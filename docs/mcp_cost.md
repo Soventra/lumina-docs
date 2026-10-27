@@ -5,7 +5,7 @@ import Image from '@theme/IdealImage';
 
 # MCP Cost Tracking
 
-LiteLLM provides two ways to track costs for MCP tool calls:
+Lumina provides two ways to track costs for MCP tool calls:
 
 | Method | When to Use | What It Does |
 |--------|-------------|--------------|
@@ -50,8 +50,8 @@ Use this when you need dynamic cost calculation or want to modify the MCP respon
 
 ```python title="custom_mcp_hook.py" showLineNumbers
 from typing import Optional
-from litellm.integrations.custom_logger import CustomLogger
-from litellm.types.mcp import MCPPostCallResponseObject
+from lumina.integrations.custom_logger import CustomLogger
+from lumina.types.mcp import MCPPostCallResponseObject
 
 
 class CustomMCPCostTracker(CustomLogger):
@@ -86,7 +86,7 @@ class CustomMCPCostTracker(CustomLogger):
         return response_obj
     
 
-# Create instance for LiteLLM to use
+# Create instance for Lumina to use
 custom_mcp_cost_tracker = CustomMCPCostTracker()
 ```
 
@@ -100,7 +100,7 @@ model_list:
       api_key: sk-xxxxxxx
 
 # Add your custom MCP hook
-litellm_settings:
+lumina_settings:
   callbacks:
     - custom_mcp_hook.custom_mcp_cost_tracker
 
@@ -112,11 +112,11 @@ mcp_servers:
 #### 3. Start the proxy
 
 ```shell
-$ litellm --config /path/to/config.yaml 
+$ lumina --config /path/to/config.yaml 
 ```
 
 When MCP tools are called, your custom hook will:
 1. Calculate costs based on your custom logic
 2. Modify the response if needed
-3. Track costs in LiteLLM's logging system
+3. Track costs in Lumina's logging system
 

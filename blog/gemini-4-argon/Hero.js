@@ -3,7 +3,7 @@ import video from './hero.mp4';
 import poster from './hero-poster.jpg';
 import styles from './hero.module.css';
 
-const description = 'Gemini 4 Argon on LiteLLM: the LiteLLM and Gemini 4 Argon lockup, then Gemini 4 Argon selected in the LiteLLM model list.';
+const description = 'Gemini 4 Argon on Lumina: the Lumina and Gemini 4 Argon lockup, then Gemini 4 Argon selected in the Lumina model list.';
 const posterUrl = typeof poster === 'string' ? poster : poster.src.src;
 
 export default function GeminiArgonHero() {

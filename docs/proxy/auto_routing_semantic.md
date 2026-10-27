@@ -10,11 +10,11 @@ The semantic Auto Router is superseded by [Auto Routing](./auto_routing.md), whi
 
 :::
 
-LiteLLM can auto select the best model for a request based on rules you define.
+Lumina can auto select the best model for a request based on rules you define.
 
 <Image alt="Auto Routing" img={require('../../img/auto_router.png')} style={{ borderRadius: '8px', marginBottom: '1em', maxWidth: '100%' }} />
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 Auto routing allows you to define routing rules that automatically select the best model for a request based on the input content. This is useful for directing different types of queries to specialized models.
 
@@ -28,9 +28,9 @@ Auto routing allows you to define routing rules that automatically select the be
     "encoder_name": "text-embedding-3-large",
     "routes": [
         {
-            "name": "litellm-gpt-4.1",
+            "name": "lumina-gpt-4.1",
             "utterances": [
-                "litellm is great"
+                "lumina is great"
             ],
             "description": "positive affirmation",
             "function_schemas": null,
@@ -39,7 +39,7 @@ Auto routing allows you to define routing rules that automatically select the be
             "metadata": {}
         },
         {
-            "name": "litellm-claude-35",
+            "name": "lumina-claude-35",
             "utterances": [
                 "how to code a program in [language]"
             ],
@@ -56,7 +56,7 @@ Auto routing allows you to define routing rules that automatically select the be
 2. **Configure the Router with auto routing models**:
 
 ```python
-from litellm import Router
+from lumina import Router
 import os
 
 router = Router(
@@ -71,14 +71,14 @@ router = Router(
         },
         # Your target models
         {
-            "model_name": "litellm-gpt-4.1",
+            "model_name": "lumina-gpt-4.1",
             "lumina_params": {
                 "model": "{{openai_large}}",
             },
             "model_info": {"id": "openai-id"},
         },
         {
-            "model_name": "litellm-claude-35",
+            "model_name": "lumina-claude-35",
             "lumina_params": {
                 "model": "{{anthropic}}",
             },
@@ -106,7 +106,7 @@ Once configured, use the auto router by calling it with your auto router model n
 # This request will be routed to {{openai_large}} based on the utterance match
 response = await router.acompletion(
     model="auto_router1",
-    messages=[{"role": "user", "content": "litellm is great"}],
+    messages=[{"role": "user", "content": "lumina is great"}],
 )
 
 # This request will be routed to {{anthropic}} for coding queries
@@ -136,15 +136,15 @@ The `router.json` file supports the following structure:
   - **metadata**: Additional metadata for the route
 
 
-## LiteLLM Proxy Server
+## Lumina Proxy Server
 
 ### Setup
 
-Navigate to the LiteLLM UI and go to **Models+Endpoints** > **Add Model** > **Auto Router Tab**.
+Navigate to the Lumina UI and go to **Models+Endpoints** > **Add Model** > **Auto Router Tab**.
 
 Configure the following required fields:
 
-- **Auto Router Name** - The model name that developers will use when making LLM API requests to LiteLLM
+- **Auto Router Name** - The model name that developers will use when making LLM API requests to Lumina
 - **Default Model** - The fallback model used when no route is matched (e.g., if set to "gpt-5.6-luna", unmatched requests will be routed to gpt-5.6-luna)
 - **Embedding Model** - The model used to generate embeddings for input messages. These embeddings are used to semantically match input against the utterances defined in your routes
 
@@ -185,7 +185,7 @@ Once added developers need to select the model=`auto_router1` in the `model` fie
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>", # replace with your LiteLLM API key
+    api_key="sk-<your-lumina-api-key>", # replace with your Lumina API key
     base_url="http://localhost:4000"
 )
 
@@ -222,7 +222,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 ## How It Works
 
-1. When a request comes in, LiteLLM generates embeddings for the input message
+1. When a request comes in, Lumina generates embeddings for the input message
 2. It compares these embeddings against **all** utterances defined across **all** your routes simultaneously
 3. It identifies the route with the **highest similarity score**. If that score exceeds the route's defined threshold, the request is routed to that model. *(Because the router selects the global maximum score rather than stopping at the first match, the order of routes in your configuration does not affect which route is selected.)*
 4. If no route's maximum score meets its threshold, the request goes to the default model

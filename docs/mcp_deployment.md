@@ -3,13 +3,13 @@ import TabItem from '@theme/TabItem';
 
 # MCP Deployment Guide
 
-How to deploy LiteLLM as a central gateway for LLMs, MCP servers, and agents.
+How to deploy Lumina as a central gateway for LLMs, MCP servers, and agents.
 
 ---
 
 ## The core idea
 
-LiteLLM is a single control plane for three resource types:
+Lumina is a single control plane for three resource types:
 
 | Resource | Registered as |
 |----------|--------------|
@@ -17,7 +17,7 @@ LiteLLM is a single control plane for three resource types:
 | **MCP Server** | `mcp_servers` in config or via UI |
 | **Agent** | A2A routes |
 
-All three share the same auth (LiteLLM API key), rate limiting, and usage dashboard, giving you a central catalog without separate registries.
+All three share the same auth (Lumina API key), rate limiting, and usage dashboard, giving you a central catalog without separate registries.
 
 ---
 
@@ -25,14 +25,14 @@ All three share the same auth (LiteLLM API key), rate limiting, and usage dashbo
 
 ### Option A: Single gateway (recommended)
 
-One LiteLLM instance handles LLM routing, MCP tool calls, and A2A agent invocations.
+One Lumina instance handles LLM routing, MCP tool calls, and A2A agent invocations.
 
 ```
 Agents / AI clients
         │
         ▼
 ┌───────────────────────────────────┐
-│         LiteLLM Gateway           │
+│         Lumina Gateway           │
 │  /v1/chat/completions  (LLMs)     │
 │  /mcp                  (tools)    │
 │  /a2a                  (agents)   │
@@ -79,7 +79,7 @@ Server names may not contain a hyphen; the proxy rejects `mcp_servers` keys like
 
 ### Option B: Separate LLM gateway and MCP gateway
 
-Split into two LiteLLM deployments: one for LLM routing (no internet exposure), one for MCP serving (optionally internet-facing).
+Split into two Lumina deployments: one for LLM routing (no internet exposure), one for MCP serving (optionally internet-facing).
 
 ```
 Internal AI clients             External AI clients
@@ -102,7 +102,7 @@ LLM API keys stay behind the firewall. A compromise of the MCP gateway does not 
 
 ## Central catalog
 
-LiteLLM exposes all resource types through standard endpoints:
+Lumina exposes all resource types through standard endpoints:
 
 | Endpoint | Returns |
 |----------|---------|
@@ -121,8 +121,8 @@ general_settings:
 ```json title="Claude Desktop config"
 {
   "mcpServers": {
-    "litellm": {
-      "url": "https://your-litellm.example.com/mcp",
+    "lumina": {
+      "url": "https://your-lumina.example.com/mcp",
       "headers": { "Authorization": "Bearer sk-..." }
     }
   }
@@ -135,7 +135,7 @@ general_settings:
 
 ### The open-port problem
 
-If you expose LiteLLM's port to the internet (for Claude Desktop / ChatGPT), `/v1/chat/completions` is also reachable externally. LLM credentials stay protected by key auth, but be deliberate about this.
+If you expose Lumina's port to the internet (for Claude Desktop / ChatGPT), `/v1/chat/completions` is also reachable externally. LLM credentials stay protected by key auth, but be deliberate about this.
 
 **Mitigations:**
 1. **Separate deployments** (Option B): the LLM gateway never gets a public port
@@ -144,7 +144,7 @@ If you expose LiteLLM's port to the internet (for Claude Desktop / ChatGPT), `/v
 
 ### MCP servers can reach the public internet
 
-When you register an external MCP URL (e.g. `https://mcp.exa.ai/mcp`), LiteLLM makes outbound requests to it on every tool call. Check that your network policy allows it and that your security team is comfortable with data leaving the perimeter.
+When you register an external MCP URL (e.g. `https://mcp.exa.ai/mcp`), Lumina makes outbound requests to it on every tool call. Check that your network policy allows it and that your security team is comfortable with data leaving the perimeter.
 
 For air-gapped networks: only register MCP servers inside your perimeter and set `available_on_public_internet: false` on each of them. The default is `true`, so a server is visible to external callers unless you explicitly set it to `false`.
 
@@ -157,7 +157,7 @@ By default all authenticated callers can call all MCP tools. Use these to restri
 | Per-key tool access | [Key-level MCP permissions](./mcp_control.md) |
 | Per-team tool access | [Team-level MCP permissions](./mcp_control.md) |
 | Hide internal servers from external callers | [available_on_public_internet](./mcp_public_internet.md) |
-| Verify requests came through LiteLLM | [MCP Zero Trust (JWT)](./mcp_zero_trust.md) |
+| Verify requests came through Lumina | [MCP Zero Trust (JWT)](./mcp_zero_trust.md) |
 | Block sensitive data in responses | [MCP Guardrails](./mcp_guardrail.md) |
 
 ---

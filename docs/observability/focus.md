@@ -9,15 +9,15 @@ Interfaces, schema mappings, and configuration options may change as we iterate 
 Please treat this integration as a preview and report any issues or suggestions to help us stabilize and improve the workflow.
 :::
 
-LiteLLM can emit usage data in the [FinOps FOCUS format](https://focus.finops.org/focus-specification/v1-2/) and push artifacts (for example Parquet files) to destinations such as Amazon S3 or Google Cloud Storage. This enables downstream cost-analysis tooling to ingest a standardised dataset directly from LiteLLM.
+Lumina can emit usage data in the [FinOps FOCUS format](https://focus.finops.org/focus-specification/v1-2/) and push artifacts (for example Parquet files) to destinations such as Amazon S3 or Google Cloud Storage. This enables downstream cost-analysis tooling to ingest a standardised dataset directly from Lumina.
 
-LiteLLM currently conforms to the FinOps FOCUS v1.2 specification when emitting this dataset.
+Lumina currently conforms to the FinOps FOCUS v1.2 specification when emitting this dataset.
 
 ## Overview
 
 | Property | Details |
 |----------|---------|
-| Destination | Export LiteLLM usage data in FOCUS format to managed storage (S3, GCS) |
+| Destination | Export Lumina usage data in FOCUS format to managed storage (S3, GCS) |
 | Callback name | `focus` |
 | Supported operations | Automatic scheduled export |
 | Data format | FOCUS Normalised Dataset (Parquet or CSV) |
@@ -63,7 +63,7 @@ LiteLLM currently conforms to the FinOps FOCUS v1.2 specification when emitting 
 ```bash
 export FOCUS_PROVIDER="s3"
 export FOCUS_PREFIX="focus_exports"
-export FOCUS_S3_BUCKET_NAME="my-litellm-focus-bucket"
+export FOCUS_S3_BUCKET_NAME="my-lumina-focus-bucket"
 export FOCUS_S3_REGION_NAME="us-east-1"
 export FOCUS_S3_ACCESS_KEY="AKIA..."
 export FOCUS_S3_SECRET_KEY="..."
@@ -75,7 +75,7 @@ export FOCUS_S3_SECRET_KEY="..."
 ```bash
 export FOCUS_PROVIDER="gcs"
 export FOCUS_PREFIX="focus_exports"
-export FOCUS_GCS_BUCKET_NAME="my-litellm-focus-bucket"
+export FOCUS_GCS_BUCKET_NAME="my-lumina-focus-bucket"
 
 # Optional: path to service account JSON. Omit to use Application Default Credentials.
 export FOCUS_GCS_PATH_SERVICE_ACCOUNT="/path/to/service-account.json"
@@ -86,7 +86,7 @@ The service account (or ADC principal) needs the `storage.objects.create` permis
 </TabItem>
 </Tabs>
 
-### Update LiteLLM config
+### Update Lumina config
 
 ```yaml
 model_list:
@@ -95,17 +95,17 @@ model_list:
       model: openai/{{openai_large}}
       api_key: sk-your-key
 
-litellm_settings:
+lumina_settings:
   callbacks: ["focus"]
 ```
 
 ### Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
-During boot LiteLLM registers the Focus logger and a background job that runs according to the configured frequency.
+During boot Lumina registers the Focus logger and a background job that runs according to the configured frequency.
 
 ## Planned Enhancements
 - Add "Setup on UI" flow alongside the current configuration-based setup.

@@ -11,24 +11,24 @@ import Image from '@theme/IdealImage';
 Ensure you have the `literalai` package installed:
 
 ```shell
-uv add literalai litellm
+uv add literalai lumina
 ```
 
 ## Quick Start
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["LITERAL_API_KEY"] = ""
 os.environ['OPENAI_API_KEY']= ""
 os.environ['LITERAL_BATCH_SIZE'] = "1" # You won't see logs appear until the batch is full and sent
 
-litellm.success_callback = ["literalai"] # Log Input/Output to LiteralAI
-litellm.failure_callback = ["literalai"] # Log Errors to LiteralAI
+lumina.success_callback = ["literalai"] # Log Input/Output to LiteralAI
+lumina.failure_callback = ["literalai"] # Log Errors to LiteralAI
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_small}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -41,7 +41,7 @@ response = litellm.completion(
 This integration is compatible with the Literal AI SDK decorators, enabling conversation and agent tracing
 
 ```py
-import litellm
+import lumina
 from literalai import LiteralClient
 import os
 
@@ -49,16 +49,16 @@ os.environ["LITERAL_API_KEY"] = ""
 os.environ['OPENAI_API_KEY']= ""
 os.environ['LITERAL_BATCH_SIZE'] = "1" # You won't see logs appear until the batch is full and sent
 
-litellm.input_callback = ["literalai"] # Support other Literal AI decorators and prompt templates
-litellm.success_callback = ["literalai"] # Log Input/Output to LiteralAI
-litellm.failure_callback = ["literalai"] # Log Errors to LiteralAI
+lumina.input_callback = ["literalai"] # Support other Literal AI decorators and prompt templates
+lumina.success_callback = ["literalai"] # Log Input/Output to LiteralAI
+lumina.failure_callback = ["literalai"] # Log Errors to LiteralAI
 
 literalai_client = LiteralClient()
 
 @literalai_client.run
 def my_agent(question: str):
     # agent logic here
-    response = litellm.completion(
+    response = lumina.completion(
         model="{{openai_small}}",
         messages=[
             {"role": "user", "content": question}
@@ -90,8 +90,8 @@ from literalai import LiteralClient
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="anything",            # litellm proxy virtual key
-    base_url="http://0.0.0.0:4000" # litellm proxy base_url
+    api_key="anything",            # lumina proxy virtual key
+    base_url="http://0.0.0.0:4000" # lumina proxy base_url
 )
 
 literalai_client = LiteralClient(api_key="")
@@ -100,7 +100,7 @@ literalai_client = LiteralClient(api_key="")
 literalai_client.instrument_openai()
 
 settings = {
-    "model": "{{openai_small}}", # model you want to send litellm proxy
+    "model": "{{openai_small}}", # model you want to send lumina proxy
     "temperature": 0,
     # ... more settings
 }

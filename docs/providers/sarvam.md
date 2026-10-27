@@ -3,13 +3,13 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM supports all the text models from [Sarvam ai](https://docs.sarvam.ai/api-reference-docs/chat/chat-completions)
+Lumina supports all the text models from [Sarvam ai](https://docs.sarvam.ai/api-reference-docs/chat/chat-completions)
 
 ## Usage
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # Set your Sarvam API key
 os.environ["SARVAM_API_KEY"] = ""
@@ -23,9 +23,9 @@ response = completion(
 print(response)
 ```
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
-Here's how to call a Sarvam.ai model with the LiteLLM Proxy Server
+Here's how to call a Sarvam.ai model with the Lumina Proxy Server
 
 1. **Modify the `config.yaml`:**
 
@@ -40,10 +40,10 @@ Here's how to call a Sarvam.ai model with the LiteLLM Proxy Server
 2. **Start the proxy:**
 
     ```bash
-    $ litellm --config /path/to/config.yaml
+    $ lumina --config /path/to/config.yaml
     ```
 
-3. **Send a request to LiteLLM Proxy Server:**
+3. **Send a request to Lumina Proxy Server:**
 
     <Tabs>
 
@@ -53,8 +53,8 @@ Here's how to call a Sarvam.ai model with the LiteLLM Proxy Server
     import openai
 
     client = openai.OpenAI(
-        api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-        base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+        api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+        base_url="http://0.0.0.0:4000" # lumina-proxy-base url
     )
 
     response = client.chat.completions.create(

@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 ### Overview
 
-Litellm provides anthropic specs compatible support for minmax
+Lumina provides anthropic specs compatible support for minmax
 
 ### Supported Models
 
@@ -25,9 +25,9 @@ MiniMax offers three models through their Anthropic-compatible API:
 #### Basic Chat Completion
 
 ```python
-import litellm
+import lumina
 
-response = litellm.anthropic.messages.acreate(
+response = lumina.anthropic.messages.acreate(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "Hello, how are you?"}],
     api_key="your-minimax-api-key",
@@ -46,9 +46,9 @@ export MINIMAX_API_BASE="https://api.minimax.io/anthropic/v1/messages"
 ```
 
 ```python
-import litellm
+import lumina
 
-response = litellm.anthropic.messages.acreate(
+response = lumina.anthropic.messages.acreate(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "Hello!"}],
     max_tokens=1000
@@ -58,7 +58,7 @@ response = litellm.anthropic.messages.acreate(
 #### With Thinking (M2.1 Feature)
 
 ```python
-response = litellm.anthropic.messages.acreate(
+response = lumina.anthropic.messages.acreate(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "Solve: 2+2=?"}],
     thinking={"type": "enabled", "budget_tokens": 1000},
@@ -91,7 +91,7 @@ tools = [
     }
 ]
 
-response = litellm.anthropic.messages.acreate(
+response = lumina.anthropic.messages.acreate(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "What's the weather in SF?"}],
     tools=tools,
@@ -102,17 +102,17 @@ response = litellm.anthropic.messages.acreate(
 
 
 
-### Usage with LiteLLM Proxy 
+### Usage with Lumina Proxy 
 
-You can use MiniMax models with the Anthropic SDK by routing through LiteLLM Proxy:
+You can use MiniMax models with the Anthropic SDK by routing through Lumina Proxy:
 
 | Step | Description |
 |------|-------------|
-| **1. Start LiteLLM Proxy** | Configure proxy with MiniMax models in `config.yaml` |
+| **1. Start Lumina Proxy** | Configure proxy with MiniMax models in `config.yaml` |
 | **2. Set Environment Variables** | Point Anthropic SDK to proxy endpoint |
 | **3. Use Anthropic SDK** | Call MiniMax models using native Anthropic SDK |
 
-#### Step 1: Configure LiteLLM Proxy
+#### Step 1: Configure Lumina Proxy
 
 Create a `config.yaml`:
 
@@ -128,7 +128,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 #### Step 2: Use with Anthropic SDK
@@ -136,7 +136,7 @@ litellm --config config.yaml
 ```python
 import os
 os.environ["ANTHROPIC_BASE_URL"] = "http://localhost:4000"
-os.environ["ANTHROPIC_API_KEY"] = "sk-<your-api-key>"  # Your LiteLLM proxy key
+os.environ["ANTHROPIC_API_KEY"] = "sk-<your-api-key>"  # Your Lumina proxy key
 
 import anthropic
 
@@ -168,16 +168,16 @@ for block in message.content:
 
 ## MiniMax - v1/chat/completions
 
-### Usage with LiteLLM SDK
+### Usage with Lumina SDK
 
-You can use MiniMax's OpenAI-compatible API directly with LiteLLM:
+You can use MiniMax's OpenAI-compatible API directly with Lumina:
 
 #### Basic Chat Completion
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.1",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
@@ -198,9 +198,9 @@ export MINIMAX_API_BASE="https://api.minimax.io/v1"
 ```
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "Hello!"}]
 )
@@ -209,7 +209,7 @@ response = litellm.completion(
 #### With Reasoning Split
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.1",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
@@ -246,7 +246,7 @@ tools = [
     }
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "What's the weather in SF?"}],
     tools=tools,
@@ -258,7 +258,7 @@ response = litellm.completion(
 #### Streaming
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "Tell me a story"}],
     stream=True,
@@ -272,17 +272,17 @@ for chunk in response:
 ```
 
 
-### Usage with OpenAI SDK via LiteLLM Proxy
+### Usage with OpenAI SDK via Lumina Proxy
 
-You can also use MiniMax models with the OpenAI SDK by routing through LiteLLM Proxy:
+You can also use MiniMax models with the OpenAI SDK by routing through Lumina Proxy:
 
 | Step | Description |
 |------|-------------|
-| **1. Start LiteLLM Proxy** | Configure proxy with MiniMax models in `config.yaml` |
+| **1. Start Lumina Proxy** | Configure proxy with MiniMax models in `config.yaml` |
 | **2. Set Environment Variables** | Point OpenAI SDK to proxy endpoint |
 | **3. Use OpenAI SDK** | Call MiniMax models using native OpenAI SDK |
 
-#### Step 1: Configure LiteLLM Proxy
+#### Step 1: Configure Lumina Proxy
 
 Create a `config.yaml`:
 
@@ -298,7 +298,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 #### Step 2: Use with OpenAI SDK
@@ -306,7 +306,7 @@ litellm --config config.yaml
 ```python
 import os
 os.environ["OPENAI_BASE_URL"] = "http://localhost:4000"
-os.environ["OPENAI_API_KEY"] = "sk-<your-api-key>"  # Your LiteLLM proxy key
+os.environ["OPENAI_API_KEY"] = "sk-<your-api-key>"  # Your Lumina proxy key
 
 from openai import OpenAI
 
@@ -372,7 +372,7 @@ Cost calculation works automatically using the pricing information in `model_pri
 
 Example:
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.1",
     messages=[{"role": "user", "content": "Hello!"}],
     api_key="your-minimax-api-key"
@@ -386,13 +386,13 @@ print(f"Cost: ${response._hidden_params.get('response_cost', 0)}")
 
 ### Quick Start
 
-### **LiteLLM Python SDK Usage**
+### **Lumina Python SDK Usage**
 
 #### Basic Usage
 
 ```python
 from pathlib import Path
-from litellm import speech
+from lumina import speech
 import os 
 
 os.environ["MINIMAX_API_KEY"] = "your-api-key"
@@ -409,7 +409,7 @@ response.stream_to_file(speech_file_path)
 #### Async Usage
 
 ```python
-from litellm import aspeech
+from lumina import aspeech
 from pathlib import Path
 import os, asyncio
 
@@ -429,10 +429,10 @@ asyncio.run(test_async_speech())
 
 #### Voice Selection
 
-MiniMax supports many voices. LiteLLM provides OpenAI-compatible voice names that map to MiniMax voices:
+MiniMax supports many voices. Lumina provides OpenAI-compatible voice names that map to MiniMax voices:
 
 ```python
-from litellm import speech
+from lumina import speech
 
 # OpenAI-compatible voice names
 voices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
@@ -461,7 +461,7 @@ response = speech(
 MiniMax TTS supports additional parameters for fine-tuning audio output:
 
 ```python
-from litellm import speech
+from lumina import speech
 
 response = speech(
     model="minimax/speech-2.6-hd",
@@ -483,7 +483,7 @@ response.stream_to_file("custom_speech.mp3")
 #### Response Formats
 
 ```python
-from litellm import speech
+from lumina import speech
 
 # MP3 format (default)
 response = speech(
@@ -518,9 +518,9 @@ response = speech(
 )
 ```
 
-### **LiteLLM Proxy Usage**
+### **Lumina Proxy Usage**
 
-LiteLLM provides an OpenAI-compatible `/audio/speech` endpoint for MiniMax TTS.
+Lumina provides an OpenAI-compatible `/audio/speech` endpoint for MiniMax TTS.
 
 #### Setup
 
@@ -542,7 +542,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -584,7 +584,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 
 ### Voice Mappings
 
-LiteLLM maps OpenAI-compatible voice names to MiniMax voice IDs:
+Lumina maps OpenAI-compatible voice names to MiniMax voice IDs:
 
 | OpenAI Voice | MiniMax Voice ID | Description |
 |--------------|------------------|-------------|
@@ -607,8 +607,8 @@ The current implementation uses MiniMax's HTTP endpoint. For WebSocket streaming
 ### Error Handling
 
 ```python
-from litellm import speech
-import litellm
+from lumina import speech
+import lumina
 
 try:
     response = speech(
@@ -617,9 +617,9 @@ try:
         input="Test input",
     )
     response.stream_to_file("output.mp3")
-except litellm.exceptions.BadRequestError as e:
+except lumina.exceptions.BadRequestError as e:
     print(f"Bad request: {e}")
-except litellm.exceptions.AuthenticationError as e:
+except lumina.exceptions.AuthenticationError as e:
     print(f"Authentication failed: {e}")
 except Exception as e:
     print(f"Error: {e}")
@@ -647,7 +647,7 @@ MiniMax video is available from v1.107.0. Earlier releases return a 500 that say
 ```python showLineNumbers title="MiniMax Video Generation"
 import os
 import time
-from litellm import video_content, video_generation, video_status
+from lumina import video_content, video_generation, video_status
 
 os.environ["MINIMAX_API_KEY"] = "your-api-key"
 
@@ -671,7 +671,7 @@ if video.status == "completed":
 
 For image-to-video, pass the first frame as `input_reference`, either as a URL or as a file (an open file, bytes, or a `(filename, file, content_type)` tuple). For reference-to-video, pass MiniMax `image_url` and `audio_url` items in `content` instead, each with a `role` of `reference_image` or `reference_audio`. MiniMax does not take references together with a first frame.
 
-The text of the request always comes from `prompt`, so text items in `content` are rejected. Guardrails that implement `apply_guardrail`, such as `litellm_content_filter`, scan that `prompt`, while other guardrail hooks may not scan `/v1/videos` requests, and no guardrail scans the image and audio references.
+The text of the request always comes from `prompt`, so text items in `content` are rejected. Guardrails that implement `apply_guardrail`, such as `lumina_content_filter`, scan that `prompt`, while other guardrail hooks may not scan `/v1/videos` requests, and no guardrail scans the image and audio references.
 
 Video calls read `MINIMAX_API_BASE` too. If you exported the `/anthropic/v1/messages` URL from the `/v1/messages` section, video calls return a 404, so set it to `https://api.minimax.io/anthropic`, which works for both, or pass `api_base="https://api.minimax.io/v1"` on video calls only.
 
@@ -717,4 +717,4 @@ curl http://localhost:4000/v1/videos/$VIDEO_ID/content \
 
 The proxy's `/content` route always returns the mp4, since it does not read `variant`. The cost map marks both models as `video_generation`, so a proxy health check on these deployments creates a real 5 second video, which MiniMax bills. With `background_health_checks` on, set `disable_background_health_check: true` in the deployment's `model_info`.
 
-To list your MiniMax tasks, call `litellm.video_list(custom_llm_provider="minimax")` from the Python SDK. MiniMax returns no cursor, so `has_more` is always `false` and later pages come from `extra_query={"page_num": N}`. On the proxy, `GET /v1/videos?custom_llm_provider=minimax` returns only the first page, newest first, and ignores `after`, `order`, `limit` and `page_num`.
+To list your MiniMax tasks, call `lumina.video_list(custom_llm_provider="minimax")` from the Python SDK. MiniMax returns no cursor, so `has_more` is always `false` and later pages come from `extra_query={"page_num": N}`. On the proxy, `GET /v1/videos?custom_llm_provider=minimax` returns only the first page, newest first, and ignores `after`, `order`, `limit` and `page_num`.

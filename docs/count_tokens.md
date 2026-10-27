@@ -5,11 +5,11 @@ import TabItem from '@theme/TabItem';
 
 ## Overview
 
-LiteLLM provides exact token counting by calling provider-specific token counting APIs. This gives you accurate token counts before sending requests, helping with cost estimation and context window management.
+Lumina provides exact token counting by calling provider-specific token counting APIs. This gives you accurate token counts before sending requests, helping with cost estimation and context window management.
 
 | Feature | Details |
 |---------|---------|
-| SDK Method | `litellm.acount_tokens()` |
+| SDK Method | `lumina.acount_tokens()` |
 | Proxy Endpoints | `/v1/messages/count_tokens` (Anthropic format), `/v1/responses/input_tokens` (OpenAI format) |
 | Local count | The SDK and the providers that have no count API use a local count. On the proxy, a failed provider count returns an error. Refer to [Proxy errors](#proxy-errors-instead-of-local-estimates) |
 
@@ -32,11 +32,11 @@ LiteLLM provides exact token counting by calling provider-specific token countin
 
 ```python
 import asyncio
-import litellm
+import lumina
 
 async def main():
     # OpenAI
-    result = await litellm.acount_tokens(
+    result = await lumina.acount_tokens(
         model="openai/{{openai_large}}",
         messages=[{"role": "user", "content": "Hello, how are you?"}],
     )
@@ -44,7 +44,7 @@ async def main():
     print(f"Tokenizer: {result.tokenizer_type}")  # "openai_api"
 
     # Anthropic
-    result = await litellm.acount_tokens(
+    result = await lumina.acount_tokens(
         model="anthropic/{{anthropic}}",
         messages=[{"role": "user", "content": "Hello, how are you?"}],
     )
@@ -58,10 +58,10 @@ asyncio.run(main())
 
 ```python
 import asyncio
-import litellm
+import lumina
 
 async def main():
-    result = await litellm.acount_tokens(
+    result = await lumina.acount_tokens(
         model="openai/{{openai_large}}",
         messages=[{"role": "user", "content": "What's the weather in Paris?"}],
         tools=[{
@@ -84,7 +84,7 @@ asyncio.run(main())
 
 ### Response Format
 
-`litellm.acount_tokens()` returns a `TokenCountResponse`:
+`lumina.acount_tokens()` returns a `TokenCountResponse`:
 
 ```python
 TokenCountResponse(
@@ -104,7 +104,7 @@ In the SDK, `acount_tokens()` uses a local tiktoken count if the provider has no
 
 ```python
 # Unsupported provider → automatic fallback
-result = await litellm.acount_tokens(
+result = await lumina.acount_tokens(
     model="together_ai/meta-llama/Llama-3-8b-chat-hf",
     messages=[{"role": "user", "content": "Hello"}],
 )
@@ -115,7 +115,7 @@ On the proxy, local counting runs in a worker thread, so a large payload does no
 
 ### Bedrock Claude models
 
-The bedrock-runtime CountTokens API rejects some Claude models with a 400 (Claude Opus 4.8, 5 and 5.5 when this was written). For a Claude model it rejects, LiteLLM sends the same body to bedrock-mantle (`https://bedrock-mantle.<region>.api.aws/anthropic/v1/messages/count_tokens`), signed with the deployment's AWS credentials, and reports `tokenizer_type: "bedrock_mantle_api"`. A model bedrock-runtime counts never reaches Mantle and keeps `tokenizer_type: "bedrock_api"`
+The bedrock-runtime CountTokens API rejects some Claude models with a 400 (Claude Opus 4.8, 5 and 5.5 when this was written). For a Claude model it rejects, Lumina sends the same body to bedrock-mantle (`https://bedrock-mantle.<region>.api.aws/anthropic/v1/messages/count_tokens`), signed with the deployment's AWS credentials, and reports `tokenizer_type: "bedrock_mantle_api"`. A model bedrock-runtime counts never reaches Mantle and keeps `tokenizer_type: "bedrock_api"`
 
 The credentials need the IAM action `bedrock-mantle:CountTokens` next to `bedrock:CountTokens`. Without it, Mantle returns a 403. The SDK then uses the local tokenizer. The proxy count routes return the 403. A Bedrock API key (`AWS_BEARER_TOKEN_BEDROCK`) is sent to Mantle as the bearer token, so the same policy applies to it
 
@@ -148,7 +148,7 @@ response = httpx.post(
     "http://localhost:4000/v1/responses/input_tokens",
     headers={
         "Content-Type": "application/json",
-        "Authorization": "Bearer sk-<your-litellm-api-key>"
+        "Authorization": "Bearer sk-<your-lumina-api-key>"
     },
     json={
         "model": "{{openai_large}}",
@@ -203,11 +203,11 @@ Each error uses the error format of the API that you used: Anthropic, OpenAI, or
 | A Gemini deployment has no API key | The error that Google returns |
 | A Vertex AI partner model, such as GLM, has no count API | A 400 that names the model |
 | A non-Claude Bedrock model, such as Amazon Nova, has no count API | The 400 or 404 from AWS |
-| `litellm.disable_token_counter` is set, and the provider has no count API | A 503 |
+| `lumina.disable_token_counter` is set, and the provider has no count API | A 503 |
 
 If the deployment sets `token_count_framing`, the proxy returns a local estimate in place of a 400 or a 404 from the provider. Refer to [Local estimates for models without a count API](#local-estimates-for-models-without-a-count-api). A Vertex AI partner model with `custom_tokenizer` in `model_info` continues to use a local count and does not return the 400.
 
-This change does not apply to providers with no count API, such as Groq. They continue to use a local count. The SDK function `litellm.acount_tokens()` also continues to use a local count.
+This change does not apply to providers with no count API, such as Groq. They continue to use a local count. The SDK function `lumina.acount_tokens()` also continues to use a local count.
 
 ### Local estimates for models without a count API
 
@@ -236,10 +236,10 @@ model_list:
 
 The built-in cost map sets these values for some models. Examples are Kimi K3 on Bedrock and Databricks, and Claude Sonnet 5.5 and Haiku 5.5 on Bedrock. These models can give a count without `model_info`. A value in `model_info` replaces the built-in value.
 
-The `/v1/messages/count_tokens`, `/v1/responses/input_tokens`, and `:countTokens` responses show the source of the count in `litellm_count_source`. On `/utils/token_counter`, the field is `count_source`. The values are:
+The `/v1/messages/count_tokens`, `/v1/responses/input_tokens`, and `:countTokens` responses show the source of the count in `lumina_count_source`. On `/utils/token_counter`, the field is `count_source`. The values are:
 
 - `provider`: the count API of the provider for the deployment
-- `token_count_model`: the count API for the model in `token_count_model`. The field `litellm_count_model` gives the name of this model.
+- `token_count_model`: the count API for the model in `token_count_model`. The field `lumina_count_model` gives the name of this model.
 - `local_estimate`: a local count
 
 ## Proxy Configuration

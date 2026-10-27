@@ -4,17 +4,17 @@ title: "Auto-Router: Switching Tiers Without Encrypted Content Failures"
 date: 2026-09-18T10:00:00
 authors:
   - tin
-description: "How LiteLLM safely removes undecryptable encrypted reasoning from cross-tier follow-ups so Auto-Router can keep routing requests"
-keywords: [auto router, encrypted content, Responses API, reasoning, routing, LiteLLM]
+description: "How Lumina safely removes undecryptable encrypted reasoning from cross-tier follow-ups so Auto-Router can keep routing requests"
+keywords: [auto router, encrypted content, Responses API, reasoning, routing, Lumina]
 tags: [routing, complexity-router, responses-api, engineering]
 hide_table_of_contents: false
 ---
 
 Auto-Router can move a conversation between tiers as the request changes from simple work to a harder task. Responses API clients can make that switch difficult because a previous response may include encrypted reasoning content that only the deployment that created it can decrypt
 
-LiteLLM now keeps the readable history and removes encrypted reasoning that the newly selected tier cannot verify. The request can continue to the selected model instead of failing with `invalid_encrypted_content`
+Lumina now keeps the readable history and removes encrypted reasoning that the newly selected tier cannot verify. The request can continue to the selected model instead of failing with `invalid_encrypted_content`
 
-This fix is included in the LiteLLM `v1.102.x` release line and landed in [PR #40280](https://github.com/BerriAI/litellm/pull/40280)
+This fix is included in the Lumina `v1.102.x` release line and landed in [PR #40280](https://github.com/Soventra/lumina/pull/40280)
 
 {/* truncate */}
 
@@ -58,17 +58,17 @@ model_list:
             - model_name: opus
 ```
 
-When LiteLLM sees a tracked encrypted item, it first looks for the deployment that created it. If that deployment is available, LiteLLM pins this request to it. If another healthy deployment shares the same encryption boundary, LiteLLM can use that peer
+When Lumina sees a tracked encrypted item, it first looks for the deployment that created it. If that deployment is available, Lumina pins this request to it. If another healthy deployment shares the same encryption boundary, Lumina can use that peer
 
-If the originating deployment belongs to a different routed group, LiteLLM removes the undecryptable encrypted reasoning and returns the healthy deployments for the selected group. Auto-Router keeps its tier decision
+If the originating deployment belongs to a different routed group, Lumina removes the undecryptable encrypted reasoning and returns the healthy deployments for the selected group. Auto-Router keeps its tier decision
 
-A same-group deployment that is temporarily unavailable follows the existing fail-fast behavior. LiteLLM does not send the encrypted item to a same-group deployment that cannot serve it and does not hide a cooldown behind a cross-tier rewrite
+A same-group deployment that is temporarily unavailable follows the existing fail-fast behavior. Lumina does not send the encrypted item to a same-group deployment that cannot serve it and does not hide a cooldown behind a cross-tier rewrite
 
-## What LiteLLM removes
+## What Lumina removes
 
-LiteLLM mutates the request before dispatch and removes `encrypted_content` and `id` from a reasoning item when the selected deployment cannot decrypt them. It keeps a readable `summary` or `content` field so the selected model still sees the response history
+Lumina mutates the request before dispatch and removes `encrypted_content` and `id` from a reasoning item when the selected deployment cannot decrypt them. It keeps a readable `summary` or `content` field so the selected model still sees the response history
 
-If a reasoning item has no readable summary or content, LiteLLM removes that item. Other input items, including user messages and ordinary assistant messages, remain in the request
+If a reasoning item has no readable summary or content, Lumina removes that item. Other input items, including user messages and ordinary assistant messages, remain in the request
 
 For example, a cross-tier follow-up changes from this:
 
@@ -94,7 +94,7 @@ to this before dispatch:
 }
 ```
 
-LiteLLM applies the same boundary check to bridged Anthropic thinking blocks. When the bridge identifies encrypted reasoning from another route, it drops that thinking block instead of forwarding a foreign or unsigned signature that the provider would reject
+Lumina applies the same boundary check to bridged Anthropic thinking blocks. When the bridge identifies encrypted reasoning from another route, it drops that thinking block instead of forwarding a foreign or unsigned signature that the provider would reject
 
 ## Why this keeps Auto-Router useful
 
@@ -102,6 +102,6 @@ The check pins only requests that need the original encryption boundary. Ordinar
 
 This gives Auto-Router two safe paths. It preserves encrypted reasoning when the selected deployment can verify it. For cross-tier Responses requests, it preserves the readable summary and removes the provider-bound payload. For bridged Anthropic thinking, it drops the foreign encrypted block before dispatch
 
-The behavior lives in the encrypted-content pre-call check and the Responses request utilities. The relevant implementation and regression coverage are available in [the affinity check](https://github.com/BerriAI/litellm/blob/main/litellm/router_utils/pre_call_checks/encrypted_content_affinity_check.py), [the Responses request utility](https://github.com/BerriAI/litellm/blob/main/litellm/responses/utils.py), and [the routing tests](https://github.com/BerriAI/litellm/blob/main/tests/test_litellm/router_utils/pre_call_checks/test_encrypted_content_affinity_check.py)
+The behavior lives in the encrypted-content pre-call check and the Responses request utilities. The relevant implementation and regression coverage are available in [the affinity check](https://github.com/Soventra/lumina/blob/main/lumina/router_utils/pre_call_checks/encrypted_content_affinity_check.py), [the Responses request utility](https://github.com/Soventra/lumina/blob/main/lumina/responses/utils.py), and [the routing tests](https://github.com/Soventra/lumina/blob/main/tests/test_lumina/router_utils/pre_call_checks/test_encrypted_content_affinity_check.py)
 
-For the complete setup and deployment-affinity behavior, see the [Responses API encrypted content affinity guide](https://docs.litellm.ai/docs/response_api#encrypted-content-affinity-multi-region-load-balancing)
+For the complete setup and deployment-affinity behavior, see the [Responses API encrypted content affinity guide](https://docs.lumina.ai/docs/response_api#encrypted-content-affinity-multi-region-load-balancing)

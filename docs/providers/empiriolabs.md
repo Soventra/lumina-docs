@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | EmpirioLabs AI hosts open, proprietary, and custom models behind one OpenAI-compatible API with pay-as-you-go pricing across text, image, video, audio, search, and 3D endpoints. |
-| Provider Route on LiteLLM | `empiriolabs/` |
+| Provider Route on Lumina | `empiriolabs/` |
 | Link to Provider Doc | [EmpirioLabs AI Documentation ↗](https://docs.empiriolabs.ai) |
 | Base URL | `https://api.empiriolabs.ai/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/empiriolabs#usage---litellm-python-sdk), `/responses` |
+| Supported Operations | [`/chat/completions`](/docs/providers/empiriolabs#usage---lumina-python-sdk), `/responses` |
 
 <br />
 <br />
@@ -41,14 +41,14 @@ os.environ["EMPIRIOLABS_API_KEY"] = ""  # your EmpirioLabs API key
 
 Get an API key from the [EmpirioLabs dashboard](https://platform.empiriolabs.ai/dashboard/api-keys).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="EmpirioLabs Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["EMPIRIOLABS_API_KEY"] = ""  # your EmpirioLabs API key
 
@@ -64,8 +64,8 @@ print(response)
 
 ```python showLineNumbers title="EmpirioLabs Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["EMPIRIOLABS_API_KEY"] = ""  # your EmpirioLabs API key
 
@@ -82,9 +82,9 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add the following to your LiteLLM Proxy configuration file:
+Add the following to your Lumina Proxy configuration file:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -99,10 +99,10 @@ model_list:
       api_key: os.environ/EMPIRIOLABS_API_KEY
 ```
 
-Start your LiteLLM Proxy server:
+Start your Lumina Proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -122,7 +122,7 @@ client = OpenAI(
 # Non-streaming response
 response = client.chat.completions.create(
     model="qwen3-7-plus",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 
 print(response.choices[0].message.content)
@@ -137,7 +137,7 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer your-proxy-api-key" \
   -d '{
     "model": "qwen3-7-plus",
-    "messages": [{"role": "user", "content": "hello from litellm"}]
+    "messages": [{"role": "user", "content": "hello from lumina"}]
   }'
 ```
 

@@ -1,6 +1,6 @@
 ---
 title: Moving from OSS
-description: Move an open-source LiteLLM gateway to LiteLLM Enterprise. The image, config.yaml, and version line stay the same. Use this checklist before you open the gateway to all your teams.
+description: Move an open-source Lumina gateway to Lumina Enterprise. The image, config.yaml, and version line stay the same. Use this checklist before you open the gateway to all your teams.
 ---
 
 # Moving from OSS
@@ -51,5 +51,5 @@ Set a budget on each team, and set soft budget alerts so that teams get an email
 ## Next steps
 
 - [Production rollout](../learn/enterprise_quickstart.md): the five steps from deployment to chargeback.
-- [Version support](./version_support.md): the release lines that LiteLLM supports.
-- [Support and SLA](./support.md): how to get help from the LiteLLM engineers.
+- [Version support](./version_support.md): the release lines that Lumina supports.
+- [Support and SLA](./support.md): how to get help from the Lumina engineers.

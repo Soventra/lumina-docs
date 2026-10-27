@@ -1,13 +1,13 @@
 # Contributing - UI
 
-Thanks for contributing to the LiteLLM UI! This guide will help you set up your local development environment.
+Thanks for contributing to the Lumina UI! This guide will help you set up your local development environment.
 
 
 ## 1. Clone the repo
 
 ```bash
-git clone https://github.com/BerriAI/litellm.git
-cd litellm
+git clone https://github.com/Soventra/lumina.git
+cd lumina
 ```
 
 ## 2. Start the Proxy
@@ -29,7 +29,7 @@ general_settings:
 Start the proxy on port 4000:
 
 ```bash
-uv run litellm --config config.yaml --port 4000
+uv run lumina --config config.yaml --port 4000
 ```
 
 The UI comes pre-built in the repo. Access it at `http://localhost:4000/ui`
@@ -43,7 +43,7 @@ There are two options for UI development:
 This runs the UI on port 3000 with hot reload. The proxy runs on port 4000.
 
 ```bash
-cd ui/litellm-dashboard
+cd ui/lumina-dashboard
 npm install
 npm run dev
 ```
@@ -62,11 +62,11 @@ If you experience redirect loops or authentication issues, clear your browser co
 
 This builds the UI and copies it to the proxy. Changes require rebuilding.
 
-1. Make your code changes in `ui/litellm-dashboard/src/`
+1. Make your code changes in `ui/lumina-dashboard/src/`
 
 2. Build the UI
 ```bash
-cd ui/litellm-dashboard
+cd ui/lumina-dashboard
 npm install
 npm run build
 ```
@@ -74,14 +74,14 @@ npm run build
 After building, copy the output to the proxy:
 
 ```bash
-cp -r out/* ../../litellm/proxy/_experimental/out/
+cp -r out/* ../../lumina/proxy/_experimental/out/
 ```
 
 Then restart the proxy and access the UI at `http://localhost:4000/ui`
 
 ## 4. Pre-PR Checklist
 
-Before submitting your pull request, make sure the following pass locally from `ui/litellm-dashboard/`:
+Before submitting your pull request, make sure the following pass locally from `ui/lumina-dashboard/`:
 
 **Run tests related to your changes:**
 
@@ -117,4 +117,4 @@ git commit -m "feat: description of your changes"
 git push origin feat/your-feature-name
 ```
 
-4. Create a Pull Request on GitHub following the [PR template](https://github.com/BerriAI/litellm/blob/main/.github/pull_request_template.md)
+4. Create a Pull Request on GitHub following the [PR template](https://github.com/Soventra/lumina/blob/main/.github/pull_request_template.md)

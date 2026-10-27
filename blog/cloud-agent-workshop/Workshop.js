@@ -10,12 +10,12 @@ export function WorkshopImage({file, ...props}) {
   return <img src={useBaseUrl(`${assetPath}${file}`)} {...props} />;
 }
 
-export function LiteLLMLogo({className = '', ...props}) {
-  const blueLogo = useBaseUrl('/img/brand/litellm-logo-blue.png');
-  const whiteLogo = useBaseUrl('/img/brand/litellm-logo-white.png');
+export function LuminaLogo({className = '', ...props}) {
+  const blueLogo = useBaseUrl('/img/brand/lumina-logo-blue.png');
+  const whiteLogo = useBaseUrl('/img/brand/lumina-logo-white.png');
   return <>
-    <img src={blueLogo} alt="LiteLLM" className={`${className} ${styles.brandLight}`} {...props} />
-    <img src={whiteLogo} alt="LiteLLM" className={`${className} ${styles.brandDark}`} {...props} />
+    <img src={blueLogo} alt="Lumina" className={`${className} ${styles.brandLight}`} {...props} />
+    <img src={whiteLogo} alt="Lumina" className={`${className} ${styles.brandDark}`} {...props} />
   </>;
 }
 
@@ -32,11 +32,11 @@ export function WorkshopHero() {
   ];
   return <section className={styles.hero} aria-labelledby="workshop-title">
     <div className={styles.brandRow}>
-      <LiteLLMLogo className={styles.logo} width="174" height="33" />
+      <LuminaLogo className={styles.logo} width="174" height="33" />
       <Link to="/blog" className={styles.backLink}>← Blog</Link>
     </div>
     <h1 id="workshop-title">Workshop: Build a<br className={styles.titleBreak} /> self-hosted cloud agent.</h1>
-    <p className={styles.heroLead}>Build and deploy with the LiteLLM team, on infrastructure your team controls.</p>
+    <p className={styles.heroLead}>Build and deploy with the Lumina team, on infrastructure your team controls.</p>
     <div className={styles.heroActions}>
       <SignupButton className={styles.signup} />
       <p className={styles.facts}>Remote <span aria-hidden="true">·</span> 2 weeks <span aria-hidden="true">·</span> October 19–30, 2026</p>
@@ -98,7 +98,7 @@ export function Result({label, children}) {
 export function Closing() {
   return <section className={styles.closing} aria-labelledby="closing-title">
     <div>
-      <h2 id="closing-title">Build with the LiteLLM team.</h2>
+      <h2 id="closing-title">Build with the Lumina team.</h2>
       <p>Remote for two weeks. Want us at your office for several days? Tell us in the signup form.</p>
       <p className={styles.signupNote}>Tell us what you hope to achieve. We’ll follow up to arrange a 30-minute intake.</p>
     </div>

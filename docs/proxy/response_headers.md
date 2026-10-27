@@ -18,11 +18,11 @@ When you make a request to the proxy, the proxy will return the following header
 
 **If key has rate limits set**
 
-The proxy will return the [remaining rate limits for that key](https://github.com/BerriAI/litellm/blob/bfa95538190575f7f317db2d9598fc9a82275492/litellm/proxy/hooks/parallel_request_limiter.py#L778).
+The proxy will return the [remaining rate limits for that key](https://github.com/Soventra/lumina/blob/bfa95538190575f7f317db2d9598fc9a82275492/lumina/proxy/hooks/parallel_request_limiter.py#L778).
 
 **If key does not have rate limits set**
 
-The proxy returns the remaining requests/tokens returned by the backend provider. (LiteLLM will standardize the backend provider's response headers to match the OpenAI format)
+The proxy returns the remaining requests/tokens returned by the backend provider. (Lumina will standardize the backend provider's response headers to match the OpenAI format)
 
 If the backend provider does not return these headers, the value will be `None`.
 
@@ -32,40 +32,40 @@ These headers are useful for clients to understand the current rate limit status
 ## Latency Headers
 | Header | Type | Description |
 |--------|------|-------------|
-| `x-litellm-response-duration-ms` | float | Total duration from the moment that a request gets to LiteLLM Proxy to the moment it gets returned to the client. |
-| `x-litellm-overhead-duration-ms` | float | LiteLLM processing overhead in milliseconds |
+| `x-lumina-response-duration-ms` | float | Total duration from the moment that a request gets to Lumina Proxy to the moment it gets returned to the client. |
+| `x-lumina-overhead-duration-ms` | float | Lumina processing overhead in milliseconds |
 
 ## Retry, Fallback Headers
 | Header | Type | Description |
 |--------|------|-------------|
-| `x-litellm-attempted-retries` | int | Number of retry attempts made |
-| `x-litellm-max-retries` | int | Configured `num_retries`, only sent when at least one retry was attempted |
-| `x-litellm-attempted-fallbacks` | int | Number of fallback attempts made |
+| `x-lumina-attempted-retries` | int | Number of retry attempts made |
+| `x-lumina-max-retries` | int | Configured `num_retries`, only sent when at least one retry was attempted |
+| `x-lumina-attempted-fallbacks` | int | Number of fallback attempts made |
 
 `max_fallbacks` is not returned as a response header
 
 ## Cost Tracking Headers
 | Header | Type | Description | Available on Pass-Through Endpoints |
 |--------|------|-------------|-------------|
-| `x-litellm-response-cost` | float | Cost of the API call | |
-| `x-litellm-response-cost-input` | float | Uncached input cost component | |
-| `x-litellm-response-cost-output` | float | Output cost component, reasoning included | |
-| `x-litellm-response-cost-cache-read` | float | Prompt cache read cost component | |
-| `x-litellm-response-cost-cache-creation` | float | Prompt cache write cost component | |
-| `x-litellm-response-cost-reasoning` | float | Reasoning cost, a subset of the output component | |
-| `x-litellm-response-cost-tool-usage` | float | Built-in tool cost component | |
-| `x-litellm-key-spend` | float | Total spend for the API key | ✅ |
+| `x-lumina-response-cost` | float | Cost of the API call | |
+| `x-lumina-response-cost-input` | float | Uncached input cost component | |
+| `x-lumina-response-cost-output` | float | Output cost component, reasoning included | |
+| `x-lumina-response-cost-cache-read` | float | Prompt cache read cost component | |
+| `x-lumina-response-cost-cache-creation` | float | Prompt cache write cost component | |
+| `x-lumina-response-cost-reasoning` | float | Reasoning cost, a subset of the output component | |
+| `x-lumina-response-cost-tool-usage` | float | Built-in tool cost component | |
+| `x-lumina-key-spend` | float | Total spend for the API key | ✅ |
 
-The component headers sum to the total: input + cache read + cache creation + output + tool usage = `x-litellm-response-cost`. Reasoning is already inside output, so exclude it from the sum. The cache and reasoning headers appear only when those costs are nonzero, and component headers appear on non-streaming responses only
+The component headers sum to the total: input + cache read + cache creation + output + tool usage = `x-lumina-response-cost`. Reasoning is already inside output, so exclude it from the sum. The cache and reasoning headers appear only when those costs are nonzero, and component headers appear on non-streaming responses only
 
-## LiteLLM Specific Headers
+## Lumina Specific Headers
 | Header | Type | Description | Available on Pass-Through Endpoints |
 |--------|------|-------------|-------------|
-| `x-litellm-call-id` | string | Id for this request. With `general_settings.include_call_id_in_error_body: true` it is also inside JSON error bodies as `litellm_call_id` ([details](./error_reference.md#reporting-a-problem)) | ✅ |
-| `x-litellm-model-id` | string | Deployment id (`model_info.id`) | |
-| `x-litellm-model-api-base` | string | API base URL | ✅ |
-| `x-litellm-version` | string | LiteLLM version | |
-| `x-litellm-model-group` | string | Routed `model_list[].model_name` (client `model`) | |
+| `x-lumina-call-id` | string | Id for this request. With `general_settings.include_call_id_in_error_body: true` it is also inside JSON error bodies as `lumina_call_id` ([details](./error_reference.md#reporting-a-problem)) | ✅ |
+| `x-lumina-model-id` | string | Deployment id (`model_info.id`) | |
+| `x-lumina-model-api-base` | string | API base URL | ✅ |
+| `x-lumina-version` | string | Lumina version | |
+| `x-lumina-model-group` | string | Routed `model_list[].model_name` (client `model`) | |
 
 ### Example
 
@@ -73,15 +73,15 @@ The component headers sum to the total: input + cache read + cache creation + ou
 model_list:
   - model_name: my-chat-model          # clients call this
     lumina_params:
-      model: {{openai_small}}               # LiteLLM calls this upstream
+      model: {{openai_small}}               # Lumina calls this upstream
     model_info:
       id: "7c9f2a1b3d8e4f0a2c6b5d9e1f3a7b8c"   # optional; auto-generated if omitted
 ```
 
 | Header | Example | Notes |
 |--------|---------|-------|
-| `x-litellm-model-group` | `my-chat-model` | `model_name` / request `model`; not `lumina_params.model`. |
-| `x-litellm-model-id` | `7c9f2a1b3d8e4f0a2c6b5d9e1f3a7b8c` | Which deployment row; use with `/v1/model/info?litellm_model_id=...`. |
+| `x-lumina-model-group` | `my-chat-model` | `model_name` / request `model`; not `lumina_params.model`. |
+| `x-lumina-model-id` | `7c9f2a1b3d8e4f0a2c6b5d9e1f3a7b8c` | Which deployment row; use with `/v1/model/info?lumina_model_id=...`. |
 | Response body `model` | often `my-chat-model` | Often restamped to match the client; upstream id stays in config. |
 
 ### Auto-routed requests
@@ -92,10 +92,10 @@ Complexity auto routers also return the recorded routing decision as response he
 
 | Header | Type | Description |
 |--------|------|-------------|
-| `x-litellm-complexity-router-tier` | string | Selected complexity tier |
-| `x-litellm-complexity-router-cause` | string | Routing mechanism that selected the tier, such as `heuristic_scorer`, `heuristic_v2`, `llm_classifier`, or a keyword rule |
-| `x-litellm-complexity-router-score` | float | Recorded heuristic score |
-| `x-litellm-complexity-router-reasoning-effort` | string | `reasoning_effort` configured on the selected tier |
+| `x-lumina-complexity-router-tier` | string | Selected complexity tier |
+| `x-lumina-complexity-router-cause` | string | Routing mechanism that selected the tier, such as `heuristic_scorer`, `heuristic_v2`, `llm_classifier`, or a keyword rule |
+| `x-lumina-complexity-router-score` | float | Recorded heuristic score |
+| `x-lumina-complexity-router-reasoning-effort` | string | `reasoning_effort` configured on the selected tier |
 
 Each header appears only when its value is present in the recorded routing decision for the successful attempt. The score is absent on routes that do not record one, including keyword and LLM-classifier decisions. The reasoning-effort header reports the selected tier's configured override; it does not report the model's default effort or the classifier model's reasoning effort. Invalid or non-ASCII text values are omitted. Raw heuristic signals, matched keywords, and the complete tier parameter map are not exposed
 
@@ -105,19 +105,19 @@ These headers are available on streaming and non-streaming requests to `/v1/chat
 
 | Header | Example | Meaning |
 |--------|---------|---------|
-| `x-litellm-response-cost` | `0.000214` | This call (USD). |
-| `x-litellm-key-spend` | `12.847` | Key total after this call. |
-| `x-litellm-response-duration-ms` | `842.3` | Proxy end-to-end (ms). |
-| `x-litellm-overhead-duration-ms` | `15.1` | LiteLLM overhead (ms). |
-| `x-litellm-attempted-retries` | `0` | Retries. |
-| `x-litellm-attempted-fallbacks` | `1` | Fallbacks to another deployment. |
-| `x-litellm-call-id` | `019b2c4d-e5f6-7890-abcd-ef1234567890` | Logs / tracing. |
-| `x-litellm-version` | `1.55.3` | Version. |
-| `x-litellm-model-api-base` | `https://api.openai.com/v1` | Provider base (no query string). |
+| `x-lumina-response-cost` | `0.000214` | This call (USD). |
+| `x-lumina-key-spend` | `12.847` | Key total after this call. |
+| `x-lumina-response-duration-ms` | `842.3` | Proxy end-to-end (ms). |
+| `x-lumina-overhead-duration-ms` | `15.1` | Lumina overhead (ms). |
+| `x-lumina-attempted-retries` | `0` | Retries. |
+| `x-lumina-attempted-fallbacks` | `1` | Fallbacks to another deployment. |
+| `x-lumina-call-id` | `019b2c4d-e5f6-7890-abcd-ef1234567890` | Logs / tracing. |
+| `x-lumina-version` | `1.55.3` | Version. |
+| `x-lumina-model-api-base` | `https://api.openai.com/v1` | Provider base (no query string). |
 
 ## Response headers from LLM providers
 
-LiteLLM also returns the original response headers from the LLM provider. These headers are prefixed with `llm_provider-` to distinguish them from LiteLLM's headers.
+Lumina also returns the original response headers from the LLM provider. These headers are prefixed with `llm_provider-` to distinguish them from Lumina's headers.
 
 Example response headers:
 ```

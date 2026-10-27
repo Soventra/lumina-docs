@@ -22,7 +22,7 @@ Useful to pass in large media files to Gemini's `/generateContent` endpoint.
 ```python
 import base64
 import requests
-from litellm import completion, create_file
+from lumina import completion, create_file
 import os
 
 
@@ -91,7 +91,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it
@@ -103,7 +103,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Fetch the audio file and convert it to a base64 encoded string
@@ -161,7 +161,7 @@ print(completion.choices[0].message)
 
 ## Azure Blob Storage Integration
 
-LiteLLM supports using Azure Blob Storage as a target storage backend for Gemini file uploads. This allows you to store files in Azure Data Lake Storage Gen2 instead of Google's managed storage.
+Lumina supports using Azure Blob Storage as a target storage backend for Gemini file uploads. This allows you to store files in Azure Data Lake Storage Gen2 instead of Google's managed storage.
 
 ### Step 1: Setup Azure Blob Storage
 
@@ -218,7 +218,7 @@ or add them in your `.env`
 3. Start proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 4. Upload file with Azure Blob Storage
@@ -228,7 +228,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Upload file to Azure Blob Storage

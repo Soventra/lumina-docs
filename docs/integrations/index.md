@@ -9,7 +9,7 @@ export const Logo = ({ src }) => (
   <img src={src} alt="" />
 );
 
-This section covers integrations with various tools and services that can be used with LiteLLM (either Proxy or SDK).
+This section covers integrations with various tools and services that can be used with Lumina (either Proxy or SDK).
 
 ---
 
@@ -155,7 +155,7 @@ items={[
     to: "/docs/proxy/guardrails/openai_moderation",
   },
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
+    icon: <Logo src="/img/integrations/lumina.png" />,
     title: "Secret Detection",
     description: "Prevent credential leaks.",
     to: "/docs/proxy/guardrails/secret_detection",
@@ -181,19 +181,19 @@ Define and enforce usage policies across your LLM deployment.
 columns={3}
 items={[
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
+    icon: <Logo src="/img/integrations/lumina.png" />,
     title: "Guardrail Policies",
     description: "Policy-based guardrail rules.",
     to: "/docs/proxy/guardrails/guardrail_policies",
   },
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
+    icon: <Logo src="/img/integrations/lumina.png" />,
     title: "Policy Flow Builder",
     description: "Visual policy configuration.",
     to: "/docs/proxy/guardrails/policy_flow_builder",
   },
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
+    icon: <Logo src="/img/integrations/lumina.png" />,
     title: "Policy Templates",
     description: "Pre-built policy templates.",
     to: "/docs/proxy/guardrails/policy_templates",
@@ -205,7 +205,7 @@ items={[
 
 ## AI Tools
 
-Connect LiteLLM to AI-powered coding and productivity tools.
+Connect Lumina to AI-powered coding and productivity tools.
 
 <NavigationCards
 columns={3}
@@ -219,7 +219,7 @@ items={[
   {
     icon: <Logo src="/img/integrations/anthropic.png" />,
     title: "Claude Code",
-    description: "Use LiteLLM with Claude Code.",
+    description: "Use Lumina with Claude Code.",
     to: "/docs/tutorials/claude_responses_api",
   },
   {
@@ -253,7 +253,7 @@ items={[
 
 ## Agent SDKs
 
-Use LiteLLM with agent frameworks and SDKs.
+Use Lumina with agent frameworks and SDKs.
 
 <NavigationCards
 columns={3}
@@ -307,13 +307,13 @@ Manage, version, and deploy prompts.
 columns={3}
 items={[
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
-    title: "LiteLLM Prompt Management",
+    icon: <Logo src="/img/integrations/lumina.png" />,
+    title: "Lumina Prompt Management",
     description: "Built-in prompt management.",
-    to: "/docs/proxy/litellm_prompt_management",
+    to: "/docs/proxy/lumina_prompt_management",
   },
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
+    icon: <Logo src="/img/integrations/lumina.png" />,
     title: "Custom Prompt Management",
     description: "Bring your own prompt store.",
     to: "/docs/proxy/custom_prompt_management",
@@ -331,15 +331,15 @@ items={[
 
 ## Manage with AI Agents
 
-Use AI agents to manage your LiteLLM deployment: create users, teams, keys, models, and more via natural language.
+Use AI agents to manage your Lumina deployment: create users, teams, keys, models, and more via natural language.
 
 <NavigationCards
 columns={1}
 items={[
   {
-    icon: <Logo src="/img/integrations/litellm.png" />,
-    title: "LiteLLM Skills",
-    description: "Manage LiteLLM via Claude Code: create keys, teams, models, and more using natural language commands.",
+    icon: <Logo src="/img/integrations/lumina.png" />,
+    title: "Lumina Skills",
+    description: "Manage Lumina via Claude Code: create keys, teams, models, and more using natural language commands.",
     to: "/docs/tutorials/claude_code_skills",
   },
 ]}

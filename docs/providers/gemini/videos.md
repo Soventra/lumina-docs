@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Gemini Video Generation (Veo)
 
-LiteLLM supports Google's Veo video generation models through a unified API interface.
+Lumina supports Google's Veo video generation models through a unified API interface.
 
 | Property | Details |
 |-------|-------|
 | Description | Google's Veo AI video generation models |
-| Provider Route on LiteLLM | `gemini/` |
+| Provider Route on Lumina | `gemini/` |
 | Supported Models | Veo 3.0 / 3.1 preview and production IDs (see table below), including **Veo 3.1 Lite** |
 | Cost Tracking | ✅ Duration-based pricing; optional **per-resolution** tiers where the catalog lists them (e.g. 720p vs 1080p) |
 | Logging Support | ✅ Full request/response logging |
@@ -30,7 +30,7 @@ os.environ["GOOGLE_API_KEY"] = "your-google-api-key"
 ### Basic Usage
 
 ```python
-from litellm import video_generation, video_status, video_content
+from lumina import video_generation, video_status, video_content
 import os
 import time
 
@@ -83,11 +83,11 @@ print("Video downloaded successfully!")
 | veo-3.1-fast-generate-preview / `…-001` | Faster / prod variants | Per Google docs | Preview / GA |
 | veo-3.1-generate-001 | Veo 3.1 production | Per Google docs | GA |
 
-Use the full LiteLLM model id with the `gemini/` prefix (for example `gemini/veo-3.1-lite-generate-preview`).
+Use the full Lumina model id with the `gemini/` prefix (for example `gemini/veo-3.1-lite-generate-preview`).
 
 ## Video Generation Parameters
 
-LiteLLM automatically maps OpenAI-style parameters to Veo's format:
+Lumina automatically maps OpenAI-style parameters to Veo's format:
 
 | OpenAI Parameter | Veo Parameter | Description | Example |
 |------------------|---------------|-------------|---------|
@@ -99,7 +99,7 @@ LiteLLM automatically maps OpenAI-style parameters to Veo's format:
 
 ### `size` and output resolution
 
-When you pass a **standard `size`** string, LiteLLM sets both:
+When you pass a **standard `size`** string, Lumina sets both:
 
 - **Aspect ratio** (`16:9` or `9:16`): same as before.
 - **Output resolution** (`720p` or `1080p`) when the height is clear from the preset, so the correct Veo tier is requested without extra fields.
@@ -132,7 +132,7 @@ Based on Veo's API:
 ## Complete Workflow Example
 
 ```python
-import litellm
+import lumina
 import time
 
 def generate_and_download_veo_video(
@@ -156,7 +156,7 @@ def generate_and_download_veo_video(
     print(f"Generating video: {prompt}")
     
     # Step 1: Initiate generation
-    response = litellm.video_generation(
+    response = lumina.video_generation(
         model="gemini/veo-3.0-generate-preview",
         prompt=prompt,
         size=size,      # Maps to aspectRatio
@@ -171,7 +171,7 @@ def generate_and_download_veo_video(
     start_time = time.time()
     
     while time.time() - start_time < max_wait_time:
-        status_response = litellm.video_status(video_id=video_id)
+        status_response = lumina.video_status(video_id=video_id)
         
         if status_response.status == "completed":
             print("✓ Video generation completed!")
@@ -188,7 +188,7 @@ def generate_and_download_veo_video(
     
     # Step 3: Download video
     print("Downloading video...")
-    video_bytes = litellm.video_content(video_id=video_id)
+    video_bytes = lumina.video_content(video_id=video_id)
     
     with open(output_file, "wb") as f:
         f.write(video_bytes)
@@ -206,7 +206,7 @@ generate_and_download_veo_video(
 ## Async Usage
 
 ```python
-from litellm import avideo_generation, avideo_status, avideo_content
+from lumina import avideo_generation, avideo_status, avideo_content
 import asyncio
 
 async def async_video_workflow():
@@ -233,7 +233,7 @@ async def async_video_workflow():
 asyncio.run(async_video_workflow())
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 ### Configuration
 
@@ -250,7 +250,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 # Server running on http://0.0.0.0:4000
 ```
 
@@ -273,11 +273,11 @@ curl --location 'http://0.0.0.0:4000/v1/videos' \
 
 # Step 2: Check status
 curl --location 'http://localhost:4000/v1/videos/{video_id}' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>'
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>'
 
 # Step 3: Download video (when status is "completed")
 curl --location 'http://localhost:4000/v1/videos/{video_id}/content' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --output video.mp4
 ```
 
@@ -285,13 +285,13 @@ curl --location 'http://localhost:4000/v1/videos/{video_id}/content' \
 <TabItem value="python" label="Python SDK">
 
 ```python
-import litellm
+import lumina
 
-litellm.api_base = "http://0.0.0.0:4000"
-litellm.api_key = "sk-<your-litellm-api-key>"
+lumina.api_base = "http://0.0.0.0:4000"
+lumina.api_key = "sk-<your-lumina-api-key>"
 
 # Generate video
-response = litellm.video_generation(
+response = lumina.video_generation(
     model="veo-3",
     prompt="A cat playing with a ball of yarn in a sunny garden"
 )
@@ -299,13 +299,13 @@ response = litellm.video_generation(
 # Check status
 import time
 while True:
-    status = litellm.video_status(video_id=response.id)
+    status = lumina.video_status(video_id=response.id)
     if status.status == "completed":
         break
     time.sleep(10)
 
 # Download video
-video_bytes = litellm.video_content(video_id=response.id)
+video_bytes = lumina.video_content(video_id=response.id)
 with open("video.mp4", "wb") as f:
     f.write(video_bytes)
 ```
@@ -315,17 +315,17 @@ with open("video.mp4", "wb") as f:
 
 ## Cost tracking and spend
 
-LiteLLM estimates **video spend** from:
+Lumina estimates **video spend** from:
 
 1. **How long** the generated clip is billed for (seconds), and  
-2. **The per-second price** for that model in LiteLLM’s model catalog (aligned with [Google’s Gemini API video pricing](https://ai.google.dev/gemini-api/docs/video) where applicable).
+2. **The per-second price** for that model in Lumina’s model catalog (aligned with [Google’s Gemini API video pricing](https://ai.google.dev/gemini-api/docs/video) where applicable).
 
-Some models charge **different per-second rates** for **720p** vs **1080p**. When you use the standard `size` presets above (or set `resolution` explicitly), LiteLLM uses the matching tier so **proxy spend, logs, and budgets** line up with the resolution you requested.
+Some models charge **different per-second rates** for **720p** vs **1080p**. When you use the standard `size` presets above (or set `resolution` explicitly), Lumina uses the matching tier so **proxy spend, logs, and budgets** line up with the resolution you requested.
 
-LiteLLM automatically tracks costs for Veo video generation:
+Lumina automatically tracks costs for Veo video generation:
 
 ```python
-response = litellm.video_generation(
+response = lumina.video_generation(
     model="gemini/veo-3.0-generate-preview",
     prompt="A beautiful sunset"
 )
@@ -351,8 +351,8 @@ response = litellm.video_generation(
 ## Error Handling
 
 ```python
-from litellm import video_generation, video_status, video_content
-from litellm.exceptions import APIError, Timeout
+from lumina import video_generation, video_status, video_content
+from lumina.exceptions import APIError, Timeout
 
 try:
     response = video_generation(

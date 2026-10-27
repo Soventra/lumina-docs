@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # /batchPredictionJobs
 
-LiteLLM supports Vertex AI batch prediction jobs through passthrough endpoints, allowing you to create and manage batch jobs directly through the proxy server.
+Lumina supports Vertex AI batch prediction jobs through passthrough endpoints, allowing you to create and manage batch jobs directly through the proxy server.
 
 ## Features
 
@@ -70,7 +70,7 @@ curl -X GET "http://localhost:4000/vertex_ai/v1/projects/your-project/locations/
 When configuring models for batch operations, use these naming conventions:
 
 - **`model_name`**: Base model name (e.g., `{{gemini_flash}}`)
-- **`model`**: Full LiteLLM identifier (e.g., `vertex_ai/{{gemini_flash}}`)
+- **`model`**: Full Lumina identifier (e.g., `vertex_ai/{{gemini_flash}}`)
 
 ## Supported Models
 
@@ -123,7 +123,7 @@ curl -X POST "http://localhost:4000/vertex_ai/v1/projects/your-project/locations
 
 ## Cost Tracking Details
 
-LiteLLM tracks cost for Vertex AI batch operations:
+Lumina tracks cost for Vertex AI batch operations:
 
 - **Token Usage**: Tracks input and output tokens for each batch request
 - **Cost Calculation**: Automatically calculates costs based on current Vertex AI pricing

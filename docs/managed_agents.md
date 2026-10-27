@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Google AI Studio - Managed Agents
 
-LiteLLM now supports the [Google AI Studio Managed Agents API](https://ai.google.dev/gemini-api/docs/gemini-agents/gemini-agents#manage-agents). Create, manage, and run custom agents through LiteLLM.
+Lumina now supports the [Google AI Studio Managed Agents API](https://ai.google.dev/gemini-api/docs/gemini-agents/gemini-agents#manage-agents). Create, manage, and run custom agents through Lumina.
 
 ## Overview
 
@@ -17,7 +17,7 @@ There are two distinct steps:
 1. **Create a custom agent**: /v1beta/agents defines your agent on the Gemini side (name, base model, instructions).
 2. **Run the agent**: Once you have created a named agent, you can interact with it by specifying its resource name in the agent field of the /interactions request.
 
-LiteLLM does **not** store the agent in its own database. The agent lives entirely on Google's side. LiteLLM is just the auth + routing layer.
+Lumina does **not** store the agent in its own database. The agent lives entirely on Google's side. Lumina is just the auth + routing layer.
 
 ## Quick start
 
@@ -34,7 +34,7 @@ export GEMINI_API_KEY="AIzaSy..."
 
 ```yaml
 general_settings:
-  master_key: "sk-<your-litellm-master-key>"
+  master_key: "sk-<your-lumina-master-key>"
 
 environment_variables:
   GEMINI_API_KEY: "AIzaSy..."   # or set in shell env
@@ -43,7 +43,7 @@ environment_variables:
 Start the proxy:
 
 ```bash
-litellm --config proxy_config.yaml
+lumina --config proxy_config.yaml
 ```
 
 If `GEMINI_API_KEY` is not set, all managed-agent calls will fail with an auth error from Google.
@@ -53,7 +53,7 @@ If `GEMINI_API_KEY` is not set, all managed-agent calls will fail with an auth e
 
 ```python
 import os
-import litellm
+import lumina
 
 os.environ["GEMINI_API_KEY"] = "AIzaSy..."
 ```
@@ -94,7 +94,7 @@ curl -X POST "http://localhost:4000/v1beta/agents" \
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.interactions.agents.create(
+response = lumina.interactions.agents.create(
     name="my-slides-agent",
     base_agent="antigravity-preview-05-2026",
     instructions="You are a helpful assistant that creates slides.",
@@ -104,7 +104,7 @@ response = litellm.interactions.agents.create(
 print(response.id)  # "my-slides-agent"
 ```
 
-Async variant: `litellm.interactions.agents.acreate(...)`.
+Async variant: `lumina.interactions.agents.acreate(...)`.
 
 </TabItem>
 </Tabs>
@@ -140,7 +140,7 @@ curl -X POST "http://localhost:4000/v1beta/interactions" \
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.interactions.create(
+response = lumina.interactions.create(
     agent="my-slides-agent",
     input="Create a slide deck on the Fibonacci sequence",
     environment="remote"
@@ -148,12 +148,12 @@ response = litellm.interactions.create(
 print(response)
 ```
 
-Async variant: `litellm.interactions.acreate(...)`.
+Async variant: `lumina.interactions.acreate(...)`.
 
 </TabItem>
 </Tabs>
 
-Note: pass `agent`, **not** `model`. The agent name is not a LiteLLM model, do not put it in the `model` field.
+Note: pass `agent`, **not** `model`. The agent name is not a Lumina model, do not put it in the `model` field.
 
 See also: [/interactions](/docs/interactions) for the full Interactions API.
 
@@ -187,7 +187,7 @@ curl "http://localhost:4000/v1beta/agents" \
 <TabItem value="sdk" label="SDK">
 
 ```python
-agents = litellm.interactions.agents.list()
+agents = lumina.interactions.agents.list()
 ```
 
 </TabItem>
@@ -226,7 +226,7 @@ curl "http://localhost:4000/v1beta/agents/my-slides-agent" \
 <TabItem value="sdk" label="SDK">
 
 ```python
-agent = litellm.interactions.agents.get(
+agent = lumina.interactions.agents.get(
     name="my-slides-agent"
 )
 ```
@@ -248,7 +248,7 @@ curl -X DELETE "http://localhost:4000/v1beta/agents/my-slides-agent" \
 <TabItem value="sdk" label="SDK">
 
 ```python
-litellm.interactions.agents.delete(
+lumina.interactions.agents.delete(
     name="my-slides-agent",
     custom_llm_provider="gemini",
 )
@@ -287,7 +287,7 @@ curl "http://localhost:4000/v1beta/agents/my-slides-agent/versions" \
 <TabItem value="sdk" label="SDK">
 
 ```python
-versions = litellm.interactions.agents.list_versions(
+versions = lumina.interactions.agents.list_versions(
     name="my-slides-agent",
     custom_llm_provider="gemini",
 )
@@ -309,10 +309,10 @@ There is no way to use managed agents with any provider other than Google AI Stu
 ## Limitations
 
 - `base_agent` only accepts `"antigravity-preview-05-2026"` (Google's current restriction).
-- Agents are stored on Google's side only. LiteLLM does not persist them in its database. If you delete an agent via Google's API directly, the proxy will not know.
+- Agents are stored on Google's side only. Lumina does not persist them in its database. If you delete an agent via Google's API directly, the proxy will not know.
 - Using the Interactions API via the `agent` param is only supported by Gemini as of now. Use the `model` param to call other providers' models.
 - `GEMINI_API_KEY` / `GOOGLE_API_KEY` must be present in the proxy environment. Passing the key per-request via `api_key` is supported in the SDK but not currently via the proxy endpoint.
 
 ## Tags
 
-`gemini` `managed-agents` `interactions` `google-ai-studio` `agents` `litellm-proxy`
+`gemini` `managed-agents` `interactions` `google-ai-studio` `agents` `lumina-proxy`

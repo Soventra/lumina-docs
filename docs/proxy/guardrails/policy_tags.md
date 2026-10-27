@@ -127,13 +127,13 @@ curl -v http://localhost:4000/chat/completions \
 Check the response headers:
 
 ```
-x-litellm-applied-policies: high-risk-policy2
-x-litellm-applied-guardrails: pii-pre-guard,phi-pre-guard,testing-pl
-x-litellm-policy-sources: high-risk-policy2=tag:health
+x-lumina-applied-policies: high-risk-policy2
+x-lumina-applied-guardrails: pii-pre-guard,phi-pre-guard,testing-pl
+x-lumina-policy-sources: high-risk-policy2=tag:health
 ```
 
 | Header | What it tells you |
 |--------|-------------------|
-| `x-litellm-applied-policies` | Which policies matched this request |
-| `x-litellm-applied-guardrails` | Which guardrails actually ran |
-| `x-litellm-policy-sources` | **Why** each policy matched — `tag:health` confirms it was the tag |
+| `x-lumina-applied-policies` | Which policies matched this request |
+| `x-lumina-applied-guardrails` | Which guardrails actually ran |
+| `x-lumina-policy-sources` | **Why** each policy matched — `tag:health` confirms it was the tag |

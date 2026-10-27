@@ -3,16 +3,16 @@ import TabItem from '@theme/TabItem';
 
 # OpenAI Agents SDK
 
-Use OpenAI Agents SDK with any LLM provider through LiteLLM Proxy.
+Use OpenAI Agents SDK with any LLM provider through Lumina Proxy.
 
-The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is a lightweight framework for building multi-agent workflows. It includes an official LiteLLM extension that lets you use any of the 100+ supported providers.
+The [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) is a lightweight framework for building multi-agent workflows. It includes an official Lumina extension that lets you use any of the 100+ supported providers.
 
 ## Quick Start
 
 ### 1. Install Dependencies
 
 ```bash
-uv add "openai-agents[litellm]"
+uv add "openai-agents[lumina]"
 ```
 
 ### 2. Add Model to Config
@@ -35,10 +35,10 @@ model_list:
       api_key: "os.environ/GEMINI_API_KEY"
 ```
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Use with Proxy
@@ -48,20 +48,20 @@ litellm --config config.yaml
 
 ```python
 from agents import Agent, Runner
-from agents.extensions.models.litellm_model import LitellmModel
+from agents.extensions.models.lumina_model import LuminaModel
 
-# Point to LiteLLM proxy
+# Point to Lumina proxy
 agent = Agent(
     name="Assistant",
     instructions="You are a helpful assistant.",
-    model=LitellmModel(
+    model=LuminaModel(
         model="claude-sonnet",  # Model from config.yaml
-        api_key="sk-<your-litellm-api-key>",      # LiteLLM API key
+        api_key="sk-<your-lumina-api-key>",      # Lumina API key
         base_url="http://localhost:4000"
     )
 )
 
-result = await Runner.run(agent, "What is LiteLLM?")
+result = await Runner.run(agent, "What is Lumina?")
 print(result.final_output)
 ```
 
@@ -70,19 +70,19 @@ print(result.final_output)
 
 ```python
 from agents import Agent, Runner
-from agents.extensions.models.litellm_model import LitellmModel
+from agents.extensions.models.lumina_model import LuminaModel
 
 # Use any provider directly
 agent = Agent(
     name="Assistant",
     instructions="You are a helpful assistant.",
-    model=LitellmModel(
+    model=LuminaModel(
         model="anthropic/{{anthropic}}",
         api_key="your-anthropic-key"
     )
 )
 
-result = await Runner.run(agent, "What is LiteLLM?")
+result = await Runner.run(agent, "What is Lumina?")
 print(result.final_output)
 ```
 
@@ -95,11 +95,11 @@ Enable usage tracking to monitor token consumption:
 
 ```python
 from agents import Agent, ModelSettings
-from agents.extensions.models.litellm_model import LitellmModel
+from agents.extensions.models.lumina_model import LuminaModel
 
 agent = Agent(
     name="Assistant",
-    model=LitellmModel(model="claude-sonnet", api_key="sk-<your-litellm-api-key>"),
+    model=LuminaModel(model="claude-sonnet", api_key="sk-<your-lumina-api-key>"),
     model_settings=ModelSettings(include_usage=True)
 )
 
@@ -111,11 +111,11 @@ print(result.context_wrapper.usage)  # Token counts
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `LUMINA_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
-| `LUMINA_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key |
+| `LUMINA_BASE_URL` | `http://localhost:4000` | Lumina proxy URL |
+| `LUMINA_API_KEY` | `sk-<your-lumina-api-key>` | Your Lumina API key |
 
 ## Related Resources
 
 - [OpenAI Agents SDK Documentation](https://openai.github.io/openai-agents-python/)
-- [LiteLLM Extension Docs](https://openai.github.io/openai-agents-python/models/litellm/)
-- [LiteLLM Proxy Quick Start](../proxy/quick_start)
+- [Lumina Extension Docs](https://openai.github.io/openai-agents-python/models/lumina/)
+- [Lumina Proxy Quick Start](../proxy/quick_start)

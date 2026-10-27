@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Predibase
 
-LiteLLM supports all models on Predibase
+Lumina supports all models on Predibase
 
 
 ## Usage
@@ -20,7 +20,7 @@ os.environ["PREDIBASE_API_KEY"] = ""
 ### Example Call
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["PREDIBASE_API_KEY"] = "predibase key"
@@ -52,10 +52,10 @@ response = completion(
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml --debug
+  $ lumina --config /path/to/config.yaml --debug
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -64,8 +64,8 @@ response = completion(
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -118,7 +118,7 @@ response = completion(
 
 ## Advanced Usage - Prompt Formatting 
 
-LiteLLM has prompt template mappings for all `meta-llama` llama3 instruct models. [**See Code**](https://github.com/BerriAI/litellm/blob/4f46b4c3975cd0f72b8c5acb2cb429d23580c18a/litellm/llms/prompt_templates/factory.py#L1360)
+Lumina has prompt template mappings for all `meta-llama` llama3 instruct models. [**See Code**](https://github.com/Soventra/lumina/blob/4f46b4c3975cd0f72b8c5acb2cb429d23580c18a/lumina/llms/prompt_templates/factory.py#L1360)
 
 To apply a custom prompt template: 
 
@@ -126,13 +126,13 @@ To apply a custom prompt template:
 <TabItem value="sdk" label="SDK">
 
 ```python 
-import litellm
+import lumina
 
 import os 
 os.environ["PREDIBASE_API_KEY"] = ""
 
 # Create your own custom prompt template 
-litellm.register_prompt_template(
+lumina.register_prompt_template(
 	    model="togethercomputer/LLaMA-2-7B-32K",
         initial_prompt_value="You are a good assistant", # [OPTIONAL]
 	    roles={
@@ -167,7 +167,7 @@ predibase_custom_model()
 # Model-specific parameters
 model_list:
   - model_name: mistral-7b # model alias
-    lumina_params: # actual params for litellm.completion()
+    lumina_params: # actual params for lumina.completion()
       model: "predibase/mistralai/Mistral-7B-Instruct-v0.1" 
       api_key: os.environ/PREDIBASE_API_KEY
       initial_prompt_value: "\n"
@@ -183,11 +183,11 @@ model_list:
 </Tabs>
 
 ## Passing additional params - max_tokens, temperature 
-See all litellm.completion supported params [here](https://docs.litellm.ai/docs/completion/input)
+See all lumina.completion supported params [here](https://docs.lumina.ai/docs/completion/input)
 
 ```python
-# !uv add litellm
-from litellm import completion
+# !uv add lumina
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["PREDIBASE_API_KEY"] = "predibase key"
@@ -214,13 +214,13 @@ response = completion(
 ```
 
 ## Passings Predibase specific params - adapter_id, adapter_source, 
-Send params [not supported by `litellm.completion()`](https://docs.litellm.ai/docs/completion/input) but supported by Predibase by passing them to `litellm.completion`
+Send params [not supported by `lumina.completion()`](https://docs.lumina.ai/docs/completion/input) but supported by Predibase by passing them to `lumina.completion`
 
-Example `adapter_id`, `adapter_source` are Predibase specific param - [See List](https://github.com/BerriAI/litellm/blob/8a35354dd6dbf4c2fcefcd6e877b980fcbd68c58/litellm/llms/predibase.py#L54)
+Example `adapter_id`, `adapter_source` are Predibase specific param - [See List](https://github.com/Soventra/lumina/blob/8a35354dd6dbf4c2fcefcd6e877b980fcbd68c58/lumina/llms/predibase.py#L54)
 
 ```python
-# !uv add litellm
-from litellm import completion
+# !uv add lumina
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["PREDIBASE_API_KEY"] = "predibase key"

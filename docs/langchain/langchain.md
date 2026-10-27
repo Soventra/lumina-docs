@@ -1,11 +1,11 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Using ChatLiteLLM() - Langchain
+# Using ChatLumina() - Langchain
 
 ## Pre-Requisites
 ```shell
-!uv add litellm langchain
+!uv add lumina langchain
 ```
 ## Quick Start
 
@@ -14,7 +14,7 @@ import TabItem from '@theme/TabItem';
 
 ```python
 import os
-from langchain_community.chat_models import ChatLiteLLM
+from langchain_community.chat_models import ChatLumina
 from langchain_core.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -24,7 +24,7 @@ from langchain_core.prompts import (
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 os.environ['OPENAI_API_KEY'] = ""
-chat = ChatLiteLLM(model="{{openai_small}}")
+chat = ChatLumina(model="{{openai_small}}")
 messages = [
     HumanMessage(
         content="what model are you"
@@ -39,7 +39,7 @@ chat.invoke(messages)
 
 ```python
 import os
-from langchain_community.chat_models import ChatLiteLLM
+from langchain_community.chat_models import ChatLumina
 from langchain_core.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -49,7 +49,7 @@ from langchain_core.prompts import (
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 os.environ['ANTHROPIC_API_KEY'] = ""
-chat = ChatLiteLLM(model="{{anthropic}}", temperature=0.3)
+chat = ChatLumina(model="{{anthropic}}", temperature=0.3)
 messages = [
     HumanMessage(
         content="what model are you"
@@ -64,7 +64,7 @@ chat.invoke(messages)
 
 ```python
 import os
-from langchain_community.chat_models import ChatLiteLLM
+from langchain_community.chat_models import ChatLumina
 from langchain_core.prompts.chat import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -74,7 +74,7 @@ from langchain_core.prompts.chat import (
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 os.environ['REPLICATE_API_TOKEN'] = ""
-chat = ChatLiteLLM(model="replicate/llama-2-70b-chat:2c1608e18606fad2812020dc541930f2d0495ce32eee50074220b87300bc16e1")
+chat = ChatLumina(model="replicate/llama-2-70b-chat:2c1608e18606fad2812020dc541930f2d0495ce32eee50074220b87300bc16e1")
 messages = [
     HumanMessage(
         content="what model are you?"
@@ -89,7 +89,7 @@ chat.invoke(messages)
 
 ```python
 import os
-from langchain_community.chat_models import ChatLiteLLM
+from langchain_community.chat_models import ChatLumina
 from langchain_core.prompts import (
     ChatPromptTemplate,
     SystemMessagePromptTemplate,
@@ -99,7 +99,7 @@ from langchain_core.prompts import (
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 os.environ['COHERE_API_KEY'] = ""
-chat = ChatLiteLLM(model="command-nightly")
+chat = ChatLumina(model="command-nightly")
 messages = [
     HumanMessage(
         content="what model are you?"
@@ -111,44 +111,44 @@ chat.invoke(messages)
 </TabItem>
 </Tabs>
 
-## Use Langchain ChatLiteLLM with MLflow
+## Use Langchain ChatLumina with MLflow
 
-MLflow provides open-source observability solution for ChatLiteLLM.
+MLflow provides open-source observability solution for ChatLumina.
 
-To enable the integration, simply call `mlflow.litellm.autolog()` before in your code. No other setup is necessary.
+To enable the integration, simply call `mlflow.lumina.autolog()` before in your code. No other setup is necessary.
 
 ```python
 import mlflow
 
-mlflow.litellm.autolog()
+mlflow.lumina.autolog()
 ```
 
-Once the auto-tracing is enabled, you can invoke `ChatLiteLLM` and see recorded traces in MLflow.
+Once the auto-tracing is enabled, you can invoke `ChatLumina` and see recorded traces in MLflow.
 
 ```python
 import os
-from langchain.chat_models import ChatLiteLLM
+from langchain.chat_models import ChatLumina
 
 os.environ['OPENAI_API_KEY']="sk-..."
 
-chat = ChatLiteLLM(model="{{openai_small}}")
+chat = ChatLumina(model="{{openai_small}}")
 chat.invoke("Hi!")
 ```
 
-## Use Langchain ChatLiteLLM with Lunary
+## Use Langchain ChatLumina with Lunary
 ```python
 import os
-from langchain.chat_models import ChatLiteLLM
+from langchain.chat_models import ChatLumina
 from langchain.schema import HumanMessage
-import litellm
+import lumina
 
 os.environ["LUNARY_PUBLIC_KEY"] = "" # from https://app.lunary.ai/settings
 os.environ['OPENAI_API_KEY']="sk-..."
 
-litellm.success_callback = ["lunary"] 
-litellm.failure_callback = ["lunary"] 
+lumina.success_callback = ["lunary"] 
+lumina.failure_callback = ["lunary"] 
 
-chat = ChatLiteLLM(
+chat = ChatLumina(
   model="{{openai_large}}"
 )
 messages = [
@@ -161,12 +161,12 @@ chat(messages)
 
 Get more details [here](../observability/lunary_integration.md)
 
-## Use LangChain ChatLiteLLM + Langfuse
-Checkout this section [here](/docs/observability/langfuse_integration#use-langchain-chatlitellm--langfuse) for more details on how to integrate Langfuse with ChatLiteLLM.
+## Use LangChain ChatLumina + Langfuse
+Checkout this section [here](/docs/observability/langfuse_integration#use-langchain-chatlumina--langfuse) for more details on how to integrate Langfuse with ChatLumina.
 
-## Using Tags with LangChain and LiteLLM
+## Using Tags with LangChain and Lumina
 
-Tags are a powerful feature in LiteLLM that allow you to categorize, filter, and track your LLM requests. When using LangChain with LiteLLM, you can pass tags through the `extra_body` parameter in the metadata.
+Tags are a powerful feature in Lumina that allow you to categorize, filter, and track your LLM requests. When using LangChain with Lumina, you can pass tags through the `extra_body` parameter in the metadata.
 
 ### Basic Tag Usage
 
@@ -231,7 +231,7 @@ print(response)
 
 </TabItem>
 
-<TabItem value="litellm-proxy" label="LiteLLM Proxy">
+<TabItem value="lumina-proxy" label="Lumina Proxy">
 
 ```python
 import os
@@ -432,9 +432,9 @@ Consider organizing tags into categories:
 - **Priority**: `critical`, `high`, `medium`, `low`
 - **User Type**: `premium`, `enterprise`, `free`
 
-### Using Tags with LiteLLM Proxy
+### Using Tags with Lumina Proxy
 
-When using tags with LiteLLM Proxy, you can:
+When using tags with Lumina Proxy, you can:
 
 1. **Filter requests** based on tags
 2. **Track costs** by tags in spend reports
@@ -486,4 +486,4 @@ spend_by_tags = response.json()
 
 `/global/spend/report` only accepts `group_by` values `team`, `customer` and `api_key`, so use `/spend/tags` for per-tag spend
 
-This documentation covers the essential patterns for using tags effectively with LangChain and LiteLLM, enabling better organization, tracking, and analytics of your LLM requests.
+This documentation covers the essential patterns for using tags effectively with LangChain and Lumina, enabling better organization, tracking, and analytics of your LLM requests.

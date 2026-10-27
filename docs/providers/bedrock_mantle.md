@@ -9,7 +9,7 @@ Use this provider to call Bedrock Mantle models with accurate **AWS Bedrock pric
 
 :::tip
 
-**We support ALL Bedrock Mantle models, just set `model=bedrock_mantle/<model-id>` as a prefix when sending litellm requests**
+**We support ALL Bedrock Mantle models, just set `model=bedrock_mantle/<model-id>` as a prefix when sending lumina requests**
 
 :::
 
@@ -26,7 +26,7 @@ Use the `bedrock_mantle/` route prefix with standard AWS credentials.
 
 ```python
 import asyncio
-import litellm
+import lumina
 import os
 
 os.environ['AWS_ACCESS_KEY_ID'] = "your-aws-access-key"
@@ -34,7 +34,7 @@ os.environ['AWS_SECRET_ACCESS_KEY'] = "your-aws-secret-key"
 os.environ['AWS_REGION_NAME'] = "us-east-1"
 
 async def main():
-    response = await litellm.anthropic_messages(
+    response = await lumina.anthropic_messages(
         model="bedrock_mantle/anthropic.claude-mythos-preview",
         max_tokens=1024,
         messages=[{"role": "user", "content": "Explain quantum entanglement simply."}],
@@ -57,10 +57,10 @@ model_list:
       aws_region_name: us-east-1
 ```
 
-**2. Start LiteLLM AI Gateway**
+**2. Start Lumina AI Gateway**
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Call `/v1/messages` via curl**
@@ -87,7 +87,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['AWS_ACCESS_KEY_ID'] = "your-aws-access-key"
@@ -114,10 +114,10 @@ model_list:
       aws_region_name: us-east-1
 ```
 
-**2. Start LiteLLM AI Gateway**
+**2. Start Lumina AI Gateway**
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Call `/v1/chat/completions` via curl**
@@ -139,7 +139,7 @@ curl -X POST http://0.0.0.0:4000/v1/chat/completions \
 
 ## Claude Models on /v1/messages
 
-Every `bedrock_mantle/anthropic.claude-*` model, Claude Mythos included, is served on `/v1/messages` from Bedrock Mantle's native Anthropic Messages endpoint, `https://bedrock-mantle.{region}.api.aws/anthropic/v1/messages`, rather than bridged through chat completions, which Mantle rejects for Claude models. This is the surface Claude Code and the Anthropic SDKs talk to, and LiteLLM forwards the request in Anthropic's own wire format, so streaming, tools, and thinking pass straight through. Other Mantle models, the GPT models below for example, keep using the Responses API bridge on `/v1/messages`
+Every `bedrock_mantle/anthropic.claude-*` model, Claude Mythos included, is served on `/v1/messages` from Bedrock Mantle's native Anthropic Messages endpoint, `https://bedrock-mantle.{region}.api.aws/anthropic/v1/messages`, rather than bridged through chat completions, which Mantle rejects for Claude models. This is the surface Claude Code and the Anthropic SDKs talk to, and Lumina forwards the request in Anthropic's own wire format, so streaming, tools, and thinking pass straight through. Other Mantle models, the GPT models below for example, keep using the Responses API bridge on `/v1/messages`
 
 Use the bare Mantle model id, such as `bedrock_mantle/anthropic.{{anthropic}}` or `bedrock_mantle/anthropic.claude-haiku-4-5`. A `us.` inference-profile prefix returns a 404 from Mantle
 
@@ -148,7 +148,7 @@ Use the bare Mantle model id, such as `bedrock_mantle/anthropic.{{anthropic}}` o
 
 ```python
 import asyncio
-import litellm
+import lumina
 import os
 
 os.environ['AWS_ACCESS_KEY_ID'] = "your-aws-access-key"
@@ -156,7 +156,7 @@ os.environ['AWS_SECRET_ACCESS_KEY'] = "your-aws-secret-key"
 os.environ['AWS_REGION_NAME'] = "us-east-2"
 
 async def main():
-    response = await litellm.anthropic_messages(
+    response = await lumina.anthropic_messages(
         model="bedrock_mantle/anthropic.{{anthropic}}",
         max_tokens=1024,
         messages=[{"role": "user", "content": "Explain quantum entanglement simply."}],
@@ -181,10 +181,10 @@ model_list:
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
 ```
 
-**2. Start LiteLLM AI Gateway**
+**2. Start Lumina AI Gateway**
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Call `/v1/messages` via curl**
@@ -207,7 +207,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 
 The region comes from `aws_region_name`, else a region prefix in the model name (`bedrock_mantle/us-east-2/anthropic.{{anthropic}}`), else the host of `api_base` or `BEDROCK_MANTLE_API_BASE` when it points at Mantle, else `BEDROCK_MANTLE_REGION`, `AWS_REGION_NAME`, or `AWS_REGION`, and finally `us-east-1`. A custom `api_base` (a VPC endpoint or a proxy in front of Mantle) is kept as the host and `/anthropic/v1/messages` is appended to it, whether it was configured with or without an `/openai/v1` or `/v1` suffix
 
-Auth is the same chain as the rest of the provider: a bearer token from `api_key`, `BEDROCK_MANTLE_API_KEY`, or `AWS_BEARER_TOKEN_BEDROCK` when one is set, otherwise SigV4 from `aws_access_key_id` / `aws_secret_access_key` / `aws_session_token`, `aws_profile_name`, or the role params. LiteLLM sends `anthropic-version: 2023-06-01` on every request, and an `anthropic-version` header supplied by the caller wins
+Auth is the same chain as the rest of the provider: a bearer token from `api_key`, `BEDROCK_MANTLE_API_KEY`, or `AWS_BEARER_TOKEN_BEDROCK` when one is set, otherwise SigV4 from `aws_access_key_id` / `aws_secret_access_key` / `aws_session_token`, `aws_profile_name`, or the role params. Lumina sends `anthropic-version: 2023-06-01` on every request, and an `anthropic-version` header supplied by the caller wins
 
 Beta features travel in the `anthropic-beta` header: the values the caller sends plus the ones a request needs (a `context_management` edit adds `context-management-2025-06-27`), limited to what Mantle accepts. A value Mantle does not know is left out instead of failing the request with a 400, and nothing is sent in the body `anthropic_beta` field, which Mantle ignores whenever the header is present
 
@@ -221,13 +221,13 @@ Health checks use the same surface. `/health` and the Admin UI's Test Connection
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ['BEDROCK_MANTLE_API_KEY'] = "your-bedrock-api-key"
 os.environ['BEDROCK_MANTLE_REGION'] = "us-east-2"
 
-response = litellm.responses(
+response = lumina.responses(
     model="bedrock_mantle/openai.{{openai_large}}",
     input="Hello! How can you help me today?",
 )
@@ -237,12 +237,12 @@ print(response)
 #### Streaming
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ['BEDROCK_MANTLE_API_KEY'] = "your-bedrock-api-key"
 
-response = litellm.responses(
+response = lumina.responses(
     model="bedrock_mantle/openai.{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True,
@@ -266,10 +266,10 @@ model_list:
       api_base: https://bedrock-mantle.us-east-2.api.aws/v1
 ```
 
-**2. Start LiteLLM AI Gateway**
+**2. Start Lumina AI Gateway**
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Call `/v1/responses` via curl**
@@ -290,7 +290,7 @@ curl -X POST http://0.0.0.0:4000/v1/responses \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000",
 )
 
@@ -306,7 +306,7 @@ print(response)
 
 ### Prompt caching (GPT-5.6 and newer)
 
-GPT-5.6 and newer OpenAI models on Mantle accept [explicit prompt cache breakpoints](../completion/prompt_caching.md#bedrock-mantle-explicit-breakpoints-openai-gpt-56-and-newer) on the Responses API: a `prompt_cache_breakpoint` marker on an `input_text`, `input_image` or `input_file` block plus a request-level `prompt_cache_options`. Each cached prefix needs at least 1,024 tokens, a request can carry up to 4 breakpoints, and a cached prefix stays available for at least 30 minutes. LiteLLM passes both fields through on `/v1/responses`. On `/v1/chat/completions` these models are bridged onto the Responses API, so a `prompt_cache_breakpoint` on a content block is kept, and `cache_control_injection_points` on the deployment place the marker for you the way they do for `openai/gpt-5.6` ([tutorial](../tutorials/prompt_caching.md#openai-gpt-56-and-newer))
+GPT-5.6 and newer OpenAI models on Mantle accept [explicit prompt cache breakpoints](../completion/prompt_caching.md#bedrock-mantle-explicit-breakpoints-openai-gpt-56-and-newer) on the Responses API: a `prompt_cache_breakpoint` marker on an `input_text`, `input_image` or `input_file` block plus a request-level `prompt_cache_options`. Each cached prefix needs at least 1,024 tokens, a request can carry up to 4 breakpoints, and a cached prefix stays available for at least 30 minutes. Lumina passes both fields through on `/v1/responses`. On `/v1/chat/completions` these models are bridged onto the Responses API, so a `prompt_cache_breakpoint` on a content block is kept, and `cache_control_injection_points` on the deployment place the marker for you the way they do for `openai/gpt-5.6` ([tutorial](../tutorials/prompt_caching.md#openai-gpt-56-and-newer))
 
 ```yaml
 model_list:
@@ -363,14 +363,14 @@ os.environ['BEDROCK_MANTLE_REGION'] = "us-east-1"  # or use AWS_REGION
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['BEDROCK_MANTLE_API_KEY'] = "your-bedrock-api-key"
 
 response = completion(
     model="bedrock_mantle/openai.gpt-oss-120b",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 print(response)
 ```
@@ -379,14 +379,14 @@ print(response)
 <TabItem value="streaming" label="Streaming">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['BEDROCK_MANTLE_API_KEY'] = "your-bedrock-api-key"
 
 response = completion(
     model="bedrock_mantle/openai.gpt-oss-120b",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
     stream=True,
 )
 
@@ -399,7 +399,7 @@ for chunk in response:
 
 ```python
 import asyncio
-from litellm import acompletion
+from lumina import acompletion
 import os
 
 os.environ['BEDROCK_MANTLE_API_KEY'] = "your-bedrock-api-key"
@@ -407,7 +407,7 @@ os.environ['BEDROCK_MANTLE_API_KEY'] = "your-bedrock-api-key"
 async def main():
     response = await acompletion(
         model="bedrock_mantle/openai.gpt-oss-120b",
-        messages=[{"role": "user", "content": "hello from litellm"}],
+        messages=[{"role": "user", "content": "hello from lumina"}],
     )
     print(response)
 
@@ -427,7 +427,7 @@ The API base URL is `https://bedrock-mantle.{region}.api.aws/v1`. Region is reso
 4. `AWS_REGION_NAME` env var, then `AWS_REGION`
 5. Default: `us-east-1`
 
-An explicit `api_base` (or `BEDROCK_MANTLE_API_BASE`) replaces the derived URL entirely. The model-name prefix is stripped before the request is sent, so `bedrock_mantle/us-gov-west-1/xai.grok-4.3` calls `xai.grok-4.3` in `us-gov-west-1`; it is recognized for the regions LiteLLM knows for Bedrock, and `aws_region_name` works for every region. Claude models on `/v1/messages` use the `/anthropic/v1/messages` path instead of `/v1` and keep a custom `api_base` as the host, see [Claude Models on /v1/messages](#claude-models-on-v1messages)
+An explicit `api_base` (or `BEDROCK_MANTLE_API_BASE`) replaces the derived URL entirely. The model-name prefix is stripped before the request is sent, so `bedrock_mantle/us-gov-west-1/xai.grok-4.3` calls `xai.grok-4.3` in `us-gov-west-1`; it is recognized for the regions Lumina knows for Bedrock, and `aws_region_name` works for every region. Claude models on `/v1/messages` use the `/anthropic/v1/messages` path instead of `/v1` and keep a custom `api_base` as the host, see [Claude Models on /v1/messages](#claude-models-on-v1messages)
 
 **Supported regions:** `us-east-1`, `us-east-2`, `us-west-2`, `eu-west-1`, `eu-west-2`, `eu-central-1`, `eu-south-1`, `eu-north-1`, `ap-northeast-1`, `ap-south-1`, `ap-southeast-3`, `sa-east-1`, and `us-gov-west-1` (AWS GovCloud)
 
@@ -464,7 +464,7 @@ model_list:
 
 A deployment that sets `base_model` or its own `input_cost_per_token` / `output_cost_per_token` is priced from that row alone; the served region is not applied on top of it
 
-## Usage with LiteLLM Proxy
+## Usage with Lumina Proxy
 
 ### 1. Set Bedrock Mantle models on config.yaml
 
@@ -492,7 +492,7 @@ model_list:
 ### 2. Start the proxy
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Send a request
@@ -507,7 +507,7 @@ client = openai.OpenAI(
 
 response = client.chat.completions.create(
     model="gpt-oss-120b",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 print(response)
 ```

@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://tavily.com](https://tavily.com)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Tavily Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["TAVILY_API_KEY"] = "tvly-..."
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -59,7 +59,7 @@ curl http://0.0.0.0:4000/v1/search/tavily-search \
 
 ```python showLineNumbers title="Tavily Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["TAVILY_API_KEY"] = "tvly-..."
 
@@ -77,6 +77,6 @@ response = search(
 
 ## Cost
 
-LiteLLM prices each Tavily search from the [model cost map](/docs/proxy/model_cost_map). A search sent with `search_depth: "advanced"` is billed at the `tavily/search-advanced` entry, which matches the 2 credits Tavily charges for it, and a search with any other depth, or none, is billed at `tavily/search`. This applies to the SDK, every `/search` route on the proxy, and web searches the proxy runs for [web search interception](/docs/integrations/websearch_interception).
+Lumina prices each Tavily search from the [model cost map](/docs/proxy/model_cost_map). A search sent with `search_depth: "advanced"` is billed at the `tavily/search-advanced` entry, which matches the 2 credits Tavily charges for it, and a search with any other depth, or none, is billed at `tavily/search`. This applies to the SDK, every `/search` route on the proxy, and web searches the proxy runs for [web search interception](/docs/integrations/websearch_interception).
 
-To bill your own rate for every depth, set `input_cost_per_query` on the search tool, as described in [Custom Per-Query Pricing](/docs/search#custom-per-query-pricing). A price you register for `tavily/search` with `litellm.register_model` keeps applying to advanced searches until you also register `tavily/search-advanced`.
+To bill your own rate for every depth, set `input_cost_per_query` on the search tool, as described in [Custom Per-Query Pricing](/docs/search#custom-per-query-pricing). A price you register for `tavily/search` with `lumina.register_model` keeps applying to advanced searches until you also register `tavily/search-advanced`.

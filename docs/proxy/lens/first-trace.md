@@ -1,6 +1,6 @@
 ---
 title: "Send your first trace"
-description: "Send one model call to Lens, then connect your existing agent. Works with standalone Lens and LiteLLM."
+description: "Send one model call to Lens, then connect your existing agent. Works with standalone Lens and Lumina."
 slug: "/proxy/lens/first-trace"
 ---
 
@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Send your first trace
 
-Send a model call to Lens and open it in **Traces**. These steps work with standalone Lens and with Lens inside the LiteLLM dashboard.
+Send a model call to Lens and open it in **Traces**. These steps work with standalone Lens and with Lens inside the Lumina dashboard.
 
 You need a running Lens service, Python {{python_version}}, and a model key. If Lens is not ready, follow [Set up Lens](./deployment.md) first. The example makes one model call, which can incur a provider charge.
 
@@ -21,7 +21,7 @@ Open Lens through the place you intend to use it:
 
 | Your setup | Open Lens here |
 | --- | --- |
-| Connected to LiteLLM | Sign in to LiteLLM and select **Lens** in the sidebar. |
+| Connected to Lumina | Sign in to Lumina and select **Lens** in the sidebar. |
 | Standalone | Open your Lens URL at `/ui/` and sign in with `LENS_ADMIN_TOKEN`. |
 
 On Lens Home, expand **Tracing key** and select **Generate tracing key**. If your Lens version shows the tracing setup panel instead, use **Generate tracing key** there. If the button is unavailable, ask your Lens or gateway administrator for a dedicated tracing key.
@@ -66,9 +66,9 @@ export LENS_EXAMPLE_MODEL="YOUR_OPENAI_MODEL"
 For another OpenAI-compatible provider, use its API key, base URL, and model name. For other provider APIs, use the corresponding [framework guide](#connect-your-existing-agent).
 
 </TabItem>
-<TabItem value="gateway" label="Through LiteLLM">
+<TabItem value="gateway" label="Through Lumina">
 
-Use a LiteLLM key with model access, the gateway's OpenAI-compatible base URL, and a model alias from **Models**:
+Use a Lumina key with model access, the gateway's OpenAI-compatible base URL, and a model alias from **Models**:
 
 ```sh
 export OPENAI_API_KEY="YOUR_LUMINA_MODEL_KEY"
@@ -152,7 +152,7 @@ Keep your agent's model connection and add instrumentation for its framework. If
 | LangChain, LangGraph, or DeepAgents | [LangChain](./imported/integrations/langchain.md), [LangGraph](./imported/integrations/langgraph.md), or [DeepAgents](./imported/integrations/deepagents.md) |
 | An application with OpenTelemetry | [OpenTelemetry examples](./imported/integrations/opentelemetry.md) |
 | Claude Code or Codex sessions | [Coding agent sessions](./coding-agents.md) |
-| Other frameworks through LiteLLM | [Complete framework examples](./framework-examples.md) |
+| Other frameworks through Lumina | [Complete framework examples](./framework-examples.md) |
 
 Run a real task, then open that trace and check its input, output, and expected steps. After traces arrive, you can [create an investigation](./investigations.md).
 

@@ -5,7 +5,7 @@ date: 2026-08-27T12:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "A recap of the August LiteLLM town hall: 79 security fixes, 375 bug fixes, 142 feature commits, a new Director of Security, the public status dashboard, and Auto-Router results from production."
+description: "A recap of the August Lumina town hall: 79 security fixes, 375 bug fixes, 142 feature commits, a new Director of Security, the public status dashboard, and Auto-Router results from production."
 tags: [townhall, reliability, product]
 hide_table_of_contents: false
 ---
@@ -50,13 +50,13 @@ In August we shipped **375 bug fixes**.
 | Streaming / Realtime APIs     | 22    |
 | MCP Gateway                   | 18    |
 
-### status.litellm.ai is live
+### status.lumina.ai is live
 
 In an effort to increase transparency, we shipped a public dashboard to display what tests actually ran on the release. You can open any recent release and see which tests passed, drill into a specific area like quota management or Claude Code, and go through the full run history. For example, on the 1.98.0rc1 release, 104 Claude Code tests ran and all of them passed before it shipped.
 
-![status.litellm.ai showing all 677 executed tests passing on the 1.99.0rc1 release, broken down by module](./status-dashboard.png)
+![status.lumina.ai showing all 677 executed tests passing on the 1.99.0rc1 release, broken down by module](./status-dashboard.png)
 
-Tracked live at [status.litellm.ai](https://status.litellm.ai/). If you have feedback on how we can improve transparency around releases, let us know.
+Tracked live at [status.lumina.ai](https://status.lumina.ai/). If you have feedback on how we can improve transparency around releases, let us know.
 
 ### What kinds of fixes shipped
 
@@ -82,7 +82,7 @@ Most of that work is catching real customer use cases and getting them into the 
 
 Dark mode shipped on the dashboard. Choose dark, light, or follow your system setting.
 
-![The LiteLLM usage dashboard in dark mode, showing project spend, usage metrics, and daily spend](./dark-mode.png)
+![The Lumina usage dashboard in dark mode, showing project spend, usage metrics, and daily spend](./dark-mode.png)
 
 The dashboard is now moved onto one shared component system. The navbar, playground, guardrails, usage, cost tracking, models and endpoints, team and user surfaces, the log details drawer, and the AI Hub, all migrated onto shadcn. 
 
@@ -107,7 +107,7 @@ A design partner ran Auto-Router across 450+ users between April 15 and August 9
 
 Auto-Router now reads the last N turns of a conversation. That change produced a **5.6x improvement in routing accuracy** on referential follow-ups, at no measurable latency cost. It came directly out of community feedback.
 
-![LiteLLM Auto-Router V2 routing accuracy on complex scenarios, 5.6x more accurate when the classifier reads the last three turns of the conversation](./autorouter-classifier.png)
+![Lumina Auto-Router V2 routing accuracy on complex scenarios, 5.6x more accurate when the classifier reads the last three turns of the conversation](./autorouter-classifier.png)
 
 ### Auto-routing and prompt caching stack
 
@@ -115,11 +115,11 @@ The most common concern we heard was whether auto-routing would break prompt cac
 
 It doesn't. The two stack. Router plus caching came in around 50% cheaper than caching alone in our benchmarks.
 
-The reason is TTL. Prompt cache entries live at least five minutes, and when the router switches models as often as it does, you typically come back to a given model inside that window while its cache is still warm. The hit still lands. [Full writeup](https://docs.litellm.ai/blog/auto-router-prompt-caching-benchmark).
+The reason is TTL. Prompt cache entries live at least five minutes, and when the router switches models as often as it does, you typically come back to a given model inside that window while its cache is still warm. The hit still lands. [Full writeup](https://docs.lumina.ai/blog/auto-router-prompt-caching-benchmark).
 
 ### AT&T cut AI costs 56%
 
-AT&T reported a 56% cost reduction on coding and other advanced AI tasks after adopting LiteLLM model routing, with a 2% quality drop. Open-source models handle 40% of their employee queries today, and they plan to take that to 60-70%. Reported by [PYMNTS](https://www.pymnts.com/news/artificial-intelligence/2026/att-slashes-ai-costs-by-adopting-model-routers-and-open-source/).
+AT&T reported a 56% cost reduction on coding and other advanced AI tasks after adopting Lumina model routing, with a 2% quality drop. Open-source models handle 40% of their employee queries today, and they plan to take that to 60-70%. Reported by [PYMNTS](https://www.pymnts.com/news/artificial-intelligence/2026/att-slashes-ai-costs-by-adopting-model-routers-and-open-source/).
 
 
 ### Auto-Router benchmarks
@@ -147,9 +147,9 @@ Four benchmarks published this month, each against its own baseline.
 
 ### Try Auto-Router
 
-- **Local CLI:** [docs.litellm.ai/docs/learn/autorouter_cli](https://docs.litellm.ai/docs/learn/autorouter_cli)
-- **On proxy:** [docs.litellm.ai/docs/proxy/auto_routing](https://docs.litellm.ai/docs/proxy/auto_routing)
-- **Join the discussion:** [GitHub Discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), pinned in our repo. The community there is actively shaping the roadmap.
+- **Local CLI:** [docs.lumina.ai/docs/learn/autorouter_cli](https://docs.lumina.ai/docs/learn/autorouter_cli)
+- **On proxy:** [docs.lumina.ai/docs/proxy/auto_routing](https://docs.lumina.ai/docs/proxy/auto_routing)
+- **Join the discussion:** [GitHub Discussion #32168](https://github.com/Soventra/lumina/discussions/32168), pinned in our repo. The community there is actively shaping the roadmap.
 
 ## Questions from the audience
 
@@ -180,10 +180,10 @@ We're also considering bringing customers onto future town halls to talk about t
 
 ## We're hiring
 
-LiteLLM is the open-source gateway thousands of teams use to run every model behind one API, from startups to the Fortune 500. We move fast: 142 features and 375 fixes shipped this month alone.
+Lumina is the open-source gateway thousands of teams use to run every model behind one API, from startups to the Fortune 500. We move fast: 142 features and 375 fixes shipped this month alone.
 
 We're hiring across the core gateway, including on the security team Oliver is building out and on a dedicated open-source maintenance team. Small team, huge surface area, real ownership from day one. Want in, or know someone great? Reach us at [recruiting@berri.ai](mailto:recruiting@berri.ai).
 
 Reach us at [support@berri.ai](mailto:support@berri.ai), or [product@berri.ai](mailto:product@berri.ai) for product feedback.
 
-Thank you for using LiteLLM. **Krrish & Ishaan**
+Thank you for using Lumina. **Krrish & Ishaan**

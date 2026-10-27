@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Custom Secret Manager
 
-Integrate your custom secret management system with LiteLLM.
+Integrate your custom secret management system with Lumina.
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ Create a new file `my_secret_manager.py` with an in-memory secret store:
 ```python showLineNumbers title="my_secret_manager.py"
 from typing import Optional, Union
 import httpx
-from litellm.integrations.custom_secret_manager import CustomSecretManager
+from lumina.integrations.custom_secret_manager import CustomSecretManager
 
 class InMemorySecretManager(CustomSecretManager):
     def __init__(self):
@@ -62,7 +62,7 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY  # Read from custom secret manager
 ```
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 <Tabs>
 <TabItem value="docker" label="Docker">
@@ -73,10 +73,10 @@ Mount your custom secret manager file on the container:
 docker run -d \
   -p 4000:4000 \
   -e LUMINA_MASTER_KEY=$LUMINA_MASTER_KEY \
-  --name litellm-proxy \
+  --name lumina-proxy \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/my_secret_manager.py:/app/my_secret_manager.py \
-  docker.litellm.ai/berriai/litellm:latest \
+  docker.lumina.ai/soventra/lumina:latest \
   --config /app/config.yaml \
   --port 4000 \
   --detailed_debug
@@ -87,7 +87,7 @@ docker run -d \
 <TabItem value="pip" label="Python Package">
 
 ```bash
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 </TabItem>
@@ -112,7 +112,7 @@ general_settings:
 
 <TabItem value="write_only" label="Store Virtual Keys">
 
-Store LiteLLM proxy virtual keys in your secret manager:
+Store Lumina proxy virtual keys in your secret manager:
 
 ```yaml showLineNumbers title="config.yaml"
 general_settings:
@@ -121,8 +121,8 @@ general_settings:
     custom_secret_manager: my_secret_manager.InMemorySecretManager
     access_mode: "write_only"
     store_virtual_keys: true
-    prefix_for_stored_virtual_keys: "litellm/"
-    description: "LiteLLM virtual key"
+    prefix_for_stored_virtual_keys: "lumina/"
+    description: "Lumina virtual key"
     tags:
       Environment: "Production"
       Team: "AI"
@@ -140,7 +140,7 @@ general_settings:
     access_mode: "read_and_write"
     hosted_keys: ["OPENAI_API_KEY"]
     store_virtual_keys: true
-    prefix_for_stored_virtual_keys: "litellm/"
+    prefix_for_stored_virtual_keys: "lumina/"
 ```
 
 </TabItem>
@@ -153,8 +153,8 @@ general_settings:
 | `custom_secret_manager` | Path to your custom secret manager class | Required |
 | `access_mode` | `"read_only"`, `"write_only"`, or `"read_and_write"` | `"read_only"` |
 | `hosted_keys` | List of specific keys to check in secret manager | All keys |
-| `store_virtual_keys` | Store LiteLLM virtual keys in secret manager | `false` |
-| `prefix_for_stored_virtual_keys` | Prefix for stored virtual keys | `"litellm/"` |
+| `store_virtual_keys` | Store Lumina virtual keys in secret manager | `false` |
+| `prefix_for_stored_virtual_keys` | Prefix for stored virtual keys | `"lumina/"` |
 | `description` | Description for stored secrets | `None` |
 | `tags` | Tags to apply to stored secrets | `None` |
 
@@ -244,9 +244,9 @@ async def async_delete_secret(
 
 ## Example
 
-See [cookbook/litellm_proxy_server/secret_manager/my_secret_manager.py](https://github.com/BerriAI/litellm/blob/main/cookbook/litellm_proxy_server/secret_manager/my_secret_manager.py) for a complete working example with:
+See [cookbook/lumina_proxy_server/secret_manager/my_secret_manager.py](https://github.com/Soventra/lumina/blob/main/cookbook/lumina_proxy_server/secret_manager/my_secret_manager.py) for a complete working example with:
 
 - In-memory secret manager implementation  
-- Integration with LiteLLM Proxy  
+- Integration with Lumina Proxy  
 - Read, write, and delete operations
 

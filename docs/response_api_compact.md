@@ -7,17 +7,17 @@ Compress conversation history using OpenAI's `/responses/compact` endpoint.
 
 | Feature | Supported |
 |---------|-----------|
-| Supported LiteLLM Versions | 1.72.0+ |
+| Supported Lumina Versions | 1.72.0+ |
 | Supported Providers | `openai` |
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Compact Response"
-import litellm
+import lumina
 
-response = litellm.compact_responses(
+response = lumina.compact_responses(
     model="openai/{{openai_large}}",
     input=[{"role": "user", "content": "Hello, how are you?"}],
     instructions="Be helpful",
@@ -29,7 +29,7 @@ print(response.object)  # "response.compaction"
 print(response.output)
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 <Tabs>
 <TabItem value="curl" label="Curl">
@@ -53,7 +53,7 @@ import httpx
 
 response = httpx.post(
     "http://localhost:4000/v1/responses/compact",
-    headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+    headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
     json={
         "model": "openai/{{openai_large}}",
         "input": [{"role": "user", "content": "Hello"}],

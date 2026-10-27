@@ -7,7 +7,7 @@ Use this to give users an accurate list of models available behind provider endp
 - Fireworks AI
 - OpenAI
 - Gemini
-- LiteLLM Proxy
+- Lumina Proxy
 - Topaz
 - Anthropic
 - XAI
@@ -27,14 +27,14 @@ model_list:
         model: xai/*
         api_key: os.environ/XAI_API_KEY
 
-litellm_settings:
+lumina_settings:
     check_provider_endpoint: true # Enable checking provider endpoint for wildcard models
 ```
 
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -111,7 +111,7 @@ Expected response
 
 ## Which key discovery uses
 
-Discovery calls the provider with the wildcard deployment's own credentials: its `api_base`, and its `api_key` or, when that is unset, the provider's environment variable on the proxy host. For a deployment pointed at a custom Anthropic-compatible gateway, LiteLLM requests `<api_base>/v1/models` with `x-api-key` set to that key and lists each returned id under the wildcard prefix, for example `my-gateway/claude-sonnet-4-5`
+Discovery calls the provider with the wildcard deployment's own credentials: its `api_base`, and its `api_key` or, when that is unset, the provider's environment variable on the proxy host. For a deployment pointed at a custom Anthropic-compatible gateway, Lumina requests `<api_base>/v1/models` with `x-api-key` set to that key and lists each returned id under the wildcard prefix, for example `my-gateway/claude-sonnet-4-5`
 
 ```yaml
 model_list:
@@ -124,7 +124,7 @@ model_list:
 general_settings:
   forward_llm_provider_auth_headers: true
 
-litellm_settings:
+lumina_settings:
   check_provider_endpoint: true
 ```
 
@@ -143,7 +143,7 @@ model_list:
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
 
-litellm_settings:
+lumina_settings:
   check_provider_endpoint: true
 ```
 

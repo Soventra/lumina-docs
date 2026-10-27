@@ -2,12 +2,12 @@
 
 ## Overview
 
-The "Spend update queue is full" warning occurs in high-volume LiteLLM proxy deployments when the internal spend tracking queue reaches capacity. This is a protective mechanism to prevent memory issues during traffic spikes.
+The "Spend update queue is full" warning occurs in high-volume Lumina proxy deployments when the internal spend tracking queue reaches capacity. This is a protective mechanism to prevent memory issues during traffic spikes.
 
 ## Warning Message
 
 ```
-LiteLLM Proxy:WARNING: spend_update_queue.py - Spend update queue is full. Aggregating all entries in queue to concatenate entries.
+Lumina Proxy:WARNING: spend_update_queue.py - Spend update queue is full. Aggregating all entries in queue to concatenate entries.
 ```
 
 ## Root Cause

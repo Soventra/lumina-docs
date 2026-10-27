@@ -15,7 +15,7 @@ Every breaking change in a release note must be surfaced in a dedicated red `:::
 
 :::danger Breaking Changes
 
-**One-sentence summary of the change.** What breaks for someone upgrading and how to restore the prior behavior if applicable. See [PR #12345](https://github.com/BerriAI/litellm/pull/12345).
+**One-sentence summary of the change.** What breaks for someone upgrading and how to restore the prior behavior if applicable. See [PR #12345](https://github.com/Soventra/lumina/pull/12345).
 
 :::
 
@@ -23,12 +23,12 @@ Every breaking change in a release note must be surfaced in a dedicated red `:::
 ```
 ## Release notes: GitHub release and ghcr image links
 
-Every new stable release note must link the GitHub releases page, https://github.com/BerriAI/litellm/releases, and the specific release entry at `https://github.com/BerriAI/litellm/releases/tag/vX.Y.Z`. Fetch that release entry before writing the note: its "Verify Docker Image Signature" block names the exact ghcr image for the version (for example `ghcr.io/berriai/litellm:v1.101.0`), so take the image reference from there rather than guessing the tag format. The note must then link that version's ghcr image, pointing at the package page `https://github.com/BerriAI/litellm/pkgs/container/litellm` with the image reference as the link text. Put these links in the "Deploy this version" section, directly after the `</Tabs>` closer and before any breaking changes admonition, in this shape:
+Every new stable release note must link the GitHub releases page, https://github.com/Soventra/lumina/releases, and the specific release entry at `https://github.com/Soventra/lumina/releases/tag/vX.Y.Z`. Fetch that release entry before writing the note: its "Verify Docker Image Signature" block names the exact ghcr image for the version (for example `ghcr.io/soventra/lumina:v1.101.0`), so take the image reference from there rather than guessing the tag format. The note must then link that version's ghcr image, pointing at the package page `https://github.com/Soventra/lumina/pkgs/container/lumina` with the image reference as the link text. Put these links in the "Deploy this version" section, directly after the `</Tabs>` closer and before any breaking changes admonition, in this shape:
 
 ```md
 </Tabs>
 
-This release is published as [`ghcr.io/berriai/litellm:vX.Y.Z`](https://github.com/BerriAI/litellm/pkgs/container/litellm). See the [GitHub release](https://github.com/BerriAI/litellm/releases/tag/vX.Y.Z) and the full [releases page](https://github.com/BerriAI/litellm/releases).
+This release is published as [`ghcr.io/soventra/lumina:vX.Y.Z`](https://github.com/Soventra/lumina/pkgs/container/lumina). See the [GitHub release](https://github.com/Soventra/lumina/releases/tag/vX.Y.Z) and the full [releases page](https://github.com/Soventra/lumina/releases).
 ```
 
 ## Release notes: runnable docker command
@@ -41,14 +41,14 @@ docker run \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:X.Y.Z
+docker.lumina.ai/soventra/lumina:X.Y.Z
 ```
 
 ## Release notes: titles, descriptions and the changelog summary
 
-Every release note is also a search result and a changelog entry, so each new note needs three things beyond its body. The `title` frontmatter names the product, the version and the change, in the form `LiteLLM vX.Y.Z <verb> <the 2 or 3 most important named changes>`, such as `LiteLLM v1.104.0 adds Claude Opus 5.5, GPT-6 and master key enforcement`. Use a plain verb (adds, fixes, updates, removes, supports), exact model, provider and feature names, at most about 75 characters, and no colon or em dash. A backport shipped on several release lines lists every version, as in `LiteLLM v1.104.1, v1.103.4 and v1.102.3 update pgbouncer to 1.26.0`.
+Every release note is also a search result and a changelog entry, so each new note needs three things beyond its body. The `title` frontmatter names the product, the version and the change, in the form `Lumina vX.Y.Z <verb> <the 2 or 3 most important named changes>`, such as `Lumina v1.104.0 adds Claude Opus 5.5, GPT-6 and master key enforcement`. Use a plain verb (adds, fixes, updates, removes, supports), exact model, provider and feature names, at most about 75 characters, and no colon or em dash. A backport shipped on several release lines lists every version, as in `Lumina v1.104.1, v1.103.4 and v1.102.3 update pgbouncer to 1.26.0`.
 
-The `description` frontmatter is the snippet under that title in search and answer engines. Without it Docusaurus uses the first heading, "Deploy this version". Write 110 to 155 characters in one or two sentences that say what changed with concrete names, start with a verb or the main subject rather than the version number, "This release" or "LiteLLM", and leave out how the release is published (images, PyPI, tags).
+The `description` frontmatter is the snippet under that title in search and answer engines. Without it Docusaurus uses the first heading, "Deploy this version". Write 110 to 155 characters in one or two sentences that say what changed with concrete names, start with a verb or the main subject rather than the version number, "This release" or "Lumina", and leave out how the release is published (images, PyPI, tags).
 
 Add an entry at the top of `release_notes/summaries.json`, which feeds the changelog at `/release_notes` and its RSS feed, and remove the oldest entry so the file keeps the latest 20. An entry is `{"folders": [...], "title": ..., "points": [...]}`: same-day backports share one entry with all their folders, `title` matches the frontmatter title, and `points` holds 2 to 4 sentences (2 or 3 for a patch). Each point is one sentence of at most 25 words that says what changed and what it means for someone upgrading, with model names, endpoints, settings and numbers in backticks where they are code. Never write a bare label such as "New models on day one". When the release has a breaking change, one point states it and the setting that restores the old behavior. Use only facts from the note.
 

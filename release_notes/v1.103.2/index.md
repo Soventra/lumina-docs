@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.103.2 supports Claude Code auto mode and fixes CLI spend"
+title: "Lumina v1.103.2 supports Claude Code auto mode and fixes CLI spend"
 description: "Lets Claude Code auto mode run through the gateway, records CLI session spend per user and fixes pass-through endpoints that forward headers."
 slug: "v1-103-2"
 date: 2026-10-01T06:37:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -33,24 +33,24 @@ docker run \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.103.2
+docker.lumina.ai/soventra/lumina:1.103.2
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.103.2
+pip install lumina==1.103.2
 ```
 
 </TabItem>
 </Tabs>
 
-This release is published as [`ghcr.io/berriai/litellm:v1.103.2`](https://github.com/BerriAI/litellm/pkgs/container/litellm). See the [GitHub release](https://github.com/BerriAI/litellm/releases/tag/v1.103.2) and the full [releases page](https://github.com/BerriAI/litellm/releases)
+This release is published as [`ghcr.io/soventra/lumina:v1.103.2`](https://github.com/Soventra/lumina/pkgs/container/lumina). See the [GitHub release](https://github.com/Soventra/lumina/releases/tag/v1.103.2) and the full [releases page](https://github.com/Soventra/lumina/releases)
 
 :::info Upgrading
 
-There are no new database migrations or breaking changes on top of [`v1.103.1`](/release_notes/v1.103.1/v1-103-1). If you are upgrading from `v1.103.0` or earlier, read the breaking changes in the `v1.103.1` notes first: Admin UI and `lite` CLI users sign in once more after upgrading, and upgrades from `v1.102.x` or earlier add an index on `LiteLLM_SpendLogs`
+There are no new database migrations or breaking changes on top of [`v1.103.1`](/release_notes/v1.103.1/v1-103-1). If you are upgrading from `v1.103.0` or earlier, read the breaking changes in the `v1.103.1` notes first: Admin UI and `lite` CLI users sign in once more after upgrading, and upgrades from `v1.102.x` or earlier add an index on `Lumina_SpendLogs`
 
 :::
 
@@ -60,7 +60,7 @@ Applies if you are upgrading from a release older than `v1.103.1`. After upgradi
 
 :::
 
-`v1.103.2` is a patch release on top of [`v1.103.1`](https://github.com/BerriAI/litellm/releases/tag/v1.103.1). It brings Claude Code auto mode through the gateway, attributes CLI session spend to the user behind it, and restores the pass-through endpoint handling that `v1.103.0` changed. The `v1.103.2` tag points at [`f69b210`](https://github.com/BerriAI/litellm/commit/f69b2103dfc0f7a41f65555fd66df05274584e5a)
+`v1.103.2` is a patch release on top of [`v1.103.1`](https://github.com/Soventra/lumina/releases/tag/v1.103.1). It brings Claude Code auto mode through the gateway, attributes CLI session spend to the user behind it, and restores the pass-through endpoint handling that `v1.103.0` changed. The `v1.103.2` tag points at [`f69b210`](https://github.com/Soventra/lumina/commit/f69b2103dfc0f7a41f65555fd66df05274584e5a)
 
 ## Claude Code auto mode works through the gateway
 
@@ -70,7 +70,7 @@ The proxy now forwards `safeguards` and `anthropic-beta` unchanged on native Ant
 
 ## CLI session spend is attributed to the user
 
-Spend from `litellm-proxy login` sessions showed up in `/user/daily/activity/aggregated` under a 64-character hash with `null` `key_alias` and `user_email`. On busy days the name lookup for those hashes could also hit the statement timeout and return nothing
+Spend from `lumina-proxy login` sessions showed up in `/user/daily/activity/aggregated` under a 64-character hash with `null` `key_alias` and `user_email`. On busy days the name lookup for those hashes could also hit the statement timeout and return nothing
 
 New CLI session spend is now recorded under the per-user `cli-session-<user_id>` alias. Hashes written before the upgrade get their owner back from the daily spend rows, and the key name lookup reads at most two spend log rows per key, so it no longer times out on large spend tables
 
@@ -82,16 +82,16 @@ Config and DB pass-throughs are merged again on every DB sync and config reload,
 
 ### What's Changed
 
-- fix(anthropic): forward safeguards and anthropic-beta unchanged on native /v1/messages - [PR #42152](https://github.com/BerriAI/litellm/pull/42152)
-- fix(anthropic): forward Claude Code safeguards and dangerous-tool-use beta to Bedrock Invoke and Vertex on /v1/messages - [PR #42288](https://github.com/BerriAI/litellm/pull/42288)
-- fix(anthropic): forward the dangerous-tool-use beta to Azure AI Foundry - [`44115c5`](https://github.com/BerriAI/litellm/commit/44115c5f2b914e562b91823390bbc26f0c93867d)
-- fix(azure_ai): add the dangerous-tool-use beta when Foundry gets safeguards - [`3b00260`](https://github.com/BerriAI/litellm/commit/3b00260b869bcc56d099c4d867e26a9b88ca3f0a)
-- fix(spend): attribute CLI session spend to the per-user cli-session alias instead of the hashed session token - [PR #40541](https://github.com/BerriAI/litellm/pull/40541)
-- fix(proxy): recover session key owners from daily spend for usage attribution - [PR #43642](https://github.com/BerriAI/litellm/pull/43642)
-- fix(proxy): look up hashed key names with two spend log rows per key - [PR #43656](https://github.com/BerriAI/litellm/pull/43656)
-- fix(proxy): restore pre-config-wins handling of pass-through endpoints - [PR #43962](https://github.com/BerriAI/litellm/pull/43962)
-- chore(release): bump litellm-enterprise 0.1.69 -> 0.1.69.post1 for stable/1.103.x - [`fe87252`](https://github.com/BerriAI/litellm/commit/fe872527f135acd6f0935e6554623b0ec9f95f22)
+- fix(anthropic): forward safeguards and anthropic-beta unchanged on native /v1/messages - [PR #42152](https://github.com/Soventra/lumina/pull/42152)
+- fix(anthropic): forward Claude Code safeguards and dangerous-tool-use beta to Bedrock Invoke and Vertex on /v1/messages - [PR #42288](https://github.com/Soventra/lumina/pull/42288)
+- fix(anthropic): forward the dangerous-tool-use beta to Azure AI Foundry - [`44115c5`](https://github.com/Soventra/lumina/commit/44115c5f2b914e562b91823390bbc26f0c93867d)
+- fix(azure_ai): add the dangerous-tool-use beta when Foundry gets safeguards - [`3b00260`](https://github.com/Soventra/lumina/commit/3b00260b869bcc56d099c4d867e26a9b88ca3f0a)
+- fix(spend): attribute CLI session spend to the per-user cli-session alias instead of the hashed session token - [PR #40541](https://github.com/Soventra/lumina/pull/40541)
+- fix(proxy): recover session key owners from daily spend for usage attribution - [PR #43642](https://github.com/Soventra/lumina/pull/43642)
+- fix(proxy): look up hashed key names with two spend log rows per key - [PR #43656](https://github.com/Soventra/lumina/pull/43656)
+- fix(proxy): restore pre-config-wins handling of pass-through endpoints - [PR #43962](https://github.com/Soventra/lumina/pull/43962)
+- chore(release): bump lumina-enterprise 0.1.69 -> 0.1.69.post1 for stable/1.103.x - [`fe87252`](https://github.com/Soventra/lumina/commit/fe872527f135acd6f0935e6554623b0ec9f95f22)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.103.1...v1.103.2
+https://github.com/Soventra/lumina/compare/v1.103.1...v1.103.2

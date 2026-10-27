@@ -18,8 +18,8 @@ Marks are normalized to transparent 512-pixel assets and rendered in grayscale.
 Published background circles and tiles are removed; foreground geometry is retained.
 Marks belong to their respective owners.
 
-LiteLLM
-static/img/brand/litellm-monogram-white.svg
+Lumina
+static/img/brand/lumina-monogram-white.svg
 Official monogram, displayed only during the colorful fast phase of the gateway.
 
 Open WebUI
@@ -39,11 +39,11 @@ https://github.com/NousResearch/hermes-agent/blob/main/website/static/img/favico
 Official NousResearch/hermes-agent website's character mark. Dark foreground is rendered in gray; white negative space is transparent.
 
 OpenAI
-https://github.com/BerriAI/litellm-docs/blob/db40f66c93ce5d0b4d5df7b915788fe1ad549449/static/img/integrations/openai.svg
+https://github.com/Soventra/lumina-docs/blob/db40f66c93ce5d0b4d5df7b915788fe1ad549449/static/img/integrations/openai.svg
 Foreground knot from the existing repository asset, rendered in gray with the white background circle removed.
 
 Anthropic
-https://github.com/BerriAI/litellm-docs/blob/db40f66c93ce5d0b4d5df7b915788fe1ad549449/static/img/integrations/anthropic.svg
+https://github.com/Soventra/lumina-docs/blob/db40f66c93ce5d0b4d5df7b915788fe1ad549449/static/img/integrations/anthropic.svg
 Existing repository mark rendered in gray on transparency.
 
 Amazon Bedrock

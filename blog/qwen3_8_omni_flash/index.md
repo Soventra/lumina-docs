@@ -6,7 +6,7 @@ image: ./hero.png
 authors:
   - misbah
   - mateo
-description: "Day 0 support for Qwen3.8-Omni-Flash on LiteLLM, with text, image, audio and video input."
+description: "Day 0 support for Qwen3.8-Omni-Flash on Lumina, with text, image, audio and video input."
 card_title: "Qwen3.8-Omni-Flash"
 card_summary: "Qwen's first omni model: text, image, audio and video input with text output, through DashScope."
 tags: [qwen, dashscope, qwen3.8-omni-flash, day 0 support]
@@ -16,9 +16,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Qwen3.8-Omni-Flash](./hero.png)
+![Lumina x Qwen3.8-Omni-Flash](./hero.png)
 
-LiteLLM supports `qwen3.8-omni-flash` on day 0 through the DashScope provider, with text, image, audio and video input and text output. Audio and video content parts pass straight through, so an OpenAI-shaped request works as it is.
+Lumina supports `qwen3.8-omni-flash` on day 0 through the DashScope provider, with text, image, audio and video input and text output. Audio and video content parts pass straight through, so an OpenAI-shaped request works as it is.
 
 {/* truncate */}
 
@@ -26,18 +26,18 @@ Qwen calls it its first omni model built around agentic work. It reasons over au
 
 ## Pricing
 
-Per 1M tokens, International: $0.15 input, $0.016 cached input, $0.47 output. Pricing lands in [PR #41754](https://github.com/BerriAI/litellm/pull/41754); without it requests route fine but log $0 spend. Hit **Reload Model Cost Map** in the Admin UI, or `POST /reload/model_cost_map`, to pick it up without a redeploy on `v1.76.0` and above.
+Per 1M tokens, International: $0.15 input, $0.016 cached input, $0.47 output. Pricing lands in [PR #41754](https://github.com/Soventra/lumina/pull/41754); without it requests route fine but log $0 spend. Hit **Reload Model Cost Map** in the Admin UI, or `POST /reload/model_cost_map`, to pick it up without a redeploy on `v1.76.0` and above.
 
 ## Usage
 
-LiteLLM's DashScope provider defaults to the mainland China endpoint. On an International account, set `api_base` to `https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, as below. Audio goes in as a `data:;base64,` URL rather than the bare base64 OpenAI accepts.
+Lumina's DashScope provider defaults to the mainland China endpoint. On an International account, set `api_base` to `https://dashscope-intl.aliyuncs.com/compatible-mode/v1`, as below. Audio goes in as a `data:;base64,` URL rather than the bare base64 OpenAI accepts.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
 import base64
-from litellm import completion
+from lumina import completion
 
 audio = base64.b64encode(open("clip.wav", "rb").read()).decode()
 
@@ -80,4 +80,4 @@ curl -X POST "http://0.0.0.0:4000/chat/completions" \
 
 ## Feedback
 
-Running Qwen3.8-Omni-Flash through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #41845](https://github.com/BerriAI/litellm/discussions/41845).
+Running Qwen3.8-Omni-Flash through Lumina and hitting something unexpected? Share it on [GitHub discussion #41845](https://github.com/Soventra/lumina/discussions/41845).

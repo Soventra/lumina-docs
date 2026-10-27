@@ -1,6 +1,6 @@
 # Claude Code with Okta SSO (JWT Auth)
 
-Route Claude Code through LiteLLM using each developer's Okta identity. Claude Code sends the developer's own Okta access token with every request, LiteLLM validates it against your Okta authorization server and creates the user automatically on first request, and usage, spend, and logs are attributed to that user. There are no per-user API keys to issue and no manual provisioning, so the setup works the same for 10 developers or 10,000.
+Route Claude Code through Lumina using each developer's Okta identity. Claude Code sends the developer's own Okta access token with every request, Lumina validates it against your Okta authorization server and creates the user automatically on first request, and usage, spend, and logs are attributed to that user. There are no per-user API keys to issue and no manual provisioning, so the setup works the same for 10 developers or 10,000.
 
 <EnterpriseFeature feature="JWT authentication" />
 
@@ -8,7 +8,7 @@ This guide uses Okta, but any OIDC provider that issues JWT access tokens (Azure
 
 ## How it works
 
-The first time a developer uses Claude Code, a small `apiKeyHelper` script opens an Okta sign-in page. After that, everything is silent: the script serves cached tokens and refreshes them in the background, Claude Code sends the token as its API key, and LiteLLM verifies the token signature against Okta's published JWKS keys. Because `user_id_upsert` is enabled, LiteLLM creates an internal user record from the token's `sub` and `email` claims on first request, so per-user spend tracking starts immediately without an admin issuing anything.
+The first time a developer uses Claude Code, a small `apiKeyHelper` script opens an Okta sign-in page. After that, everything is silent: the script serves cached tokens and refreshes them in the background, Claude Code sends the token as its API key, and Lumina verifies the token signature against Okta's published JWKS keys. Because `user_id_upsert` is enabled, Lumina creates an internal user record from the token's `sub` and `email` claims on first request, so per-user spend tracking starts immediately without an admin issuing anything.
 
 ## 1. Create an Okta app
 
@@ -26,7 +26,7 @@ Tokens must come from a **custom authorization server** (for example the built-i
 
 Access tokens from custom authorization servers include `sub` by default. To also get the user's email in the access token, add a claim under **Security > API > Authorization Servers > default > Claims**: name `email`, include in **Access Token**, value `user.email`.
 
-## 2. Configure LiteLLM
+## 2. Configure Lumina
 
 Enable JWT auth in your proxy config:
 
@@ -45,7 +45,7 @@ model_list:
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: true
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     user_email_jwt_field: "email"
     user_id_upsert: true
@@ -65,12 +65,12 @@ export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"
 Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 :::tip
 
-To restrict access to your corporate domain, add `user_allowed_email_domain: "yourcompany.com"` under `litellm_jwtauth`. See [JWT-based Auth](../proxy/token_auth) for all available claim mappings and access controls.
+To restrict access to your corporate domain, add `user_allowed_email_domain: "yourcompany.com"` under `lumina_jwtauth`. See [JWT-based Auth](../proxy/token_auth) for all available claim mappings and access controls.
 
 :::
 
@@ -159,12 +159,12 @@ done
 
 The script prints only the access token to stdout, which is what `apiKeyHelper` requires; sign-in prompts go to stderr. Make it executable with `chmod +x ~/.claude/okta-token.sh`.
 
-Then point Claude Code at LiteLLM in `~/.claude/settings.json`:
+Then point Claude Code at Lumina in `~/.claude/settings.json`:
 
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "https://litellm.yourcompany.com",
+    "ANTHROPIC_BASE_URL": "https://lumina.yourcompany.com",
     "CLAUDE_CODE_API_KEY_HELPER_TTL_MS": "3300000"
   },
   "apiKeyHelper": "~/.claude/okta-token.sh"
@@ -179,12 +179,12 @@ Nothing above requires per-user admin work, so rollout is just distributing two 
 
 ## Optional: teams, budgets, and per-user keys
 
-Two extensions are common once the basic flow works. To attribute spend to teams, add a `groups` claim to your Okta access tokens and map it with `team_ids_jwt_field: "groups"`; the group values must match LiteLLM team IDs, which you can sync from Okta via [SCIM](../tutorials/scim_litellm) or create manually. To give each developer their own budget, rate limits, and model access instead of shared team settings, use [JWT to Virtual Key Mapping](../proxy/jwt_key_mapping) with `unregistered_jwt_client_behavior: "auto_register"`, which provisions a virtual key per user on their first request.
+Two extensions are common once the basic flow works. To attribute spend to teams, add a `groups` claim to your Okta access tokens and map it with `team_ids_jwt_field: "groups"`; the group values must match Lumina team IDs, which you can sync from Okta via [SCIM](../tutorials/scim_lumina) or create manually. To give each developer their own budget, rate limits, and model access instead of shared team settings, use [JWT to Virtual Key Mapping](../proxy/jwt_key_mapping) with `unregistered_jwt_client_behavior: "auto_register"`, which provisions a virtual key per user on their first request.
 
 ## Related docs
 
-- [JWT-based Auth](../proxy/token_auth): all `litellm_jwtauth` options
+- [JWT-based Auth](../proxy/token_auth): all `lumina_jwtauth` options
 - [JWT to Virtual Key Mapping](../proxy/jwt_key_mapping): per-user keys, budgets, and model access
 - [Provisioning identities and issuing keys](../proxy/identity_provisioning): how JWT auth, SCIM, and key auto-registration fit together
 - [Claude Code Gateway (SSO sign-in)](./claude_code_gateway): developers sign in with `/login` through the proxy's SSO, with no helper script
-- [Claude Code Quickstart](./claude_responses_api): basic Claude Code with LiteLLM setup
+- [Claude Code Quickstart](./claude_responses_api): basic Claude Code with Lumina setup

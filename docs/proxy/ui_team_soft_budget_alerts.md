@@ -127,6 +127,6 @@ curl -X POST 'http://localhost:4000/team/update' \
 
 ## Related Documentation
 
-- [Email Notifications](./email.md) – Configure email integrations (Resend, SMTP) for LiteLLM Proxy
+- [Email Notifications](./email.md) – Configure email integrations (Resend, SMTP) for Lumina Proxy
 - [Alerting](./alerting.md) – Set up Slack and other alerting channels
 - [Cost Tracking](./cost_tracking.md) – Track and manage spend across teams, keys, and users

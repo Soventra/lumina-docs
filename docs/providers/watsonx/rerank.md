@@ -5,17 +5,17 @@
 | Property | Details                                                                  |
 |----------|--------------------------------------------------------------------------|
 | Description | watsonx.ai rerank integration                                            |
-| Provider Route on LiteLLM | `watsonx/`                                                               |
+| Provider Route on Lumina | `watsonx/`                                                               |
 | Supported Operations | `/ml/v1/text/rerank`                                                     |
 | Link to Provider Doc | [IBM WatsonX.ai ↗](https://cloud.ibm.com/apidocs/watsonx-ai#text-rerank) |
 
 ## Quick Start
 
-### **LiteLLM SDK**
+### **Lumina SDK**
 
 ```python
 import os
-from litellm import rerank
+from lumina import rerank
 
 os.environ["WATSONX_APIKEY"] = "YOUR_WATSONX_APIKEY"
 os.environ["WATSONX_API_BASE"] = "YOUR_WATSONX_API_BASE"
@@ -39,7 +39,7 @@ response = rerank(
 print(response)
 ```
 
-### **LiteLLM Proxy**
+### **Lumina Proxy**
 
 ```yaml
 model_list:

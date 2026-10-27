@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | Synthetic runs open-source AI models in secure datacenters within the US and EU, with a focus on privacy. They never train on your data and auto-delete API data within 14 days. |
-| Provider Route on LiteLLM | `synthetic/` |
+| Provider Route on Lumina | `synthetic/` |
 | Link to Provider Doc | [Synthetic Website ↗](https://synthetic.new) |
 | Base URL | `https://api.synthetic.new/openai/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/synthetic#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](/docs/providers/synthetic#usage---lumina-python-sdk) |
 
 <br />
 
@@ -28,14 +28,14 @@ os.environ["SYNTHETIC_API_KEY"] = ""  # your Synthetic API key
 
 Get your Synthetic API key from [synthetic.new](https://synthetic.new).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Synthetic Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["SYNTHETIC_API_KEY"] = ""  # your Synthetic API key
 
@@ -54,8 +54,8 @@ print(response)
 
 ```python showLineNumbers title="Synthetic Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["SYNTHETIC_API_KEY"] = ""  # your Synthetic API key
 
@@ -72,7 +72,7 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 

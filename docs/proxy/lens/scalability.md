@@ -8,7 +8,7 @@ slug: "/proxy/lens/scalability"
 
 :::note Historical gateway measurements
 
-The design and measurements below describe the previous gateway-hosted Lens implementation and its PostgreSQL metadata store, preserved from [documentation revision 6a8ba43c](https://github.com/BerriAI/litellm-docs/blob/6a8ba43c/docs/proxy/lens/scalability.md). References to "before", "now", "today" and proposed changes belong to that revision. They do not describe or qualify the independent Lens runtime
+The design and measurements below describe the previous gateway-hosted Lens implementation and its PostgreSQL metadata store, preserved from [documentation revision 6a8ba43c](https://github.com/Soventra/lumina-docs/blob/6a8ba43c/docs/proxy/lens/scalability.md). References to "before", "now", "today" and proposed changes belong to that revision. They do not describe or qualify the independent Lens runtime
 
 The standalone Rust runtime stores Lens metadata and traces in ClickHouse and coordinates work through ClickHouse KeeperMap. PostgreSQL is only a migration source. See [Run Lens](https://github.com/BerriAI/lens/blob/main/deploy/lens/README.md) for the supported deployment topology and the [current Lens benchmark procedure](https://github.com/BerriAI/lens/blob/main/docs/benchmarks.md) for reproducible HTTP measurements against exact service artifacts and resource limits
 
@@ -23,7 +23,7 @@ The measured gateway implementation stored traces and request logs in ClickHouse
 | Claim a job | PostgreSQL | Due lenses, read 20 at a time | Total lenses, lenses not due |
 | Heartbeat a job | PostgreSQL | Size of the lens document today; a narrow lease row in the target design | Number of lenses |
 
-The charts and tables on this page come from a local benchmark that runs the Lens SQL from before and after each change against real ClickHouse and PostgreSQL. Every timing is repeated and reported as a median with its p10 to p90 spread, and [Benchmark methodology](#methodology) lists the hardware, versions, dataset and run counts. They show how cost grows with data size on one machine and are not production latency targets. These measurements cover SQL and scheduling costs, excluding transport between LiteLLM and the Lens service
+The charts and tables on this page come from a local benchmark that runs the Lens SQL from before and after each change against real ClickHouse and PostgreSQL. Every timing is repeated and reported as a median with its p10 to p90 spread, and [Benchmark methodology](#methodology) lists the hardware, versions, dataset and run counts. They show how cost grows with data size on one machine and are not production latency targets. These measurements cover SQL and scheduling costs, excluding transport between Lumina and the Lens service
 
 ## Every trace query is bounded by time {#time-bounded-queries}
 
@@ -91,7 +91,7 @@ The bound keeps the partitions a read opens tied to the trace's age, and that is
 
 A worker claim must find one due job, and that cost should not grow with the number of lenses. Before this design a claim loaded and validated every lens, which took 1.1 s with 200 lenses and 5.4 s with 800, per attempt. Each lens now keeps the next time it needs a worker in a `due_at` column with an index. That is when its queued job was created, when its running job's lease expires, or its next scheduled run. Every full update of a lens writes `due_at` in the same statement, so the column cannot drift from the document
 
-The [archived worker-claim diagram](https://github.com/BerriAI/litellm-docs/blob/6a8ba43c/static/img/lens/scalability/claim.svg) shows the old gateway protocol. Its worker-claim endpoint was removed during the standalone extraction; current Lens schedules work inside its Rust service
+The [archived worker-claim diagram](https://github.com/Soventra/lumina-docs/blob/6a8ba43c/static/img/lens/scalability/claim.svg) shows the old gateway protocol. Its worker-claim endpoint was removed during the standalone extraction; current Lens schedules work inside its Rust service
 
 A claim reads pages of up to 20 due lenses in `(due_at, id)` order until it claims one or exhausts the queue. A worker that loses the race for one moves on to the next instead of retrying against a lens another worker just took. Lenses created before the column existed start with a `due_at` in the past, and the first claim that looks at one writes its real value
 
@@ -139,7 +139,7 @@ All measurements ran on one machine with 8 vCPUs (Intel Xeon Platinum 8559C) and
 
 The ClickHouse dataset is 18M synthetic spans over 90 daily partitions, about 200K spans a day, spread over 6 teams with one owning half of them. Every trace has 20 spans with attribute maps and message content. The smaller retentions of 7, 15, 30, 45 and 60 days are copies of the newest days of the same data, so every retention holds identical spans for the window being sampled. The sample window is the 24 hours that end at the newest span. `read_rows` and `read_bytes` come from `system.query_log`, partitions opened come from `EXPLAIN indexes = 1`, and times are wall clock at the client. Each sample loop ran once to warm the cache and then 5 times, and each trace read ran 3 times to warm up and then 25 times. The sample result is hashed on every run to check that both versions select the same traces in the same order
 
-The PostgreSQL table matches `LiteLLM_Lens` with its `due_at` index. Lens documents are built with the Lens Pydantic models, and each finding has 5 evidence quotes and 50 occurrences. Claim time covers the query plus validating every returned document, median of 7 runs after a warm-up. Heartbeat WAL is the difference in `pg_current_wal_lsn()` around each update, after a checkpoint, over 60 renewals spread across 20 lenses. The lease row is the narrow table the target design uses: an id, a lease timestamp and a version
+The PostgreSQL table matches `Lumina_Lens` with its `due_at` index. Lens documents are built with the Lens Pydantic models, and each finding has 5 evidence quotes and 50 occurrences. Claim time covers the query plus validating every returned document, median of 7 runs after a warm-up. Heartbeat WAL is the difference in `pg_current_wal_lsn()` around each update, after a checkpoint, over 60 renewals spread across 20 lenses. The lease row is the narrow table the target design uses: an id, a lease timestamp and a version
 
 These results describe how cost scales on one machine with warm caches. Production clusters have more cores and slower or remote disks, so absolute times will differ, while rows read, partitions opened, bytes loaded and WAL written depend on the data and should carry over
 
@@ -153,4 +153,4 @@ The implemented query and scheduling changes have the load tests below. Each tes
 | `lens_content_reads_scale_with_trace_not_retention` | 24 older days under the same trace id | 2,000 rows read before and after | fails, 2,000 grows to 50,000 |
 | `test_lens_claim_reads_scale_with_due_lenses_not_total_lenses` | 200 lenses that are not due | 52,156 bytes loaded before and after | fails, 1.1 MB grows to 11.5 MB |
 
-The two ClickHouse tests live in `litellm-rust/crates/traces-clickhouse/tests/load.rs` and assert that `read_rows` from `system.query_log` grows by at most 5%. The scheduler test lives in `tests/integration/database/test_lens_scheduler_load.py` and asserts that the claim loads exactly the same lens data and still claims the due lens. A heartbeat WAL test ships with the narrow lease change
+The two ClickHouse tests live in `lumina-rust/crates/traces-clickhouse/tests/load.rs` and assert that `read_rows` from `system.query_log` grows by at most 5%. The scheduler test lives in `tests/integration/database/test_lens_scheduler_load.py` and asserts that the claim loads exactly the same lens data and still claims the due lens. A heartbeat WAL test ships with the narrow lease change

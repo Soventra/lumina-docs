@@ -1,15 +1,15 @@
 ---
 title: Production rollout
 sidebar_label: Production rollout
-description: Roll out LiteLLM Enterprise in five steps. Deploy the gateway, give access to models, MCP tools, and agents, connect clients, secure authentication, and allocate costs across projects and business units.
+description: Roll out Lumina Enterprise in five steps. Deploy the gateway, give access to models, MCP tools, and agents, connect clients, secure authentication, and allocate costs across projects and business units.
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This guide gives the five steps to roll out LiteLLM Enterprise for all the teams in your company. Do the steps in sequence. Each step uses the deployment, the team, and the virtual key from the steps before it.
+This guide gives the five steps to roll out Lumina Enterprise for all the teams in your company. Do the steps in sequence. Each step uses the deployment, the team, and the virtual key from the steps before it.
 
-1. [Deploy LiteLLM](#step-1-deploy-litellm) with the critical deployment settings.
+1. [Deploy Lumina](#step-1-deploy-lumina) with the critical deployment settings.
 2. [Give access](#step-2-give-access-to-models-mcp-tools-and-agents) to providers, models, MCP tools, and agents.
 3. [Configure the client endpoints](#step-3-configure-the-client-endpoints).
 4. [Implement secure authentication](#step-4-implement-secure-authentication).
@@ -17,14 +17,14 @@ This guide gives the five steps to roll out LiteLLM Enterprise for all the teams
 
 :::info
 
-- **Free trial**: [30-day enterprise license](https://www.litellm.ai/enterprise#trial)
-- **Talk to us**: [Book a demo](https://enterprise.litellm.ai/demo)
+- **Free trial**: [30-day enterprise license](https://www.lumina.ai/enterprise#trial)
+- **Talk to us**: [Book a demo](https://enterprise.lumina.ai/demo)
 - **Gateway that you run now**: start with [Moving from OSS](/docs/enterprise/moving_from_oss)
 - **All Enterprise features**: [Enterprise overview](/docs/enterprise)
 
 :::
 
-## Step 1. Deploy LiteLLM
+## Step 1. Deploy Lumina
 
 ### Critical deployment settings
 
@@ -54,7 +54,7 @@ The full list is in [Production best practices](/docs/proxy/prod) and [Security 
 Follow the [Quickstart](/docs/proxy/docker_quick_start). Condensed steps:
 
 ```bash
-curl -O https://raw.githubusercontent.com/BerriAI/litellm/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/Soventra/lumina/main/docker-compose.yml
 ```
 
 Create `.env`:
@@ -75,12 +75,12 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["prometheus"]
 
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
-  database_url: "postgresql://llmproxy:dbpassword9090@db:5432/litellm"
+  database_url: "postgresql://llmproxy:dbpassword9090@db:5432/lumina"
   store_model_in_db: true
 ```
 
@@ -96,11 +96,11 @@ Deploy with raw manifests when you manage your own Postgres and want full contro
 
 #### 1. Create a ConfigMap for `config.yaml`
 
-```yaml title="litellm-config.yaml" showLineNumbers
+```yaml title="lumina-config.yaml" showLineNumbers
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: litellm-config
+  name: lumina-config
 data:
   config.yaml: |
     model_list:
@@ -109,7 +109,7 @@ data:
           model: openai/{{openai_large}}
           api_key: os.environ/OPENAI_API_KEY
 
-    litellm_settings:
+    lumina_settings:
       callbacks: ["prometheus"]
 
     general_settings:
@@ -118,18 +118,18 @@ data:
 ```
 
 ```bash
-kubectl apply -f litellm-config.yaml
+kubectl apply -f lumina-config.yaml
 ```
 
 #### 2. Create a Secret for keys
 
 ```bash
-kubectl create secret generic litellm-secrets \
+kubectl create secret generic lumina-secrets \
   --from-literal=LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
   --from-literal=LUMINA_SALT_KEY="sk-salt-change-me" \
   --from-literal=LUMINA_LICENSE="eyJ..." \
   --from-literal=OPENAI_API_KEY="your-api-key" \
-  --from-literal=DATABASE_URL="postgresql://user:pass@host:5432/litellm"
+  --from-literal=DATABASE_URL="postgresql://user:pass@host:5432/lumina"
 ```
 
 #### 3. Create `deployment.yaml`
@@ -138,26 +138,26 @@ kubectl create secret generic litellm-secrets \
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: litellm-deployment
+  name: lumina-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: litellm
+      app: lumina
   template:
     metadata:
       labels:
-        app: litellm
+        app: lumina
     spec:
       containers:
-        - name: litellm
-          image: docker.litellm.ai/berriai/litellm:latest
+        - name: lumina
+          image: docker.lumina.ai/soventra/lumina:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 4000
           envFrom:
             - secretRef:
-                name: litellm-secrets
+                name: lumina-secrets
           args:
             - "--config"
             - "/app/proxy_config.yaml"
@@ -181,7 +181,7 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: litellm-config
+            name: lumina-config
 ```
 
 ```bash
@@ -194,10 +194,10 @@ kubectl apply -f deployment.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: litellm-service
+  name: lumina-service
 spec:
   selector:
-    app: litellm
+    app: lumina
   ports:
     - protocol: TCP
       port: 4000
@@ -212,21 +212,21 @@ kubectl apply -f service.yaml
 #### 5. Start the server
 
 ```bash
-kubectl port-forward service/litellm-service 4000:4000
+kubectl port-forward service/lumina-service 4000:4000
 ```
 
-Your LiteLLM Gateway is now running on `http://0.0.0.0:4000`.
+Your Lumina Gateway is now running on `http://0.0.0.0:4000`.
 
 </TabItem>
 
 <TabItem value="helm" label="Helm">
 
-The chart is published to an OCI registry, so Helm installs it directly; there is no need to clone the repo. It can provision Postgres for you (`db.deployStandalone: true`) or point at an existing database (`db.useExisting`). See the [chart README](https://github.com/BerriAI/litellm/blob/main/helm/litellm-helm/README.md) and the full [values.yaml](https://github.com/BerriAI/litellm/blob/main/helm/litellm-helm/values.yaml).
+The chart is published to an OCI registry, so Helm installs it directly; there is no need to clone the repo. It can provision Postgres for you (`db.deployStandalone: true`) or point at an existing database (`db.useExisting`). See the [chart README](https://github.com/Soventra/lumina/blob/main/helm/lumina-helm/README.md) and the full [values.yaml](https://github.com/Soventra/lumina/blob/main/helm/lumina-helm/values.yaml).
 
 #### 1. Create a Secret for your license + provider keys
 
 ```bash
-kubectl create secret generic litellm-env-secret \
+kubectl create secret generic lumina-env-secret \
   --from-literal=LUMINA_LICENSE="eyJ..." \
   --from-literal=OPENAI_API_KEY="your-api-key"
 ```
@@ -236,10 +236,10 @@ kubectl create secret generic litellm-env-secret \
 Layer your enterprise settings onto the chart. `environmentSecrets` injects the Secret above as env vars, which `proxy_config` then references with `os.environ/<NAME>`.
 
 ```yaml title="values-enterprise.yaml" showLineNumbers
-masterkey: sk-<your-litellm-api-key>
+masterkey: sk-<your-lumina-api-key>
 
 environmentSecrets:
-  - litellm-env-secret
+  - lumina-env-secret
 
 db:
   deployStandalone: true
@@ -253,7 +253,7 @@ proxy_config:
       lumina_params:
         model: openai/{{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
-  litellm_settings:
+  lumina_settings:
     callbacks: ["prometheus"]
   general_settings:
     store_model_in_db: true
@@ -267,9 +267,9 @@ proxy_config:
 db:
   useExisting: true
   endpoint: my-postgres.default.svc.cluster.local
-  database: litellm
+  database: lumina
   secret:
-    name: litellm-db-secret
+    name: lumina-db-secret
     usernameKey: username
     passwordKey: password
 ```
@@ -282,16 +282,16 @@ Install the chart straight from the OCI registry, passing your enterprise values
 helm install \
   -f values-enterprise.yaml \
   mydeploy \
-  oci://docker.litellm.ai/berriai/litellm-helm
+  oci://docker.lumina.ai/soventra/lumina-helm
 ```
 
 #### 4. Expose the service to localhost
 
 ```bash
-kubectl port-forward service/mydeploy-litellm-helm 4000:4000
+kubectl port-forward service/mydeploy-lumina-helm 4000:4000
 ```
 
-Your LiteLLM Gateway is now running on `http://127.0.0.1:4000`.
+Your Lumina Gateway is now running on `http://127.0.0.1:4000`.
 
 </TabItem>
 </Tabs>
@@ -355,12 +355,12 @@ mcp_servers:
 ```mermaid
 flowchart TD
     CLIENT["Client (A2A SDK / curl)"]
-    CLIENT -->|"Authorization: Bearer sk-..."| PROXY["LiteLLM Agent Gateway"]
+    CLIENT -->|"Authorization: Bearer sk-..."| PROXY["Lumina Agent Gateway"]
     PROXY -->|"object_permission.agents"| PERMS["Key / Team agent allowlist"]
     PERMS -->|"GET /v1/agents filter"| LIST["Agent catalog"]
     PERMS -->|"POST /a2a/{agent_id}"| AGENT["Downstream A2A Agent"]
     AGENT -->|"response + nested LLM calls"| PROXY
-    PROXY -->|"X-LiteLLM-Trace-Id · agent spend"| LOGS["Logs tab · Agent cost tracking"]
+    PROXY -->|"X-Lumina-Trace-Id · agent spend"| LOGS["Logs tab · Agent cost tracking"]
 ```
 
 → [MCP overview](/docs/mcp) · [Agent Gateway overview](/docs/a2a)
@@ -376,7 +376,7 @@ Applications and tools send requests to the gateway URL with the team virtual ke
 ```mermaid
 flowchart TD
     APP["Client App / SDK"]
-    APP -->|"Authorization: Bearer sk-..."| PROXY["LiteLLM Gateway"]
+    APP -->|"Authorization: Bearer sk-..."| PROXY["Lumina Gateway"]
     PROXY -->|"virtual key lookup"| KEY["Virtual Key + Team"]
     KEY -->|"model allowlist"| ROUTE["LLM Router /v1/chat/completions"]
     ROUTE -->|"lumina_params.model"| PROVIDER["Provider API (OpenAI, Azure, Bedrock)"]
@@ -391,7 +391,7 @@ curl -X POST 'http://localhost:4000/chat/completions' \
   -H 'Authorization: Bearer sk-team-key' \
   -d '{
     "model": "{{openai_large}}",
-    "messages": [{"role": "user", "content": "Hello from LiteLLM Enterprise Gateway"}]
+    "messages": [{"role": "user", "content": "Hello from Lumina Enterprise Gateway"}]
   }'
 ```
 
@@ -404,7 +404,7 @@ curl -X POST 'http://localhost:4000/chat/completions' \
 ```mermaid
 flowchart TD
     CLIENT["Client (curl / OpenAI SDK / Cursor)"]
-    CLIENT -->|"x-litellm-api-key: Bearer sk-..."| PROXY["LiteLLM MCP Gateway"]
+    CLIENT -->|"x-lumina-api-key: Bearer sk-..."| PROXY["Lumina MCP Gateway"]
     PROXY -->|"object_permission.mcp_servers"| PERMS["Key / Team MCP allowlist"]
     PERMS -->|"allowed server"| MCP["DeepWiki MCP Server"]
     MCP -->|"tool result"| PROXY
@@ -419,10 +419,10 @@ curl -X POST 'http://localhost:4000/v1/chat/completions' \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "{{openai_large}}",
-    "messages": [{"role": "user", "content": "TLDR of BerriAI/litellm repo"}],
+    "messages": [{"role": "user", "content": "TLDR of Soventra/lumina repo"}],
     "tools": [{
       "type": "mcp",
-      "server_url": "litellm_proxy/deepwiki",
+      "server_url": "lumina_proxy/deepwiki",
       "server_label": "deepwiki",
       "require_approval": "never"
     }]
@@ -540,11 +540,11 @@ PROXY_BASE_URL="https://<your-proxy-base-url>"
 
 Sign in to the Admin UI through your identity provider. Then disable the login with the master key and `UI_PASSWORD`. Refer to [Disable environment credential login](/docs/proxy/security_best_practices#disable-environment-credential-login-to-the-admin-ui).
 
-To create users and teams from your identity provider, use [SCIM provisioning](/docs/tutorials/scim_litellm). For more options, refer to [SSO for the Admin UI](/docs/proxy/admin_ui_sso), [SSO event hooks](/docs/proxy/custom_sso), and [CLI SSO](/docs/proxy/cli_sso).
+To create users and teams from your identity provider, use [SCIM provisioning](/docs/tutorials/scim_lumina). For more options, refer to [SSO for the Admin UI](/docs/proxy/admin_ui_sso), [SSO event hooks](/docs/proxy/custom_sso), and [CLI SSO](/docs/proxy/cli_sso).
 
 ### JWT authentication for API traffic
 
-Workloads can send JWTs from your OIDC provider in place of long-lived virtual keys. The JWT claims can map each request to a LiteLLM user, team, and model access. Refer to [JWT authentication](/docs/proxy/token_auth) and [JWT to virtual key mapping](/docs/proxy/jwt_key_mapping).
+Workloads can send JWTs from your OIDC provider in place of long-lived virtual keys. The JWT claims can map each request to a Lumina user, team, and model access. Refer to [JWT authentication](/docs/proxy/token_auth) and [JWT to virtual key mapping](/docs/proxy/jwt_key_mapping).
 
 ### Least-privilege access
 
@@ -556,18 +556,18 @@ Keep the provider keys in your secret manager, not in configuration files. Refer
 
 ### Audit logs
 
-Audit logs are on by default when the gateway has a license. To turn them off, set `store_audit_logs: false` in `litellm_settings`. To do a test, delete a virtual key in the API or the Admin UI. Then open the **Audit Logs** page. Refer to [Audit logs](/docs/proxy/audit_logs).
+Audit logs are on by default when the gateway has a license. To turn them off, set `store_audit_logs: false` in `lumina_settings`. To do a test, delete a virtual key in the API or the Admin UI. Then open the **Audit Logs** page. Refer to [Audit logs](/docs/proxy/audit_logs).
 
 ---
 
 ## Step 5. Set up chargeback
 
-Chargeback assigns the cost of each request to the business unit or project that sent it. LiteLLM attributes spend at each level of the tenant hierarchy: organization, team, user, and virtual key. Projects and tags add more dimensions. Use organizations for business units and teams for the groups in them. Use projects for applications, and tags for costs that go across teams.
+Chargeback assigns the cost of each request to the business unit or project that sent it. Lumina attributes spend at each level of the tenant hierarchy: organization, team, user, and virtual key. Projects and tags add more dimensions. Use organizations for business units and teams for the groups in them. Use projects for applications, and tags for costs that go across teams.
 
 ```mermaid
 flowchart TD
     REQUEST["Client Request (LLM / MCP / Agent)"]
-    REQUEST -->|"Authorization: Bearer sk-..."| PROXY["LiteLLM Enterprise Gateway"]
+    REQUEST -->|"Authorization: Bearer sk-..."| PROXY["Lumina Enterprise Gateway"]
 
     PROXY -->|"key.team_id"| TEAMS["Team (Org hierarchy)"]
     PROXY -->|"virtual key lookup"| KEYS["Virtual Keys"]
@@ -626,7 +626,7 @@ Refer to [Virtual keys](/docs/proxy/virtual_keys).
 1. Add `tag_budget_config` to `config.yaml` and restart the gateway:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   tag_budget_config:
     poc:chat-app:
       max_budget: 0.000000000001
@@ -676,4 +676,4 @@ For temporary limits, use a [temporary budget increase](/docs/proxy/temporary_bu
 
 ## Get help
 
-Each Enterprise license includes a dedicated Slack or Teams channel with the LiteLLM engineers. You can also send an email to `support@berri.ai`. Refer to [Support and SLA](/docs/enterprise/support).
+Each Enterprise license includes a dedicated Slack or Teams channel with the Lumina engineers. You can also send an email to `support@berri.ai`. Refer to [Support and SLA](/docs/enterprise/support).

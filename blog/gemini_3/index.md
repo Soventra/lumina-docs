@@ -1,12 +1,12 @@
 ---
 slug: gemini_3
-title: "DAY 0 Support: Gemini 3 on LiteLLM"
+title: "DAY 0 Support: Gemini 3 on Lumina"
 date: 2025-11-19T10:00:00
 authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "Common questions and best practices for using gemini-3-pro-preview with LiteLLM Proxy and SDK."
+description: "Common questions and best practices for using gemini-3-pro-preview with Lumina Proxy and SDK."
 card_title: "Gemini 3"
 card_summary: "gemini-3-pro-preview on the proxy and SDK, with thought signatures and the new thinking controls."
 tags: [gemini, day 0 support, llms]
@@ -18,7 +18,7 @@ import TabItem from '@theme/TabItem';
 
 :::info
 
-This guide covers common questions and best practices for using `gemini-3-pro-preview` with LiteLLM Proxy and SDK.
+This guide covers common questions and best practices for using `gemini-3-pro-preview` with Lumina Proxy and SDK.
 
 :::
 
@@ -30,7 +30,7 @@ This guide covers common questions and best practices for using `gemini-3-pro-pr
 <TabItem value="sdk" label="Python SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -45,7 +45,7 @@ print(response.choices[0].message.content)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Add to config.yaml:**
 
@@ -60,7 +60,7 @@ model_list:
 **2. Start proxy:**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make request:**
@@ -81,7 +81,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Supported Endpoints
 
-LiteLLM provides **full end-to-end support** for Gemini 3 Pro Preview on:
+Lumina provides **full end-to-end support** for Gemini 3 Pro Preview on:
 
 - ✅ `/v1/chat/completions` - OpenAI-compatible chat completions endpoint
 - ✅ `/v1/responses` - OpenAI Responses API endpoint (streaming and non-streaming)
@@ -102,9 +102,9 @@ Thought signatures are encrypted representations of the model's internal reasoni
 
 #### How Thought Signatures Work
 
-1. **Automatic Extraction**: When Gemini 3 returns a function call, LiteLLM automatically extracts the `thought_signature` from the response
+1. **Automatic Extraction**: When Gemini 3 returns a function call, Lumina automatically extracts the `thought_signature` from the response
 2. **Storage**: Thought signatures are stored in `provider_specific_fields.thought_signature` of tool calls
-3. **Automatic Preservation**: When you include the assistant's message in conversation history, LiteLLM automatically preserves and returns thought signatures to Gemini
+3. **Automatic Preservation**: When you include the assistant's message in conversation history, Lumina automatically preserves and returns thought signatures to Gemini
 
 ## Example: Multi-Turn Function Calling
 
@@ -117,8 +117,8 @@ When using streaming mode with `stream_chunk_builder()`, thought signatures are 
 
 ```python
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
 
@@ -158,7 +158,7 @@ for part in response:
 
 # Reconstruct message using stream_chunk_builder
 # Thought signatures are now preserved automatically!
-full_response = litellm.stream_chunk_builder(chunks, messages=messages)
+full_response = lumina.stream_chunk_builder(chunks, messages=messages)
 print(f"Full response: {full_response}")
 
 assistant_msg = full_response.choices[0].message
@@ -205,7 +205,7 @@ print()  # New line
 from openai import OpenAI
 import json
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000")
 
 # Define tools
 tools = [
@@ -360,7 +360,7 @@ curl http://localhost:4000/v1/chat/completions \
 
 #### Important Notes on Thought Signatures
 
-1. **Automatic Handling**: LiteLLM automatically extracts and preserves thought signatures. You don't need to manually manage them.
+1. **Automatic Handling**: Lumina automatically extracts and preserves thought signatures. You don't need to manually manage them.
 
 2. **Parallel Function Calls**: When the model makes parallel function calls, only the **first function call** has a thought signature.
 
@@ -372,11 +372,11 @@ curl http://localhost:4000/v1/chat/completions \
 
 #### Common Question: Will switching from a non-Gemini-3 model to Gemini-3 break conversation history?
 
-**Answer: No!** LiteLLM automatically handles this by adding dummy thought signatures when needed.
+**Answer: No!** Lumina automatically handles this by adding dummy thought signatures when needed.
 
 #### How It Works
 
-When you switch from a model that doesn't use thought signatures (e.g., `gemini-2.5-flash`) to Gemini 3, LiteLLM:
+When you switch from a model that doesn't use thought signatures (e.g., `gemini-2.5-flash`) to Gemini 3, Lumina:
 
 1. **Detects missing signatures**: Identifies assistant messages with tool calls that lack thought signatures
 2. **Adds dummy signature**: Automatically injects a dummy thought signature (`skip_thought_signature_validator`) for compatibility
@@ -390,7 +390,7 @@ When you switch from a model that doesn't use thought signatures (e.g., `gemini-
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000")
 
 # Step 1: Start with gemini-2.5-flash (no thought signatures)
 messages = [{"role": "user", "content": "What's the weather?"}]
@@ -406,7 +406,7 @@ response1 = client.chat.completions.create(
 messages.append(response1.choices[0].message)
 
 # Step 2: Switch to gemini-3-pro-preview
-# LiteLLM automatically adds dummy thought signature to the previous assistant message
+# Lumina automatically adds dummy thought signature to the previous assistant message
 response2 = client.chat.completions.create(
     model="gemini-3-pro-preview",  # 👈 Switched model
     messages=messages,  # 👈 Same conversation history
@@ -434,7 +434,7 @@ curl http://localhost:4000/v1/chat/completions \
   }'
 
 # Step 2: Switch to gemini-3-pro-preview with same conversation history
-# LiteLLM automatically handles the missing thought signature
+# Lumina automatically handles the missing thought signature
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
@@ -450,7 +450,7 @@ curl http://localhost:4000/v1/chat/completions \
     "tools": [...],
     "reasoning_effort": "low"
   }'
-# ✅ Works! LiteLLM adds dummy signature automatically
+# ✅ Works! Lumina adds dummy signature automatically
 ```
 
 </TabItem>
@@ -469,7 +469,7 @@ This is the recommended approach by Google for handling conversation history fro
 
 #### How `reasoning_effort` Maps to `thinking_level`
 
-For Gemini 3 Pro Preview, LiteLLM automatically maps `reasoning_effort` to the new `thinking_level` parameter:
+For Gemini 3 Pro Preview, Lumina automatically maps `reasoning_effort` to the new `thinking_level` parameter:
 
 | `reasoning_effort` | `thinking_level` | Notes |
 |-------------------|------------------|-------|
@@ -481,7 +481,7 @@ For Gemini 3 Pro Preview, LiteLLM automatically maps `reasoning_effort` to the n
 | `"none"` | `"low"` | Gemini 3 cannot fully disable thinking |
 
 #### Default Behavior
-LiteLLM **does not** set `thinking_level` when you omit `reasoning_effort`. The Gemini API applies its **native defaults**, matching a direct call to Google.
+Lumina **does not** set `thinking_level` when you omit `reasoning_effort`. The Gemini API applies its **native defaults**, matching a direct call to Google.
 
 
 ### Example Usage
@@ -490,7 +490,7 @@ LiteLLM **does not** set `thinking_level` when you omit `reasoning_effort`. The 
 <TabItem value="sdk" label="Python SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # Low thinking level (faster, lower cost)
 response = completion(
@@ -508,7 +508,7 @@ response = completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```bash
 # Low thinking level
@@ -539,20 +539,20 @@ curl http://localhost:4000/v1/chat/completions \
 
 1. **Gemini 3 Cannot Disable Thinking**: Unlike Gemini 2.5 models, Gemini 3 cannot fully disable thinking. Even when you set `reasoning_effort="none"` or `"disable"`, it maps to `thinking_level="low"`.
 
-2. **Temperature Recommendation**: For Gemini 3 models, LiteLLM defaults `temperature` to `1.0` and strongly recommends keeping it at this default. Setting `temperature < 1.0` can cause:
+2. **Temperature Recommendation**: For Gemini 3 models, Lumina defaults `temperature` to `1.0` and strongly recommends keeping it at this default. Setting `temperature < 1.0` can cause:
    - Infinite loops
    - Degraded reasoning performance
    - Failure on complex tasks
 
-3. **Thinking defaults come from the API**: If you omit `reasoning_effort`, LiteLLM does **not** override `thinking_level`. Set `reasoning_effort` or native thinking parameters when you want a predictable cost or latency profile (for example `reasoning_effort="low"` for lighter reasoning).
+3. **Thinking defaults come from the API**: If you omit `reasoning_effort`, Lumina does **not** override `thinking_level`. Set `reasoning_effort` or native thinking parameters when you want a predictable cost or latency profile (for example `reasoning_effort="low"` for lighter reasoning).
 
 ## Cost Tracking: Prompt Caching & Context Window
 
-LiteLLM provides full cost tracking for Gemini 3 Pro Preview, including support for prompt caching and tiered pricing based on context window size.
+Lumina provides full cost tracking for Gemini 3 Pro Preview, including support for prompt caching and tiered pricing based on context window size.
 
 ### Prompt Caching Cost Tracking
 
-Gemini 3 supports prompt caching, which allows you to cache frequently used prompt prefixes to reduce costs. LiteLLM automatically tracks and calculates costs for:
+Gemini 3 supports prompt caching, which allows you to cache frequently used prompt prefixes to reduce costs. Lumina automatically tracks and calculates costs for:
 
 - **Cache Hit Tokens**: Tokens that are read from cache (charged at a lower rate)
 - **Cache Creation Tokens**: Tokens that are written to cache (one-time cost)
@@ -560,7 +560,7 @@ Gemini 3 supports prompt caching, which allows you to cache frequently used prom
 
 #### How It Works
 
-LiteLLM extracts caching information from the `prompt_tokens_details` field in the usage object:
+Lumina extracts caching information from the `prompt_tokens_details` field in the usage object:
 
 ```python
 {
@@ -583,10 +583,10 @@ Gemini 3 Pro Preview supports up to 1M tokens of context, with tiered pricing th
 
 #### Automatic Tier Detection
 
-LiteLLM automatically detects when your prompt exceeds the 200k token threshold and applies the appropriate tiered pricing:
+Lumina automatically detects when your prompt exceeds the 200k token threshold and applies the appropriate tiered pricing:
 
 ```python
-from litellm import completion_cost
+from lumina import completion_cost
 
 # Example: Small prompt (< 200k tokens)
 response_small = completion(
@@ -614,10 +614,10 @@ The cost calculation includes:
 
 ### Example: Viewing Cost Breakdown
 
-You can view the detailed cost breakdown using LiteLLM's cost tracking:
+You can view the detailed cost breakdown using Lumina's cost tracking:
 
 ```python
-from litellm import completion, completion_cost
+from lumina import completion, completion_cost
 
 response = completion(
     model="gemini/gemini-3-pro-preview",
@@ -646,11 +646,11 @@ if usage.prompt_tokens_details:
 1. **Use Prompt Caching**: For repeated prompt prefixes, enable caching to reduce costs by up to 90% for cached portions
 2. **Monitor Context Size**: Be aware that prompts above 200k tokens use tiered pricing (2x for input, 1.5x for output)
 3. **Cache Management**: Cache creation tokens are charged once when writing to cache, then subsequent reads are much cheaper
-4. **Track Usage**: Use LiteLLM's built-in cost tracking to monitor spending across different token types
+4. **Track Usage**: Use Lumina's built-in cost tracking to monitor spending across different token types
 
-### Integration with LiteLLM Proxy
+### Integration with Lumina Proxy
 
-When using LiteLLM Proxy, all cost tracking is automatically logged and available through:
+When using Lumina Proxy, all cost tracking is automatically logged and available through:
 
 - **Usage Logs**: Detailed token and cost breakdowns in proxy logs
 - **Budget Management**: Set budgets and alerts based on actual usage
@@ -664,7 +664,7 @@ model_list:
       model: gemini/gemini-3-pro-preview
       api_key: os.environ/GEMINI_API_KEY
 
-litellm_settings:
+lumina_settings:
   # Enable detailed cost tracking
   success_callback: ["langfuse"]  # or your preferred logging service
 ```
@@ -695,15 +695,15 @@ export GEMINI_API_KEY="your-gemini-api-key"
 export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
 ```
 
-**3. Start LiteLLM Proxy:**
+**3. Start Lumina Proxy:**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-**4. Configure Claude Code to use LiteLLM Proxy:**
+**4. Configure Claude Code to use Lumina Proxy:**
 
 ```bash
 export ANTHROPIC_BASE_URL="http://0.0.0.0:4000"
@@ -713,7 +713,7 @@ export ANTHROPIC_AUTH_TOKEN="$LUMINA_MASTER_KEY"
 **5. Use Gemini 3 Pro Preview with Claude Code:**
 
 ```bash
-# Claude Code will use gemini-3-pro-preview from your LiteLLM proxy
+# Claude Code will use gemini-3-pro-preview from your Lumina proxy
 claude --model gemini-3-pro-preview
 
 ```
@@ -732,8 +732,8 @@ $ claude --model gemini-3-pro-preview
 ### Benefits
 
 - ✅ **Native Claude Code Experience**: Use Gemini 3 Pro Preview with Claude Code's familiar CLI interface
-- ✅ **Unified Authentication**: Single API key for all models through LiteLLM proxy
-- ✅ **Cost Tracking**: All usage tracked through LiteLLM's centralized logging
+- ✅ **Unified Authentication**: Single API key for all models through Lumina proxy
+- ✅ **Cost Tracking**: All usage tracked through Lumina's centralized logging
 - ✅ **Model Switching**: Easily switch between Claude and Gemini models
 - ✅ **Full Feature Support**: All Gemini 3 features (thought signatures, function calling, etc.) work through Claude Code
 
@@ -742,16 +742,16 @@ $ claude --model gemini-3-pro-preview
 **Claude Code not finding the model:**
 - Ensure the model name in Claude Code matches exactly: `gemini-3-pro-preview`
 - Verify your proxy is running: `curl http://0.0.0.0:4000/health`
-- Check that `ANTHROPIC_BASE_URL` points to your LiteLLM proxy
+- Check that `ANTHROPIC_BASE_URL` points to your Lumina proxy
 
 **Authentication errors:**
-- Verify `ANTHROPIC_AUTH_TOKEN` matches your LiteLLM master key
+- Verify `ANTHROPIC_AUTH_TOKEN` matches your Lumina master key
 - Ensure `GEMINI_API_KEY` is set correctly
-- Check LiteLLM proxy logs for detailed error messages
+- Check Lumina proxy logs for detailed error messages
 
 ## Responses API Support
 
-LiteLLM fully supports the OpenAI Responses API for Gemini 3 Pro Preview, including both streaming and non-streaming modes. The Responses API provides a structured way to handle multi-turn conversations with function calling, and LiteLLM automatically preserves thought signatures throughout the conversation.
+Lumina fully supports the OpenAI Responses API for Gemini 3 Pro Preview, including both streaming and non-streaming modes. The Responses API provides a structured way to handle multi-turn conversations with function calling, and Lumina automatically preserves thought signatures throughout the conversation.
 
 ### Example: Using Responses API with Gemini 3
 
@@ -900,7 +900,7 @@ for chunk in response:
 ### Responses API Benefits
 
 - ✅ **Structured Output**: Responses API provides a clear structure for handling function calls and multi-turn conversations
-- ✅ **Thought Signature Preservation**: LiteLLM automatically preserves thought signatures in both streaming and non-streaming modes
+- ✅ **Thought Signature Preservation**: Lumina automatically preserves thought signatures in both streaming and non-streaming modes
 - ✅ **Integration**: Works with existing OpenAI SDK patterns
 - ✅ **Full Feature Support**: All Gemini 3 features (thought signatures, function calling, reasoning) are fully supported
 
@@ -938,7 +938,7 @@ For Gemini 3 models, always use `temperature=1.0` (default). Lower temperatures 
 #### 4. Handle Model Switches Gracefully
 
 When switching from non-Gemini-3 to Gemini-3:
-- ✅ LiteLLM automatically handles missing thought signatures
+- ✅ Lumina automatically handles missing thought signatures
 - ✅ No manual intervention needed
 - ✅ Conversation history continues to work
 
@@ -958,7 +958,7 @@ messages.append(response.choices[0].message)  # ✅ Includes thought signatures
 
 **Symptom**: Errors when switching from gemini-2.5-flash to gemini-3-pro-preview
 
-**Solution**: This should work automatically! LiteLLM adds dummy signatures. If you see errors, ensure you're using the latest LiteLLM version.
+**Solution**: This should work automatically! Lumina adds dummy signatures. If you see errors, ensure you're using the latest Lumina version.
 
 #### Issue: Infinite Loops or Poor Performance
 

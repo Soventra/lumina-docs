@@ -10,8 +10,8 @@ import TabItem from '@theme/TabItem';
 
 A semantic cache embeds the prompt and serves the closest cached response whose cosine similarity
 clears `similarity_threshold`, so it can hit on prompts that are similar rather than identical.
-LiteLLM supports three backends for it: Qdrant, Valkey and Redis. A response served from a semantic
-cache carries an `x-litellm-semantic-similarity` header.
+Lumina supports three backends for it: Qdrant, Valkey and Redis. A response served from a semantic
+cache carries an `x-lumina-semantic-similarity` header.
 
 :::warning
 
@@ -40,9 +40,9 @@ model_list:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   set_verbose: True
-  cache: True # set cache responses to True, litellm defaults to using a redis cache
+  cache: True # set cache responses to True, lumina defaults to using a redis cache
   cache_params:
     type: qdrant-semantic
     qdrant_semantic_cache_embedding_model: openai-embedding # the model should be defined on the model_list
@@ -62,7 +62,7 @@ QDRANT_API_BASE = "https://5392d382-45*********.cloud.qdrant.io"
 ### Step 3: Run proxy with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ### Step 4. Test it
@@ -79,7 +79,7 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-**Expect to see `x-litellm-semantic-similarity` in the response headers when semantic caching is
+**Expect to see `x-lumina-semantic-similarity` in the response headers when semantic caching is
 on**
 
 ## Valkey
@@ -106,7 +106,7 @@ model_list:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   set_verbose: True
   cache: True
   cache_params:
@@ -114,7 +114,7 @@ litellm_settings:
     host: os.environ/VALKEY_HOST
     port: os.environ/VALKEY_PORT
     valkey_semantic_cache_embedding_model: openai-embedding # the model should be defined on the model_list
-    valkey_semantic_cache_index_name: litellm_semantic_cache_index # optional
+    valkey_semantic_cache_index_name: lumina_semantic_cache_index # optional
     similarity_threshold: 0.8 # similarity threshold for semantic cache
 ```
 
@@ -131,7 +131,7 @@ For ElastiCache with encryption in transit (TLS), add `ssl: true` under `cache_p
 ### Step 3: Run proxy with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ### Step 4. Test it
@@ -148,7 +148,7 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-**Expect to see `x-litellm-semantic-similarity` in the response headers when semantic caching is
+**Expect to see `x-lumina-semantic-similarity` in the response headers when semantic caching is
 on**
 
 ## Redis
@@ -169,7 +169,7 @@ model_list:
       api_key: os.environ/AZURE_API_KEY
       api_version: "2023-07-01-preview"
 
-litellm_settings:
+lumina_settings:
   set_verbose: True
   cache: True # set cache responses to True
   cache_params:
@@ -182,7 +182,7 @@ Set the Redis credentials the same way as for an exact-match Redis cache; see
 [Redis and Valkey](./caching_redis.md#connect-the-proxy-to-redis). Then run the proxy:
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ## Semantic Caching and Multi-Turn Agentic Traffic
@@ -213,10 +213,10 @@ Caching only runs on the call types listed in `supported_call_types`. The defaul
 
 A semantic cache key deliberately leaves the prompt out, so the only thing keeping two callers apart is the tenant scope: the virtual key, its team and its organization. Every end user behind one virtual key therefore shares one semantic bucket by default, and a response generated for one of them (tool calls included) can be served to another who sends a semantically similar prompt through the same key.
 
-Set `semantic_cache_scope: end_user` under `cache_params` to also isolate buckets per end user. The end-user id is the one the proxy authenticates for the request (`user_api_key_end_user_id`): the `x-litellm-customer-id` header, a configured `user_header_name`, or the request `user` field. It is read from both `metadata` and `litellm_metadata`, so `/v1/chat/completions`, `/v1/responses` and `/v1/messages` are all covered. A request that carries no end-user id falls back to the key/team/org bucket rather than landing in a shared empty one. The default, `key`, keeps today's key/team/org scope.
+Set `semantic_cache_scope: end_user` under `cache_params` to also isolate buckets per end user. The end-user id is the one the proxy authenticates for the request (`user_api_key_end_user_id`): the `x-lumina-customer-id` header, a configured `user_header_name`, or the request `user` field. It is read from both `metadata` and `lumina_metadata`, so `/v1/chat/completions`, `/v1/responses` and `/v1/messages` are all covered. A request that carries no end-user id falls back to the key/team/org bucket rather than landing in a shared empty one. The default, `key`, keeps today's key/team/org scope.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: redis-semantic
@@ -229,12 +229,12 @@ The same setting is available in the Admin UI under Caching -> Cache Settings as
 
 ## Semantic Caching and a Slow Embedding Endpoint
 
-A semantic cache embeds the prompt before every request, and that embedding call runs inline, so the request cannot reach the LLM until it finishes. LiteLLM caps it at 5 seconds. Past the deadline the lookup is abandoned, the response carries `x-litellm-semantic-similarity: 0.0`, and the request proceeds to the model as a cache miss. An embedding endpoint that is unreachable or hanging therefore costs a few seconds instead of stalling the request.
+A semantic cache embeds the prompt before every request, and that embedding call runs inline, so the request cannot reach the LLM until it finishes. Lumina caps it at 5 seconds. Past the deadline the lookup is abandoned, the response carries `x-lumina-semantic-similarity: 0.0`, and the request proceeds to the model as a cache miss. An embedding endpoint that is unreachable or hanging therefore costs a few seconds instead of stalling the request.
 
 Raise the deadline if your embedding endpoint is legitimately slower than that, either per cache with `semantic_cache_embedding_timeout` under `cache_params` or globally with the `SEMANTIC_CACHE_EMBEDDING_TIMEOUT_SECONDS` environment variable.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: redis-semantic

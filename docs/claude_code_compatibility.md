@@ -5,11 +5,11 @@ sidebar_label: Claude Code Compatibility
 
 import ClaudeCodeCompatibilityTable from '@site/src/components/ClaudeCodeCompatibilityTable';
 
-# Claude Code × LiteLLM compatibility matrix
+# Claude Code × Lumina compatibility matrix
 
 This table is regenerated daily by an automated populator that runs the
 [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) against
-the newest final LiteLLM release (the latest bare `vX.Y.Z` tag) across each
+the newest final Lumina release (the latest bare `vX.Y.Z` tag) across each
 supported provider, with Haiku 4.5, Sonnet 4.6, and Opus 4.7 in parallel. A
 cell goes green only if all three model tiers pass.
 
@@ -27,7 +27,7 @@ cell goes green only if all three model tiers pass.
 ## Source
 
 The matrix JSON lives at
-[`src/data/compatibility-matrix.json`](https://github.com/BerriAI/litellm-docs/blob/main/src/data/compatibility-matrix.json).
+[`src/data/compatibility-matrix.json`](https://github.com/Soventra/lumina-docs/blob/main/src/data/compatibility-matrix.json).
 The populator is in
-[`tests/e2e/claude_code/cron_vm/`](https://github.com/BerriAI/litellm/tree/main/tests/e2e/claude_code/cron_vm)
+[`tests/e2e/claude_code/cron_vm/`](https://github.com/Soventra/lumina/tree/main/tests/e2e/claude_code/cron_vm)
 on the main repo.

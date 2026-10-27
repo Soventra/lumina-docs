@@ -13,7 +13,7 @@ Set fallbacks in the `.completion()` call for SDK and client-side for proxy.
 
 In this request the following will occur:
 1. The request to `model="zephyr-beta"` will fail
-2. litellm proxy will loop through all the model_groups specified in `fallbacks=["{{openai_small}}"]`
+2. lumina proxy will loop through all the model_groups specified in `fallbacks=["{{openai_small}}"]`
 3. The request to `model="{{openai_small}}"` will succeed and the client making the request will get a response from gpt-5.6-luna 
 
 Key Change: `"fallbacks": ["{{openai_small}}"]`
@@ -22,7 +22,7 @@ Key Change: `"fallbacks": ["{{openai_small}}"]`
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(model_list=[...]) # defined in Step 1.
 
@@ -33,7 +33,7 @@ resp = router.completion(
     fallbacks=[
         {
             "model": "{{anthropic}}",
-            "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+            "messages": [{"role": "user", "content": "What is Lumina?"}],
         }
     ],
 )
@@ -115,7 +115,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -150,7 +150,7 @@ fallbacks = [
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(model_list=[...]) # defined in Step 1.
 
@@ -161,7 +161,7 @@ resp = router.completion(
     fallbacks=[
         {
             "model": "{{anthropic}}",
-            "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+            "messages": [{"role": "user", "content": "What is Lumina?"}],
         }
     ],
 )
@@ -193,7 +193,7 @@ response = client.chat.completions.create(
     extra_body={
       "fallbacks": [{
           "model": "{{anthropic}}",
-          "messages": [{"role": "user", "content": "What is LiteLLM?"}]
+          "messages": [{"role": "user", "content": "What is Lumina?"}]
       }]
     }
 )
@@ -223,7 +223,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
     ],
     "fallbacks": [{
         "model": "{{anthropic}}",
-        "messages": [{"role": "user", "content": "What is LiteLLM?"}]
+        "messages": [{"role": "user", "content": "What is Lumina?"}]
     }]
 }'
 ```
@@ -249,7 +249,7 @@ chat = ChatOpenAI(
     extra_body={
       "fallbacks": [{
           "model": "{{anthropic}}",
-          "messages": [{"role": "user", "content": "What is LiteLLM?"}]
+          "messages": [{"role": "user", "content": "What is Lumina?"}]
       }]
     }
 )
@@ -259,7 +259,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)

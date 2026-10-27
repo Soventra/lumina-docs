@@ -4,27 +4,27 @@ import TabItem from '@theme/TabItem';
 
 # CLI - Quick Start
 
-Setup LiteLLM Proxy quickly via CLI. 
+Setup Lumina Proxy quickly via CLI. 
 
-LiteLLM Server (LLM Gateway) manages:
+Lumina Server (LLM Gateway) manages:
 
 * **Unified Interface**: Calling 100+ LLMs [Huggingface/Bedrock/TogetherAI/etc.](/docs/proxy/quick_start#supported-llms) in the OpenAI `ChatCompletions` & `Completions` format
-* **Cost tracking**: Authentication, Spend Tracking & Budgets [Virtual Keys](https://docs.litellm.ai/docs/proxy/virtual_keys)
-* **Load Balancing**: between Multiple Models + Deployments of the same model - LiteLLM proxy can handle 1.5k+ requests/second during load tests.
+* **Cost tracking**: Authentication, Spend Tracking & Budgets [Virtual Keys](https://docs.lumina.ai/docs/proxy/virtual_keys)
+* **Load Balancing**: between Multiple Models + Deployments of the same model - Lumina proxy can handle 1.5k+ requests/second during load tests.
 
 ```shell
-$ uv tool install 'litellm[proxy]'
+$ uv tool install 'lumina[proxy]'
 ```
 
 :::warning[Minimum Python version]
-LiteLLM 1.84.0 and newer require Python {{python_min_version}} or higher (`requires-python >={{python_min_version}}`). `uv tool install` handles this for you by provisioning a compatible Python automatically. A bare `pip install 'litellm[proxy]'` does not; on an older interpreter pip silently resolves down to the last release whose `requires-python` still allowed it (1.83.9 for the previous floor), with no error. If you pinned to an old version unexpectedly, check `python --version` and upgrade to {{python_min_version}}+ (or use uv), then reinstall
+Lumina 1.84.0 and newer require Python {{python_min_version}} or higher (`requires-python >={{python_min_version}}`). `uv tool install` handles this for you by provisioning a compatible Python automatically. A bare `pip install 'lumina[proxy]'` does not; on an older interpreter pip silently resolves down to the last release whose `requires-python` still allowed it (1.83.9 for the previous floor), with no error. If you pinned to an old version unexpectedly, check `python --version` and upgrade to {{python_min_version}}+ (or use uv), then reinstall
 :::
 
-## Quick Start - LiteLLM Proxy CLI
+## Quick Start - Lumina Proxy CLI
 
-Run the following command to start the litellm proxy
+Run the following command to start the lumina proxy
 ```shell
-$ litellm --model huggingface/bigcode/starcoder
+$ lumina --model huggingface/bigcode/starcoder
 
 #INFO: Proxy running on http://0.0.0.0:4000
 ```
@@ -35,20 +35,20 @@ $ litellm --model huggingface/bigcode/starcoder
 Run with `--detailed_debug` if you need detailed debug logs 
 
 ```shell
-$ litellm --model huggingface/bigcode/starcoder --detailed_debug
+$ lumina --model huggingface/bigcode/starcoder --detailed_debug
 ```
 :::
 
 ### Test
 In a new shell, run, this will make an `openai.chat.completions` request. Ensure you're using openai v1.0.0+
 ```shell
-litellm --test
+lumina --test
 ```
 
 This will now automatically route any requests for gpt-3.5-turbo to bigcode starcoder, hosted on huggingface inference endpoints. 
 
 ### Supported LLMs
-All LiteLLM supported LLMs are supported on the Proxy. Seel all [supported llms](https://docs.litellm.ai/docs/providers)
+All Lumina supported LLMs are supported on the Proxy. Seel all [supported llms](https://docs.lumina.ai/docs/providers)
 <Tabs>
 <TabItem value="bedrock" label="AWS Bedrock">
 
@@ -59,7 +59,7 @@ $ export AWS_SECRET_ACCESS_KEY=
 ```
 
 ```shell
-$ litellm --model bedrock/us.anthropic.{{anthropic}}
+$ lumina --model bedrock/us.anthropic.{{anthropic}}
 ```
 </TabItem>
 <TabItem value="azure" label="Azure OpenAI">
@@ -69,7 +69,7 @@ $ export AZURE_API_KEY=my-api-key
 $ export AZURE_API_BASE=my-api-base
 ```
 ```
-$ litellm --model azure/my-deployment-name
+$ lumina --model azure/my-deployment-name
 ```
 
 </TabItem>
@@ -80,13 +80,13 @@ $ export OPENAI_API_KEY=my-api-key
 ```
 
 ```shell
-$ litellm --model {{openai_small}}
+$ lumina --model {{openai_small}}
 ```
 </TabItem>
 <TabItem value="ollama" label="Ollama">
 
 ```
-$ litellm --model ollama/<ollama-model-name>
+$ lumina --model ollama/<ollama-model-name>
 ```
 
 </TabItem>
@@ -97,7 +97,7 @@ $ export OPENAI_API_KEY=my-api-key
 ```
 
 ```shell
-$ litellm --model openai/<your model name> --api_base <your-api-base> # e.g. http://0.0.0.0:3000
+$ lumina --model openai/<your model name> --api_base <your-api-base> # e.g. http://0.0.0.0:3000
 ```
 </TabItem>
 
@@ -109,7 +109,7 @@ $ export VERTEX_LOCATION="us-west"
 ```
 
 ```shell
-$ litellm --model vertex_ai/{{gemini_flash}}
+$ lumina --model vertex_ai/{{gemini_flash}}
 ```
 </TabItem>
 
@@ -119,14 +119,14 @@ $ litellm --model vertex_ai/{{gemini_flash}}
 $ export HUGGINGFACE_API_KEY=my-api-key #[OPTIONAL]
 ```
 ```shell
-$ litellm --model huggingface/<your model name> --api_base <your-api-base> # e.g. http://0.0.0.0:3000
+$ lumina --model huggingface/<your model name> --api_base <your-api-base> # e.g. http://0.0.0.0:3000
 ```
 
 </TabItem>
 <TabItem value="huggingface-local" label="Huggingface (TGI) Local">
 
 ```shell
-$ litellm --model huggingface/<your model name> --api_base http://0.0.0.0:8001
+$ lumina --model huggingface/<your model name> --api_base http://0.0.0.0:8001
 ```
 
 </TabItem>
@@ -139,7 +139,7 @@ export AWS_SECRET_ACCESS_KEY=
 ```
 
 ```shell
-$ litellm --model sagemaker/jumpstart-dft-meta-textgeneration-llama-2-7b
+$ lumina --model sagemaker/jumpstart-dft-meta-textgeneration-llama-2-7b
 ```
 
 </TabItem>
@@ -149,7 +149,7 @@ $ litellm --model sagemaker/jumpstart-dft-meta-textgeneration-llama-2-7b
 $ export ANTHROPIC_API_KEY=my-api-key
 ```
 ```shell
-$ litellm --model {{anthropic}}
+$ lumina --model {{anthropic}}
 ```
 
 </TabItem>
@@ -157,7 +157,7 @@ $ litellm --model {{anthropic}}
 Assuming you're running vllm locally
 
 ```shell
-$ litellm --model vllm/facebook/opt-125m
+$ lumina --model vllm/facebook/opt-125m
 ```
 </TabItem>
 <TabItem value="together_ai" label="TogetherAI">
@@ -166,7 +166,7 @@ $ litellm --model vllm/facebook/opt-125m
 $ export TOGETHERAI_API_KEY=my-api-key
 ```
 ```shell
-$ litellm --model together_ai/lmsys/vicuna-13b-v1.5-16k
+$ lumina --model together_ai/lmsys/vicuna-13b-v1.5-16k
 ```
 
 </TabItem>
@@ -177,7 +177,7 @@ $ litellm --model together_ai/lmsys/vicuna-13b-v1.5-16k
 $ export REPLICATE_API_KEY=my-api-key
 ```
 ```shell
-$ litellm \
+$ lumina \
   --model replicate/meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3
 ```
 
@@ -186,7 +186,7 @@ $ litellm \
 <TabItem value="petals" label="Petals">
 
 ```shell
-$ litellm --model petals/meta-llama/Llama-2-70b-chat-hf
+$ lumina --model petals/meta-llama/Llama-2-70b-chat-hf
 ```
 
 </TabItem>
@@ -197,7 +197,7 @@ $ litellm --model petals/meta-llama/Llama-2-70b-chat-hf
 $ export GEMINI_API_KEY=my-gemini-key
 ```
 ```shell
-$ litellm --model gemini/{{gemini_flash}}
+$ lumina --model gemini/{{gemini_flash}}
 ```
 
 </TabItem>
@@ -209,7 +209,7 @@ $ export AI21_API_KEY=my-api-key
 ```
 
 ```shell
-$ litellm --model j2-light
+$ lumina --model j2-light
 ```
 
 </TabItem>
@@ -221,23 +221,23 @@ $ export COHERE_API_KEY=my-api-key
 ```
 
 ```shell
-$ litellm --model command-nightly
+$ lumina --model command-nightly
 ```
 
 </TabItem>
 
 </Tabs>
 
-## Quick Start - LiteLLM Proxy + Config.yaml
-The config allows you to create a model list and set `api_base`, `max_tokens` (all litellm params). See more details about the config [here](https://docs.litellm.ai/docs/proxy/configs)
+## Quick Start - Lumina Proxy + Config.yaml
+The config allows you to create a model list and set `api_base`, `max_tokens` (all lumina params). See more details about the config [here](https://docs.lumina.ai/docs/proxy/configs)
 
-### Create a Config for LiteLLM Proxy
+### Create a Config for Lumina Proxy
 Example config
 
 ```yaml
 model_list: 
   - model_name: {{openai_small}} # user-facing model alias
-    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+    lumina_params: # all params accepted by lumina.completion() - https://docs.lumina.ai/docs/completion/input
       model: azure/<your-deployment-name>
       api_base: <your-azure-api-endpoint>
       api_key: <your-azure-api-key>
@@ -256,14 +256,14 @@ model_list:
 ### Run proxy with config
 
 ```shell
-litellm --config your_config.yaml
+lumina --config your_config.yaml
 ```
 
 
-## Using LiteLLM Proxy - Curl Request, OpenAI Package, Langchain
+## Using Lumina Proxy - Curl Request, OpenAI Package, Langchain
 
 :::info
-LiteLLM is compatible with several SDKs - including OpenAI SDK, Anthropic SDK, Mistral SDK, LLamaIndex, Langchain (Js, Python)
+Lumina is compatible with several SDKs - including OpenAI SDK, Anthropic SDK, Mistral SDK, LLamaIndex, Langchain (Js, Python)
 
 [More examples here](user_keys)
 :::
@@ -295,7 +295,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="{{openai_small}}", messages = [
     {
         "role": "user",
@@ -319,7 +319,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "{{openai_small}}",
     temperature=0.1
 )
@@ -329,7 +329,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -372,12 +372,12 @@ print(f"TITAN EMBEDDINGS")
 print(query_result[:5])
 ```
 </TabItem>
-<TabItem value="litellm" label="LiteLLM SDK">
+<TabItem value="lumina" label="Lumina SDK">
 
 This is **not recommended**. There is duplicate logic as the proxy also uses the sdk, which might lead to unexpected errors. 
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 response = completion(
     model="openai/{{openai_small}}", 
@@ -405,7 +405,7 @@ from anthropic import Anthropic
 
 client = Anthropic(
     base_url="http://localhost:4000", # proxy endpoint
-    api_key="sk-test-proxy-key-123", # litellm proxy virtual key (example)
+    api_key="sk-test-proxy-key-123", # lumina proxy virtual key (example)
 )
 
 message = client.messages.create(
@@ -429,7 +429,7 @@ print(message.content)
 
 
 
-## Proxy Endpoints - [Swagger Docs](https://docs.litellm.ai/api-reference/)
+## Proxy Endpoints - [Swagger Docs](https://docs.lumina.ai/api-reference/)
 - POST `/chat/completions` - chat completions endpoint to call 100+ LLMs
 - POST `/completions` - completions endpoint
 - POST `/embeddings` - embedding endpoint for Azure, OpenAI, Huggingface endpoints
@@ -441,12 +441,12 @@ print(message.content)
 
 Events that occur during normal operation
 ```shell
-litellm --model {{openai_small}} --debug
+lumina --model {{openai_small}} --debug
 ```
 
 Detailed information
 ```shell
-litellm --model {{openai_small}} --detailed_debug
+lumina --model {{openai_small}} --detailed_debug
 ```
 
 ### Set Debug Level using env variables
@@ -466,4 +466,4 @@ Errors only
 export LUMINA_LOG=ERROR
 ```
 
-`LUMINA_LOG` must be a valid Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). Setting it to `None` makes `import litellm` fail.
+`LUMINA_LOG` must be a valid Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). Setting it to `None` makes `import lumina` fail.

@@ -5,12 +5,12 @@ import TabItem from '@theme/TabItem';
 
 ## Priority PayGo
 
-LiteLLM supports Priority PayGo.  
+Lumina supports Priority PayGo.  
 Send a priority header, get priority queueing, and pay priority token rates.
 
 :::info[Which models support Priority PayGo?]
 As of this writing: `gemini/gemini-2.5-pro`, `vertex_ai/gemini-3-pro-preview`, `vertex_ai/gemini-3.1-pro-preview`, `vertex_ai/gemini-3-flash-preview`, and their variants.
-Check `supports_service_tier: true` in LiteLLM's [model pricing JSON](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).
+Check `supports_service_tier: true` in Lumina's [model pricing JSON](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json).
 :::
 
 ### Send a priority request
@@ -20,12 +20,12 @@ Use this header:
 `X-Vertex-AI-LLM-Shared-Request-Type: priority`
 
 <Tabs>
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="vertex_ai/{{gemini_pro}}",
     messages=[{"role": "user", "content": "Summarize the Gettysburg Address."}],
     vertex_project="YOUR_PROJECT_ID",
@@ -61,7 +61,7 @@ curl http://localhost:4000/v1/chat/completions \
 </TabItem>
 <TabItem value="pass-through" label="Pass-through mode">
 
-Use `x-pass-` so LiteLLM forwards provider-specific headers.
+Use `x-pass-` so Lumina forwards provider-specific headers.
 
 ```bash
 MODEL_ID="{{gemini_pro}}"
@@ -69,7 +69,7 @@ PROJECT_ID="YOUR_PROJECT_ID"
 
 curl -X POST \
   "${LUMINA_PROXY_BASE_URL}/vertex_ai/v1/projects/${PROJECT_ID}/locations/global/publishers/google/models/${MODEL_ID}:generateContent" \
-  -H "Authorization: Bearer sk-your-litellm-key" \
+  -H "Authorization: Bearer sk-your-lumina-key" \
   -H "Content-Type: application/json" \
   -H "x-pass-X-Vertex-AI-LLM-Shared-Request-Type: priority" \
   -d '{"contents": [{"role": "user", "parts": [{"text": "Hello!"}]}]}'
@@ -90,7 +90,7 @@ curl -X POST \
 | `ON_DEMAND_PRIORITY` | `"priority"` | `input_cost_per_token_priority` |
 | `FLEX` / `BATCH` | `"flex"` | `input_cost_per_token_flex` |
 
-If a tier-specific key is missing, LiteLLM falls back to standard pricing keys.
+If a tier-specific key is missing, Lumina falls back to standard pricing keys.
 
 ---
 
@@ -106,9 +106,9 @@ This is a different header from priority routing:
 ### Native route example
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="vertex_ai/{{gemini_flash}}",
     messages=[{"role": "user", "content": "Hello!"}],
     vertex_project="YOUR_PROJECT_ID",
@@ -125,7 +125,7 @@ PROJECT_ID="YOUR_PROJECT_ID"
 
 curl -X POST \
   "${LUMINA_PROXY_BASE_URL}/vertex_ai/v1/projects/${PROJECT_ID}/locations/global/publishers/google/models/${MODEL_ID}:generateContent" \
-  -H "Authorization: Bearer sk-your-litellm-key" \
+  -H "Authorization: Bearer sk-your-lumina-key" \
   -H "Content-Type: application/json" \
   -H "x-pass-X-Vertex-AI-LLM-Request-Type: shared" \
   -d '{
@@ -143,9 +143,9 @@ A: The service account or Application Default Credentials (ADC) user does not ha
 **Q: What should I do if I get a `429 Quota exceeded` error?**  
 A: This means you've hit the per-region QPM (queries per minute) or TPM (tokens per minute) quota. You can:
 - Request a quota increase from the [GCP Quotas console](https://console.cloud.google.com/iam-admin/quotas)
-- Add more regions to your LiteLLM configuration for load balancing
+- Add more regions to your Lumina configuration for load balancing
 - Upgrade to [Provisioned Throughput](https://cloud.google.com/vertex-ai/generative-ai/docs/provisioned-throughput) for guaranteed capacity
 
 **Q: How do I fix the `VERTEXAI_PROJECT not set` error?**  
-A: Either pass the `vertex_project` parameter explicitly in your LiteLLM call, or set the `VERTEXAI_PROJECT` environment variable before running your code.
+A: Either pass the `vertex_project` parameter explicitly in your Lumina call, or set the `VERTEXAI_PROJECT` environment variable before running your code.
 

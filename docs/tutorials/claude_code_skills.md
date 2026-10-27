@@ -1,17 +1,17 @@
-# LiteLLM Skills
+# Lumina Skills
 
-[litellm-skills](https://github.com/BerriAI/litellm-skills) is a collection of [Agent Skills](https://agentskills.io) for managing a live LiteLLM proxy. Install them once and any agent that supports the Agent Skills standard (Claude Code, OpenCode, OpenClaw, etc.) can create users, teams, keys, models, MCP servers, agents, and query usage, all by running `curl` commands against your proxy.
+[lumina-skills](https://github.com/Soventra/lumina-skills) is a collection of [Agent Skills](https://agentskills.io) for managing a live Lumina proxy. Install them once and any agent that supports the Agent Skills standard (Claude Code, OpenCode, OpenClaw, etc.) can create users, teams, keys, models, MCP servers, agents, and query usage, all by running `curl` commands against your proxy.
 
 ## Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm-skills/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/Soventra/lumina-skills/main/install.sh | sh
 ```
 
 ## Requirements
 
 - `curl` installed
-- A running LiteLLM proxy (local or remote)
+- A running Lumina proxy (local or remote)
 - A proxy admin key, not a virtual key scoped to `llm_api_routes`
 
 ## Available Skills
@@ -93,7 +93,7 @@ When you invoke a skill, the agent asks for your `LUMINA_BASE_URL` and admin key
 
 ## Related
 
-- [litellm-skills on GitHub](https://github.com/BerriAI/litellm-skills)
+- [lumina-skills on GitHub](https://github.com/Soventra/lumina-skills)
 - [Virtual Keys](../proxy/virtual_keys.md) — managing API keys on the proxy
 - [Team-based routing](../proxy/team_based_routing.md) — setting up teams
 - [Model Management](../proxy/model_management.md) — adding models via config or API

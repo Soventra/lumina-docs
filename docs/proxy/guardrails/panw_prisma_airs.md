@@ -2,7 +2,7 @@ import Image from '@theme/IdealImage';
 
 # PANW Prisma AIRS
 
-LiteLLM supports PANW Prisma AIRS (AI Runtime Security) guardrails via the [Prisma AIRS Scan API](https://pan.dev/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/). This integration provides Security-as-Code for AI applications using Palo Alto Networks' AI security platform.
+Lumina supports PANW Prisma AIRS (AI Runtime Security) guardrails via the [Prisma AIRS Scan API](https://pan.dev/prisma-airs/api/airuntimesecurity/airuntimesecurityapi/). This integration provides Security-as-Code for AI applications using Palo Alto Networks' AI security platform.
 
 - **Prompt injection and malicious URL detection** — real-time scanning before or after LLM calls
 - **Data loss prevention (DLP)** — detect and block sensitive data in prompts and responses
@@ -21,7 +21,7 @@ LiteLLM supports PANW Prisma AIRS (AI Runtime Security) guardrails via the [Pris
 
 For detailed setup instructions, see the [Prisma AIRS API Overview](https://docs.paloaltonetworks.com/ai-runtime-security/activation-and-onboarding/ai-runtime-security-api-intercept-overview).
 
-### 2. Define Guardrails on your LiteLLM config.yaml
+### 2. Define Guardrails on your Lumina config.yaml
 
 Set `api_base` to the regional endpoint for your Prisma AIRS deployment profile:
 
@@ -49,7 +49,7 @@ guardrails:
       api_base: "https://service.api.aisecurity.paloaltonetworks.com"  # US — change to your region
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```bash
 export PANW_PRISMA_AIRS_API_KEY="your-panw-api-key"
@@ -58,7 +58,7 @@ export OPENAI_API_KEY="sk-proj-..."
 ```
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test Request
@@ -91,9 +91,9 @@ Expected response when the guardrail blocks:
 }
 ```
 
-LiteLLM wraps this detail in an endpoint-specific HTTP error envelope. Optional fields that may also appear: `scan_id`, `report_id`, `profile_name`, `profile_id`, `tr_id`, `prompt_detected`.
+Lumina wraps this detail in an endpoint-specific HTTP error envelope. Optional fields that may also appear: `scan_id`, `report_id`, `profile_name`, `profile_id`, `tr_id`, `prompt_detected`.
 
-On success, the guardrail name appears in the `x-litellm-applied-guardrails` response header.
+On success, the guardrail name appears in the `x-lumina-applied-guardrails` response header.
 
 ## Configuration
 
@@ -115,7 +115,7 @@ On success, the guardrail name appears in the `x-litellm-applied-guardrails` res
 |-----------|----------|-------------|---------|
 | `api_key` | Yes | Your PANW Prisma AIRS API key from Strata Cloud Manager | - |
 | `profile_name` | No | Security profile name configured in Strata Cloud Manager. Optional if API key has linked profile | - |
-| `app_name` | No | Application identifier for tracking in Prisma AIRS analytics (prefixed with "LiteLLM-") | `LiteLLM` |
+| `app_name` | No | Application identifier for tracking in Prisma AIRS analytics (prefixed with "Lumina-") | `Lumina` |
 | `api_base` | No | Regional API endpoint. US: `https://service.api.aisecurity.paloaltonetworks.com`, EU: `https://service-de.api.aisecurity.paloaltonetworks.com`, India: `https://service-in.api.aisecurity.paloaltonetworks.com`, Singapore: `https://service-sg.api.aisecurity.paloaltonetworks.com` | US |
 | `mode` | No | When to run the guardrail (see mode table above) | `pre_call` |
 | `fallback_on_error` | No | Action when PANW API is unavailable: `"block"` (fail-closed) or `"allow"` (fail-open). Config errors always block. | `block` |
@@ -144,8 +144,8 @@ export PANW_PRISMA_AIRS_API_BASE="https://custom-endpoint.com"
 | `profile_name` | PANW AI security profile name | Per-request > config |
 | `profile_id` | PANW AI security profile ID (takes precedence over `profile_name`) | Per-request only |
 | `user_ip` | User IP address for tracking in Prisma AIRS | Per-request only |
-| `app_name` | Application identifier (prefixed with "LiteLLM-") | Per-request > config > "LiteLLM" |
-| `app_user` | Custom user identifier for tracking in Prisma AIRS | `app_user` > `user` > "litellm_user" |
+| `app_name` | Application identifier (prefixed with "Lumina-") | Per-request > config > "Lumina" |
+| `app_user` | Custom user identifier for tracking in Prisma AIRS | `app_user` > `user` > "lumina_user" |
 
 ```json
 {
@@ -182,7 +182,7 @@ guardrails:
 ### Content Masking
 
 :::warning[Important: Masking is Controlled by PANW Security Profile]
-The actual masking behavior (what content gets masked and how) is controlled by your PANW Prisma AIRS security profile in Strata Cloud Manager. The LiteLLM flags (`mask_request_content`, `mask_response_content`) only control whether to apply the masked content and allow the request to continue, or block entirely.
+The actual masking behavior (what content gets masked and how) is controlled by your PANW Prisma AIRS security profile in Strata Cloud Manager. The Lumina flags (`mask_request_content`, `mask_response_content`) only control whether to apply the masked content and allow the request to continue, or block entirely.
 :::
 
 ```yaml
@@ -229,7 +229,7 @@ guardrails:
 
 Authentication and configuration errors (401, 403, invalid profile) always block. Only transient errors (429, timeout, network) trigger fail-open.
 
-When fail-open is triggered, the response includes a tracking header: `X-LiteLLM-Applied-Guardrails: panw-airs:unscanned`
+When fail-open is triggered, the response includes a tracking header: `X-Lumina-Applied-Guardrails: panw-airs:unscanned`
 
 ### Custom Violation Messages
 
@@ -254,15 +254,15 @@ guardrails:
 
 ### Transaction Tracking
 
-For standard request/response scans, `tr_id` maps to `litellm_call_id`. MCP tool scans use the parent `litellm_call_id` when available; if missing, PANW synthesizes a fallback MCP transaction ID. The real limitation is correlation loss: synthesized MCP `tr_id` values are not grouped with the parent request's prompt/response scans in AIRS dashboards.
+For standard request/response scans, `tr_id` maps to `lumina_call_id`. MCP tool scans use the parent `lumina_call_id` when available; if missing, PANW synthesizes a fallback MCP transaction ID. The real limitation is correlation loss: synthesized MCP `tr_id` values are not grouped with the parent request's prompt/response scans in AIRS dashboards.
 
-By default, LiteLLM generates a UUID for `litellm_call_id`. To provide your own:
+By default, Lumina generates a UUID for `lumina_call_id`. To provide your own:
 
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
-  -H "x-litellm-call-id: my-custom-call-id-789" \
+  -H "x-lumina-call-id: my-custom-call-id-789" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "capital of France"}],
@@ -270,7 +270,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-The `x-litellm-call-id` is also returned in response headers. If you pass `litellm_trace_id` in request metadata (or via the `x-litellm-trace-id` header), it is included in the PANW API payload metadata but does not affect `tr_id` or appear in Prisma AIRS.
+The `x-lumina-call-id` is also returned in response headers. If you pass `lumina_trace_id` in request metadata (or via the `x-lumina-trace-id` header), it is included in the PANW API payload metadata but does not affect `tr_id` or appear in Prisma AIRS.
 
 ### Streaming
 
@@ -303,11 +303,11 @@ guardrails:
       default_on: true
 ```
 
-Set `mode: post_mcp_call` explicitly and `default_on: true` so the MCP child call selects the guardrail. Ordinary `post_call` configuration continues to scan LLM responses only. This requires a LiteLLM version containing [the integration fix](https://github.com/BerriAI/litellm/pull/43109).
+Set `mode: post_mcp_call` explicitly and `default_on: true` so the MCP child call selects the guardrail. Ordinary `post_call` configuration continues to scan LLM responses only. This requires a Lumina version containing [the integration fix](https://github.com/Soventra/lumina/pull/43109).
 
 A blocked `/mcp` call returns an MCP tool error (`result.isError: true`), which can arrive with HTTP 200. During `/v1/responses` MCP auto-execution, the model receives a tool error instead of the blocked content and can continue generating a response. The block does not by itself make the overall Responses request return HTTP 400.
 
 ### Current Limitations
 
 - **Guardrail selection not inherited by MCP sub-calls.** With `default_on: false`, MCP child-call scans can be skipped because the parent request's guardrail selection is not propagated to the synthetic MCP payload. Workaround: use a dedicated guardrail with `mode: pre_mcp_call` or `mode: post_mcp_call` and `default_on: true`.
-- **MCP transaction correlation.** MCP tool scans use the parent `litellm_call_id` when available; otherwise a fallback ID is synthesized and will not be grouped with the parent request in AIRS dashboards.
+- **MCP transaction correlation.** MCP tool scans use the parent `lumina_call_id` when available; otherwise a fallback ID is synthesized and will not be grouped with the parent request in AIRS dashboards.

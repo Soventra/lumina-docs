@@ -5,10 +5,10 @@ import {createWorkshopSignupHandler} from './signup.mjs';
 
 const env = {VERCEL: '1', WORKSHOP_ZAPIER_WEBHOOK_URL: 'https://hooks.zapier.com/hooks/catch/test-owner/test-hook/'};
 const body = {
-  name: ' Alex Chen ', email: 'alex@litellm.ai', company: 'Example',
+  name: ' Alex Chen ', email: 'alex@lumina.ai', company: 'Example',
   linkedin: 'linkedin.com/in/alex-chen', workflow: 'Turn Slack bugs into tested pull requests.',
   onsiteInterest: '', submissionId: 'stable-id-123',
-  source: 'https://docs.litellm.ai/blog/cloud-agent-workshop?campaign=social#signup',
+  source: 'https://docs.lumina.ai/blog/cloud-agent-workshop?campaign=social#signup',
 };
 const neverFetch = () => assert.fail('Invalid request reached the webhook');
 
@@ -16,7 +16,7 @@ async function invoke(handler, options = {}) {
   const req = options.stream === undefined ? {} : Readable.from([Buffer.from(options.stream)]);
   Object.assign(req, {
     method: options.method || 'POST',
-    headers: {host: 'docs.litellm.ai', origin: 'https://docs.litellm.ai', 'content-type': 'application/json', ...options.headers},
+    headers: {host: 'docs.lumina.ai', origin: 'https://docs.lumina.ai', 'content-type': 'application/json', ...options.headers},
     socket: {remoteAddress: options.remoteAddress || '203.0.113.1'},
   });
   if (options.stream === undefined) req.body = options.body === undefined ? body : options.body;
@@ -42,14 +42,14 @@ test('relay normalizes answers and sends the exact workshop hook contract', asyn
       linkedin: 'https://linkedin.com/in/alex-chen', workflow: body.workflow, onsiteInterest: 'Not specified',
       submissionId: body.submissionId, workshop: 'Build a self-hosted cloud agent',
       dates: 'October 19–30, 2026', format: 'Remote · 2 weeks',
-      source: 'https://docs.litellm.ai/blog/cloud-agent-workshop',
+      source: 'https://docs.lumina.ai/blog/cloud-agent-workshop',
     });
     assert.equal(slackMessage, [
       '*New cloud agent workshop signup*',
       'Build a self-hosted cloud agent · October 19–30, 2026 · Remote · 2 weeks',
-      '', '*Name:* Alex Chen', '*Work email:* alex@litellm.ai', '*Company:* Example',
+      '', '*Name:* Alex Chen', '*Work email:* alex@lumina.ai', '*Company:* Example',
       '*LinkedIn:* https://linkedin.com/in/alex-chen', '*Goals:* Turn Slack bugs into tested pull requests.',
-      '*On-site interest:* Not specified', '*Source:* https://docs.litellm.ai/blog/cloud-agent-workshop',
+      '*On-site interest:* Not specified', '*Source:* https://docs.lumina.ai/blog/cloud-agent-workshop',
       '*Submission ID:* stable-id-123',
     ].join('\n'));
     return Response.json({status: 'success'});
@@ -97,7 +97,7 @@ test('missing and invalid fields, forged metadata, and unsafe source URLs never 
     {...body, name: ' '}, {...body, email: 'not-an-email'}, {...body, linkedin: 'https://linkedin.com.evil.example/in/alex'},
     {...body, workflow: 'x'.repeat(3001)}, {...body, onsiteInterest: 'Invented'}, {...body, company: 100},
     {...body, submissionId: 'x'}, {...body, source: 'https://evil.example/workshop'},
-    {...body, source: 'https://user:password@docs.litellm.ai/blog/cloud-agent-workshop'},
+    {...body, source: 'https://user:password@docs.lumina.ai/blog/cloud-agent-workshop'},
     {...body, event: 'another-event'}, {...body, webhookUrl: 'https://evil.example'},
   ]) {
     const handler = createWorkshopSignupHandler({env, fetchImpl: neverFetch});
@@ -190,7 +190,7 @@ test('streamed JSON input follows the same validation path', async () => {
 });
 
 
-const handoffOrigins = ['https://handoff.litellm.ai', 'https://litellm-handoff.onrender.com', 'https://litellm-workshop-directions.ishaan196385.chatgpt.site'];
+const handoffOrigins = ['https://handoff.lumina.ai', 'https://lumina-handoff.onrender.com', 'https://lumina-workshop-directions.ishaan196385.chatgpt.site'];
 
 test('HANDOFF preflight allows only POST and Content-Type without calling Zapier', async () => {
   const handler = createWorkshopSignupHandler({env: {VERCEL: '1'}, fetchImpl: neverFetch});
@@ -247,10 +247,10 @@ test('HANDOFF requests forward timeline and updated dates to the same Zapier hoo
 test('HANDOFF CORS does not accept lookalike origins, non-HTTPS origins, or arbitrary hosts', async () => {
   const handler = createWorkshopSignupHandler({env, fetchImpl: neverFetch});
   const badOrigins = [
-    'https://handoff.litellm.ai.evil.example', 'https://evil.handoff.litellm.ai',
-    'https://litellm-handoff.onrender.com.evil.example', 'https://another.onrender.com',
-    'http://handoff.litellm.ai', 'https://handoff.litellm.ai:444',
-    'https://handoff.litellm.ai/', 'https://user@handoff.litellm.ai',
+    'https://handoff.lumina.ai.evil.example', 'https://evil.handoff.lumina.ai',
+    'https://lumina-handoff.onrender.com.evil.example', 'https://another.onrender.com',
+    'http://handoff.lumina.ai', 'https://handoff.lumina.ai:444',
+    'https://handoff.lumina.ai/', 'https://user@handoff.lumina.ai',
   ];
   for (const origin of badOrigins) {
     for (const method of ['POST', 'OPTIONS']) {
@@ -269,7 +269,7 @@ test('HANDOFF validation failures include CORS headers and never reach Zapier', 
     {...body, source: origin, deploymentTimeline: 'Tomorrow'},
     {...body, source: origin, deploymentTimeline: 30},
     {...body, source: origin, deploymentTimeline: 'x'.repeat(101)},
-    {...body, source: 'https://docs.litellm.ai/blog/cloud-agent-workshop'},
+    {...body, source: 'https://docs.lumina.ai/blog/cloud-agent-workshop'},
     {...body, source: origin, workflowGoals: body.workflow},
   ]) {
     const result = await invoke(handler, {headers: {origin}, body: invalid});
@@ -373,7 +373,7 @@ test('reserved domains are rejected on every workshop origin, including partial 
     'qa@company.test', 'qa@company.invalid', 'qa@company.localhost',
     'qa@localhost', 'qa@a.b.example.com',
   ];
-  for (const origin of ['https://docs.litellm.ai', ...handoffOrigins]) {
+  for (const origin of ['https://docs.lumina.ai', ...handoffOrigins]) {
     for (const email of emails) {
       const handler = createWorkshopSignupHandler({env, fetchImpl: neverFetch});
       const result = await invoke(handler, {headers: {origin}, stream: JSON.stringify({email})});
@@ -388,7 +388,7 @@ test('shell probes in name and company never reach the webhook on any workshop o
     '$(sleep 5)', '`sleep 5`', ';sleep 5;', 'Example && curl https://probe.invalid',
     'Example | bash', 'Example || whoami', '${IFS}sleep${IFS}5', 'Example\nsleep 5',
   ];
-  for (const origin of ['https://docs.litellm.ai', ...handoffOrigins]) {
+  for (const origin of ['https://docs.lumina.ai', ...handoffOrigins]) {
     for (const field of ['name', 'company']) {
       for (const probe of probes) {
         const handler = createWorkshopSignupHandler({env, fetchImpl: neverFetch});
@@ -420,7 +420,7 @@ test('international names and ordinary company punctuation remain valid; workflo
 });
 
 test('source paths cannot carry attacker-controlled text into notifications through any workshop origin', async () => {
-  for (const origin of ['https://docs.litellm.ai', ...handoffOrigins]) {
+  for (const origin of ['https://docs.lumina.ai', ...handoffOrigins]) {
     const canonicalPath = handoffOrigins.includes(origin) ? '/' : '/blog/cloud-agent-workshop';
     for (const suffix of ['/$(sleep%206)', '/;sleep%206;', '/nested/path?campaign=social#signup']) {
       const handler = createWorkshopSignupHandler({env, fetchImpl: async (_url, options) => {
@@ -538,7 +538,7 @@ test('retry cache stays bounded by evicting old confirmed entries while recent r
   let now = 0, calls = 0;
   const handler = createWorkshopSignupHandler({env, now: () => now, fetchImpl: async () => { calls += 1; return Response.json({status: 'success'}); }});
   const options = i => ({
-    body: {...body, email: `attendee-${i}@litellm.ai`, submissionId: `bounded-cache-${i}`},
+    body: {...body, email: `attendee-${i}@lumina.ai`, submissionId: `bounded-cache-${i}`},
     headers: {'x-vercel-forwarded-for': `198.51.100.${i % 200 + 1}`},
   });
   for (let i = 0; i <= 1000; i += 1) {

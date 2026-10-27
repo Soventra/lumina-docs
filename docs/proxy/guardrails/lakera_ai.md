@@ -7,11 +7,11 @@ import TabItem from '@theme/TabItem';
 **Supported endpoints:** The Lakera v2 integration only supports the **chat completions** endpoint (`/v1/chat/completions`). It is not supported for the Responses API, `/v1/messages`, MCP, A2A, or other proxy endpoints.
 
 ## Quick Start
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -47,11 +47,11 @@ guardrails:
 - `post_call` Run **after** LLM call, on **input & output**
 - `during_call` Run **during** LLM call, on **input** Same as `pre_call` but runs in parallel as LLM call.  Response not returned until guardrail check completes
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request 
@@ -171,8 +171,8 @@ guardrails:
   - `"monitor"`: Logs violations but allows the request to proceed. Useful for tuning security policies without blocking legitimate requests.
   - `"inject_system_message"`: Appends an advisory system message to the request and lets the real LLM call proceed (HTTP 200), instead of blocking or allowing silently. See [Advisory mode](#advisory-mode) below for how it works and its limitations.
 - `advisory_system_message`: (Optional[str]) Custom advisory message template, used only when `on_flagged: "inject_system_message"`. Must be a valid `str.format()` string containing a real `{reason}` placeholder (an escaped `{{reason}}` is rejected); an invalid template raises an error when the guardrail is configured, not on the first flagged request. Defaults to a built-in generic message when unset.
-- `skip_system_message_in_guardrail`: (Optional[bool]) Exclude `role: system` messages from what's sent to Lakera for inspection. The LLM still receives the full conversation; only Lakera's view is filtered. If unset, falls back to the global `litellm_settings.skip_system_message_in_guardrail`. See [Guardrails quick start](./quick_start#skip-system-messages-in-guardrail-evaluation) for the global setting and Admin UI controls.
-- `skip_tool_message_in_guardrail`: (Optional[bool]) Same as above, for `role: tool` messages (tool call results). Falls back to `litellm_settings.skip_tool_message_in_guardrail` if unset. See [Guardrails quick start](./quick_start#skip-tool-messages-in-guardrail-evaluation).
+- `skip_system_message_in_guardrail`: (Optional[bool]) Exclude `role: system` messages from what's sent to Lakera for inspection. The LLM still receives the full conversation; only Lakera's view is filtered. If unset, falls back to the global `lumina_settings.skip_system_message_in_guardrail`. See [Guardrails quick start](./quick_start#skip-system-messages-in-guardrail-evaluation) for the global setting and Admin UI controls.
+- `skip_tool_message_in_guardrail`: (Optional[bool]) Same as above, for `role: tool` messages (tool call results). Falls back to `lumina_settings.skip_tool_message_in_guardrail` if unset. See [Guardrails quick start](./quick_start#skip-tool-messages-in-guardrail-evaluation).
 
 Unlike most other guardrails that run via a direct hook on the raw request, Lakera v2 honors both skip flags directly; most direct-hook guardrails do not. See [Where the skip flags apply](./quick_start#where-the-skip-flags-apply) for the full picture across guardrails.
 
@@ -182,7 +182,7 @@ Masking in place preserves both skip flags and every other field on a message (a
 
 `on_flagged: "inject_system_message"` is for detectors prone to false positives, for example a prompt-injection heuristic tripping on legitimate instructional language, where the operator wants the LLM itself to weigh whether a flag is real rather than hard-blocking every flagged request or allowing it with no signal at all.
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 guardrails:
   - guardrail_name: "lakera-advisory"
     lumina_params:

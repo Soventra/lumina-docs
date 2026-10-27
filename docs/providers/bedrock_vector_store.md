@@ -9,23 +9,23 @@ AWS Bedrock Knowledge Bases allows you to connect your LLM's to your organizatio
 | Property | Details |
 |----------|---------|
 | Description | Bedrock Knowledge Bases connects your data to LLM's, enabling them to retrieve and reference your organization's information in their responses. |
-| Provider Route on LiteLLM | `bedrock` in the litellm vector_store_registry |
+| Provider Route on Lumina | `bedrock` in the lumina vector_store_registry |
 | Provider Doc | [AWS Bedrock Knowledge Bases ↗](https://aws.amazon.com/bedrock/knowledge-bases/) |
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
-```python showLineNumbers title="Example using LiteLLM Python SDK"
+```python showLineNumbers title="Example using Lumina Python SDK"
 import os
-import litellm
+import lumina
 
-from litellm.vector_stores.vector_store_registry import VectorStoreRegistry, LiteLLM_ManagedVectorStore
+from lumina.vector_stores.vector_store_registry import VectorStoreRegistry, Lumina_ManagedVectorStore
 
 # Init vector store registry with your Bedrock Knowledge Base
-litellm.vector_store_registry = VectorStoreRegistry(
+lumina.vector_store_registry = VectorStoreRegistry(
     vector_stores=[
-        LiteLLM_ManagedVectorStore(
+        Lumina_ManagedVectorStore(
             vector_store_id="YOUR_KNOWLEDGE_BASE_ID",  # KB ID from AWS Bedrock
             custom_llm_provider="bedrock"
         )
@@ -33,7 +33,7 @@ litellm.vector_store_registry = VectorStoreRegistry(
 )
 
 # Make a completion request using your Knowledge Base
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}", 
     messages=[{"role": "user", "content": "What does our company policy say about remote work?"}],
     tools=[
@@ -47,7 +47,7 @@ response = await litellm.acompletion(
 print(response.choices[0].message.content)
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your vector_store_registry
 
@@ -73,9 +73,9 @@ vector_store_registry:
 
 </TabItem>
 
-<TabItem value="litellm-ui" label="LiteLLM UI">
+<TabItem value="lumina-ui" label="Lumina UI">
 
-On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Store. On this page you can create a vector store with a name, vector store id and credentials.
+On the Lumina UI, Navigate to Experimental > Vector Stores > Create Vector Store. On this page you can create a vector store with a name, vector store id and credentials.
 
 <Image 
   img={require('../../img/kb_2.png')}
@@ -113,10 +113,10 @@ curl http://localhost:4000/v1/chat/completions \
 ```python
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Make a completion request with vector_store_ids parameter
@@ -152,7 +152,7 @@ Filter by metadata attributes.
 <TabItem value="single-filter" label="Single Filter">
 
 ```python
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages=[{"role": "user", "content": "What are the latest updates?"}],
     tools=[{
@@ -172,7 +172,7 @@ response = await litellm.acompletion(
 <TabItem value="and-filters" label="AND">
 
 ```python
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages=[{"role": "user", "content": "What are the policies?"}],
     tools=[{
@@ -193,7 +193,7 @@ response = await litellm.acompletion(
 <TabItem value="or-filters" label="OR">
 
 ```python
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages=[{"role": "user", "content": "Show me technical docs"}],
     tools=[{
@@ -214,7 +214,7 @@ response = await litellm.acompletion(
 <TabItem value="advanced-filters" label="AWS Operators">
 
 ```python
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages=[{"role": "user", "content": "Find docs"}],
     tools=[{
@@ -259,15 +259,15 @@ curl http://localhost:4000/v1/chat/completions \
 
 ## Restrict Results to a User
 
-Knowledge Bases with access control (a Kendra GenAI index or a data source with document-level ACLs) only return the chunks a given user may see. Pass that identity as Bedrock's `userContext` and LiteLLM forwards it on the Retrieve request. The value is sent as is, so Bedrock validates it: `userId` must be a string. LiteLLM does not check the identity against the proxy key, so only callers you trust to name their users should be able to search a store with ACLs.
+Knowledge Bases with access control (a Kendra GenAI index or a data source with document-level ACLs) only return the chunks a given user may see. Pass that identity as Bedrock's `userContext` and Lumina forwards it on the Retrieve request. The value is sent as is, so Bedrock validates it: `userId` must be a string. Lumina does not check the identity against the proxy key, so only callers you trust to name their users should be able to search a store with ACLs.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.vector_stores.search(
+response = lumina.vector_stores.search(
     vector_store_id="YOUR_KNOWLEDGE_BASE_ID",
     custom_llm_provider="bedrock",
     query="What does our company policy say about remote work?",
@@ -282,7 +282,7 @@ response = litellm.vector_stores.search(
 ```python
 from openai import OpenAI
 
-client = OpenAI(base_url="http://localhost:4000", api_key="your-litellm-api-key")
+client = OpenAI(base_url="http://localhost:4000", api_key="your-lumina-api-key")
 
 response = client.vector_stores.search(
     vector_store_id="YOUR_KNOWLEDGE_BASE_ID",
@@ -332,6 +332,6 @@ See how to access vector store search results in your response:
 ## Further Reading
 
 Vector Stores:
-- [Always on Vector Stores](https://docs.litellm.ai/docs/completion/knowledgebase#always-on-for-a-model)
-- [Listing available vector stores on litellm proxy](https://docs.litellm.ai/docs/completion/knowledgebase#listing-available-vector-stores)
-- [How LiteLLM Vector Stores Work](https://docs.litellm.ai/docs/completion/knowledgebase#how-it-works)
+- [Always on Vector Stores](https://docs.lumina.ai/docs/completion/knowledgebase#always-on-for-a-model)
+- [Listing available vector stores on lumina proxy](https://docs.lumina.ai/docs/completion/knowledgebase#listing-available-vector-stores)
+- [How Lumina Vector Stores Work](https://docs.lumina.ai/docs/completion/knowledgebase#how-it-works)

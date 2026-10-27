@@ -1,6 +1,6 @@
 ---
 title: Production Deployment
-description: Production deployment guide for LiteLLM on AWS, GCP, Azure, or any Kubernetes cluster, with Helm charts and official Terraform modules.
+description: Production deployment guide for Lumina on AWS, GCP, Azure, or any Kubernetes cluster, with Helm charts and official Terraform modules.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -18,16 +18,16 @@ There are two supported paths. If you run Kubernetes, [deploy with Helm](#deploy
 
 <CloudArchitectureSelector />
 
-LiteLLM provides two deployment modes:
+Lumina provides two deployment modes:
 
-- **Monolithic**: one `litellm` image serves LLM traffic, management APIs, and the UI. This is what the `litellm-helm` chart runs, and the simplest to operate.
-- **Microservices**: a `gateway` (LLM traffic, port 4000), `backend` (management APIs and UI backend, port 4001), and `ui` (port 3000), each deployed and scaled independently. This is what the componentized `litellm` chart and both Terraform modules run; see the [chart values](https://github.com/BerriAI/litellm/blob/main/helm/litellm/values.yaml) for the full reference.
+- **Monolithic**: one `lumina` image serves LLM traffic, management APIs, and the UI. This is what the `lumina-helm` chart runs, and the simplest to operate.
+- **Microservices**: a `gateway` (LLM traffic, port 4000), `backend` (management APIs and UI backend, port 4001), and `ui` (port 3000), each deployed and scaled independently. This is what the componentized `lumina` chart and both Terraform modules run; see the [chart values](https://github.com/Soventra/lumina/blob/main/helm/lumina/values.yaml) for the full reference.
 
 The supporting infrastructure is identical in either mode:
 
 | Component | Purpose | Notes |
 |---|---|---|
-| LiteLLM services | One proxy deployment (monolithic) or gateway + backend + ui (microservices) | Stateless; run 2+ replicas behind a load balancer |
+| Lumina services | One proxy deployment (monolithic) or gateway + backend + ui (microservices) | Stateless; run 2+ replicas behind a load balancer |
 | PostgreSQL | Keys, teams, users, spend logs, config | Required for the proxy's auth and tracking features |
 | Redis | Rate limiting, router state, caching across instances | Required once you run more than one instance |
 | Migrations job | Applies schema migrations against Postgres | Runs once per upgrade; proxy instances set `DISABLE_SCHEMA_UPDATE=true` |
@@ -35,7 +35,7 @@ The supporting infrastructure is identical in either mode:
 ## Core configuration
 
 ```bash
-DATABASE_URL="postgresql://user:password@host:5432/litellm"
+DATABASE_URL="postgresql://user:password@host:5432/lumina"
 LUMINA_MASTER_KEY="sk-..."   # admin key for the proxy
 LUMINA_SALT_KEY="sk-..."     # encrypts provider credentials stored in the DB. Set once, never change it
 DISABLE_SCHEMA_UPDATE="true"  # proxy instances never run migrations; the migrations job does
@@ -44,7 +44,7 @@ STORE_MODEL_IN_DB="True"      # manage models from the Admin UI instead of confi
 
 `LUMINA_SALT_KEY` cannot be rotated after you add models: it encrypts the provider credentials stored in your database, and changing it makes them unreadable. Generate a strong random value and store both keys in your cloud's secret manager.
 
-Official images are published to `ghcr.io/berriai` and mirrored at `docker.litellm.ai/berriai`. Use `ghcr.io/berriai/litellm` for monolithic deployments, including those with Postgres, since it bundles the Prisma toolchain, and pin a version tag rather than `latest` or a moving tag, so rollbacks are deterministic. All images are signed; see the [Docker Image Security Guide](./docker_image_security.md) for verification and the non-root variant.
+Official images are published to `ghcr.io/berriai` and mirrored at `docker.lumina.ai/berriai`. Use `ghcr.io/soventra/lumina` for monolithic deployments, including those with Postgres, since it bundles the Prisma toolchain, and pin a version tag rather than `latest` or a moving tag, so rollbacks are deterministic. All images are signed; see the [Docker Image Security Guide](./docker_image_security.md) for verification and the non-root variant.
 
 ## Provision the data stores
 
@@ -64,20 +64,20 @@ Provision [Cloud SQL PostgreSQL](https://cloud.google.com/sql/docs/postgres) and
 <TabItem value="azure" label="Azure">
 
 ```bash
-az group create --name litellm-prod --location eastus
+az group create --name lumina-prod --location eastus
 
-az aks create --resource-group litellm-prod --name litellm-aks \
+az aks create --resource-group lumina-prod --name lumina-aks \
   --node-count 3 --enable-managed-identity
 
-az postgres flexible-server create --resource-group litellm-prod \
-  --name litellm-db --database-name litellm \
+az postgres flexible-server create --resource-group lumina-prod \
+  --name lumina-db --database-name lumina \
   --tier GeneralPurpose --sku-name Standard_D2ds_v5
 
-az redis create --resource-group litellm-prod --name litellm-redis \
+az redis create --resource-group lumina-prod --name lumina-redis \
   --location eastus --sku Standard --vm-size c1
 ```
 
-Docs: [AKS](https://learn.microsoft.com/en-us/azure/aks/what-is-aks), [Azure Database for PostgreSQL Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview), [Azure Cache for Redis](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-overview). Azure Cache for Redis serves TLS on port 6380, and TLS is enabled through the URL scheme: instead of `redis_host` and `redis_port`, set `redis_url: "rediss://:<access-key>@litellm-redis.redis.cache.windows.net:6380"` under `router_settings` (the `rediss://` scheme turns TLS on).
+Docs: [AKS](https://learn.microsoft.com/en-us/azure/aks/what-is-aks), [Azure Database for PostgreSQL Flexible Server](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/overview), [Azure Cache for Redis](https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-overview). Azure Cache for Redis serves TLS on port 6380, and TLS is enabled through the URL scheme: instead of `redis_host` and `redis_port`, set `redis_url: "rediss://:<access-key>@lumina-redis.redis.cache.windows.net:6380"` under `router_settings` (the `rediss://` scheme turns TLS on).
 
 </TabItem>
 </Tabs>
@@ -87,14 +87,14 @@ Docs: [AKS](https://learn.microsoft.com/en-us/azure/aks/what-is-aks), [Azure Dat
 First create the secrets both charts consume:
 
 ```bash
-kubectl create secret generic litellm-masterkey \
+kubectl create secret generic lumina-masterkey \
   --from-literal=masterkey="sk-$(openssl rand -hex 24)"
 
-kubectl create secret generic litellm-db \
-  --from-literal=username=litellm \
+kubectl create secret generic lumina-db \
+  --from-literal=username=lumina \
   --from-literal=password="<database-password>"
 
-kubectl create secret generic litellm-env \
+kubectl create secret generic lumina-env \
   --from-literal=LUMINA_SALT_KEY="sk-$(openssl rand -hex 24)" \
   --from-literal=REDIS_PASSWORD="<redis-password>" \
   --from-literal=OPENAI_API_KEY="<provider-key>"
@@ -103,30 +103,30 @@ kubectl create secret generic litellm-env \
 Then pick a deployment mode:
 
 <Tabs>
-<TabItem value="monolith" label="Monolithic (litellm-helm)">
+<TabItem value="monolith" label="Monolithic (lumina-helm)">
 
 ```yaml title="values.yaml"
 replicaCount: 3
 
 image:
-  repository: ghcr.io/berriai/litellm
+  repository: ghcr.io/soventra/lumina
   tag: "v1.90.2"          # pin your version
 
-masterkeySecretName: litellm-masterkey
+masterkeySecretName: lumina-masterkey
 masterkeySecretKey: masterkey
 
 db:
   useExisting: true
   deployStandalone: false
   endpoint: "<postgres-endpoint>"
-  database: litellm
+  database: lumina
   secret:
-    name: litellm-db
+    name: lumina-db
     usernameKey: username
     passwordKey: password
 
 environmentSecrets:
-  - litellm-env
+  - lumina-env
 
 proxy_config:
   model_list:
@@ -141,10 +141,10 @@ proxy_config:
 ```
 
 ```bash
-helm install litellm oci://ghcr.io/berriai/litellm-helm -f values.yaml
+helm install lumina oci://ghcr.io/soventra/lumina-helm -f values.yaml
 ```
 
-If the database takes short-lived tokens instead of a password (RDS or Aurora with IAM database authentication, Azure Database for PostgreSQL with Microsoft Entra ID), there is no password to put in `litellm-db`. Set `db.useIAMAuth: true` (or `db.useAzureEntraAuth: true`) with `db.username` and drop the `secret` block. The chart then sets `IAM_TOKEN_DB_AUTH` (or `AZURE_POSTGRESQL_AUTH`) and emits `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USERNAME` and `DATABASE_NAME` instead of `DATABASE_PASSWORD` and `DATABASE_URL`, and the proxy, the migrations job and the collector sidecar each mint their own token at startup. The pod needs cloud credentials for that token, IRSA or Pod Identity on EKS and workload identity on AKS.
+If the database takes short-lived tokens instead of a password (RDS or Aurora with IAM database authentication, Azure Database for PostgreSQL with Microsoft Entra ID), there is no password to put in `lumina-db`. Set `db.useIAMAuth: true` (or `db.useAzureEntraAuth: true`) with `db.username` and drop the `secret` block. The chart then sets `IAM_TOKEN_DB_AUTH` (or `AZURE_POSTGRESQL_AUTH`) and emits `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USERNAME` and `DATABASE_NAME` instead of `DATABASE_PASSWORD` and `DATABASE_URL`, and the proxy, the migrations job and the collector sidecar each mint their own token at startup. The pod needs cloud credentials for that token, IRSA or Pod Identity on EKS and workload identity on AKS.
 
 ```yaml title="values.yaml (RDS IAM)"
 db:
@@ -152,27 +152,27 @@ db:
   deployStandalone: false
   useIAMAuth: true
   endpoint: "<postgres-endpoint>"
-  database: litellm
-  username: litellm_iam   # the role granted rds_iam
+  database: lumina
+  username: lumina_iam   # the role granted rds_iam
 ```
 
-The chart lives at [`helm/litellm-helm`](https://github.com/BerriAI/litellm/tree/main/helm/litellm-helm); the published chart versions carry LiteLLM release numbers (for example `1.90.2`), and `helm show values oci://ghcr.io/berriai/litellm-helm` lists every knob. Beyond the values above it supports [autoscaling](#autoscaling) (`autoscaling.*` or `keda.*`), PodDisruptionBudgets (`pdb.*`), a Prometheus ServiceMonitor (`serviceMonitor.*`), read replica routing (`db.readReplicaUrl`, see [Database Read Replica](./db_read_replica.md)), graceful drain on shutdown (`lifecycle`), ArgoCD or Helm hooks for the migrations job (`migrationJob.hooks.*`, see [Helm PreSync hooks](./prod.md#run-migrations-from-the-helm-presync-hook)), and an optional [dedicated Prometheus metrics listener](./prometheus.md#isolate-prometheus-scraping-from-inference-traffic) configured through `metricsServer.*`.
+The chart lives at [`helm/lumina-helm`](https://github.com/Soventra/lumina/tree/main/helm/lumina-helm); the published chart versions carry Lumina release numbers (for example `1.90.2`), and `helm show values oci://ghcr.io/soventra/lumina-helm` lists every knob. Beyond the values above it supports [autoscaling](#autoscaling) (`autoscaling.*` or `keda.*`), PodDisruptionBudgets (`pdb.*`), a Prometheus ServiceMonitor (`serviceMonitor.*`), read replica routing (`db.readReplicaUrl`, see [Database Read Replica](./db_read_replica.md)), graceful drain on shutdown (`lifecycle`), ArgoCD or Helm hooks for the migrations job (`migrationJob.hooks.*`, see [Helm PreSync hooks](./prod.md#run-migrations-from-the-helm-presync-hook)), and an optional [dedicated Prometheus metrics listener](./prometheus.md#isolate-prometheus-scraping-from-inference-traffic) configured through `metricsServer.*`.
 
 </TabItem>
-<TabItem value="micro" label="Microservices (litellm)">
+<TabItem value="micro" label="Microservices (lumina)">
 
 ```yaml title="values.yaml"
 masterKey:
-  secretName: litellm-masterkey
+  secretName: lumina-masterkey
   secretKey: masterkey
 
 database:
   writer:
     host: "<postgres-endpoint>"
     port: 5432
-    dbname: litellm
+    dbname: lumina
     passwordSecret:
-      name: litellm-db
+      name: lumina-db
       usernameKey: username
       passwordKey: password
   # optional: add database.reader to route reads to a replica
@@ -181,7 +181,7 @@ redis:
   host: "<redis-endpoint>"
   port: 6379
   passwordSecret:
-    name: litellm-env
+    name: lumina-env
     passwordKey: REDIS_PASSWORD
 
 # one host fronting gateway, backend, and ui
@@ -205,15 +205,15 @@ ingress:
 For one DNS hostname per component without path-based routing, see [Separate hostname per component](./manifests_to_microservices.md#separate-hostname-per-component).
 
 ```bash
-helm upgrade --install litellm \
-  oci://ghcr.io/berriai/litellm/chart/litellm \
+helm upgrade --install lumina \
+  oci://ghcr.io/soventra/lumina/chart/lumina \
   --version 1.89.2 \
   -f values.yaml
 ```
 
 This deploys `gateway`, `backend`, and `ui` as separate services. You can scale the gateway for inference traffic without scaling the management API or Admin UI. The chart requires external Postgres and Redis and supports database read replicas, IAM database authentication, Redis Cluster, per-component probes, and per-component autoscaling.
 
-Pin the chart to `1.89.0` or newer. Each component image tag defaults to the chart version. See the [chart values](https://github.com/BerriAI/litellm/blob/main/helm/litellm/values.yaml) for every option, [Autoscaling](#autoscaling) for scaling configuration, and [Prometheus metrics isolation](./prometheus.md#isolate-prometheus-scraping-from-inference-traffic) for the gateway metrics sidecar.
+Pin the chart to `1.89.0` or newer. Each component image tag defaults to the chart version. See the [chart values](https://github.com/Soventra/lumina/blob/main/helm/lumina/values.yaml) for every option, [Autoscaling](#autoscaling) for scaling configuration, and [Prometheus metrics isolation](./prometheus.md#isolate-prometheus-scraping-from-inference-traffic) for the gateway metrics sidecar.
 
 The [high-throughput deployment profile](./high_throughput.md) adds shared database connections, isolated spend processing, and RPS/TPS autoscaling.
 
@@ -226,7 +226,7 @@ Both charts run the migrations job automatically and keep `DISABLE_SCHEMA_UPDATE
 
 Both charts can scale themselves, and both ship autoscaling off or conservative by default. For the thresholds to aim at, and why memory is not one of them, see [autoscaling in the production checklist](./prod.md#autoscaling).
 
-`litellm-helm` offers two mutually exclusive mechanisms. `autoscaling.*` renders a standard HorizontalPodAutoscaler, and `keda.*` renders a KEDA `ScaledObject` for scaling on queue depth, Prometheus queries, or anything else KEDA can read. Enabling both renders only the HPA, so pick one.
+`lumina-helm` offers two mutually exclusive mechanisms. `autoscaling.*` renders a standard HorizontalPodAutoscaler, and `keda.*` renders a KEDA `ScaledObject` for scaling on queue depth, Prometheus queries, or anything else KEDA can read. Enabling both renders only the HPA, so pick one.
 
 ```yaml
 autoscaling:
@@ -249,14 +249,14 @@ keda:
 
 The componentized chart scales each component on its own, under `gateway.hpa`, `backend.hpa`, and `ui.hpa`. The gateway and backend autoscale out of the box and the UI does not, with maximums sized to the shape of each component's traffic: the gateway defaults to `maxReplicas: 10` at 70 percent CPU and 80 percent memory, the backend to `maxReplicas: 4` at 70 percent CPU, and the UI to `maxReplicas: 3` at 80 percent CPU with `enabled: false`. Raising the gateway's ceiling is usually all you need, since it is the only component that sees LLM traffic.
 
-Whichever mechanism you use, set the maximum against what your database can serve. The connection pool is per worker, so the ceiling on replicas is also a ceiling on Postgres connections; `litellm-helm` defaults `maxReplicas` to 100, which at the default pool limit of 10 asks for roughly 1000 connections at full scale-out. See [bounding database connections](./prod.md#bound-database-connections).
+Whichever mechanism you use, set the maximum against what your database can serve. The connection pool is per worker, so the ceiling on replicas is also a ceiling on Postgres connections; `lumina-helm` defaults `maxReplicas` to 100, which at the default pool limit of 10 asks for roughly 1000 connections at full scale-out. See [bounding database connections](./prod.md#bound-database-connections).
 
 #### Scale on requests and tokens per pod
 
-CPU lags LLM traffic: a pod streaming forty responses is mostly waiting on providers, so its CPU stays low while its capacity is gone. Both charts can scale on the two counters the proxy already exports, `litellm_proxy_total_requests_metric_total` and `litellm_total_tokens_metric_total`, expressed as requests per second (RPS) and tokens per second (TPS) per pod, the way load is usually quoted (1k rps, 75M tok/s). The targets are opt-in and empty by default, so nothing changes until you set one, and they sit next to the CPU and memory targets: an HPA follows whichever metric asks for the most replicas. `averageValue` is a Kubernetes quantity, so `"6M"` and `"6000000"` are the same tokens per second.
+CPU lags LLM traffic: a pod streaming forty responses is mostly waiting on providers, so its CPU stays low while its capacity is gone. Both charts can scale on the two counters the proxy already exports, `lumina_proxy_total_requests_metric_total` and `lumina_total_tokens_metric_total`, expressed as requests per second (RPS) and tokens per second (TPS) per pod, the way load is usually quoted (1k rps, 75M tok/s). The targets are opt-in and empty by default, so nothing changes until you set one, and they sit next to the CPU and memory targets: an HPA follows whichever metric asks for the most replicas. `averageValue` is a Kubernetes quantity, so `"6M"` and `"6000000"` are the same tokens per second.
 
 ```yaml
-# litellm-helm
+# lumina-helm
 autoscaling:
   enabled: true
   targetRequestsPerSecond: "90"
@@ -277,27 +277,27 @@ gateway:
     targetTokensPerSecond: "6M"
 ```
 
-Each target renders an `autoscaling/v2` `Pods` metric, `litellm_requests_per_second` or `litellm_tokens_per_second`, with an `AverageValue` target. Kubernetes cannot read Prometheus by itself, so two things have to be in place. The chart's ServiceMonitor (Prometheus Operator) scrapes every pod on its own so each sample carries the `pod` label. Turn on the dedicated metrics listener with it (`gateway.metricsServer.enabled` on the componentized chart, `metricsServer.enabled` on `litellm-helm`): the main port serves `/metrics/` behind virtual-key auth and answers an unauthenticated scrape with 401, so the componentized chart refuses to render a ServiceMonitor without it. Then a [Prometheus Adapter](https://github.com/kubernetes-sigs/prometheus-adapter) has to serve those two names on `custom.metrics.k8s.io`, grouped by pod. `rate()` already returns a per-second value, so there is no `* 60`:
+Each target renders an `autoscaling/v2` `Pods` metric, `lumina_requests_per_second` or `lumina_tokens_per_second`, with an `AverageValue` target. Kubernetes cannot read Prometheus by itself, so two things have to be in place. The chart's ServiceMonitor (Prometheus Operator) scrapes every pod on its own so each sample carries the `pod` label. Turn on the dedicated metrics listener with it (`gateway.metricsServer.enabled` on the componentized chart, `metricsServer.enabled` on `lumina-helm`): the main port serves `/metrics/` behind virtual-key auth and answers an unauthenticated scrape with 401, so the componentized chart refuses to render a ServiceMonitor without it. Then a [Prometheus Adapter](https://github.com/kubernetes-sigs/prometheus-adapter) has to serve those two names on `custom.metrics.k8s.io`, grouped by pod. `rate()` already returns a per-second value, so there is no `* 60`:
 
 ```yaml
 rules:
-  - seriesQuery: 'litellm_proxy_total_requests_metric_total{namespace!="",pod!=""}'
+  - seriesQuery: 'lumina_proxy_total_requests_metric_total{namespace!="",pod!=""}'
     resources: { overrides: { namespace: { resource: namespace }, pod: { resource: pod } } }
-    name: { as: litellm_requests_per_second }
+    name: { as: lumina_requests_per_second }
     metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
-  - seriesQuery: 'litellm_total_tokens_metric_total{namespace!="",pod!=""}'
+  - seriesQuery: 'lumina_total_tokens_metric_total{namespace!="",pod!=""}'
     resources: { overrides: { namespace: { resource: namespace }, pod: { resource: pod } } }
-    name: { as: litellm_tokens_per_second }
+    name: { as: lumina_tokens_per_second }
     metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[1m])) by (<<.GroupBy>>)
 ```
 
 The unit is a constant factor and does not make the HPA react any faster. What sets the lag is the `rate()` window in the adapter rule, the scrape interval, and the HPA sync period (15s by default). Keep the window at `[1m]` and the ServiceMonitor interval at the chart default of 15s or faster so the window always holds at least four samples: after a traffic step the signal moves on the next scrape and reaches its full value 60s later, where a `[2m]` window is still at half.
 
-Both counters are split by model, key, and team labels, so the `sum by (pod)` folds a pod's series into one number. `kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/<ns>/pods/*/litellm_tokens_per_second` shows what the HPA sees. Worked example: 1,000 rps across 10 gateway pods is 100 rps per pod against a target of 90, so the HPA asks for `ceil(10 * 100 / 90) = 12` replicas. The token metric does the same arithmetic: ten pods serving 70,000,000 tokens per second between them average 7,000,000 TPS against a target of 6,000,000, so `ceil(10 * 7000000 / 6000000) = 12`.
+Both counters are split by model, key, and team labels, so the `sum by (pod)` folds a pod's series into one number. `kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/<ns>/pods/*/lumina_tokens_per_second` shows what the HPA sees. Worked example: 1,000 rps across 10 gateway pods is 100 rps per pod against a target of 90, so the HPA asks for `ceil(10 * 100 / 90) = 12` replicas. The token metric does the same arithmetic: ten pods serving 70,000,000 tokens per second between them average 7,000,000 TPS against a target of 6,000,000, so `ceil(10 * 7000000 / 6000000) = 12`.
 
 Tokens are counted when a response finishes, so a long stream shows up in TPS only once it completes. RPS reacts first and TPS catches up, which is fine for scale-out but means a burst of long streams is under-counted for as long as they run. Do not set a TPS target alone if your traffic is dominated by multi-minute streams.
 
-On `litellm-helm` the same signals are available through KEDA without an adapter. `keda.prometheus.requestsPerSecond` and `keda.prometheus.tokensPerSecond` are the load one replica should carry, and each adds a Prometheus trigger on `sum(rate(<counter>{namespace="<release namespace>",job="<release>-metrics"}[1m]))`, selected by release namespace and the `job` label the chart's ServiceMonitor produces. KEDA divides the release-wide rate by the per-replica threshold to pick the replica count, so the result matches the HPA path for the same traffic. Keep `keda.pollingInterval` at 15s or lower for the same reason as the scrape interval above.
+On `lumina-helm` the same signals are available through KEDA without an adapter. `keda.prometheus.requestsPerSecond` and `keda.prometheus.tokensPerSecond` are the load one replica should carry, and each adds a Prometheus trigger on `sum(rate(<counter>{namespace="<release namespace>",job="<release>-metrics"}[1m]))`, selected by release namespace and the `job` label the chart's ServiceMonitor produces. KEDA divides the release-wide rate by the per-replica threshold to pick the replica count, so the result matches the HPA path for the same traffic. Keep `keda.pollingInterval` at 15s or lower for the same reason as the scrape interval above.
 
 ```yaml
 keda:
@@ -312,7 +312,7 @@ serviceMonitor:
   enabled: true
 ```
 
-On AWS ECS the Terraform module takes the same per-second inputs, `gateway_target_requests_per_second` on `ALBRequestCountPerTarget` and `gateway_target_tokens_per_second` once you publish the token counter to CloudWatch, and converts them itself because the ALB publishes a per-minute count. CloudWatch target tracking aggregates every metric over 60-second periods with no period setting, so ECS reacts on a roughly one-minute cadence whatever the unit; the [module README](https://github.com/BerriAI/litellm/blob/main/terraform/litellm/aws/README.md#scaling-the-gateway-on-requests-and-tokens) covers both policies. Cloud Run scales on request concurrency and has no custom-metric input, so there is no TPS path on GCP outside GKE.
+On AWS ECS the Terraform module takes the same per-second inputs, `gateway_target_requests_per_second` on `ALBRequestCountPerTarget` and `gateway_target_tokens_per_second` once you publish the token counter to CloudWatch, and converts them itself because the ALB publishes a per-minute count. CloudWatch target tracking aggregates every metric over 60-second periods with no period setting, so ECS reacts on a roughly one-minute cadence whatever the unit; the [module README](https://github.com/Soventra/lumina/blob/main/terraform/lumina/aws/README.md#scaling-the-gateway-on-requests-and-tokens) covers both policies. Cloud Run scales on request concurrency and has no custom-metric input, so there is no TPS path on GCP outside GKE.
 
 ### Kubernetes without Helm
 
@@ -325,7 +325,7 @@ If you manage raw manifests, the equivalent deployment is a ConfigMap for `confi
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: litellm-config-file
+  name: lumina-config-file
 data:
   config.yaml: |
       model_list:
@@ -338,29 +338,29 @@ apiVersion: v1
 kind: Secret
 type: Opaque
 metadata:
-  name: litellm-secrets
+  name: lumina-secrets
 data:
   OPENAI_API_KEY: bWVvd19pbV9hX2NhdA== # your api key in base64
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: litellm-deployment
+  name: lumina-deployment
   labels:
-    app: litellm
+    app: lumina
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: litellm
+      app: lumina
   template:
     metadata:
       labels:
-        app: litellm
+        app: lumina
     spec:
       containers:
-      - name: litellm
-        image: docker.litellm.ai/berriai/litellm:v1.90.2 # pin a version, do not use :latest
+      - name: lumina
+        image: docker.lumina.ai/soventra/lumina:v1.90.2 # pin a version, do not use :latest
         args:
           - "--config"
           - "/app/proxy_server_config.yaml"
@@ -372,7 +372,7 @@ spec:
           subPath: config.yaml
         envFrom:
         - secretRef:
-            name: litellm-secrets
+            name: lumina-secrets
         livenessProbe:
           httpGet:
             path: /health/liveliness
@@ -388,15 +388,15 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: litellm-config-file
+            name: lumina-config-file
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: litellm-service
+  name: lumina-service
 spec:
   selector:
-    app: litellm
+    app: lumina
   ports:
     - protocol: TCP
       port: 4000
@@ -412,23 +412,23 @@ To connect the database, add `DATABASE_URL` and `LUMINA_MASTER_KEY` to the Secre
 
 The official modules deploy the full microservices stack (network, database, Redis, object storage, secrets, compute, load balancer, and a migrations job that runs before the services start) and are published to the Terraform Registry:
 
-- [`BerriAI/litellm/aws`](https://registry.terraform.io/modules/BerriAI/litellm/aws/latest)
-- [`BerriAI/litellm/google`](https://registry.terraform.io/modules/BerriAI/litellm/google/latest)
+- [`Soventra/lumina/aws`](https://registry.terraform.io/modules/Soventra/lumina/aws/latest)
+- [`Soventra/lumina/google`](https://registry.terraform.io/modules/Soventra/lumina/google/latest)
 
-Each module version defaults the four component images (gateway, backend, UI, migrations) to the matching LiteLLM release, so upgrading LiteLLM is a bump of the module `version`. Set `image_tag` only to pin a different release, or `image_registry` to pull the same images from a mirror.
+Each module version defaults the four component images (gateway, backend, UI, migrations) to the matching Lumina release, so upgrading Lumina is a bump of the module `version`. Set `image_tag` only to pin a different release, or `image_registry` to pull the same images from a mirror.
 
 ### 1-click deploy from Cloud Shell
 
 <div style={{display: 'flex', alignItems: 'center', gap: '1.5rem'}}>
   <a href="https://console.aws.amazon.com/cloudshell/home" target="_blank" rel="nofollow"><img src="/img/deploy-on-aws.png" alt="Deploy on AWS" height="40" /></a>
-  <a href="https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2FBerriAI%2Fterraform-google-litellm&cloudshell_git_branch=v1.105.0&cloudshell_workspace=examples%2Fdefault&cloudshell_tutorial=TUTORIAL.md&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image&shellonly=true" target="_blank" rel="nofollow"><img src="/img/deploy-on-gcp.png" alt="Deploy on GCP" height="40" /></a>
+  <a href="https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2FBerriAI%2Fterraform-google-lumina&cloudshell_git_branch=v1.105.0&cloudshell_workspace=examples%2Fdefault&cloudshell_tutorial=TUTORIAL.md&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image&shellonly=true" target="_blank" rel="nofollow"><img src="/img/deploy-on-gcp.png" alt="Deploy on GCP" height="40" /></a>
 </div>
 
-Both buttons open a browser shell that is already authenticated to your cloud account, so you deploy the default example stacks from the [LiteLLM repo](https://github.com/BerriAI/litellm/tree/main/terraform/litellm) without installing anything on your own machine. The GCP button also starts a guided tutorial; the AWS button only opens the shell, and you run the steps below in it.
+Both buttons open a browser shell that is already authenticated to your cloud account, so you deploy the default example stacks from the [Lumina repo](https://github.com/Soventra/lumina/tree/main/terraform/lumina) without installing anything on your own machine. The GCP button also starts a guided tutorial; the AWS button only opens the shell, and you run the steps below in it.
 
-**GCP** clones the [terraform-google-litellm](https://github.com/BerriAI/terraform-google-litellm) module mirror at the latest stable release into Cloud Shell, which is a much smaller download than the full LiteLLM repo, and opens a guided [DeployStack tutorial](https://github.com/BerriAI/terraform-google-litellm/blob/v1.105.0/examples/default/TUTORIAL.md). You pick the project and answer a few prompts; the tutorial creates the Artifact Registry remote repository that Cloud Run needs to pull from `ghcr.io`, writes `terraform.tfvars` from your answers, and runs `terraform apply`.
+**GCP** clones the [terraform-google-lumina](https://github.com/BerriAI/terraform-google-lumina) module mirror at the latest stable release into Cloud Shell, which is a much smaller download than the full Lumina repo, and opens a guided [DeployStack tutorial](https://github.com/BerriAI/terraform-google-lumina/blob/v1.105.0/examples/default/TUTORIAL.md). You pick the project and answer a few prompts; the tutorial creates the Artifact Registry remote repository that Cloud Run needs to pull from `ghcr.io`, writes `terraform.tfvars` from your answers, and runs `terraform apply`.
 
-**AWS** opens CloudShell. The default stack runs Aurora (writer plus reader), multi-AZ ElastiCache, a NAT gateway, an ALB, and Fargate tasks, all billed by the hour, so use a sandbox account for a trial. The user you are signed in as needs permission to manage EC2 networking, RDS, ElastiCache, S3, Secrets Manager, ECS, Application Auto Scaling, Elastic Load Balancing, and CloudWatch Logs, and to create IAM roles and policies named `*-litellm-*`.
+**AWS** opens CloudShell. The default stack runs Aurora (writer plus reader), multi-AZ ElastiCache, a NAT gateway, an ALB, and Fargate tasks, all billed by the hour, so use a sandbox account for a trial. The user you are signed in as needs permission to manage EC2 networking, RDS, ElastiCache, S3, Secrets Manager, ECS, Application Auto Scaling, Elastic Load Balancing, and CloudWatch Logs, and to create IAM roles and policies named `*-lumina-*`.
 
 CloudShell does not ship Terraform, and the module needs Terraform 1.12 or later. Install it into your home directory, which CloudShell keeps between sessions:
 
@@ -446,12 +446,12 @@ terraform version
 Then clone the repo and copy the default example's variables file:
 
 ```bash
-git clone https://github.com/BerriAI/litellm.git
-cd litellm/terraform/litellm/aws/examples/default
+git clone https://github.com/Soventra/lumina.git
+cd lumina/terraform/lumina/aws/examples/default
 cp terraform.tfvars.example terraform.tfvars
 ```
 
-Edit `terraform.tfvars`. A clone of the repo has no image tag of its own, so `image_tag` must name a published [LiteLLM release](https://github.com/BerriAI/litellm/releases). The example refuses a plaintext ALB unless you set `acm_certificate_arn` or, for a trial stack, `allow_plaintext_alb = true`. The gateway only loads models added in the Admin UI when it has `STORE_MODEL_IN_DB` set, so set it through `gateway_extra_env`. The stack creates ElastiCache Redis and passes `REDIS_HOST`, `REDIS_PORT`, and `REDIS_SSL` to the containers, but the proxy only connects to it when `proxy_config` enables the cache with `litellm_settings = { cache = true }`. Without it, the Admin UI shows "No Redis configured" and `/cache/ping` returns `litellm.cache is None`. Keep `general_settings`, `router_settings`, and `litellm_settings` as sibling keys of `proxy_config`; a `litellm_settings` block nested inside `general_settings` is ignored. For a stack you plan to delete, `s3_force_destroy` and `skip_final_snapshot` let `terraform destroy` remove the bucket and the Aurora cluster without keeping a final snapshot:
+Edit `terraform.tfvars`. A clone of the repo has no image tag of its own, so `image_tag` must name a published [Lumina release](https://github.com/Soventra/lumina/releases). The example refuses a plaintext ALB unless you set `acm_certificate_arn` or, for a trial stack, `allow_plaintext_alb = true`. The gateway only loads models added in the Admin UI when it has `STORE_MODEL_IN_DB` set, so set it through `gateway_extra_env`. The stack creates ElastiCache Redis and passes `REDIS_HOST`, `REDIS_PORT`, and `REDIS_SSL` to the containers, but the proxy only connects to it when `proxy_config` enables the cache with `lumina_settings = { cache = true }`. Without it, the Admin UI shows "No Redis configured" and `/cache/ping` returns `lumina.cache is None`. Keep `general_settings`, `router_settings`, and `lumina_settings` as sibling keys of `proxy_config`; a `lumina_settings` block nested inside `general_settings` is ignored. For a stack you plan to delete, `s3_force_destroy` and `skip_final_snapshot` let `terraform destroy` remove the bucket and the Aurora cluster without keeping a final snapshot:
 
 ```hcl title="terraform.tfvars"
 region = "us-east-1"
@@ -466,7 +466,7 @@ gateway_extra_env = { STORE_MODEL_IN_DB = "True" }
 
 proxy_config = {
   general_settings = {}
-  litellm_settings = {
+  lumina_settings = {
     cache = true
   }
 }
@@ -475,7 +475,7 @@ s3_force_destroy    = true
 skip_final_snapshot = true
 ```
 
-The module defaults Aurora PostgreSQL to 16.4, which some regions no longer offer (us-east-1 among them), and the apply then fails at the database after it has created the network and Redis. The example does not expose `db_engine_version` in `terraform.tfvars`, so list the versions your region offers and add one to the `module "litellm"` block in `main.tf`, for example `db_engine_version = "16.15"`:
+The module defaults Aurora PostgreSQL to 16.4, which some regions no longer offer (us-east-1 among them), and the apply then fails at the database after it has created the network and Redis. The example does not expose `db_engine_version` in `terraform.tfvars`, so list the versions your region offers and add one to the `module "lumina"` block in `main.tf`, for example `db_engine_version = "16.15"`:
 
 ```bash
 aws rds describe-db-engine-versions --engine aurora-postgresql \
@@ -500,15 +500,15 @@ MASTER_KEY="$(aws secretsmanager get-secret-value \
 echo "$ALB_URL"
 ```
 
-Check that the proxy uses Redis. A healthy response has `"status": "healthy"` and `"cache_type": "redis"`; `Cache not initialized` means the tasks that answered do not have `litellm_settings.cache` set:
+Check that the proxy uses Redis. A healthy response has `"status": "healthy"` and `"cache_type": "redis"`; `Cache not initialized` means the tasks that answered do not have `lumina_settings.cache` set:
 
 ```bash
 curl -s "$ALB_URL/cache/ping" -H "Authorization: Bearer $MASTER_KEY"
 ```
 
-Log in to the Admin UI at `<alb_url>/ui` with the username `admin` and the master key as the password. The stack starts with no models. To add one in the UI, open **Models + Endpoints**, select **Add Model**, choose the provider, enter the model and its credentials, and save; then send a test message from **Playground**. To declare models in Terraform instead, add a `model_list` to `proxy_config` and pass the provider keys with `gateway_extra_secrets` as shown in the next section. Each service logs to CloudWatch under `/ecs/<tenant>-litellm-<env>/` (`gateway`, `backend`, `ui`, `migrations`, and `bootstrap-db`). To upgrade, change `image_tag` and run `terraform apply` again, which reruns the migrations.
+Log in to the Admin UI at `<alb_url>/ui` with the username `admin` and the master key as the password. The stack starts with no models. To add one in the UI, open **Models + Endpoints**, select **Add Model**, choose the provider, enter the model and its credentials, and save; then send a test message from **Playground**. To declare models in Terraform instead, add a `model_list` to `proxy_config` and pass the provider keys with `gateway_extra_secrets` as shown in the next section. Each service logs to CloudWatch under `/ecs/<tenant>-lumina-<env>/` (`gateway`, `backend`, `ui`, `migrations`, and `bootstrap-db`). To upgrade, change `image_tag` and run `terraform apply` again, which reruns the migrations.
 
-Terraform keeps the stack's state in `terraform.tfstate` in the example directory. CloudShell deletes your home directory after 120 days without a session in that region, and without the state file Terraform can no longer update or destroy the stack, so use an [S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3) for any stack you keep. To delete a trial stack, run `terraform destroy` from the same directory. Without `s3_force_destroy`, the destroy fails if the versioned S3 bucket holds any object or old object version, and without `skip_final_snapshot` it leaves a final Aurora snapshot named `<tenant>-litellm-<env>-final-<hash>` that you delete yourself.
+Terraform keeps the stack's state in `terraform.tfstate` in the example directory. CloudShell deletes your home directory after 120 days without a session in that region, and without the state file Terraform can no longer update or destroy the stack, so use an [S3 backend](https://developer.hashicorp.com/terraform/language/backend/s3) for any stack you keep. To delete a trial stack, run `terraform destroy` from the same directory. Without `s3_force_destroy`, the destroy fails if the versioned S3 bucket holds any object or old object version, and without `skip_final_snapshot` it leaves a final Aurora snapshot named `<tenant>-lumina-<env>-final-<hash>` that you delete yourself.
 
 To call the modules from your own root config instead, use the examples below.
 
@@ -520,8 +520,8 @@ To call the modules from your own root config instead, use the examples below.
 By default, provisions a VPC with public and private subnets, an Aurora PostgreSQL cluster (writer plus reader, IAM database auth), ElastiCache Redis (multi-AZ, encrypted), an S3 bucket, Secrets Manager entries, an Application Load Balancer, and ECS Fargate services. The networking and both data stores are optional, so you can reuse what your account already runs; see below.
 
 ```hcl title="main.tf"
-module "litellm" {
-  source  = "BerriAI/litellm/aws"
+module "lumina" {
+  source  = "Soventra/lumina/aws"
   version = "~> 1.90"
 
   region = "us-east-1"
@@ -530,7 +530,7 @@ module "litellm" {
   env    = "prod"
 
   ui_password         = var.ui_password
-  litellm_license     = var.litellm_license      # optional, omit for open source
+  lumina_license     = var.lumina_license      # optional, omit for open source
   acm_certificate_arn = var.acm_certificate_arn  # TLS is required by default
 
   proxy_config = {
@@ -550,13 +550,13 @@ module "litellm" {
 
 Before you apply: use Terraform 1.12 or later, and run it where `bash` and the AWS CLI are available, since the module starts its database bootstrap and migration tasks from the machine running Terraform. Provision the TLS certificate in [AWS Certificate Manager](https://docs.aws.amazon.com/acm/latest/userguide/acm-overview.html) (the module refuses a plaintext ALB unless you explicitly set `allow_plaintext_alb = true`), and create any provider-key secrets in [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/create_secret.html) first, since `gateway_extra_secrets` takes their ARNs. After apply, point your DNS record at the ALB hostname.
 
-The module auto-generates the master key into Secrets Manager if you do not supply one. The application connects to Aurora with short-lived IAM tokens, so its `DATABASE_URL` carries no password (the database master password itself is generated into Secrets Manager and never touches the application). Every resource is named `<tenant>-litellm-<env>`, and the module declares no provider, so you can `for_each` it to run one stack per tenant.
+The module auto-generates the master key into Secrets Manager if you do not supply one. The application connects to Aurora with short-lived IAM tokens, so its `DATABASE_URL` carries no password (the database master password itself is generated into Secrets Manager and never touches the application). Every resource is named `<tenant>-lumina-<env>`, and the module declares no provider, so you can `for_each` it to run one stack per tenant.
 
 **Bringing your own VPC, database, or Redis.** The networking and both data stores are each optional, so you can deploy into infrastructure your account already has. This is the path to take when your guardrails only allow workloads inside a pre-approved VPC, or when a separate team owns the Postgres and Redis you are expected to use. Set only the pieces you want to reuse; anything you leave at its default is still created for you.
 
 ```hcl title="main.tf"
-module "litellm" {
-  source  = "BerriAI/litellm/aws"
+module "lumina" {
+  source  = "Soventra/lumina/aws"
   version = "~> 1.90"
 
   region = "us-east-1"
@@ -595,8 +595,8 @@ Missing or inconsistent inputs fail during `terraform plan` rather than halfway 
 Provisions a VPC with Private Services Access, Cloud SQL PostgreSQL (primary plus read replica), Memorystore Redis with TLS, a GCS bucket, Secret Manager entries, Cloud Run services, and a global HTTPS load balancer with serverless NEGs.
 
 ```hcl title="main.tf"
-module "litellm" {
-  source  = "BerriAI/litellm/google"
+module "lumina" {
+  source  = "Soventra/lumina/google"
   version = "~> 1.90"
 
   project_id = "my-project"
@@ -605,7 +605,7 @@ module "litellm" {
   env        = "prod"
 
   ui_password     = var.ui_password
-  litellm_license = var.litellm_license  # optional
+  lumina_license = var.lumina_license  # optional
 
   # Cloud Run cannot pull from ghcr.io. Point this at an Artifact Registry
   # remote repository backed by ghcr.io, or mirror the images.
@@ -622,14 +622,14 @@ module "litellm" {
 }
 ```
 
-Three GCP-specific caveats. First, always override `image_registry`: it defaults to `ghcr.io/berriai`, which Cloud Run cannot pull from, so the apply succeeds but the services fail at image pull. Point it at an [Artifact Registry remote repository](https://cloud.google.com/artifact-registry/docs/repositories/remote-overview) that proxies `ghcr.io`. Second, the database uses password authentication through Secret Manager rather than IAM auth; LiteLLM's IAM token support is AWS RDS specific. Third, create the DNS record for `lb_domains` pointing at the load balancer IP after apply; the [Google-managed certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs) will not finish provisioning until the domain resolves to it.
+Three GCP-specific caveats. First, always override `image_registry`: it defaults to `ghcr.io/berriai`, which Cloud Run cannot pull from, so the apply succeeds but the services fail at image pull. Point it at an [Artifact Registry remote repository](https://cloud.google.com/artifact-registry/docs/repositories/remote-overview) that proxies `ghcr.io`. Second, the database uses password authentication through Secret Manager rather than IAM auth; Lumina's IAM token support is AWS RDS specific. Third, create the DNS record for `lb_domains` pointing at the load balancer IP after apply; the [Google-managed certificate](https://cloud.google.com/load-balancing/docs/ssl-certificates/google-managed-certs) will not finish provisioning until the domain resolves to it.
 
 </TabItem>
 </Tabs>
 
 The AWS module can run Prometheus collection in a dedicated ECS sidecar using `gateway_metrics_port` and restrict access with `gateway_metrics_scrape_cidrs`; see [Isolate Prometheus scraping from inference traffic](./prometheus.md#isolate-prometheus-scraping-from-inference-traffic).
 
-To manage LiteLLM resources (keys, teams, models) as code once the stack is up, use [terraform-provider-litellm](https://github.com/BerriAI/terraform-provider-litellm).
+To manage Lumina resources (keys, teams, models) as code once the stack is up, use [terraform-provider-lumina](https://github.com/BerriAI/terraform-provider-lumina).
 
 ## Other platforms
 

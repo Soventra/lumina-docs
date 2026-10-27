@@ -1,21 +1,21 @@
 # Pass-Through Cost & Usage Tracking
 
-Some pass-through targets fan a single HTTP request out to several models internally. LiteLLM cannot price those requests from the response body, so before this contract existed they landed in the spend logs with zero cost and zero tokens
+Some pass-through targets fan a single HTTP request out to several models internally. Lumina cannot price those requests from the response body, so before this contract existed they landed in the spend logs with zero cost and zero tokens
 
-The target can instead report the totals for the whole request in two response headers. LiteLLM records what it reports, without recomputing it
+The target can instead report the totals for the whole request in two response headers. Lumina records what it reports, without recomputing it
 
 ## The headers
 
 | Header | Format | Meaning |
 | --- | --- | --- |
-| `x-litellm-response-cost` | decimal string, USD | Total cost of this request across every internal model call, e.g. `0.000415` |
-| `x-litellm-total-tokens` | integer string | Total tokens across every internal model call, e.g. `1874` |
+| `x-lumina-response-cost` | decimal string, USD | Total cost of this request across every internal model call, e.g. `0.000415` |
+| `x-lumina-total-tokens` | integer string | Total tokens across every internal model call, e.g. `1874` |
 
 Send one total per HTTP request. There is no per-model breakdown, and the reported values are authoritative
 
 ## Quick start
 
-Define the pass-through endpoint as usual. Nothing in the config opts into this contract; LiteLLM reads the headers whenever the target sends them
+Define the pass-through endpoint as usual. Nothing in the config opts into this contract; Lumina reads the headers whenever the target sends them
 
 ```yaml
 general_settings:
@@ -27,7 +27,7 @@ general_settings:
         Authorization: "Bearer os.environ/INTERNAL_API_TOKEN"
 ```
 
-Call it through the proxy with your LiteLLM key:
+Call it through the proxy with your Lumina key:
 
 ```shell
 curl -i -X POST 'http://localhost:4000/internal-api/summarize' \
@@ -41,17 +41,17 @@ Have the target answer with the totals it computed:
 ```
 HTTP/1.1 200 OK
 content-type: application/json
-x-litellm-response-cost: 0.000415
-x-litellm-total-tokens: 1874
+x-lumina-response-cost: 0.000415
+x-lumina-total-tokens: 1874
 ```
 
-LiteLLM books `0.000415` and `1874` against the calling key, team, and user, and the values show up in the spend logs and on the usage dashboards alongside the rest of that key's traffic
+Lumina books `0.000415` and `1874` against the calling key, team, and user, and the values show up in the spend logs and on the usage dashboards alongside the rest of that key's traffic
 
-## What LiteLLM records
+## What Lumina records
 
-The reported values are written as sent. LiteLLM parses them, checks them for sanity, and never recomputes a cost of its own on top
+The reported values are written as sent. Lumina parses them, checks them for sanity, and never recomputes a cost of its own on top
 
-Only the values the target actually reported are written. A target that sends a cost but no token count keeps the token count LiteLLM derived on its own, rather than having it zeroed. A target that sends neither header is left alone entirely, which is the normal case for provider pass-through routes like Anthropic or Vertex AI, where LiteLLM derives the cost from the response body
+Only the values the target actually reported are written. A target that sends a cost but no token count keeps the token count Lumina derived on its own, rather than having it zeroed. A target that sends neither header is left alone entirely, which is the normal case for provider pass-through routes like Anthropic or Vertex AI, where Lumina derives the cost from the response body
 
 ## Validation
 
@@ -59,8 +59,8 @@ A value that fails any of these checks is treated as not reported, and a warning
 
 | Header | Accepted | Rejected |
 | --- | --- | --- |
-| `x-litellm-response-cost` | Any finite, non-negative decimal, including `0` | Unparseable text, negative values, `inf`, `nan` |
-| `x-litellm-total-tokens` | Any non-negative integer, including `0` | Unparseable text, negative values |
+| `x-lumina-response-cost` | Any finite, non-negative decimal, including `0` | Unparseable text, negative values, `inf`, `nan` |
+| `x-lumina-total-tokens` | Any non-negative integer, including `0` | Unparseable text, negative values |
 
 An explicit `0` is a real value, not a missing one, so send both headers even when the totals are zero
 
@@ -88,4 +88,4 @@ Streaming targets work, because response headers arrive before the body. A targe
 
 ## Reading the values back
 
-Upstream response headers relay through to the calling client, so callers see the same `x-litellm-response-cost` shape they get from the general API. LiteLLM adds `x-litellm-call-id` on the way out, which is the value to match against the spend logs when reconciling any individual request
+Upstream response headers relay through to the calling client, so callers see the same `x-lumina-response-cost` shape they get from the general API. Lumina adds `x-lumina-call-id` on the way out, which is the value to match against the spend logs when reconciling any individual request

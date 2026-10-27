@@ -3,9 +3,9 @@ import TabItem from '@theme/TabItem';
 
 # Atlassian MCP server
 
-> Connect Atlassian's hosted remote MCP server through the LiteLLM MCP Gateway for Jira issues, Confluence pages, and Compass components.
+> Connect Atlassian's hosted remote MCP server through the Lumina MCP Gateway for Jira issues, Confluence pages, and Compass components.
 
-Atlassian hosts and updates the server, so there is nothing to deploy or run yourself. LiteLLM adds centralized auth, access control by key and team, cost tracking per tool call, and one audit trail across every MCP server you expose.
+Atlassian hosts and updates the server, so there is nothing to deploy or run yourself. Lumina adds centralized auth, access control by key and team, cost tracking per tool call, and one audit trail across every MCP server you expose.
 
 ## When should you use this server
 
@@ -17,7 +17,7 @@ Atlassian hosts and updates the server, so there is nothing to deploy or run you
 
 - One server spans Jira, Jira Service Management, Confluence, Bitbucket, and Compass, so a single registration reaches all of them
 - Hosted by Atlassian over Streamable HTTP; Cloud only, with no support for Server or Data Center
-- Dynamic client registration, so LiteLLM negotiates the OAuth client and there is no client ID or secret to manage
+- Dynamic client registration, so Lumina negotiates the OAuth client and there is no client ID or secret to manage
 
 Atlassian ships this as the **Rovo MCP Server**, which is the name to search for in their documentation.
 
@@ -35,20 +35,20 @@ Atlassian ships this as the **Rovo MCP Server**, which is the name to search for
 https://mcp.atlassian.com/v1/mcp/authv2
 ```
 
-Atlassian documents `authv2` for manually configured clients, which is what LiteLLM is. The older `https://mcp.atlassian.com/v1/mcp` form is still live and still handed out by Atlassian's one-click installers, so you may see it in existing setups; prefer `authv2` for new ones.
+Atlassian documents `authv2` for manually configured clients, which is what Lumina is. The older `https://mcp.atlassian.com/v1/mcp` form is still live and still handed out by Atlassian's one-click installers, so you may see it in existing setups; prefer `authv2` for new ones.
 
 ***
 
-## Connect via LiteLLM MCP Gateway
+## Connect via Lumina MCP Gateway
 
 :::warning[Leave the client credentials out]
 Do not set `client_id`, `client_secret`, or `token_url` on this server. Those switch it to a machine-to-machine identity shared by every caller, so Jira changes get attributed to one service account instead of the person who asked for them. Atlassian's dynamic registration makes them unnecessary.
 :::
 
-### Step 1: Register the server in LiteLLM
+### Step 1: Register the server in Lumina
 
 <Tabs>
-<TabItem value="ui" label="LiteLLM UI">
+<TabItem value="ui" label="Lumina UI">
 
 Navigate to **MCP Servers**, click **+ Add New MCP Server**, and set:
 
@@ -83,7 +83,7 @@ mcp_servers:
 
 ### Step 2: Set the proxy's public origin
 
-If LiteLLM runs behind a TLS-terminating ingress, set `PROXY_BASE_URL` to the origin users see in their address bar so the OAuth callback validates:
+If Lumina runs behind a TLS-terminating ingress, set `PROXY_BASE_URL` to the origin users see in their address bar so the OAuth callback validates:
 
 ```bash
 PROXY_BASE_URL=https://llm.example.com
@@ -104,7 +104,7 @@ The gateway serves each server at `http://localhost:4000/{server_name}/mcp`, so 
     "atlassian": {
       "url": "http://localhost:4000/atlassian_mcp/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>"
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>"
       }
     }
   }
@@ -116,20 +116,20 @@ The gateway serves each server at `http://localhost:4000/{server_name}/mcp`, so 
 
 ```bash showLineNumbers
 claude mcp add --transport http atlassian http://localhost:4000/atlassian_mcp/mcp \
-  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
+  --header "x-lumina-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
 </Tabs>
 
-The first call opens a browser to authorize and pick a site. LiteLLM stores that user's token and refreshes it afterwards, so subsequent sessions connect without prompting.
+The first call opens a browser to authorize and pick a site. Lumina stores that user's token and refreshes it afterwards, so subsequent sessions connect without prompting.
 
 ***
 
 ## Tools provided
 
 :::info
-Atlassian publishes its tool definitions at runtime through `tools/list`, so names and fields can change without notice. The **MCP Tools** tab in the LiteLLM UI is the source of truth for what your site exposes; it lists the live tools and lets you call one with test arguments. See Atlassian's [MCP server documentation](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/) for upstream detail.
+Atlassian publishes its tool definitions at runtime through `tools/list`, so names and fields can change without notice. The **MCP Tools** tab in the Lumina UI is the source of truth for what your site exposes; it lists the live tools and lets you call one with test arguments. See Atlassian's [MCP server documentation](https://support.atlassian.com/atlassian-rovo-mcp-server/docs/getting-started-with-the-atlassian-remote-mcp-server/) for upstream detail.
 :::
 
 | Product | Capabilities |
@@ -141,7 +141,7 @@ Atlassian publishes its tool definitions at runtime through `tools/list`, so nam
 | Bitbucket | Repository and pull request access |
 | Cross-product | Linking items across products, for example attaching a ticket to a page, or finding docs tied to a Compass component |
 
-LiteLLM prefixes tool names with the server name, so a tool named `getJiraIssue` is exposed to models as `atlassian_mcp-getJiraIssue`; see [Tool naming](../mcp_rest_api.md#tool-naming). This server's tool surface is large, so [MCP Tool Search](../mcp_tool_search.md) and [semantic filtering](../mcp_semantic_filter.md) are worth enabling to keep the model's tool list small enough to be useful.
+Lumina prefixes tool names with the server name, so a tool named `getJiraIssue` is exposed to models as `atlassian_mcp-getJiraIssue`; see [Tool naming](../mcp_rest_api.md#tool-naming). This server's tool surface is large, so [MCP Tool Search](../mcp_tool_search.md) and [semantic filtering](../mcp_semantic_filter.md) are worth enabling to keep the model's tool list small enough to be useful.
 
 ### Known limitations
 
@@ -153,6 +153,6 @@ The server is in beta, and Atlassian applies its own hourly request quota that v
 Grant the server per key or per team with `object_permission`, and cap call volume per server with `mcp_rpm_limit`, both covered in [MCP Permission Management](../mcp_control.md). A per-key cap matters more here than on most servers, since Atlassian's beta quota is shared across the whole site and one runaway agent can exhaust it.
 :::
 
-:::warning[Put the LiteLLM key in `x-litellm-api-key`]
-Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the LiteLLM API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and LiteLLM forwards your LiteLLM key to Atlassian, which rejects it. To diagnose, add `x-litellm-mcp-debug: true` and read the response headers; a healthy call reports `x-mcp-debug-auth-resolution: oauth2-passthrough` against `https://mcp.atlassian.com/v1/mcp/authv2`, while `SAME_AS_LUMINA_KEY` confirms this case and `m2m-client-credentials` means client credentials are set and every caller shares one identity. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth) and the [MCP Troubleshooting Guide](../mcp_troubleshoot.md).
+:::warning[Put the Lumina key in `x-lumina-api-key`]
+Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the Lumina API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and Lumina forwards your Lumina key to Atlassian, which rejects it. To diagnose, add `x-lumina-mcp-debug: true` and read the response headers; a healthy call reports `x-mcp-debug-auth-resolution: oauth2-passthrough` against `https://mcp.atlassian.com/v1/mcp/authv2`, while `SAME_AS_LUMINA_KEY` confirms this case and `m2m-client-credentials` means client credentials are set and every caller shares one identity. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth) and the [MCP Troubleshooting Guide](../mcp_troubleshoot.md).
 :::

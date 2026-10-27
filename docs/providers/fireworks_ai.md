@@ -9,20 +9,20 @@ import TabItem from '@theme/TabItem';
 :::
 
 :::tip
-New to running Fireworks AI behind LiteLLM? [Getting Started with Fireworks AI on LiteLLM](/blog/fireworks-getting-started) goes from an empty directory to a working request, then adds a second model and a fallback.
+New to running Fireworks AI behind Lumina? [Getting Started with Fireworks AI on Lumina](/blog/fireworks-getting-started) goes from an empty directory to a working request, then adds a second model and a fallback.
 :::
 
 | Property | Details |
 |-------|-------|
 | Description | The fastest and most efficient inference engine to build production-ready, compound AI systems. |
-| Provider Route on LiteLLM | `fireworks_ai/` |
+| Provider Route on Lumina | `fireworks_ai/` |
 | Provider Doc | [Fireworks AI ↗](https://docs.fireworks.ai/getting-started/introduction) |
 | Supported OpenAI Endpoints | `/chat/completions`, `/responses`, `/embeddings`, `/completions`, `/audio/transcriptions`, `/rerank` |
 
 
 ## Overview
 
-This guide explains how to integrate LiteLLM with Fireworks AI. You can connect to Fireworks AI in three main ways:
+This guide explains how to integrate Lumina with Fireworks AI. You can connect to Fireworks AI in three main ways:
 
 1. <b> Using Fireworks AI serverless models </b> – Easy connection to Fireworks-managed models.
 2. <b> Connecting to a model in your own Fireworks account </b> – Access models that are hosted within your Fireworks account.
@@ -37,14 +37,14 @@ os.environ['FIREWORKS_AI_API_KEY']
 
 ## Sample Usage - Serverless Models
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['FIREWORKS_AI_API_KEY'] = ""
 response = completion(
     model="fireworks_ai/glm-5p3-flash", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -54,14 +54,14 @@ A bare serverless slug like `glm-5p3-flash` is expanded to `accounts/fireworks/m
 
 ## Sample Usage - Serverless Models - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['FIREWORKS_AI_API_KEY'] = ""
 response = completion(
     model="fireworks_ai/glm-5p3-flash", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )
@@ -72,14 +72,14 @@ for chunk in response:
 
 ## Sample Usage -  Models in Your Own Fireworks Account 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['FIREWORKS_AI_API_KEY'] = ""
 response = completion(
     model="fireworks_ai/accounts/fireworks/models/YOUR_MODEL_ID", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -87,14 +87,14 @@ print(response)
 
 ## Sample Usage - Direct-Route Deployment
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['FIREWORKS_AI_API_KEY'] = "YOUR_DIRECT_API_KEY"
 response = completion(
     model="fireworks_ai/accounts/fireworks/models/deepseek-v4p1-flash#accounts/gitlab/deployments/2fb7764c", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
    api_base="https://gitlab-2fb7764c.direct.fireworks.ai/v1"
 )
@@ -106,17 +106,17 @@ print(response)
 
 ## Sample Usage - Routers
 
-Fireworks routers are served at `accounts/fireworks/routers/<router-id>` rather than `accounts/fireworks/models/<model-id>`, so a bare slug alone cannot tell LiteLLM which one you mean. Prefix the slug with `routers/` to target a router; LiteLLM expands `routers/<id>` to `accounts/fireworks/routers/<id>`. See the [Fireworks routers docs](https://docs.fireworks.ai/deployments/routers) for the routers available on your account.
+Fireworks routers are served at `accounts/fireworks/routers/<router-id>` rather than `accounts/fireworks/models/<model-id>`, so a bare slug alone cannot tell Lumina which one you mean. Prefix the slug with `routers/` to target a router; Lumina expands `routers/<id>` to `accounts/fireworks/routers/<id>`. See the [Fireworks routers docs](https://docs.fireworks.ai/deployments/routers) for the routers available on your account.
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['FIREWORKS_AI_API_KEY'] = ""
 response = completion(
     model="fireworks_ai/routers/glm-latest",
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -126,9 +126,9 @@ The full resource id (`fireworks_ai/accounts/fireworks/routers/glm-latest`) is s
 
 ## FireRouter and open-model routers
 
-[FireRouter](https://docs.fireworks.ai/nexus/firerouter) is Fireworks' managed router. Instead of pointing at one model, a router ID picks a model for each user turn. Fireworks serves routers under `accounts/fireworks/routers/<id>`, and LiteLLM accepts the short ID or the full resource path:
+[FireRouter](https://docs.fireworks.ai/nexus/firerouter) is Fireworks' managed router. Instead of pointing at one model, a router ID picks a model for each user turn. Fireworks serves routers under `accounts/fireworks/routers/<id>`, and Lumina accepts the short ID or the full resource path:
 
-| Router ID | What it routes across | LiteLLM model |
+| Router ID | What it routes across | Lumina model |
 | - | - | - |
 | `auto` | Fireworks open models, chosen by Fireworks | `fireworks_ai/auto` |
 | `auto-instant` | Fireworks open models, tuned for the lowest latency | `fireworks_ai/auto-instant` |
@@ -138,7 +138,7 @@ The full resource id (`fireworks_ai/accounts/fireworks/routers/glm-latest`) is s
 
 `auto` and `auto-instant` only use Fireworks open models, so your Fireworks API key is the only credential they need. `firerouter/auto` and `firerouter/auto-instant` behave the same way. See [Example router IDs](https://docs.fireworks.ai/nexus/firerouter#example-router-ids) for more routes
 
-The full resource path works on every LiteLLM version. The short `firerouter` IDs need v1.104.0-rc.1 or later, and the short `auto` and `auto-instant` IDs need v1.105.0 or later. On older versions a short ID is sent as a model path and Fireworks returns a 404, so use the full path there
+The full resource path works on every Lumina version. The short `firerouter` IDs need v1.104.0-rc.1 or later, and the short `auto` and `auto-instant` IDs need v1.105.0 or later. On older versions a short ID is sent as a model path and Fireworks returns a 404, so use the full path there
 
 ```yaml
 model_list:
@@ -169,7 +169,7 @@ Fireworks does not resell closed models. When a `firerouter` route includes Clau
 
 If no credential is available for a closed model, FireRouter leaves it out and serves the turn with the other models in the route. For example, `firerouter/opus` without an Anthropic credential is served by Fireworks open models. You get `400 no_credential` instead when you send `x-routing-preference: 1`, which forces the route's closed primary, or when you call a closed model ID directly
 
-To send the header from LiteLLM, set it on the deployment with `lumina_params.extra_headers`, or let each client send its own by enabling `forward_client_headers_to_llm_api` globally or per model group
+To send the header from Lumina, set it on the deployment with `lumina_params.extra_headers`, or let each client send its own by enabling `forward_client_headers_to_llm_api` globally or per model group
 
 ```yaml
 model_list:
@@ -192,7 +192,7 @@ general_settings:
 The same headers go through the SDK on `completion()`:
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="fireworks_ai/firerouter",
@@ -207,9 +207,9 @@ response = completion(
 
 ### Cost tracking
 
-LiteLLM prices each request off the model Fireworks reports it routed to, so a router has no price of its own. Fireworks-hosted models are billed at Fireworks rates, and closed models (for example a Claude turn) are billed at that provider's own list price. The charges land on two vendor bills, Fireworks for open models and Anthropic or OpenAI for closed ones, but LiteLLM spend logs and budgets add both up under the one model group
+Lumina prices each request off the model Fireworks reports it routed to, so a router has no price of its own. Fireworks-hosted models are billed at Fireworks rates, and closed models (for example a Claude turn) are billed at that provider's own list price. The charges land on two vendor bills, Fireworks for open models and Anthropic or OpenAI for closed ones, but Lumina spend logs and budgets add both up under the one model group
 
-## Usage with LiteLLM Proxy 
+## Usage with Lumina Proxy 
 
 ### 1. Set Fireworks AI Models on config.yaml
 
@@ -224,7 +224,7 @@ model_list:
 ### 2. Start Proxy 
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Test it
@@ -257,7 +257,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="fireworks-glm-5p3", messages = [
     {
         "role": "user",
@@ -281,7 +281,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "fireworks-glm-5p3",
     temperature=0.1
 )
@@ -291,7 +291,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -303,14 +303,14 @@ print(response)
 
 ## Decisions (System One)
 
-Fireworks serves its decision model, `accounts/fireworks/routers/rune`, on `https://api.fireworks.ai/inference/v1/systemone`. It is in private preview, so ask your Fireworks account team to enable it; the model name they give you may differ. LiteLLM exposes it on both [`/v1/systemone` and `/v1/decisions`](../decisions.md): the System One route forwards the `state` plus `questions` body as is, and the OpenAI-format route is translated into the same request. The model accepts text only and is billed on input tokens, with a lower rate for `cached_input_tokens`, which LiteLLM records as cached tokens for cost tracking
+Fireworks serves its decision model, `accounts/fireworks/routers/rune`, on `https://api.fireworks.ai/inference/v1/systemone`. It is in private preview, so ask your Fireworks account team to enable it; the model name they give you may differ. Lumina exposes it on both [`/v1/systemone` and `/v1/decisions`](../decisions.md): the System One route forwards the `state` plus `questions` body as is, and the OpenAI-format route is translated into the same request. The model accepts text only and is billed on input tokens, with a lower rate for `cached_input_tokens`, which Lumina records as cached tokens for cost tracking
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
 import os
-from litellm import systemone
+from lumina import systemone
 
 os.environ["FIREWORKS_AI_API_KEY"] = "YOUR_API_KEY"
 
@@ -377,13 +377,13 @@ curl http://0.0.0.0:4000/v1/decisions \
 
 ```python
 import os
-from litellm import responses
+from lumina import responses
 
 os.environ["FIREWORKS_AI_API_KEY"] = "YOUR_API_KEY"
 
 response = responses(
     model="fireworks_ai/accounts/fireworks/models/kimi-k3",
-    input="Use the deepwiki MCP server to tell me in one sentence what the BerriAI/litellm repository is.",
+    input="Use the deepwiki MCP server to tell me in one sentence what the Soventra/lumina repository is.",
     tools=[
         {
             "type": "mcp",
@@ -412,7 +412,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -423,7 +423,7 @@ curl http://0.0.0.0:4000/v1/responses \
   -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "fireworks-kimi-k3",
-    "input": "Use the deepwiki MCP server to tell me in one sentence what the BerriAI/litellm repository is.",
+    "input": "Use the deepwiki MCP server to tell me in one sentence what the Soventra/lumina repository is.",
     "tools": [
       {
         "type": "mcp",
@@ -444,21 +444,21 @@ Multi-turn tool calling works the same way it does against Fireworks directly: s
 
 ## Document Inlining 
 
-LiteLLM supports document inlining for Fireworks AI models. This is useful for models that are not vision models, but still need to parse documents/images/etc.
+Lumina supports document inlining for Fireworks AI models. This is useful for models that are not vision models, but still need to parse documents/images/etc.
 
-LiteLLM will add `#transform=inline` to the url of the image_url, if the model is not a vision model.[**See Code**](https://github.com/BerriAI/litellm/blob/1ae9d45798bdaf8450f2dfdec703369f3d2212b7/litellm/llms/fireworks_ai/chat/transformation.py#L114)
+Lumina will add `#transform=inline` to the url of the image_url, if the model is not a vision model.[**See Code**](https://github.com/Soventra/lumina/blob/1ae9d45798bdaf8450f2dfdec703369f3d2212b7/lumina/llms/fireworks_ai/chat/transformation.py#L114)
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["FIREWORKS_AI_API_KEY"] = "YOUR_API_KEY"
 os.environ["FIREWORKS_AI_API_BASE"] = "https://audio-prod.api.fireworks.ai/v1"
 
-completion = litellm.completion(
+completion = lumina.completion(
     model="fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct",
     messages=[
         {
@@ -498,7 +498,7 @@ model_list:
 2. Start Proxy
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it
@@ -538,14 +538,14 @@ If you want to disable the auto-add of `#transform=inline` to the url of the ima
 <TabItem value="sdk" label="SDK">
 
 ```python
-litellm.disable_add_transform_inline_image_block = True
+lumina.disable_add_transform_inline_image_block = True
 ```
 
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
     disable_add_transform_inline_image_block: true
 ```
 
@@ -560,7 +560,7 @@ The `reasoning_effort` parameter is supported on select Fireworks AI models. Sup
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["FIREWORKS_AI_API_KEY"] = "YOUR_API_KEY"
@@ -599,12 +599,12 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## User and Session Attribution
 
-Fireworks can tell apart the developers behind a shared Fireworks API key when LiteLLM sends two identifiers on each request
+Fireworks can tell apart the developers behind a shared Fireworks API key when Lumina sends two identifiers on each request
 
-| Identifier | LiteLLM source | Sent to Fireworks as |
+| Identifier | Lumina source | Sent to Fireworks as |
 |---|---|---|
 | User id | `user_id` of the virtual key that made the request | `user` field in the request body |
-| Session id | `x-litellm-session-id` header, `litellm_session_id`, or `metadata.session_id` | `x-session-affinity` header |
+| Session id | `x-lumina-session-id` header, `lumina_session_id`, or `metadata.session_id` | `x-session-affinity` header |
 
 ### Session id
 
@@ -613,7 +613,7 @@ Fireworks can tell apart the developers behind a shared Fireworks API key when L
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_KEY" \
-  -H "x-litellm-session-id: my-session-1" \
+  -H "x-lumina-session-id: my-session-1" \
   -H "Content-Type: application/json" \
   -d '{"model": "fireworks-glm-5p2", "messages": [{"role": "user", "content": "hi"}]}'
 ```
@@ -622,7 +622,7 @@ When the request has no session id, or the proxy generated one because of `gener
 
 ### User id
 
-Set `fireworks_forward_user_id: true` on a deployment to send the LiteLLM user id as Fireworks' `user` field. It is off by default because user ids are often email addresses
+Set `fireworks_forward_user_id: true` on a deployment to send the Lumina user id as Fireworks' `user` field. It is off by default because user ids are often email addresses
 
 ```yaml
 model_list:
@@ -633,11 +633,11 @@ model_list:
       fireworks_forward_user_id: true
 ```
 
-To turn it on from the Admin UI, open the model on the Models page, click **Edit Settings**, and add `"fireworks_forward_user_id": true` to **LiteLLM Params**
+To turn it on from the Admin UI, open the model on the Models page, click **Edit Settings**, and add `"fireworks_forward_user_id": true` to **Lumina Params**
 
 It applies to `/v1/chat/completions` (streaming included), `/v1/responses` and `/v1/messages` on `fireworks_ai/` deployments. The value is the `user_id` of the virtual key, so two developers sharing one Fireworks API key show up as two users, and requests made with the master key send the proxy admin id, `default_user_id`. Fireworks echoes `user` back in `/v1/responses` replies, so the developer sees their own user id there
 
-The LiteLLM user id replaces any `user` the client sent (and `metadata.user_id` on `/v1/messages`) as well as the key hash that `litellm_settings.overwrite_user_with_key_hash` would send, and a request that tries to set `fireworks_forward_user_id` itself is rejected, so developers cannot change their own attribution. When the key has no `user_id`, LiteLLM leaves the request as it is and a client-supplied `user` is still forwarded. To stop such keys from choosing their own `user`, also set `litellm_settings.overwrite_user_with_key_hash: true`, which sends the key hash for them while keys with a `user_id` still send the user id
+The Lumina user id replaces any `user` the client sent (and `metadata.user_id` on `/v1/messages`) as well as the key hash that `lumina_settings.overwrite_user_with_key_hash` would send, and a request that tries to set `fireworks_forward_user_id` itself is rejected, so developers cannot change their own attribution. When the key has no `user_id`, Lumina leaves the request as it is and a client-supplied `user` is still forwarded. To stop such keys from choosing their own `user`, also set `lumina_settings.overwrite_user_with_key_hash: true`, which sends the key hash for them while keys with a `user_id` still send the user id
 
 ## Supported Models - ALL Fireworks AI Models Supported!
 
@@ -664,11 +664,11 @@ We support ALL Fireworks AI models, just set `fireworks_ai/` as a prefix when se
 
 | Model Name            | Function Call                                                   |
 |-----------------------|-----------------------------------------------------------------|
-| fireworks_ai/nomic-ai/nomic-embed-text-v1.5 | `response = litellm.embedding(model="fireworks_ai/nomic-ai/nomic-embed-text-v1.5", input=input_text)` |
-| fireworks_ai/nomic-ai/nomic-embed-text-v1 | `response = litellm.embedding(model="fireworks_ai/nomic-ai/nomic-embed-text-v1", input=input_text)` |
-| fireworks_ai/WhereIsAI/UAE-Large-V1 | `response = litellm.embedding(model="fireworks_ai/WhereIsAI/UAE-Large-V1", input=input_text)` |
-| fireworks_ai/thenlper/gte-large | `response = litellm.embedding(model="fireworks_ai/thenlper/gte-large", input=input_text)` |
-| fireworks_ai/thenlper/gte-base | `response = litellm.embedding(model="fireworks_ai/thenlper/gte-base", input=input_text)` |
+| fireworks_ai/nomic-ai/nomic-embed-text-v1.5 | `response = lumina.embedding(model="fireworks_ai/nomic-ai/nomic-embed-text-v1.5", input=input_text)` |
+| fireworks_ai/nomic-ai/nomic-embed-text-v1 | `response = lumina.embedding(model="fireworks_ai/nomic-ai/nomic-embed-text-v1", input=input_text)` |
+| fireworks_ai/WhereIsAI/UAE-Large-V1 | `response = lumina.embedding(model="fireworks_ai/WhereIsAI/UAE-Large-V1", input=input_text)` |
+| fireworks_ai/thenlper/gte-large | `response = lumina.embedding(model="fireworks_ai/thenlper/gte-large", input=input_text)` |
+| fireworks_ai/thenlper/gte-base | `response = lumina.embedding(model="fireworks_ai/thenlper/gte-base", input=input_text)` |
 
 
 ## Audio Transcription
@@ -679,7 +679,7 @@ We support ALL Fireworks AI models, just set `fireworks_ai/` as a prefix when se
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import transcription
+from lumina import transcription
 import os
 
 os.environ["FIREWORKS_AI_API_KEY"] = "YOUR_API_KEY"
@@ -693,7 +693,7 @@ response = transcription(
 )
 ```
 
-[Pass API Key/API Base in `.transcription`](../set_keys.md#passing-args-to-completion-or-any-litellm-endpoint---transcription-embedding-text_completion-etc)
+[Pass API Key/API Base in `.transcription`](../set_keys.md#passing-args-to-completion-or-any-lumina-endpoint---transcription-embedding-text_completion-etc)
 
 </TabItem>
 <TabItem value="proxy" label="PROXY">
@@ -714,7 +714,7 @@ model_list:
 2. Start Proxy
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it
@@ -738,7 +738,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["FIREWORKS_AI_API_KEY"] = "YOUR_API_KEY"
@@ -761,7 +761,7 @@ response = rerank(
 print(response)
 ```
 
-[Pass API Key/API Base in `.rerank`](../set_keys.md#passing-args-to-completion-or-any-litellm-endpoint---transcription-embedding-text_completion-etc)
+[Pass API Key/API Base in `.rerank`](../set_keys.md#passing-args-to-completion-or-any-lumina-endpoint---transcription-embedding-text_completion-etc)
 
 </TabItem>
 <TabItem value="proxy" label="PROXY">
@@ -781,7 +781,7 @@ model_list:
 2. Start Proxy
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it

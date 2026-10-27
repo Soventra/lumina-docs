@@ -4,11 +4,11 @@ Get started by creating a free API key via https://brave.com/search/api/.
 
 For documentation on other parameters supported by the Brave Search API, visit https://api-dashboard.search.brave.com/api-reference/web/search/post.
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Brave Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["BRAVE_API_KEY"] = "BSATzx..."
 
@@ -19,7 +19,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -40,7 +40,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

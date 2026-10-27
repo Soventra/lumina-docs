@@ -1,4 +1,4 @@
-// The lead routing that www.litellm.ai/enterprise runs before it submits
+// The lead routing that www.lumina.ai/enterprise runs before it submits
 // (the "codex-enterprise-unified-routing" custom code in Webflow). Company
 // size alone picks the route; the Zap and the sales sheet read lead-route and
 // lead-routing-reason, and the route picks the Calendly page. The website
@@ -65,7 +65,7 @@ export function successCopy(result) {
     };
   }
   return {
-    heading: call ? 'Thanks, let’s talk.' : 'Thank you for your interest in LiteLLM.',
+    heading: call ? 'Thanks, let’s talk.' : 'Thank you for your interest in Lumina.',
     body: call ? 'Choose a time that works for you.' : 'You will get an email from our sales team shortly.',
   };
 }
@@ -78,7 +78,7 @@ export function calendlyUrl(result, {name, email, submissionId}) {
   const p = new URLSearchParams({embed_domain: window.location.hostname, embed_type: 'Inline', hide_gdpr_banner: '1'});
   if (name) p.set('name', name);
   if (email) p.set('email', email);
-  p.set('utm_source', 'litellm-enterprise-form');
+  p.set('utm_source', 'lumina-enterprise-form');
   if (submissionId) p.set('utm_term', submissionId);
   p.set('utm_campaign', result.route);
   return `${base}?${p.toString()}`;

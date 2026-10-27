@@ -8,7 +8,7 @@ First, set up your guardrail policy in the Zscaler AI Guard dashboard to obtain 
 
 ## 2. Define Zscaler AI Guard in `config.yaml`
 
-You can define Zscaler AI Guard settings directly in your LiteLLM `config.yaml` file.
+You can define Zscaler AI Guard settings directly in your Lumina `config.yaml` file.
 
 ### Example Configuration
 
@@ -45,7 +45,7 @@ Expect this to fail since if you enable prompt_injection as Block mode
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your litellm key>" \
+  -H "Authorization: Bearer <your lumina key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -102,19 +102,19 @@ In cases where encounter other errors when apply Zscaler AI Guard, return exampl
 }
 ```
 
-Each scan waits up to 5 seconds by default. If requests fail with `litellm.Timeout: Connection timed out. Timeout passed=5.0`, the scan is taking longer than that, which is most common under load because the limit also covers waiting for a free connection. Raise it with the `timeout` param shown above, in seconds. It applies to each individual Zscaler AI Guard API call and can differ per guardrail, so a pre-call and a post-call guardrail can carry different limits. You can also set it from the Admin UI when adding or editing the guardrail. It must be positive; a zero or negative value is ignored and the 5 second default is used instead.
+Each scan waits up to 5 seconds by default. If requests fail with `lumina.Timeout: Connection timed out. Timeout passed=5.0`, the scan is taking longer than that, which is most common under load because the limit also covers waiting for a free connection. Raise it with the `timeout` param shown above, in seconds. It applies to each individual Zscaler AI Guard API call and can differ per guardrail, so a pre-call and a post-call guardrail can carry different limits. You can also set it from the Admin UI when adding or editing the guardrail. It must be positive; a zero or negative value is ignored and the 5 second default is used instead.
 
 ## 6. Sending User Information to Zscaler AI Guard (Optional)
 If you need to send end-user information to Zscaler AI Guard for analysis, you can set the configuration in the environment variables to True and include the relevant information in custom_headers on Zscaler AI Guard.
 
 - To send user_api_key_alias:
-Set SEND_USER_API_KEY_ALIAS = True in litellm (Default: False), add 'user-api-key-alias' to the custom_headers in Zscaler AI Guard
+Set SEND_USER_API_KEY_ALIAS = True in lumina (Default: False), add 'user-api-key-alias' to the custom_headers in Zscaler AI Guard
 
 - To send user_api_key_user_id:
-Set SEND_USER_API_KEY_USER_ID = True in litellm  (Default: False), add 'user-api-key-user-id' to the custom_headers in Zscaler AI Guard
+Set SEND_USER_API_KEY_USER_ID = True in lumina  (Default: False), add 'user-api-key-user-id' to the custom_headers in Zscaler AI Guard
 
 - To send user_api_key_team_id:
-Set SEND_USER_API_KEY_TEAM_ID = True in litellm  (Default: False), add 'user-api-key-team-id' to the custom_headers in Zscaler AI Guard
+Set SEND_USER_API_KEY_TEAM_ID = True in lumina  (Default: False), add 'user-api-key-team-id' to the custom_headers in Zscaler AI Guard
 
 The request's top-level `user` field is always sent, with no setting needed, as `user` in the execute-policy request body whenever it is a non-empty string. Values of any other type are left out.
 
@@ -122,13 +122,13 @@ The request's top-level `user` field is always sent, with no setting needed, as 
 {"direction": "IN", "content": "...", "policyId": 100, "user": "alice@example.com"}
 ```
 
-The value is whatever the client put in `user`, so treat it as attribution rather than a verified identity. The proxy can also fill it in: from the header named by `general_settings.user_header_name`, with the key owner's user id on `/v1/audio/speech`, or with a hash of the virtual key when `litellm_settings.overwrite_user_with_key_hash` is on. With that setting, requests made with the master key send the fixed value `litellm_proxy_master_key` instead of a hash, as described in [virtual keys](../virtual_keys.md#overwrite-outgoing-user-with-the-key-hash).
+The value is whatever the client put in `user`, so treat it as attribution rather than a verified identity. The proxy can also fill it in: from the header named by `general_settings.user_header_name`, with the key owner's user id on `/v1/audio/speech`, or with a hash of the virtual key when `lumina_settings.overwrite_user_with_key_hash` is on. With that setting, requests made with the master key send the fixed value `lumina_proxy_master_key` instead of a hash, as described in [virtual keys](../virtual_keys.md#overwrite-outgoing-user-with-the-key-hash).
 
 ## 7. Using a Custom Zscaler AI Guard Policy (Optional)
-If an end user wants to use their own custom Zscaler AI Guard policy instead of the default policy for LiteLLM, they can do so by providing metadata in their LiteLLM request. Follow the steps below to implement this functionality:
+If an end user wants to use their own custom Zscaler AI Guard policy instead of the default policy for Lumina, they can do so by providing metadata in their Lumina request. Follow the steps below to implement this functionality:
 
--  Set up the custom policy in the Zscaler AI Guard tenant designated for LiteLLM, get the custom policy id.
--  During a LiteLLM API call, include the custom policy id in the metadata section of the request payload. 
+-  Set up the custom policy in the Zscaler AI Guard tenant designated for Lumina, get the custom policy id.
+-  During a Lumina API call, include the custom policy id in the metadata section of the request payload. 
 
 Example Request with Custom Policy Metadata
 
@@ -147,8 +147,8 @@ curl -i http://localhost:8165/v1/chat/completions \
   }'
 ```
 
-## 8. Set Custom Zscaler AI Guard Policy on Litellm Team OR Key Metadata (Optional)
-In addition to setting `zguard_policy_id` in a request or the configuration file, you can also set it in the metadata for LiteLLM Team or Key. The `zguard_policy_id` is determined using the following order of precedence: request, Key, Team, config file. This logic is illustrated below:
+## 8. Set Custom Zscaler AI Guard Policy on Lumina Team OR Key Metadata (Optional)
+In addition to setting `zguard_policy_id` in a request or the configuration file, you can also set it in the metadata for Lumina Team or Key. The `zguard_policy_id` is determined using the following order of precedence: request, Key, Team, config file. This logic is illustrated below:
 ```
 user_api_key_metadata = metadata.get("user_api_key_metadata", {}) or {}
 team_metadata = metadata.get("team_metadata", {}) or {}

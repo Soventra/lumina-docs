@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Databricks Agents
 
-Register a Databricks ResponsesAgent as a LiteLLM agent and call it through `/a2a/<agent>` or as `model: a2a/<agent>` on `/v1/chat/completions`, `/v1/responses`, and `/v1/messages`.
+Register a Databricks ResponsesAgent as a Lumina agent and call it through `/a2a/<agent>` or as `model: a2a/<agent>` on `/v1/chat/completions`, `/v1/responses`, and `/v1/messages`.
 
 | Feature | Supported |
 |---|---|
@@ -15,13 +15,13 @@ Register a Databricks ResponsesAgent as a LiteLLM agent and call it through `/a2
 
 ## How it works
 
-A Databricks ResponsesAgent speaks the OpenAI Responses API shape. LiteLLM flattens the chat messages to Responses `input` items, posts them to the agent, and maps the agent's `output` back to a chat completion or to an A2A message. Tool calls stay inside the agent, so none are mapped.
+A Databricks ResponsesAgent speaks the OpenAI Responses API shape. Lumina flattens the chat messages to Responses `input` items, posts them to the agent, and maps the agent's `output` back to a chat completion or to an A2A message. Tool calls stay inside the agent, so none are mapped.
 
 ## Endpoint URLs
 
 `api_base` takes any of these shapes. The endpoint name goes in `model` only where the URL does not already name it.
 
-| `api_base` | `model` | What LiteLLM calls |
+| `api_base` | `model` | What Lumina calls |
 |---|---|---|
 | `https://<workspace>` or `https://<workspace>/serving-endpoints` | required | `https://<workspace>/serving-endpoints/<model>/invocations` |
 | `https://<workspace>/serving-endpoints/<endpoint>` | ignored | `https://<workspace>/serving-endpoints/<endpoint>/invocations` |
@@ -55,7 +55,7 @@ When the proxy's environment sets `DATABRICKS_CLIENT_ID` and `DATABRICKS_CLIENT_
 <Tabs>
 <TabItem value="ui" label="UI">
 
-1. Go to **Agentic** > **Agents** in the LiteLLM dashboard.
+1. Go to **Agentic** > **Agents** in the Lumina dashboard.
 2. Click **Add New Agent** and pick **Databricks Agent**.
 3. Enter the agent name, the `api_base`, and the `model` (the serving endpoint name) where the URL does not already name it.
 4. Fill in either a personal access token or the service principal's `client_id`, `client_secret`, and, for an App, `workspace_url`.
@@ -157,7 +157,7 @@ curl http://localhost:4000/a2a/dbx-serving \
 
 `custom_inputs`, `context`, `databricks_options`, `temperature`, `top_p`, and `user` pass through to the agent as sent, and `max_tokens` or `max_completion_tokens` is sent as `max_output_tokens`. Other OpenAI parameters answer 400 unless `drop_params` is set, in which case they are dropped.
 
-When the agent itself sets `custom_inputs` or `extra_body`, the agent's keys win over the caller's key by key, and the caller's other keys still reach the agent. A caller's `extra_body` cannot set `model` or `input`, which answer 400 unless `drop_params` is set. Client `X-LiteLLM-*` headers are never forwarded to the agent.
+When the agent itself sets `custom_inputs` or `extra_body`, the agent's keys win over the caller's key by key, and the caller's other keys still reach the agent. A caller's `extra_body` cannot set `model` or `input`, which answer 400 unless `drop_params` is set. Client `X-Lumina-*` headers are never forwarded to the agent.
 
 Messages are sent as text. Image, file, and audio content parts, assistant `tool_calls`, and `tool` or `function` messages answer 400 naming them. Under `drop_params` they are dropped, and a message with nothing left is left out of the request.
 

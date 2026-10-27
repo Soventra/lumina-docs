@@ -6,7 +6,7 @@ https://docs.nebius.com/studio/inference/quickstart
 
 :::tip
 
-**Litellm provides support to all models from Nebius AI Studio. To use a model, set `model=nebius/<any-model-on-nebius-ai-studio>` as a prefix for litellm requests. The full list of supported models is provided at https://studio.nebius.ai/ **
+**Lumina provides support to all models from Nebius AI Studio. To use a model, set `model=nebius/<any-model-on-nebius-ai-studio>` as a prefix for lumina requests. The full list of supported models is provided at https://studio.nebius.ai/ **
 
 :::
 
@@ -19,7 +19,7 @@ os.environ['NEBIUS_API_KEY']
 
 ## Sample Usage: Text Generation
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['NEBIUS_API_KEY'] = "insert-your-nebius-ai-studio-api-key"
@@ -46,7 +46,7 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['NEBIUS_API_KEY'] = ""
@@ -76,7 +76,7 @@ for chunk in response:
 
 ## Sample Usage - Embedding
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['NEBIUS_API_KEY'] = ""
@@ -88,9 +88,9 @@ print(response)
 ```
 
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
-Here's how to call a Nebius AI Studio model with the LiteLLM Proxy Server
+Here's how to call a Nebius AI Studio model with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -103,10 +103,10 @@ Here's how to call a Nebius AI Studio model with the LiteLLM Proxy Server
   ```
 2. Start the proxy 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -115,8 +115,8 @@ Here's how to call a Nebius AI Studio model with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="litellm-proxy-key",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="lumina-proxy-key",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -137,7 +137,7 @@ Here's how to call a Nebius AI Studio model with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header 'Authorization: litellm-proxy-key' \
+      --header 'Authorization: lumina-proxy-key' \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",
@@ -187,7 +187,7 @@ The Nebius provider supports the following parameters:
 
 ## Error Handling
 
-The integration uses the standard LiteLLM error handling. Common errors include:
+The integration uses the standard Lumina error handling. Common errors include:
 
 - **Authentication Error**: Check your API key
 - **Model Not Found**: Ensure you're using a valid model name

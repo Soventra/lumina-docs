@@ -7,7 +7,7 @@ authors:
   - yujonglee
   - oliver
   - mateo
-description: "A recap of the September LiteLLM town hall: security and stability updates, OCR running on Rust by default, test coverage past the 80% target, and new Fusion and liteagents launches."
+description: "A recap of the September Lumina town hall: security and stability updates, OCR running on Rust by default, test coverage past the 80% target, and new Fusion and liteagents launches."
 tags: [townhall, reliability, product]
 hide_table_of_contents: false
 ---
@@ -34,14 +34,14 @@ Major work in security went into authentication:
 - Enforced SSO login
 - The option to disable logins that use credentials held in environment variables
 
-**Master keys.** Wiz found 1 in 10 of the LiteLLM instances they scanned running with a blank or default master key. LiteLLM now refuses to start when the master key is unset or still at the default, so a deployment leaning on it will fail to boot on upgrade.
+**Master keys.** Wiz found 1 in 10 of the Lumina instances they scanned running with a blank or default master key. Lumina now refuses to start when the master key is unset or still at the default, so a deployment leaning on it will fail to boot on upgrade.
 
 **A new disclosure practice, and more CVEs.**
 
 - For anything an unauthenticated attacker can reach, we build the fix in a private fork and publish it at the same moment as the release, the backports, and the disclosure.
 - We're minting more CVEs than before, mostly low and medium severity.
 - The increase comes from a change in publishing policy. Our security posture hasn't changed.
-- Subscribe to our [GitHub security advisories](https://github.com/BerriAI/litellm/security/advisories) to get them as they land.
+- Subscribe to our [GitHub security advisories](https://github.com/Soventra/lumina/security/advisories) to get them as they land.
 
 Next month we're at Patch the Planet, an OpenAI and Trail of Bits initiative where security engineers spend a focused week on one project.
 
@@ -76,10 +76,10 @@ Starting with `v1.102.0`, OCR runs on Rust by default. `LUMINA_RUST=0` still fal
 ![OCR benchmark at 30 offered requests per second with an 8 MiB upload, showing Rust completing every arrival while Python falls well short, and Rust p95 latency in the tens of milliseconds against several seconds for Python](./rust-ocr-benchmark.png)
 
 - On a single CPU, median throughput went from 143.6 to 211.7 RPS at 1 MiB, and from 21.6 to 36.2 RPS at 8 MiB.
-- These are proxy overhead numbers, measured against a local mock provider with proxy CPU as the bottleneck. [Full methodology](https://docs.litellm.ai/blog/litellm-rust-ocr).
+- These are proxy overhead numbers, measured against a local mock provider with proxy CPU as the bottleneck. [Full methodology](https://docs.lumina.ai/blog/lumina-rust-ocr).
 - `/messages` is next, shipping as opt-in.
 - By December 1, we want chat completions, messages, and responses migrated and deployable as a pure Rust Axum server.
-- Progress is public at [docs.litellm.ai/rust-migration](https://docs.litellm.ai/rust-migration), currently at 5%.
+- Progress is public at [docs.lumina.ai/rust-migration](https://docs.lumina.ai/rust-migration), currently at 5%.
 
 ### New models
 
@@ -91,11 +91,11 @@ Highlights include OpenAI's GPT-6 family, Claude Opus 5.5 and Claude Fable 5.1, 
 
 ### Fusion
 
-`litellm/fusion-1` sends your request to a configurable panel of models in parallel, has a judge compare the successful responses, then has that judge synthesize one answer. It works with Chat Completions, Anthropic Messages, and Responses.
+`lumina/fusion-1` sends your request to a configurable panel of models in parallel, has a judge compare the successful responses, then has that judge synthesize one answer. It works with Chat Completions, Anthropic Messages, and Responses.
 
-![LiteLLM fusion model card: one request fans out to a panel of models in parallel, to openai/gpt-6-astra, anthropic/claude-opus-5 and gemini/gemini-3.8-flash, and a judge returns a single response](./fusion-1.png)
+![Lumina fusion model card: one request fans out to a panel of models in parallel, to openai/gpt-6-astra, anthropic/claude-opus-5 and gemini/gemini-3.8-flash, and a judge returns a single response](./fusion-1.png)
 
-It's expensive, and cost and latency both scale with panel size and the models you pick. Keep it for hard problems where quality matters more than cost. See the [fusion docs](https://docs.litellm.ai/docs/fusion) for setup.
+It's expensive, and cost and latency both scale with panel size and the models you pick. Keep it for hard problems where quality matters more than cost. See the [fusion docs](https://docs.lumina.ai/docs/fusion) for setup.
 
 ### liteagents SDK
 
@@ -103,16 +103,16 @@ liteagents is a beta SDK that lets you swap between agent harnesses without rewr
 
 ![liteagents SDK code sample: a LiteAgentClient is configured with a ProfileOptions block selecting the deepagents harness and a model, then queried for a response](./liteagents-sdk.png)
 
-Read more about the [liteagents SDK](https://www.litellm.ai/liteagents).
+Read more about the [liteagents SDK](https://www.lumina.ai/liteagents).
 
 ### Also shipped
 
-- **Self-hosting.** A PgBouncer inside the container shares database connections across workers, spend writes can move to a sidecar off the request path, and Helm and Terraform can [autoscale on requests and tokens per second](https://docs.litellm.ai/docs/proxy/deploy#scale-on-requests-and-tokens-per-pod) per pod rather than only CPU.
-- **MCP Gateway.** The `/mcp` route now runs [semantic search across tools](https://docs.litellm.ai/docs/mcp_tool_search) and returns only those matching the query, so we no longer trim long upstream catalogs to fit. [Tool permissions](https://docs.litellm.ai/docs/mcp_control) are enforced on listing and calling, and session tokens are RS256-signed so an external gateway can verify a token came from LiteLLM.
+- **Self-hosting.** A PgBouncer inside the container shares database connections across workers, spend writes can move to a sidecar off the request path, and Helm and Terraform can [autoscale on requests and tokens per second](https://docs.lumina.ai/docs/proxy/deploy#scale-on-requests-and-tokens-per-pod) per pod rather than only CPU.
+- **MCP Gateway.** The `/mcp` route now runs [semantic search across tools](https://docs.lumina.ai/docs/mcp_tool_search) and returns only those matching the query, so we no longer trim long upstream catalogs to fit. [Tool permissions](https://docs.lumina.ai/docs/mcp_control) are enforced on listing and calling, and session tokens are RS256-signed so an external gateway can verify a token came from Lumina.
 - **Team admin permissions.** Budget, TPM, RPM and the approved model list stay with the proxy admin while team admins self-serve keys and models. Rolling out shortly.
 
 ## We're hiring
 
 We're hiring across the core gateway; reach us at [recruiting@berri.ai](mailto:recruiting@berri.ai), or [product@berri.ai](mailto:product@berri.ai) for product feedback.
 
-Thank you for using LiteLLM. **The LiteLLM Team**
+Thank you for using Lumina. **The Lumina Team**

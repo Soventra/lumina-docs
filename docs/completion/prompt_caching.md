@@ -28,7 +28,7 @@ Prompt caching is silently skipped when the input is below the provider's minimu
 | Google Gemini | 1,024 |
 :::
 
-For the supported providers, LiteLLM follows the OpenAI prompt caching usage object format:
+For the supported providers, Lumina follows the OpenAI prompt caching usage object format:
 
 ```bash
 "usage": {
@@ -62,7 +62,7 @@ Note: OpenAI caching is only available for prompts containing 1024 tokens or mor
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import os
 
 os.environ["OPENAI_API_KEY"] = ""
@@ -132,7 +132,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -142,7 +142,7 @@ from openai import OpenAI
 import os
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    api_key="LUMINA_PROXY_KEY", # sk-<your-lumina-api-key>
     base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
@@ -211,7 +211,7 @@ OpenAI also supports two optional parameters for more control over caching behav
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["OPENAI_API_KEY"] = ""
@@ -272,13 +272,13 @@ print(response.usage)
 
 ### OpenAI explicit breakpoints (GPT-5.6 and newer)
 
-GPT-5.6 and newer also accept [explicit cache breakpoints](https://developers.openai.com/api/docs/guides/prompt-caching#prompt-cache-breakpoints): a `prompt_cache_breakpoint` marker on a content block plus a request-level `prompt_cache_options` that picks the mode (`implicit` keeps OpenAI's automatic breakpoint on the latest message alongside yours, `explicit` uses only yours) and the cache `ttl` (`30m`, or `12h` on `/responses`). LiteLLM passes both through on `/chat/completions`, `/responses` and, for Anthropic-shaped clients, `/v1/messages`. A `12h` write bills at 2.5x the input rate instead of 1.25x for `30m`, and OpenAI reports the split in `usage.input_tokens_details.cache_write_tokens_details` as `ttl_30m_tokens` and `ttl_12h_tokens`. LiteLLM prices the `12h` share from the model's `cache_creation_input_token_cost_above_12hr` and the rest from `cache_creation_input_token_cost`; a model without the 12-hour rate bills every write at the 30-minute rate. Models that accept the marker carry `supports_prompt_cache_breakpoint: true` in the cost map, and a GPT-5.6 or newer OpenAI model name the map has not flagged yet is treated the same way. To have LiteLLM place the marker for you from the deployment config, see the [auto-inject tutorial](../tutorials/prompt_caching.md#openai-gpt-56-and-newer)
+GPT-5.6 and newer also accept [explicit cache breakpoints](https://developers.openai.com/api/docs/guides/prompt-caching#prompt-cache-breakpoints): a `prompt_cache_breakpoint` marker on a content block plus a request-level `prompt_cache_options` that picks the mode (`implicit` keeps OpenAI's automatic breakpoint on the latest message alongside yours, `explicit` uses only yours) and the cache `ttl` (`30m`, or `12h` on `/responses`). Lumina passes both through on `/chat/completions`, `/responses` and, for Anthropic-shaped clients, `/v1/messages`. A `12h` write bills at 2.5x the input rate instead of 1.25x for `30m`, and OpenAI reports the split in `usage.input_tokens_details.cache_write_tokens_details` as `ttl_30m_tokens` and `ttl_12h_tokens`. Lumina prices the `12h` share from the model's `cache_creation_input_token_cost_above_12hr` and the rest from `cache_creation_input_token_cost`; a model without the 12-hour rate bills every write at the 30-minute rate. Models that accept the marker carry `supports_prompt_cache_breakpoint: true` in the cost map, and a GPT-5.6 or newer OpenAI model name the map has not flagged yet is treated the same way. To have Lumina place the marker for you from the deployment config, see the [auto-inject tutorial](../tutorials/prompt_caching.md#openai-gpt-56-and-newer)
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["OPENAI_API_KEY"] = ""
@@ -349,18 +349,18 @@ print(response.usage.input_tokens_details)
 
 ### Bedrock Mantle explicit breakpoints (OpenAI GPT-5.6 and newer)
 
-The OpenAI GPT-5.6 and newer models on [Amazon Bedrock Mantle](../providers/bedrock_mantle.md) take the same `prompt_cache_breakpoint` marker and `prompt_cache_options` request field, on the Responses API only. LiteLLM passes both through on `/responses`, and a `/chat/completions` call to one of these models is bridged onto the Responses API with the marker kept on the content block, so `cache_control_injection_points` on the deployment work the same way they do for `openai/gpt-5.6` ([auto-inject tutorial](../tutorials/prompt_caching.md#openai-gpt-56-and-newer)). Mantle's limits, from the [AWS announcement](https://aws.amazon.com/blogs/machine-learning/introducing-explicit-prompt-caching-for-openai-gpt-5-6-models-on-amazon-bedrock/): each cached prefix needs at least 1,024 tokens, a request can carry up to 4 breakpoints on `input_text`, `input_image` and `input_file` blocks, a cached prefix stays available for at least 30 minutes, cache writes bill at 1.25x the input rate and cache reads at a 90% discount. The response reports `usage.input_tokens_details.cache_write_tokens` on the call that writes the cache and `cached_tokens` on the calls that read it, and LiteLLM prices both from the model's `cache_creation_input_token_cost` and `cache_read_input_token_cost`
+The OpenAI GPT-5.6 and newer models on [Amazon Bedrock Mantle](../providers/bedrock_mantle.md) take the same `prompt_cache_breakpoint` marker and `prompt_cache_options` request field, on the Responses API only. Lumina passes both through on `/responses`, and a `/chat/completions` call to one of these models is bridged onto the Responses API with the marker kept on the content block, so `cache_control_injection_points` on the deployment work the same way they do for `openai/gpt-5.6` ([auto-inject tutorial](../tutorials/prompt_caching.md#openai-gpt-56-and-newer)). Mantle's limits, from the [AWS announcement](https://aws.amazon.com/blogs/machine-learning/introducing-explicit-prompt-caching-for-openai-gpt-5-6-models-on-amazon-bedrock/): each cached prefix needs at least 1,024 tokens, a request can carry up to 4 breakpoints on `input_text`, `input_image` and `input_file` blocks, a cached prefix stays available for at least 30 minutes, cache writes bill at 1.25x the input rate and cache reads at a 90% discount. The response reports `usage.input_tokens_details.cache_write_tokens` on the call that writes the cache and `cached_tokens` on the calls that read it, and Lumina prices both from the model's `cache_creation_input_token_cost` and `cache_read_input_token_cost`
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["AWS_BEARER_TOKEN_BEDROCK"] = ""
 
-response = litellm.responses(
+response = lumina.responses(
     model="bedrock_mantle/openai.gpt-5.6-sol",
     aws_region_name="us-east-1",
     input=[
@@ -448,11 +448,11 @@ This same format also works for [Gemini / Vertex AI](#google-ai-studio--vertex-a
 <TabItem value="sdk" label="SDK">
 
 ```python 
-from litellm import completion 
-import litellm 
+from lumina import completion 
+import lumina 
 import os 
 
-litellm.set_verbose = True # SEE RAW REQUEST
+lumina.set_verbose = True # SEE RAW REQUEST
 os.environ["ANTHROPIC_API_KEY"] = "" 
 
 response = completion(
@@ -497,7 +497,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -507,7 +507,7 @@ from openai import OpenAI
 import os
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    api_key="LUMINA_PROXY_KEY", # sk-<your-lumina-api-key>
     base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
@@ -559,7 +559,7 @@ See [Anthropic's prompt caching docs](https://docs.anthropic.com/en/docs/build-w
 
 ### Bedrock Example
 
-LiteLLM automatically translates OpenAI-format `cache_control` markers to Bedrock's native `cachePoint` format, so no changes are needed to your existing code if you're already using `cache_control`.
+Lumina automatically translates OpenAI-format `cache_control` markers to Bedrock's native `cachePoint` format, so no changes are needed to your existing code if you're already using `cache_control`.
 
 :::tip[Minimum tokens (Bedrock)]
 Prompts below the minimum are processed without caching, and no error is returned. Check `cache_creation_input_tokens` in the response.
@@ -579,9 +579,9 @@ See [the Bedrock prompt caching docs](https://docs.aws.amazon.com/bedrock/latest
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/us.anthropic.{{anthropic}}",
     messages=[
         {
@@ -618,7 +618,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -668,7 +668,7 @@ See the [AWS Bedrock prompt caching docs](https://docs.aws.amazon.com/bedrock/la
 
 ### Google AI Studio / Vertex AI (Gemini) Example
 
-Use the same Anthropic-style `cache_control` format; LiteLLM automatically translates it to Google's [context caching API](https://ai.google.dev/api/caching).
+Use the same Anthropic-style `cache_control` format; Lumina automatically translates it to Google's [context caching API](https://ai.google.dev/api/caching).
 
 **How it works under the hood:**
 1. Messages with `cache_control` are separated and sent to Google's `cachedContents` API
@@ -686,7 +686,7 @@ Gemini 2.5 and newer already cache repeated prefixes implicitly, for free. Sendi
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = ""
@@ -733,7 +733,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -742,7 +742,7 @@ litellm --config /path/to/config.yaml
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY",  # sk-<your-litellm-api-key>
+    api_key="LUMINA_PROXY_KEY",  # sk-<your-lumina-api-key>
     base_url="LUMINA_PROXY_BASE",  # http://0.0.0.0:4000
 )
 
@@ -784,7 +784,7 @@ For Vertex AI, use `vertex_ai/` prefix:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/{{gemini_flash}}",
@@ -831,7 +831,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -840,7 +840,7 @@ litellm --config /path/to/config.yaml
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY",  # sk-<your-litellm-api-key>
+    api_key="LUMINA_PROXY_KEY",  # sk-<your-lumina-api-key>
     base_url="LUMINA_PROXY_BASE",  # http://0.0.0.0:4000
 )
 
@@ -879,13 +879,13 @@ print(response.usage)
 Works the same as OpenAI. 
 
 ```python 
-from litellm import completion 
-import litellm
+from lumina import completion 
+import lumina
 import os 
 
 os.environ["DEEPSEEK_API_KEY"] = "" 
 
-litellm.set_verbose = True # SEE RAW REQUEST
+lumina.set_verbose = True # SEE RAW REQUEST
 
 model_name = "deepseek/deepseek-chat"
 messages_1 = [
@@ -935,8 +935,8 @@ message_2 = [
     {"role": "user", "content": "When did the Shang Dynasty fall?"},
 ]
 
-response_1 = litellm.completion(model=model_name, messages=messages_1)
-response_2 = litellm.completion(model=model_name, messages=message_2)
+response_1 = lumina.completion(model=model_name, messages=messages_1)
+response_2 = lumina.completion(model=model_name, messages=message_2)
 
 # Add any assertions here to check the response
 print(response_2.usage)
@@ -947,7 +947,7 @@ print(response_2.usage)
 
 Cost cache-hit prompt tokens can differ from cache-miss prompt tokens.
 
-Use the `completion_cost()` function for calculating cost ([handles prompt caching cost calculation](https://github.com/BerriAI/litellm/blob/f7ce1173f3315cc6cae06cf9bcf12e54a2a19705/litellm/llms/anthropic/cost_calculation.py#L12) as well). [**See more helper functions**](./token_usage.md)
+Use the `completion_cost()` function for calculating cost ([handles prompt caching cost calculation](https://github.com/Soventra/lumina/blob/f7ce1173f3315cc6cae06cf9bcf12e54a2a19705/lumina/llms/anthropic/cost_calculation.py#L12) as well). [**See more helper functions**](./token_usage.md)
 
 ```python
 cost = completion_cost(completion_response=response, model=model)
@@ -959,11 +959,11 @@ cost = completion_cost(completion_response=response, model=model)
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion, completion_cost
-import litellm 
+from lumina import completion, completion_cost
+import lumina 
 import os 
 
-litellm.set_verbose = True # SEE RAW REQUEST
+lumina.set_verbose = True # SEE RAW REQUEST
 os.environ["ANTHROPIC_API_KEY"] = "" 
 model = "anthropic/{{anthropic}}"
 response = completion(
@@ -1000,13 +1000,13 @@ print(formatted_string)
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
-LiteLLM returns the calculated cost in the response headers - `x-litellm-response-cost` 
+Lumina returns the calculated cost in the response headers - `x-lumina-response-cost` 
 
 ```python
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>..
+    api_key="LUMINA_PROXY_KEY", # sk-<your-lumina-api-key>..
     base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 response = client.chat.completions.with_raw_response.create(
@@ -1016,7 +1016,7 @@ response = client.chat.completions.with_raw_response.create(
     }],
     model="{{openai_small}}",
 )
-print(response.headers.get('x-litellm-response-cost'))
+print(response.headers.get('x-lumina-response-cost'))
 
 completion = response.parse()  # get the object that `chat.completions.create()` would have returned
 print(completion)
@@ -1033,7 +1033,7 @@ Check if a model supports prompt caching with `supports_prompt_caching()`
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm.utils import supports_prompt_caching
+from lumina.utils import supports_prompt_caching
 
 supports_pc: bool = supports_prompt_caching(model="anthropic/{{anthropic}}")
 
@@ -1058,7 +1058,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1091,12 +1091,12 @@ curl -L -X GET 'http://0.0.0.0:4000/v1/model/info' \
 </TabItem>
 </Tabs>
 
-This checks our maintained [model info/cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json)
+This checks our maintained [model info/cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json)
 
 ## Read More
 
 :::tip[Auto-Inject Prompt Caching]
-Want LiteLLM to automatically add `cache_control` directives without modifying your code? 
+Want Lumina to automatically add `cache_control` directives without modifying your code? 
 
 See [**Auto-Inject Prompt Caching Tutorial**](../tutorials/prompt_caching.md) to learn how to use `cache_control_injection_points` to automatically cache system messages, specific messages by index, or custom injection patterns.
 :::

@@ -14,8 +14,8 @@ function isContentUrl(value) {
   try {
     const decoded = decodeURIComponent(value.split(/[?#]/)[0]);
     if (/[\\\u0000-\u001f]/.test(decoded) || decoded.split('/').includes('..')) return false;
-    const url = new URL(value, 'https://docs.litellm.ai');
-    return url.origin === 'https://docs.litellm.ai' && contentPath(url.pathname);
+    const url = new URL(value, 'https://docs.lumina.ai');
+    return url.origin === 'https://docs.lumina.ai' && contentPath(url.pathname);
   } catch { return false; }
 }
 

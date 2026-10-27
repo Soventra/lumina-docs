@@ -3,14 +3,14 @@ import TabItem from '@theme/TabItem';
 
 # Web Search
 
-Use web search with litellm
+Use web search with lumina
 
 | Feature | Details |
 |---------|---------|
 | Supported Endpoints | - `/chat/completions` <br/> - `/responses` <br/> - `/images/generations` (Gemini image models only) |
 | Supported Providers | `openai`, `xai`, `vertex_ai`, `anthropic`, `gemini`, `perplexity` |
-| LiteLLM Cost Tracking | ✅ Supported |
-| LiteLLM Version | `v1.71.0+` |
+| Lumina Cost Tracking | ✅ Supported |
+| Lumina Version | `v1.71.0+` |
 
 ## Which Search Engine is Used?
 
@@ -58,7 +58,7 @@ OpenAI offers two distinct ways to use web search depending on the endpoint and 
 Search models like `gpt-5-search-api` **automatically search the web** even without the `web_search_options` parameter. Use `web_search_options` to set `search_context_size` (`"low"`, `"medium"`, `"high"`) or specify `user_location` for localized results.
 :::
 
-## `/chat/completions` (litellm.completion)
+## `/chat/completions` (lumina.completion)
 
 ### Quick Start
 
@@ -66,7 +66,7 @@ Search models like `gpt-5-search-api` **automatically search the web** even with
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="openai/gpt-5-search-api",
@@ -129,7 +129,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -139,7 +139,7 @@ from openai import OpenAI
 
 # Point to your proxy server
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -168,7 +168,7 @@ response = client.chat.completions.create(
 
 **OpenAI (using web_search_options)**
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 # Customize search context size
 response = completion(
@@ -187,10 +187,10 @@ response = completion(
 
 **xAI (using web_search_options)**
 
-xAI no longer runs web search on its own `/chat/completions`, so when `web_search_options` is set LiteLLM sends the request to xAI's Responses API with a `web_search` tool and converts the result back to a chat completion. xAI does not support `search_context_size`, so it is dropped
+xAI no longer runs web search on its own `/chat/completions`, so when `web_search_options` is set Lumina sends the request to xAI's Responses API with a `web_search` tool and converts the result back to a chat completion. xAI does not support `search_context_size`, so it is dropped
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="xai/grok-3",
@@ -206,7 +206,7 @@ response = completion(
 
 **Anthropic (using web_search_options)**
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 # Customize search context size for Anthropic
 response = completion(
@@ -231,7 +231,7 @@ response = completion(
 
 **VertexAI/Gemini (using web_search_options)**
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 # Customize search context size for Gemini
 response = completion(
@@ -251,7 +251,7 @@ response = completion(
 **Gemini image generation (using web_search_options on `/images/generations`)**
 
 ```python showLineNumbers
-from litellm import image_generation
+from lumina import image_generation
 
 response = image_generation(
     model="gemini/gemini-3.1-flash-image-preview",
@@ -269,7 +269,7 @@ from openai import OpenAI
 
 # Point to your proxy server
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -292,7 +292,7 @@ response = client.chat.completions.create(
 
 
 
-## `/responses` (litellm.responses)
+## `/responses` (lumina.responses)
 
 Use the `web_search_preview` tool with models like `{{openai_large}}`, `{{openai_small}}`, etc.
 
@@ -306,7 +306,7 @@ Search-dedicated models like `gpt-5-search-api` and `gpt-4o-search-preview` do *
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import responses
+from lumina import responses
 
 response = responses(
     model="openai/{{openai_large}}",
@@ -338,7 +338,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -348,7 +348,7 @@ from openai import OpenAI
 
 # Point to your proxy server
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -371,7 +371,7 @@ print(response.output_text)
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import responses
+from lumina import responses
 
 # Customize search context size
 response = responses(
@@ -391,7 +391,7 @@ from openai import OpenAI
 
 # Point to your proxy server
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -428,7 +428,7 @@ model_list:
 ```
 
 ### Advanced
-You can configure LiteLLM's router to optionally drop models that do not support WebSearch, for example
+You can configure Lumina's router to optionally drop models that do not support WebSearch, for example
 ```yaml
   - model_name: {{openai_large}}
     lumina_params:
@@ -441,7 +441,7 @@ You can configure LiteLLM's router to optionally drop models that do not support
     model_info:
       supports_web_search: False <---- KEY CHANGE!
 ```
-In this example, LiteLLM will still route LLM requests to both deployments, but for WebSearch, will solely route to OpenAI.
+In this example, Lumina will still route LLM requests to both deployments, but for WebSearch, will solely route to OpenAI.
 
 </TabItem>
 <TabItem value="custom" label="Custom Search Context">
@@ -484,24 +484,24 @@ model_list:
 <Tabs>
 <TabItem label="SDK" value="sdk">
 
-Use `litellm.supports_web_search(model="model_name")` -> returns `True` if model can perform web searches
+Use `lumina.supports_web_search(model="model_name")` -> returns `True` if model can perform web searches
 
 ```python showLineNumbers
 # Check OpenAI models
-assert litellm.supports_web_search(model="openai/gpt-5-search-api") == True
-assert litellm.supports_web_search(model="openai/gpt-4o-search-preview") == True
+assert lumina.supports_web_search(model="openai/gpt-5-search-api") == True
+assert lumina.supports_web_search(model="openai/gpt-4o-search-preview") == True
 
 # Check xAI models
-assert litellm.supports_web_search(model="xai/grok-3") == True
+assert lumina.supports_web_search(model="xai/grok-3") == True
 
 # Check Anthropic models
-assert litellm.supports_web_search(model="anthropic/{{anthropic}}") == True
+assert lumina.supports_web_search(model="anthropic/{{anthropic}}") == True
 
 # Check VertexAI models
-assert litellm.supports_web_search(model="{{gemini_flash}}") == True
+assert lumina.supports_web_search(model="{{gemini_flash}}") == True
 
 # Check Google AI Studio models
-assert litellm.supports_web_search(model="gemini/{{gemini_flash}}") == True
+assert lumina.supports_web_search(model="gemini/{{gemini_flash}}") == True
 ```
 </TabItem>
 
@@ -563,7 +563,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Call `/model_group/info` to check if a model supports web search
@@ -613,7 +613,7 @@ Expected Response
 
 ## Web Search Cost Tracking
 
-LiteLLM tracks web search costs automatically based on provider-specific billing models. The cost is added on top of the standard token-based pricing.
+Lumina tracks web search costs automatically based on provider-specific billing models. The cost is added on top of the standard token-based pricing.
 
 ### How providers charge for web search
 
@@ -673,7 +673,7 @@ model_list:
 
 ### Google's free grounding allowance
 
-Google gives every billing account a free allowance of Google Search grounding before the per-query price applies: 5,000 queries per month shared across the Gemini 3 models, 1,500 grounded prompts per day shared across Gemini 2.0 Flash, 2.5 Flash and 2.5 Flash-Lite, and 10,000 grounded prompts per day for Gemini 2.5 Pro. By default LiteLLM bills grounding from the first query, so logged grounding spend is an upper bound on the Google invoice.
+Google gives every billing account a free allowance of Google Search grounding before the per-query price applies: 5,000 queries per month shared across the Gemini 3 models, 1,500 grounded prompts per day shared across Gemini 2.0 Flash, 2.5 Flash and 2.5 Flash-Lite, and 10,000 grounded prompts per day for Gemini 2.5 Pro. By default Lumina bills grounding from the first query, so logged grounding spend is an upper bound on the Google invoice.
 
 The cost map describes each allowance with `search_free_requests` on the Gemini rows. `count` is the free units per period, `period` is `"day"` or `"month"`, and models with the same `shared_group` draw from one pool, counted in the row's `web_search_billing_unit`.
 
@@ -689,7 +689,7 @@ The cost map describes each allowance with `search_free_requests` on the Gemini 
 The field does nothing on its own. To have the proxy log grounding at $0 until the shared allowance is used up, opt in with `apply_search_free_tier`. The proxy keeps one counter per `shared_group` and UTC period in its Redis, the same Redis it uses for budgets, so every proxy instance draws from the same pool and a restart does not reset it. A request that crosses the allowance is split: the queries still inside it are free and the rest are billed at `search_context_cost_per_query`. The spend row keeps the full price in `metadata.cost_breakdown.original_cost` and the freed amount in `discount_amount`.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   apply_search_free_tier: true   # default false
   cache: true
   cache_params:
@@ -698,19 +698,19 @@ litellm_settings:
     port: os.environ/REDIS_PORT
 ```
 
-Two things to know before turning it on. The allowance is per Google billing account and LiteLLM only sees its own traffic, so if anything else on the account also grounds, LiteLLM frees queries that Google billed and the logged spend becomes a lower bound inside the allowance window; leave the setting off if other workloads share the account. Google does not publish the time zone its allowance resets in, so LiteLLM resets on the UTC calendar day and month. Without Redis, or when the counter cannot be reached, the request is billed at full price and a warning is logged. The `x-litellm-response-cost` header and logging callbacks still report the pre-allowance cost; only the spend row, budgets and spend counters see the reduced spend.
+Two things to know before turning it on. The allowance is per Google billing account and Lumina only sees its own traffic, so if anything else on the account also grounds, Lumina frees queries that Google billed and the logged spend becomes a lower bound inside the allowance window; leave the setting off if other workloads share the account. Google does not publish the time zone its allowance resets in, so Lumina resets on the UTC calendar day and month. Without Redis, or when the counter cannot be reached, the request is billed at full price and a warning is logged. The `x-lumina-response-cost` header and logging callbacks still report the pre-allowance cost; only the spend row, budgets and spend counters see the reduced spend.
 
-### How LiteLLM tracks search usage
+### How Lumina tracks search usage
 
-The number of web search requests is stored in `usage.prompt_tokens_details.web_search_requests`. LiteLLM extracts this from each provider's response:
+The number of web search requests is stored in `usage.prompt_tokens_details.web_search_requests`. Lumina extracts this from each provider's response:
 
 - **Gemini**: Extracted from `groundingMetadata.webSearchQueries` in the response. For Gemini 2.x, clamped to 1 (per-prompt billing).
 - **OpenAI**: Reported directly in the usage metadata.
 - **Anthropic**: Reported via `server_tool_use.web_search_requests`.
-- **xAI**: Reported in `usage.server_side_tool_usage_details.web_search_calls` rather than `web_search_requests`. `num_sources_used` is not read. When xAI returns `usage.cost`, LiteLLM uses it as the response cost, which already includes the search charge
+- **xAI**: Reported in `usage.server_side_tool_usage_details.web_search_calls` rather than `web_search_requests`. `num_sources_used` is not read. When xAI returns `usage.cost`, Lumina uses it as the response cost, which already includes the search charge
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="gemini/{{gemini_flash}}",
     messages=[{"role": "user", "content": "Latest tech news?"}],
     web_search_options={"search_context_size": "medium"},
@@ -720,6 +720,6 @@ response = litellm.completion(
 print(response.usage.prompt_tokens_details.web_search_requests)  # e.g., 3
 
 # Get total cost (includes token cost + web search cost)
-cost = litellm.completion_cost(completion_response=response)
+cost = lumina.completion_cost(completion_response=response)
 print(f"Total cost: ${cost}")
 ```

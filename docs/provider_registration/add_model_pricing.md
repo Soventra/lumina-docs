@@ -4,7 +4,7 @@ title: "Add Model Pricing & Context Window"
 
 To add pricing or context window information for a model, simply make a PR to this file:
 
-**[model_prices_and_context_window.json](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json)**
+**[model_prices_and_context_window.json](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json)**
 
 ### Sample Spec
 
@@ -22,7 +22,7 @@ Here's the full specification with all available fields:
         "file_search_cost_per_gb_per_day": 0.0,
         "input_cost_per_audio_token": 0.0,
         "input_cost_per_token": 0.0,
-        "litellm_provider": "one of https://docs.litellm.ai/docs/providers",
+        "lumina_provider": "one of https://docs.lumina.ai/docs/providers",
         "max_input_tokens": "max input tokens, if the provider specifies it. if not default to max_tokens",
         "max_output_tokens": "max output tokens, if the provider specifies it. if not default to max_tokens",
         "max_tokens": "LEGACY parameter. set to max_output_tokens if provider specifies it. IF not set to max_input_tokens, if provider specifies it.",
@@ -85,7 +85,7 @@ The `above_272k` keys apply to a batch line whose prompt exceeds 272K tokens, th
         "cache_read_input_token_cost": 8e-08,
         "deprecation_date": "2025-10-01",
         "input_cost_per_token": 8e-07,
-        "litellm_provider": "anthropic",
+        "lumina_provider": "anthropic",
         "max_input_tokens": 200000,
         "max_output_tokens": 8192,
         "max_tokens": 8192,
@@ -116,7 +116,7 @@ The `above_272k` keys apply to a batch line whose prompt exceeds 272K tokens, th
         "input_cost_per_token": 2e-06,
         "input_cost_per_token_above_200k_tokens": 4e-06,
         "input_cost_per_token_batches": 1e-06,
-        "litellm_provider": "vertex_ai",
+        "lumina_provider": "vertex_ai",
         "max_audio_length_hours": 8.4,
         "max_audio_per_prompt": 1,
         "max_images_per_prompt": 3000,
@@ -149,7 +149,7 @@ Many providers release the same model under multiple names, for example a `lates
         "aliases": ["claude-sonnet-4-5-20250929"],
         "input_cost_per_token": 3e-06,
         "output_cost_per_token": 1.5e-05,
-        "litellm_provider": "anthropic",
+        "lumina_provider": "anthropic",
         "max_input_tokens": 200000,
         "max_output_tokens": 64000,
         "mode": "chat",
@@ -162,5 +162,5 @@ Many providers release the same model under multiple names, for example a `lates
 At load time, each alias is expanded into a top-level entry sharing the same data as the canonical entry. The example above makes both `claude-sonnet-4-5` and `claude-sonnet-4-5-20250929` resolve with the same pricing and capabilities.
 
 :::info
-This is different from [`model_alias_map`](../completion/model_alias.md), which is a runtime SDK/proxy feature for mapping user-facing model names to LiteLLM model identifiers. The `aliases` field here is for the model cost JSON only, and it avoids duplicate entries for models that share identical pricing and capabilities.
+This is different from [`model_alias_map`](../completion/model_alias.md), which is a runtime SDK/proxy feature for mapping user-facing model names to Lumina model identifiers. The `aliases` field here is for the model cost JSON only, and it avoids duplicate entries for models that share identical pricing and capabilities.
 :::

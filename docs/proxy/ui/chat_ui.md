@@ -1,15 +1,15 @@
 ---
 title: Chat UI
-description: Chat with the models on your LiteLLM gateway, use MCP tools, and see your own keys, logs, and usage on one page in the Admin UI.
+description: Chat with the models on your Lumina gateway, use MCP tools, and see your own keys, logs, and usage on one page in the Admin UI.
 ---
 
 import Image from '@theme/IdealImage';
 
 # Chat UI
 
-The Chat UI is a chat page in the LiteLLM Admin UI, at `/ui/chat`. When it is on, each user who can log in to the Admin UI can use it. Users can send messages to the models that they have access to and use the tools of MCP servers.
+The Chat UI is a chat page in the Lumina Admin UI, at `/ui/chat`. When it is on, each user who can log in to the Admin UI can use it. Users can send messages to the models that they have access to and use the tools of MCP servers.
 
-Each request from the Chat UI goes through the gateway. LiteLLM applies the same model access, budgets, and logs to these requests as to API requests.
+Each request from the Chat UI goes through the gateway. Lumina applies the same model access, budgets, and logs to these requests as to API requests.
 
 :::info Beta
 
@@ -19,7 +19,7 @@ The Chat UI is a beta feature. Its pages and controls can change in new releases
 
 ## Turn the Chat UI on or off
 
-The Chat UI is on by default in releases that include [PR #46918](https://github.com/BerriAI/litellm/pull/46918). In older releases it is off by default, and a proxy admin must turn it on. A proxy admin can turn it off at any time with the same switch.
+The Chat UI is on by default in releases that include [PR #46918](https://github.com/Soventra/lumina/pull/46918). In older releases it is off by default, and a proxy admin must turn it on. A proxy admin can turn it off at any time with the same switch.
 
 1. Log in to the Admin UI as a proxy admin.
 2. Go to **Settings** > **Admin Settings**.
@@ -53,7 +53,7 @@ curl -X PATCH "$PROXY_BASE_URL/update/ui_settings" \
   -d '{"enable_chat_ui": true}'
 ```
 
-LiteLLM keeps this value in the database. The gateway must have a `DATABASE_URL`.
+Lumina keeps this value in the database. The gateway must have a `DATABASE_URL`.
 
 ### Enable through configuration
 
@@ -134,7 +134,7 @@ The model can then call the tools of the servers that you selected. The list sho
 
 ## Connect to an MCP server with OAuth
 
-Some MCP servers must have a sign-in for each user. For these servers, LiteLLM keeps one OAuth token for each user.
+Some MCP servers must have a sign-in for each user. For these servers, Lumina keeps one OAuth token for each user.
 
 1. Click **Integrations**.
 2. Find the MCP server. A server that must have a sign-in shows a **Connect** button.
@@ -176,7 +176,7 @@ For the full OAuth settings, refer to [MCP OAuth](../../mcp_oauth.md).
 
 The **API Keys** page shows the virtual keys of your user. For each key, the page shows the spend, the budget, the expiry date, and the creation date.
 
-On LiteLLM Enterprise, each key also has a **Rotate** button. **Rotate** makes a new secret value for the key.
+On Lumina Enterprise, each key also has a **Rotate** button. **Rotate** makes a new secret value for the key.
 
 <Image
   img={require('../../../img/chat_ui_api_keys.png')}
@@ -211,7 +211,7 @@ The **Usage** page shows your total spend, the number of API requests, the token
 
 ## Spend for Chat UI requests
 
-The Chat UI sends each request with the login session of the user. LiteLLM records the spend of the request for that user. The spend does not go to the virtual keys of the user.
+The Chat UI sends each request with the login session of the user. Lumina records the spend of the request for that user. The spend does not go to the virtual keys of the user.
 
 ## Chat UI and Playground
 

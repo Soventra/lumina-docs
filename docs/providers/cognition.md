@@ -8,12 +8,12 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Cognition serves its SWE coding models over an OpenAI-compatible API |
-| Provider Route on LiteLLM | `cognition/` |
+| Provider Route on Lumina | `cognition/` |
 | Link to Provider Doc | [Cognition Documentation](https://docs.devin.ai) |
 | Default Base URL | `https://api.cognition.ai/v1` |
-| Supported Operations | `/chat/completions`, `/messages` through LiteLLM's Anthropic Messages adapter |
+| Supported Operations | `/chat/completions`, `/messages` through Lumina's Anthropic Messages adapter |
 
-Cognition is its own provider on LiteLLM rather than a generic OpenAI-compatible route, so its spend is priced from the Cognition cost map entries and reported under `cognition` instead of being pooled with OpenAI traffic
+Cognition is its own provider on Lumina rather than a generic OpenAI-compatible route, so its spend is priced from the Cognition cost map entries and reported under `cognition` instead of being pooled with OpenAI traffic
 
 ## API Key
 
@@ -34,13 +34,13 @@ os.environ["COGNITION_API_BASE"] = "https://api.cognition.ai/v1"  # optional ove
 
 Pricing follows the [Cognition model list](https://docs.devin.ai/desktop/models). `swe-1.7` is the standard tier; `swe-1.7-lightning` is the Cerebras-served tier that answers at about 1000 tokens a second and costs 5x. If your contract prices differ, set `input_cost_per_token` / `output_cost_per_token` on the deployment and those override the cost map
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Chat Completions
 
 ```python showLineNumbers title="Cognition Chat Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["COGNITION_API_KEY"] = "your-api-key"
 
@@ -56,7 +56,7 @@ print(response.choices[0].message.content)
 
 ```python showLineNumbers title="Cognition Streaming Chat Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["COGNITION_API_KEY"] = "your-api-key"
 
@@ -74,7 +74,7 @@ for chunk in response:
 
 ```python showLineNumbers title="Cognition Tool Calling"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["COGNITION_API_KEY"] = "your-api-key"
 
@@ -103,9 +103,9 @@ response = completion(
 print(response.choices[0].message.tool_calls)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add Cognition to your LiteLLM Proxy configuration:
+Add Cognition to your Lumina Proxy configuration:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -120,10 +120,10 @@ general_settings:
 
 Start the proxy:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
+```bash showLineNumbers title="Start Lumina Proxy"
 export COGNITION_API_KEY="your-api-key"
 export LUMINA_MASTER_KEY="sk-local-cognition"
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -141,7 +141,7 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="swe-1.7",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 
 print(response.choices[0].message.content)
@@ -157,7 +157,7 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "swe-1.7",
-    "messages": [{"role": "user", "content": "hello from litellm"}]
+    "messages": [{"role": "user", "content": "hello from lumina"}]
   }'
 ```
 
@@ -168,9 +168,9 @@ You can also add Cognition from the Admin UI. Go to Models, then Add Model, pick
 
 ## Anthropic Messages Compatibility
 
-LiteLLM translates Anthropic Messages-shaped requests into Cognition chat completions, both through the SDK facade and the proxy's `/v1/messages` endpoint:
+Lumina translates Anthropic Messages-shaped requests into Cognition chat completions, both through the SDK facade and the proxy's `/v1/messages` endpoint:
 
-```bash showLineNumbers title="Anthropic Messages through LiteLLM Proxy"
+```bash showLineNumbers title="Anthropic Messages through Lumina Proxy"
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
@@ -178,13 +178,13 @@ curl http://localhost:4000/v1/messages \
   -d '{
     "model": "swe-1.7",
     "max_tokens": 128,
-    "messages": [{"role": "user", "content": "hello from litellm"}]
+    "messages": [{"role": "user", "content": "hello from lumina"}]
   }'
 ```
 
 ## Cost Tracking
 
-The `cognition/` models are registered in LiteLLM's model cost map, so per-request spend is computed automatically, returned in the `x-litellm-response-cost` response header, and recorded in spend logs under provider `cognition`. Discounts and reports configured for OpenAI do not apply to this traffic
+The `cognition/` models are registered in Lumina's model cost map, so per-request spend is computed automatically, returned in the `x-lumina-response-cost` response header, and recorded in spend logs under provider `cognition`. Discounts and reports configured for OpenAI do not apply to this traffic
 
 ## Custom Endpoints
 

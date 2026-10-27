@@ -15,11 +15,11 @@ hide_table_of_contents: false
 **Severity:** High
 **Status:** Resolved
 
-> **Note:** This fix is available starting from LiteLLM `v1.81.3.rc.6` or higher.
+> **Note:** This fix is available starting from Lumina `v1.81.3.rc.6` or higher.
 
 ## Summary
 
-A PR ([`#19467`](https://github.com/BerriAI/litellm/pull/19467)) accidentally removed the `root_path=server_root_path` parameter from the FastAPI app initialization in `proxy_server.py`. This caused the proxy to ignore the `SERVER_ROOT_PATH` environment variable when serving the UI. Users who deploy LiteLLM behind a reverse proxy with a path prefix (e.g., `/api/v1` or `/llmproxy`) found that all UI pages returned 404 Not Found.
+A PR ([`#19467`](https://github.com/Soventra/lumina/pull/19467)) accidentally removed the `root_path=server_root_path` parameter from the FastAPI app initialization in `proxy_server.py`. This caused the proxy to ignore the `SERVER_ROOT_PATH` environment variable when serving the UI. Users who deploy Lumina behind a reverse proxy with a path prefix (e.g., `/api/v1` or `/llmproxy`) found that all UI pages returned 404 Not Found.
 
 - **LLM API calls:** No impact. API routing was unaffected.
 - **UI pages:** All UI pages returned 404 for deployments using `SERVER_ROOT_PATH`.
@@ -31,13 +31,13 @@ A PR ([`#19467`](https://github.com/BerriAI/litellm/pull/19467)) accidentally re
 
 ## Background
 
-Many LiteLLM deployments run behind a reverse proxy (e.g., Nginx, Traefik, AWS ALB) that routes traffic to LiteLLM under a path prefix. FastAPI's `root_path` parameter tells the application about this prefix so it can correctly serve static files, generate URLs, and handle routing.
+Many Lumina deployments run behind a reverse proxy (e.g., Nginx, Traefik, AWS ALB) that routes traffic to Lumina under a path prefix. FastAPI's `root_path` parameter tells the application about this prefix so it can correctly serve static files, generate URLs, and handle routing.
 
 ```mermaid
 sequenceDiagram
     participant User as User Browser
     participant RP as Reverse Proxy
-    participant LP as LiteLLM Proxy
+    participant LP as Lumina Proxy
 
     User->>RP: GET /llmproxy/ui/
     RP->>LP: GET /ui/ (X-Forwarded-Prefix: /llmproxy)
@@ -47,13 +47,13 @@ sequenceDiagram
     Note over LP: After regression:<br/>FastAPI root_path=""<br/>→ UI assets resolve to wrong paths<br/>→ 404 Not Found
 ```
 
-The `root_path` parameter was present in `proxy_server.py` since early versions of LiteLLM. It was removed as a side effect of PR [#19467](https://github.com/BerriAI/litellm/pull/19467), which was intended to fix a different UI 404 issue.
+The `root_path` parameter was present in `proxy_server.py` since early versions of Lumina. It was removed as a side effect of PR [#19467](https://github.com/Soventra/lumina/pull/19467), which was intended to fix a different UI 404 issue.
 
 ---
 
 ## Root cause
 
-PR [#19467](https://github.com/BerriAI/litellm/pull/19467) (`73d49f8`) removed the `root_path=server_root_path` line from the `FastAPI()` constructor in `proxy_server.py`:
+PR [#19467](https://github.com/Soventra/lumina/pull/19467) (`73d49f8`) removed the `root_path=server_root_path` line from the `FastAPI()` constructor in `proxy_server.py`:
 
 ```diff
  app = FastAPI(
@@ -81,18 +81,18 @@ The regression went undetected because:
 
 | #   | Action                                                                                            | Status  | Code                                                                                                                       |
 | --- | ------------------------------------------------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Restore `root_path=server_root_path` in FastAPI app initialization                                | ✅ Done | [`#19790`](https://github.com/BerriAI/litellm/pull/19790) (`5426b3c`)                                                      |
-| 2   | Add unit tests for `get_server_root_path()` and FastAPI app initialization                        | ✅ Done | [`test_server_root_path.py`](https://github.com/BerriAI/litellm/blob/main/tests/proxy_unit_tests/test_server_root_path.py) |
-| 3   | Add CI workflow that builds Docker image and tests UI routing with `SERVER_ROOT_PATH` on every PR | ✅ Done | [`test_server_root_path.yml`](https://github.com/BerriAI/litellm/blob/main/.github/workflows/test_server_root_path.yml)    |
-| 4   | Document manual test procedure for `SERVER_ROOT_PATH`                                             | ✅ Done | [Discussion #8495](https://github.com/BerriAI/litellm/discussions/8495)                                                    |
+| 1   | Restore `root_path=server_root_path` in FastAPI app initialization                                | ✅ Done | [`#19790`](https://github.com/Soventra/lumina/pull/19790) (`5426b3c`)                                                      |
+| 2   | Add unit tests for `get_server_root_path()` and FastAPI app initialization                        | ✅ Done | [`test_server_root_path.py`](https://github.com/Soventra/lumina/blob/main/tests/proxy_unit_tests/test_server_root_path.py) |
+| 3   | Add CI workflow that builds Docker image and tests UI routing with `SERVER_ROOT_PATH` on every PR | ✅ Done | [`test_server_root_path.yml`](https://github.com/Soventra/lumina/blob/main/.github/workflows/test_server_root_path.yml)    |
+| 4   | Document manual test procedure for `SERVER_ROOT_PATH`                                             | ✅ Done | [Discussion #8495](https://github.com/Soventra/lumina/discussions/8495)                                                    |
 
 ---
 
 ## CI workflow details
 
-The new [`test_server_root_path.yml`](https://github.com/BerriAI/litellm/blob/main/.github/workflows/test_server_root_path.yml) workflow runs on every PR against `main`. It:
+The new [`test_server_root_path.yml`](https://github.com/Soventra/lumina/blob/main/.github/workflows/test_server_root_path.yml) workflow runs on every PR against `main`. It:
 
-1. Builds the LiteLLM Docker image
+1. Builds the Lumina Docker image
 2. Starts a container with `SERVER_ROOT_PATH` set (tests both `/api/v1` and `/llmproxy`)
 3. Verifies the UI returns valid HTML at `{ROOT_PATH}/ui/`
 4. Fails the workflow if the UI is unreachable
@@ -121,19 +121,19 @@ This prevents future regressions where changes to `proxy_server.py` accidentally
 
 | Time (UTC)         | Event                                                                                                                                                        |
 | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Jan 22, 2026 04:20 | PR [#19467](https://github.com/BerriAI/litellm/pull/19467) merged, removing `root_path=server_root_path`                                                     |
+| Jan 22, 2026 04:20 | PR [#19467](https://github.com/Soventra/lumina/pull/19467) merged, removing `root_path=server_root_path`                                                     |
 | Jan 22–26          | Users on nightly builds report UI 404 errors when using `SERVER_ROOT_PATH`                                                                                   |
-| Jan 26, 2026 17:48 | Fix PR [#19790](https://github.com/BerriAI/litellm/pull/19790) merged, restoring `root_path=server_root_path`                                                |
-| Feb 18, 2026       | CI workflow [`test_server_root_path.yml`](https://github.com/BerriAI/litellm/blob/main/.github/workflows/test_server_root_path.yml) added to run on every PR |
+| Jan 26, 2026 17:48 | Fix PR [#19790](https://github.com/Soventra/lumina/pull/19790) merged, restoring `root_path=server_root_path`                                                |
+| Feb 18, 2026       | CI workflow [`test_server_root_path.yml`](https://github.com/Soventra/lumina/blob/main/.github/workflows/test_server_root_path.yml) added to run on every PR |
 
 ---
 
 ## Resolution steps for users
 
-For users still experiencing issues, update to the latest LiteLLM version:
+For users still experiencing issues, update to the latest Lumina version:
 
 ```bash
-pip install --upgrade litellm
+pip install --upgrade lumina
 ```
 
 Verify your `SERVER_ROOT_PATH` is correctly set:

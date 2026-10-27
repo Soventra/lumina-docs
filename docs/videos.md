@@ -13,15 +13,15 @@ Fallbacks | ✅ (Between supported models) |
 
 :::tip
 
-LiteLLM follows the [OpenAI Video Generation API specification](https://platform.openai.com/docs/guides/video-generation)
+Lumina follows the [OpenAI Video Generation API specification](https://platform.openai.com/docs/guides/video-generation)
 
 :::
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 ### Quick Start 
 
 ```python
-from litellm import video_generation, video_status, video_content
+from lumina import video_generation, video_status, video_content
 import os
 import time
 
@@ -67,7 +67,7 @@ with open("generated_video.mp4", "wb") as f:
 ### Async Usage 
 
 ```python
-from litellm import avideo_generation, avideo_status, avideo_content
+from lumina import avideo_generation, avideo_status, avideo_content
 import os, asyncio
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -114,7 +114,7 @@ asyncio.run(test_async_video())
 ### Video Status Checking
 
 ```python
-from litellm import video_status
+from lumina import video_status
 
 status_response = video_status(
     video_id="video_1234567890"
@@ -130,7 +130,7 @@ print(f"Model: {status_response.model}")
 For listing videos, you need to specify the provider since there's no video_id to decode from:
 
 ```python
-from litellm import video_list
+from lumina import video_list
 
 # List videos from OpenAI
 videos = video_list(custom_llm_provider="openai")
@@ -142,7 +142,7 @@ for video in videos:
 ### Video Generation with Reference Image
 
 ```python
-from litellm import video_generation
+from lumina import video_generation
 
 # Video generation with reference image
 response = video_generation(
@@ -159,7 +159,7 @@ print(f"Video ID: {response.id}")
 ### Video Remix (Video Editing)
 
 ```python
-from litellm import video_remix
+from lumina import video_remix
 
 # Remix an existing video by its ID with a new prompt
 response = video_remix(
@@ -187,7 +187,7 @@ response = video_generation(
 ### Azure Video Generation
 
 ```python
-from litellm import video_generation
+from lumina import video_generation
 import os
 
 os.environ["AZURE_OPENAI_API_KEY"] = "your-azure-api-key"
@@ -204,9 +204,9 @@ response = video_generation(
 print(f"Video ID: {response.id}")
 ```
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-LiteLLM provides OpenAI API compatible video endpoints for complete video generation workflow:
+Lumina provides OpenAI API compatible video endpoints for complete video generation workflow:
 
 - `/videos` - Generate new videos
 - `/videos/remix` - Edit existing videos with reference images  
@@ -215,7 +215,7 @@ LiteLLM provides OpenAI API compatible video endpoints for complete video genera
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -230,10 +230,10 @@ model_list:
       api_base: os.environ/AZURE_OPENAI_API_BASE
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -243,7 +243,7 @@ Test video generation request
 ```bash
 curl --location 'http://localhost:4000/v1/videos' \
 --header 'Content-Type: application/json' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --data '{
     "model": "sora-2",
     "prompt": "A beautiful sunset over the ocean"
@@ -254,14 +254,14 @@ Test video status request
 
 ```bash
 curl --location 'http://localhost:4000/v1/videos/{video_id}' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>'
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>'
 ```
 
 Test video retrieval request
 
 ```bash
 curl --location 'http://localhost:4000/v1/videos/{video_id}/content' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --output video.mp4
 ```
 
@@ -270,7 +270,7 @@ Test video remix request
 ```bash
 curl --location --request POST 'http://localhost:4000/v1/videos/{video_id}/remix' \
 --header 'Content-Type: application/json' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --data '{
     "prompt": "New remix instructions"
 }'
@@ -281,17 +281,17 @@ Test video list request (requires custom_llm_provider)
 ```bash
 # Note: video_list requires custom_llm_provider since there's no video_id to decode from
 curl --location 'http://localhost:4000/v1/videos?custom_llm_provider=openai' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>'
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>'
 
 # Or using header
 curl --location 'http://localhost:4000/v1/videos' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --header 'custom-llm-provider: azure'
 ```
 
 ### Character, Edit, and Extension Endpoints
 
-LiteLLM proxy also supports these OpenAI-compatible video routes:
+Lumina proxy also supports these OpenAI-compatible video routes:
 
 - `POST /v1/videos/characters`
 - `GET /v1/videos/characters/{character_id}`
@@ -301,11 +301,11 @@ LiteLLM proxy also supports these OpenAI-compatible video routes:
 #### Routing Behavior (`target_model_names`, encoded IDs, and provider overrides)
 
 - `POST /v1/videos/characters` supports `target_model_names` like `POST /v1/videos`.
-- When `target_model_names` is provided on character creation, LiteLLM encodes the returned `character_id` with routing metadata.
-- `GET /v1/videos/characters/{character_id}` accepts encoded character IDs directly. LiteLLM decodes the ID internally and routes with the correct model/provider metadata.
+- When `target_model_names` is provided on character creation, Lumina encodes the returned `character_id` with routing metadata.
+- `GET /v1/videos/characters/{character_id}` accepts encoded character IDs directly. Lumina decodes the ID internally and routes with the correct model/provider metadata.
 - `POST /v1/videos/edits` and `POST /v1/videos/extensions` support both:
   - plain `video.id`
-  - encoded `video.id` values returned by LiteLLM
+  - encoded `video.id` values returned by Lumina
 - `custom_llm_provider` can be supplied using the same patterns as other proxy endpoints:
   - header: `custom-llm-provider`
   - query: `?custom_llm_provider=...`
@@ -379,21 +379,21 @@ curl http://localhost:4000/v1/videos \
   }'
 ```
 
-## **Using OpenAI Client with LiteLLM Proxy**
+## **Using OpenAI Client with Lumina Proxy**
 
-You can use the standard OpenAI Python client to interact with LiteLLM's video endpoints. This provides a familiar interface while keeping LiteLLM's provider abstraction and proxy features.
+You can use the standard OpenAI Python client to interact with Lumina's video endpoints. This provides a familiar interface while keeping Lumina's provider abstraction and proxy features.
 
 ### Setup
 
-First, configure your OpenAI client to point to your LiteLLM proxy:
+First, configure your OpenAI client to point to your Lumina proxy:
 
 ```python
 from openai import OpenAI
 
-# Point the OpenAI client to your LiteLLM proxy
+# Point the OpenAI client to your Lumina proxy
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM proxy API key
-    base_url="http://localhost:4000/v1"  # Your LiteLLM proxy URL
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina proxy API key
+    base_url="http://localhost:4000/v1"  # Your Lumina proxy URL
 )
 ```
 
@@ -510,7 +510,7 @@ import time
 
 # Initialize client
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000/v1"
 )
 
@@ -565,7 +565,7 @@ print(f"Remix started. ID: {remix_response.id}")
 
 :::info
 
-LiteLLM follows the **OpenAI Video Generation API specification**. 
+Lumina follows the **OpenAI Video Generation API specification**. 
 
 See the [official OpenAI Video Generation documentation](https://platform.openai.com/docs/guides/video-generation) for complete details.
 

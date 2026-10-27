@@ -5,7 +5,7 @@ date: 2026-09-17T10:00:00
 authors:
   - tin
 description: "Five Auto Router updates: cache-cost estimates, Fast Mode by tier, team-managed routers, live CLI stats, and more accurate Anthropic savings."
-keywords: [auto router, llm routing, litellm, prompt caching, anthropic fast mode, cost optimization, spend tracking]
+keywords: [auto router, llm routing, lumina, prompt caching, anthropic fast mode, cost optimization, spend tracking]
 tags: [auto-router, routing, complexity-router, cost-optimization, engineering]
 hide_table_of_contents: false
 ---
@@ -18,9 +18,9 @@ Predict cache costs, set speed by tier, let teams manage routers, and see the ch
 
 :::info[Help shape Auto Router]
 
-Test Auto Router on your production traffic with the LiteLLM team.
+Test Auto Router on your production traffic with the Lumina team.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::
 
@@ -58,7 +58,7 @@ Track Auto Router usage without leaving your coding agent.
 
 - See the model that handled your last turn.
 - Compare session spend with an estimate for the most expensive model in your router's highest tier.
-- Use your existing LiteLLM API key to read your own session stats.
+- Use your existing Lumina API key to read your own session stats.
 - **Set it up with `lite configure`.** Use your proxy URL, set `LUMINA_PROXY_API_KEY` to your key, and replace `production-auto-router` with your router name:
 
   ```bash
@@ -81,7 +81,7 @@ We fixed the baseline calculation to include Anthropic's Fast Mode and regional 
 - Keep any custom prices you've set for a deployment.
 - See zero savings when the routed request and baseline have identical usage, cache treatment, and prices.
 
-See the fix in [PR #41341](https://github.com/BerriAI/litellm/pull/41341).
+See the fix in [PR #41341](https://github.com/Soventra/lumina/pull/41341).
 
 ## Try it
 
@@ -130,6 +130,6 @@ general_settings:
 
 Test Auto Router on your workload and help us decide what to build next.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::

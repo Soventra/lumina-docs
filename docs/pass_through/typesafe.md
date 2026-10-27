@@ -8,12 +8,12 @@ Pass-through endpoint for the [TypeSafe AI](https://docs.typesafe.ai/api) System
 |-------|-------|-------|
 | Cost Tracking | ✅ | Priced from the response `usage` and the model registry |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ❌ | Not offered by the TypeSafe API |
 
 Just replace `https://api.typesafe.ai` with `LUMINA_PROXY_BASE_URL/typesafe`
 
-LiteLLM adds the TypeSafe API key from the proxy environment, so clients only need a LiteLLM virtual key.
+Lumina adds the TypeSafe API key from the proxy environment, so clients only need a Lumina virtual key.
 
 Client headers that start with `TypeSafe-Danger-Zone-`, such as `TypeSafe-Danger-Zone-Images: true` for images and `box` questions on Jev 1.14, are forwarded to TypeSafe. Other client headers are not.
 
@@ -21,7 +21,7 @@ To call Jev through your `model_list` with load balancing, fallbacks and per-dep
 
 To let JEV pick the model for a completion, configure the [JEV Auto Router](/docs/auto_router/setup#jev-classifier-typesafe-ai) with `classifier_type: jev` and `jev_classifier_config`. It uses one System One Choice question for the configured tiers, then dispatches to the selected completion model. See [routing context, fallback and accounting](/docs/proxy/auto_routing#jev-classifier) and the [measured classifier comparison](/blog/jev-auto-router-benchmark)
 
-The [OSS classifier guide](/docs/auto_router/decision_classifiers) documents the canonical `classifier_type: oss_classifier` and `opensource_classifier_config.provider: jev` names, which require a gateway build containing [backend #43626](https://github.com/BerriAI/litellm/pull/43626). Both configurations use the TypeSafe transport; the new backend continues to accept the existing Jev names.
+The [OSS classifier guide](/docs/auto_router/decision_classifiers) documents the canonical `classifier_type: oss_classifier` and `opensource_classifier_config.provider: jev` names, which require a gateway build containing [backend #43626](https://github.com/Soventra/lumina/pull/43626). Both configurations use the TypeSafe transport; the new backend continues to accept the existing Jev names.
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ export TYPESAFE_API_BASE="https://api.typesafe.ai"
 2. Start the proxy
 
 ```bash showLineNumbers
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -93,7 +93,7 @@ Pick `/v1/systemone` under **Endpoint** and your Jev model under **Model**. **Lo
 
 The editor opens on the **Form** tab, so you can build a request without writing JSON. Type the text the model should read into **Input**, then fill in each question card: its **Name**, its **Answer type** (**Choice**, **Yes / no** or **Score**), its **Instructions** and its criteria. A choice takes **Options** with descriptions, a yes / no question takes **Yes means** and **No means**, and a score takes **Levels, lowest first**, numbered from 0. **Add question**, **Add option** and **Add level** add rows, and the trash buttons remove them.
 
-The **cURL** tab shows the request as a read-only curl command for the proxy's `/v1/systemone`, and it follows your edits. Once the form has no issues, **Copy cURL** copies it, and you replace `$LUMINA_API_KEY` with a virtual key. To tag the call in LiteLLM's spend logs, which the form has no input for, copy the curl and add `"metadata": {"tags": ["triage"]}` to its `-d` body.
+The **cURL** tab shows the request as a read-only curl command for the proxy's `/v1/systemone`, and it follows your edits. Once the form has no issues, **Copy cURL** copies it, and you replace `$LUMINA_API_KEY` with a virtual key. To tag the call in Lumina's spend logs, which the form has no input for, copy the curl and add `"metadata": {"tags": ["triage"]}` to its `-d` body.
 
 The form checks the request as you type. Problems are listed above **Send**, such as `Add the text the model should decide about.` for an empty **Input** and `Give every question a name.` for an unnamed question, and **Send** stays disabled until they are fixed. TypeSafe checks the rest when you send, so a yes / no question with no instructions and no **Yes means** or **No means** comes back as a 400.
 
@@ -103,4 +103,4 @@ Once the call returns, the **Response** card shows one card per question: the pi
 
 ## Cost Tracking
 
-Spend uses `usage.input_tokens` and `usage.output_tokens` from the response and the `typesafe/<model>` entry in LiteLLM's model registry (`jev-1.13.0`, `jev-1.14.0`, `jev-latest`, `jev-preview`). The request is logged under the versioned model TypeSafe reports, for example `typesafe/jev-1.13.0`, even when the request used an alias.
+Spend uses `usage.input_tokens` and `usage.output_tokens` from the response and the `typesafe/<model>` entry in Lumina's model registry (`jev-1.13.0`, `jev-1.14.0`, `jev-latest`, `jev-preview`). The request is logged under the versioned model TypeSafe reports, for example `typesafe/jev-1.13.0`, even when the request used an alias.

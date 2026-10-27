@@ -1,6 +1,6 @@
 # Documentation search and Ask AI
 
-Search retrieves matches through the same-origin `/api/docs/search` endpoint over current docs, integration guides, API operations, individual blog posts, and release notes from the site build. Each input change starts retrieval immediately, without a typing delay or a Jev request. The server loads the index once per instance and computes fresh results for every query. The browser downloads only the results, so it does not need the full search index. Ask AI retrieves from the same content and links to its sources. Short topics such as “codex subscription” work without adding “LiteLLM” to the question. The assistant can also help with general questions; there is no topic-rejection gate.
+Search retrieves matches through the same-origin `/api/docs/search` endpoint over current docs, integration guides, API operations, individual blog posts, and release notes from the site build. Each input change starts retrieval immediately, without a typing delay or a Jev request. The server loads the index once per instance and computes fresh results for every query. The browser downloads only the results, so it does not need the full search index. Ask AI retrieves from the same content and links to its sources. Short topics such as “codex subscription” work without adding “Lumina” to the question. The assistant can also help with general questions; there is no topic-rejection gate.
 
 ## Try Jev reranking locally
 
@@ -10,8 +10,8 @@ Use Node 24 or later and the existing dependencies. Put `DOCS_AI_API_KEY` in `.e
 
 ```bash
 mkdir -p .cache-loader/jev-search
-curl -fsSL https://docs.litellm.ai/search-index.json -o .cache-loader/jev-search/search-index.json
-curl -fsSL https://docs.litellm.ai/search-documents.json -o .cache-loader/jev-search/search-documents.json
+curl -fsSL https://docs.lumina.ai/search-index.json -o .cache-loader/jev-search/search-index.json
+curl -fsSL https://docs.lumina.ai/search-documents.json -o .cache-loader/jev-search/search-documents.json
 node search/page-structure.js
 npm run search:lab
 ```
@@ -37,7 +37,7 @@ npm run build
 cp .env.example .env.local
 ```
 
-Document search works without a model credential. To try Ask AI, set `DOCS_AI_API_KEY` in `.env.local` to a LiteLLM virtual key that can call these gateway aliases:
+Document search works without a model credential. To try Ask AI, set `DOCS_AI_API_KEY` in `.env.local` to a Lumina virtual key that can call these gateway aliases:
 
 ```text
 anthropic/claude-haiku-5-5
@@ -45,7 +45,7 @@ openai/gpt-6-luna
 openai/gpt-6.1-sol
 ```
 
-The default gateway is `https://gateway.litellm-sandbox.ai`. Set `DOCS_AI_BASE_URL` only when using another HTTPS gateway. Start the local server:
+The default gateway is `https://gateway.lumina-sandbox.ai`. Set `DOCS_AI_BASE_URL` only when using another HTTPS gateway. Start the local server:
 
 ```bash
 npm run search:serve
@@ -53,7 +53,7 @@ npm run search:serve
 
 Open [localhost:3333/docs](http://localhost:3333/docs), select the navbar search icon or press **Cmd+K** on Mac or **Ctrl+K** on Windows/Linux. Search for “entra” and “end user”, then add a qualifier such as “entra group sync”. The dialog shows 25 matches initially; **Show 25 more** reveals the rest. Results appear as soon as the search API responds. Closing the dialog or switching to Ask AI cancels pending searches.
 
-Search is available on docs, blogs, release notes, and other pages using the site navbar. Docs also keep the sidebar search button; mobile keeps it in the expanded navigation menu. Plain **K** does not open search. Select **Ask AI** and ask “How do I enable Redis caching in LiteLLM?” to check that the answer cites documentation. Ask “codex subscription” and check that it explains the ChatGPT subscription integration with a source link.
+Search is available on docs, blogs, release notes, and other pages using the site navbar. Docs also keep the sidebar search button; mobile keeps it in the expanded navigation menu. Plain **K** does not open search. Select **Ask AI** and ask “How do I enable Redis caching in Lumina?” to check that the answer cites documentation. Ask “codex subscription” and check that it explains the ChatGPT subscription integration with a source link.
 
 The server reads `.env.local`; the build and browser do not read the AI credential. Keep it out of `docusaurus.config.js`, public environment variables, and committed files. Plain `npm start` does not build the search index or run the API; use the built preview above
 
@@ -61,7 +61,7 @@ The server reads `.env.local`; the build and browser do not read the AI credenti
 
 The same-origin `/api/docs/search` function bundles only `build/search-index.json` and loads it once per function instance. `/api/docs/ask` bundles `build/search-*.json` for its research tools. Vercel uses `npm run build` and the `build` output directory. No separate API service or retrieval database is needed.
 
-In the docs project's **Settings > Environment Variables**, add `DOCS_AI_API_KEY` as a server secret and set `DOCS_AI_PUBLIC_ENABLED=true` for the intended environment, then redeploy. The production origin defaults to `https://docs.litellm.ai`. For a preview or another domain, set `DOCS_ORIGIN` to that exact origin too. Without the public enable flag, Ask AI returns 503 while document search still works
+In the docs project's **Settings > Environment Variables**, add `DOCS_AI_API_KEY` as a server secret and set `DOCS_AI_PUBLIC_ENABLED=true` for the intended environment, then redeploy. The production origin defaults to `https://docs.lumina.ai`. For a preview or another domain, set `DOCS_ORIGIN` to that exact origin too. Without the public enable flag, Ask AI returns 503 while document search still works
 
 Keyword search is available without model credentials or an enable flag. `POST /api/docs/search` accepts `{query, type}`, with a query of 1 to 500 characters and an optional `all`, `docs`, `blog`, or `release` filter. It returns up to 100 results, uses `Cache-Control: no-store`, and makes no model calls. The existing engine preserves ranking, snippets, filters, typo handling, and chronological browsing. The endpoint limits request bodies to 16 KB and four concurrent requests per instance. The old Jev request-rate allowance does not apply to keyword searches. The Jev comparison remains available only through `npm run search:lab`.
 
@@ -86,14 +86,14 @@ LENS_UI_URL=https://your-lens.example.com/ui/
 
 The exporter constructs `Authorization: Bearer ...` from `LUMINA_TRACING_KEY`. Keep `DOCS_AI_API_KEY` and the model gateway configuration unchanged; model and Lens admin keys cannot replace the tracing key. Lens and ClickHouse are sufficient for trace storage, with no analysis provider or gateway tracing integration required
 
-Restart `npm run search:serve`, then ask a question. Lens records the agent as `litellm-docs-search`. Follow-up questions share the conversation's trace, with each question's searches, passage reads, and answer nested beneath it. Select **Clear** to start a new conversation and trace. The browser carries a signed trace reference between requests, so follow-ups stay together across Vercel instances. It contains no credentials and is never passed to the model
+Restart `npm run search:serve`, then ask a question. Lens records the agent as `lumina-docs-search`. Follow-up questions share the conversation's trace, with each question's searches, passage reads, and answer nested beneath it. Select **Clear** to start a new conversation and trace. The browser carries a signed trace reference between requests, so follow-ups stay together across Vercel instances. It contains no credentials and is never passed to the model
 
 Traces contain questions, prompt context, retrieved document references, answers, model names, timing, and token usage. Rejected completions retain their request ID, finish reason, reasoning usage, and a safe error description. A `GatewayResponseTruncated` span means the provider stopped at its completion limit. The exporter excludes request headers and redacts the configured model and tracing credentials. Tracing is optional and exporter failures do not fail the answer
 
 To run a real conversation and verify storage of all its exported spans in one trace:
 
 ```bash
-npm run search:verify-trace -- "How do I use my Codex subscription with LiteLLM?" "How do I log in?"
+npm run search:verify-trace -- "How do I use my Codex subscription with Lumina?" "How do I log in?"
 ```
 
 This uses the existing model credentials and makes the normal research and answer calls for each quoted question. It flushes the exporter, requires one shared trace, records actual exported trace and span IDs in `.cache-loader/docs-trace-receipt.json`, and checks Lens's receipt endpoint with the same tracing key. Only `received: true` confirms delivery. Authentication errors stop verification; other receipt checks are bounded to 30 attempts and 60 seconds. Open the printed trace URL after confirmation
@@ -122,13 +122,13 @@ The hosting platform's request-size limit and the model's context window still a
 
 ## Model routing and caching
 
-Every model call requests GPT-6.1 Sol with `reasoning_effort=low` and LiteLLM's native ordered fallbacks to Haiku 5.5 and GPT-6 Luna, both with `reasoning_effort=none`. The backend fixes the aliases and fallback parameters for both the website and Slack. The configured LiteLLM gateway supports Sol tool calls through its Chat Completions endpoint; verify this translation when changing gateways, since [direct OpenAI Sol tool calls require Responses](https://developers.openai.com/api/docs/models/gpt-6.1-sol). Sol can use the available model-call deadline. Fallbacks handle provider failures when time remains; the call and hosting deadlines still bound the entire operation. The agent chooses when to search, read, or finish research. `search_docs` accepts one to three queries and returns results grouped by query, with each page title first. `read_docs` returns every indexed passage and first-party link from the selected pages without truncation, with requested passages first. This retains prerequisites and request examples that may appear under other headings. Tool results stay private; the final answer receives all the evidence read, then streams once.
+Every model call requests GPT-6.1 Sol with `reasoning_effort=low` and Lumina's native ordered fallbacks to Haiku 5.5 and GPT-6 Luna, both with `reasoning_effort=none`. The backend fixes the aliases and fallback parameters for both the website and Slack. The configured Lumina gateway supports Sol tool calls through its Chat Completions endpoint; verify this translation when changing gateways, since [direct OpenAI Sol tool calls require Responses](https://developers.openai.com/api/docs/models/gpt-6.1-sol). Sol can use the available model-call deadline. Fallbacks handle provider failures when time remains; the call and hosting deadlines still bound the entire operation. The agent chooses when to search, read, or finish research. `search_docs` accepts one to three queries and returns results grouped by query, with each page title first. `read_docs` returns every indexed passage and first-party link from the selected pages without truncation, with requested passages first. This retains prerequisites and request examples that may appear under other headings. Tool results stay private; the final answer receives all the evidence read, then streams once.
 
 Ask AI does not set `max_tokens` or `max_completion_tokens` for research, answering, or fallback models, and does not cap answer characters or response bytes. The gateway and provider use their configured defaults and model limits. `reasoning_effort=none` does not guarantee zero reasoning tokens on every provider. An interrupted or provider-truncated stream reports an error and does not save a partial answer. Finish reason and usage are retained in the trace.
 
 Provider prompt-prefix caching reuses the processed instructions and documentation, while every request still searches and generates a fresh answer. Research keeps questions and tool results in conversation order. The final answer receives read passages before the question and history. Anthropic ephemeral cache breakpoints mark the stable instructions and final evidence. GPT models use OpenAI's automatic prefix caching
 
-The service has no answer cache and explicitly disables LiteLLM response-cache reads and writes. API responses use `Cache-Control: no-store`. Provider caching still requires an exact matching prefix that meets the provider's minimum token count; short prompts may be too small. Verify real prompt-cache use through provider usage fields such as `cache_creation_input_tokens` and `prompt_tokens_details.cached_tokens`, not by comparing answers or response times
+The service has no answer cache and explicitly disables Lumina response-cache reads and writes. API responses use `Cache-Control: no-store`. Provider caching still requires an exact matching prefix that meets the provider's minimum token count; short prompts may be too small. Verify real prompt-cache use through provider usage fields such as `cache_creation_input_tokens` and `prompt_tokens_details.cached_tokens`, not by comparing answers or response times
 
 ## Search behavior and security boundaries
 
@@ -165,7 +165,7 @@ Events are best effort and may be missing when analytics are blocked or the page
 
 Ask AI receives source types, dates, and versions. It is instructed to use current docs for setup, attribute blog benchmarks to their measured conditions, and use release notes for version-specific changes. It must distinguish stable releases from prereleases and cannot infer first availability from a feature's mention in a release note.
 
-Ask AI uses matching public docs to interpret short topics and follow-ups, then generates an answer with citations. It has no scope classifier or output-verdict gate. General questions can receive an answer without sources; LiteLLM-specific guidance is instructed to use retrieved evidence. Citation numbers and URLs are validated against read passages and their indexed first-party links. Source numbers stay stable during streaming and completion; an invalid citation reports an error without regenerating the answer. The renderer disables HTML and images and permits only the returned citation links
+Ask AI uses matching public docs to interpret short topics and follow-ups, then generates an answer with citations. It has no scope classifier or output-verdict gate. General questions can receive an answer without sources; Lumina-specific guidance is instructed to use retrieved evidence. Citation numbers and URLs are validated against read passages and their indexed first-party links. Source numbers stay stable during streaming and completion; an invalid citation reports an error without regenerating the answer. The renderer disables HTML and images and permits only the returned citation links
 
 The API accepts a non-empty question, previous turns as `{question, answer?}` objects, and an optional signed trace reference. It does not impose application limits on question length, history length, or request body size. It rejects extra fields, caller-controlled roles, model settings, fallback overrides, tools, URLs as configuration, and caller-supplied documents. Prior questions, answers and retrieved docs are untrusted reference material. The model never receives the API key or access to environment variables, arbitrary network requests, or private files. Its tools only search and read the public corpus
 
@@ -188,14 +188,14 @@ Clients without the streaming Accept header retain the JSON response contract. A
 
 ## Slack bot service route
 
-`POST /api/docs/bot-ask` runs the same Ask AI engine, corpus, full-page research tools, models, fallbacks, answer generation, citations, streaming protocol and trace propagation as `/api/docs/ask`. It is intended for the [LiteLLM Docs Slack worker](https://github.com/BerriAI/litellm-docs-bot).
+`POST /api/docs/bot-ask` runs the same Ask AI engine, corpus, full-page research tools, models, fallbacks, answer generation, citations, streaming protocol and trace propagation as `/api/docs/ask`. It is intended for the [Lumina Docs Slack worker](https://github.com/Soventra/lumina-docs-bot).
 
 Website Ask AI and Slack final answers use a say-it style: one short, plain-English explanation, the smallest useful code example when relevant, and supporting documentation citations. They expand when the user asks or essential permissions, prerequisites, or caveats require it. This is a writing instruction, not an output-token limit. Research and evidence remain complete. Callers cannot supply a prompt or style override.
 
-Configure `DOCS_BOT_SERVICE_TOKEN` with a random service secret and `DOCS_BOT_AI_API_KEY` with a dedicated LiteLLM virtual key, then redeploy the docs service. The virtual key uses the existing `DOCS_AI_BASE_URL`; permit the same fixed model aliases and set the team's spending budget and capacity allocation on that key. The worker sends `Authorization: Bearer <DOCS_BOT_SERVICE_TOKEN>` and the existing `{question, history?, traceContext?}` request body. Keep both secrets server-side. The model key is never sent to the worker and never falls back to `DOCS_AI_API_KEY`.
+Configure `DOCS_BOT_SERVICE_TOKEN` with a random service secret and `DOCS_BOT_AI_API_KEY` with a dedicated Lumina virtual key, then redeploy the docs service. The virtual key uses the existing `DOCS_AI_BASE_URL`; permit the same fixed model aliases and set the team's spending budget and capacity allocation on that key. The worker sends `Authorization: Bearer <DOCS_BOT_SERVICE_TOKEN>` and the existing `{question, history?, traceContext?}` request body. Keep both secrets server-side. The model key is never sent to the worker and never falls back to `DOCS_AI_API_KEY`.
 
 The bot route does not require `DOCS_AI_PUBLIC_ENABLED` and has no public per-IP, per-minute or four-request concurrency restriction. Authentication is mandatory, including on localhost. It retains body-read and answer deadlines, origin checks, client-disconnect cancellation, generic failures, the provider context-window error, and `Cache-Control: no-store`. The worker queues work and controls concurrency; its dedicated gateway key and hosting platform enforce the deployed capacity and budget.
 
 Both Vercel and `npm run search:serve` expose the route. Vercel bundles the same build-generated index and documents into its function; a warm function instance reuses that corpus across requests. The Slack worker never loads an index. Missing either bot secret returns 503; an incorrect bearer credential returns 401. An authenticated empty JSON object returns 400 without calling a model, which the worker uses as a configuration preflight.
 
-To record bot requests with a dedicated Lens ingestion key, set `DOCS_BOT_TRACING_KEY` in the docs hosting environment and redeploy. It overrides `LUMINA_TRACING_KEY` only for the authenticated bot route and uses the existing `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` and HTTP/protobuf exporter. Without the override, the bot retains the existing docs tracing configuration. The agent name remains `litellm-docs-search`; bot root spans include `docs.search.surface=slack`. Search, full-page reads, model calls, usage and complete answers use the existing instrumentation. The worker saves the signed trace reference per conversation so follow-ups join the same trace. No tracing SDK or Lens ingestion key is needed in the Slack worker.
+To record bot requests with a dedicated Lens ingestion key, set `DOCS_BOT_TRACING_KEY` in the docs hosting environment and redeploy. It overrides `LUMINA_TRACING_KEY` only for the authenticated bot route and uses the existing `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` and HTTP/protobuf exporter. Without the override, the bot retains the existing docs tracing configuration. The agent name remains `lumina-docs-search`; bot root spans include `docs.search.surface=slack`. Search, full-page reads, model calls, usage and complete answers use the existing instrumentation. The worker saves the signed trace reference per conversation so follow-ups join the same trace. No tracing SDK or Lens ingestion key is needed in the Slack worker.

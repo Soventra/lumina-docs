@@ -7,15 +7,15 @@ To use Fast mode on supported OpenAI models or Ultrafast on GPT-6 Astra, see [Fa
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 
 #### Non-streaming
 ```python showLineNumbers title="OpenAI Non-streaming Response"
-import litellm
+import lumina
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -26,10 +26,10 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="OpenAI Streaming Response"
-import litellm
+import lumina
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True
@@ -41,9 +41,9 @@ for event in response:
 
 #### Web Search
 ```python showLineNumbers title="OpenAI Responses with Web Search"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="What is the capital of France?",
     tools=[{
@@ -59,11 +59,11 @@ For full details, see the [Web Search guide](../../completion/web_search.md).
 
 #### Image Generation with Streaming
 ```python showLineNumbers title="OpenAI Streaming Image Generation"
-import litellm
+import lumina
 import base64
 
 # Streaming image generation with partial images
-stream = litellm.responses(
+stream = lumina.responses(
     model="{{openai_large}}",  # Use an actual image generation model
     input="Generate a gorgeous image of a river made of white owl feathers",
     stream=True,
@@ -82,10 +82,10 @@ for event in stream:
 
 #### GET a Response
 ```python showLineNumbers title="Get Response by ID"
-import litellm
+import lumina
 
 # First, create a response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -95,22 +95,22 @@ response = litellm.responses(
 response_id = response.id
 
 # Retrieve the response by ID
-retrieved_response = litellm.get_responses(
+retrieved_response = lumina.get_responses(
     response_id=response_id
 )
 
 print(retrieved_response)
 
 # For async usage
-# retrieved_response = await litellm.aget_responses(response_id=response_id)
+# retrieved_response = await lumina.aget_responses(response_id=response_id)
 ```
 
 #### DELETE a Response
 ```python showLineNumbers title="Delete Response by ID"
-import litellm
+import lumina
 
 # First, create a response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -120,18 +120,18 @@ response = litellm.responses(
 response_id = response.id
 
 # Delete the response by ID
-delete_response = litellm.delete_responses(
+delete_response = lumina.delete_responses(
     response_id=response_id
 )
 
 print(delete_response)
 
 # For async usage
-# delete_response = await litellm.adelete_responses(response_id=response_id)
+# delete_response = await lumina.adelete_responses(response_id=response_id)
 ```
 
 
-### LiteLLM Proxy with OpenAI SDK
+### Lumina Proxy with OpenAI SDK
 
 1. Set up config.yaml
 
@@ -143,15 +143,15 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-2. Start LiteLLM Proxy Server
+2. Start Lumina Proxy Server
 
-```bash title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-3. Use OpenAI SDK with LiteLLM Proxy
+3. Use OpenAI SDK with Lumina Proxy
 
 #### Non-streaming
 ```python showLineNumbers title="OpenAI Proxy Non-streaming Response"
@@ -199,7 +199,7 @@ from openai import OpenAI
 import base64
 
 # Initialize client with your proxy URL
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000")
 
 stream = client.responses.create(
     model="{{openai_large}}",
@@ -275,16 +275,16 @@ print(delete_response)
 
 | Provider | Supported Parameters |
 |----------|---------------------|
-| `openai` | [All Responses API parameters are supported](https://github.com/BerriAI/litellm/blob/7c3df984da8e4dff9201e4c5353fdc7a2b441831/litellm/llms/openai/responses/transformation.py#L23) |
+| `openai` | [All Responses API parameters are supported](https://github.com/Soventra/lumina/blob/7c3df984da8e4dff9201e4c5353fdc7a2b441831/lumina/llms/openai/responses/transformation.py#L23) |
 
 ## Reusable Prompts
 
 Use the `prompt` parameter to reference a stored prompt template and optionally supply variables.
 
 ```python showLineNumbers title="Stored Prompt"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     prompt={
         "id": "pmpt_abc123",
@@ -299,7 +299,7 @@ response = litellm.responses(
 print(response)
 ```
 
-The same parameter is supported when calling the LiteLLM proxy with the OpenAI SDK:
+The same parameter is supported when calling the Lumina proxy with the OpenAI SDK:
 
 ```python showLineNumbers title="Stored Prompt via Proxy"
 from openai import OpenAI
@@ -324,13 +324,13 @@ print(response)
 ## Computer Use 
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
-import litellm
+import lumina
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="computer-use-preview",
     tools=[{
         "type": "computer_use_preview",
@@ -364,7 +364,7 @@ print(response.output)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Set up config.yaml
 
@@ -376,10 +376,10 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-2. Start LiteLLM Proxy Server
+2. Start Lumina Proxy Server
 
-```bash title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -437,10 +437,10 @@ print(response)
 ## MCP Tools 
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
-```python showLineNumbers title="MCP Tools with LiteLLM SDK"
-import litellm
+```python showLineNumbers title="MCP Tools with Lumina SDK"
+import lumina
 from typing import Optional
 
 # Configure MCP Tools
@@ -454,7 +454,7 @@ MCP_TOOLS = [
 ]
 
 # Step 1: Make initial request - OpenAI will use MCP LIST and return MCP calls for approval
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     tools=MCP_TOOLS,
     input="What transport protocols does the 2025-03-26 version of the MCP spec support?"
@@ -468,7 +468,7 @@ for output in response.output:
         break
 
 # Step 2: Send followup with approval for the MCP call
-response_with_mcp_call = litellm.responses(
+response_with_mcp_call = lumina.responses(
     model="openai/{{openai_large}}",
     tools=MCP_TOOLS,
     input=[
@@ -485,7 +485,7 @@ print(response_with_mcp_call)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Set up config.yaml
 
@@ -497,17 +497,17 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-2. Start LiteLLM Proxy Server
+2. Start Lumina Proxy Server
 
-```bash title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
 3. Test it!
 
-```python showLineNumbers title="MCP Tools with OpenAI SDK via LiteLLM Proxy"
+```python showLineNumbers title="MCP Tools with OpenAI SDK via Lumina Proxy"
 from openai import OpenAI
 from typing import Optional
 
@@ -567,10 +567,10 @@ print(response_with_mcp_call)
 The `verbosity` parameter is supported for the `responses` API.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python showLineNumbers title="Verbosity Parameter"
-from litellm import responses
+from lumina import responses
 
 question = "Write a poem about a boy and his first pet dog."
 
@@ -585,7 +585,7 @@ for verbosity in ["low", "medium", "high"]:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```python
 from openai import OpenAI
@@ -646,7 +646,7 @@ display(styled_df)
 ## Function Calling
 
 ```python showLineNumbers title="Function Calling with Parallel Tool Calls"
-import litellm
+import lumina
 import json
 
 tools = [
@@ -665,7 +665,7 @@ tools = [
 ]
 
 # Step 1: Request with tools (parallel_tool_calls=True allows multiple calls)
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input=[{"role": "user", "content": "What's the weather in Paris and Tokyo?"}],
     tools=tools,
@@ -684,7 +684,7 @@ for output in response.output:
         })
 
 # Step 3: Send results back
-final_response = litellm.responses(
+final_response = lumina.responses(
     model="openai/{{openai_large}}",
     input=tool_results,
     tools=tools,
@@ -702,10 +702,10 @@ Tool search lets models dynamically load tools at runtime instead of sending eve
 Requires `gpt-5.4` or later. See [OpenAI Tool Search docs](https://developers.openai.com/api/docs/guides/tools-tool-search) for full details.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python showLineNumbers title="Tool Search with Namespaces"
-import litellm
+import lumina
 
 # Define namespaces with deferred tools
 tools = [
@@ -764,7 +764,7 @@ tools = [
     },
 ]
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Look up invoice INV-2024-001 from the billing system",
     tools=tools,
@@ -785,7 +785,7 @@ for item in response.output:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Set up config.yaml
 
@@ -797,17 +797,17 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-2. Start LiteLLM Proxy Server
+2. Start Lumina Proxy Server
 
-```bash title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
 3. Test it!
 
-```python showLineNumbers title="Tool Search via OpenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Tool Search via OpenAI SDK with Lumina Proxy"
 from openai import OpenAI
 
 client = OpenAI(
@@ -852,12 +852,12 @@ print(response.output)
 You can also use tool search through the `/v1/chat/completions` endpoint by prefixing the model with `openai/responses/`. The request is routed through the Responses API but returns a standard chat completions response.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python showLineNumbers title="Tool Search via Chat Completions Bridge"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_large}}",
     messages=[{"role": "user", "content": "Look up invoice INV-2024-001"}],
     tools=[
@@ -889,7 +889,7 @@ for tool_call in response.choices[0].message.tool_calls:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```bash showLineNumbers title="Tool Search via /v1/chat/completions"
 curl http://localhost:4000/v1/chat/completions \
@@ -928,13 +928,13 @@ curl http://localhost:4000/v1/chat/completions \
 ## Free-form Function Calling
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 
 ```python showLineNumbers title="Free-form Function Calling"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="{{openai_small}}",
     input="Please use the code_exec tool to calculate the area of a circle with radius equal to the number of 'r's in strawberry",
     text={"format": {"type": "text"}},
@@ -950,7 +950,7 @@ print(response.output)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```python showLineNumbers title="Free-form Function Calling"
 from openai import OpenAI
@@ -982,10 +982,10 @@ print(response.output)
 ## Context-Free Grammar 
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python showLineNumbers title="Context-Free Grammar"
-import litellm
+import lumina
 
 import textwrap
 
@@ -1028,7 +1028,7 @@ sql_prompt_mssql = (
 )
 
 
-response = litellm.responses(
+response = lumina.responses(
     model="{{openai_large}}",
     input=sql_prompt_mssql,
     text={"format": {"type": "text"}},
@@ -1052,7 +1052,7 @@ print(response_mssql.output[1].input)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```python showLineNumbers title="Context-Free Grammar"
 from openai import OpenAI
@@ -1132,13 +1132,13 @@ print(response_mssql.output[1].input)
 ## Minimal Reasoning
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 
 ```python showLineNumbers title="Minimal Reasoning"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="{{openai_large}}",
     input= [{ 'role': 'developer', 'content': prompt }, 
             { 'role': 'user', 'content': 'The food that the restaurant was great! I recommend it to everyone.' }],
@@ -1150,7 +1150,7 @@ response = litellm.responses(
 print(response)
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```python showLineNumbers title="Minimal Reasoning"
 from openai import OpenAI

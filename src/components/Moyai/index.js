@@ -60,7 +60,7 @@ export function MoyaiHero() {
           ref={frame}
           className={styles.heroFrame}
           src={source}
-          title="Illustrated Moyai workflow: give a task through Slack or Web, run it in Moyai’s cloud workspace with inference through LiteLLM, and come back to a pull request."
+          title="Illustrated Moyai workflow: give a task through Slack or Web, run it in Moyai’s cloud workspace with inference through Lumina, and come back to a pull request."
           onLoad={updatePlayer}
           scrolling="no"
         />
@@ -95,14 +95,14 @@ export function BenefitGrid() {
       <section aria-labelledby="budget-your-agents">
         <span className={styles.number}>03</span>
         <Heading as="h3" id="budget-your-agents">One source of truth for model costs</Heading>
-        <p>Use LiteLLM as your source of truth for model charges. In Moyai, see those same charges by user, session, and model. Trace a teammate's total back to the requests behind it.</p>
+        <p>Use Lumina as your source of truth for model charges. In Moyai, see those same charges by user, session, and model. Trace a teammate's total back to the requests behind it.</p>
         <Link className={styles.proofLink} to="#see-agent-spend">See the spend breakdown <ArrowRight size={15} aria-hidden="true" /></Link>
       </section>
       <section aria-labelledby="choose-your-stack">
         <span className={styles.number}>04</span>
         <Heading as="h3" id="choose-your-stack">Choose your agent and model</Heading>
-        <p>Run Codex, Claude Agent SDK, or Hermes with a compatible model through your LiteLLM gateway. Try a different model for the next task and compare the result and cost.</p>
-        <Link className={styles.proofLink} to={`${root}/setup#configure-litellm`}>Explore supported agents <ArrowRight size={15} aria-hidden="true" /></Link>
+        <p>Run Codex, Claude Agent SDK, or Hermes with a compatible model through your Lumina gateway. Try a different model for the next task and compare the result and cost.</p>
+        <Link className={styles.proofLink} to={`${root}/setup#configure-lumina`}>Explore supported agents <ArrowRight size={15} aria-hidden="true" /></Link>
       </section>
     </div>
   );

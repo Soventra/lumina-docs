@@ -1,11 +1,11 @@
 # Adding Guardrail Support to Endpoints
 
-This guide explains how to add guardrail translation support to new LiteLLM endpoints (e.g., Chat Completions, Responses API, etc.).
+This guide explains how to add guardrail translation support to new Lumina endpoints (e.g., Chat Completions, Responses API, etc.).
 
 ## When to Add Guardrail Support
 
 Add guardrail support when:
-- You're creating a new LiteLLM endpoint (e.g., a new API format)
+- You're creating a new Lumina endpoint (e.g., a new API format)
 - You want to enable guardrails for an existing endpoint that doesn't support them
 - You need custom text extraction logic for a specific message format
 
@@ -14,7 +14,7 @@ Add guardrail support when:
 Guardrail handlers follow this structure:
 
 ```
-litellm/llms/{provider}/{endpoint}/guardrail_translation/
+lumina/llms/{provider}/{endpoint}/guardrail_translation/
 ├── __init__.py          # Exports handler and registers call types
 ├── handler.py           # Main handler implementation
 └── README.md            # Documentation (optional but recommended)
@@ -24,7 +24,7 @@ litellm/llms/{provider}/{endpoint}/guardrail_translation/
 
 **OpenAI Chat Completions:**
 ```
-litellm/llms/openai/chat/guardrail_translation/
+lumina/llms/openai/chat/guardrail_translation/
 ├── __init__.py
 ├── handler.py
 └── README.md
@@ -32,7 +32,7 @@ litellm/llms/openai/chat/guardrail_translation/
 
 **OpenAI Responses API:**
 ```
-litellm/llms/openai/responses/guardrail_translation/
+lumina/llms/openai/responses/guardrail_translation/
 ├── __init__.py
 ├── handler.py
 └── README.md
@@ -40,7 +40,7 @@ litellm/llms/openai/responses/guardrail_translation/
 
 **Anthropic Messages:**
 ```
-litellm/llms/anthropic/chat/guardrail_translation/
+lumina/llms/anthropic/chat/guardrail_translation/
 ├── __init__.py
 └── handler.py
 ```
@@ -60,15 +60,15 @@ This module provides guardrail translation support for {Provider}'s {Endpoint} f
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, cast
 
-from litellm._logging import verbose_proxy_logger
-from litellm.llms.base_llm.guardrail_translation.base_translation import BaseTranslation
-from litellm.types.utils import GenericGuardrailAPIInputs
+from lumina._logging import verbose_proxy_logger
+from lumina.llms.base_llm.guardrail_translation.base_translation import BaseTranslation
+from lumina.types.utils import GenericGuardrailAPIInputs
 
 if TYPE_CHECKING:
-    from litellm.integrations.custom_guardrail import CustomGuardrail
-    from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
-    from litellm.proxy._types import UserAPIKeyAuth
-    from litellm.types.utils import ModelResponse  # Or appropriate response type
+    from lumina.integrations.custom_guardrail import CustomGuardrail
+    from lumina.lumina_core_utils.lumina_logging import Logging as LuminaLoggingObj
+    from lumina.proxy._types import UserAPIKeyAuth
+    from lumina.types.utils import ModelResponse  # Or appropriate response type
 
 
 class MyEndpointHandler(BaseTranslation):
@@ -84,7 +84,7 @@ class MyEndpointHandler(BaseTranslation):
         self,
         data: dict,
         guardrail_to_apply: "CustomGuardrail",
-        litellm_logging_obj: Optional["LiteLLMLoggingObj"] = None,
+        lumina_logging_obj: Optional["LuminaLoggingObj"] = None,
     ) -> Any:
         """
         Process input by applying guardrails to text content.
@@ -92,7 +92,7 @@ class MyEndpointHandler(BaseTranslation):
         Args:
             data: Request data dictionary
             guardrail_to_apply: The guardrail instance to apply
-            litellm_logging_obj: Logging object for the call, forwarded to the guardrail
+            lumina_logging_obj: Logging object for the call, forwarded to the guardrail
 
         Returns:
             Modified data with guardrails applied
@@ -104,7 +104,7 @@ class MyEndpointHandler(BaseTranslation):
         self,
         response: Any,  # Use appropriate response type
         guardrail_to_apply: "CustomGuardrail",
-        litellm_logging_obj: Optional["LiteLLMLoggingObj"] = None,
+        lumina_logging_obj: Optional["LuminaLoggingObj"] = None,
         user_api_key_dict: Optional["UserAPIKeyAuth"] = None,
         request_data: dict | None = None,
     ) -> Any:
@@ -114,7 +114,7 @@ class MyEndpointHandler(BaseTranslation):
         Args:
             response: API response object
             guardrail_to_apply: The guardrail instance to apply
-            litellm_logging_obj: Logging object for the call, forwarded to the guardrail
+            lumina_logging_obj: Logging object for the call, forwarded to the guardrail
             user_api_key_dict: Caller identity, passed separately since the response has none
             request_data: The originating request body
 
@@ -136,7 +136,7 @@ async def process_input_messages(
     self,
     data: dict,
     guardrail_to_apply: "CustomGuardrail",
-    litellm_logging_obj: Optional["LiteLLMLoggingObj"] = None,
+    lumina_logging_obj: Optional["LuminaLoggingObj"] = None,
 ) -> Any:
     """Process input messages by applying guardrails to text content."""
     # 1. Get input data from request
@@ -162,7 +162,7 @@ async def process_input_messages(
             inputs=GenericGuardrailAPIInputs(texts=texts_to_check),
             request_data=data,
             input_type="request",
-            logging_obj=litellm_logging_obj,
+            logging_obj=lumina_logging_obj,
         )
 
         # 4. Map the returned texts back to the original structure
@@ -188,7 +188,7 @@ async def process_output_response(
     self,
     response: "ModelResponse",
     guardrail_to_apply: "CustomGuardrail",
-    litellm_logging_obj: Optional["LiteLLMLoggingObj"] = None,
+    lumina_logging_obj: Optional["LuminaLoggingObj"] = None,
     user_api_key_dict: Optional["UserAPIKeyAuth"] = None,
     request_data: dict | None = None,
 ) -> Any:
@@ -215,7 +215,7 @@ async def process_output_response(
             inputs=GenericGuardrailAPIInputs(texts=texts_to_check),
             request_data=request_data or {},
             input_type="response",
-            logging_obj=litellm_logging_obj,
+            logging_obj=lumina_logging_obj,
         )
 
         # 4. Update response with guardrailed text
@@ -288,10 +288,10 @@ Create `__init__.py` to register the handler with call types:
 ```python nolint
 """My Endpoint handler for Unified Guardrails."""
 
-from litellm.llms.{provider}/{endpoint}/guardrail_translation.handler import (
+from lumina.llms.{provider}/{endpoint}/guardrail_translation.handler import (
     MyEndpointHandler,
 )
-from litellm.types.utils import CallTypes
+from lumina.types.utils import CallTypes
 
 guardrail_translation_mappings = {
     CallTypes.my_endpoint: MyEndpointHandler,
@@ -301,7 +301,7 @@ guardrail_translation_mappings = {
 __all__ = ["guardrail_translation_mappings"]
 ```
 
-**Important:** Make sure your `CallTypes` are defined in `litellm/types/utils.py`.
+**Important:** Make sure your `CallTypes` are defined in `lumina/types/utils.py`.
 
 ### Step 5: Add Documentation
 
@@ -362,7 +362,7 @@ Override these methods to customize behavior:
 
 ### Step 6: Add Unit Tests
 
-Create thorough tests in `tests/test_litellm/llms/{provider}/{endpoint}/`:
+Create thorough tests in `tests/test_lumina/llms/{provider}/{endpoint}/`:
 
 ```python
 """
@@ -377,15 +377,15 @@ import pytest
 
 sys.path.insert(0, os.path.abspath("../../../../../.."))
 
-from litellm.integrations.custom_guardrail import CustomGuardrail
-from litellm.llms import get_guardrail_translation_mapping
-from litellm.llms.{provider}.{endpoint}.guardrail_translation.handler import (
+from lumina.integrations.custom_guardrail import CustomGuardrail
+from lumina.llms import get_guardrail_translation_mapping
+from lumina.llms.{provider}.{endpoint}.guardrail_translation.handler import (
     MyEndpointHandler,
 )
-from litellm.types.utils import CallTypes, GenericGuardrailAPIInputs
+from lumina.types.utils import CallTypes, GenericGuardrailAPIInputs
 
 if TYPE_CHECKING:
-    from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
+    from lumina.lumina_core_utils.lumina_logging import Logging as LuminaLoggingObj
 
 
 class MockGuardrail(CustomGuardrail):
@@ -396,7 +396,7 @@ class MockGuardrail(CustomGuardrail):
         inputs: GenericGuardrailAPIInputs,
         request_data: dict,
         input_type: Literal["request", "response"],
-        logging_obj: Optional["LiteLLMLoggingObj"] = None,
+        logging_obj: Optional["LuminaLoggingObj"] = None,
     ) -> GenericGuardrailAPIInputs:
         inputs["texts"] = [f"{text} [GUARDRAILED]" for text in inputs.get("texts", [])]
         return inputs

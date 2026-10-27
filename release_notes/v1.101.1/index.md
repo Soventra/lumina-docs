@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.101.1 - Claude Code Auto Mode, Wildcard License Auto-Router & TypeSafe Jev"
+title: "Lumina v1.101.1 - Claude Code Auto Mode, Wildcard License Auto-Router & TypeSafe Jev"
 description: "Lets Claude Code auto mode work through the gateway and fixes Bedrock GPT and Grok switches. Also grants the auto-router feature to wildcard licenses."
 slug: "v1-101-1"
 date: 2026-09-23T06:12:25
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -33,22 +33,22 @@ docker run \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.101.1
+docker.lumina.ai/soventra/lumina:1.101.1
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.101.1
+pip install lumina==1.101.1
 ```
 
 </TabItem>
 </Tabs>
 
-This release is published as [`ghcr.io/berriai/litellm:v1.101.1`](https://github.com/BerriAI/litellm/pkgs/container/litellm). See the [GitHub release](https://github.com/BerriAI/litellm/releases/tag/v1.101.1) and the full [releases page](https://github.com/BerriAI/litellm/releases)
+This release is published as [`ghcr.io/soventra/lumina:v1.101.1`](https://github.com/Soventra/lumina/pkgs/container/lumina). See the [GitHub release](https://github.com/Soventra/lumina/releases/tag/v1.101.1) and the full [releases page](https://github.com/Soventra/lumina/releases)
 
-`v1.101.1` is a patch release on top of [`v1.101.0`](/release_notes/v1.101.0/v1-101-0). It lets Claude Code auto mode work through the gateway, fixes Claude Code model switches to Bedrock OpenAI GPT and xAI Grok models, lets a wildcard enterprise license lift the auto-router limit, and brings the TypeSafe Jev integrations to this line. There are no configuration changes for existing setups. Both the Docker image and the PyPI package were built from [`432215e`](https://github.com/BerriAI/litellm/commit/432215e6196935d63b5558b3f2fa7ac38965449e)
+`v1.101.1` is a patch release on top of [`v1.101.0`](/release_notes/v1.101.0/v1-101-0). It lets Claude Code auto mode work through the gateway, fixes Claude Code model switches to Bedrock OpenAI GPT and xAI Grok models, lets a wildcard enterprise license lift the auto-router limit, and brings the TypeSafe Jev integrations to this line. There are no configuration changes for existing setups. Both the Docker image and the PyPI package were built from [`432215e`](https://github.com/Soventra/lumina/commit/432215e6196935d63b5558b3f2fa7ac38965449e)
 
 ## Claude Code auto mode works through the gateway
 
@@ -78,21 +78,21 @@ The lockfile moves anyio to 4.14.2 and soupsieve to 2.9. No declared dependency 
 
 ### What's Changed
 
-- fix(anthropic): forward safeguards and anthropic-beta unchanged on native /v1/messages - [PR #42152](https://github.com/BerriAI/litellm/pull/42152)
-- fix(anthropic): forward Claude Code safeguards and dangerous-tool-use beta to Bedrock Invoke and Vertex on /v1/messages - [PR #42288](https://github.com/BerriAI/litellm/pull/42288)
-- fix(bedrock): clamp maxTokens to the 16-token minimum for OpenAI GPT and xAI Grok models on Converse - [PR #41870](https://github.com/BerriAI/litellm/pull/41870)
-- fix(license): let a wildcard allowed_features license grant the auto_router feature - [PR #41684](https://github.com/BerriAI/litellm/pull/41684)
-- fix(proxy): apply team model aliases on the JWT auth path - [PR #39985](https://github.com/BerriAI/litellm/pull/39985)
-- feat(proxy): add TypeSafe AI Jev evaluate passthrough with registry-priced spend tracking - [PR #41607](https://github.com/BerriAI/litellm/pull/41607)
-- feat(router): add TypeSafe Jev as a complexity router classifier - [PR #41615](https://github.com/BerriAI/litellm/pull/41615)
-- fix(proxy): forward every method on the typesafe pass-through route - [PR #41723](https://github.com/BerriAI/litellm/pull/41723)
-- feat(guardrails): add TypeSafe Jev relevance-based compaction guardrail - [PR #41757](https://github.com/BerriAI/litellm/pull/41757)
-- fix(proxy): enforce virtual key budgets for JEV test routing - [PR #41879](https://github.com/BerriAI/litellm/pull/41879)
-- feat(auto-router): add JEV classifier alongside LLM classifier - [PR #41886](https://github.com/BerriAI/litellm/pull/41886)
-- feat(openrouter): price typesafe/jev-1.13 and add an openrouter decisions pass-through - [PR #42301](https://github.com/BerriAI/litellm/pull/42301)
-- feat(auto-router): allow opted-in team members to manage their routers, the parts the Jev router changes build on - [PR #41175](https://github.com/BerriAI/litellm/pull/41175)
+- fix(anthropic): forward safeguards and anthropic-beta unchanged on native /v1/messages - [PR #42152](https://github.com/Soventra/lumina/pull/42152)
+- fix(anthropic): forward Claude Code safeguards and dangerous-tool-use beta to Bedrock Invoke and Vertex on /v1/messages - [PR #42288](https://github.com/Soventra/lumina/pull/42288)
+- fix(bedrock): clamp maxTokens to the 16-token minimum for OpenAI GPT and xAI Grok models on Converse - [PR #41870](https://github.com/Soventra/lumina/pull/41870)
+- fix(license): let a wildcard allowed_features license grant the auto_router feature - [PR #41684](https://github.com/Soventra/lumina/pull/41684)
+- fix(proxy): apply team model aliases on the JWT auth path - [PR #39985](https://github.com/Soventra/lumina/pull/39985)
+- feat(proxy): add TypeSafe AI Jev evaluate passthrough with registry-priced spend tracking - [PR #41607](https://github.com/Soventra/lumina/pull/41607)
+- feat(router): add TypeSafe Jev as a complexity router classifier - [PR #41615](https://github.com/Soventra/lumina/pull/41615)
+- fix(proxy): forward every method on the typesafe pass-through route - [PR #41723](https://github.com/Soventra/lumina/pull/41723)
+- feat(guardrails): add TypeSafe Jev relevance-based compaction guardrail - [PR #41757](https://github.com/Soventra/lumina/pull/41757)
+- fix(proxy): enforce virtual key budgets for JEV test routing - [PR #41879](https://github.com/Soventra/lumina/pull/41879)
+- feat(auto-router): add JEV classifier alongside LLM classifier - [PR #41886](https://github.com/Soventra/lumina/pull/41886)
+- feat(openrouter): price typesafe/jev-1.13 and add an openrouter decisions pass-through - [PR #42301](https://github.com/Soventra/lumina/pull/42301)
+- feat(auto-router): allow opted-in team members to manage their routers, the parts the Jev router changes build on - [PR #41175](https://github.com/Soventra/lumina/pull/41175)
 - chore(deps): refresh anyio and soupsieve in the lockfile
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.101.0...v1.101.1
+https://github.com/Soventra/lumina/compare/v1.101.0...v1.101.1

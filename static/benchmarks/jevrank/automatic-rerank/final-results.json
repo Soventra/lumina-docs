@@ -1,10 +1,10 @@
 {
   "timestamp_utc": "2026-10-21T05:31:50.507910+00:00",
   "head": "10de80b6452a9945af05fdbea9e0aa0501661c69",
-  "gateway": "https://gateway.litellm-sandbox.ai",
+  "gateway": "https://gateway.lumina-sandbox.ai",
   "requested_model": "typesafe/jev-latest",
   "pricing_source": "gateway /model/info",
-  "catalog_source": "bundled preview-branch catalog (LITELLM_LOCAL_MODEL_COST_MAP=True)",
+  "catalog_source": "bundled preview-branch catalog (LUMINA_LOCAL_MODEL_COST_MAP=True)",
   "input_cost_per_token": 4.2e-08,
   "output_cost_per_token": 0,
   "records": [
@@ -12,9 +12,9 @@
       "case": "sdk_sync",
       "status": "passed",
       "latency_seconds": 0.356,
-      "query": "What is LiteLLM used for?",
+      "query": "What is Lumina used for?",
       "documents": [
-        "LiteLLM is a gateway and SDK for calling many language models through a consistent API.",
+        "Lumina is a gateway and SDK for calling many language models through a consistent API.",
         "Bananas are yellow fruit commonly used in smoothies."
       ],
       "selected_method": "pointwise (selected from the model catalog)",
@@ -25,7 +25,7 @@
             "index": 0,
             "relevance_score": 0.99,
             "document": {
-              "text": "LiteLLM is a gateway and SDK for calling many language models through a consistent API."
+              "text": "Lumina is a gateway and SDK for calling many language models through a consistent API."
             }
           },
           {
@@ -45,7 +45,7 @@
         }
       },
       "sdk_completion_cost_usd": 2.6963999999999998e-05,
-      "cost_calculation": "litellm.completion_cost(response, custom_cost_per_token=explicit gateway rates)",
+      "cost_calculation": "lumina.completion_cost(response, custom_cost_per_token=explicit gateway rates)",
       "tokens_times_configured_price_usd": 2.6963999999999998e-05,
       "observed_gateway_response_cost_usd": 2.6963999999999998e-05,
       "costs_match": true,
@@ -54,13 +54,13 @@
           "case": "sdk_sync",
           "status_code": 200,
           "path": "/v1/decisions",
-          "x-litellm-response-cost": 1.3607999999999999e-05
+          "x-lumina-response-cost": 1.3607999999999999e-05
         },
         {
           "case": "sdk_sync",
           "status_code": 200,
           "path": "/v1/decisions",
-          "x-litellm-response-cost": 1.3355999999999999e-05
+          "x-lumina-response-cost": 1.3355999999999999e-05
         }
       ],
       "provider_responses": [
@@ -114,9 +114,9 @@
       "case": "sdk_async",
       "status": "passed",
       "latency_seconds": 0.202,
-      "query": "What is LiteLLM used for?",
+      "query": "What is Lumina used for?",
       "documents": [
-        "LiteLLM is a gateway and SDK for calling many language models through a consistent API.",
+        "Lumina is a gateway and SDK for calling many language models through a consistent API.",
         "Bananas are yellow fruit commonly used in smoothies."
       ],
       "selected_method": "pointwise (selected from the model catalog)",
@@ -127,7 +127,7 @@
             "index": 0,
             "relevance_score": 0.99,
             "document": {
-              "text": "LiteLLM is a gateway and SDK for calling many language models through a consistent API."
+              "text": "Lumina is a gateway and SDK for calling many language models through a consistent API."
             }
           },
           {
@@ -147,7 +147,7 @@
         }
       },
       "sdk_completion_cost_usd": 2.6963999999999998e-05,
-      "cost_calculation": "litellm.completion_cost(response, custom_cost_per_token=explicit gateway rates)",
+      "cost_calculation": "lumina.completion_cost(response, custom_cost_per_token=explicit gateway rates)",
       "tokens_times_configured_price_usd": 2.6963999999999998e-05,
       "observed_gateway_response_cost_usd": 2.6963999999999998e-05,
       "costs_match": true,
@@ -156,13 +156,13 @@
           "case": "sdk_async",
           "status_code": 200,
           "path": "/v1/decisions",
-          "x-litellm-response-cost": 1.3607999999999999e-05
+          "x-lumina-response-cost": 1.3607999999999999e-05
         },
         {
           "case": "sdk_async",
           "status_code": 200,
           "path": "/v1/decisions",
-          "x-litellm-response-cost": 1.3355999999999999e-05
+          "x-lumina-response-cost": 1.3355999999999999e-05
         }
       ],
       "provider_responses": [
@@ -216,9 +216,9 @@
       "case": "router_alias",
       "status": "passed",
       "latency_seconds": 0.254,
-      "query": "What is LiteLLM used for?",
+      "query": "What is Lumina used for?",
       "documents": [
-        "LiteLLM is a gateway and SDK for calling many language models through a consistent API.",
+        "Lumina is a gateway and SDK for calling many language models through a consistent API.",
         "Bananas are yellow fruit commonly used in smoothies."
       ],
       "selected_method": "pointwise (selected from the model catalog)",
@@ -229,7 +229,7 @@
             "index": 0,
             "relevance_score": 0.99,
             "document": {
-              "text": "LiteLLM is a gateway and SDK for calling many language models through a consistent API."
+              "text": "Lumina is a gateway and SDK for calling many language models through a consistent API."
             }
           }
         ],
@@ -242,7 +242,7 @@
         }
       },
       "sdk_completion_cost_usd": 2.6963999999999998e-05,
-      "cost_calculation": "litellm.completion_cost(response, custom_cost_per_token=explicit gateway rates)",
+      "cost_calculation": "lumina.completion_cost(response, custom_cost_per_token=explicit gateway rates)",
       "tokens_times_configured_price_usd": 2.6963999999999998e-05,
       "observed_gateway_response_cost_usd": 2.6963999999999998e-05,
       "costs_match": true,
@@ -251,13 +251,13 @@
           "case": "router_alias",
           "status_code": 200,
           "path": "/v1/decisions",
-          "x-litellm-response-cost": 1.3355999999999999e-05
+          "x-lumina-response-cost": 1.3355999999999999e-05
         },
         {
           "case": "router_alias",
           "status_code": 200,
           "path": "/v1/decisions",
-          "x-litellm-response-cost": 1.3607999999999999e-05
+          "x-lumina-response-cost": 1.3607999999999999e-05
         }
       ],
       "provider_responses": [

@@ -26,11 +26,11 @@ For this guardrail you need a deployed Presidio Analyzer and Presido Anonymizer 
 ## Quick Start
 
 <Tabs>
-<TabItem value="ui" label="LiteLLM UI">
+<TabItem value="ui" label="Lumina UI">
 
 ### 1. Create a PII, PHI Masking Guardrail 
 
-On the LiteLLM UI, navigate to Guardrails. Click "Add Guardrail". On this dropdown select "Presidio PII" and enter your presidio analyzer and anonymizer endpoints. 
+On the Lumina UI, navigate to Guardrails. Click "Add Guardrail". On this dropdown select "Presidio PII" and enter your presidio analyzer and anonymizer endpoints. 
 
 <Image 
   img={require('../../../img/presidio_1.png')}
@@ -96,10 +96,10 @@ export PRESIDIO_ANONYMIZER_API_BASE="http://localhost:5001"
 - `post_call` Run **after** LLM call, on **input & output**
 - `logging_only` Run **after** LLM call, only apply PII Masking before logging to Langfuse, etc. Not on the actual llm api request / response.
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 ```shell title="Start Gateway" showLineNumbers
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 </TabItem>
@@ -108,9 +108,9 @@ litellm --config config.yaml --detailed_debug
 
 ### 3. Test it! 
 
-#### 3.1 LiteLLM UI 
+#### 3.1 Lumina UI 
 
-On the litellm UI, navigate to the 'Test Keys' page, select the guardrail you created and send the following messaged filled with PII data. 
+On the lumina UI, navigate to the 'Test Keys' page, select the guardrail you created and send the following messaged filled with PII data. 
 
 ```text title="PII Request" showLineNumbers
 My credit card is 4111-1111-1111-1111 and my email is test@example.com.
@@ -200,11 +200,11 @@ curl http://localhost:4000/chat/completions \
 
 ## Tracing Guardrail requests
 
-Once your guardrail is live in production, you will also be able to trace your guardrail on LiteLLM Logs, Langfuse, Arize Phoenix, etc, all LiteLLM logging integrations. 
+Once your guardrail is live in production, you will also be able to trace your guardrail on Lumina Logs, Langfuse, Arize Phoenix, etc, all Lumina logging integrations. 
 
-### LiteLLM UI 
+### Lumina UI 
 
-On the LiteLLM logs page you can see that the PII content was masked for this specific request. And you can see detailed tracing for the guardrail. This allows you to monitor entity types masked with their corresponding confidence score and the duration of the guardrail execution.  
+On the Lumina logs page you can see that the PII content was masked for this specific request. And you can see detailed tracing for the guardrail. This allows you to monitor entity types masked with their corresponding confidence score and the duration of the guardrail execution.  
 
 <Image 
   img={require('../../../img/presidio_4.png')}
@@ -213,7 +213,7 @@ On the LiteLLM logs page you can see that the PII content was masked for this sp
 
 ### Langfuse 
 
-When connecting Litellm to Langfuse, you can see the guardrail information on the Langfuse Trace. 
+When connecting Lumina to Langfuse, you can see the guardrail information on the Langfuse Trace. 
 
 <Image 
   img={require('../../../img/presidio_5.png')}
@@ -285,7 +285,7 @@ guardrails:
 
 ### Large content chunking
 
-Presidio analyzer deployments commonly cap the `/analyze` request body size (for example at 1 MB), and analyzer latency grows with payload size. LiteLLM automatically splits any single content block whose serialized `/analyze` body would exceed `presidio_analyze_chunk_size_bytes` (default: `500000` bytes, measured on the JSON-escaped form the analyzer receives) into overlapping chunks, analyzes the chunks with a bounded fan-out, and merges the detections back onto the original text, so large content blocks are masked correctly instead of failing with `HTTP 413`.
+Presidio analyzer deployments commonly cap the `/analyze` request body size (for example at 1 MB), and analyzer latency grows with payload size. Lumina automatically splits any single content block whose serialized `/analyze` body would exceed `presidio_analyze_chunk_size_bytes` (default: `500000` bytes, measured on the JSON-escaped form the analyzer receives) into overlapping chunks, analyzes the chunks with a bounded fan-out, and merges the detections back onto the original text, so large content blocks are masked correctly instead of failing with `HTTP 413`.
 
 ```yaml
 guardrails:
@@ -300,7 +300,7 @@ Set it below your analyzer deployment's request body limit, leaving headroom for
 
 ### Supported Entity Types
 
-LiteLLM Supports all Presidio entity types. See the complete list of presidio entity types [here](https://microsoft.github.io/presidio/supported_entities/).
+Lumina Supports all Presidio entity types. See the complete list of presidio entity types [here](https://microsoft.github.io/presidio/supported_entities/).
 
 ### Supported Actions
 
@@ -467,7 +467,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -575,7 +575,7 @@ In this example, the request will use Spanish (`es`) for PII detection even thou
 
 LLM responses can sometimes contain the masked tokens. 
 
-For presidio 'replace' operations, LiteLLM can check the LLM response and replace the masked token with the user-submitted values. 
+For presidio 'replace' operations, Lumina can check the LLM response and replace the masked token with the user-submitted values. 
 
 Define your guardrails under the `guardrails` section
 ```yaml title="Output Parsing Config" showLineNumbers
@@ -608,9 +608,9 @@ guardrails:
 
 Send ad-hoc recognizers to presidio `/analyze` by passing a json file to the proxy 
 
-[**Example** ad-hoc recognizer](https://github.com/BerriAI/litellm/blob/b69b7503db5aa039a49b7ca96ae5b34db0d25a3d/litellm/proxy/hooks/example_presidio_ad_hoc_recognizer.json)
+[**Example** ad-hoc recognizer](https://github.com/Soventra/lumina/blob/b69b7503db5aa039a49b7ca96ae5b34db0d25a3d/lumina/proxy/hooks/example_presidio_ad_hoc_recognizer.json)
 
-#### Define ad-hoc recognizer on your LiteLLM config.yaml 
+#### Define ad-hoc recognizer on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 ```yaml title="Ad Hoc Recognizers Config" showLineNumbers
@@ -639,7 +639,7 @@ export PRESIDIO_ANONYMIZER_API_BASE="http://localhost:5001"
 You can see this working, when you run the proxy: 
 
 ```bash title="Run Proxy with Debug" showLineNumbers
-litellm --config /path/to/config.yaml --debug
+lumina --config /path/to/config.yaml --debug
 ```
 
 Make a chat completions request, example:
@@ -670,7 +670,7 @@ This is currently only applied for
 
 :::
 
-1. Define mode: `logging_only` on your LiteLLM config.yaml 
+1. Define mode: `logging_only` on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 ```yaml title="Logging Only Config" showLineNumbers
@@ -698,7 +698,7 @@ export PRESIDIO_ANONYMIZER_API_BASE="http://localhost:5001"
 2. Start proxy
 
 ```bash title="Start Proxy" showLineNumbers
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 

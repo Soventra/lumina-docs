@@ -10,7 +10,7 @@ This will return a response object with a default response (works for streaming 
 
 ## quick start
 ```python
-from litellm import completion 
+from lumina import completion 
 
 model = "{{openai_small}}"
 messages = [{"role":"user", "content":"This is a test request"}]
@@ -21,7 +21,7 @@ completion(model=model, messages=messages, mock_response="It's simple to use and
 ## streaming
 
 ```python
-from litellm import completion 
+from lumina import completion 
 model = "{{openai_small}}"
 messages = [{"role": "user", "content": "Hey, I'm a mock request"}]
 response = completion(model=model, messages=messages, stream=True, mock_response="It's simple to use and easy to get started")
@@ -58,19 +58,19 @@ for chunk in response:
 ## Building a pytest function using `completion` with `mock_response`
 
 ```python
-from litellm import completion
+from lumina import completion
 import pytest
 
 def test_completion_openai():
     try:
         response = completion(
             model="{{openai_small}}",
-            messages=[{"role":"user", "content":"Why is LiteLLM amazing?"}],
-            mock_response="LiteLLM is awesome"
+            messages=[{"role":"user", "content":"Why is Lumina amazing?"}],
+            mock_response="Lumina is awesome"
         )
         # Add any assertions here to check the response
         print(response)
-        assert(response['choices'][0]['message']['content'] == "LiteLLM is awesome")
+        assert(response['choices'][0]['message']['content'] == "Lumina is awesome")
     except Exception as e:
         pytest.fail(f"Error occurred: {e}")
 ```

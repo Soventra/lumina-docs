@@ -16,7 +16,7 @@ Use the ClickHouse HTTP(S) endpoint, with special characters in credentials URL-
 https://lens_user:URL_ENCODED_PASSWORD@clickhouse.example.com:8443
 ```
 
-The usual private HTTP port is 8123; port 9000 uses the native protocol and is not the Lens HTTP connection. Keep the URL in your secret manager. Standalone Lens defaults to database `lens`; existing gateway installations can retain `litellm`. Preserve the database containing your records
+The usual private HTTP port is 8123; port 9000 uses the native protocol and is not the Lens HTTP connection. Keep the URL in your secret manager. Standalone Lens defaults to database `lens`; existing gateway installations can retain `lumina`. Preserve the database containing your records
 
 Lens initializes its schema and application state before accepting requests. Its credential must allow database, table and materialized-view creation, reads, inserts and alters for publication and cleanup. A read-only analytical account cannot run Lens
 

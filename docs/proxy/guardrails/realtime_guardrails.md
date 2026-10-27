@@ -9,14 +9,14 @@ Guard voice conversations in the [Realtime API](/docs/realtime) by intercepting 
 
 The Realtime API is a long-lived WebSocket session. Unlike `/chat/completions` where a guardrail runs once per HTTP request, a voice session has many turns, and each one needs to be checked individually.
 
-LiteLLM intercepts each turn at the transcription event, after Whisper converts speech to text but before the LLM generates a response:
+Lumina intercepts each turn at the transcription event, after Whisper converts speech to text but before the LLM generates a response:
 
 ```
 User speaks into mic
         │
         ▼ audio bytes (PCM)
 ┌───────────────────┐
-│   LiteLLM Proxy   │  forwards audio to OpenAI unchanged
+│   Lumina Proxy   │  forwards audio to OpenAI unchanged
 └────────┬──────────┘
          │
          ▼
@@ -30,7 +30,7 @@ User speaks into mic
          │
          ▼
 ┌───────────────────────────────────────────┐
-│           LiteLLM Proxy                   │
+│           Lumina Proxy                   │
 │                                           │
 │   ◄──── GUARDRAIL RUNS HERE ────►         │
 │   apply_guardrail(texts=[transcript])     │
@@ -44,7 +44,7 @@ User speaks into mic
 └───────────────────────────────────────────┘
 ```
 
-**Key detail**: LiteLLM also injects `create_response: false` into the session on connect, so the LLM never auto-responds before the guardrail has run.
+**Key detail**: Lumina also injects `create_response: false` into the session on connect, so the LLM never auto-responds before the guardrail has run.
 
 ## Supported guardrail mode
 
@@ -68,7 +68,7 @@ model_list:
 guardrails:
   - guardrail_name: "voice-content-filter"
     lumina_params:
-      guardrail: litellm_content_filter
+      guardrail: lumina_content_filter
       mode: realtime_input_transcription
       default_on: true
       blocked_words:
@@ -89,7 +89,7 @@ general_settings:
 ### Step 2: Start proxy
 
 ```bash
-litellm --config proxy_config.yaml --port 4000
+lumina --config proxy_config.yaml --port 4000
 ```
 
 ### Step 3: Connect a Realtime client
@@ -103,7 +103,7 @@ Connect your client to the proxy instead of directly to OpenAI:
 const ws = new WebSocket(
   "ws://localhost:4000/v1/realtime?model=openai/gpt-4o-realtime-preview",
   [],
-  { headers: { Authorization: "Bearer sk-<your-litellm-api-key>" } }
+  { headers: { Authorization: "Bearer sk-<your-lumina-api-key>" } }
 )
 
 ws.onopen = () => {
@@ -136,7 +136,7 @@ import websockets
 async def main():
     async with websockets.connect(
         "ws://localhost:4000/v1/realtime?model=openai/gpt-4o-realtime-preview",
-        additional_headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+        additional_headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
     ) as ws:
         await ws.recv()  # session.created
 
@@ -173,7 +173,7 @@ On a transcription-only session (`/v1/realtime?intent=transcription`, or a `sess
 
 ## Using with other guardrail providers
 
-The proxy runs realtime guardrails through the provider's `apply_guardrail` method, but a guardrail can only be configured with `mode: realtime_input_transcription` if that hook is listed in its `get_supported_event_hooks()`. Currently only `litellm_content_filter` declares it. Setting the mode on another provider (for example `lakera_v2`, which supports only `pre_call`, `during_call`, and `post_call`) fails validation at proxy startup: the proxy logs an error (`Skipping guardrail ... proxy is starting WITHOUT this guardrail`) and starts without that guardrail, so realtime sessions run unprotected. Setting `LUMINA_STRICT_GUARDRAIL_MODES=false` downgrades the log to a warning, but the guardrail is still not supported for this mode.
+The proxy runs realtime guardrails through the provider's `apply_guardrail` method, but a guardrail can only be configured with `mode: realtime_input_transcription` if that hook is listed in its `get_supported_event_hooks()`. Currently only `lumina_content_filter` declares it. Setting the mode on another provider (for example `lakera_v2`, which supports only `pre_call`, `during_call`, and `post_call`) fails validation at proxy startup: the proxy logs an error (`Skipping guardrail ... proxy is starting WITHOUT this guardrail`) and starts without that guardrail, so realtime sessions run unprotected. Setting `LUMINA_STRICT_GUARDRAIL_MODES=false` downgrades the log to a warning, but the guardrail is still not supported for this mode.
 
 To add realtime support to a custom guardrail, include `GuardrailEventHooks.realtime_input_transcription` in its `get_supported_event_hooks()` and implement `apply_guardrail`.
 
@@ -185,7 +185,7 @@ To enable realtime guardrails only for specific API keys, set `default_on: false
 guardrails:
   - guardrail_name: "voice-content-filter"
     lumina_params:
-      guardrail: litellm_content_filter
+      guardrail: lumina_content_filter
       mode: realtime_input_transcription
       default_on: false   # off by default
 ```

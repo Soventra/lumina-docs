@@ -6,8 +6,8 @@ Use OpenAI's Code Interpreter tool to execute Python code in a secure, sandboxed
 
 | Feature | Supported |
 |---------|-----------|
-| LiteLLM Python SDK | ✅ |
-| LiteLLM AI Gateway | ✅ |
+| Lumina Python SDK | ✅ |
+| Lumina AI Gateway | ✅ |
 | Supported Providers | `openai` |
 
 :::tip[Route code interpreter to your own sandbox]
@@ -16,17 +16,17 @@ The proxy can intercept `code_interpreter` on `/v1/responses` and run the code i
 
 :::
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### API (OpenAI SDK)
 
-Use the OpenAI SDK pointed at your LiteLLM Gateway:
+Use the OpenAI SDK pointed at your Lumina Gateway:
 
 ```python showLineNumbers title="code_interpreter_gateway.py"
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM API key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina API key
     base_url="http://localhost:4000"
 )
 
@@ -45,7 +45,7 @@ print(response)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -66,7 +66,7 @@ for event in stream:
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -97,13 +97,13 @@ for file in files.data:
 
 ### AI Gateway UI
 
-The LiteLLM Admin UI includes built-in Code Interpreter support.
+The Lumina Admin UI includes built-in Code Interpreter support.
 
 <Image img={require('../../img/code_interp.png')} />
 
 **Steps:**
 
-1. Go to **Playground** in the LiteLLM UI
+1. Go to **Playground** in the Lumina UI
 2. Select an **OpenAI model** (e.g., `openai/{{openai_large}}`)
 3. Select `/v1/responses` as the endpoint under **Endpoint Type**
 4. Toggle **Code Interpreter** in the left panel
@@ -114,14 +114,14 @@ The UI will display:
 - Generated images inline
 - Download links for files (CSVs, etc.)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ### Run Code Interpreter
 
 ```python showLineNumbers title="code_interpreter.py"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Generate a bar chart of quarterly sales and save as PNG",
     tools=[{"type": "code_interpreter"}]
@@ -135,10 +135,10 @@ print(response)
 After Code Interpreter runs, retrieve the generated files:
 
 ```python showLineNumbers title="get_file_content.py"
-import litellm
+import lumina
 
 # 1. Run code interpreter
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Create a pie chart of market share and save as PNG",
     tools=[{"type": "code_interpreter"}]
@@ -148,14 +148,14 @@ response = litellm.responses(
 container_id = response.output[0].container_id  # e.g. "cntr_abc123..."
 
 # 3. List files in container
-files = litellm.list_container_files(
+files = lumina.list_container_files(
     container_id=container_id,
     custom_llm_provider="openai"
 )
 
 # 4. Download each file
 for file in files.data:
-    content = litellm.containers.retrieve_container_file_content(
+    content = lumina.containers.retrieve_container_file_content(
         container_id=container_id,
         file_id=file.id,
         custom_llm_provider="openai"

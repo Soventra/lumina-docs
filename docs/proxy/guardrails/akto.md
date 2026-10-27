@@ -9,11 +9,11 @@ Akto's key capabilities include:
 - **Runtime Guardrails** - enforce configurable policies covering prompt injection, jailbreaks, sensitive data leakage, unauthorized tool use, schema violations, and more
 - **AI Security Posture Management** - unified visibility into risk scores, compliance gaps, and security metrics, with support for 10+ standards including OWASP GenAI, NIST AI RMF, and MITRE ATLAS
 
-Each Akto guardrail entry checks traffic with Akto at the point its `mode` names and records it in the Akto dashboard. `pre_call` checks the request before it reaches the LLM, `post_call` checks the LLM response before it reaches the caller, and `pre_mcp_call` / `post_mcp_call` check MCP tool arguments and tool results. When Akto flags the traffic, LiteLLM blocks it; when Akto returns a masked version, LiteLLM forwards the masked version instead. `logging_only` sends the request and the response to Akto after the call finishes and never blocks or changes it, see [Monitor without blocking](#monitor-without-blocking).
+Each Akto guardrail entry checks traffic with Akto at the point its `mode` names and records it in the Akto dashboard. `pre_call` checks the request before it reaches the LLM, `post_call` checks the LLM response before it reaches the caller, and `pre_mcp_call` / `post_mcp_call` check MCP tool arguments and tool results. When Akto flags the traffic, Lumina blocks it; when Akto returns a masked version, Lumina forwards the masked version instead. `logging_only` sends the request and the response to Akto after the call finishes and never blocks or changes it, see [Monitor without blocking](#monitor-without-blocking).
 
 :::warning `post_call` now blocks
 
-Older versions sent `post_call` traffic to Akto in the background and never blocked the response, so a `post_call`-only setup worked as a monitor-only mode. Starting with [PR #44343](https://github.com/BerriAI/litellm/pull/44343), `post_call` waits for Akto's verdict: a flagged response is blocked with `403`, and every response waits for the check. With the default `unreachable_fallback: fail_closed`, a response also fails with `503` when Akto is down or slow. For a monitor-only setup, use `mode: logging_only` instead, see [Monitor without blocking](#monitor-without-blocking). To keep `post_call` blocking but let responses pass when Akto cannot be reached, set `unreachable_fallback: fail_open`.
+Older versions sent `post_call` traffic to Akto in the background and never blocked the response, so a `post_call`-only setup worked as a monitor-only mode. Starting with [PR #44343](https://github.com/Soventra/lumina/pull/44343), `post_call` waits for Akto's verdict: a flagged response is blocked with `403`, and every response waits for the check. With the default `unreachable_fallback: fail_closed`, a response also fails with `503` when Akto is down or slow. For a monitor-only setup, use `mode: logging_only` instead, see [Monitor without blocking](#monitor-without-blocking). To keep `post_call` blocking but let responses pass when Akto cannot be reached, set `unreachable_fallback: fail_open`.
 
 :::
 
@@ -55,14 +55,14 @@ guardrails:
       default_on: true
 ```
 
-Keep only the entries you need. The MCP entry applies to tools served through the [LiteLLM MCP gateway](../../mcp.md).
+Keep only the entries you need. The MCP entry applies to tools served through the [Lumina MCP gateway](../../mcp.md).
 
 ### 3. Test request
 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your litellm key>" \
+  -H "Authorization: Bearer <your lumina key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -89,7 +89,7 @@ A blocked MCP tool call answers differently per endpoint. On `/mcp` it comes bac
 ## How It Works
 
 ```
-Request -> LiteLLM -> Akto check (pre_call)
+Request -> Lumina -> Akto check (pre_call)
   -> Blocked -> 403
   -> Allowed -> LLM -> Akto check (post_call)
        -> Blocked -> 403
@@ -114,7 +114,7 @@ Every check is one awaited call to Akto that both evaluates the traffic and reco
 
 ## Monitor without blocking
 
-Use `mode: logging_only` to send traffic to Akto for evaluation and recording without enforcing anything. After each call finishes, LiteLLM checks the request and the response with Akto, so they show up in the Akto dashboard, and the caller always gets the LLM response unchanged:
+Use `mode: logging_only` to send traffic to Akto for evaluation and recording without enforcing anything. After each call finishes, Lumina checks the request and the response with Akto, so they show up in the Akto dashboard, and the caller always gets the LLM response unchanged:
 
 ```yaml
 guardrails:

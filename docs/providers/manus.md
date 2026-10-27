@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Manus
 
-Use Manus AI agents through LiteLLM's OpenAI-compatible Responses API.
+Use Manus AI agents through Lumina's OpenAI-compatible Responses API.
 
 | Property | Details |
 |----------|---------|
 | Description | Manus is an AI agent platform for complex reasoning tasks, document analysis, and multi-step workflows with asynchronous task execution. |
-| Provider Route on LiteLLM | `manus/{agent_profile}` |
+| Provider Route on Lumina | `manus/{agent_profile}` |
 | Supported Operations | `/responses` (Responses API), `/files` (Files API) |
 | Provider Doc | [Manus API ↗](https://open.manus.im/docs/openai-compatibility) |
 
@@ -23,10 +23,10 @@ manus/{agent_profile}
 - `manus/manus-1.6-lite` - Lightweight agent for simple tasks
 - `manus/manus-1.6-max` - Advanced agent for complex analysis
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Basic Usage"
-import litellm
+import lumina
 import os
 import time
 
@@ -34,7 +34,7 @@ import time
 os.environ["MANUS_API_KEY"] = "your-manus-api-key"
 
 # Create task
-response = litellm.responses(
+response = lumina.responses(
     model="manus/manus-1.6",
     input="What's the capital of France?",
 )
@@ -46,7 +46,7 @@ print(f"Status: {response.status}")  # "running"
 task_id = response.id
 while response.status == "running":
     time.sleep(5)
-    response = litellm.get_response(
+    response = lumina.get_response(
         response_id=task_id,
         custom_llm_provider="manus",
     )
@@ -59,7 +59,7 @@ if response.status == "completed":
             print(message.content[0].text)
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### Setup
 
@@ -72,7 +72,7 @@ model_list:
 ```
 
 ```bash title="Start Proxy"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### Usage
@@ -164,9 +164,9 @@ if response.status == "completed":
 
 Manus operates as an **asynchronous agent API**:
 
-1. **Create Task**: When you call `litellm.responses()`, Manus creates a task and returns immediately with `status: "running"`
+1. **Create Task**: When you call `lumina.responses()`, Manus creates a task and returns immediately with `status: "running"`
 2. **Task Executes**: The agent works on your request in the background
-3. **Poll for Completion**: You must repeatedly call `litellm.get_response()` or `client.responses.retrieve()` until the status changes to `"completed"`
+3. **Poll for Completion**: You must repeatedly call `lumina.get_response()` or `client.responses.retrieve()` until the status changes to `"completed"`
 4. **Get Results**: Once completed, the `output` field contains the full conversation
 
 **Task Statuses:**
@@ -192,10 +192,10 @@ For production applications, use [webhooks](https://open.manus.im/docs/webhooks)
 
 Manus supports file uploads for document analysis and processing. Files can be uploaded and then referenced in Responses API calls.
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Upload, Use, Retrieve, and Delete Files"
-import litellm
+import lumina
 import os
 
 # Set API key
@@ -203,7 +203,7 @@ os.environ["MANUS_API_KEY"] = "your-manus-api-key"
 
 # Upload file
 file_content = b"This is a document for analysis."
-created_file = await litellm.acreate_file(
+created_file = await lumina.acreate_file(
     file=("document.txt", file_content),
     purpose="assistants",
     custom_llm_provider="manus",
@@ -211,7 +211,7 @@ created_file = await litellm.acreate_file(
 print(f"Uploaded file: {created_file.id}")
 
 # Use file with Responses API
-response = await litellm.aresponses(
+response = await lumina.aresponses(
     model="manus/manus-1.6",
     input=[
         {
@@ -227,21 +227,21 @@ response = await litellm.aresponses(
 print(f"Response: {response.id}")
 
 # Retrieve file
-retrieved_file = await litellm.afile_retrieve(
+retrieved_file = await lumina.afile_retrieve(
     file_id=created_file.id,
     custom_llm_provider="manus",
 )
 print(f"File details: {retrieved_file.filename}, {retrieved_file.bytes} bytes")
 
 # Delete file
-deleted_file = await litellm.afile_delete(
+deleted_file = await lumina.afile_delete(
     file_id=created_file.id,
     custom_llm_provider="manus",
 )
 print(f"Deleted: {deleted_file.deleted}")
 ```
 
-### LiteLLM AI Gateway
+### Lumina AI Gateway
 
 <Tabs>
 <TabItem value="curl" label="cURL">
@@ -364,6 +364,6 @@ print(f"Deleted: {deleted_file.deleted}")
 
 ## Related Documentation
 
-- [LiteLLM Responses API](/docs/response_api)
-- [LiteLLM Files API](/docs/proxy/litellm_managed_files)
+- [Lumina Responses API](/docs/response_api)
+- [Lumina Files API](/docs/proxy/lumina_managed_files)
 - [Manus OpenAI Compatibility](https://open.manus.im/docs/openai-compatibility)

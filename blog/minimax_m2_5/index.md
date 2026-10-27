@@ -6,7 +6,7 @@ authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "Day 0 support for MiniMax-M2.5 on LiteLLM"
+description: "Day 0 support for MiniMax-M2.5 on Lumina"
 tags: [minimax, M2.5, llm]
 hide_table_of_contents: false
 ---
@@ -14,13 +14,13 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports MiniMax-M2.5 on Day 0. Use it across OpenAI-compatible and Anthropic-compatible APIs through the LiteLLM AI Gateway.
+Lumina now supports MiniMax-M2.5 on Day 0. Use it across OpenAI-compatible and Anthropic-compatible APIs through the Lumina AI Gateway.
 
 {/* truncate */}
 
 ## Supported Models
 
-LiteLLM supports the following MiniMax models:
+Lumina supports the following MiniMax models:
 
 | Model | Description | Input Cost | Output Cost | Context Window |
 |-------|-------------|------------|-------------|----------------|
@@ -38,13 +38,13 @@ LiteLLM supports the following MiniMax models:
 ## Docker Image
 
 ```bash
-docker pull litellm/litellm:v1.81.3-stable
+docker pull lumina/lumina:v1.81.3-stable
 ```
 
 ## Usage - OpenAI Compatible API (/v1/chat/completions)
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -64,7 +64,7 @@ docker run -d \
   -p 4000:4000 \
   -e MINIMAX_API_KEY=$MINIMAX_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.3-stable \
+  ghcr.io/soventra/lumina:v1.81.3-stable \
   --config /app/config.yaml
 ```
 
@@ -111,7 +111,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Anthropic Compatible API (/v1/messages)
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -131,7 +131,7 @@ docker run -d \
   -p 4000:4000 \
   -e MINIMAX_API_KEY=$MINIMAX_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.3-stable \
+  ghcr.io/soventra/lumina:v1.81.3-stable \
   --config /app/config.yaml
 ```
 
@@ -178,14 +178,14 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 }'
 ```
 
-## Usage - LiteLLM SDK
+## Usage - Lumina SDK
 
 ### OpenAI-compatible API
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.5",
     messages=[
         {"role": "user", "content": "Hello, how are you?"}
@@ -200,9 +200,9 @@ print(response.choices[0].message.content)
 ### Anthropic-compatible API
 
 ```python
-import litellm
+import lumina
 
-response = litellm.anthropic.messages.acreate(
+response = lumina.anthropic.messages.acreate(
     model="minimax/MiniMax-M2.5",
     messages=[{"role": "user", "content": "Hello, how are you?"}],
     api_key="your-minimax-api-key",
@@ -216,7 +216,7 @@ print(response.choices[0].message.content)
 ### With Thinking
 
 ```python
-response = litellm.anthropic.messages.acreate(
+response = lumina.anthropic.messages.acreate(
     model="minimax/MiniMax-M2.5",
     messages=[{"role": "user", "content": "Solve: 2+2=?"}],
     thinking={"type": "enabled", "budget_tokens": 1000},
@@ -232,7 +232,7 @@ for block in response.choices[0].message.content:
 ### With Reasoning Split (OpenAI API)
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.5",
     messages=[
         {"role": "user", "content": "Solve: 2+2=?"}
@@ -250,7 +250,7 @@ print(f"Response: {response.choices[0].message.content}")
 
 ## Cost Tracking
 
-LiteLLM automatically tracks costs for MiniMax-M2.5 requests. The pricing is:
+Lumina automatically tracks costs for MiniMax-M2.5 requests. The pricing is:
 
 - **Input**: $0.3 per 1M tokens
 - **Output**: $1.2 per 1M tokens
@@ -260,7 +260,7 @@ LiteLLM automatically tracks costs for MiniMax-M2.5 requests. The pricing is:
 ### Accessing Cost Information
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.5",
     messages=[{"role": "user", "content": "Hello!"}],
     api_key="your-minimax-api-key"
@@ -275,7 +275,7 @@ print(f"Cost: ${response._hidden_params.get('response_cost', 0)}")
 ### OpenAI API
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="minimax/MiniMax-M2.5",
     messages=[{"role": "user", "content": "Tell me a story"}],
     stream=True,
@@ -291,7 +291,7 @@ for chunk in response:
 ### Streaming with Reasoning Split
 
 ```python
-stream = litellm.completion(
+stream = lumina.completion(
     model="minimax/MiniMax-M2.5",
     messages=[
         {"role": "user", "content": "Tell me a story"},
@@ -325,12 +325,12 @@ for chunk in stream:
 
 ## Using with Native SDKs
 
-### Anthropic SDK via LiteLLM Proxy
+### Anthropic SDK via Lumina Proxy
 
 ```python
 import os
 os.environ["ANTHROPIC_BASE_URL"] = "http://localhost:4000"
-os.environ["ANTHROPIC_API_KEY"] = "sk-<your-api-key>"  # Your LiteLLM proxy key
+os.environ["ANTHROPIC_API_KEY"] = "sk-<your-api-key>"  # Your Lumina proxy key
 
 import anthropic
 
@@ -360,12 +360,12 @@ for block in message.content:
         print(f"Text:\n{block.text}\n")
 ```
 
-### OpenAI SDK via LiteLLM Proxy
+### OpenAI SDK via Lumina Proxy
 
 ```python
 import os
 os.environ["OPENAI_BASE_URL"] = "http://localhost:4000"
-os.environ["OPENAI_API_KEY"] = "sk-<your-api-key>"  # Your LiteLLM proxy key
+os.environ["OPENAI_API_KEY"] = "sk-<your-api-key>"  # Your Lumina proxy key
 
 from openai import OpenAI
 

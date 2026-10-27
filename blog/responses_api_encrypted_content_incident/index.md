@@ -76,7 +76,7 @@ flowchart TD
 
 ## Root Cause
 
-LiteLLM's router had no mechanism to track which deployment created specific encrypted content items and route follow-up requests accordingly. The router treated all deployments as interchangeable, leading to decryption failures when encrypted content crossed organizational boundaries.
+Lumina's router had no mechanism to track which deployment created specific encrypted content items and route follow-up requests accordingly. The router treated all deployments as interchangeable, leading to decryption failures when encrypted content crossed organizational boundaries.
 
 **The Problem Flow:**
 
@@ -110,17 +110,17 @@ Implemented a new `encrypted_content_affinity` pre-call check that intelligently
 
 ### Implementation
 
-**1. Encoding `model_id` into output items** ([`responses/utils.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/responses/utils.py))
+**1. Encoding `model_id` into output items** ([`responses/utils.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/responses/utils.py))
 
-The same approach used for `previous_response_id` affinity, with no cache needed. When a response contains output items with `encrypted_content`, LiteLLM encodes the originating deployment's `model_id` in **two places** for redundancy:
+The same approach used for `previous_response_id` affinity, with no cache needed. When a response contains output items with `encrypted_content`, Lumina encodes the originating deployment's `model_id` in **two places** for redundancy:
 
-1. **Into the item ID** (if present): `rs_abc123` → `encitem_{base64("litellm:model_id:{model_id};item_id:rs_abc123")}`
-2. **Into the encrypted_content itself**: Wraps the content with `litellm_enc:{base64("model_id:{model_id}")};{original_encrypted_content}`
+1. **Into the item ID** (if present): `rs_abc123` → `encitem_{base64("lumina:model_id:{model_id};item_id:rs_abc123")}`
+2. **Into the encrypted_content itself**: Wraps the content with `lumina_enc:{base64("model_id:{model_id}")};{original_encrypted_content}`
 
 ```python
 # Encoding item IDs (when present)
 def _build_encrypted_item_id(model_id: str, item_id: str) -> str:
-    assembled = f"litellm:model_id:{model_id};item_id:{item_id}"
+    assembled = f"lumina:model_id:{model_id};item_id:{item_id}"
     encoded = base64.b64encode(assembled.encode("utf-8")).decode("utf-8")
     return f"encitem_{encoded}"
 
@@ -128,7 +128,7 @@ def _build_encrypted_item_id(model_id: str, item_id: str) -> str:
 def _wrap_encrypted_content_with_model_id(encrypted_content: str, model_id: str) -> str:
     metadata = f"model_id:{model_id}"
     encoded_metadata = base64.b64encode(metadata.encode("utf-8")).decode("utf-8")
-    return f"litellm_enc:{encoded_metadata};{encrypted_content}"
+    return f"lumina_enc:{encoded_metadata};{encrypted_content}"
 ```
 
 **Why wrap encrypted_content directly?** Some clients (like Codex) don't consistently send item IDs in follow-up requests, but they always send the `encrypted_content` itself. By embedding `model_id` into the content, affinity works even when IDs are missing.
@@ -139,14 +139,14 @@ def _wrap_encrypted_content_with_model_id(encrypted_content: str, model_id: str)
 
 This ensures clients receiving streaming responses get wrapped content they can send back.
 
-Before forwarding to the upstream provider, LiteLLM restores the original item IDs and unwraps encrypted_content so the provider never sees the encoded form:
+Before forwarding to the upstream provider, Lumina restores the original item IDs and unwraps encrypted_content so the provider never sees the encoded form:
 
 ```python
 # In responses/main.py — before calling the handler
 input = ResponsesAPIRequestUtils._restore_encrypted_content_item_ids_in_input(input)
 ```
 
-**2. `EncryptedContentAffinityCheck`, routing only** ([`encrypted_content_affinity_check.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/router_utils/pre_call_checks/encrypted_content_affinity_check.py))
+**2. `EncryptedContentAffinityCheck`, routing only** ([`encrypted_content_affinity_check.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/router_utils/pre_call_checks/encrypted_content_affinity_check.py))
 
 No `async_log_success_event` or cache lookups; the `model_id` is decoded directly from the item ID or encrypted_content:
 
@@ -178,7 +178,7 @@ class EncryptedContentAffinityCheck(CustomLogger):
         
         # 2. Try unwrapping from encrypted_content (fallback for clients that omit IDs)
         encrypted_content = item.get("encrypted_content", "")
-        if encrypted_content and encrypted_content.startswith("litellm_enc:"):
+        if encrypted_content and encrypted_content.startswith("lumina_enc:"):
             model_id, _ = ResponsesAPIRequestUtils._unwrap_encrypted_content_with_model_id(
                 encrypted_content
             )
@@ -187,7 +187,7 @@ class EncryptedContentAffinityCheck(CustomLogger):
         return None
 ```
 
-**3. Rate Limit Bypass** ([`router.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/router.py))
+**3. Rate Limit Bypass** ([`router.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/router.py))
 
 When encrypted content requires a specific deployment, RPM/TPM limits are bypassed (the request would fail on any other deployment anyway):
 
@@ -226,14 +226,14 @@ router_settings:
 
 | # | Action | Status | Code |
 |---|---|---|---|
-| 1 | Encode `model_id` into encrypted-content item IDs on response | ✅ Done | [`responses/utils.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/responses/utils.py) |
-| 2 | Restore original item IDs before forwarding to upstream provider | ✅ Done | [`responses/main.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/responses/main.py) |
-| 3 | `EncryptedContentAffinityCheck`: decode item IDs to route (no cache) | ✅ Done | [`encrypted_content_affinity_check.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/router_utils/pre_call_checks/encrypted_content_affinity_check.py) |
-| 4 | Add `encrypted_content_affinity` to `OptionalPreCallChecks` type | ✅ Done | [`types/router.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/types/router.py) |
-| 5 | Implement rate limit bypass for affinity-pinned requests | ✅ Done | [`router.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/router.py) |
-| 6 | Unit tests: encoding/decoding utilities, routing, RPM bypass | ✅ Done | [`test_encrypted_content_affinity_check.py`](https://github.com/BerriAI/litellm/blob/main/litellm/tests/test_litellm/router_utils/pre_call_checks/test_encrypted_content_affinity_check.py) |
-| 7 | Documentation: Responses API guide, load balancing guide, config reference | ✅ Done | [Docs](https://docs.litellm.ai/docs/response_api#encrypted-content-affinity-multi-region-load-balancing) |
-| 8 | **[Mar 3]** Fix streaming events to wrap encrypted_content | ✅ Done | [`responses/streaming_iterator.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm/responses/streaming_iterator.py) |
+| 1 | Encode `model_id` into encrypted-content item IDs on response | ✅ Done | [`responses/utils.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/responses/utils.py) |
+| 2 | Restore original item IDs before forwarding to upstream provider | ✅ Done | [`responses/main.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/responses/main.py) |
+| 3 | `EncryptedContentAffinityCheck`: decode item IDs to route (no cache) | ✅ Done | [`encrypted_content_affinity_check.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/router_utils/pre_call_checks/encrypted_content_affinity_check.py) |
+| 4 | Add `encrypted_content_affinity` to `OptionalPreCallChecks` type | ✅ Done | [`types/router.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/types/router.py) |
+| 5 | Implement rate limit bypass for affinity-pinned requests | ✅ Done | [`router.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/router.py) |
+| 6 | Unit tests: encoding/decoding utilities, routing, RPM bypass | ✅ Done | [`test_encrypted_content_affinity_check.py`](https://github.com/Soventra/lumina/blob/main/lumina/tests/test_lumina/router_utils/pre_call_checks/test_encrypted_content_affinity_check.py) |
+| 7 | Documentation: Responses API guide, load balancing guide, config reference | ✅ Done | [Docs](https://docs.lumina.ai/docs/response_api#encrypted-content-affinity-multi-region-load-balancing) |
+| 8 | **[Mar 3]** Fix streaming events to wrap encrypted_content | ✅ Done | [`responses/streaming_iterator.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina/responses/streaming_iterator.py) |
 
 ---
 
@@ -243,7 +243,7 @@ router_settings:
 
 After the initial fix was deployed, users reported that the `invalid_encrypted_content` error **still occurred** when using streaming responses with clients like Codex. Investigation revealed:
 
-- ✅ Non-streaming responses: `encrypted_content` was correctly wrapped with `litellm_enc:` prefix
+- ✅ Non-streaming responses: `encrypted_content` was correctly wrapped with `lumina_enc:` prefix
 - ❌ Streaming responses: Individual `response.output_item.added` and `response.output_item.done` events contained **raw, unwrapped** `encrypted_content`
 
 Since Codex and other clients consume responses as streams, they received unwrapped content in these events and sent it back in follow-up requests, causing the affinity check to fail.
@@ -254,13 +254,13 @@ The `_update_encrypted_content_item_ids_in_response` function only modified the 
 
 ### The Fix
 
-Modified `litellm/litellm/responses/streaming_iterator.py` to wrap `encrypted_content` in streaming events:
+Modified `lumina/lumina/responses/streaming_iterator.py` to wrap `encrypted_content` in streaming events:
 
 ```python
 # In ResponsesAPIStreamingIterator._process_chunk
 if (
-    self.litellm_metadata
-    and self.litellm_metadata.get("encrypted_content_affinity_enabled")
+    self.lumina_metadata
+    and self.lumina_metadata.get("encrypted_content_affinity_enabled")
 ):
     event_type = getattr(openai_responses_api_chunk, "type", None)
     if event_type in (
@@ -272,8 +272,8 @@ if (
             encrypted_content = getattr(item, "encrypted_content", None)
             if encrypted_content and isinstance(encrypted_content, str):
                 model_id = (
-                    self.litellm_metadata.get("model_info", {}).get("id")
-                    if self.litellm_metadata
+                    self.lumina_metadata.get("model_info", {}).get("id")
+                    if self.lumina_metadata
                     else None
                 )
                 if model_id:

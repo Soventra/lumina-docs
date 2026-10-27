@@ -2,10 +2,10 @@
 // and sales links. CommonJS so plugins/llms.js can expand <AgentPrompt id="…"/>
 // and <InstallBox variant="…"/> into the per-page markdown agents read.
 
-const DOCS = 'https://docs.litellm.ai';
+const DOCS = 'https://docs.lumina.ai';
 
-const SALES_URL = 'https://www.litellm.ai/enterprise#talk-to-sales';
-const TRIAL_URL = 'https://www.litellm.ai/enterprise#trial';
+const SALES_URL = 'https://www.lumina.ai/enterprise#talk-to-sales';
+const TRIAL_URL = 'https://www.lumina.ai/enterprise#trial';
 
 // Adds attribution so the Webflow form and PostHog can tell which docs page
 // sent the lead. The hash stays last so the page still scrolls to the form.
@@ -18,36 +18,36 @@ function withUtm(url, content) {
 
 const PROMPTS = {
   sdk: {
-    title: 'Add the LiteLLM SDK to this project',
-    text: `Help me add the LiteLLM Python SDK to this project. First read ${DOCS}/llms.txt and ${DOCS}/docs/index.md. Then:
-1. Detect the language, package manager, and framework. The SDK is Python only. If this is not a Python project, stop and tell me to run the LiteLLM Gateway and keep my existing OpenAI SDK instead (${DOCS}/docs/proxy/docker_quick_start.md).
-2. Install litellm with the project's own tool (uv add litellm, poetry add litellm, or pin it in requirements.txt).
-3. Replace direct OpenAI or Anthropic client calls with litellm.completion or litellm.acompletion, keeping the same model with a provider prefix (openai/..., anthropic/...). LiteLLM returns the OpenAI response shape, so update any Anthropic-style parsing to choices[0].message.content. Keep streaming and tool calls working.
+    title: 'Add the Lumina SDK to this project',
+    text: `Help me add the Lumina Python SDK to this project. First read ${DOCS}/llms.txt and ${DOCS}/docs/index.md. Then:
+1. Detect the language, package manager, and framework. The SDK is Python only. If this is not a Python project, stop and tell me to run the Lumina Gateway and keep my existing OpenAI SDK instead (${DOCS}/docs/proxy/docker_quick_start.md).
+2. Install lumina with the project's own tool (uv add lumina, poetry add lumina, or pin it in requirements.txt).
+3. Replace direct OpenAI or Anthropic client calls with lumina.completion or lumina.acompletion, keeping the same model with a provider prefix (openai/..., anthropic/...). Lumina returns the OpenAI response shape, so update any Anthropic-style parsing to choices[0].message.content. Keep streaming and tool calls working.
 4. Add the provider key names to .env.example and read them from the environment. Never write real keys to files.
 5. Verify: run one real completion and print the reply, then run the existing tests. Show me the diff and both outputs.`,
   },
   gateway: {
-    title: 'Run the LiteLLM Gateway locally',
-    text: `Help me run the LiteLLM Gateway locally. First read ${DOCS}/docs/proxy/docker_quick_start.md. Then:
+    title: 'Run the Lumina Gateway locally',
+    text: `Help me run the Lumina Gateway locally. First read ${DOCS}/docs/proxy/docker_quick_start.md. Then:
 1. Check that Docker Compose v2 is installed and running, and that port 4000 is free.
-2. In a new litellm-gateway directory, download https://github.com/BerriAI/litellm/raw/main/docker/docker-compose.quickstart.yml and create .env with LITELLM_MASTER_KEY and LITELLM_SALT_KEY, each "sk-" followed by the output of openssl rand -hex 32, and POSTGRES_PASSWORD set to the output of openssl rand -hex 24. Add .env to .gitignore and never print any of these values.
+2. In a new lumina-gateway directory, download https://github.com/Soventra/lumina/raw/main/docker/docker-compose.quickstart.yml and create .env with LUMINA_MASTER_KEY and LUMINA_SALT_KEY, each "sk-" followed by the output of openssl rand -hex 32, and POSTGRES_PASSWORD set to the output of openssl rand -hex 24. Add .env to .gitignore and never print any of these values.
 3. Run docker compose -f docker-compose.quickstart.yml up -d and poll http://localhost:4000/health/readiness until the database shows as connected.
 4. Ask me which provider and model to add. Add it with POST /model/new using the master key, reading my provider API key from my shell environment without echoing it.
 5. Verify: GET /v1/models lists the model and POST /v1/chat/completions returns a reply.
 6. Tell me to open http://localhost:4000/ui and sign in as admin with the master key from .env.`,
   },
   clients: {
-    title: 'Point my tools at my LiteLLM Gateway',
-    text: `Help me route my tools through my LiteLLM Gateway. First read ${DOCS}/docs/proxy/client_setup/overview.md, then claude_code.md and codex_cli.md in the same folder. Ask me for the gateway URL (default http://localhost:4000) and a virtual key. If I only have the master key, create a scoped key with POST /key/generate and use that instead.
+    title: 'Point my tools at my Lumina Gateway',
+    text: `Help me route my tools through my Lumina Gateway. First read ${DOCS}/docs/proxy/client_setup/overview.md, then claude_code.md and codex_cli.md in the same folder. Ask me for the gateway URL (default http://localhost:4000) and a virtual key. If I only have the master key, create a scoped key with POST /key/generate and use that instead.
 1. Call GET /v1/models with the key. Only the names it returns are valid models.
 2. My app: point the existing OpenAI SDK at <url>/v1, or the Anthropic SDK at <url>, with the virtual key, and switch the model to a gateway model name.
 3. Claude Code: follow claude_code.md to set ANTHROPIC_BASE_URL and ANTHROPIC_AUTH_TOKEN. Show me the change before writing it.
-4. Codex: follow codex_cli.md to add a litellm provider to ~/.codex/config.toml. Show me the change before writing it.
+4. Codex: follow codex_cli.md to add a lumina provider to ~/.codex/config.toml. Show me the change before writing it.
 5. Verify: send one request from each tool and confirm it appears under Logs at <url>/ui.`,
   },
   'lens-claude-code': {
     title: 'Set up Claude Code tracing in Lens',
-    text: `Set up this machine to send my Claude Code sessions to LiteLLM Lens. First read ${DOCS}/docs/proxy/lens/coding-agents.md and ${DOCS}/docs/proxy/lens/deployment.md.
+    text: `Set up this machine to send my Claude Code sessions to Lumina Lens. First read ${DOCS}/docs/proxy/lens/coding-agents.md and ${DOCS}/docs/proxy/lens/deployment.md.
 1. Ask me for the full Traces endpoint from Lens > Traces > Set up tracing and an agent name, defaulting to claude-code. Preserve any /lens-ingest prefix and include /v1/traces once. Derive the logs endpoint by replacing the final /v1/traces with /v1/logs. Read my dedicated tracing key from an existing environment variable or a hidden terminal prompt. Never ask me to paste the key into chat, print it, or commit it.
 2. Check that tracing is enabled and the Lens service accepts Claude conversation logs at /v1/logs. If it needs an upgrade, explain that before changing my local settings.
 3. Explain which session content will be sent to my Lens service. Configure Claude's built-in OTLP trace and log exporters and the content flags in the guide. Merge them into the env object in my user-level ~/.claude/settings.json, preserving other settings and resource attributes. Keep credentials in private user configuration. Use lens.session.capture=true and my chosen gen_ai.agent.name. Do not install a plugin or helper, change my Claude subscription/API login or model endpoint, or enable optional raw API-body export.
@@ -56,7 +56,7 @@ const PROMPTS = {
   },
   'lens-codex': {
     title: 'Set up Codex tracing in Lens',
-    text: `Set up LiteLLM Lens tracing for my local Codex desktop or CLI sessions. First read ${DOCS}/docs/proxy/lens/coding-agents.md and https://github.com/BerriAI/litellm-lens-codex-integration/blob/main/README.md.
+    text: `Set up Lumina Lens tracing for my local Codex desktop or CLI sessions. First read ${DOCS}/docs/proxy/lens/coding-agents.md and https://github.com/Soventra/lumina-lens-codex-integration/blob/main/README.md.
 1. Check this machine's operating system and Python version against the integration's current prerequisites. If automatic setup is unsupported, explain the limitation rather than inventing installation steps.
 2. Ask me for the full Traces endpoint from Lens > Traces > Set up tracing and an agent name. The installer accepts that endpoint at its Lens ingestion URL prompt and preserves /lens-ingest when present. Use the documented Terminal setup so I can enter my dedicated tracing key at its hidden prompt and confirm recording. Never ask me to paste the key into chat, print it, or commit it.
 3. Install or update the official BerriAI integration using the README's From Terminal instructions. Reuse an existing installation where possible, and preserve my Codex authentication, model configuration, and unrelated hooks. Explain what will be recorded; only newly captured activity should be exported.
@@ -64,32 +64,32 @@ const PROMPTS = {
 5. Show me what changed with credentials hidden, explain how to pause recording with lens-setup, and summarize the integration's capture limits.`,
   },
   enterprise: {
-    title: 'Evaluate LiteLLM Enterprise on my gateway',
-    text: `Help me evaluate LiteLLM Enterprise on my own LiteLLM Gateway. First read ${DOCS}/docs/enterprise.md and ${DOCS}/docs/learn/enterprise_quickstart.md. Then:
+    title: 'Evaluate Lumina Enterprise on my gateway',
+    text: `Help me evaluate Lumina Enterprise on my own Lumina Gateway. First read ${DOCS}/docs/enterprise.md and ${DOCS}/docs/learn/enterprise_quickstart.md. Then:
 1. Check whether a gateway is already running (GET <url>/health/readiness). If not, set one up first by following ${DOCS}/docs/proxy/docker_quick_start.md.
-2. Ask me for the trial license key. Add it as LITELLM_LICENSE in the gateway's environment (.env for Docker Compose) without printing it, and restart the gateway.
+2. Ask me for the trial license key. Add it as LUMINA_LICENSE in the gateway's environment (.env for Docker Compose) without printing it, and restart the gateway.
 3. Ask which identity provider we use (Okta, Entra ID, Google, or another OIDC or SAML provider) and walk me through ${DOCS}/docs/proxy/admin_ui_sso.md for it. Show me every config change before writing it.
 4. Verify: sign in to <url>/ui through SSO, then confirm the audit log records an admin action.
 If I do not have a license yet, stop and point me to ${SALES_URL}.`,
   },
   mcp: {
-    title: 'Put my MCP servers behind the LiteLLM Gateway',
-    text: `Help me serve MCP tools through my LiteLLM Gateway. First read ${DOCS}/docs/mcp.md and ${DOCS}/docs/mcp_control.md. Ask me for the gateway URL and a key with admin rights, and which MCP servers I want to add.
+    title: 'Put my MCP servers behind the Lumina Gateway',
+    text: `Help me serve MCP tools through my Lumina Gateway. First read ${DOCS}/docs/mcp.md and ${DOCS}/docs/mcp_control.md. Ask me for the gateway URL and a key with admin rights, and which MCP servers I want to add.
 1. Add each MCP server to the gateway the way mcp.md describes, keeping any server credentials in environment variables, never in files.
 2. Limit which keys and teams can use each server, following mcp_control.md.
 3. Connect one client (Claude Code, Cursor, or my app) to the gateway's MCP endpoint with a virtual key. Show me each config change before writing it.
 4. Verify: list the tools through the gateway and call one of them.`,
   },
   agents: {
-    title: 'Route my A2A agents through the LiteLLM Gateway',
-    text: `Help me put my A2A agents behind my LiteLLM Gateway. First read ${DOCS}/docs/a2a.md, ${DOCS}/docs/a2a_agent_card.md, and ${DOCS}/docs/a2a_agent_permissions.md. Ask me for the gateway URL, a key with admin rights, and the agents I want to add.
+    title: 'Route my A2A agents through the Lumina Gateway',
+    text: `Help me put my A2A agents behind my Lumina Gateway. First read ${DOCS}/docs/a2a.md, ${DOCS}/docs/a2a_agent_card.md, and ${DOCS}/docs/a2a_agent_permissions.md. Ask me for the gateway URL, a key with admin rights, and the agents I want to add.
 1. Register each agent on the gateway as a2a.md describes.
 2. Decide with me which teams and keys may call each agent, and set that up following a2a_agent_permissions.md.
 3. Verify: invoke one agent through the gateway with a virtual key, then confirm the request shows up under Logs at <url>/ui.`,
   },
   autorouter: {
-    title: 'Try the LiteLLM Auto Router',
-    text: `Help me try the LiteLLM Auto Router, a paid add-on for the LiteLLM Gateway. First read ${DOCS}/docs/auto_router/index.md, then setup.md and recommended_configurations.md in the same folder.
+    title: 'Try the Lumina Auto Router',
+    text: `Help me try the Lumina Auto Router, a paid add-on for the Lumina Gateway. First read ${DOCS}/docs/auto_router/index.md, then setup.md and recommended_configurations.md in the same folder.
 1. Check that a gateway is running and ask me for its URL and an admin key.
 2. Recommend a starting configuration from recommended_configurations.md for the models I already have, and explain the trade-off before changing anything.
 3. Follow setup.md to add the router, showing me each config change before writing it.
@@ -97,14 +97,14 @@ If I do not have a license yet, stop and point me to ${SALES_URL}.`,
   },
   observability: {
     title: 'Send my gateway logs to my observability tool',
-    text: `Help me send LiteLLM Gateway logs and spend to our observability tool. First read ${DOCS}/docs/proxy/logging.md. Ask me which tool we use (Langfuse, Datadog, OpenTelemetry, or another listed there) and for the gateway URL.
+    text: `Help me send Lumina Gateway logs and spend to our observability tool. First read ${DOCS}/docs/proxy/logging.md. Ask me which tool we use (Langfuse, Datadog, OpenTelemetry, or another listed there) and for the gateway URL.
 1. Follow the section for that tool in logging.md. Put every credential in environment variables, never in config files, and show me each change before writing it.
 2. Restart the gateway if the change needs it.
 3. Verify: send one request through the gateway and show me where it appears in the tool.`,
   },
   liteadmin: {
-    title: 'Manage my LiteLLM Gateway from this agent with LiteAdmin MCP',
-    text: `Help me connect LiteAdmin MCP so you can manage my LiteLLM Gateway. First read ${DOCS}/docs/proxy/liteadmin_mcp.md. Then:
+    title: 'Manage my Lumina Gateway from this agent with LiteAdmin MCP',
+    text: `Help me connect LiteAdmin MCP so you can manage my Lumina Gateway. First read ${DOCS}/docs/proxy/liteadmin_mcp.md. Then:
 1. Ask me for the gateway URL and a personal virtual key that belongs to a user with the proxy_admin role. Do not use the master key, and never print the key.
 2. Add the LiteAdmin MCP server to this client the way the guide shows for it (Claude Code, Claude Desktop, or Codex). Show me the change before writing it.
 3. Verify: list the gateway's models and my teams through the MCP tools, then stop and ask me what to change.`,
@@ -113,44 +113,44 @@ If I do not have a license yet, stop and point me to ${SALES_URL}.`,
     title: 'Try LiteAgents on one of my agents',
     text: `Help me try LiteAgents, a preview SDK for switching agent harnesses without rewriting the agent. First read https://github.com/BerriAI/liteagents/blob/main/docs/getting-started.md and the harness-switching recipe at https://github.com/BerriAI/liteagents/blob/main/cookbook/recipes/10_harness_switch.py. Then:
 1. Install the preview release the getting-started guide names, in a separate virtual environment.
-2. Ask me which agent to port and which model to use. If I run a LiteLLM Gateway, point the model at it with a virtual key read from the environment.
+2. Ask me which agent to port and which model to use. If I run a Lumina Gateway, point the model at it with a virtual key read from the environment.
 3. Port the agent to a LiteAgents profile, keeping its tools and MCP connections, and run one task.
 4. Change only the harness field to a second harness, run the same task, and show me both results side by side.`,
   },
 };
 
-const GATEWAY_COMPOSE = `curl -sSLO https://github.com/BerriAI/litellm/raw/main/docker/docker-compose.quickstart.yml
-printf 'LITELLM_MASTER_KEY=sk-%s\\nLITELLM_SALT_KEY=sk-%s\\nPOSTGRES_PASSWORD=%s\\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" "$(openssl rand -hex 24)" > .env
+const GATEWAY_COMPOSE = `curl -sSLO https://github.com/Soventra/lumina/raw/main/docker/docker-compose.quickstart.yml
+printf 'LUMINA_MASTER_KEY=sk-%s\\nLUMINA_SALT_KEY=sk-%s\\nPOSTGRES_PASSWORD=%s\\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" "$(openssl rand -hex 24)" > .env
 docker compose -f docker-compose.quickstart.yml up -d`;
 
 // The one command per system shown in the Quick Start box. The gateway scripts
-// live in the litellm repo: scripts/quickstart.sh and scripts/quickstart.ps1.
+// live in the lumina repo: scripts/quickstart.sh and scripts/quickstart.ps1.
 const QUICKSTART = {
   gateway: {
-    mac: 'curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/quickstart.sh | sh',
-    windows: 'irm https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/quickstart.ps1 | iex',
+    mac: 'curl -fsSL https://raw.githubusercontent.com/Soventra/lumina/main/scripts/quickstart.sh | sh',
+    windows: 'irm https://raw.githubusercontent.com/Soventra/lumina/main/scripts/quickstart.ps1 | iex',
   },
-  sdk: 'uv add litellm',
+  sdk: 'uv add lumina',
 };
 
 const GATEWAY_DOCKER_RUN = `docker run \\
-  -e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \\
+  -e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \\
   -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \\
   -e STORE_MODEL_IN_DB=True \\
   -p 4000:4000 \\
-  docker.litellm.ai/berriai/litellm:main-stable`;
+  docker.lumina.ai/soventra/lumina:main-stable`;
 
 // One-click hosted deploys, offered to phone visitors who cannot run Docker.
 const ONE_CLICK = [
   ['Railway', 'https://railway.com/deploy/RhvhdC?referralCode=7mRv9K&utm_medium=integration&utm_source=template&utm_campaign=generic', 'https://railway.com/button.svg'],
-  ['Render', 'https://render.com/deploy?repo=https://github.com/BerriAI/litellm', 'https://render.com/images/deploy-to-render-button.svg'],
+  ['Render', 'https://render.com/deploy?repo=https://github.com/Soventra/lumina', 'https://render.com/images/deploy-to-render-button.svg'],
   ['AWS', 'https://console.aws.amazon.com/cloudshell/home', '/img/deploy-on-aws.png'],
-  ['GCP', 'https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2FBerriAI%2Fterraform-google-litellm&cloudshell_git_branch=v1.105.0&cloudshell_workspace=examples%2Fdefault&cloudshell_tutorial=TUTORIAL.md&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image&shellonly=true', '/img/deploy-on-gcp.png'],
+  ['GCP', 'https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2FBerriAI%2Fterraform-google-lumina&cloudshell_git_branch=v1.105.0&cloudshell_workspace=examples%2Fdefault&cloudshell_tutorial=TUTORIAL.md&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image&shellonly=true', '/img/deploy-on-gcp.png'],
 ];
 
-const INSTALLER = `curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/install.sh | sh`;
+const INSTALLER = `curl -fsSL https://raw.githubusercontent.com/Soventra/lumina/main/scripts/install.sh | sh`;
 
-const HELM = `helm install litellm oci://ghcr.io/berriai/litellm-helm -f values.yaml`;
+const HELM = `helm install lumina oci://ghcr.io/soventra/lumina-helm -f values.yaml`;
 
 // Install options per path. The first entry is the recommended command and is
 // the only one shown up front; the rest sit under "Other ways to install",
@@ -186,24 +186,24 @@ const INSTALLS = {
         label: 'One-line installer',
         when: 'You want the gateway as a local CLI without Docker (macOS and Linux). It runs from a config file with no database, so there are no virtual keys or admin UI.',
         code: INSTALLER,
-        more: 'https://github.com/BerriAI/litellm/blob/main/scripts/install.sh',
+        more: 'https://github.com/Soventra/lumina/blob/main/scripts/install.sh',
         moreLabel: 'Read the script',
       },
     ],
   },
   sdk: {
     title: 'Install the SDK',
-    what: 'Adds the litellm package to your Python project (Python 3.10 or newer).',
+    what: 'Adds the lumina package to your Python project (Python 3.10 or newer).',
     options: [
-      {id: 'uv', label: 'uv', code: 'uv add litellm', more: '/docs/#quick-start'},
-      {id: 'pip', label: 'pip', when: 'Your project uses pip and requirements.txt.', code: 'pip install litellm'},
+      {id: 'uv', label: 'uv', code: 'uv add lumina', more: '/docs/#quick-start'},
+      {id: 'pip', label: 'pip', when: 'Your project uses pip and requirements.txt.', code: 'pip install lumina'},
     ],
   },
 };
 
 const ENTERPRISE_HERO = {
   title: 'Give every team access to AI. Keep control of who uses what, and what it costs.',
-  text: 'LiteLLM Enterprise is the open-source AI Gateway plus single sign-on, audit logs, delegated admin roles, and support from the engineers who build it. It runs in your cloud, so prompts and responses never leave your environment.',
+  text: 'Lumina Enterprise is the open-source AI Gateway plus single sign-on, audit logs, delegated admin roles, and support from the engineers who build it. It runs in your cloud, so prompts and responses never leave your environment.',
 };
 
 // What each tier adds, top to bottom. Each tier includes everything below it.
@@ -279,7 +279,7 @@ const USE_CASES = [
     visual: {
       type: 'code',
       lang: 'python',
-      code: `from litellm import completion
+      code: `from lumina import completion
 
 messages = [{"role": "user", "content": "Hello"}]
 
@@ -315,7 +315,7 @@ completion(model="anthropic/${M.anthropic}", messages=messages)`,
     product: 'Enterprise',
     problem: 'Single sign-on, audit logs, and admin roles for all the teams in your company.',
     solution:
-      'A license key adds Enterprise features to the same gateway. These features are SSO, SCIM, audit logs of all admin changes, and admins for each team. Enterprise also gives deployment in more than one region, and the LiteLLM engineers help your team.',
+      'A license key adds Enterprise features to the same gateway. These features are SSO, SCIM, audit logs of all admin changes, and admins for each team. Enterprise also gives deployment in more than one region, and the Lumina engineers help your team.',
     to: '/docs/enterprise',
     cta: 'Talk to sales',
     sales: true,

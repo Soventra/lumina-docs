@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Meta's Model API provides access to Muse Spark reasoning models and Muse Voice transcription. |
-| Provider Route on LiteLLM | `meta/` |
+| Provider Route on Lumina | `meta/` |
 | Supported Endpoints | `/chat/completions`, `/responses`, `/v1/messages`, `/v1/realtime` |
 | Developer Portal | [Meta Model API ↗](https://dev.meta.ai/) |
 | Speech-to-Text Reference | [Muse Voice transcription ↗](https://dev.meta.ai/docs/speech-to-text) |
@@ -22,7 +22,7 @@ Chat, Responses and Messages requests go to `https://api.meta.ai/v1` by default;
 ## Supported Models
 
 :::info
-We actively maintain the list of models, pricing, token window, etc. [here](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).
+We actively maintain the list of models, pricing, token window, etc. [here](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json).
 :::
 
 | Model ID | Input context length | Input Modalities | Output Modalities |
@@ -34,11 +34,11 @@ We actively maintain the list of models, pricing, token window, etc. [here](http
 
 `muse-voice-transcribe-1.0` is a realtime speech-to-text model served over the proxy's `/v1/realtime` WebSocket and billed per second of audio. It is realtime only: `/v1/audio/transcriptions` and other batch or file transcription endpoints are not supported.
 
-The API also natively exposes the Anthropic Messages format, so LiteLLM forwards `/v1/messages` requests to `https://api.meta.ai/v1/messages` untranslated, preserving Anthropic-only features like thinking blocks.
+The API also natively exposes the Anthropic Messages format, so Lumina forwards `/v1/messages` requests to `https://api.meta.ai/v1/messages` untranslated, preserving Anthropic-only features like thinking blocks.
 
 ## Muse Voice Realtime Transcription
 
-LiteLLM serves Muse Voice through the proxy's OpenAI-compatible `/v1/realtime` endpoint. Clients speak the OpenAI Realtime transcription protocol; LiteLLM streams their PCM16 audio to `wss://api.meta.ai/v1/asr/realtime` as binary frames and maps Muse's transcript frames back to OpenAI events. The [Python example](#example-python-client) below is a complete push to talk session.
+Lumina serves Muse Voice through the proxy's OpenAI-compatible `/v1/realtime` endpoint. Clients speak the OpenAI Realtime transcription protocol; Lumina streams their PCM16 audio to `wss://api.meta.ai/v1/asr/realtime` as binary frames and maps Muse's transcript frames back to OpenAI events. The [Python example](#example-python-client) below is a complete push to talk session.
 
 ### 1. Add the model to your config
 
@@ -50,10 +50,10 @@ model_list:
       api_key: os.environ/META_API_KEY
 ```
 
-`api_key` falls back to `META_API_KEY`. `api_base` is optional and must be an absolute `wss://` or `https://` URL; LiteLLM keeps its host and port and replaces the path with `/v1/asr/realtime`. `http://`, `ws://`, embedded credentials and URL fragments are rejected, and `META_API_BASE` is ignored for realtime sessions.
+`api_key` falls back to `META_API_KEY`. `api_base` is optional and must be an absolute `wss://` or `https://` URL; Lumina keeps its host and port and replaces the path with `/v1/asr/realtime`. `http://`, `ws://`, embedded credentials and URL fragments are rejected, and `META_API_BASE` is ignored for realtime sessions.
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -66,7 +66,7 @@ ws://localhost:4000/v1/realtime?model=muse-voice-transcribe&intent=transcription
 
 Authenticate with `Authorization: Bearer <proxy key>`. `model` is the `model_name` from your config and is required; `intent=transcription` alone routes to the proxy's default OpenAI transcription model. `intent=transcription` makes the session transcription-only and pins any model named in `session.update` to the one you were authorized for.
 
-LiteLLM emits `session.created` with `object: realtime.transcription_session` once it has connected to Meta, before the Muse handshake.
+Lumina emits `session.created` with `object: realtime.transcription_session` once it has connected to Meta, before the Muse handshake.
 
 ### 3. Configure the session
 
@@ -109,9 +109,9 @@ An invalid `session.update` (bad rate, channel count, turn detection type or lan
 
 ### 4. Stream audio
 
-`input_audio_buffer.append` carries base64 mono PCM16 at the configured rate, at most four seconds per event. LiteLLM repackets the audio into 80 ms binary frames and paces them to Muse in real time. `input_audio_buffer.clear` drops the partial frame LiteLLM is still holding; audio already sent to Muse cannot be recalled. Every other client event, including `response.create`, is dropped.
+`input_audio_buffer.append` carries base64 mono PCM16 at the configured rate, at most four seconds per event. Lumina repackets the audio into 80 ms binary frames and paces them to Muse in real time. `input_audio_buffer.clear` drops the partial frame Lumina is still holding; audio already sent to Muse cannot be recalled. Every other client event, including `response.create`, is dropped.
 
-Server VAD needs audio to keep arriving in real time. Stream silence during pauses and send `input_audio_buffer.end` (a LiteLLM event, not part of the OpenAI protocol) when you are finished. If the client simply stops sending, Meta closes with code `1008` (`Ingress below real-time`), which the proxy relays as an `error` event followed by a `1008` close.
+Server VAD needs audio to keep arriving in real time. Stream silence during pauses and send `input_audio_buffer.end` (a Lumina event, not part of the OpenAI protocol) when you are finished. If the client simply stops sending, Meta closes with code `1008` (`Ingress below real-time`), which the proxy relays as an `error` event followed by a `1008` close.
 
 ### 5. Read transcripts
 
@@ -140,7 +140,7 @@ Guardrails with `mode: realtime_input_transcription` run on each completed trans
 Select guardrails per connection with a `guardrails=name1,name2` query parameter.
 
 :::warning
-With a `realtime_input_transcription` guardrail configured, LiteLLM rewrites a client's `turn_detection: null` into `{"create_response": false}` before Muse sees it, so push to talk clients run in server VAD mode: `input_audio_buffer.commit` no longer ends the stream, and a client that stops streaming is disconnected with code `1008`. Server VAD clients are unaffected.
+With a `realtime_input_transcription` guardrail configured, Lumina rewrites a client's `turn_detection: null` into `{"create_response": false}` before Muse sees it, so push to talk clients run in server VAD mode: `input_audio_buffer.commit` no longer ends the stream, and a client that stops streaming is disconnected with code `1008`. Server VAD clients are unaffected.
 :::
 
 ### Example Python client
@@ -213,14 +213,14 @@ What is the weather in Paris? (1.36 s)
 
 For server VAD, send `"turn_detection": {"type": "server_vad"}` instead of `None`, keep streaming (silence included) for as long as the microphone is open, and finish with `{"type": "input_audio_buffer.end"}`. Each detected utterance arrives with its own `item_id`.
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Meta Model API Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["META_API_KEY"] = ""  # your Meta Model API key
 
@@ -233,8 +233,8 @@ response = completion(model="meta/muse-spark-1.1", messages=messages)
 
 ```python showLineNumbers title="Meta Model API Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["META_API_KEY"] = ""  # your Meta Model API key
 
@@ -256,8 +256,8 @@ for chunk in response:
 
 ```python showLineNumbers title="Meta Model API Reasoning Effort"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["META_API_KEY"] = ""  # your Meta Model API key
 
@@ -277,8 +277,8 @@ print(response.usage.completion_tokens_details.reasoning_tokens)
 
 ```python showLineNumbers title="Meta Model API Function Calling"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["META_API_KEY"] = ""  # your Meta Model API key
 
@@ -318,9 +318,9 @@ response = completion(
 print(response.choices[0].message.tool_calls)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add the following to your LiteLLM Proxy configuration file:
+Add the following to your Lumina Proxy configuration file:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -330,10 +330,10 @@ model_list:
       api_key: os.environ/META_API_KEY
 ```
 
-Start your LiteLLM Proxy server:
+Start your Lumina Proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -379,13 +379,13 @@ for chunk in response:
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Meta Model API via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Meta Model API via Proxy - Lumina SDK"
+import lumina
 
-response = litellm.completion(
-    model="litellm_proxy/muse-spark-1.1",
+response = lumina.completion(
+    model="lumina_proxy/muse-spark-1.1",
     messages=[{"role": "user", "content": "Write a short poem about AI."}],
     api_base="http://localhost:4000",
     api_key="your-proxy-api-key"

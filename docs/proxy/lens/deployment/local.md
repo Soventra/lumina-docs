@@ -1,12 +1,12 @@
 ---
 title: "Start standalone Lens"
-description: "Run Lens and ClickHouse locally, sign in, and send a first trace without a LiteLLM gateway."
+description: "Run Lens and ClickHouse locally, sign in, and send a first trace without a Lumina gateway."
 slug: "/proxy/lens/deployment/local"
 ---
 
 # Start standalone Lens
 
-Run Lens on your computer to inspect agent traces. You need Git, Docker, and Docker Compose v2. Docker must be running. You do not need a LiteLLM gateway, PostgreSQL, or a model provider key to start Lens.
+Run Lens on your computer to inspect agent traces. You need Git, Docker, and Docker Compose v2. Docker must be running. You do not need a Lumina gateway, PostgreSQL, or a model provider key to start Lens.
 
 This quickstart builds Lens from the [source repository](https://github.com/BerriAI/lens). The first build can take several minutes. See [Releases and images](./releases.md) for published artifact availability.
 
@@ -38,7 +38,7 @@ For an agent on the same computer, the trace endpoint is `http://localhost:4318/
 
 ## 4. Choose your next step
 
-To use Lens in an existing LiteLLM dashboard, [connect this Lens deployment](./litellm.md#1-get-the-lens-address). To make Lens available to a team, follow [Docker Compose on a server](./server.md) or [Kubernetes](./kubernetes.md).
+To use Lens in an existing Lumina dashboard, [connect this Lens deployment](./lumina.md#1-get-the-lens-address). To make Lens available to a team, follow [Docker Compose on a server](./server.md) or [Kubernetes](./kubernetes.md).
 
 You can inspect traces before configuring an analysis model. When you want Lens to investigate them, [configure an analysis model](https://github.com/BerriAI/lens/blob/main/docs/analysis.md) and [create an investigation](../investigations.md).
 

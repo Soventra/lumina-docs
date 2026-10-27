@@ -1,11 +1,11 @@
 ---
 title: What Needs Redis
-description: Features that do not work, or do not work correctly, when the LiteLLM proxy runs without Redis.
+description: Features that do not work, or do not work correctly, when the Lumina proxy runs without Redis.
 ---
 
 # What Needs Redis
 
-Redis is highly recommended for any LiteLLM proxy deployment that runs more than one worker process, and most deployments do: a single container with `--num_workers` above 1 already counts, as does any Kubernetes deployment with more than one replica.
+Redis is highly recommended for any Lumina proxy deployment that runs more than one worker process, and most deployments do: a single container with `--num_workers` above 1 already counts, as does any Kubernetes deployment with more than one replica.
 
 Almost everything the proxy enforces (rate limits, budgets, cooldowns, cache hits, config changes) is coordinated through state. With Redis, that state is shared, so every worker sees the same counters and the same invalidations. Without it, each worker keeps its own copy in memory, so a limit of 100 requests per minute across 4 workers really lets through 400, a revoked key stays usable on the workers that did not process the revocation, and cache hits only land on the worker that happened to store the response.
 
@@ -27,7 +27,7 @@ router_settings:
   redis_port: os.environ/REDIS_PORT
   redis_password: os.environ/REDIS_PASSWORD
 
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: redis
@@ -57,7 +57,7 @@ The most well-known functionality that is degraded or unavailable across pods:
 | Scheduled jobs (budget resets, spend log cleanup, key rotation, expired session cleanup, database spend flush) | The pod lock that elects a single runner needs Redis, so every worker runs the job and they contend on the same rows. |
 | [Shared health checks](./shared_health_check.md) | Every worker runs its own background health checks against every deployment, multiplying provider health traffic. |
 | [Request prioritization](../scheduler.md) | The priority queue is per worker, so ordering only holds among requests that land on the same worker. |
-| SSO and `litellm login` from the CLI | The login flow can fail when the browser redirect lands on a different worker than the one that started it. |
+| SSO and `lumina login` from the CLI | The login flow can fail when the browser redirect lands on a different worker than the one that started it. |
 | [MCP](../mcp_oauth.md) outbound OAuth credentials | Tokens are cached per worker, so each worker refreshes independently; a provider that rotates refresh tokens on use can invalidate the others. |
 | Background responses and polling | A polled response is readable only on the worker that produced it. |
 

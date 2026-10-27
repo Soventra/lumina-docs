@@ -18,7 +18,7 @@ test('rejects duplicate routes and paths that escape the source repository', () 
 });
 
 test('rewrites published READMEs, code links, references, images, and legacy anchors', async () => {
-  const source = '# Agent\n\n[Other](../other/README.md#setup)\n\n[Code][code]\n\n[Deploy](https://docs.litellm.ai/docs/proxy/lens#quick-start)\n\n![Trace](trace.png)\n\n[code]: main.py?plain=1#L1\n';
+  const source = '# Agent\n\n[Other](../other/README.md#setup)\n\n[Code][code]\n\n[Deploy](https://docs.lumina.ai/docs/proxy/lens#quick-start)\n\n![Trace](trace.png)\n\n[code]: main.py?plain=1#L1\n';
   const files = new Set(['other/README.md', 'agent/main.py', 'agent/trace.png']);
   const result = await transformReadme(source, page, [page, second], revision, async () => Buffer.from('image'), files, legacy);
   assert.match(result.content, /\/lens\/integrations\/other#setup/);

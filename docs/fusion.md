@@ -1,7 +1,7 @@
 ---
 title: Fusion model
 sidebar_label: Fusion Model
-description: Use litellm/fusion-1 for judge-synthesized answers from a parallel model panel.
+description: Use lumina/fusion-1 for judge-synthesized answers from a parallel model panel.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -11,11 +11,11 @@ import TabItem from '@theme/TabItem';
 
 :::caution Not yet released
 
-Fusion is not in any released litellm version or on litellm `main` yet. It lives on the `litellm_fusion_router` branch and ships once [litellm PR #39224](https://github.com/BerriAI/litellm/pull/39224) merges. Until then, the snippets on this page fail with `BadRequestError: LLM Provider NOT provided ... You passed model=litellm/fusion-1`
+Fusion is not in any released lumina version or on lumina `main` yet. It lives on the `lumina_fusion_router` branch and ships once [lumina PR #39224](https://github.com/Soventra/lumina/pull/39224) merges. Until then, the snippets on this page fail with `BadRequestError: LLM Provider NOT provided ... You passed model=lumina/fusion-1`
 
 :::
 
-`litellm/fusion-1` is a LiteLLM-provided virtual model for requests that benefit from independent model perspectives. It sends the request to a configurable panel in parallel, asks a judge to compare the successful responses, then has the judge synthesize one public response.
+`lumina/fusion-1` is a Lumina-provided virtual model for requests that benefit from independent model perspectives. It sends the request to a configurable panel in parallel, asks a judge to compare the successful responses, then has the judge synthesize one public response.
 
 The request and response keep the native shape of the SDK method you call. Fusion works with Chat Completions, Anthropic Messages, and Responses.
 
@@ -27,7 +27,7 @@ flowchart LR
     Synthesis --> Response["One public response"]
 ```
 
-The judge first produces a structured comparison covering consensus, contradictions, coverage gaps, unique insights, and blind spots. LiteLLM feeds that private analysis back to the judge, which writes the final answer. The public `response.model` identifies the concrete judge model that produced it.
+The judge first produces a structured comparison covering consensus, contradictions, coverage gaps, unique insights, and blind spots. Lumina feeds that private analysis back to the judge, which writes the final answer. The public `response.model` identifies the concrete judge model that produced it.
 
 ## Quick start
 
@@ -37,7 +37,7 @@ Set credentials for every provider used by the panel and judge. The same `fusion
 <TabItem value="chat" label="Chat Completions" default>
 
 ```python showLineNumbers
-import litellm
+import lumina
 
 fusion = {
     "models": [
@@ -50,8 +50,8 @@ fusion = {
     },
 }
 
-response = litellm.completion(
-    model="litellm/fusion-1",
+response = lumina.completion(
+    model="lumina/fusion-1",
     messages=[
         {
             "role": "user",
@@ -69,7 +69,7 @@ print(response.choices[0].message.content)
 <TabItem value="messages" label="Anthropic Messages">
 
 ```python showLineNumbers
-import litellm
+import lumina
 
 fusion = {
     "models": [
@@ -82,8 +82,8 @@ fusion = {
     },
 }
 
-response = litellm.anthropic.messages.create(
-    model="litellm/fusion-1",
+response = lumina.anthropic.messages.create(
+    model="lumina/fusion-1",
     max_tokens=2048,
     messages=[
         {
@@ -102,7 +102,7 @@ print(response["content"][0]["text"])
 <TabItem value="responses" label="Responses">
 
 ```python showLineNumbers
-import litellm
+import lumina
 
 fusion = {
     "models": [
@@ -115,8 +115,8 @@ fusion = {
     },
 }
 
-response = litellm.responses(
-    model="litellm/fusion-1",
+response = lumina.responses(
+    model="lumina/fusion-1",
     input="Review this database migration plan for operational risks.",
     fusion=fusion,
 )
@@ -128,20 +128,20 @@ print(response.output_text)
 </TabItem>
 </Tabs>
 
-Calling `litellm/fusion-1` always runs deliberation. There is no separate flag to enable it. You can omit `fusion` to use the default panel and judge.
+Calling `lumina/fusion-1` always runs deliberation. There is no separate flag to enable it. You can omit `fusion` to use the default panel and judge.
 
 ## Response behavior
 
-Fusion returns one normal response in the format of the SDK method you called. It does not return separate panel responses or the private judge comparison. The response's hidden Fusion metadata reports whether deliberation ran and how many panel calls succeeded or failed, without including their content. Its hidden `router` field identifies `litellm/fusion-1`.
+Fusion returns one normal response in the format of the SDK method you called. It does not return separate panel responses or the private judge comparison. The response's hidden Fusion metadata reports whether deliberation ran and how many panel calls succeeded or failed, without including their content. Its hidden `router` field identifies `lumina/fusion-1`.
 
 ## Configuration
 
-Pass a `fusion` dictionary alongside `model="litellm/fusion-1"`. Every field is optional.
+Pass a `fusion` dictionary alongside `model="lumina/fusion-1"`. Every field is optional.
 
 | Field | Default | Description |
 |---|---|---|
-| `models` | LiteLLM default panel | One to eight models that answer independently in parallel. |
-| `judge.model` | LiteLLM default judge | Model that compares successful panel responses and writes the final answer. |
+| `models` | Lumina default panel | One to eight models that answer independently in parallel. |
+| `judge.model` | Lumina default judge | Model that compares successful panel responses and writes the final answer. |
 | `judge.criteria` | `None` | Instructions used to compare the panel responses. |
 | `max_completion_tokens` | `16000` | Maximum output tokens, including reasoning, for each internal call. |
 | `reasoning` | Provider default | Reasoning effort forwarded to panel and judge calls. |
@@ -151,8 +151,8 @@ Pass a `fusion` dictionary alongside `model="litellm/fusion-1"`. Every field is 
 
 Standard tools remain available on the public request. Client tool schemas are kept private from panel and comparison calls. The judge receives them when it authors the final response.
 
-Streaming uses the async SDK methods: `litellm.acompletion()`, `litellm.anthropic.messages.acreate()`, or `litellm.aresponses()`. Synchronous streaming is rejected with guidance to the matching async method.
+Streaming uses the async SDK methods: `lumina.acompletion()`, `lumina.anthropic.messages.acreate()`, or `lumina.aresponses()`. Synchronous streaming is rejected with guidance to the matching async method.
 
 ## Cost and recursion
 
-Fusion makes several provider calls for one public request. Cost and latency increase with panel size and the configured models. Panel and judge models cannot recursively invoke `litellm/fusion-1`; deliberation is bounded to one level.
+Fusion makes several provider calls for one public request. Cost and latency increase with panel size and the configured models. Panel and judge models cannot recursively invoke `lumina/fusion-1`; deliberation is bounded to one level.

@@ -1,24 +1,24 @@
 ---
 title: "Claude Agent SDK"
-description: "Run Claude Agent SDK examples and send their agent traces to LiteLLM Lens."
+description: "Run Claude Agent SDK examples and send their agent traces to Lumina Lens."
 slug: "/proxy/lens/integrations/claude-agent-sdk"
 sidebar_label: "Claude Agent SDK"
-custom_edit_url: "https://github.com/BerriAI/litellm-lens-example/edit/main/claude-agent-sdk/README.md"
+custom_edit_url: "https://github.com/Soventra/lumina-lens-example/edit/main/claude-agent-sdk/README.md"
 mdx:
   format: md
 ---
 
-<!-- Generated from BerriAI/litellm-lens-example/claude-agent-sdk/README.md at a2294277609202247b71c08d7b491f5212809988. Edit the source README. -->
+<!-- Generated from Soventra/lumina-lens-example/claude-agent-sdk/README.md at a2294277609202247b71c08d7b491f5212809988. Edit the source README. -->
 
 # Claude Agent SDK
 
 For optional help from your coding agent, use [Set it up for me](https://github.com/BerriAI/lens/blob/main/docs/setup-with-agent.md#connect-an-agent-to-lens-already-running). It preserves your model connection and verifies a real trace after setup
 
-Send Claude Agent SDK traces to [LiteLLM Lens](/docs/proxy/lens) using the runnable examples in this repository.
+Send Claude Agent SDK traces to [Lumina Lens](/docs/proxy/lens) using the runnable examples in this repository.
 
 ## Prerequisites
 
-You need [Lens installed alongside LiteLLM](/docs/proxy/lens/deployment#configure-an-existing-proxy), a key with model access, and a configured model alias. The swarm example needs a model that supports tool calls. In **Lens > Traces > Set up tracing**, click **Generate tracing key** and copy the **Traces endpoint** under **Connection details**. Ask your administrator for these if you cannot create a tracing key.
+You need [Lens installed alongside Lumina](/docs/proxy/lens/deployment#configure-an-existing-proxy), a key with model access, and a configured model alias. The swarm example needs a model that supports tool calls. In **Lens > Traces > Set up tracing**, click **Generate tracing key** and copy the **Traces endpoint** under **Connection details**. Ask your administrator for these if you cannot create a tracing key.
 
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/). It uses the checked-in Python version and resolves each example’s dependencies from its uv workspace.
 
@@ -27,24 +27,24 @@ Install [uv](https://docs.astral.sh/uv/getting-started/installation/). It uses t
 For a fresh checkout:
 
 ```bash
-git clone https://github.com/BerriAI/litellm-lens-example.git
-cd litellm-lens-example/claude-agent-sdk
+git clone https://github.com/Soventra/lumina-lens-example.git
+cd lumina-lens-example/claude-agent-sdk
 cp .env.example .env
 ```
 
-If you already cloned the repository, run the remaining commands from `claude-agent-sdk/`. Copy [.env.example](https://github.com/BerriAI/litellm-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/.env.example) to `.env` if it does not exist, then set:
+If you already cloned the repository, run the remaining commands from `claude-agent-sdk/`. Copy [.env.example](https://github.com/Soventra/lumina-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/.env.example) to `.env` if it does not exist, then set:
 
 | Variable              | Value                                                                                                                                                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `LUMINA_GATEWAY_URL` | Your gateway’s base URL without a trailing slash or `/v1`, for example `http://localhost:4002`                                                                                                    |
-| `LUMINA_API_KEY`     | Your LiteLLM model key                                                                                                                                                                            |
+| `LUMINA_API_KEY`     | Your Lumina model key                                                                                                                                                                            |
 | `LENS_URL`            | Copy **Traces endpoint** from Lens tracing setup and remove the final `/v1/traces`. Keep `/lens-ingest` if present. For example, `http://localhost:4318` or `https://gateway.example/lens-ingest` |
 | `LENS_TRACING_KEY`    | The dedicated tracing key from Lens tracing setup                                                                                                                                                 |
 | `LUMINA_MODEL`       | A model alias configured on your gateway                                                                                                                                                          |
 
 The checked-in values target a local development gateway. Replace them for your deployment. Keep the exporter settings from `.env.example`; the examples configure their trace exporters in code. They send traces to `LENS_URL/v1/traces` with the tracing key as a bearer token.
 
-Leave `MOCK_LUMINA_GATEWAY_URL` unset unless you intend to send an additional trace copy to the local [recorder](https://github.com/BerriAI/litellm-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/recorder/AGENTS.md).
+Leave `MOCK_LUMINA_GATEWAY_URL` unset unless you intend to send an additional trace copy to the local [recorder](https://github.com/Soventra/lumina-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/recorder/AGENTS.md).
 
 ## Run an example
 
@@ -56,7 +56,7 @@ A `research_agent` answers one question.
 uv run --env-file .env --package lens-claude-agent-sdk-simple simple/main.py
 ```
 
-See [simple/main.py](https://github.com/BerriAI/litellm-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/simple/main.py) for the implementation.
+See [simple/main.py](https://github.com/Soventra/lumina-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/simple/main.py) for the implementation.
 
 ### Agent swarm
 
@@ -66,7 +66,7 @@ A coordinator delegates to `search_agent` and `writer_agent` subagents.
 uv run --env-file .env --package lens-claude-agent-sdk-swarm swarm/main.py
 ```
 
-See [swarm/main.py](https://github.com/BerriAI/litellm-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/swarm/main.py) for the implementation.
+See [swarm/main.py](https://github.com/Soventra/lumina-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/swarm/main.py) for the implementation.
 
 ## Verify the trace
 
@@ -84,7 +84,7 @@ The swarm example uses bypassPermissions for its configured Agent tool. Review t
 
 ## Match model calls to spend
 
-The local [adapter](https://github.com/BerriAI/litellm-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/gateway.py) adds the actual Anthropic message ID as the `request-id` response header, which the CLI records on its model spans. Streaming response bytes pass through unchanged.
+The local [adapter](https://github.com/Soventra/lumina-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/claude-agent-sdk/gateway.py) adds the actual Anthropic message ID as the `request-id` response header, which the CLI records on its model spans. Streaming response bytes pass through unchanged.
 
 Start it in a separate terminal from `claude-agent-sdk/`, using the gateway configured in `.env`:
 

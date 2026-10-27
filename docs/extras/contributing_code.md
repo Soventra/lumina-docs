@@ -2,7 +2,7 @@
 
 ## Checklist before submitting a PR
 
-Here are the core requirements for any PR submitted to LiteLLM:
+Here are the core requirements for any PR submitted to Lumina:
 
 - [ ] Sign the [Contributor License Agreement (CLA)](#contributor-license-agreement-cla)
 - [ ] Keep scope as isolated as possible; your changes should address **one specific problem** at a time
@@ -23,9 +23,9 @@ Here are the core requirements for any PR submitted to LiteLLM:
 
 ## Contributor License Agreement (CLA)
 
-Before contributing code to LiteLLM, you must sign our [Contributor License Agreement (CLA)](https://cla-assistant.io/BerriAI/litellm). This is a legal requirement for all contributions to be merged into the main repository. The CLA helps protect both you and the project by clearly defining the terms under which your contributions are made.
+Before contributing code to Lumina, you must sign our [Contributor License Agreement (CLA)](https://cla-assistant.io/Soventra/lumina). This is a legal requirement for all contributions to be merged into the main repository. The CLA helps protect both you and the project by clearly defining the terms under which your contributions are made.
 
-**Important:** We strongly recommend signing the CLA **before** starting work on your contribution to avoid delays in the review process. You can find and sign the CLA [here](https://cla-assistant.io/BerriAI/litellm).
+**Important:** We strongly recommend signing the CLA **before** starting work on your contribution to avoid delays in the review process. You can find and sign the CLA [here](https://cla-assistant.io/Soventra/lumina).
 
 ---
 
@@ -61,7 +61,7 @@ PR titles must follow the same format, because squash-merge uses the PR title as
 
 ### Branch naming
 
-Internal contributors branch off `main` with a `litellm_` prefix and no `/`, for example `litellm_weighted_round_robin`. Fork branches can be named anything.
+Internal contributors branch off `main` with a `lumina_` prefix and no `/`, for example `lumina_weighted_round_robin`. Fork branches can be named anything.
 
 ### Installing the hooks
 
@@ -90,7 +90,7 @@ To uninstall: `git config --unset core.hooksPath`.
 Step 1: Clone the repo
 
 ```shell
-git clone https://github.com/BerriAI/litellm.git
+git clone https://github.com/Soventra/lumina.git
 ```
 
 Step 2: Install dev dependencies
@@ -101,20 +101,20 @@ uv sync --group dev --extra proxy
 
 ### 2. Adding tests
 
-- Add your tests to the [`tests/test_litellm/` directory](https://github.com/BerriAI/litellm/tree/main/tests/litellm).
-- This directory mirrors the `litellm/` directory 1:1 and should **only** contain mocked tests.
+- Add your tests to the [`tests/test_lumina/` directory](https://github.com/Soventra/lumina/tree/main/tests/lumina).
+- This directory mirrors the `lumina/` directory 1:1 and should **only** contain mocked tests.
 - **Do not** add real LLM API calls to this directory.
 
-#### File naming convention for `tests/test_litellm/`
+#### File naming convention for `tests/test_lumina/`
 
-The test directory follows the same structure as `litellm/`:
+The test directory follows the same structure as `lumina/`:
 
-- `test_{filename}.py` maps to `litellm/{filename}.py`
-- `litellm/proxy/test_caching_routes.py` maps to `litellm/proxy/caching_routes.py`
+- `test_{filename}.py` maps to `lumina/{filename}.py`
+- `lumina/proxy/test_caching_routes.py` maps to `lumina/proxy/caching_routes.py`
 
 ### 3. Running unit tests
 
-Run the following command from the root of the `litellm` directory:
+Run the following command from the root of the `lumina` directory:
 
 ```shell
 make test-unit
@@ -122,13 +122,13 @@ make test-unit
 
 ### 4. Running linting tests
 
-Run the following command from the root of the `litellm` directory:
+Run the following command from the root of the `lumina` directory:
 
 ```shell
 make lint
 ```
 
-LiteLLM uses `basedpyright` for type checking. CI also runs `ruff format --check` for formatting; run `make format` to fix formatting locally.
+Lumina uses `basedpyright` for type checking. CI also runs `ruff format --check` for formatting; run `make format` to fix formatting locally.
 
 ### 5. Submit a PR
 
@@ -144,13 +144,13 @@ LiteLLM uses `basedpyright` for type checking. CI also runs `ruff format --check
 Step 1: Clone the repo
 
 ```shell
-git clone https://github.com/BerriAI/litellm.git
+git clone https://github.com/Soventra/lumina.git
 ```
 
 Step 2: Navigate to the UI dashboard directory
 
 ```shell
-cd ui/litellm-dashboard
+cd ui/lumina-dashboard
 ```
 
 Step 3: Install dependencies
@@ -192,14 +192,14 @@ npm run build
 
 ## Advanced
 
-### Building the LiteLLM Docker Image
+### Building the Lumina Docker Image
 
-Follow these instructions if you want to build and run the LiteLLM Docker image yourself.
+Follow these instructions if you want to build and run the Lumina Docker image yourself.
 
 Step 1: Clone the repo
 
 ```shell
-git clone https://github.com/BerriAI/litellm.git
+git clone https://github.com/Soventra/lumina.git
 ```
 
 Step 2: Build the Docker image
@@ -207,12 +207,12 @@ Step 2: Build the Docker image
 Build using `Dockerfile.non_root`:
 
 ```shell
-docker build -f docker/Dockerfile.non_root -t litellm_test_image .
+docker build -f docker/Dockerfile.non_root -t lumina_test_image .
 ```
 
 Step 3: Run the Docker image
 
-Make sure `config.yaml` is present in the root directory. This is your LiteLLM proxy config file.
+Make sure `config.yaml` is present in the root directory. This is your Lumina proxy config file.
 
 ```shell
 docker run \
@@ -220,16 +220,16 @@ docker run \
     -e DATABASE_URL="postgresql://xxxxxxxx" \
     -e LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
     -p 4000:4000 \
-    litellm_test_image \
+    lumina_test_image \
     --config /app/config.yaml --detailed_debug
 ```
 
-### Running the LiteLLM Proxy Locally
+### Running the Lumina Proxy Locally
 
 1. Navigate to the `proxy/` directory:
 
 ```shell
-cd litellm/litellm/proxy
+cd lumina/lumina/proxy
 ```
 
 2. Run the proxy:

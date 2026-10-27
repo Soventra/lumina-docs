@@ -28,7 +28,7 @@ const content = (title = 'Routing') => ({
 });
 
 test('generates distinct page images, preserves overrides, and refreshes changed titles', async (t) => {
-  const cacheDir = await fs.mkdtemp(path.join(os.tmpdir(), 'litellm-social-cards-'));
+  const cacheDir = await fs.mkdtemp(path.join(os.tmpdir(), 'lumina-social-cards-'));
   t.after(() => fs.rm(cacheDir, {recursive: true, force: true}));
   const plugin = socialCardsPlugin({siteDir}, {cacheDir});
   const run = async (allContent) => {

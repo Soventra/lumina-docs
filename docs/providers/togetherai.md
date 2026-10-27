@@ -2,7 +2,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Together AI 
-LiteLLM supports all models on Together AI. 
+Lumina supports all models on Together AI. 
 
 ## API Keys
 
@@ -13,7 +13,7 @@ os.environ["TOGETHERAI_API_KEY"] = "your-api-key"
 ## Sample Usage
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 os.environ["TOGETHERAI_API_KEY"] = "your-api-key"
 
@@ -23,9 +23,9 @@ completion(model="together_ai/togethercomputer/Llama-2-7B-32K-Instruct", message
 ```
 
 ## Together AI Models
-liteLLM supports `non-streaming` and `streaming` requests to all models on https://api.together.xyz/
+Lumina supports `non-streaming` and `streaming` requests to all models on https://api.together.xyz/
 
-Example TogetherAI Usage - Note: liteLLM supports all models deployed on TogetherAI
+Example TogetherAI Usage - Note: Lumina supports all models deployed on TogetherAI
 
 
 ### Llama LLMs - Chat
@@ -82,10 +82,10 @@ Example TogetherAI Usage - Note: liteLLM supports all models deployed on Togethe
 Using a chat model on Together AI with it's own prompt format?
 
 ### Using Llama2 Instruct models
-If you're using Together AI's Llama2 variants( `model=togethercomputer/llama-2..-instruct`), LiteLLM can automatically translate between the OpenAI prompt format and the TogetherAI Llama2 one (`[INST]..[/INST]`). 
+If you're using Together AI's Llama2 variants( `model=togethercomputer/llama-2..-instruct`), Lumina can automatically translate between the OpenAI prompt format and the TogetherAI Llama2 one (`[INST]..[/INST]`). 
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 # set env variable 
 os.environ["TOGETHERAI_API_KEY"] = ""
@@ -97,7 +97,7 @@ completion(model="together_ai/togethercomputer/Llama-2-7B-32K-Instruct", message
 
 ### Using another model
 
-You can create a custom prompt template on LiteLLM (and we [welcome PRs](https://github.com/BerriAI/litellm) to add them to the main repo)
+You can create a custom prompt template on Lumina (and we [welcome PRs](https://github.com/Soventra/lumina) to add them to the main repo)
 
 Let's make one for `OpenAssistant/llama2-70b-oasst-sft-v10`!
 
@@ -112,11 +112,11 @@ The accepted template format is: [Reference](https://huggingface.co/OpenAssistan
 """
 ```
 
-Let's register our custom prompt template: [Implementation Code](https://github.com/BerriAI/litellm/blob/64f3d3c56ef02ac5544983efc78293de31c1c201/litellm/llms/prompt_templates/factory.py#L77)
+Let's register our custom prompt template: [Implementation Code](https://github.com/Soventra/lumina/blob/64f3d3c56ef02ac5544983efc78293de31c1c201/lumina/llms/prompt_templates/factory.py#L77)
 ```python
-import litellm 
+import lumina 
 
-litellm.register_prompt_template(
+lumina.register_prompt_template(
 	    model="OpenAssistant/llama2-70b-oasst-sft-v10",
 	    roles={
             "system": {
@@ -138,7 +138,7 @@ litellm.register_prompt_template(
 Let's use it! 
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 # set env variable 
 os.environ["TOGETHERAI_API_KEY"] = ""
@@ -151,13 +151,13 @@ completion(model="together_ai/OpenAssistant/llama2-70b-oasst-sft-v10", messages=
 **Complete Code**
 
 ```python
-import litellm 
-from litellm import completion
+import lumina 
+from lumina import completion
 
 # set env variable 
 os.environ["TOGETHERAI_API_KEY"] = ""
 
-litellm.register_prompt_template(
+lumina.register_prompt_template(
 	    model="OpenAssistant/llama2-70b-oasst-sft-v10",
 	    roles={
             "system": {
@@ -203,24 +203,24 @@ print(response)
     "completion_tokens": 16,
     "total_tokens": 23
   },
-  "litellm_call_id": "f21315db-afd6-4c1e-b43a-0b5682de4b06"
+  "lumina_call_id": "f21315db-afd6-4c1e-b43a-0b5682de4b06"
 }
 ```
 
 
 ## Reasoning controls via `chat_template_kwargs`
 
-Together steers its reasoning models through a request-level `chat_template_kwargs` object ([Together docs](https://docs.together.ai/docs/deepseek-v3-1#hybrid-reasoning-model)). LiteLLM passes it through untouched on the SDK and on every proxy endpoint (`/v1/chat/completions`, `/v1/messages`, `/v1/responses`), streaming included, so any key Together documents for your model works as is. Together validates the keys server-side and silently ignores ones a model does not support.
+Together steers its reasoning models through a request-level `chat_template_kwargs` object ([Together docs](https://docs.together.ai/docs/deepseek-v3-1#hybrid-reasoning-model)). Lumina passes it through untouched on the SDK and on every proxy endpoint (`/v1/chat/completions`, `/v1/messages`, `/v1/responses`), streaming included, so any key Together documents for your model works as is. Together validates the keys server-side and silently ignores ones a model does not support.
 
 ### Toggling thinking on hybrid models
 
 Hybrid reasoning models (e.g. `Qwen/Qwen3.5-9B`) think by default; `{"thinking": false}` turns it off.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK Usage">
+<TabItem value="sdk" label="Lumina SDK Usage">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["TOGETHERAI_API_KEY"] = "your-api-key"
@@ -234,7 +234,7 @@ print(response.choices[0].message.content)  # direct answer, no reasoning_conten
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy Usage">
+<TabItem value="proxy" label="Lumina Proxy Usage">
 
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
@@ -252,10 +252,10 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ### Preserved thinking across turns
 
-Models like `zai-org/GLM-5.2` clear prior-turn reasoning from the prompt by default. Sending `{"clear_thinking": false}` keeps it, provided you replay each assistant turn's `reasoning_content` unmodified alongside its `content`. LiteLLM forwards the replayed `reasoning_content` to Together and strips its own bookkeeping fields (`thinking_blocks`, `provider_specific_fields`) from the outbound request, so replaying a LiteLLM response object verbatim is safe.
+Models like `zai-org/GLM-5.2` clear prior-turn reasoning from the prompt by default. Sending `{"clear_thinking": false}` keeps it, provided you replay each assistant turn's `reasoning_content` unmodified alongside its `content`. Lumina forwards the replayed `reasoning_content` to Together and strips its own bookkeeping fields (`thinking_blocks`, `provider_specific_fields`) from the outbound request, so replaying a Lumina response object verbatim is safe.
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["TOGETHERAI_API_KEY"] = "your-api-key"
@@ -290,10 +290,10 @@ Anthropic-SDK clients pointed at the proxy's `/v1/messages` endpoint get the sam
 
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK Usage">
+<TabItem value="sdk" label="Lumina SDK Usage">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["TOGETHERAI_API_KEY"] = "sk-.."
@@ -316,13 +316,13 @@ print(response)
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy Usage">
+<TabItem value="proxy" label="Lumina Proxy Usage">
 
-LiteLLM provides an cohere api compatible `/rerank` endpoint for Rerank calls.
+Lumina provides an cohere api compatible `/rerank` endpoint for Rerank calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -332,10 +332,10 @@ model_list:
       api_key: os.environ/TOGETHERAI_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

@@ -1,4 +1,4 @@
-/* Blog post page, styled after a post on https://www.litellm.ai/blog.
+/* Blog post page, styled after a post on https://www.lumina.ai/blog.
    Values come from the website's blog embed: a 1200px column with hairline
    sides and row dividers, a 46px/600 title, 12px-radius cover, then an
    800px body at 18px/1.8. Scoped to this CSS module; docs pages are
@@ -53,7 +53,7 @@
 
 /* The post is a closed box: top and bottom edges join the side rails, so the
    rails no longer start and stop in empty space, and a small accent square
-   marks each corner, as on the litellm.ai grid. */
+   marks each corner, as on the lumina.ai grid. */
 .post {
   position: relative;
   max-width: 1200px;

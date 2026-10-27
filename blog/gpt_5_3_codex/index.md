@@ -6,7 +6,7 @@ authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "Day 0 support for GPT-5.3-Codex on LiteLLM, including phase parameter handling for Responses API."
+description: "Day 0 support for GPT-5.3-Codex on Lumina, including phase parameter handling for Responses API."
 card_title: "GPT-5.3-Codex"
 card_summary: "Codex model whose assistant items carry a phase field (commentary, final_answer) you must echo back each turn."
 tags: [openai, gpt-5.3-codex, codex, day 0 support]
@@ -16,7 +16,7 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports GPT-5.3-Codex on Day 0, including support for the new assistant `phase` metadata on Responses API output items.
+Lumina now supports GPT-5.3-Codex on Day 0, including support for the new assistant `phase` metadata on Responses API output items.
 
 {/* truncate */}
 
@@ -39,13 +39,13 @@ Important:
 ## Docker Image
 
 ```bash
-docker pull ghcr.io/berriai/litellm:v1.81.12-stable.gpt-5.3
+docker pull ghcr.io/soventra/lumina:v1.81.12-stable.gpt-5.3
 ```
 
 ## Usage 
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -63,7 +63,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.12-stable.gpt-5.3 \
+  ghcr.io/soventra/lumina:v1.81.12-stable.gpt-5.3 \
   --config /app/config.yaml
 ```
 
@@ -83,14 +83,14 @@ curl -X POST "http://0.0.0.0:4000/v1/responses" \
 </TabItem>
 </Tabs>
 
-## Python Example: Persist `phase` with OpenAI Client + LiteLLM Base URL
+## Python Example: Persist `phase` with OpenAI Client + Lumina Base URL
 
 ```python
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="http://0.0.0.0:4000/v1",  # LiteLLM Proxy
-    api_key="your-litellm-api-key",
+    base_url="http://0.0.0.0:4000/v1",  # Lumina Proxy
+    api_key="your-lumina-api-key",
 )
 
 items = []  # Persist this per conversation/thread

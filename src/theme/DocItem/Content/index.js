@@ -29,7 +29,7 @@ function decodeMarkdown(b64) {
   return new TextDecoder().decode(bytes);
 }
 
-const SITE_URL = 'https://docs.litellm.ai';
+const SITE_URL = 'https://docs.lumina.ai';
 
 function trackPageAction(action) {
   try {
@@ -74,7 +74,7 @@ export function PageActions({rawMarkdownB64, permalink, hasMarkdownUrl}) {
   }
 
   const mdUrl = `${SITE_URL}${permalink.endsWith('/') ? `${permalink}index.md` : `${permalink}.md`}`;
-  const ask = encodeURIComponent(`Read ${mdUrl} and help me with it. I may ask follow-up questions about LiteLLM.`);
+  const ask = encodeURIComponent(`Read ${mdUrl} and help me with it. I may ask follow-up questions about Lumina.`);
   const items = hasMarkdownUrl
     ? [
         {id: 'view', label: 'View as Markdown', sub: 'Plain text for agents', href: mdUrl},
@@ -164,7 +164,7 @@ export default function DocItemContent({children}) {
       {showRustMigrationBanner && (
         <Link className={styles.rustMigrationBanner} to="/rust-migration">
           <span className={styles.rustMigrationContent}>
-            <strong>LiteLLM is moving to Rust <span aria-hidden="true">🦀</span></strong>
+            <strong>Lumina is moving to Rust <span aria-hidden="true">🦀</span></strong>
             <small>Read the latest updates.</small>
           </span>
           <span className={styles.rustMigrationChevron} aria-hidden="true">›</span>

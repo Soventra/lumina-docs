@@ -8,7 +8,7 @@ Run experiments or change the specific model (e.g. from gpt-5.6-terra to a gpt-5
 
 | Supported Integrations | Link |
 |------------------------|------|
-| Native LiteLLM GitOps (.prompt files) | [Get Started](native_litellm_prompt) |
+| Native Lumina GitOps (.prompt files) | [Get Started](native_lumina_prompt) |
 | Langfuse               | [Get Started](https://langfuse.com/docs/prompts/get-started) |
 | Humanloop              | [Get Started](../observability/humanloop) |
 | Generic Prompt Management API | [Get Started](../adding_provider/generic_prompt_management_api) |
@@ -58,7 +58,7 @@ Each integration has its own configuration parameters and access control mechani
 
 **Option 1: Using a .prompt file**
 
-Point each entry at a single file with `prompt_file`, or omit it to load `<prompt_id>.prompt` from `litellm_settings.global_prompt_directory`. A per-prompt `prompt_directory` is rejected at startup with `ValueError: Cannot set prompt_directory when working with prompt_initializer`
+Point each entry at a single file with `prompt_file`, or omit it to load `<prompt_id>.prompt` from `lumina_settings.global_prompt_directory`. A per-prompt `prompt_directory` is rejected at startup with `ValueError: Cannot set prompt_directory when working with prompt_initializer`
 
 ```yaml
 prompts:
@@ -73,7 +73,7 @@ prompts:
       prompt_id: "goodbye"
       prompt_integration: "dotprompt"  # Loads ./prompts/goodbye.prompt from global_prompt_directory
 
-litellm_settings:
+lumina_settings:
   global_prompt_directory: "./prompts"  # Global setting for all dotprompt integrations
 ```
 
@@ -140,7 +140,7 @@ prompts:
       bitbucket_access_token: "os.environ/BITBUCKET_ACCESS_TOKEN"
       bitbucket_branch: "main"  # optional, defaults to main
 
-litellm_settings:
+lumina_settings:
   global_bitbucket_config:
     workspace: "your-workspace"
     repository: "your-repo"
@@ -176,7 +176,7 @@ prompts:
       gitlab_branch: "main"  # optional
       gitlab_prompts_path: "prompts"  # optional, defaults to root
 
-litellm_settings:
+lumina_settings:
   global_gitlab_config:
     project: "group/sub/repo"
     access_token: "os.environ/GITLAB_ACCESS_TOKEN"
@@ -206,7 +206,7 @@ prompts:
     lumina_params:
       prompt_integration: "generic_prompt_management"
       provider_specific_query_params:
-        project_name: litellm
+        project_name: lumina
         slug: hello-world-prompt-2bac
       api_base: http://localhost:8080
       api_key: os.environ/GENERIC_PROMPT_API_KEY
@@ -216,7 +216,7 @@ prompts:
 
 **What you need to implement:**
 
-A GET endpoint at `/beta/litellm_prompt_management` that returns:
+A GET endpoint at `/beta/lumina_prompt_management` that returns:
 
 ```json
 {
@@ -281,7 +281,7 @@ prompts:
             model: "{{openai_large}}"
             temperature: 0.8
 
-litellm_settings:
+lumina_settings:
   global_prompt_directory: "./prompts"
 ```
 
@@ -356,14 +356,14 @@ Each prompt in the `prompts` list requires:
 
 ```python
 import os 
-import litellm
+import lumina
 
 os.environ["LANGFUSE_PUBLIC_KEY"] = "public_key" # [OPTIONAL] set here or in `.completion`
 os.environ["LANGFUSE_SECRET_KEY"] = "secret_key" # [OPTIONAL] set here or in `.completion`
 
-litellm.set_verbose = True # see raw request to provider
+lumina.set_verbose = True # see raw request to provider
 
-resp = litellm.completion(
+resp = lumina.completion(
     model="langfuse/{{openai_small}}",
     prompt_id="test-chat-prompt",
     prompt_variables={"user_message": "this is used"}, # [OPTIONAL]
@@ -394,7 +394,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 3. Test it! 
@@ -429,7 +429,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -458,7 +458,7 @@ print(response)
 **Expected Logs:**
 
 ```
-POST Request Sent from LiteLLM:
+POST Request Sent from Lumina:
 curl -X POST \
 https://api.openai.com/v1/ \
 -d '{'model': '{{openai_small}}', 'messages': <YOUR LANGFUSE PROMPT TEMPLATE>}'
@@ -466,15 +466,15 @@ https://api.openai.com/v1/ \
 
 ## How to set model 
 
-### Set the model on LiteLLM 
+### Set the model on Lumina 
 
-You can do `langfuse/<litellm_model_name>`
+You can do `langfuse/<lumina_model_name>`
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-litellm.completion(
+lumina.completion(
     model="langfuse/{{openai_small}}", # or `langfuse/anthropic/{{anthropic}}`
     # ...
 )
@@ -529,7 +529,7 @@ The `messages` field sent in by the client is ignored.
 
 The Langfuse prompt will replace the `messages` field.
 
-To replace parts of the prompt, use the `prompt_variables` field. [See how prompt variables are used](https://github.com/BerriAI/litellm/blob/017f83d038f85f93202a083cf334de3544a3af01/litellm/integrations/langfuse/langfuse_prompt_management.py#L127)
+To replace parts of the prompt, use the `prompt_variables` field. [See how prompt variables are used](https://github.com/Soventra/lumina/blob/017f83d038f85f93202a083cf334de3544a3af01/lumina/integrations/langfuse/langfuse_prompt_management.py#L127)
 
 If the Langfuse prompt is a string, it will be sent as a user message (not all providers support system messages).
 
@@ -541,7 +541,7 @@ If the Langfuse prompt is a list, it will be sent as is (Langfuse chat prompts a
 
 ## API Reference
 
-These are the params you can pass to the `litellm.completion` function in SDK and `lumina_params` in config.yaml
+These are the params you can pass to the `lumina.completion` function in SDK and `lumina_params` in config.yaml
 
 ```
 prompt_id: str # required

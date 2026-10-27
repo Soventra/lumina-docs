@@ -10,13 +10,13 @@ OpenTelemetry is a CNCF standard for observability. It connects to any observabi
 
 :::tip[Looking for full-request tracing?]
 
-There's a newer, opt-in **[OpenTelemetry v2](./opentelemetry_v2)** integration for LiteLLM Proxy that produces one trace per request (HTTP → auth → guardrails → LLM call → DB writes), follows the official GenAI semantic conventions, and ships with presets for Arize, Phoenix, Langfuse, Weave, and more. Enable it with `LUMINA_OTEL_V2=true`.
+There's a newer, opt-in **[OpenTelemetry v2](./opentelemetry_v2)** integration for Lumina Proxy that produces one trace per request (HTTP → auth → guardrails → LLM call → DB writes), follows the official GenAI semantic conventions, and ships with presets for Arize, Phoenix, Langfuse, Weave, and more. Enable it with `LUMINA_OTEL_V2=true`.
 
 :::
 
 :::note[Change in v1.81.0]
 
-From v1.81.0, the request/response is set as attributes on the parent `Received Proxy Server Request` span by default, and there is **no** separate `litellm_request` span unless you opt in. To restore nested `litellm_request` spans, set `USE_OTEL_LUMINA_REQUEST_SPAN=true`. See [Span Hierarchy](#span-hierarchy) for the full picture and [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span) for when to flip the flag.
+From v1.81.0, the request/response is set as attributes on the parent `Received Proxy Server Request` span by default, and there is **no** separate `lumina_request` span unless you opt in. To restore nested `lumina_request` spans, set `USE_OTEL_LUMINA_REQUEST_SPAN=true`. See [Span Hierarchy](#span-hierarchy) for the full picture and [Why don't I see a `lumina_request` span?](#why-dont-i-see-a-lumina_request-span) for when to flip the flag.
 
 :::
 
@@ -61,7 +61,7 @@ OTEL_EXPORTER_OTLP_PROTOCOL=grpc
 OTEL_EXPORTER_OTLP_HEADERS="api-key=key,other-config-value=value"
 ```
 
-> Note: OTLP gRPC requires `grpcio`. Install via `uv add "litellm[grpc]"` (or `grpcio`).
+> Note: OTLP gRPC requires `grpcio`. Install via `uv add "lumina[grpc]"` (or `grpcio`).
 
 </TabItem>
 
@@ -73,7 +73,7 @@ OTEL_ENDPOINT="https://api.lmnr.ai:8443"
 OTEL_HEADERS="authorization=Bearer <project-api-key>"
 ```
 
-> Note: OTLP gRPC requires `grpcio`. Install via `uv add "litellm[grpc]"` (or `grpcio`).
+> Note: OTLP gRPC requires `grpcio`. Install via `uv add "lumina[grpc]"` (or `grpcio`).
 
 </TabItem>
 
@@ -83,10 +83,10 @@ OTEL_HEADERS="authorization=Bearer <project-api-key>"
 OTEL_EXPORTER_OTLP_ENDPOINT="https://ingest.<realm>.observability.splunkcloud.com/v2/trace/otlp"
 OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 OTEL_EXPORTER_OTLP_HEADERS="X-SF-Token=<your-ingest-access-token>"
-OTEL_SERVICE_NAME="litellm-proxy"
+OTEL_SERVICE_NAME="lumina-proxy"
 ```
 
-For **LiteLLM Proxy** setup, ingest token patterns, and trace verification, see **[Splunk Observability Cloud (OpenTelemetry)](/docs/observability/splunk_observability_cloud)**.
+For **Lumina Proxy** setup, ingest token patterns, and trace verification, see **[Splunk Observability Cloud (OpenTelemetry)](/docs/observability/splunk_observability_cloud)**.
 
 </TabItem>
 
@@ -95,22 +95,22 @@ For **LiteLLM Proxy** setup, ingest token patterns, and trace verification, see 
 Use just 1 line of code, to instantly log your LLM responses **across all providers** with OpenTelemetry:
 
 ```python
-litellm.callbacks = ["otel"]
+lumina.callbacks = ["otel"]
 ```
 
 ## Span Hierarchy
 
-Every LLM request handled by the LiteLLM Proxy produces a tree of spans rooted at `Received Proxy Server Request`. Conditional spans below are only emitted when their controlling flag is set or their feature is in use.
+Every LLM request handled by the Lumina Proxy produces a tree of spans rooted at `Received Proxy Server Request`. Conditional spans below are only emitted when their controlling flag is set or their feature is in use.
 
 ```
 Received Proxy Server Request                      (SpanKind.SERVER, root)
 │
-├── litellm_request                                (INTERNAL, only when USE_OTEL_LUMINA_REQUEST_SPAN=true)
+├── lumina_request                                (INTERNAL, only when USE_OTEL_LUMINA_REQUEST_SPAN=true)
 │   ├── raw_gen_ai_request                         (INTERNAL — provider request/response, content-capture-gated)
 │   └── guardrail                                  (INTERNAL — one per executed guardrail)
 │
-├── raw_gen_ai_request                             (INTERNAL — when litellm_request is collapsed into the root)
-├── guardrail                                      (INTERNAL — when litellm_request is collapsed into the root)
+├── raw_gen_ai_request                             (INTERNAL — when lumina_request is collapsed into the root)
+├── guardrail                                      (INTERNAL — when lumina_request is collapsed into the root)
 │
 ├── auth, router, self, proxy_pre_call,            (INTERNAL — service-hook spans, see below)
 │   redis, postgres, batch_write_to_db
@@ -120,48 +120,48 @@ Received Proxy Server Request                      (SpanKind.SERVER, root)
 
 In **semconv mode** (`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`), when an LLM-call span is created its name becomes `{operation} {model}` (e.g. `chat {{openai_large}}`) with `SpanKind.CLIENT`, and `raw_gen_ai_request` is suppressed. The same `USE_OTEL_LUMINA_REQUEST_SPAN` gating decides whether the span is emitted at all. See [Opt-In to Latest GenAI Semantic Conventions](#opt-in-to-latest-genai-semantic-conventions).
 
-The SDK (no proxy) emits `litellm_request` as the root if no parent context exists; there is no `Received Proxy Server Request` span in pure-SDK use.
+The SDK (no proxy) emits `lumina_request` as the root if no parent context exists; there is no `Received Proxy Server Request` span in pure-SDK use.
 
 ### Span name reference
 
 | Span name | Span kind | Parent | When emitted |
 |---|---|---|---|
-| `Received Proxy Server Request` | `SERVER` | root (or external `traceparent` if present) | Once per HTTP request to the LiteLLM Proxy |
-| `litellm_request` | `INTERNAL` | proxy root (proxy) or root (SDK) | When `USE_OTEL_LUMINA_REQUEST_SPAN=true` (proxy) or no parent context exists (SDK). In semconv mode replaced by `{operation} {model}` |
-| `raw_gen_ai_request` | `INTERNAL` | `litellm_request` if present, else proxy root | One per upstream provider call. Carries provider-native request/response under `llm.{provider}.*`. Suppressed in semconv mode and when message content capture is disabled |
-| `guardrail` | `INTERNAL` (OpenInference kind = `guardrail`) | `litellm_request` if present, else proxy root | One span per guardrail execution (pre-call, during-call, or post-call) |
+| `Received Proxy Server Request` | `SERVER` | root (or external `traceparent` if present) | Once per HTTP request to the Lumina Proxy |
+| `lumina_request` | `INTERNAL` | proxy root (proxy) or root (SDK) | When `USE_OTEL_LUMINA_REQUEST_SPAN=true` (proxy) or no parent context exists (SDK). In semconv mode replaced by `{operation} {model}` |
+| `raw_gen_ai_request` | `INTERNAL` | `lumina_request` if present, else proxy root | One per upstream provider call. Carries provider-native request/response under `llm.{provider}.*`. Suppressed in semconv mode and when message content capture is disabled |
+| `guardrail` | `INTERNAL` (OpenInference kind = `guardrail`) | `lumina_request` if present, else proxy root | One span per guardrail execution (pre-call, during-call, or post-call) |
 | `Failed Proxy Server Request` | `INTERNAL` | proxy root | When the proxy raises an exception before completing the request |
 | `{route}` (e.g. `/user/info`, `/key/info`) | `INTERNAL` | proxy root | Management-endpoint calls (non-LLM proxy routes) |
 | `auth`, `router`, `self`, `proxy_pre_call`, `redis`, `postgres`, `batch_write_to_db`, `reset_budget_job`, `pod_lock_manager` | `INTERNAL` | proxy root | Service-hook spans — see below |
 
 ### Service-hook spans (a.k.a. "infrastructure" spans)
 
-LiteLLM has a separate hook (`async_service_success_hook` / `async_service_failure_hook`) that records timing for internal subsystems like the router, auth checks, Redis, Postgres, and the proxy pre-call pipeline. When the OTEL integration is active and a parent span is in context, each of these hooks creates an INTERNAL child span.
+Lumina has a separate hook (`async_service_success_hook` / `async_service_failure_hook`) that records timing for internal subsystems like the router, auth checks, Redis, Postgres, and the proxy pre-call pipeline. When the OTEL integration is active and a parent span is in context, each of these hooks creates an INTERNAL child span.
 
-The span **name is the `ServiceTypes` enum value** (`auth`, `router`, `self`, `proxy_pre_call`, `redis`, `postgres`, …). The full set is defined in `litellm/types/services.py`. `self` is the LiteLLM SDK itself (e.g. timing of `make_openai_chat_completion_request`); `router` may appear multiple times per request (once for `async_get_available_deployment`, once for the wrapping `acompletion`).
+The span **name is the `ServiceTypes` enum value** (`auth`, `router`, `self`, `proxy_pre_call`, `redis`, `postgres`, …). The full set is defined in `lumina/types/services.py`. `self` is the Lumina SDK itself (e.g. timing of `make_openai_chat_completion_request`); `router` may appear multiple times per request (once for `async_get_available_deployment`, once for the wrapping `acompletion`).
 
 Each service-hook span carries:
 
 | Attribute | Value |
 |---|---|
 | `service` | The service enum value (e.g. `"router"`, `"redis"`) |
-| `call_type` | The specific operation (e.g. `"async_get_available_deployment"`, `"acompletion"`, `"add_litellm_data_to_request"`) |
+| `call_type` | The specific operation (e.g. `"async_get_available_deployment"`, `"acompletion"`, `"add_lumina_data_to_request"`) |
 | `error` | Set on failure spans only |
 | (custom event_metadata) | Whatever the caller attached |
 
-These spans are **operational/infrastructure spans**, not GenAI semantic spans. They are useful for SRE-level debugging (where is time being spent inside LiteLLM?) but they do **not** carry `gen_ai.*` attributes. If you only want AI-semantic spans in your backend, filter on the presence of `gen_ai.system` (or on span name).
+These spans are **operational/infrastructure spans**, not GenAI semantic spans. They are useful for SRE-level debugging (where is time being spent inside Lumina?) but they do **not** carry `gen_ai.*` attributes. If you only want AI-semantic spans in your backend, filter on the presence of `gen_ai.system` (or on span name).
 
 There is currently **no env var that disables individual service-hook spans**. If you need them filtered, do it at the OTLP collector / backend layer (e.g. via a tail-based sampler that drops by `name`).
 
-### Why don't I see a `litellm_request` span?
+### Why don't I see a `lumina_request` span?
 
-Behavior changed in **v1.81.0**. By default, `USE_OTEL_LUMINA_REQUEST_SPAN=false` and the proxy collapses the `litellm_request` span into the parent `Received Proxy Server Request` span, setting its `gen_ai.*` attributes on the parent instead. This:
+Behavior changed in **v1.81.0**. By default, `USE_OTEL_LUMINA_REQUEST_SPAN=false` and the proxy collapses the `lumina_request` span into the parent `Received Proxy Server Request` span, setting its `gen_ai.*` attributes on the parent instead. This:
 
 - Avoids duplicating attributes across parent and child.
 - Reduces span count (and storage cost) by ~1 span per request.
 - Keeps the trace shallow when a parent context already exists.
 
-To restore the older nested behavior, where every LLM call gets its own `litellm_request` span as a child of the proxy root span, set:
+To restore the older nested behavior, where every LLM call gets its own `lumina_request` span as a child of the proxy root span, set:
 
 ```shell
 USE_OTEL_LUMINA_REQUEST_SPAN=true
@@ -169,9 +169,9 @@ USE_OTEL_LUMINA_REQUEST_SPAN=true
 
 This is the right setting if:
 
-- One HTTP request makes multiple `litellm.completion` calls, and under the default behavior the last call's attributes overwrite earlier ones on the shared parent.
+- One HTTP request makes multiple `lumina.completion` calls, and under the default behavior the last call's attributes overwrite earlier ones on the shared parent.
 - You want a clean parent for `raw_gen_ai_request` and `guardrail` children that is not the HTTP request span.
-- Your backend's UI is built around AI-semantic span names like `litellm_request`.
+- Your backend's UI is built around AI-semantic span names like `lumina_request`.
 
 This is **not a regression**; the change is intentional. The flag is read fresh on every request, so it can be flipped without restarting.
 
@@ -179,24 +179,24 @@ In semconv mode (`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`), th
 
 ### Context propagation (W3C `traceparent`)
 
-LiteLLM honors the W3C Trace Context header. If your client (or upstream gateway) sends a `traceparent` header, LiteLLM creates the `Received Proxy Server Request` span as a child of that external trace, so LiteLLM's spans appear inline inside whatever distributed trace your application already has.
+Lumina honors the W3C Trace Context header. If your client (or upstream gateway) sends a `traceparent` header, Lumina creates the `Received Proxy Server Request` span as a child of that external trace, so Lumina's spans appear inline inside whatever distributed trace your application already has.
 
 Parent-context resolution order (highest priority first):
 
-1. Explicit `litellm_parent_otel_span` in the request `metadata`.
+1. Explicit `lumina_parent_otel_span` in the request `metadata`.
 2. Inbound `traceparent` HTTP header (extracted via `TraceContextTextMapPropagator`).
 3. The currently-active span in the OTEL global context (thread-local).
-4. None; LiteLLM's span is the root.
+4. None; Lumina's span is the root.
 
-To force every LiteLLM trace to be its own root regardless of inbound headers or active context, set `OTEL_IGNORE_CONTEXT_PROPAGATION=true`.
+To force every Lumina trace to be its own root regardless of inbound headers or active context, set `OTEL_IGNORE_CONTEXT_PROPAGATION=true`.
 
 ## Running Multiple OpenTelemetry Handlers
 
 You can run more than one OpenTelemetry handler in the same process, for example a generic OTLP exporter alongside a backend-specific subclass. Set `skip_set_global=True` on every handler past the first so each one gets its own private `TracerProvider`, `MeterProvider`, and `LoggerProvider`. Spans, metrics, and log events then flow only through that handler's exporter.
 
 ```python
-import litellm
-from litellm.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig
+import lumina
+from lumina.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig
 
 # Primary handler. Claims the global TracerProvider.
 primary = OpenTelemetry(config=OpenTelemetryConfig(
@@ -211,7 +211,7 @@ secondary = OpenTelemetry(config=OpenTelemetryConfig(
     skip_set_global=True,
 ))
 
-litellm.callbacks = [primary, secondary]
+lumina.callbacks = [primary, secondary]
 ```
 
 Init order does not matter. Both handlers receive their own spans regardless of which is constructed first.
@@ -221,14 +221,14 @@ Init order does not matter. Both handlers receive their own spans regardless of 
 When two OTEL-emitting integrations are active at once, for instance a customized LangSmith OTEL handler plus the generic `otel` exporter, both honor the same `traceparent` propagation rules and the same parent-resolution order described in [Context propagation](#context-propagation-w3c-traceparent). As long as one handler uses `skip_set_global=True`, both will:
 
 - See the same `trace_id` for a given request.
-- Emit the same span hierarchy (`Received Proxy Server Request` → `litellm_request` if enabled → `raw_gen_ai_request` / `guardrail`).
+- Emit the same span hierarchy (`Received Proxy Server Request` → `lumina_request` if enabled → `raw_gen_ai_request` / `guardrail`).
 - Differ only in which exporter they ship spans to.
 
-If a customized LangSmith OTEL handler is configured to mount `litellm_request` only when the request carries a `traceparent` (otherwise no-op), the generic OTEL handler still emits its full hierarchy. The two views remain readable independently because the span names and attributes are identical.
+If a customized LangSmith OTEL handler is configured to mount `lumina_request` only when the request carries a `traceparent` (otherwise no-op), the generic OTEL handler still emits its full hierarchy. The two views remain readable independently because the span names and attributes are identical.
 
 ## Capturing Message Content
 
-LiteLLM uses the standard `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable to control whether prompts and completions are captured, and where:
+Lumina uses the standard `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable to control whether prompts and completions are captured, and where:
 
 ```shell
 # Do not capture message content
@@ -251,8 +251,8 @@ A boolean form is also accepted: `true` maps to `EVENT_ONLY`, `false` maps to `N
 When running multiple OpenTelemetry handlers, set `capture_message_content` on each `OpenTelemetryConfig` so the handlers can have different content policies. For example, send full prompts to a debugging backend while stripping content from a compliance-focused OTLP collector:
 
 ```python
-import litellm
-from litellm.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig
+import lumina
+from lumina.integrations.opentelemetry import OpenTelemetry, OpenTelemetryConfig
 
 stripped = OpenTelemetry(config=OpenTelemetryConfig(
     exporter="otlp_http",
@@ -267,12 +267,12 @@ verbose = OpenTelemetry(config=OpenTelemetryConfig(
     skip_set_global=True,
 ))
 
-litellm.callbacks = [stripped, verbose]
+lumina.callbacks = [stripped, verbose]
 ```
 
 Resolution order (highest priority first):
 
-1. `litellm.turn_off_message_logging=True` forces `NO_CONTENT` (dynamic kill-switch; overrides everything below).
+1. `lumina.turn_off_message_logging=True` forces `NO_CONTENT` (dynamic kill-switch; overrides everything below).
 2. `OpenTelemetryConfig.capture_message_content` (per-handler field, sampled at handler init).
 3. `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` env var (sampled at handler init).
 4. The legacy per-instance `message_logging` flag, which defaults to `True` and maps to `SPAN_AND_EVENT`.
@@ -293,7 +293,7 @@ This changes the LLM-call span name, kind, and structure, suppresses the non-sta
 
 ### Redact Messages and Responses from all OpenTelemetry Logging
 
-Set `litellm.turn_off_message_logging=True` This will prevent the messages and responses from being logged to OpenTelemetry, but request metadata will still be logged.
+Set `lumina.turn_off_message_logging=True` This will prevent the messages and responses from being logged to OpenTelemetry, but request metadata will still be logged.
 
 ### Redact Messages and Responses from specific OpenTelemetry Logging
 
@@ -301,30 +301,30 @@ The OpenTelemetry logger does not read the Langfuse `mask_input`, `mask_output` 
 
 ## Troubleshooting
 
-### I don't see a `litellm_request` span
+### I don't see a `lumina_request` span
 
-Expected behavior under the v1.81.0+ default (`USE_OTEL_LUMINA_REQUEST_SPAN=false`): the proxy root span absorbs the LLM-call attributes and there is no separate `litellm_request` span. To restore nested spans, set `USE_OTEL_LUMINA_REQUEST_SPAN=true`. See [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span).
+Expected behavior under the v1.81.0+ default (`USE_OTEL_LUMINA_REQUEST_SPAN=false`): the proxy root span absorbs the LLM-call attributes and there is no separate `lumina_request` span. To restore nested spans, set `USE_OTEL_LUMINA_REQUEST_SPAN=true`. See [Why don't I see a `lumina_request` span?](#why-dont-i-see-a-lumina_request-span).
 
-If you're in semconv mode, the LLM-call span exists but is renamed to `{operation} {model}` (e.g. `chat {{openai_large}}`), so search by `gen_ai.system` rather than by the literal name `litellm_request`.
+If you're in semconv mode, the LLM-call span exists but is renamed to `{operation} {model}` (e.g. `chat {{openai_large}}`), so search by `gen_ai.system` rather than by the literal name `lumina_request`.
 
 ### I only see infrastructure spans (`router`, `auth`, `redis`, `proxy_pre_call`)
 
-Those are [service-hook spans](#service-hook-spans-aka-infrastructure-spans). They're emitted alongside the AI-semantic spans (`raw_gen_ai_request`, `guardrail`, and `litellm_request` if enabled), not instead of them. If you don't see any `gen_ai.*` attributes anywhere in your trace:
+Those are [service-hook spans](#service-hook-spans-aka-infrastructure-spans). They're emitted alongside the AI-semantic spans (`raw_gen_ai_request`, `guardrail`, and `lumina_request` if enabled), not instead of them. If you don't see any `gen_ai.*` attributes anywhere in your trace:
 
-1. Verify `litellm.callbacks` (or `litellm_settings.callbacks`) includes `"otel"`.
+1. Verify `lumina.callbacks` (or `lumina_settings.callbacks`) includes `"otel"`.
 2. Verify the request actually hit a `/chat/completions` (or other LLM) route. Management endpoints (`/key/info`, `/user/info`, …) won't have `gen_ai.*` attributes.
-3. Check whether `litellm.turn_off_message_logging=true` or a `NO_CONTENT` capture mode is set, since they suppress message and raw-provider attributes.
-4. Set `USE_OTEL_LUMINA_REQUEST_SPAN=true` so the LLM attributes land on a span named `litellm_request` instead of being co-mingled with HTTP request attributes on `Received Proxy Server Request`.
+3. Check whether `lumina.turn_off_message_logging=true` or a `NO_CONTENT` capture mode is set, since they suppress message and raw-provider attributes.
+4. Set `USE_OTEL_LUMINA_REQUEST_SPAN=true` so the LLM attributes land on a span named `lumina_request` instead of being co-mingled with HTTP request attributes on `Received Proxy Server Request`.
 
-### Trace LiteLLM Proxy user/key/org/team information on failed requests
+### Trace Lumina Proxy user/key/org/team information on failed requests
 
-LiteLLM emits `metadata.user_api_key_*` attributes (key hash, key alias, org ID, user ID, team ID) on **both successful and failed** requests. They appear on the `litellm_request` span when present, otherwise on `Received Proxy Server Request`.
+Lumina emits `metadata.user_api_key_*` attributes (key hash, key alias, org ID, user ID, team ID) on **both successful and failed** requests. They appear on the `lumina_request` span when present, otherwise on `Received Proxy Server Request`.
 
 <Image img={require('../../img/otel_debug_trace.png')} />
 
 ### Not seeing traces land on Integration
 
-If you don't see traces landing on your integration, set `DEBUG_OTEL="True"` in your LiteLLM environment and try again.
+If you don't see traces landing on your integration, set `DEBUG_OTEL="True"` in your Lumina environment and try again.
 
 ```shell
 export DEBUG_OTEL="True"
@@ -335,13 +335,13 @@ This will emit any logging issues to the console. Common causes:
 - `OTEL_EXPORTER_OTLP_ENDPOINT` points to an HTTPS endpoint but the protocol is `grpc` (or vice-versa).
 - `OTEL_HEADERS` is missing the auth header your backend expects.
 - A firewall/sidecar is dropping outbound OTLP traffic on 4317/4318.
-- For gRPC, `grpcio` isn't installed (`uv add "litellm[grpc]"`).
+- For gRPC, `grpcio` isn't installed (`uv add "lumina[grpc]"`).
 
 ### Spans are getting truncated or dropped
 
 OTLP exporters batch spans. Very large `gen_ai.input.messages`/`gen_ai.output.messages` (e.g. multi-megabyte prompts) can exceed default OTLP attribute size limits at the collector. Either:
 
-- Move large payloads off-trace (set `litellm.turn_off_message_logging=true` and rely on Spend Logs / cold storage, referenced via `metadata.cold_storage_object_key`).
+- Move large payloads off-trace (set `lumina.turn_off_message_logging=true` and rely on Spend Logs / cold storage, referenced via `metadata.cold_storage_object_key`).
 - Raise the collector's `max_attribute_value_length` and OTLP receiver `max_recv_msg_size_mib`.
 
 ## Control metric attribute cardinality
@@ -357,7 +357,7 @@ The filter applies to metrics only. Spans keep their full attribute set, so trac
 The common case. Keep the stable identity attributes and drop the per-request blobs that drive cardinality.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 callback_settings:
@@ -378,7 +378,7 @@ callback_settings:
 When you want the smallest, most predictable attribute set, list exactly the attributes to keep. Anything not listed is dropped from metrics.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 callback_settings:
@@ -431,32 +431,32 @@ All flags below are read from environment variables unless noted. Boolean flags 
 | `OTEL_EXPORTER` (alias: `OTEL_EXPORTER_OTLP_PROTOCOL`) | `console` | Exporter type. Common values: `console`, `otlp_http`, `otlp_grpc`, `http/json`, `http/protobuf`, `grpc` |
 | `OTEL_ENDPOINT` (alias: `OTEL_EXPORTER_OTLP_ENDPOINT`) | none | OTLP endpoint URL |
 | `OTEL_HEADERS` (alias: `OTEL_EXPORTER_OTLP_HEADERS`) | none | Comma-separated `key=value,key2=value2` header list |
-| `OTEL_SERVICE_NAME` | `litellm` | Resource attribute `service.name` |
+| `OTEL_SERVICE_NAME` | `lumina` | Resource attribute `service.name` |
 | `OTEL_ENVIRONMENT_NAME` | `production` | Resource attribute `deployment.environment` |
 | `OTEL_MODEL_ID` | `OTEL_SERVICE_NAME` | Resource attribute `model_id` |
-| `OTEL_TRACER_NAME` | `litellm` | Tracer name |
-| `LUMINA_METER_NAME` | `litellm` | Meter name (when metrics enabled) |
-| `LUMINA_LOGGER_NAME` | `litellm` | Logger name (when events enabled) |
+| `OTEL_TRACER_NAME` | `lumina` | Tracer name |
+| `LUMINA_METER_NAME` | `lumina` | Meter name (when metrics enabled) |
+| `LUMINA_LOGGER_NAME` | `lumina` | Logger name (when events enabled) |
 | `OTEL_LOGS_EXPORTER` | none | Logs exporter (e.g. `console`) when events are enabled |
 
-When the `otlp_http` exporter talks to a collector behind an internal CA, it honors `SSL_CERT_FILE` (a path to a CA bundle) and `litellm_settings.ssl_verify` (`false` disables verification). The OpenTelemetry SDK's own `OTEL_EXPORTER_OTLP_CERTIFICATE` still wins when set
+When the `otlp_http` exporter talks to a collector behind an internal CA, it honors `SSL_CERT_FILE` (a path to a CA bundle) and `lumina_settings.ssl_verify` (`false` disables verification). The OpenTelemetry SDK's own `OTEL_EXPORTER_OTLP_CERTIFICATE` still wins when set
 
 ### Span / metric / event toggles
 
 | Variable | Default | Effect |
 |---|---|---|
-| `USE_OTEL_LUMINA_REQUEST_SPAN` | `false` | Force `litellm_request` to always be emitted as a child of the proxy root span. See [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span) |
+| `USE_OTEL_LUMINA_REQUEST_SPAN` | `false` | Force `lumina_request` to always be emitted as a child of the proxy root span. See [Why don't I see a `lumina_request` span?](#why-dont-i-see-a-lumina_request-span) |
 | `OTEL_SEMCONV_STABILITY_OPT_IN` | unset | Set to `gen_ai_latest_experimental` to switch to the [latest GenAI semantic conventions](#opt-in-to-latest-genai-semantic-conventions). Comma-separable per OTEL spec |
 | `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | unset → falls back to legacy `message_logging` (default `True` → `SPAN_AND_EVENT`) | `NO_CONTENT` / `SPAN_ONLY` / `EVENT_ONLY` / `SPAN_AND_EVENT`. Boolean form accepted (`true`→`EVENT_ONLY`, `false`→`NO_CONTENT`) |
 | `LUMINA_OTEL_INTEGRATION_ENABLE_METRICS` | `false` | Enable OTLP metrics (TTFT, TPOT, response duration, cost, token usage, operation duration) |
 | `LUMINA_OTEL_INTEGRATION_ENABLE_EVENTS` | `false` | Enable OTLP semantic logs (`gen_ai.content.prompt`/`gen_ai.content.completion`, or `gen_ai.client.inference.operation.details` in semconv mode) |
-| `OTEL_IGNORE_CONTEXT_PROPAGATION` | `false` | If `true`, ignore inbound `traceparent` headers and any active span — every LiteLLM trace becomes its own root |
+| `OTEL_IGNORE_CONTEXT_PROPAGATION` | `false` | If `true`, ignore inbound `traceparent` headers and any active span — every Lumina trace becomes its own root |
 | `DEBUG_OTEL` | `false` | Print exporter and span-creation diagnostics to stderr |
-| `litellm.turn_off_message_logging` (Python global / `litellm_settings.turn_off_message_logging`) | `false` | Kill-switch for content capture. Suppresses `llm.{provider}.*` raw request/response, `gen_ai.input.messages`, `gen_ai.output.messages`, and `gen_ai.content.*` log events. Overrides per-handler `capture_message_content` |
+| `lumina.turn_off_message_logging` (Python global / `lumina_settings.turn_off_message_logging`) | `false` | Kill-switch for content capture. Suppresses `llm.{provider}.*` raw request/response, `gen_ai.input.messages`, `gen_ai.output.messages`, and `gen_ai.content.*` log events. Overrides per-handler `capture_message_content` |
 
 ### Per-request `metadata` keys
 
-The Langfuse `mask_input`, `mask_output` and `update_trace_keys` keys have no effect on OpenTelemetry spans. Use `litellm.turn_off_message_logging` or a `NO_CONTENT` capture mode to redact content.
+The Langfuse `mask_input`, `mask_output` and `update_trace_keys` keys have no effect on OpenTelemetry spans. Use `lumina.turn_off_message_logging` or a `NO_CONTENT` capture mode to redact content.
 
 | Key | Effect |
 |---|---|
@@ -479,7 +479,7 @@ The Langfuse `mask_input`, `mask_output` and `update_trace_keys` keys have no ef
 
 ## Appendix: Spans, Metrics, and Attributes Reference
 
-This appendix enumerates every span, metric, and AI-semantic attribute LiteLLM emits, including how each changes when [semconv mode](#opt-in-to-latest-genai-semantic-conventions) is enabled.
+This appendix enumerates every span, metric, and AI-semantic attribute Lumina emits, including how each changes when [semconv mode](#opt-in-to-latest-genai-semantic-conventions) is enabled.
 
 ### Spans Reference
 
@@ -488,7 +488,7 @@ The LLM-call span is the AI-semantic core. Its name, kind, and supporting child 
 | Span | Kind | Default mode | Semconv mode |
 |---|---|---|---|
 | Proxy request frame | `SERVER` | `Received Proxy Server Request` | `Received Proxy Server Request` (unchanged) |
-| LLM-call span | `INTERNAL` (default) / `CLIENT` (semconv) | `litellm_request` (only when `USE_OTEL_LUMINA_REQUEST_SPAN=true`; otherwise attributes land on the proxy frame span) | `{operation} {model}` (e.g. `chat gpt-4`, `embeddings text-embedding-3-small`); same `USE_OTEL_LUMINA_REQUEST_SPAN` gating as default mode |
+| LLM-call span | `INTERNAL` (default) / `CLIENT` (semconv) | `lumina_request` (only when `USE_OTEL_LUMINA_REQUEST_SPAN=true`; otherwise attributes land on the proxy frame span) | `{operation} {model}` (e.g. `chat gpt-4`, `embeddings text-embedding-3-small`); same `USE_OTEL_LUMINA_REQUEST_SPAN` gating as default mode |
 | Raw provider payload | `INTERNAL` | `raw_gen_ai_request` (when message content capture is permitted) | not emitted (data lives on the LLM-call span and the consolidated event) |
 | Guardrail check | `INTERNAL` | one span per guardrail invocation, named per guardrail | unchanged |
 | Management endpoint | `INTERNAL` | one span per proxy admin call, named per endpoint | unchanged |
@@ -497,7 +497,7 @@ Operation names emitted in semconv mode: `chat` (default), `embeddings` (when ca
 
 ### Events Reference
 
-Events land on the LiteLLM-managed `LoggerProvider` when `enable_events=True` on the config.
+Events land on the Lumina-managed `LoggerProvider` when `enable_events=True` on the config.
 
 | Event | Default mode | Semconv mode |
 |---|---|---|
@@ -507,24 +507,24 @@ Events land on the LiteLLM-managed `LoggerProvider` when `enable_events=True` on
 
 ### Metrics Reference
 
-LiteLLM emits the following histograms when `enable_metrics=True` is set on the `OpenTelemetryConfig`. Metric names match the OTEL GenAI semantic conventions.
+Lumina emits the following histograms when `enable_metrics=True` is set on the `OpenTelemetryConfig`. Metric names match the OTEL GenAI semantic conventions.
 
 | Metric | Unit | Description |
 |---|---|---|
-| `gen_ai.client.operation.duration` | `s` | End-to-end operation duration including LiteLLM overhead. |
+| `gen_ai.client.operation.duration` | `s` | End-to-end operation duration including Lumina overhead. |
 | `gen_ai.client.token.usage` | `{token}` | Token usage. Records two histograms per call (label `gen_ai.token.type` is `"input"` or `"output"`). |
 | `gen_ai.usage.cost` | `USD` | Computed request cost. |
 | `gen_ai.server.time_to_first_token` | `s` | Time from request start to first streamed token (streaming requests only). |
 | `gen_ai.server.time_per_output_token` | `s` | Average time per output token (generation time / completion tokens). |
-| `gen_ai.client.response.duration` | `s` | LLM API generation time, excluding LiteLLM overhead. |
+| `gen_ai.client.response.duration` | `s` | LLM API generation time, excluding Lumina overhead. |
 
 :::note[Renamed in this release]
 
-`gen_ai.usage.cost`, `gen_ai.server.time_to_first_token`, and `gen_ai.server.time_per_output_token` were previously emitted as `gen_ai.client.token.cost`, `gen_ai.client.response.time_to_first_token`, and `gen_ai.client.response.time_per_output_token`. The older spellings are not GenAI semantic conventions and no vendor dashboard queries them, so nothing prebuilt could chart LiteLLM's cost or latency. If you hand-built panels or alerts against the old names, repoint them at the names above
+`gen_ai.usage.cost`, `gen_ai.server.time_to_first_token`, and `gen_ai.server.time_per_output_token` were previously emitted as `gen_ai.client.token.cost`, `gen_ai.client.response.time_to_first_token`, and `gen_ai.client.response.time_per_output_token`. The older spellings are not GenAI semantic conventions and no vendor dashboard queries them, so nothing prebuilt could chart Lumina's cost or latency. If you hand-built panels or alerts against the old names, repoint them at the names above
 
 :::
 
-Common labels on every histogram: `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.framework="litellm"`. `gen_ai.system` is added when LiteLLM knows the call's provider, so a call without one carries no `gen_ai.system` label.
+Common labels on every histogram: `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.framework="lumina"`. `gen_ai.system` is added when Lumina knows the call's provider, so a call without one carries no `gen_ai.system` label.
 
 | Common metric ask | Metric |
 |---|---|
@@ -542,14 +542,14 @@ Even with metrics off, every metric below can be derived from spans. This is wha
 |---|---|
 | **TTFT** (Time to First Token) | Streaming requests only. Use the dedicated `gen_ai.server.time_to_first_token` metric, or capture `completion_start_time` from request `kwargs` via a custom callback. |
 | **TPOT** (Time per Output Token) | Use the `gen_ai.server.time_per_output_token` metric, or derive as `gen_ai.client.response.duration ÷ gen_ai.usage.output_tokens`. |
-| **Total response duration** | `gen_ai.client.response.duration` metric, or `end_time − start_time` of the LLM-call span (or proxy root span minus LiteLLM overhead — see `hidden_params.litellm_overhead_time_ms`). |
+| **Total response duration** | `gen_ai.client.response.duration` metric, or `end_time − start_time` of the LLM-call span (or proxy root span minus Lumina overhead — see `hidden_params.lumina_overhead_time_ms`). |
 | **Vendor (provider) latency** | Duration of the `raw_gen_ai_request` span (default mode) — pure time spent waiting on the upstream provider. In semconv mode, use `gen_ai.client.response.duration`. |
-| **LiteLLM overhead** | `hidden_params.litellm_overhead_time_ms` on the proxy root span. Or `Received Proxy Server Request.duration − raw_gen_ai_request.duration`. |
+| **Lumina overhead** | `hidden_params.lumina_overhead_time_ms` on the proxy root span. Or `Received Proxy Server Request.duration − raw_gen_ai_request.duration`. |
 | **Token usage** | `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.usage.total_tokens` on the LLM span (or `gen_ai.client.token.usage` metric). |
 | **Cost** | `gen_ai.cost.total_cost` (and the rest of `gen_ai.cost.*`) on the LLM span; or `gen_ai.usage.cost` metric. |
 | **Guardrail evaluation time** | Duration of each `guardrail` span. Disambiguate by `guardrail_name` and `guardrail_mode`. |
 | **Router / auth / Redis / DB latency** | Duration of the corresponding [service-hook span](#service-hook-spans-aka-infrastructure-spans) (`router`, `auth`, `redis`, `postgres`, …). |
-| **Retry / fallback count** | `hidden_params.x-litellm-attempted-retries` and `hidden_params.x-litellm-attempted-fallbacks` on the proxy root span. |
+| **Retry / fallback count** | `hidden_params.x-lumina-attempted-retries` and `hidden_params.x-lumina-attempted-fallbacks` on the proxy root span. |
 | **Streaming?** | `llm.is_streaming` attribute (`"True"`/`"False"`). |
 
 ### Attributes Reference
@@ -558,10 +558,10 @@ Attributes set on the LLM-call span. Names follow [OTEL GenAI semconv](https://o
 
 | Attribute | Default mode | Semconv mode |
 |---|---|---|
-| `gen_ai.operation.name` | the litellm `call_type` (e.g. `acompletion`) | the semconv operation (`chat`, `embeddings`, `text_completion`) |
+| `gen_ai.operation.name` | the lumina `call_type` (e.g. `acompletion`) | the semconv operation (`chat`, `embeddings`, `text_completion`) |
 | `gen_ai.system` | provider name (e.g. `openai`) | unchanged |
 | `gen_ai.provider.name` | not set | provider name (the renamed Required attribute per spec) |
-| `gen_ai.framework` | `litellm` | `litellm` |
+| `gen_ai.framework` | `lumina` | `lumina` |
 | `gen_ai.request.model` | model | model |
 | `gen_ai.request.max_tokens`, `temperature`, `top_p` | when set in the request | when set in the request |
 | `gen_ai.request.frequency_penalty`, `presence_penalty`, `top_k`, `seed`, `stop_sequences`, `stream`, `choice.count` | not set | when set in the request |
@@ -569,11 +569,11 @@ Attributes set on the LLM-call span. Names follow [OTEL GenAI semconv](https://o
 | `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `gen_ai.usage.total_tokens` | when present | unchanged |
 | `gen_ai.usage.cache_creation.input_tokens`, `gen_ai.usage.cache_read.input_tokens` | not set | when present in the response |
 | `gen_ai.input.messages`, `gen_ai.output.messages`, `gen_ai.system_instructions` | when message content capture permits, JSON-encoded array of `{role, parts: [...]}` objects | unchanged |
-| `gen_ai.cost.input_cost`, `output_cost`, `total_cost` (and related cost breakdown attrs) | LiteLLM-specific cost attributes | unchanged |
+| `gen_ai.cost.input_cost`, `output_cost`, `total_cost` (and related cost breakdown attrs) | Lumina-specific cost attributes | unchanged |
 
 #### `gen_ai.cost.*` (cost breakdown, all modes)
 
-LiteLLM expands every key from `standard_logging_payload["cost_breakdown"]` as `gen_ai.cost.{key}`. Currently observed keys:
+Lumina expands every key from `standard_logging_payload["cost_breakdown"]` as `gen_ai.cost.{key}`. Currently observed keys:
 
 | Attribute | Meaning |
 |---|---|
@@ -585,24 +585,24 @@ LiteLLM expands every key from `standard_logging_payload["cost_breakdown"]` as `
 | `gen_ai.cost.discount_percent`, `gen_ai.cost.discount_amount` | Discount applied |
 | `gen_ai.cost.margin_percent`, `gen_ai.cost.margin_fixed_amount`, `gen_ai.cost.margin_total_amount` | Margin components |
 
-#### `litellm.*` (proxy root and LLM span)
+#### `lumina.*` (proxy root and LLM span)
 
 | Attribute | Value |
 |---|---|
-| `litellm.call_id` | Unique per `litellm.completion` invocation. Use this to correlate trace data with LiteLLM Spend Logs and the LiteLLM UI |
-| `litellm.request.type` | Same as `call_type` (e.g. `acompletion`, `aembedding`, `aimage_generation`) |
+| `lumina.call_id` | Unique per `lumina.completion` invocation. Use this to correlate trace data with Lumina Spend Logs and the Lumina UI |
+| `lumina.request.type` | Same as `call_type` (e.g. `acompletion`, `aembedding`, `aimage_generation`) |
 
 #### `llm.*` (proxy root and LLM span)
 
 | Attribute | Value |
 |---|---|
-| `llm.request.type` | LiteLLM `call_type` |
+| `llm.request.type` | Lumina `call_type` |
 | `llm.is_streaming` | `"True"` or `"False"` |
 | `llm.user` | `user` parameter, if set |
 
 #### `llm.{provider}.*` (raw provider request/response, default mode only)
 
-Set **only on `raw_gen_ai_request`**, to avoid attribute duplication. For each key in the raw provider request body, LiteLLM emits `llm.{provider}.{key}`. Same for the raw response body.
+Set **only on `raw_gen_ai_request`**, to avoid attribute duplication. For each key in the raw provider request body, Lumina emits `llm.{provider}.{key}`. Same for the raw response body.
 
 Examples observed for `openai`:
 
@@ -623,11 +623,11 @@ llm.openai.extra_body
 
 For Anthropic, replace `openai` with `anthropic` (`llm.anthropic.messages`, `llm.anthropic.stop_reason`, etc.). Same pattern for every other provider.
 
-These attributes are suppressed when `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=NO_CONTENT`, when `litellm.turn_off_message_logging=true`, or in semconv mode (where the entire `raw_gen_ai_request` span is suppressed).
+These attributes are suppressed when `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=NO_CONTENT`, when `lumina.turn_off_message_logging=true`, or in semconv mode (where the entire `raw_gen_ai_request` span is suppressed).
 
 #### `metadata.*` (proxy root, sometimes LLM span)
 
-LiteLLM iterates `standard_logging_payload["metadata"]` and emits each entry as `metadata.{key}`. Common keys (not exhaustive):
+Lumina iterates `standard_logging_payload["metadata"]` and emits each entry as `metadata.{key}`. Common keys (not exhaustive):
 
 | Attribute | Meaning |
 |---|---|
@@ -635,7 +635,7 @@ LiteLLM iterates `standard_logging_payload["metadata"]` and emits each entry as 
 | `metadata.user_api_key_alias` | Virtual-key alias |
 | `metadata.user_api_key_team_id`, `metadata.user_api_key_team_alias` | Team identifiers |
 | `metadata.user_api_key_org_id`, `metadata.user_api_key_org_alias` | Organization identifiers |
-| `metadata.user_api_key_user_id`, `metadata.user_api_key_user_email` | LiteLLM internal user identifiers |
+| `metadata.user_api_key_user_id`, `metadata.user_api_key_user_email` | Lumina internal user identifiers |
 | `metadata.user_api_key_end_user_id` | End-user passed in request |
 | `metadata.user_api_key_project_id`, `metadata.user_api_key_project_alias` | Project identifiers |
 | `metadata.user_api_key_spend`, `metadata.user_api_key_max_budget`, `metadata.user_api_key_budget_reset_at` | Budget state |
@@ -649,7 +649,7 @@ LiteLLM iterates `standard_logging_payload["metadata"]` and emits each entry as 
 | `metadata.cold_storage_object_key` | When request payloads are offloaded to cold storage |
 | `metadata.user_api_key_auth_metadata` | Extra auth context |
 
-Plus `hidden_params`, a single attribute holding a JSON-serialized dict that includes `litellm_overhead_time_ms`, `api_base`, `response_cost`, `additional_headers`, `model_id`, `x-litellm-attempted-retries`, `x-litellm-attempted-fallbacks`, etc.
+Plus `hidden_params`, a single attribute holding a JSON-serialized dict that includes `lumina_overhead_time_ms`, `api_base`, `response_cost`, `additional_headers`, `model_id`, `x-lumina-attempted-retries`, `x-lumina-attempted-fallbacks`, etc.
 
 #### Guardrail span attributes
 
@@ -684,15 +684,15 @@ On `Failed Proxy Server Request` (and on any LLM-call span on failure):
 
 | Attribute | Default | Override |
 |---|---|---|
-| `service.name` | `litellm` | `OTEL_SERVICE_NAME` |
+| `service.name` | `lumina` | `OTEL_SERVICE_NAME` |
 | `deployment.environment` | `production` | `OTEL_ENVIRONMENT_NAME` |
 | `model_id` | matches `service.name` | `OTEL_MODEL_ID` |
 | `telemetry.sdk.{language,name,version}` | set by SDK | — |
 
 ### Stability
 
-Span names, metric names, and the attribute set above are stable across LiteLLM patch releases. The LLM-call span name and kind change between [Default mode and Semconv mode](#opt-in-to-latest-genai-semantic-conventions) and migrate via the documented opt-in flag rather than between releases.
+Span names, metric names, and the attribute set above are stable across Lumina patch releases. The LLM-call span name and kind change between [Default mode and Semconv mode](#opt-in-to-latest-genai-semantic-conventions) and migrate via the documented opt-in flag rather than between releases.
 
 ## Support
 
-For LiteLLM OTEL integration questions, file an issue at [BerriAI/litellm](https://github.com/BerriAI/litellm/issues). For OpenLLMetry / Traceloop semantic-convention questions, see [Slack](https://traceloop.com/slack) or email [dev@traceloop.com](mailto:dev@traceloop.com).
+For Lumina OTEL integration questions, file an issue at [Soventra/lumina](https://github.com/Soventra/lumina/issues). For OpenLLMetry / Traceloop semantic-convention questions, see [Slack](https://traceloop.com/slack) or email [dev@traceloop.com](mailto:dev@traceloop.com).

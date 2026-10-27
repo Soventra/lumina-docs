@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.100.5 and v1.101.5 update next to 16.3.6 and urllib3 to 2.8.0"
+title: "Lumina v1.100.5 and v1.101.5 update next to 16.3.6 and urllib3 to 2.8.0"
 description: "Updates urllib3, pypdf and pyjwt in the locked Python dependencies, and updates the Admin UI next package to 16.3.6."
 slug: "v1-101-5"
 date: 2026-10-07T18:44:55
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -33,22 +33,22 @@ docker run \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.101.5
+docker.lumina.ai/soventra/lumina:1.101.5
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.101.5
+pip install lumina==1.101.5
 ```
 
 </TabItem>
 </Tabs>
 
-This release is published as [`ghcr.io/berriai/litellm:v1.101.5`](https://github.com/BerriAI/litellm/pkgs/container/litellm). See the [GitHub release](https://github.com/BerriAI/litellm/releases/tag/v1.101.5) and the full [releases page](https://github.com/BerriAI/litellm/releases)
+This release is published as [`ghcr.io/soventra/lumina:v1.101.5`](https://github.com/Soventra/lumina/pkgs/container/lumina). See the [GitHub release](https://github.com/Soventra/lumina/releases/tag/v1.101.5) and the full [releases page](https://github.com/Soventra/lumina/releases)
 
-`v1.101.5` is a patch release on top of [`v1.101.4`](/release_notes/v1.101.4/v1-101-4). It updates locked Python and Admin UI dependencies and the wolfi-base image digest. There are no new database migrations or breaking changes. The `v1.101.5` tag points at [`abbf938`](https://github.com/BerriAI/litellm/commit/abbf9385b29cfc6928e93545de19a0bf36da8ac4)
+`v1.101.5` is a patch release on top of [`v1.101.4`](/release_notes/v1.101.4/v1-101-4). It updates locked Python and Admin UI dependencies and the wolfi-base image digest. There are no new database migrations or breaking changes. The `v1.101.5` tag points at [`abbf938`](https://github.com/Soventra/lumina/commit/abbf9385b29cfc6928e93545de19a0bf36da8ac4)
 
 ## Dependency updates
 
@@ -58,9 +58,9 @@ This release is published as [`ghcr.io/berriai/litellm:v1.101.5`](https://github
 
 ### What's Changed
 
-- Refresh locked Python and Admin UI dependencies - [PR #44773](https://github.com/BerriAI/litellm/pull/44773)
-- Bump wolfi-base digest to pick up glibc 2.44-r6 - [PR #44804](https://github.com/BerriAI/litellm/pull/44804)
+- Refresh locked Python and Admin UI dependencies - [PR #44773](https://github.com/Soventra/lumina/pull/44773)
+- Bump wolfi-base digest to pick up glibc 2.44-r6 - [PR #44804](https://github.com/Soventra/lumina/pull/44804)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.101.4...v1.101.5
+https://github.com/Soventra/lumina/compare/v1.101.4...v1.101.5

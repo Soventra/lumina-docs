@@ -2,7 +2,7 @@ import Image from '@theme/IdealImage';
 
 # Team Bring-Your-Own Guardrails
 
-Team-based guardrails let **developers** register a guardrail for their team via the API; an **admin** then reviews and approves or rejects it in the LiteLLM UI. Only [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api) guardrails can be registered this way.
+Team-based guardrails let **developers** register a guardrail for their team via the API; an **admin** then reviews and approves or rejects it in the Lumina UI. Only [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api) guardrails can be registered this way.
 
 ## Overview
 
@@ -29,7 +29,7 @@ Team-based guardrails let **developers** register a guardrail for their team via
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `guardrail_name` | string | Yes | Unique name for the guardrail. |
-| `lumina_params` | object | Yes | Must include `guardrail: "generic_guardrail_api"`, `mode` (e.g. `pre_call`, `post_call`), and `api_base`. See [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api#litellm-configuration). |
+| `lumina_params` | object | Yes | Must include `guardrail: "generic_guardrail_api"`, `mode` (e.g. `pre_call`, `post_call`), and `api_base`. See [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api#lumina-configuration). |
 | `guardrail_info` | object | No | Optional metadata (e.g. `description`). |
 
 ### Requirements for `lumina_params`
@@ -83,7 +83,7 @@ After a successful register, the guardrail stays in `pending_review` until an ad
 
 ## Admin flow: Approve or reject in the UI
 
-Admins review and approve or reject team guardrail submissions in the LiteLLM proxy UI.
+Admins review and approve or reject team guardrail submissions in the Lumina proxy UI.
 
 ### 1. Open the Guardrails page
 

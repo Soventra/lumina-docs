@@ -7,7 +7,7 @@ https://lmstudio.ai/docs/basics/server
 
 :::tip
 
-**We support ALL LM Studio models, just set `model=lm_studio/<any-model-on-lmstudio>` as a prefix when sending litellm requests**
+**We support ALL LM Studio models, just set `model=lm_studio/<any-model-on-lmstudio>` as a prefix when sending lumina requests**
 
 :::
 
@@ -15,7 +15,7 @@ https://lmstudio.ai/docs/basics/server
 | Property | Details |
 |-------|-------|
 | Description | Discover, download, and run local LLMs. |
-| Provider Route on LiteLLM | `lm_studio/` |
+| Provider Route on Lumina | `lm_studio/` |
 | Provider Doc | [LM Studio ↗](https://lmstudio.ai/docs/api/openai-api) |
 | Supported OpenAI Endpoints | `/chat/completions`, `/embeddings`, `/completions` |
 
@@ -28,7 +28,7 @@ os.environ['LM_STUDIO_API_KEY'] # optional, default is empty
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['LM_STUDIO_API_BASE'] = ""
@@ -47,7 +47,7 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['LM_STUDIO_API_KEY'] = ""
@@ -67,9 +67,9 @@ for chunk in response:
 ```
 
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
-Here's how to call a LM Studio model with the LiteLLM Proxy Server
+Here's how to call a LM Studio model with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -85,10 +85,10 @@ Here's how to call a LM Studio model with the LiteLLM Proxy Server
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -97,8 +97,8 @@ Here's how to call a LM Studio model with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -143,7 +143,7 @@ See [Supported Parameters](../completion/input.md#translated-openai-params) for 
 ## Embedding
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os 
 
 os.environ['LM_STUDIO_API_BASE'] = "http://localhost:8000"
@@ -158,11 +158,11 @@ print(response)
 ## Structured Output
 
 LM Studio supports structured outputs via JSON Schema. You can pass a pydantic model or a raw schema using `response_format`.
-LiteLLM sends the schema as `{ "type": "json_schema", "json_schema": {"schema": <your schema>} }`.
+Lumina sends the schema as `{ "type": "json_schema", "json_schema": {"schema": <your schema>} }`.
 
 ```python
 from pydantic import BaseModel
-from litellm import completion
+from lumina import completion
 
 class Book(BaseModel):
     title: str

@@ -1,4 +1,4 @@
-// Posts to the "Talk to sales form" on www.litellm.ai/enterprise through
+// Posts to the "Talk to sales form" on www.lumina.ai/enterprise through
 // Webflow's public form endpoint, with the same payload webflow.js sends from
 // the website. Webflow records it as an ordinary submission of that form, so
 // the Zap that watches the form (sales sheet, Slack, Calendly join) runs with
@@ -12,7 +12,7 @@ const FORM = {
   name: 'Talk to sales form',
   pageId: '69fcbe97c6ffb21cbc7c3d8c',
   elementId: '815fd284-8dd9-1f9d-f7ee-1bce5ac92ad0',
-  domain: 'www.litellm.ai',
+  domain: 'www.lumina.ai',
 };
 const ENDPOINT = `https://webflow.com/api/v1/form/${SITE_ID}`;
 

@@ -1,6 +1,6 @@
 # Auto Routing Benchmark: Cost Ladders
 
-This benchmark evaluates how well LiteLLM routing strategies reduce cost while preserving response quality. It compares the semantic [Auto Router](./auto_routing_semantic.md), the rule-based `complexity_router`, fixed-model baselines, and a cost-matched shuffled control on a three-model Gemini 3.x cost ladder.
+This benchmark evaluates how well Lumina routing strategies reduce cost while preserving response quality. It compares the semantic [Auto Router](./auto_routing_semantic.md), the rule-based `complexity_router`, fixed-model baselines, and a cost-matched shuffled control on a three-model Gemini 3.x cost ladder.
 
 ## Key findings
 

@@ -6,7 +6,7 @@ authors:
   - ishaan
   - tin
   - moe
-description: "Run cloud coding agents on your own infrastructure with Moyai. Choose your agent and models through LiteLLM, track costs, and follow the setup guide."
+description: "Run cloud coding agents on your own infrastructure with Moyai. Choose your agent and models through Lumina, track costs, and follow the setup guide."
 tags: [agents, open-source, infrastructure]
 hide_table_of_contents: true
 custom_hero: true
@@ -32,7 +32,7 @@ export const sections = [
 
 <PostByline />
 
-Today we're open sourcing [Moyai](https://github.com/BerriAI/moyai), the cloud coding agent our team runs at LiteLLM. Give it a task in Slack or the browser, then come back to a pull request with code and test results to review. You choose the agent and compatible model, run it on your infrastructure, and track the cost through LiteLLM.
+Today we're open sourcing [Moyai](https://github.com/BerriAI/moyai), the cloud coding agent our team runs at Lumina. Give it a task in Slack or the browser, then come back to a pull request with code and test results to review. You choose the agent and compatible model, run it on your infrastructure, and track the cost through Lumina.
 
 [Set up your first cloud task](/docs/self_hosted_coding_agents/moyai/setup), or see the cost comparison and a real bug fix below.
 
@@ -54,7 +54,7 @@ We estimate about $700 a day to run Moyai for our team. Over 31 days, that comes
 
 ## Why we're open sourcing it
 
-Last week we wrote about [how we built our own internal Devin in 2 days](/blog/internal-devin-two-days), and most replies asked to run it themselves. Moyai is the same code we run in production at LiteLLM. You deploy it on your infrastructure and point it at your LiteLLM gateway. You control the installation and provider access; model requests still go to the provider you select.
+Last week we wrote about [how we built our own internal Devin in 2 days](/blog/internal-devin-two-days), and most replies asked to run it themselves. Moyai is the same code we run in production at Lumina. You deploy it on your infrastructure and point it at your Lumina gateway. You control the installation and provider access; model requests still go to the provider you select.
 
 ## A cloud agent that keeps working
 
@@ -72,23 +72,23 @@ Pick a supported agent such as Codex, Claude Agent SDK, or Hermes when you start
 
 <LogoWall title="Harnesses" items={HARNESSES} />
 
-Check the [agent and model compatibility table](/docs/self_hosted_coding_agents/moyai/setup#configure-litellm) when choosing a combination for your gateway.
+Check the [agent and model compatibility table](/docs/self_hosted_coding_agents/moyai/setup#configure-lumina) when choosing a combination for your gateway.
 
-## Choose your models through LiteLLM {#any-model-any-provider}
+## Choose your models through Lumina {#any-model-any-provider}
 
-Moyai sends model requests through LiteLLM. Choose a compatible model for the task and your budget, with provider keys kept on the gateway. Moyai attributes each tracked request to the teammate who sent the message.
+Moyai sends model requests through Lumina. Choose a compatible model for the task and your budget, with provider keys kept on the gateway. Moyai attributes each tracked request to the teammate who sent the message.
 
 <LogoWall title="Providers" items={PROVIDERS} />
 
-LiteLLM supports 100+ providers. Your selected agent needs a model and gateway endpoint that support its protocol and tool calls.
+Lumina supports 100+ providers. Your selected agent needs a model and gateway endpoint that support its protocol and tool calls.
 
 ## One source of truth for model costs
 
-Moyai uses LiteLLM's reported charges for its per-user, session, and model breakdowns. You can see which teammates and tasks account for spend, then check a tracked request against the same gateway cost. See the [spend dashboard](/docs/self_hosted_coding_agents/moyai#see-agent-spend) and [cost accounting details](/docs/self_hosted_coding_agents/moyai/architecture#cost-accounting).
+Moyai uses Lumina's reported charges for its per-user, session, and model breakdowns. You can see which teammates and tasks account for spend, then check a tracked request against the same gateway cost. See the [spend dashboard](/docs/self_hosted_coding_agents/moyai#see-agent-spend) and [cost accounting details](/docs/self_hosted_coding_agents/moyai/architecture#cost-accounting).
 
 ## Set up your first cloud task {#get-started}
 
-Bring a Modal account, a reachable LiteLLM gateway, and a key for your chosen model. [Follow the setup guide](/docs/self_hosted_coding_agents/moyai/setup) to deploy Moyai, verify a cloud task, and connect one repository. Give it a small bug your team already understands. Review the PR, test output, and model cost before expanding the rollout.
+Bring a Modal account, a reachable Lumina gateway, and a key for your chosen model. [Follow the setup guide](/docs/self_hosted_coding_agents/moyai/setup) to deploy Moyai, verify a cloud task, and connect one repository. Give it a small bug your team already understands. Review the PR, test output, and model cost before expanding the rollout.
 
 You own the installation, updates, credentials, and backups. You pay for model usage and cloud infrastructure. Read the [architecture guide](/docs/self_hosted_coding_agents/moyai/architecture) for the system design, checkpoints, and recovery behavior.
 

@@ -8,7 +8,7 @@ This pattern is well-suited for long-horizon agentic workloads (coding agents, c
 
 :::info[Beta]
 
-The advisor tool is in beta. Include `anthropic-beta: advisor-tool-2026-03-01` in your requests; LiteLLM adds this automatically when it detects the advisor tool in your `tools` array.
+The advisor tool is in beta. Include `anthropic-beta: advisor-tool-2026-03-01` in your requests; Lumina adds this automatically when it detects the advisor tool in your `tools` array.
 
 :::
 
@@ -17,14 +17,14 @@ The advisor tool is in beta. Include `anthropic-beta: advisor-tool-2026-03-01` i
 | Provider | Chat Completions API | Messages API | Notes |
 |----------|---------------------|--------------|-------|
 | **Anthropic API** | ✅ | ✅ | Native — runs server-side |
-| **OpenAI / Azure OpenAI** | ✅ | ✅ | LiteLLM orchestration loop |
-| **Amazon Bedrock** | ✅ | ✅ | LiteLLM orchestration loop |
-| **Google Vertex AI** | ✅ | ✅ | LiteLLM orchestration loop |
-| **Groq / Mistral / others** | ✅ | ✅ | LiteLLM orchestration loop |
+| **OpenAI / Azure OpenAI** | ✅ | ✅ | Lumina orchestration loop |
+| **Amazon Bedrock** | ✅ | ✅ | Lumina orchestration loop |
+| **Google Vertex AI** | ✅ | ✅ | Lumina orchestration loop |
+| **Groq / Mistral / others** | ✅ | ✅ | Lumina orchestration loop |
 
-## How it works (LiteLLM native orchestration)
+## How it works (Lumina native orchestration)
 
-For non-Anthropic providers, LiteLLM implements the advisor loop itself. The API you call is identical; LiteLLM runs the loop for you.
+For non-Anthropic providers, Lumina implements the advisor loop itself. The API you call is identical; Lumina runs the loop for you.
 
 When a request arrives with an `advisor_20260301` tool and a non-Anthropic provider, `AdvisorOrchestrationHandler` intercepts it. It translates the advisor tool into a regular function tool the provider understands, then runs an orchestration loop:
 
@@ -49,7 +49,7 @@ flowchart TD
     D -->|"no — end_turn\nor other stop reason"| I["Clean final response\nno advisor blocks in output"]
 ```
 
-**What LiteLLM does for you:**
+**What Lumina does for you:**
 
 - Strips `advisor_20260301` from the outgoing request, so the provider only sees a standard function tool named `advisor`
 - When the executor calls it, intercepts before the result reaches you, runs the advisor sub-call, and injects the advice
@@ -75,10 +75,10 @@ The executor and advisor models must form a valid pair. The advisor is an Opus m
 
 #### Basic Example
 
-```python showLineNumbers title="Advisor Tool — litellm.completion()"
-import litellm
+```python showLineNumbers title="Advisor Tool — lumina.completion()"
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "Build a concurrent worker pool in Go with graceful shutdown."}
@@ -99,9 +99,9 @@ print(response.choices[0].message.content)
 #### With Optional Parameters
 
 ```python showLineNumbers title="Advisor Tool with max_uses and caching"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "Build a REST API with authentication in Python."}
@@ -122,9 +122,9 @@ response = litellm.completion(
 #### Streaming
 
 ```python showLineNumbers title="Streaming with Advisor Tool"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "Implement a distributed rate limiter."}
@@ -154,7 +154,7 @@ The advisor sub-inference does not stream. The executor's stream pauses while th
 #### Multi-Turn Conversation
 
 ```python showLineNumbers title="Multi-Turn with Advisor Tool"
-import litellm
+import lumina
 
 tools = [
     {
@@ -168,7 +168,7 @@ messages = [
     {"role": "user", "content": "Build a concurrent worker pool in Go with graceful shutdown."}
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages,
     tools=tools,
@@ -181,7 +181,7 @@ messages.append({"role": "assistant", "content": response.choices[0].message.con
 # Continue the conversation — keep the same tools array
 messages.append({"role": "user", "content": "Now add a max-in-flight limit of 10."})
 
-response2 = litellm.completion(
+response2 = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages,
     tools=tools,
@@ -191,7 +191,7 @@ response2 = litellm.completion(
 
 :::tip[Auto-strip on follow-up turns]
 
-LiteLLM automatically strips `advisor_tool_result` blocks from message history when the advisor tool is not present in the current request. This prevents the Anthropic 400 error that would otherwise occur.
+Lumina automatically strips `advisor_tool_result` blocks from message history when the advisor tool is not present in the current request. This prevents the Anthropic 400 error that would otherwise occur.
 
 :::
 
@@ -213,7 +213,7 @@ model_list:
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="your-litellm-proxy-key",
+    api_key="your-lumina-proxy-key",
     base_url="http://0.0.0.0:4000/v1"
 )
 
@@ -241,12 +241,12 @@ response = client.chat.completions.create(
 
 #### Basic Example
 
-```python showLineNumbers title="Advisor Tool — litellm.anthropic.messages"
+```python showLineNumbers title="Advisor Tool — lumina.anthropic.messages"
 import asyncio
-import litellm
+import lumina
 
 async def main():
-    response = await litellm.anthropic.messages.acreate(
+    response = await lumina.anthropic.messages.acreate(
         model="anthropic/{{anthropic}}",
         messages=[
             {"role": "user", "content": "Build a concurrent worker pool in Go with graceful shutdown."}
@@ -270,10 +270,10 @@ asyncio.run(main())
 ```python showLineNumbers title="Messages API Streaming with Advisor Tool"
 import asyncio
 import json
-import litellm
+import lumina
 
 async def main():
-    response = await litellm.anthropic.messages.acreate(
+    response = await lumina.anthropic.messages.acreate(
         model="anthropic/{{anthropic}}",
         messages=[
             {"role": "user", "content": "Implement a distributed rate limiter."}
@@ -319,7 +319,7 @@ model_list:
 import anthropic
 
 client = anthropic.Anthropic(
-    api_key="your-litellm-proxy-key",
+    api_key="your-lumina-proxy-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -341,16 +341,16 @@ response = client.beta.messages.create(
 print(response)
 ```
 
-#### Non-Anthropic Provider (LiteLLM orchestration loop)
+#### Non-Anthropic Provider (Lumina orchestration loop)
 
 ```python showLineNumbers title="Advisor Tool with OpenAI executor" keep-model-ids
 import asyncio
-import litellm
+import lumina
 
 async def main():
     # executor: openai/gpt-5.6-luna  |  advisor: {{anthropic_large}}
-    # LiteLLM runs the orchestration loop automatically
-    response = await litellm.anthropic.messages.acreate(
+    # Lumina runs the orchestration loop automatically
+    response = await lumina.anthropic.messages.acreate(
         model="openai/gpt-5.6-luna",
         messages=[
             {"role": "user", "content": "Implement a Python LRU cache with O(1) get and put."}
@@ -408,7 +408,7 @@ A successful advisor call returns `server_tool_use` and `advisor_tool_result` bl
 }
 ```
 
-Pass the full assistant content, including advisor blocks, back on subsequent turns. LiteLLM handles this automatically through `provider_specific_fields`.
+Pass the full assistant content, including advisor blocks, back on subsequent turns. Lumina handles this automatically through `provider_specific_fields`.
 
 ---
 
@@ -447,7 +447,7 @@ Top-level `usage` reflects executor tokens only. Advisor tokens appear in `itera
 
 **Tips:**
 - Enable `caching` on the tool definition only when you expect 3+ advisor calls per conversation; it costs more than it saves below that threshold.
-- Use `max_uses` to cap advisor calls per request. On the Anthropic API it must be at least 1, and once it is reached the advisor returns a `max_uses_exceeded` error result and the executor continues without further advice. On the LiteLLM orchestration loop (non-Anthropic providers), exceeding it raises `AdvisorMaxIterationsError` and the request fails
+- Use `max_uses` to cap advisor calls per request. On the Anthropic API it must be at least 1, and once it is reached the advisor returns a `max_uses_exceeded` error result and the executor continues without further advice. On the Lumina orchestration loop (non-Anthropic providers), exceeding it raises `AdvisorMaxIterationsError` and the request fails
 - For conversation-level caps, count advisor calls client-side. When you reach your limit, remove the advisor tool from `tools`.
 
 ---
@@ -486,4 +486,4 @@ The advisor should respond in under 100 words and use enumerated steps, not expl
 ## Additional Resources
 
 - [Anthropic Advisor Tool Documentation](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool)
-- [LiteLLM Tool Calling Guide](https://docs.litellm.ai/docs/completion/function_call)
+- [Lumina Tool Calling Guide](https://docs.lumina.ai/docs/completion/function_call)

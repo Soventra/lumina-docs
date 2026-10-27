@@ -1,15 +1,15 @@
 ---
-title: "LiteLLM v1.59.0"
+title: "Lumina v1.59.0"
 description: "Adds the opt-in store_prompts_in_spend_logs option, which shows messages and responses in the Admin UI. It is off by default."
 slug: v1.59.0
 date: 2025-01-17T10:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://media.licdn.com/dms/image/v2/D4D03AQGrlsJ3aqpHmQ/profile-displayphoto-shrink_400_400/B4DZSAzgP7HYAg-/0/1737327772964?e=1749686400&v=beta&t=Hkl3U8Ps0VtvNxX0BNNq24b4dtX5wQaPFp6oiKCIHD8
   - name: Ishaan Jaffer
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://media.licdn.com/dms/image/v2/D4D03AQGiM7ZrUwqu_Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1675971026692?e=1741824000&v=beta&t=eQnRdXPJo4eiINWTZARoYTfqh064pgZ-E21pQTSy8jc
 tags: [admin ui, logging, db schema]
@@ -24,7 +24,7 @@ import Image from '@theme/IdealImage';
 
 :::info
 
-Get a 7 day free trial for LiteLLM Enterprise [here](https://litellm.ai/#trial).
+Get a 7 day free trial for Lumina Enterprise [here](https://lumina.ai/#trial).
 
 **no call needed**
 
@@ -40,7 +40,7 @@ You can now view messages and response logs on Admin UI.
 
 How to enable it - add `store_prompts_in_spend_logs: true` to your `proxy_config.yaml`
 
-Once this flag is enabled, your `messages` and `responses` will be stored in the `LiteLLM_Spend_Logs` table.
+Once this flag is enabled, your `messages` and `responses` will be stored in the `Lumina_Spend_Logs` table.
 
 ```yaml
 general_settings:
@@ -49,7 +49,7 @@ general_settings:
 
 ## DB Schema Change
 
-Added `messages` and `responses` to the `LiteLLM_Spend_Logs` table.
+Added `messages` and `responses` to the `Lumina_Spend_Logs` table.
 
 **By default this is not logged.** If you want `messages` and `responses` to be logged, you need to opt in with this setting 
 

@@ -6,7 +6,7 @@ Pass-through endpoints for Mistral - call provider-specific endpoint, in native 
 |-------|-------|-------|
 | Cost Tracking | ❌ | Not supported |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | |
 
 Just replace `https://api.mistral.ai/v1` with `LUMINA_PROXY_BASE_URL/mistral`
@@ -39,10 +39,10 @@ Let's call the Mistral [`/chat/completions` endpoint](https://docs.mistral.ai/ap
 export MISTRAL_API_KEY="<your-mistral-api-key>"
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -80,7 +80,7 @@ Key Changes:
 
 ### **Example 1: OCR endpoint**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/ocr' \
@@ -114,7 +114,7 @@ curl https://api.mistral.ai/v1/ocr \
 
 ### **Example 2: Chat API**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/chat/completions' \
@@ -173,7 +173,7 @@ export MISTRAL_API_KEY="<your-mistral-api-key>"
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```

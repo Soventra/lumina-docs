@@ -90,10 +90,10 @@ export default function SignupDialog({open, onClose}) {
   }}>
     <div className={styles.panel}>
       <button className={styles.close} type="button" onClick={onClose} aria-label="Close workshop signup">×</button>
-      <p className={styles.eyebrow}>LITELLM WORKSHOP · OCTOBER 19–30</p>
+      <p className={styles.eyebrow}>LUMINA WORKSHOP · OCTOBER 19–30</p>
       {status === 'success' ? <div className={styles.success}>
         <h2 className={styles.title} ref={heading} tabIndex={-1} id={`${id}-title`}>Workshop request received.</h2>
-        <p id={`${id}-description`}>The LiteLLM team will follow up at <strong>{email}</strong> to arrange your 30-minute intake and discuss what you want to build.</p>
+        <p id={`${id}-description`}>The Lumina team will follow up at <strong>{email}</strong> to arrange your 30-minute intake and discuss what you want to build.</p>
         <p className={styles.note}>Your request was received. A session time has not been booked.</p>
         <button className={styles.submit} type="button" onClick={onClose}>Back to the workshop</button>
       </div> : <>
@@ -111,7 +111,7 @@ export default function SignupDialog({open, onClose}) {
               {field('company', 'Company', <input type="text" autoComplete="organization" />, {required: true})}
               {field('linkedin', 'LinkedIn profile', <input type="text" inputMode="url" autoComplete="url" autoCapitalize="none" spellCheck={false} placeholder="linkedin.com/in/your-profile" />, {required: true})}
               {field('workflow', 'What are you hoping to achieve?', <textarea rows={3} placeholder="For example: let engineers send tasks in Slack and get tested pull requests from an agent running in our cloud." />, {required: true, wide: true})}
-              {field('onsiteInterest', 'Would you like the LiteLLM team to work with you on-site? (optional)', <select defaultValue=""><option value="">No preference yet</option><option value="Yes">Yes, I’d like to discuss it</option><option value="Maybe">Maybe, tell me more</option><option value="No">No, remote works for us</option></select>, {wide: true})}
+              {field('onsiteInterest', 'Would you like the Lumina team to work with you on-site? (optional)', <select defaultValue=""><option value="">No preference yet</option><option value="Yes">Yes, I’d like to discuss it</option><option value="Maybe">Maybe, tell me more</option><option value="No">No, remote works for us</option></select>, {wide: true})}
             </div>
             {error && <p className={styles.error} ref={errorMessage} tabIndex={-1} role="alert">{error}</p>}
             <button className={styles.submit} type="submit" disabled={status === 'sending'}>{status === 'sending' ? 'Saving your request…' : 'Sign up'}</button>

@@ -68,10 +68,10 @@ function loadFeed() {
     if (known.has(folder) || /rc\d*$|dev/i.test(folder)) continue;
     const note = readNote(folder);
     if (!note || note.date <= newest) continue;
-    const headline = String(note.data.title || '').replace(/^(LiteLLM\s+)?v?\d+\.\d+\.\d+\S*\s+[-–—:]?\s*/, '');
+    const headline = String(note.data.title || '').replace(/^(Lumina\s+)?v?\d+\.\d+\.\d+\S*\s+[-–—:]?\s*/, '');
     entries.push({
       date: note.date,
-      title: `LiteLLM ${versionOf(folder)}${headline ? ` ${headline}` : ''}`,
+      title: `Lumina ${versionOf(folder)}${headline ? ` ${headline}` : ''}`,
       points: highlightSentences(note.content),
       versions: [{version: versionOf(folder), id: `${folder}/index`, permalink: permalinkOf(folder, note.data)}],
     });
@@ -109,10 +109,10 @@ module.exports = function releaseFeedPlugin() {
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
         '  <channel>',
-        '    <title>LiteLLM Changelog</title>',
+        '    <title>Lumina Changelog</title>',
         `    <link>${site}/release_notes/</link>`,
         `    <atom:link href="${site}/release_notes/rss.xml" rel="self" type="application/rss+xml"/>`,
-        '    <description>The main changes in each LiteLLM release.</description>',
+        '    <description>The main changes in each Lumina release.</description>',
         '    <language>en</language>',
         content[0] ? `    <lastBuildDate>${new Date(content[0].date).toUTCString()}</lastBuildDate>` : '',
         ...items,

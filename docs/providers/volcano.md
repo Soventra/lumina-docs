@@ -3,7 +3,7 @@ https://www.volcengine.com/docs/82379/1263482
 
 :::tip
 
-**We support ALL Volcengine models including Chat and Embeddings, just set `model=volcengine/<any-model-on-volcengine>` as a prefix when sending litellm requests**
+**We support ALL Volcengine models including Chat and Embeddings, just set `model=volcengine/<any-model-on-volcengine>` as a prefix when sending lumina requests**
 
 :::
 
@@ -17,7 +17,7 @@ os.environ['ARK_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['VOLCENGINE_API_KEY'] = ""
@@ -41,7 +41,7 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['VOLCENGINE_API_KEY'] = ""
@@ -68,7 +68,7 @@ for chunk in response:
 
 ## Sample Usage - Embedding
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['VOLCENGINE_API_KEY'] = ""
@@ -88,7 +88,7 @@ print(response)
 
 ### Embedding Parameters
 ```python
-from litellm import embedding
+from lumina import embedding
 
 response = embedding(
     model="volcengine/doubao-embedding-text-240715",
@@ -103,7 +103,7 @@ We support ALL `volcengine` models for both chat completions and embeddings:
 - **Chat Models**: Set `volcengine/<OUR_ENDPOINT_ID>` as a prefix when sending completion requests
 - **Embedding Models**: Use the specific model names listed above (e.g., `volcengine/doubao-embedding-text-240715`)
 
-## Sample Usage - LiteLLM Proxy
+## Sample Usage - Lumina Proxy
 
 ### Config.yaml setting
 
@@ -159,7 +159,7 @@ Doubao-Seedance models run as async tasks on Ark's content generation API. `vide
 ```python showLineNumbers title="Volcengine Video Generation"
 import os
 import time
-from litellm import video_content, video_generation, video_status
+from lumina import video_content, video_generation, video_status
 
 os.environ["ARK_API_KEY"] = "your-api-key"
 
@@ -190,16 +190,16 @@ These four models carry a price per resolution tier:
 
 Ark renders a fixed frame per resolution tier and ratio rather than the pixels you ask for, so `size` picks the tier whose 16:9 frame has the closest pixel count, where 960x960 and 1280x720 are both 720p, and the closest of `16:9`, `9:16`, `4:3`, `3:4`, `1:1` and `21:9`, where 854x480 is 16:9. A priced model with neither `size` nor `resolution` runs at 720p, and a `resolution` the model has no price for, such as 1080p on the fast tier, answers 400 unless `drop_params` is on. The poll reports the frame Ark will render for the tier asked for.
 
-Ark bills a task when it finishes while LiteLLM bills the video when the task is created, so every create carries a length and a tier whose cost is known up front. `seconds` sets the length, an omitted `seconds` is sent as OpenAI's default of 4 seconds rather than Ark's own default of picking the length for you, and `seconds="-1"`, that Ark-picked length, answers 400. Spend is logged at create time from the model's per-second rate at the tier sent.
+Ark bills a task when it finishes while Lumina bills the video when the task is created, so every create carries a length and a tier whose cost is known up front. `seconds` sets the length, an omitted `seconds` is sent as OpenAI's default of 4 seconds rather than Ark's own default of picking the length for you, and `seconds="-1"`, that Ark-picked length, answers 400. Spend is logged at create time from the model's per-second rate at the tier sent.
 
-`input_reference` takes the first frame as a URL, or as a `Path`, an open file, bytes or a `(filename, file, content_type)` tuple, which LiteLLM reads and inlines as a base64 data URL, and OpenAI's `{"image_url": "..."}` object. A plain string is always sent to Ark as a URL it fetches itself, even when it looks like a local path. References Ark keeps for the whole clip go in `content` instead, one item per asset with the Ark role it plays, and a caller-supplied `content` array wins over `input_reference`. An `ep-` endpoint id has no price of its own, so it keeps whichever `resolution` you send, and takes a model's tiers when the deployment sets `model_info.base_model`.
+`input_reference` takes the first frame as a URL, or as a `Path`, an open file, bytes or a `(filename, file, content_type)` tuple, which Lumina reads and inlines as a base64 data URL, and OpenAI's `{"image_url": "..."}` object. A plain string is always sent to Ark as a URL it fetches itself, even when it looks like a local path. References Ark keeps for the whole clip go in `content` instead, one item per asset with the Ark role it plays, and a caller-supplied `content` array wins over `input_reference`. An `ep-` endpoint id has no price of its own, so it keeps whichever `resolution` you send, and takes a model's tiers when the deployment sets `model_info.base_model`.
 
 These requests answer 400 instead of reaching Ark:
 
 - a text item in `content`, since `prompt` is the only text the input guardrails scan. Move the text into `prompt`, or pass `drop_params` to send it as written
 - a video input, which covers an edit, an extension, a remix and a `reference_video` item in `content`, since Ark bills a task with a video input at a lower rate per token that is not known at create time
 - `frames`, since Ark counts frames off the length
-- `characters`, `image`, or any other field LiteLLM does not send to Ark, unless `drop_params` is on
+- `characters`, `image`, or any other field Lumina does not send to Ark, unless `drop_params` is on
 
 `user` is sent as Ark's `safety_identifier`. Video calls read `VOLCENGINE_API_BASE` or `ARK_API_BASE` and strip the other surfaces' paths off them, so one base serves chat, embedding and video. Point `api_base` at `https://ark.ap-southeast.bytepluses.com/api/v3` to run the `dreamina-*` ids on BytePlus ModelArk. Those ids have no price in the cost map, so they bill $0 and skip budgets until the deployment sets its own price or a `base_model` in `model_info`.
 
@@ -234,4 +234,4 @@ curl http://localhost:4000/v1/videos/$VIDEO_ID/content \
 
 The cost map marks these models as `video_generation`, so a proxy health check on a deployment creates a real 4 second video, which Ark bills. With `background_health_checks` on, set `disable_background_health_check: true` in the deployment's `model_info`.
 
-To list the account's tasks, call `litellm.video_list(custom_llm_provider="volcengine")`. Ark pages by number rather than by cursor, so later pages come from `extra_query={"page_num": N}` and `has_more` is always `false`. The list covers every task on the Ark account, and on the proxy `GET /v1/videos?custom_llm_provider=volcengine` serves the first page only.
+To list the account's tasks, call `lumina.video_list(custom_llm_provider="volcengine")`. Ark pages by number rather than by cursor, so later pages come from `extra_query={"page_num": N}` and `has_more` is always `false`. The list covers every task on the Ark account, and on the proxy `GET /v1/videos?custom_llm_provider=volcengine` serves the first page only.

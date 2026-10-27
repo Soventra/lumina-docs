@@ -46,7 +46,7 @@ function collectPages(allContent) {
 function socialCardsPlugin({siteDir}, {cacheDir = path.join(siteDir, socialCardsPlugin.cacheDir)} = {}) {
   const templateDir = path.join(siteDir, 'scripts/social-card');
   const outputDir = path.join(cacheDir, 'img/og');
-  const templateFiles = ['index.cjs', 'assets/litellm-logo-blue.svg',
+  const templateFiles = ['index.cjs', 'assets/lumina-logo-blue.svg',
     'assets/LiberationSans-Regular.ttf', 'assets/LiberationSans-Bold.ttf'];
 
   return {

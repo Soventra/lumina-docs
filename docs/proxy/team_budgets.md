@@ -20,12 +20,12 @@ This is configured in `default_team_settings` in your `config.yaml`.
 ```yaml
 # in your config.yaml
 
-litellm_jwtauth:
+lumina_jwtauth:
   team_id_upsert: true
   team_id_jwt_field: "team_id"
   # ... other jwt settings
 
-litellm_settings:
+lumina_settings:
   default_team_settings: 
     - team_id: "default-settings"
       max_budget: 100.0
@@ -151,7 +151,7 @@ On the 2nd response - expect an HTTP 422 with the following error
 }
 ```
 
-To return 429 instead, set `budget_exceeded_status_code: 429` under `litellm_settings` in your config.yaml
+To return 429 instead, set `budget_exceeded_status_code: 429` under `lumina_settings` in your config.yaml
 
 </TabItem>
 
@@ -164,12 +164,12 @@ To return 429 instead, set `budget_exceeded_status_code: 429` under `litellm_set
 
 ### Prometheus metrics for `remaining_budget`
 
-[More info about Prometheus metrics here](https://docs.litellm.ai/docs/proxy/prometheus)
+[More info about Prometheus metrics here](https://docs.lumina.ai/docs/proxy/prometheus)
 
 You'll need the following in your proxy config.yaml
 
 ```yaml
-litellm_settings:
+lumina_settings:
   success_callback: ["prometheus"]
   failure_callback: ["prometheus"]
 ```
@@ -177,7 +177,7 @@ litellm_settings:
 Expect to see this metric on prometheus to track the Remaining Budget for the team
 
 ```shell
-litellm_remaining_team_budget_metric{team_alias="QA Prod Bot",team_id="de35b29e-6ca8-4f47-b804-2b79d07aa99a"} 9.699999999999992e-06
+lumina_remaining_team_budget_metric{team_alias="QA Prod Bot",team_id="de35b29e-6ca8-4f47-b804-2b79d07aa99a"} 9.699999999999992e-06
 ```
 
 ## See Also

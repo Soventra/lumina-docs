@@ -45,9 +45,9 @@ model_list:
 <Tabs>
 <TabItem value="admin" label="admin">
 
-Create a client scope called `litellm_proxy_admin` in your OpenID provider (e.g. Keycloak).
+Create a client scope called `lumina_proxy_admin` in your OpenID provider (e.g. Keycloak).
 
-Grant your user, `litellm_proxy_admin` scope when generating a JWT. 
+Grant your user, `lumina_proxy_admin` scope when generating a JWT. 
 
 ```bash
 curl --location ' 'https://demo.duendesoftware.com/connect/token'' \
@@ -57,7 +57,7 @@ curl --location ' 'https://demo.duendesoftware.com/connect/token'' \
 --data-urlencode 'username=test-{USERNAME}' \
 --data-urlencode 'password={USER_PASSWORD}' \
 --data-urlencode 'grant_type=password' \
---data-urlencode 'scope=litellm_proxy_admin' # grant this scope
+--data-urlencode 'scope=lumina_proxy_admin' # grant this scope
 ```
 </TabItem>
 <TabItem value="project" label="project">
@@ -104,9 +104,9 @@ curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ### Multiple OIDC providers
 
-Use this if you want LiteLLM to validate your JWT against multiple OIDC providers (e.g. Google Cloud, GitHub Auth)
+Use this if you want Lumina to validate your JWT against multiple OIDC providers (e.g. Google Cloud, GitHub Auth)
 
-Set `JWT_PUBLIC_KEY_URL` in your environment to a comma-separated list of URLs for your OIDC providers. Each entry can be a JWKS URL or an OIDC discovery URL (`.../.well-known/openid-configuration`); LiteLLM fetches a discovery document and follows its `jwks_uri`
+Set `JWT_PUBLIC_KEY_URL` in your environment to a comma-separated list of URLs for your OIDC providers. Each entry can be a JWKS URL or an OIDC discovery URL (`.../.well-known/openid-configuration`); Lumina fetches a discovery document and follows its `jwks_uri`
 
 ```bash
 export JWT_PUBLIC_KEY_URL="https://demo.duendesoftware.com/.well-known/openid-configuration,https://accounts.google.com/.well-known/openid-configuration"
@@ -116,7 +116,7 @@ This validates tokens from every listed provider against one shared set of claim
 
 #### How a token is validated
 
-LiteLLM reads the `kid` from the unverified JWT header and walks the `JWT_PUBLIC_KEY_URL` list in order. For each URL it loads that provider's key set and looks for a key whose `kid` equals the token's. The first match wins and the search stops there; if no listed provider publishes that `kid`, the request is rejected with a 401 (`No matching public key found`). The `iss` claim plays no part in choosing the key set on this path, so `kid` alone decides which provider's key is tried
+Lumina reads the `kid` from the unverified JWT header and walks the `JWT_PUBLIC_KEY_URL` list in order. For each URL it loads that provider's key set and looks for a key whose `kid` equals the token's. The first match wins and the search stops there; if no listed provider publishes that `kid`, the request is rejected with a 401 (`No matching public key found`). The `iss` claim plays no part in choosing the key set on this path, so `kid` alone decides which provider's key is tried
 
 A token without a `kid` header only matches a key set that contains exactly one key. Against a JWKS with several keys it is rejected, so a provider that rotates keys must put `kid` in the header
 
@@ -126,29 +126,29 @@ Once a key is selected the signature is verified with it and `exp` (plus `nbf` a
 
 #### Caching and failure behavior
 
-Each key set (and each discovery document) is cached in the proxy's auth cache, Redis when configured and otherwise in-process memory, for `litellm_jwtauth.public_key_ttl` seconds (default 600). A `kid` miss does not trigger a refetch inside the TTL, so a token signed with a key the provider rotated in a moment ago is rejected until the cached copy expires
+Each key set (and each discovery document) is cached in the proxy's auth cache, Redis when configured and otherwise in-process memory, for `lumina_jwtauth.public_key_ttl` seconds (default 600). A `kid` miss does not trigger a refetch inside the TTL, so a token signed with a key the provider rotated in a moment ago is rejected until the cached copy expires
 
-When a fetch fails at the transport level (DNS, connect, TLS, timeout) LiteLLM tries it up to three times with a short backoff, then remembers the outage for 30 seconds so concurrent requests do not pile onto the dead endpoint. If a last-known-good copy of that key set exists and is younger than `public_key_ttl + public_key_stale_ttl` (default 600 + 3600 seconds) it is served and a warning is logged. Otherwise the request fails with a 503 (`the identity provider's JWKS endpoint is temporarily unreachable`) and the remaining URLs in the list are not tried, even if one of them holds the matching key. Set `public_key_stale_ttl: 0` to fail closed as soon as the cached copy expires. A non-200 response or an unparseable body is neither retried nor served stale; it fails the request with a 401 and also stops the walk through the list
+When a fetch fails at the transport level (DNS, connect, TLS, timeout) Lumina tries it up to three times with a short backoff, then remembers the outage for 30 seconds so concurrent requests do not pile onto the dead endpoint. If a last-known-good copy of that key set exists and is younger than `public_key_ttl + public_key_stale_ttl` (default 600 + 3600 seconds) it is served and a warning is logged. Otherwise the request fails with a 503 (`the identity provider's JWKS endpoint is temporarily unreachable`) and the remaining URLs in the list are not tried, even if one of them holds the matching key. Set `public_key_stale_ttl: 0` to fail closed as soon as the cached copy expires. A non-200 response or an unparseable body is neither retried nor served stale; it fails the request with a 401 and also stops the walk through the list
 
 ```yaml title="config.yaml"
 general_settings:
   enable_jwt_auth: true
-  litellm_jwtauth:
+  lumina_jwtauth:
     public_key_ttl: 600
     public_key_stale_ttl: 3600
 ```
 
 #### Per-issuer claim mapping
 
-Use `litellm_jwtauth.issuers` when the same claim means different things depending on which provider minted the token. A common case: one provider puts the team ID in `sub` while another puts the user ID there, so a single global `team_id_jwt_field: "sub"` cannot serve both
+Use `lumina_jwtauth.issuers` when the same claim means different things depending on which provider minted the token. A common case: one provider puts the team ID in `sub` while another puts the user ID there, so a single global `team_id_jwt_field: "sub"` cannot serve both
 
 Each entry is matched against the token's `iss` claim and carries its own JWKS URL, audience, and claim mappings
 
 ```yaml title="config.yaml"
 general_settings:
   enable_jwt_auth: true
-  litellm_jwtauth:
-    admin_jwt_scope: "litellm_proxy_admin"
+  lumina_jwtauth:
+    admin_jwt_scope: "lumina_proxy_admin"
     issuers:
       - issuer: "https://accounts.google.com"
         audience: "my-gcp-audience"
@@ -182,9 +182,9 @@ Claim paths support dot notation for nested claims, for example `resource_access
 
 ##### Things to know
 
-Every issuer must set either `audience` or `disable_audience_validation: true`. LiteLLM rejects the config at startup otherwise, so tokens minted by another application that shares your provider's signing keys cannot authenticate against your proxy
+Every issuer must set either `audience` or `disable_audience_validation: true`. Lumina rejects the config at startup otherwise, so tokens minted by another application that shares your provider's signing keys cannot authenticate against your proxy
 
-Claim mappings you leave out of an issuer entry fall back to the top-level `litellm_jwtauth` setting. If you keep a global `team_id_jwt_field: "sub"` and add an issuer that only maps `user_id_jwt_field: "sub"`, that issuer's tokens still get a team ID read from `sub`. Move all of your claim mappings into `issuers` to avoid this
+Claim mappings you leave out of an issuer entry fall back to the top-level `lumina_jwtauth` setting. If you keep a global `team_id_jwt_field: "sub"` and add an issuer that only maps `user_id_jwt_field: "sub"`, that issuer's tokens still get a team ID read from `sub`. Move all of your claim mappings into `issuers` to avoid this
 
 `issuers` is additive routing rather than an allow-list. A token whose `iss` matches no entry falls through to the global `JWT_PUBLIC_KEY_URL` and `JWT_AUDIENCE` path, so leave those unset if you want only your listed issuers accepted
 
@@ -192,26 +192,26 @@ Matching is on `iss` only. The `kid` header still selects the signing key within
 
 #### Recommended multi-provider setup
 
-For more than one provider, prefer `litellm_jwtauth.issuers` over the shared list even when the claim mappings are the same. An `issuers` entry scopes the key lookup to that issuer's own JWKS and verifies `iss` and `aud` per provider, which the shared list cannot do. Leave `JWT_PUBLIC_KEY_URL` unset so a token whose `iss` is not listed is rejected (401, `Missing JWT Public Key URL`) instead of falling through to an unscoped path. Key caching and the stale-copy fallback described above apply to each issuer's JWKS in the same way
+For more than one provider, prefer `lumina_jwtauth.issuers` over the shared list even when the claim mappings are the same. An `issuers` entry scopes the key lookup to that issuer's own JWKS and verifies `iss` and `aud` per provider, which the shared list cannot do. Leave `JWT_PUBLIC_KEY_URL` unset so a token whose `iss` is not listed is rejected (401, `Missing JWT Public Key URL`) instead of falling through to an unscoped path. Key caching and the stale-copy fallback described above apply to each issuer's JWKS in the same way
 
 ```yaml title="config.yaml"
 general_settings:
   enable_jwt_auth: true
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     user_email_jwt_field: "email"
     issuers:
       - issuer: "https://keycloak.example.com/realms/my-realm"
-        audience: "litellm-proxy"
+        audience: "lumina-proxy"
 
       - issuer: "https://sts.example-cloud.com"
         jwks_url: "https://sts.example-cloud.com/.well-known/jwks.json"
-        audience: "litellm-proxy"
+        audience: "lumina-proxy"
 ```
 
 #### Provider compatibility
 
-LiteLLM does not special-case any identity provider. Any issuer works if it signs tokens with one of the algorithms listed above, publishes its public keys as a JWKS (directly, or through an OIDC discovery document that carries a `jwks_uri`), sets a `kid` header that appears in that JWKS, and mints a stable `iss` value plus the audience you configure. The Keycloak and Kubernetes issuers shown on this page publish keys this way; for any other issuer, check those four points against a decoded sample token and the provider's JWKS before relying on it
+Lumina does not special-case any identity provider. Any issuer works if it signs tokens with one of the algorithms listed above, publishes its public keys as a JWKS (directly, or through an OIDC discovery document that carries a `jwks_uri`), sets a `kid` header that appears in that JWKS, and mints a stable `iss` value plus the audience you configure. The Keycloak and Kubernetes issuers shown on this page publish keys this way; for any other issuer, check those four points against a decoded sample token and the provider's JWKS before relying on it
 
 #### Troubleshooting
 
@@ -220,7 +220,7 @@ Run the proxy with `--detailed_debug` to see the `JWT Auth:` log lines that expl
 | Symptom | Cause | Fix |
 | --- | --- | --- |
 | 401 `No matching public key found. keys=[...], kid=...` | No listed JWKS contains the token's `kid`, or the token has no `kid` and the JWKS has several keys | Confirm the `kid` from the token header appears in one of the JWKS documents. If the provider just rotated keys, wait out `public_key_ttl` or restart the proxy |
-| 401 `Validation fails: Signature verification failed` with several providers in `JWT_PUBLIC_KEY_URL` | Two providers publish the same `kid`; the shared list picks the first URL that has it and verifies against the wrong key | Use `litellm_jwtauth.issuers` so the lookup is scoped to the token's issuer |
+| 401 `Validation fails: Signature verification failed` with several providers in `JWT_PUBLIC_KEY_URL` | Two providers publish the same `kid`; the shared list picks the first URL that has it and verifies against the wrong key | Use `lumina_jwtauth.issuers` so the lookup is scoped to the token's issuer |
 | 401 `Validation fails: Invalid issuer` | `iss` does not equal `JWT_ISSUER` (shared path) or the matched `issuers[].issuer` | Copy `iss` verbatim from a decoded token; trailing slashes and `http` vs `https` matter |
 | 401 `Validation fails: Audience doesn't match` or `Token is missing the "aud" claim` | `aud` does not contain `JWT_AUDIENCE` / `issuers[].audience`, or the token has no `aud` | Set the audience your provider actually mints (often the client ID), or set `disable_audience_validation: true` on that issuer if it cannot mint one |
 | 401 `Validation fails: The specified alg value is not allowed` | Token is HMAC-signed or uses an algorithm outside the list above | Configure the provider to sign with RS256 or another asymmetric algorithm |
@@ -230,7 +230,7 @@ Run the proxy with `--detailed_debug` to see the `JWT Auth:` log lines that expl
 
 ### Kubernetes ServiceAccount Authentication
 
-Use Kubernetes ServiceAccount tokens to authenticate workloads running in your cluster. This is useful when you want pods to authenticate to LiteLLM using their native Kubernetes identity.
+Use Kubernetes ServiceAccount tokens to authenticate workloads running in your cluster. This is useful when you want pods to authenticate to Lumina using their native Kubernetes identity.
 
 #### Prerequisites
 
@@ -283,14 +283,14 @@ export JWT_PUBLIC_KEY_URL="https://<api-server>/openid/v1/jwks"
 </TabItem>
 </Tabs>
 
-#### Step 2: Configure LiteLLM
+#### Step 2: Configure Lumina
 
-Configure LiteLLM to extract identity information from Kubernetes ServiceAccount tokens:
+Configure Lumina to extract identity information from Kubernetes ServiceAccount tokens:
 
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:  
+  lumina_jwtauth:  
     # Use namespace as team identifier (resolves via team_alias in DB)
     team_alias_jwt_field: 'kubernetes\.io.namespace'
 ```
@@ -333,7 +333,7 @@ spec:
           key: token
 ```
 
-Set the expected audience in LiteLLM:
+Set the expected audience in Lumina:
 
 ```bash
 export JWT_AUDIENCE="https://kubernetes.default.svc"
@@ -341,7 +341,7 @@ export JWT_AUDIENCE="https://kubernetes.default.svc"
 
 #### Step 4: Create Team for Namespace
 
-Create a team in LiteLLM that matches the namespace (using `team_alias`):
+Create a team in Lumina that matches the namespace (using `team_alias`):
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/team/new' \
@@ -359,7 +359,7 @@ curl -X POST 'http://0.0.0.0:4000/team/new' \
 From within the pod, the token is available in the `LUMINA_TOKEN` environment variable:
 
 ```bash
-# Make a request to LiteLLM using the env var
+# Make a request to Lumina using the env var
 curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
 -H "Authorization: Bearer $LUMINA_TOKEN" \
@@ -375,7 +375,7 @@ A Kubernetes ServiceAccount token looks like this:
 
 ```json
 {
-  "aud": ["litellm-proxy"],
+  "aud": ["lumina-proxy"],
   "exp": 1234567890,
   "iat": 1234567890,
   "iss": "https://oidc.eks.us-west-2.amazonaws.com/id/EXAMPLE",
@@ -402,7 +402,7 @@ Use the `team_alias_jwt_field` to automatically resolve namespaces to teams:
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     # Map the namespace to team_alias in the database
     team_alias_jwt_field: 'kubernetes\.io.namespace'
@@ -413,19 +413,19 @@ This way, pods in namespace `production` automatically get associated with the t
 
 ### Set Accepted JWT Scope Names 
 
-Change the string in JWT 'scopes', that litellm evaluates to see if a user has admin access.
+Change the string in JWT 'scopes', that lumina evaluates to see if a user has admin access.
 
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
-    admin_jwt_scope: "litellm-proxy-admin"
+  lumina_jwtauth:
+    admin_jwt_scope: "lumina-proxy-admin"
 ```
 
 ### Tracking End-Users / Internal Users / Team / Org
 
-Set the field in the jwt token, which corresponds to a litellm user / team / org.
+Set the field in the jwt token, which corresponds to a lumina user / team / org.
 
 **Note:** All JWT fields support dot notation to access nested claims (e.g., `"user.sub"`, `"resource_access.client.roles"`).
 
@@ -433,8 +433,8 @@ Set the field in the jwt token, which corresponds to a litellm user / team / org
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
-    admin_jwt_scope: "litellm-proxy-admin"
+  lumina_jwtauth:
+    admin_jwt_scope: "lumina-proxy-admin"
     team_id_jwt_field: "client_id" # CAN BE ANY FIELD (supports dot notation for nested claims)
     user_id_jwt_field: "sub" # CAN BE ANY FIELD (supports dot notation for nested claims)
     org_id_jwt_field: "org_id" # CAN BE ANY FIELD (supports dot notation for nested claims)
@@ -471,26 +471,26 @@ Expected JWT (flat structure):
 **Configuration for nested example:**
 
 ```yaml
-litellm_jwtauth:
+lumina_jwtauth:
   user_id_jwt_field: "user.sub"
   user_email_jwt_field: "user.email"
   team_id_jwt_field: "tenant.team_id"
   org_id_jwt_field: "organization.id"
 ```
 
-Now litellm will automatically update the spend for the user/team/org in the db for each call. 
+Now lumina will automatically update the spend for the user/team/org in the db for each call. 
 
 ### Resolve by Name (Alias) Instead of ID
 
-Sometimes your JWT token contains human-readable names instead of database IDs. LiteLLM can resolve these names to IDs by looking them up in the database.
+Sometimes your JWT token contains human-readable names instead of database IDs. Lumina can resolve these names to IDs by looking them up in the database.
 
-**Use Case:** Your IDP provides team/org names in the JWT, but LiteLLM needs the actual database IDs for spend tracking and access control.
+**Use Case:** Your IDP provides team/org names in the JWT, but Lumina needs the actual database IDs for spend tracking and access control.
 
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     # Name-based fields (resolved via database lookup)
     team_alias_jwt_field: "team_alias"       # Resolves team by team_alias in DB
     org_alias_jwt_field: "org_alias"         # Resolves org by organization_alias in DB
@@ -508,17 +508,17 @@ general_settings:
 
 **How It Works:**
 
-1. LiteLLM extracts the name from the configured JWT field
+1. Lumina extracts the name from the configured JWT field
 2. Looks up the entity in the database by its alias field:
-   - Teams: `team_alias` column in `LiteLLM_TeamTable`
-   - Organizations: `organization_alias` column in `LiteLLM_OrganizationTable`
+   - Teams: `team_alias` column in `Lumina_TeamTable`
+   - Organizations: `organization_alias` column in `Lumina_OrganizationTable`
 3. Uses the resolved ID for spend tracking and access control
 
 **Precedence:** ID fields always take precedence over name fields. If both `team_id_jwt_field` and `team_alias_jwt_field` are configured and both values exist in the JWT, the ID will be used.
 
 ```yaml
 # Example: ID takes precedence
-litellm_jwtauth:
+lumina_jwtauth:
   team_id_jwt_field: "team_id"        # Used if present in JWT
   team_alias_jwt_field: "team_alias"   # Fallback if team_id not present
 ```
@@ -526,7 +526,7 @@ litellm_jwtauth:
 **Nested Fields:** Name fields also support dot notation for nested claims:
 
 ```yaml
-litellm_jwtauth:
+lumina_jwtauth:
   team_alias_jwt_field: "organization.team.name"
   org_alias_jwt_field: "company.name"
 ```
@@ -542,12 +542,12 @@ Here's what scopes on JWT-Auth tokens look like
 
 **Can be a list**
 ```
-scope: ["litellm-proxy-admin",...]
+scope: ["lumina-proxy-admin",...]
 ```
 
 **Can be a space-separated string**
 ```
-scope: "litellm-proxy-admin ..."
+scope: "lumina-proxy-admin ..."
 ```
 
 ### Control model access with Teams
@@ -558,7 +558,7 @@ scope: "litellm-proxy-admin ..."
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     team_ids_jwt_field: "groups" 
     user_id_upsert: true # add user_id to the db if they don't exist
@@ -574,7 +574,7 @@ This is assuming your token looks like this:
 }
 ```
 
-2. Create the teams on LiteLLM 
+2. Create the teams on Lumina 
 
 ```bash
 curl -X POST '<PROXY_BASE_URL>/team/new' \
@@ -595,22 +595,22 @@ OIDC Auth for API: [**See Walkthrough**](https://www.loom.com/share/00fe2deab59a
 
 ### Flow
 
-- Validate if user id is in the DB (LiteLLM_UserTable)
-- Validate if any of the groups are in the DB (LiteLLM_TeamTable)
+- Validate if user id is in the DB (Lumina_UserTable)
+- Validate if any of the groups are in the DB (Lumina_TeamTable)
 - Validate if any group has model access
 - If all checks pass, allow the request
 
 ### Select Team via Request Header
 
-When a JWT token contains multiple teams (via `team_ids_jwt_field`), you can explicitly select which team to use for a request by passing the `x-litellm-team-id` header.
+When a JWT token contains multiple teams (via `team_ids_jwt_field`), you can explicitly select which team to use for a request by passing the `x-lumina-team-id` header.
 
-The header accepts either the team's `team_id` or its `team_alias`. LiteLLM first checks the value against the team ids the JWT grants; when it is not one of them, LiteLLM looks up a team with that alias and accepts it only if that team's id is one the JWT grants. Either way the request runs as the canonical `team_id`, so budgets, model access, rate limits, spend logs and the `team_id` column in the database all show the id, never the alias. Sending the id skips the alias lookup
+The header accepts either the team's `team_id` or its `team_alias`. Lumina first checks the value against the team ids the JWT grants; when it is not one of them, Lumina looks up a team with that alias and accepts it only if that team's id is one the JWT grants. Either way the request runs as the canonical `team_id`, so budgets, model access, rate limits, spend logs and the `team_id` column in the database all show the id, never the alias. Sending the id skips the alias lookup
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
 -H 'Authorization: Bearer <your-jwt-token>' \
--H 'x-litellm-team-id: team_id_2' \
+-H 'x-lumina-team-id: team_id_2' \
 -d '{
   "model": "{{openai_large}}",
   "messages": [{"role": "user", "content": "Hello"}]
@@ -623,7 +623,7 @@ The same request with the alias of `team_id_2` (the `team_alias` set on `/team/n
 curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
 -H 'Authorization: Bearer <your-jwt-token>' \
--H 'x-litellm-team-id: team_2' \
+-H 'x-lumina-team-id: team_2' \
 -d '{
   "model": "{{openai_large}}",
   "messages": [{"role": "user", "content": "Hello"}]
@@ -634,21 +634,21 @@ curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 - The value must be a team id in the JWT's `team_ids_jwt_field` list (or the `team_id_jwt_field` value), or the alias of one of those teams
 - A value that is neither, including the alias of a team the JWT does not grant, returns a 403 whose message says the value matched no team id or team alias and lists the team ids the JWT allows
 - An alias shared by more than one team never resolves; keep aliases unique if you want to select teams by alias
-- If no header is provided, LiteLLM auto-selects the first team with access to the requested model
+- If no header is provided, Lumina auto-selects the first team with access to the requested model
 
 With `fallback_to_db_teams: true` and a JWT that carries no team claim, the header is checked against the user's team memberships in the database instead of the JWT, and an alias is accepted there too: the value must be the id or the alias of a team the user belongs to, otherwise the request is denied with a 403
 
 
 ### Fall back to DB team when JWT claims don't resolve
 
-By default, when `team_id_jwt_field` or `team_ids_jwt_field` is configured and the JWT carries a claim value that does **not** map to any LiteLLM team, LiteLLM raises an error: the claim is treated as authoritative.
+By default, when `team_id_jwt_field` or `team_ids_jwt_field` is configured and the JWT carries a claim value that does **not** map to any Lumina team, Lumina raises an error: the claim is treated as authoritative.
 
-For deployments where the IdP team claim is **advisory** (e.g. machine tokens whose `groups` claim lives in a separate namespace from LiteLLM `team_id`s), opt in to a fallback: if the configured claim is present but unresolved, LiteLLM defers to the user's single LiteLLM team (when the user belongs to exactly one team in the DB).
+For deployments where the IdP team claim is **advisory** (e.g. machine tokens whose `groups` claim lives in a separate namespace from Lumina `team_id`s), opt in to a fallback: if the configured claim is present but unresolved, Lumina defers to the user's single Lumina team (when the user belongs to exactly one team in the DB).
 
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     team_ids_jwt_field: "groups"
     team_claim_fallback: true # opt in
@@ -666,12 +666,12 @@ general_settings:
 | `groups` claim present, none resolve to a real team | 403 | defer → fallback to user's single DB team |
 | no claim at all (single-team fallback baseline) | 200 / fallback | 200 / fallback |
 
-**Security envelope:** the fallback only resolves when the user belongs to exactly one LiteLLM team in the DB; non-404 errors (e.g. `"No DB Connected"`) always propagate. Keep the default (`false`) if your IdP team claims are authoritative for authorization.
+**Security envelope:** the fallback only resolves when the user belongs to exactly one Lumina team in the DB; non-404 errors (e.g. `"No DB Connected"`) always propagate. Keep the default (`false`) if your IdP team claims are authoritative for authorization.
 
 
 ### Custom JWT Validate
 
-Validate a JWT Token using custom logic, if you need an extra way to verify if tokens are valid for LiteLLM Proxy.
+Validate a JWT Token using custom logic, if you need an extra way to verify if tokens are valid for Lumina Proxy.
 
 #### 1. Setup custom validate function
 
@@ -698,7 +698,7 @@ def my_custom_validate(token: str) -> Literal[True]:
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     team_id_jwt_field: "tenant_id"
     user_id_upsert: True
@@ -736,15 +736,15 @@ By default:
 - Admins: can access only management routes (`/team/*`, `/key/*`, `/user/*`)
 - Teams: can access only openai routes (`/chat/completions`, etc.)+ info routes (`/*/info`)
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/b204f0c01c703317d812a1553363ab0cb989d5b6/litellm/proxy/_types.py#L95)
+[**See Code**](https://github.com/Soventra/lumina/blob/b204f0c01c703317d812a1553363ab0cb989d5b6/lumina/proxy/_types.py#L95)
 
 **Admin Routes**
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
-    admin_jwt_scope: "litellm-proxy-admin"
+  lumina_jwtauth:
+    admin_jwt_scope: "lumina-proxy-admin"
     admin_allowed_routes: ["/v1/embeddings"]
 ```
 
@@ -753,21 +753,21 @@ general_settings:
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     # ...
-    team_id_jwt_field: "litellm-team" # Set field in the JWT token that stores the team ID
+    team_id_jwt_field: "lumina-team" # Set field in the JWT token that stores the team ID
     team_allowed_routes: ["/v1/chat/completions"] # Set accepted routes
 ```
 
 ### Allowing other provider routes for Teams
 
-Team JWTs can already call `/v1/messages` and `/v1/messages/count_tokens` by default. To enable team JWT tokens to access other Anthropic-style endpoints in `anthropic_routes`, update `team_allowed_routes` in your `litellm_jwtauth` configuration. `team_allowed_routes` supports the following values:
+Team JWTs can already call `/v1/messages` and `/v1/messages/count_tokens` by default. To enable team JWT tokens to access other Anthropic-style endpoints in `anthropic_routes`, update `team_allowed_routes` in your `lumina_jwtauth` configuration. `team_allowed_routes` supports the following values:
 
-- Named route groups from `LiteLLMRoutes` (e.g., `openai_routes`, `anthropic_routes`, `info_routes`, `mapped_pass_through_routes`).
+- Named route groups from `LuminaRoutes` (e.g., `openai_routes`, `anthropic_routes`, `info_routes`, `mapped_pass_through_routes`).
 - Exact routes, e.g. `/v1/messages`.
 - Route prefixes ending in `*`, e.g. `/internal-models/*`, which match every route under that prefix.
 
-Below is a quick reference for the route groups you can use and example representative routes from each group. If you need the exhaustive list, see the `LiteLLMRoutes` enum in `litellm/proxy/_types.py` for the authoritative list.
+Below is a quick reference for the route groups you can use and example representative routes from each group. If you need the exhaustive list, see the `LuminaRoutes` enum in `lumina/proxy/_types.py` for the authoritative list.
 
 | Route Group | What it contains | Representative routes |
 |-------------|------------------|-----------------------|
@@ -780,13 +780,13 @@ Below is a quick reference for the route groups you can use and example represen
 | `info_routes` | Read-only & info endpoints used by the UI | `/key/info`, `/team/info`, `/v1/models` |
 | `management_routes` | Admin-only management endpoints (create/update/delete user/team/model) | `/team/new`, `/key/generate`, `/model/new` |
 | `spend_tracking_routes` | Budget/spend related endpoints | `/spend/logs`, `/spend/keys`, `/spend/users` |
-| `public_routes` | Public and unauthenticated endpoints | `/`, `/routes`, `/.well-known/litellm-ui-config` |
+| `public_routes` | Public and unauthenticated endpoints | `/`, `/routes`, `/.well-known/lumina-ui-config` |
 
-Note: `llm_api_routes` is the union of OpenAI, Anthropic, Google, pass-through and other LLM routes (`openai_routes + anthropic_routes + google_routes + mapped_pass_through_routes + passthrough_routes_wildcard + apply_guardrail_routes + mcp_routes + litellm_native_routes`).
+Note: `llm_api_routes` is the union of OpenAI, Anthropic, Google, pass-through and other LLM routes (`openai_routes + anthropic_routes + google_routes + mapped_pass_through_routes + passthrough_routes_wildcard + apply_guardrail_routes + mcp_routes + lumina_native_routes`).
 
-Defaults (what the proxy uses if you don't override them in `litellm_jwtauth`):
+Defaults (what the proxy uses if you don't override them in `lumina_jwtauth`):
 
-- `admin_jwt_scope`: `litellm_proxy_admin`
+- `admin_jwt_scope`: `lumina_proxy_admin`
 - `admin_allowed_routes` (default): `management_routes`, `spend_tracking_routes`, `global_spend_tracking_routes`, `info_routes` 
 - `team_allowed_routes` (default): `openai_routes`, `info_routes`, `mcp_routes`, `/v1/messages`, `/v1/messages/count_tokens`. Setting `team_allowed_routes` replaces this list, so add `mcp_routes` and the `/v1/messages` routes back if teams still need them
 - `public_allowed_routes` (default): `public_routes`
@@ -797,7 +797,7 @@ Example: Allow team JWTs to call Anthropic `/v1/messages` (either by route group
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_ids_jwt_field: "team_ids"
     team_allowed_routes: ["openai_routes", "info_routes", "anthropic_routes"]
 ```
@@ -807,7 +807,7 @@ Or selectively allow the exact Anthropic message endpoint only:
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_ids_jwt_field: "team_ids"
     team_allowed_routes: ["/v1/messages", "info_routes"]
 ```
@@ -817,7 +817,7 @@ If you register pass-through endpoints that all share a prefix, grant the prefix
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_ids_jwt_field: "team_ids"
     team_allowed_routes: ["openai_routes", "info_routes", "/internal-models/*"]
 ```
@@ -833,8 +833,8 @@ Control how long public keys are cached for (in seconds).
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
-    admin_jwt_scope: "litellm-proxy-admin"
+  lumina_jwtauth:
+    admin_jwt_scope: "lumina-proxy-admin"
     admin_allowed_routes: ["/v1/embeddings"]
     public_key_ttl: 600 # KEY CHANGE
 ```
@@ -847,7 +847,7 @@ Set a custom field in which the team_id exists. By default, the 'client_id' fiel
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_id_jwt_field: "client_id" # KEY CHANGE
 ```
 
@@ -862,7 +862,7 @@ curl --location 'http://0.0.0.0:4000/team/block' \
 --header 'Authorization: Bearer <admin-token>' \
 --header 'Content-Type: application/json' \
 --data '{
-    "team_id": "litellm-test-client-id-new" # set team id
+    "team_id": "lumina-test-client-id-new" # set team id
 }'
 ```
 
@@ -873,7 +873,7 @@ curl --location 'http://0.0.0.0:4000/team/unblock' \
 --header 'Authorization: Bearer <admin-token>' \
 --header 'Content-Type: application/json' \
 --data '{
-    "team_id": "litellm-test-client-id-new" # set team id
+    "team_id": "lumina-test-client-id-new" # set team id
 }'
 ```
 
@@ -888,7 +888,7 @@ Allow users who belong to a specific email domain, automatic access to the proxy
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_email_jwt_field: "email" # checks 'email' field in jwt payload
     user_allowed_email_domain: "my-co.com" # OPTIONAL - allows user@my-co.com to call proxy
     user_id_upsert: true # upserts the user to db, if valid email but not in db
@@ -896,7 +896,7 @@ general_settings:
 
 ## OIDC UserInfo Endpoint
 
-Use this when your JWT/access token doesn't contain user-identifying information. LiteLLM will call your identity provider's UserInfo endpoint to fetch user details.
+Use this when your JWT/access token doesn't contain user-identifying information. Lumina will call your identity provider's UserInfo endpoint to fetch user details.
 
 ### When to Use
 
@@ -909,7 +909,7 @@ Use this when your JWT/access token doesn't contain user-identifying information
 ```yaml title="config.yaml" showLineNumbers
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     # Enable OIDC UserInfo endpoint
     oidc_userinfo_enabled: true
     oidc_userinfo_endpoint: "https://your-idp.com/oauth2/userinfo"
@@ -926,24 +926,24 @@ general_settings:
 ```mermaid
 sequenceDiagram
     participant Client
-    participant LiteLLM
+    participant Lumina
     participant IdP as Identity Provider
 
-    Client->>LiteLLM: Request with Bearer token
-    Note over LiteLLM: Check cache for UserInfo
+    Client->>Lumina: Request with Bearer token
+    Note over Lumina: Check cache for UserInfo
     
-    LiteLLM->>IdP: GET /userinfo (if not cached)<br/>Authorization: Bearer {token}
-    IdP-->>LiteLLM: User data (sub, email, roles)
+    Lumina->>IdP: GET /userinfo (if not cached)<br/>Authorization: Bearer {token}
+    IdP-->>Lumina: User data (sub, email, roles)
     
-    Note over LiteLLM: Cache response (TTL: 5min)<br/>Extract user_id, email, roles<br/>Perform RBAC checks
+    Note over Lumina: Cache response (TTL: 5min)<br/>Extract user_id, email, roles<br/>Perform RBAC checks
     
-    LiteLLM-->>Client: Authorized/Denied
+    Lumina-->>Client: Authorized/Denied
 ```
 
 ### Example: Azure AD
 
 ```yaml title="config.yaml" showLineNumbers
-litellm_jwtauth:
+lumina_jwtauth:
   oidc_userinfo_enabled: true
   oidc_userinfo_endpoint: "https://graph.microsoft.com/oidc/userinfo"
   user_id_jwt_field: "sub"
@@ -953,7 +953,7 @@ litellm_jwtauth:
 ### Example: Keycloak
 
 ```yaml title="config.yaml" showLineNumbers
-litellm_jwtauth:
+lumina_jwtauth:
   oidc_userinfo_enabled: true
   oidc_userinfo_endpoint: "https://keycloak.example.com/realms/your-realm/protocol/openid-connect/userinfo"
   user_id_jwt_field: "sub"
@@ -974,11 +974,11 @@ Use this when:
 general_settings:
   enable_jwt_auth: true
   enable_oauth2_auth: false
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     routing_overrides:
       - iss: "machine-issuer.example.com"
-        client_id: "MID_LITELLM"
+        client_id: "MID_LUMINA"
         path: "oauth2"
 ```
 
@@ -988,8 +988,8 @@ general_settings:
 - Supported selectors: `iss` (required), `client_id` (optional), `scope` (optional), `aud` (optional).
 - Selector values can be a single string or a list of strings (the claim must match at least one entry, using the rules below).
 - **Wildcards:** selectors may use shell-style `*` and `?`. Matching is **case-sensitive**, so use the same casing your IdP emits in JWT claims.
-- **`scope` claim as a space-delimited string:** OAuth/OIDC often sends `scope` as one string (e.g. `openid profile App:LiteLLM`). LiteLLM splits that string **only when matching the `scope` selector**, so a configured value like `App:LiteLLM` can match. **`iss`, `aud`, and `client_id` are never split on spaces**; the full claim string is used (routing uses unverified claims only for path selection; final auth still validates the token).
-- If no rule matches, LiteLLM continues with standard JWT validation.
+- **`scope` claim as a space-delimited string:** OAuth/OIDC often sends `scope` as one string (e.g. `openid profile App:Lumina`). Lumina splits that string **only when matching the `scope` selector**, so a configured value like `App:Lumina` can match. **`iss`, `aud`, and `client_id` are never split on spaces**; the full claim string is used (routing uses unverified claims only for path selection; final auth still validates the token).
+- If no rule matches, Lumina continues with standard JWT validation.
 
 ### Example: `scope` and wildcard `client_id`
 
@@ -997,11 +997,11 @@ general_settings:
 general_settings:
   enable_jwt_auth: true
   enable_oauth2_auth: false
-  litellm_jwtauth:
+  lumina_jwtauth:
     routing_overrides:
       - iss: "machine-issuer.example.com"
-        scope: "App:LiteLLM"
-        client_id: "*MID_LITELLM"
+        scope: "App:Lumina"
+        client_id: "*MID_LUMINA"
         path: "oauth2"
 ```
 
@@ -1011,11 +1011,11 @@ general_settings:
 general_settings:
   enable_jwt_auth: true
   enable_oauth2_auth: false
-  litellm_jwtauth:
+  lumina_jwtauth:
     routing_overrides:
       - iss: ["machine-issuer.example.com", "backup-issuer.example.com"]
-        client_id: ["MID_LITELLM", "MID_BACKUP"]
-        aud: ["api://litellm", "api://fallback"]
+        client_id: ["MID_LUMINA", "MID_BACKUP"]
+        aud: ["api://lumina", "api://fallback"]
         path: "oauth2"
 ```
 
@@ -1033,11 +1033,11 @@ Very important, set `enforce_rbac: true` to ensure that the RBAC system is enabl
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     object_id_jwt_field: "oid" # can be either user / team, inferred from the role mapping
     roles_jwt_field: "roles"
     role_mappings:
-      - role: litellm.api.consumer
+      - role: lumina.api.consumer
         internal_role: "team"
     enforce_rbac: true # VERY IMPORTANT
 
@@ -1047,20 +1047,20 @@ general_settings:
       routes: ["/v1/chat/completions"]
 
 environment_variables:
-  JWT_AUDIENCE: "api://LiteLLM_Proxy" # ensures audience is validated
+  JWT_AUDIENCE: "api://Lumina_Proxy" # ensures audience is validated
 ```
 
 - `object_id_jwt_field`: The field in the JWT token that contains the object id. This id can be either a user id or a team id. Use this instead of `user_id_jwt_field` and `team_id_jwt_field`. If the same field could be both. **Supports dot notation** for nested claims (e.g., `"profile.object_id"`).
 
-- `roles_jwt_field`: The field in the JWT token that contains the roles. This field is a list of roles that the user has. **Supports dot notation** for nested fields - e.g., `resource_access.litellm-test-client-id.roles`.
+- `roles_jwt_field`: The field in the JWT token that contains the roles. This field is a list of roles that the user has. **Supports dot notation** for nested fields - e.g., `resource_access.lumina-test-client-id.roles`.
 
 **Additional JWT Field Configuration Options:**
 
 - `team_ids_jwt_field`: Field containing team IDs (as a list). **Supports dot notation** (e.g., `"groups"`, `"teams.ids"`).
 - `user_email_jwt_field`: Field containing user email. **Supports dot notation** (e.g., `"email"`, `"user.email"`).
-- `end_user_id_jwt_field`: Field containing end-user ID for cost tracking. **Supports dot notation** (e.g., `"customer_id"`, `"customer.id"`). When set, the end-user ID from the verified JWT claim takes precedence over any request-supplied value (headers like `x-litellm-end-user-id` or body fields like `metadata.user_id`; see the [customer ID priority order](customers#1-make-llm-api-call-w-customer-id)).
+- `end_user_id_jwt_field`: Field containing end-user ID for cost tracking. **Supports dot notation** (e.g., `"customer_id"`, `"customer.id"`). When set, the end-user ID from the verified JWT claim takes precedence over any request-supplied value (headers like `x-lumina-end-user-id` or body fields like `metadata.user_id`; see the [customer ID priority order](customers#1-make-llm-api-call-w-customer-id)).
 
-- `role_mappings`: A list of role mappings. Map the received role in the JWT token to an internal role on LiteLLM.
+- `role_mappings`: A list of role mappings. Map the received role in the JWT token to an internal role on Lumina.
 
 - `JWT_AUDIENCE`: The audience of the JWT token. This is used to validate the audience of the JWT token. Set via an environment variable.
 
@@ -1068,16 +1068,16 @@ environment_variables:
 
 ```bash
 {
-  "aud": "api://LiteLLM_Proxy",
+  "aud": "api://Lumina_Proxy",
   "oid": "eec236bd-0135-4b28-9354-8fc4032d543e",
-  "roles": ["litellm.api.consumer"] 
+  "roles": ["lumina.api.consumer"] 
 }
 ```
 
 ### Role Mapping Spec 
 
 - `role`: The expected role in the JWT token. 
-- `internal_role`: The internal role on LiteLLM that will be used to control access. 
+- `internal_role`: The internal role on Lumina that will be used to control access. 
 
 Supported internal roles:
 - `team`: Team object will be used for RBAC spend tracking. Use this for tracking spend for a 'use case'. 
@@ -1106,13 +1106,13 @@ model_list:
 
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_id_jwt_field: "client_id" # set the field in the JWT token that contains the team id
     team_id_upsert: true # upsert the team to db, if team id is not found in db
     scope_mappings:
-      - scope: litellm.api.consumer
+      - scope: lumina.api.consumer
         models: ["anthropic-claude"]
-      - scope: litellm.api.gpt_3_5_turbo
+      - scope: lumina.api.gpt_3_5_turbo
         models: ["gpt-3.5-turbo-testing"]
     enforce_scope_based_access: true # enforce scope-based access control
     enforce_rbac: true # enforces only a Team/User/ProxyAdmin can access the proxy.
@@ -1129,7 +1129,7 @@ Expected Token:
 
 ```bash
 {
-  "scope": ["litellm.api.consumer", "litellm.api.gpt_3_5_turbo"] # can be a list or a space-separated string
+  "scope": ["lumina.api.consumer", "lumina.api.gpt_3_5_turbo"] # can be a list or a space-separated string
 }
 ```
 
@@ -1152,46 +1152,46 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ## [BETA] Sync User Roles and Teams with IDP
 
-Automatically sync user roles and team memberships from your Identity Provider (IDP) to LiteLLM's database. This ensures that user permissions and team memberships in LiteLLM stay in sync with your IDP.
+Automatically sync user roles and team memberships from your Identity Provider (IDP) to Lumina's database. This ensures that user permissions and team memberships in Lumina stay in sync with your IDP.
 
 **Note:** This is in beta and might change unexpectedly.
 
 ### Use Cases
 
-- **Role Synchronization**: Automatically update user roles in LiteLLM when they change in your IDP
-- **Team Membership Sync**: Keep team memberships in sync between your IDP and LiteLLM
-- **Centralized Access Management**: Manage all user permissions through your IDP while maintaining LiteLLM functionality
+- **Role Synchronization**: Automatically update user roles in Lumina when they change in your IDP
+- **Team Membership Sync**: Keep team memberships in sync between your IDP and Lumina
+- **Centralized Access Management**: Manage all user permissions through your IDP while maintaining Lumina functionality
 
 ### Setup
 
 #### 1. Configure JWT Role Mapping
 
-Map roles from your JWT token to LiteLLM user roles:
+Map roles from your JWT token to Lumina user roles:
 
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     team_ids_jwt_field: "groups"
     roles_jwt_field: "roles"
     user_id_upsert: true
     sync_user_role_and_teams: true # Enable sync functionality
-    jwt_litellm_role_map: # Map JWT roles to LiteLLM roles
+    jwt_lumina_role_map: # Map JWT roles to Lumina roles
       - jwt_role: "ADMIN"
-        litellm_role: "proxy_admin"
+        lumina_role: "proxy_admin"
       - jwt_role: "USER"
-        litellm_role: "internal_user"
+        lumina_role: "internal_user"
       - jwt_role: "VIEWER"
-        litellm_role: "internal_user"
+        lumina_role: "internal_user"
 ```
 
 #### 2. JWT Role Mapping Spec
 
 - `jwt_role`: The role name as it appears in your JWT token. Supports wildcard patterns using `fnmatch` (e.g., `"ADMIN_*"` matches `"ADMIN_READ"`, `"ADMIN_WRITE"`, etc.)
-- `litellm_role`: The corresponding LiteLLM user role
+- `lumina_role`: The corresponding Lumina user role
 
-**Supported LiteLLM Roles:**
+**Supported Lumina Roles:**
 - `proxy_admin`: Full administrative access
 - `internal_user`: Standard user access
 - `internal_user_view_only`: Read-only access
@@ -1213,12 +1213,12 @@ general_settings:
 When a user makes a request with a JWT token:
 
 1. **Role Sync**: 
-   - LiteLLM checks if the user's role in the JWT matches their role in the database
-   - If different, the user's role is updated in LiteLLM's database
-   - Uses the `jwt_litellm_role_map` to convert JWT roles to LiteLLM roles
+   - Lumina checks if the user's role in the JWT matches their role in the database
+   - If different, the user's role is updated in Lumina's database
+   - Uses the `jwt_lumina_role_map` to convert JWT roles to Lumina roles
 
 2. **Team Membership Sync**:
-   - Compares team memberships from the JWT token with the user's current teams in LiteLLM
+   - Compares team memberships from the JWT token with the user's current teams in Lumina
    - Adds the user to new teams found in the JWT
    - Removes the user from teams not present in the JWT
 
@@ -1231,7 +1231,7 @@ When a user makes a request with a JWT token:
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     # Required fields
     user_id_jwt_field: "sub"
     team_ids_jwt_field: "groups"
@@ -1242,18 +1242,18 @@ general_settings:
     user_id_upsert: true
     
     # Role mapping
-    jwt_litellm_role_map:
+    jwt_lumina_role_map:
       - jwt_role: "AI_ADMIN_*"  # Wildcard pattern
-        litellm_role: "proxy_admin"
+        lumina_role: "proxy_admin"
       - jwt_role: "AI_USER"
-        litellm_role: "internal_user"
+        lumina_role: "internal_user"
 ```
 
 ### Important Notes
 
 - **Performance**: Sync operations happen during authentication, which may add slight latency
 - **Database Access**: Requires database access for user and team updates
-- **Team Creation**: Teams mentioned in JWT tokens must exist in LiteLLM before sync can assign users to them
+- **Team Creation**: Teams mentioned in JWT tokens must exist in Lumina before sync can assign users to them
 - **Wildcard Support**: JWT role patterns support wildcard matching using `fnmatch`
 
 ### Testing the Sync Feature
@@ -1291,9 +1291,9 @@ curl -X GET 'http://0.0.0.0:4000/user/info?user_id=user-123' \
 
 ## [BETA] JWT-to-Virtual-Key Mapping
 
-Map JWT identities to LiteLLM virtual keys so that JWT-authenticated users get per-user budgets, rate limits, model access controls, and spend tracking.
+Map JWT identities to Lumina virtual keys so that JWT-authenticated users get per-user budgets, rate limits, model access controls, and spend tracking.
 
-When a JWT comes in, LiteLLM looks up a configured claim (e.g. `email`, `sub`) in a mapping table. If a mapping exists, the request is treated as if it arrived with the corresponding virtual key, and all virtual key features apply.
+When a JWT comes in, Lumina looks up a configured claim (e.g. `email`, `sub`) in a mapping table. If a mapping exists, the request is treated as if it arrived with the corresponding virtual key, and all virtual key features apply.
 
 ### Setup
 
@@ -1302,7 +1302,7 @@ Add `virtual_key_claim_field` to your JWT auth config:
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     virtual_key_claim_field: "email"         # JWT claim to look up (supports dot notation)
     virtual_key_mapping_cache_ttl: 300       # Cache TTL in seconds (default: 300)
 ```
@@ -1363,9 +1363,9 @@ curl -X POST http://localhost:4000/jwt/key/mapping/delete \
 ### How It Works
 
 1. A request arrives with a JWT bearer token
-2. LiteLLM validates the JWT signature
+2. Lumina validates the JWT signature
 3. Extracts the configured claim (e.g. `email` → `user@example.com`)
-4. Looks up the claim value in the `LiteLLM_JWTKeyMapping` table
+4. Looks up the claim value in the `Lumina_JWTKeyMapping` table
 5. If a mapping exists, the request proceeds as if the mapped virtual key was used, so budgets, rate limits, model access, and spend tracking all apply
 6. If no mapping exists, falls back to standard JWT auth (team-level controls)
 
@@ -1380,7 +1380,7 @@ curl -X POST http://localhost:4000/jwt/key/mapping/delete \
 
 ## Bind JWTs to Registered Agents
 
-Provision agent identities in your identity provider (for example, one Microsoft Entra ID app registration per agent) and let LiteLLM enforce the agent's policies on every JWT that agent presents. When `agent_id_jwt_field` is set, LiteLLM reads that claim from the verified token, matches it against a registered agent (first by `agent_id`, then by `agent_name`), and sets `agent_id` on the authenticated identity. Everything that already applies to a virtual key bound to an agent then applies to the JWT caller too: `require_trace_id_on_calls_by_agent`, per-agent MCP server and tool restrictions, and `agent_id` spend attribution.
+Provision agent identities in your identity provider (for example, one Microsoft Entra ID app registration per agent) and let Lumina enforce the agent's policies on every JWT that agent presents. When `agent_id_jwt_field` is set, Lumina reads that claim from the verified token, matches it against a registered agent (first by `agent_id`, then by `agent_name`), and sets `agent_id` on the authenticated identity. Everything that already applies to a virtual key bound to an agent then applies to the JWT caller too: `require_trace_id_on_calls_by_agent`, per-agent MCP server and tool restrictions, and `agent_id` spend attribution.
 
 ### Setup
 
@@ -1398,7 +1398,7 @@ agents:
 
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     agent_id_jwt_field: "azp"   # supports dot notation for nested claims
     team_id_jwt_field: "team"
     user_id_jwt_field: "sub"
@@ -1406,7 +1406,7 @@ general_settings:
 
 ### Behavior
 
-A token whose claim matches a registered agent is bound to that agent and inherits its restrictions, so with the config above a call without `x-litellm-trace-id` is rejected with `400`. A token whose claim matches no registered agent is rejected with `403` rather than falling back to an unbound identity, the same way an unknown `team_id_jwt_field` value is rejected; this applies to admin-scoped tokens as well. A token that does not carry the claim at all is authenticated exactly as before. When `agent_id_jwt_field` is unset nothing changes.
+A token whose claim matches a registered agent is bound to that agent and inherits its restrictions, so with the config above a call without `x-lumina-trace-id` is rejected with `400`. A token whose claim matches no registered agent is rejected with `403` rather than falling back to an unbound identity, the same way an unknown `team_id_jwt_field` value is rejected; this applies to admin-scoped tokens as well. A token that does not carry the claim at all is authenticated exactly as before. When `agent_id_jwt_field` is unset nothing changes.
 
 Every token that carries the configured claim is treated as an agent. Entra puts `azp` on delegated (user) tokens too, so if humans and agents obtain tokens for the same audience, `azp` will bind or reject the human callers as well. In that setup point `agent_id_jwt_field` at a claim that only agent tokens carry, such as an optional claim or a custom claim added through a claims mapping policy on the agents' app registrations, and leave `azp` for a proxy whose JWT callers are all agents.
 
@@ -1414,6 +1414,6 @@ If the token also maps to a virtual key through [JWT-to-Virtual-Key Mapping](#be
 
 ## All JWT Params
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/b204f0c01c703317d812a1553363ab0cb989d5b6/litellm/proxy/_types.py#L95)
+[**See Code**](https://github.com/Soventra/lumina/blob/b204f0c01c703317d812a1553363ab0cb989d5b6/lumina/proxy/_types.py#L95)
 
 

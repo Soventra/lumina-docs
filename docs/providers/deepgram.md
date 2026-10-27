@@ -3,19 +3,19 @@ import TabItem from '@theme/TabItem';
 
 # Deepgram 
 
-LiteLLM supports Deepgram's `/listen` endpoint.
+Lumina supports Deepgram's `/listen` endpoint.
 
 | Property | Details |
 |-------|-------|
 | Description | Deepgram's voice AI platform provides APIs for speech-to-text, text-to-speech, and language understanding. |
-| Provider Route on LiteLLM | `deepgram/` |
+| Provider Route on Lumina | `deepgram/` |
 | Provider Doc | [Deepgram ↗](https://developers.deepgram.com/docs/introduction) |
 | Supported OpenAI Endpoints | `/audio/transcriptions` |
 
 ## Quick Start
 
 ```python
-from litellm import transcription
+from lumina import transcription
 import os 
 
 # set api keys 
@@ -27,7 +27,7 @@ response = transcription(model="deepgram/nova-2", file=audio_file)
 print(f"response: {response}")
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 ### Add model to config 
 
@@ -49,7 +49,7 @@ general_settings:
 ### Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml 
+lumina --config /path/to/config.yaml 
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -72,7 +72,7 @@ curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 ```python
 from openai import OpenAI
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 

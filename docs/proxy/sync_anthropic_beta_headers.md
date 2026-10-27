@@ -4,9 +4,9 @@ Automatically keep your Anthropic beta headers configuration up to date without 
 
 ## Overview
 
-When Anthropic releases new beta features (e.g., new tool capabilities, extended context windows), you typically need to restart your LiteLLM service to get the latest beta header mappings for different providers (Anthropic, Bedrock, Vertex AI, Azure AI).
+When Anthropic releases new beta features (e.g., new tool capabilities, extended context windows), you typically need to restart your Lumina service to get the latest beta header mappings for different providers (Anthropic, Bedrock, Vertex AI, Azure AI).
 
-With auto-sync, LiteLLM automatically pulls the latest configuration from GitHub's [`anthropic_beta_headers_config.json`](https://github.com/BerriAI/litellm/blob/main/litellm/anthropic_beta_headers_config.json) without requiring a restart. This means:
+With auto-sync, Lumina automatically pulls the latest configuration from GitHub's [`anthropic_beta_headers_config.json`](https://github.com/Soventra/lumina/blob/main/lumina/anthropic_beta_headers_config.json) without requiring a restart. This means:
 
 - **Zero downtime** when new beta features are released
 - **Always up-to-date** provider support mappings
@@ -60,7 +60,7 @@ print(result['message'])
 
 **Custom beta headers config URL:**
 ```bash
-export LUMINA_ANTHROPIC_BETA_HEADERS_URL="https://raw.githubusercontent.com/BerriAI/litellm/main/litellm/anthropic_beta_headers_config.json"
+export LUMINA_ANTHROPIC_BETA_HEADERS_URL="https://raw.githubusercontent.com/Soventra/lumina/main/lumina/anthropic_beta_headers_config.json"
 ```
 
 **Use local beta headers config:**
@@ -109,7 +109,7 @@ curl -X DELETE "https://your-proxy-url/schedule/anthropic_beta_headers_reload" \
 
 ## How It Works
 
-1. **Initial Load:** On startup, LiteLLM loads the beta headers configuration from the remote URL (or local file if configured)
+1. **Initial Load:** On startup, Lumina loads the beta headers configuration from the remote URL (or local file if configured)
 2. **Caching:** The configuration is cached in memory to avoid repeated fetches on every request
 3. **Scheduled Reload:** If configured, the proxy checks every 10 seconds whether it's time to reload based on your schedule
 4. **Manual Reload:** You can trigger an immediate reload via the API endpoint

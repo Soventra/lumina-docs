@@ -8,7 +8,7 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for Meta Muse Spark 1.3 on LiteLLM, with cost tracking for both the standard and contributor tiers."
+description: "Day 0 support for Meta Muse Spark 1.3 on Lumina, with cost tracking for both the standard and contributor tiers."
 card_title: "Meta Muse Spark 1.3"
 card_summary: "Meta's Muse Spark 1.3 with cost tracking for both the standard and contributor pricing tiers."
 image: ./hero.png
@@ -19,11 +19,11 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Muse Spark 1.3](./hero.png)
+![Lumina x Muse Spark 1.3](./hero.png)
 
 # Muse Spark 1.3 day 0 support
 
-LiteLLM now offers `muse-spark-1.3` and `muse-spark-1.3-contributor` on day 0, through the `meta/` route on the Meta Model API. Meta ships 1.3 today in Muse Code and the Model API, tuned for long-horizon agentic and coding work, and reports roughly 20% fewer tool calls and 25% fewer tokens than 1.2 internally.
+Lumina now offers `muse-spark-1.3` and `muse-spark-1.3-contributor` on day 0, through the `meta/` route on the Meta Model API. Meta ships 1.3 today in Muse Code and the Model API, tuned for long-horizon agentic and coding work, and reports roughly 20% fewer tool calls and 25% fewer tokens than 1.2 internally.
 
 {/* truncate */}
 
@@ -45,7 +45,7 @@ The contributor tier runs 12.5x cheaper on input and 21x cheaper on output, with
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="meta/muse-spark-1.3",
@@ -78,7 +78,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make requests**
@@ -86,7 +86,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "muse-spark-1.3",
     "messages": [{"role": "user", "content": "Hello!"}]
@@ -98,10 +98,10 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 ## Reasoning, modalities, and audio
 
-Muse Spark 1.3 is a reasoning model. LiteLLM passes `reasoning_effort` through in OpenAI shape, accepting `minimal`, `low`, `medium`, `high`, and `xhigh`. Meta's announcement names a higher "max reasoning" mode that is not available yet, so `xhigh` is the ceiling today. Reasoning tokens bill as output tokens.
+Muse Spark 1.3 is a reasoning model. Lumina passes `reasoning_effort` through in OpenAI shape, accepting `minimal`, `low`, `medium`, `high`, and `xhigh`. Meta's announcement names a higher "max reasoning" mode that is not available yet, so `xhigh` is the ceiling today. Reasoning tokens bill as output tokens.
 
 Text, image, video, and PDF input work as they did on 1.2, across `/v1/chat/completions`, `/v1/responses`, and [`/v1/messages`](../../docs/anthropic_unified), with a 1,048,576-token context window.
 
 ## Feedback
 
-Running Muse Spark 1.3 through LiteLLM and hitting something unexpected? Share it in [GitHub discussions](https://github.com/BerriAI/litellm/discussions/39439).
+Running Muse Spark 1.3 through Lumina and hitting something unexpected? Share it in [GitHub discussions](https://github.com/Soventra/lumina/discussions/39439).

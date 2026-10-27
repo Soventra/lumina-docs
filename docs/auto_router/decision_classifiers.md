@@ -1,10 +1,10 @@
 ---
 title: Connect self-hosted classifiers
 sidebar_label: Self-hosted classifiers
-description: Use any deployed decision model, such as Strands Decider, vLLM or Cloudflare Clef, or connect a self-hosted Laya or Bespoke Nimble endpoint or the Databricks `ai_decide` AI Function to LiteLLM Auto Router. Set the classifier, its connection, and routing tiers.
+description: Use any deployed decision model, such as Strands Decider, vLLM or Cloudflare Clef, or connect a self-hosted Laya or Bespoke Nimble endpoint or the Databricks `ai_decide` AI Function to Lumina Auto Router. Set the classifier, its connection, and routing tiers.
 ---
 
-Use a decision model to classify requests for LiteLLM Auto Router. Your classifier chooses a complexity tier for each request, then LiteLLM calls a completion model assigned to that tier. Your application uses one router model name through the chat completions API.
+Use a decision model to classify requests for Lumina Auto Router. Your classifier chooses a complexity tier for each request, then Lumina calls a completion model assigned to that tier. Your application uses one router model name through the chat completions API.
 
 For a screenshot walkthrough and the full tuning reference, see [Customize your classifier](./optimize_classifier.md#connect-a-self-hosted-classifier). That guide also covers using a self-hosted OpenAI-compatible LLM as a judge instead of a System One classifier.
 
@@ -12,15 +12,15 @@ For a screenshot walkthrough and the full tuning reference, see [Customize your 
 
 ## What you host
 
-You host the classifier model behind a System One HTTP API, separately from the LiteLLM gateway. LiteLLM sends it the request context and tier criteria, then uses its decision to route the completion. This guide assumes that endpoint is running. For hosting instructions, see the [Laya HTTP server guide](https://github.com/NandhaKishorM/laya/blob/main/docs/http-api.md) or the [Nimble project](https://github.com/bespokelabsai/nimble#quickstart).
+You host the classifier model behind a System One HTTP API, separately from the Lumina gateway. Lumina sends it the request context and tier criteria, then uses its decision to route the completion. This guide assumes that endpoint is running. For hosting instructions, see the [Laya HTTP server guide](https://github.com/NandhaKishorM/laya/blob/main/docs/http-api.md) or the [Nimble project](https://github.com/bespokelabsai/nimble#quickstart).
 
 | Component | Role | Where it runs |
 | --- | --- | --- |
-| LiteLLM gateway | Receives the client request, asks for a tier, then routes the completion | Your gateway deployment |
+| Lumina gateway | Receives the client request, asks for a tier, then routes the completion | Your gateway deployment |
 | Classifier server | Runs Laya or Nimble inference and returns the tier choice | A server you deploy and operate |
 | Completion model | Generates the answer after routing | Your configured hosted provider or self-hosted model endpoint |
 
-Use a base URL reachable from the gateway. For a classifier in your private network, this can be an internal service URL. Selecting a classifier in LiteLLM connects to that service; it does not start a model server.
+Use a base URL reachable from the gateway. For a classifier in your private network, this can be an internal service URL. Selecting a classifier in Lumina connects to that service; it does not start a model server.
 
 ### Request context and data flow
 
@@ -30,9 +30,9 @@ The completion model still receives the request needed to generate the answer. H
 
 ## Use a deployed decision model {#use-a-deployed-decision-model}
 
-Any `model_list` entry that serves [`/v1/decisions`](/docs/decisions) can classify requests for the router. Set `deployment_name` inside `opensource_classifier_config` to that entry's `model_name`. LiteLLM then sends the classifier call through that deployment, so the call uses the deployment's endpoint, credentials and price, and you configure the connection once for both the router and the decision routes. Every provider in the [decision provider list](/docs/decisions#supported-providers) works this way, including Strands Decider and Cloudflare Clef.
+Any `model_list` entry that serves [`/v1/decisions`](/docs/decisions) can classify requests for the router. Set `deployment_name` inside `opensource_classifier_config` to that entry's `model_name`. Lumina then sends the classifier call through that deployment, so the call uses the deployment's endpoint, credentials and price, and you configure the connection once for both the router and the decision routes. Every provider in the [decision provider list](/docs/decisions#supported-providers) works this way, including Strands Decider and Cloudflare Clef.
 
-Available from v1.104.3. [LiteLLM #45913](https://github.com/BerriAI/litellm/pull/45913) added it, and backports shipped it in v1.104.3, v1.105.0 and v1.106.0. The examples on this page use the names from v1.106.0. On v1.104.x and v1.105.x releases, write `classifier_type: jev` and `jev_classifier_config` in place of `classifier_type: oss_classifier` and `opensource_classifier_config`, and give a decision model `mode: evaluation` in place of `mode: decisions`.
+Available from v1.104.3. [Lumina #45913](https://github.com/Soventra/lumina/pull/45913) added it, and backports shipped it in v1.104.3, v1.105.0 and v1.106.0. The examples on this page use the names from v1.106.0. On v1.104.x and v1.105.x releases, write `classifier_type: jev` and `jev_classifier_config` in place of `classifier_type: oss_classifier` and `opensource_classifier_config`, and give a decision model `mode: evaluation` in place of `mode: decisions`.
 
 For Strands Decider, run the model on a server you operate and set `STRANDS_DECIDER_API_BASE` on the gateway to that server's base URL without `/v1/systemone`. Set `STRANDS_DECIDER_API_KEY` only when the server requires a bearer token. For Cloudflare Clef, set `CLOUDFLARE_API_KEY` and `CLOUDFLARE_ACCOUNT_ID`. Use `cloudflare/clef-flash` instead of `cloudflare/clef` for the lower-cost Clef Flash model.
 
@@ -88,11 +88,11 @@ model_list:
 
 The deployment owns the connection, so `opensource_classifier_config` rejects `api_base` and `api_key` next to `deployment_name`, and `provider` and `model` have no effect there. Set `timeout_ms` to the time your decision model needs after warm-up. A self-hosted model on a CPU can need much longer than the 3000 ms default.
 
-The response headers show which classifier ran. A routed request returns `x-litellm-complexity-router-cause: jev_classifier` for every decision model and `x-litellm-classifier-cost` with the classifier call's cost. The spend log records the classifier call under the deployment's model, for example `strands_decider/strands-decider-2B-hobson-v19` or `cloudflare/clef`, and prices it from that model's cost map entry. Strands Decider is self-hosted, so its token rates are zero.
+The response headers show which classifier ran. A routed request returns `x-lumina-complexity-router-cause: jev_classifier` for every decision model and `x-lumina-classifier-cost` with the classifier call's cost. The spend log records the classifier call under the deployment's model, for example `strands_decider/strands-decider-2B-hobson-v19` or `cloudflare/clef`, and prices it from that model's cost map entry. Strands Decider is self-hosted, so its token rates are zero.
 
 ### vLLM {#vllm}
 
-vLLM serves `/v1/systemone` from [v0.32.0](https://github.com/vllm-project/vllm/releases/tag/v0.32.0), added in [vllm-project/vllm#59299](https://github.com/vllm-project/vllm/pull/59299). It answers `choice`, `noul` and `score` questions as described in vLLM's [Structured Decisions](https://github.com/vllm-project/vllm/blob/v0.32.0/docs/serving/online_serving/structured_decisions.md) docs, on the model architectures listed in its [`READ_STRATEGIES`](https://github.com/vllm-project/vllm/blob/v0.32.0/vllm/entrypoints/generate/structured_decisions/strategies.py#L812), Qwen3 and Qwen3.5 among them, and returns 501 for other models. The router asks for the tier as a `choice` question. `provider` does not take `hosted_vllm`, so connect vLLM through `deployment_name`. This config needs LiteLLM v1.106.0 or later:
+vLLM serves `/v1/systemone` from [v0.32.0](https://github.com/vllm-project/vllm/releases/tag/v0.32.0), added in [vllm-project/vllm#59299](https://github.com/vllm-project/vllm/pull/59299). It answers `choice`, `noul` and `score` questions as described in vLLM's [Structured Decisions](https://github.com/vllm-project/vllm/blob/v0.32.0/docs/serving/online_serving/structured_decisions.md) docs, on the model architectures listed in its [`READ_STRATEGIES`](https://github.com/vllm-project/vllm/blob/v0.32.0/vllm/entrypoints/generate/structured_decisions/strategies.py#L812), Qwen3 and Qwen3.5 among them, and returns 501 for other models. The router asks for the tier as a `choice` question. `provider` does not take `hosted_vllm`, so connect vLLM through `deployment_name`. This config needs Lumina v1.106.0 or later:
 
 ```yaml title="config.yaml"
 model_list:
@@ -119,7 +119,7 @@ model_list:
         classifier_fallback: default_model
 ```
 
-`small-solver` and `large-solver` are the completion deployments from the example above. LiteLLM drops a trailing `/v1` from `api_base` before it adds `/v1/systemone`, so the base URL you use for vLLM chat completions works here too. `mode: decisions` lists the deployment under **Decisions Model** in the dashboard, where you can pick `qwen-decider`. Qwen3-0.6B keeps the example small enough for a CPU, but in testing it rated hard prompts `SIMPLE` and sent them to the small solver. Check the tiers your model picks on your own prompts, as described in [Evaluate quality and cost](#evaluate-quality-and-cost), before you route real traffic through it. On a CPU without bf16 support, the default bf16 weights hung the first `/v1/systemone` call in testing, and `vllm serve Qwen/Qwen3-0.6B --dtype float32 --enforce-eager` worked.
+`small-solver` and `large-solver` are the completion deployments from the example above. Lumina drops a trailing `/v1` from `api_base` before it adds `/v1/systemone`, so the base URL you use for vLLM chat completions works here too. `mode: decisions` lists the deployment under **Decisions Model** in the dashboard, where you can pick `qwen-decider`. Qwen3-0.6B keeps the example small enough for a CPU, but in testing it rated hard prompts `SIMPLE` and sent them to the small solver. Check the tiers your model picks on your own prompts, as described in [Evaluate quality and cost](#evaluate-quality-and-cost), before you route real traffic through it. On a CPU without bf16 support, the default bf16 weights hung the first `/v1/systemone` call in testing, and `vllm serve Qwen/Qwen3-0.6B --dtype float32 --enforce-eager` worked.
 
 On Ollama, Bespoke Nimble connects through [`provider: bespoke`](#nimble-self-hosted-system-one-server). A model that serves only chat completions, on Ollama or any OpenAI-compatible server, can still classify requests as an LLM judge with `classifier_type: llm`, as described in [A self-hosted OpenAI-compatible judge](./optimize_classifier.md#a-self-hosted-openai-compatible-judge).
 
@@ -132,13 +132,13 @@ On Ollama, Bespoke Nimble connects through [`provider: bespoke`](#nimble-self-ho
 | [Jev](https://docs.typesafe.ai/) | TypeSafe's hosted API | `jev-latest` | `jev` |
 | [Databricks `ai_decide`](https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_decide) | An AI Function on your Databricks workspace (Beta) | `ai_decide` | `databricks` |
 
-All four use the System One decision protocol. LiteLLM sends a `choice` question describing your tiers to `POST /v1/systemone`, or to `POST /api/2.0/ai-functions/ai-decide` for Databricks. Set `api_base` to the server's base URL without `/v1/systemone`; an endpoint that only exposes `/v1/evaluate` or chat completions is not sufficient.
+All four use the System One decision protocol. Lumina sends a `choice` question describing your tiers to `POST /v1/systemone`, or to `POST /api/2.0/ai-functions/ai-decide` for Databricks. Set `api_base` to the server's base URL without `/v1/systemone`; an endpoint that only exposes `/v1/evaluate` or chat completions is not sufficient.
 
 :::info Availability
 
-The configuration names in this guide and Laya support require a gateway build containing [backend #43626](https://github.com/BerriAI/litellm/pull/43626). The **OSS Classifier** dashboard selector also requires [UI #43768](https://github.com/BerriAI/litellm/pull/43768). Both changes are merged; use a gateway build that includes them. Bespoke Nimble support requires [Nimble #44246](https://github.com/BerriAI/litellm/pull/44246).
+The configuration names in this guide and Laya support require a gateway build containing [backend #43626](https://github.com/Soventra/lumina/pull/43626). The **OSS Classifier** dashboard selector also requires [UI #43768](https://github.com/Soventra/lumina/pull/43768). Both changes are merged; use a gateway build that includes them. Bespoke Nimble support requires [Nimble #44246](https://github.com/Soventra/lumina/pull/44246).
 
-Databricks serving endpoints require [BerriAI/litellm#45200](https://github.com/BerriAI/litellm/pull/45200), and the `ai_decide` AI Function requires [BerriAI/litellm#45722](https://github.com/BerriAI/litellm/pull/45722).
+Databricks serving endpoints require [Soventra/lumina#45200](https://github.com/Soventra/lumina/pull/45200), and the `ai_decide` AI Function requires [Soventra/lumina#45722](https://github.com/Soventra/lumina/pull/45722).
 
 Existing Jev-compatible configurations can keep `classifier_type: jev` and `jev_classifier_config`. For new routers, use the canonical names below; see [migration](#migrate-an-existing-jev-or-nimble-router) when upgrading an existing router.
 
@@ -146,11 +146,11 @@ Existing Jev-compatible configurations can keep `classifier_type: jev` and `jev_
 
 ## Connect the classifier to the gateway
 
-Set your classifier's connection variables in the **LiteLLM gateway environment**. The examples below use internal hostnames; replace them with your endpoint's base URL. LiteLLM appends `/v1/systemone`, so omit that path from the URL.
+Set your classifier's connection variables in the **Lumina gateway environment**. The examples below use internal hostnames; replace them with your endpoint's base URL. Lumina appends `/v1/systemone`, so omit that path from the URL.
 
 ### Connect Laya {#laya-self-hosted-http-server}
 
-Point LiteLLM to your Laya HTTP endpoint:
+Point Lumina to your Laya HTTP endpoint:
 
 ```bash
 export LAYA_API_BASE="http://laya-server:8000"
@@ -169,7 +169,7 @@ opensource_classifier_config:
 
 ### Connect Nimble {#nimble-self-hosted-system-one-server}
 
-Point LiteLLM to your Nimble System One endpoint:
+Point Lumina to your Nimble System One endpoint:
 
 ```bash
 export BESPOKE_API_BASE="http://nimble-server:8000"
@@ -186,18 +186,18 @@ opensource_classifier_config:
   timeout_ms: 30000
 ```
 
-For an Ollama endpoint, use `model: nimble`. Other deployments may serve `nimble-latest` or `bespokelabs/Bespoke-Nimble-9B`. The `bespoke` provider is separate from LiteLLM's Nimble search integration.
+For an Ollama endpoint, use `model: nimble`. Other deployments may serve `nimble-latest` or `bespokelabs/Bespoke-Nimble-9B`. The `bespoke` provider is separate from Lumina's Nimble search integration.
 
 ### Endpoint and authentication settings
 
 - **Base URL:** use the hostname and port reachable from the gateway. `localhost` refers to the gateway's own host or container.
-- **Credentials:** LiteLLM sends `LAYA_API_KEY` or `BESPOKE_API_KEY` as a bearer token. Use the credential your endpoint accepts; omit it for endpoints that do not require authentication. These settings do not enable authentication on the classifier server.
+- **Credentials:** Lumina sends `LAYA_API_KEY` or `BESPOKE_API_KEY` as a bearer token. Use the credential your endpoint accepts; omit it for endpoints that do not require authentication. These settings do not enable authentication on the classifier server.
 - **Model:** match the name served by your endpoint.
 - **Timeout:** start with the examples above, then tune for your classifier's response time.
 
 Restart the gateway after changing its environment. You can then [configure the Auto Router in the dashboard](#configure-from-the-dashboard) or [use YAML](#configure-the-router).
 
-For a router-specific connection, set `api_base` and its matching `api_key` inside `opensource_classifier_config`. An explicit `api_base` gets `LAYA_API_KEY` or `BESPOKE_API_KEY` only when it names the same server as `LAYA_API_BASE` or `BESPOKE_API_BASE`, ignoring a trailing `/` or `/v1`. Builds before [LiteLLM #45260](https://github.com/BerriAI/litellm/pull/45260) never send the environment key to an explicit `api_base`. If your endpoint requires another authentication scheme, such as Modal's `Modal-Key` and `Modal-Secret` headers, use a proxy that translates the bearer credential to the required headers.
+For a router-specific connection, set `api_base` and its matching `api_key` inside `opensource_classifier_config`. An explicit `api_base` gets `LAYA_API_KEY` or `BESPOKE_API_KEY` only when it names the same server as `LAYA_API_BASE` or `BESPOKE_API_BASE`, ignoring a trailing `/` or `/v1`. Builds before [Lumina #45260](https://github.com/Soventra/lumina/pull/45260) never send the environment key to an explicit `api_base`. If your endpoint requires another authentication scheme, such as Modal's `Modal-Key` and `Modal-Secret` headers, use a proxy that translates the bearer credential to the required headers.
 
 ### Jev: hosted TypeSafe API
 
@@ -216,14 +216,14 @@ For a router-specific endpoint, supply both `api_base` and its matching `api_key
 
 ### Databricks: the ai_decide AI Function {#databricks-ai-decide}
 
-Databricks serves OpenJev as the `ai_decide` AI Function at `POST /api/2.0/ai-functions/ai-decide` on your workspace. The function is in Beta, so a workspace admin must turn on the `ai_decide` preview first. Point LiteLLM at your workspace with the same variables the other `databricks/` models use:
+Databricks serves OpenJev as the `ai_decide` AI Function at `POST /api/2.0/ai-functions/ai-decide` on your workspace. The function is in Beta, so a workspace admin must turn on the `ai_decide` preview first. Point Lumina at your workspace with the same variables the other `databricks/` models use:
 
 ```bash
 export DATABRICKS_API_BASE="https://<workspace-host>"
 export DATABRICKS_API_KEY="<databricks-token>"
 ```
 
-`DATABRICKS_TOKEN` is read when `DATABRICKS_API_KEY` is unset, and a `DATABRICKS_API_BASE` that ends in `/serving-endpoints` also works. Use `provider: databricks` and set `model: ai_decide`, which is required. A bare serving endpoint name such as `databricks-openjev-qwen35-4b` also works, and LiteLLM then sends the request, `model` included, to that endpoint's `/invocations` route instead. In the [complete router configuration](#configure-the-router), use:
+`DATABRICKS_TOKEN` is read when `DATABRICKS_API_KEY` is unset, and a `DATABRICKS_API_BASE` that ends in `/serving-endpoints` also works. Use `provider: databricks` and set `model: ai_decide`, which is required. A bare serving endpoint name such as `databricks-openjev-qwen35-4b` also works, and Lumina then sends the request, `model` included, to that endpoint's `/invocations` route instead. In the [complete router configuration](#configure-the-router), use:
 
 ```yaml
 opensource_classifier_config:
@@ -232,7 +232,7 @@ opensource_classifier_config:
   timeout_ms: 5000
 ```
 
-LiteLLM posts the System One request without a `model` field to `POST /api/2.0/ai-functions/ai-decide` and logs the classifier call as `databricks/ai_decide`. The AI Function reports no token usage, so the classifier call is logged at zero cost and no `x-litellm-classifier-cost` header is returned. A router-specific `api_base` requires its matching `api_key`, so a configuration override cannot send the workspace token to another host.
+Lumina posts the System One request without a `model` field to `POST /api/2.0/ai-functions/ai-decide` and logs the classifier call as `databricks/ai_decide`. The AI Function reports no token usage, so the classifier call is logged at zero cost and no `x-lumina-classifier-cost` header is returned. A router-specific `api_base` requires its matching `api_key`, so a configuration override cannot send the workspace token to another host.
 
 ## Configure from the dashboard
 
@@ -246,7 +246,7 @@ From v1.104.3 the dashboard picks the classifier from your deployed decision mod
 
 Dashboards before v1.104.3 show **OSS Classifier** with an **OSS provider** list instead. There, set the [connection variables above](#connect-the-classifier-to-the-gateway) on the gateway, choose **Laya** or **Bespoke Nimble**, and set **Classifier Model** to a name your server supports. Start the timeout at `15000` for Laya or `30000` for Nimble.
 
-Built-in OSS classification uses the shipped tier criteria and is available without a LiteLLM license. Custom instructions and custom tiers follow the dashboard's displayed allowance.
+Built-in OSS classification uses the shipped tier criteria and is available without a Lumina license. Custom instructions and custom tiers follow the dashboard's displayed allowance.
 
 Administrators can configure `api_base` and `api_key` overrides through the management API. An explicit `api_base` inherits the environment key only when it names the `LAYA_API_BASE` or `BESPOKE_API_BASE` server, so supply its matching `api_key` when the server requires one. The dashboard edits model and classifier options while the gateway owns the connection. Saving the same provider preserves its stored connection; changing providers drops the previous provider's endpoint and key. Team members cannot submit endpoint or credential overrides through the management API.
 
@@ -287,15 +287,15 @@ This example routes classifier failures to `large-solver` and sends no prior con
 
 ## Test routing and send a request
 
-Start LiteLLM after setting the classifier connection variables and your completion-provider credentials:
+Start Lumina after setting the classifier connection variables and your completion-provider credentials:
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 In **Models + Endpoints → Auto Router**, open the create or edit form and use **Test Routing** to inspect the chosen tier and model without calling the completion model. A successful fallback does not prove the classifier worked: inspect the routing cause and classifier model. A decision-model result uses `cause: jev_classifier` for every decision model. Laya reports a classifier model such as `laya/english`; Nimble reports `bespoke/<model>`, using the model returned by the server when available; Databricks reports `databricks/ai_decide`.
 
-Use a LiteLLM virtual key with access to `decision-router` to make a completion:
+Use a Lumina virtual key with access to `decision-router` to make a completion:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
@@ -311,7 +311,7 @@ If a decision model is missing from the dashboard's **Decision model** list, che
 
 ## Call a native decision API
 
-Configure the matching server URL, then use a LiteLLM virtual key with access to the provider-prefixed model. The body names the native model:
+Configure the matching server URL, then use a Lumina virtual key with access to the provider-prefixed model. The body names the native model:
 
 | Provider | Gateway endpoint | Body `model` | Virtual-key model permission |
 | --- | --- | --- | --- |
@@ -372,7 +372,7 @@ curl http://localhost:4000/v1/systemone \
   }'
 ```
 
-LiteLLM unwraps the `response` envelope Databricks returns and keeps its `metadata`. The AI Function reports no usage or model, so `usage` is zero and `model` is `null`. See the [Databricks provider page](/docs/providers/databricks#decisions-ai_decide) for the full deployment example.
+Lumina unwraps the `response` envelope Databricks returns and keeps its `metadata`. The AI Function reports no usage or model, so `usage` is zero and `model` is `null`. See the [Databricks provider page](/docs/providers/databricks#decisions-ai_decide) for the full deployment example.
 
 Every native Laya request must explicitly choose `english`, `multilingual` or `typed-decisions`, with permission for the corresponding `laya/<checkpoint>` model. Unknown names and automatic selection are rejected. The response preserves Laya's `answers`, `usage` and `routing` fields. Both native routes support System One requests only; `/v1/evaluate`, chat completions and streaming are not exposed. Nimble preserves its native `answers` and `usage` response.
 
@@ -380,13 +380,13 @@ Every native Laya request must explicitly choose `english`, `multilingual` or `t
 
 Compare tier choices on representative prompts before changing production routing. Probabilities describe the supplied choices; confidence scores from different model families are not interchangeable accuracy estimates. Measure downstream answer quality, classifier latency, fallback frequency and total cost using the [evaluation guide](/docs/auto_router/evaluate).
 
-Jev calls can incur TypeSafe charges. Self-hosting Nimble or Laya has compute costs even without a hosted inference fee. Laya and Bespoke Nimble's built-in catalog token rates are zero; infrastructure is paid separately. Jev uses `typesafe/<model>` classifier log naming, Laya uses `laya/<checkpoint>`, Bespoke Nimble uses `bespoke/<model>` and Databricks uses `databricks/ai_decide`. Databricks `ai_decide` is logged at zero cost: Databricks bills AI Functions on your workspace, and the function reports no token usage for LiteLLM to price. The OSS classifier name does not change the `cause: jev_classifier` value in routing results.
+Jev calls can incur TypeSafe charges. Self-hosting Nimble or Laya has compute costs even without a hosted inference fee. Laya and Bespoke Nimble's built-in catalog token rates are zero; infrastructure is paid separately. Jev uses `typesafe/<model>` classifier log naming, Laya uses `laya/<checkpoint>`, Bespoke Nimble uses `bespoke/<model>` and Databricks uses `databricks/ai_decide`. Databricks `ai_decide` is logged at zero cost: Databricks bills AI Functions on your workspace, and the function reports no token usage for Lumina to price. The OSS classifier name does not change the `cause: jev_classifier` value in routing results.
 
 If the classifier falls back, check the endpoint, checkpoint name, credentials, model warm-up and timeout. A timeout can also open the classifier circuit breaker, which defaults to a 30-second recovery interval. Verify that the server accepts `/v1/systemone`, rather than adding that path to `api_base`.
 
 ## Migrate an existing Jev or Nimble router
 
-After upgrading to v1.106.0 or later, which ships [backend #43626](https://github.com/BerriAI/litellm/pull/43626), use `classifier_type: oss_classifier` and rename `jev_classifier_config` to `opensource_classifier_config`. Set `provider: jev` and keep the existing model, endpoint, credential and classifier options. For example, the hosted Jev configuration becomes:
+After upgrading to v1.106.0 or later, which ships [backend #43626](https://github.com/Soventra/lumina/pull/43626), use `classifier_type: oss_classifier` and rename `jev_classifier_config` to `opensource_classifier_config`. Set `provider: jev` and keep the existing model, endpoint, credential and classifier options. For example, the hosted Jev configuration becomes:
 
 ```yaml
 classifier_type: oss_classifier

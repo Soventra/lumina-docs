@@ -4,11 +4,11 @@ title: API reference
 
 # API reference
 
-The entry points live on the top-level `litellm` module, next to `litellm.completion`. Each one has an async version with an `a` prefix.
+The entry points live on the top-level `lumina` module, next to `lumina.completion`. Each one has an async version with an `a` prefix.
 
 ```python
-import litellm
-from litellm import (
+import lumina
+from lumina import (
     Harness,
     ClaudeCodeOptions,
     CodexOptions,
@@ -17,18 +17,18 @@ from litellm import (
     ToolLoopOptions,
     sandbox,
 )
-from litellm.harness import Text, ToolCall, FileChange, Done, Result, State
+from lumina.harness import Text, ToolCall, FileChange, Done, Result, State
 ```
 
 ## Functions
 
 | Function | Async | Returns |
 |---|---|---|
-| `litellm.agent(harness, prompt, *, sandbox, **options)` | `aagent` | `Result` |
-| `litellm.agent(harness, prompt, *, sandbox, stream=True, **options)` | `aagent(..., stream=True)` | `EventStream` |
-| `litellm.agent_session(harness, *, sandbox, **options)` | `aagent_session` | `Session` |
-| `litellm.agent_resume(state, *, sandbox)` | `aagent_resume` | `Session` |
-| `litellm.agent_capabilities(harness)` | | `Capabilities` |
+| `lumina.agent(harness, prompt, *, sandbox, **options)` | `aagent` | `Result` |
+| `lumina.agent(harness, prompt, *, sandbox, stream=True, **options)` | `aagent(..., stream=True)` | `EventStream` |
+| `lumina.agent_session(harness, *, sandbox, **options)` | `aagent_session` | `Session` |
+| `lumina.agent_resume(state, *, sandbox)` | `aagent_resume` | `Session` |
+| `lumina.agent_capabilities(harness)` | | `Capabilities` |
 
 ## Options
 
@@ -40,7 +40,7 @@ def agent(
     prompt: str,
     *,
     sandbox: Sandbox,
-    model: str | None = None,                # "litellm_proxy/<group>" for the gateway, else any LiteLLM model
+    model: str | None = None,                # "lumina_proxy/<group>" for the gateway, else any Lumina model
     api_key: str | None = None,              # gateway virtual key, or provider key in SDK mode
     api_base: str | None = None,             # gateway root without /v1, or provider base in SDK mode
     stream: bool = False,
@@ -53,7 +53,7 @@ def agent(
     output: type[BaseModel] | None = None,
     max_turns: int | None = None,
     timeout: float | None = None,
-    metadata: Mapping[str, Any] | None = None,   # sent as x-litellm-spend-logs-metadata
+    metadata: Mapping[str, Any] | None = None,   # sent as x-lumina-spend-logs-metadata
     options: (
         ClaudeCodeOptions
         | CodexOptions

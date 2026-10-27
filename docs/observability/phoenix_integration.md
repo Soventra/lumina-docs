@@ -3,21 +3,21 @@ import TabItem from '@theme/TabItem';
 
 # Arize Phoenix
 
-[Arize Phoenix](https://arize.com/phoenix/) is the open-source LLM tracing and evaluation project from [Arize AI](https://arize.com/?utm_source=litellm-docs&utm_medium=partner&utm_campaign=partner-docs&utm_content=phoenix-integration). Use it for local development, experimentation, and self-hosted workflows.
+[Arize Phoenix](https://arize.com/phoenix/) is the open-source LLM tracing and evaluation project from [Arize AI](https://arize.com/?utm_source=lumina-docs&utm_medium=partner&utm_campaign=partner-docs&utm_content=phoenix-integration). Use it for local development, experimentation, and self-hosted workflows.
 
-Phoenix is separate from [Arize AX](https://arize.com/products/ax/), the full-featured platform for production teams, AI-native companies, and enterprises, available as managed cloud or enterprise self-hosted deployment. LiteLLM supports both backends, but they use different callbacks, credentials, and endpoints. Use `arize_phoenix` for Phoenix, use `arize` for AX, or enable both when you need to send the same traces to each.
+Phoenix is separate from [Arize AX](https://arize.com/products/ax/), the full-featured platform for production teams, AI-native companies, and enterprises, available as managed cloud or enterprise self-hosted deployment. Lumina supports both backends, but they use different callbacks, credentials, and endpoints. Use `arize_phoenix` for Phoenix, use `arize` for AX, or enable both when you need to send the same traces to each.
 
-For teams building evaluation loops around LiteLLM traces, Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) cover production workflows for tracing failures, evaluating model behavior, and improving agent reliability.
+For teams building evaluation loops around Lumina traces, Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) cover production workflows for tracing failures, evaluating model behavior, and improving agent reliability.
 
 :::info
-We want to learn how we can make the callbacks better! Meet the LiteLLM [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version) or
+We want to learn how we can make the callbacks better! Meet the Lumina [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version) or
 join our [discord](https://discord.gg/wuPM9dRgDw)
 :::
 
 ## Pre-Requisites
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
 ## Quick Start
@@ -26,7 +26,7 @@ uv add litellm
 <TabItem value="python" label="SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["LUMINA_OTEL_V2"] = "true"
@@ -36,11 +36,11 @@ os.environ["PHOENIX_PROJECT_NAME"] = ""   # optional, defaults to "default"
 # LLM API Keys
 os.environ["OPENAI_API_KEY"] = ""
 
-# set arize_phoenix as a callback, litellm will send the data to phoenix
-litellm.callbacks = ["arize_phoenix"]
+# set arize_phoenix as a callback, lumina will send the data to phoenix
+lumina.callbacks = ["arize_phoenix"]
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_large}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -49,7 +49,7 @@ response = litellm.completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -60,7 +60,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["arize_phoenix"]
 ```
 
@@ -73,10 +73,10 @@ PHOENIX_COLLECTOR_ENDPOINT="https://app.phoenix.arize.com/v1/traces"
 PHOENIX_PROJECT_NAME="my-project"   # optional
 ```
 
-3. Start LiteLLM Proxy
+3. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it!
@@ -107,22 +107,22 @@ Phoenix uses the same OpenInference vocabulary as Arize AX, so the LLM-call span
 
 The `arize_phoenix` preset names the `openinference` mapper for you. If you point the generic OTLP path at Phoenix instead (your own collector, `OTEL_ENDPOINT` at the Phoenix `/v1/traces` URL), the spans arrive with only the canonical `gen_ai.*` names and render plainly until you name the mapper with `MAPPER_NAMES=genai,openinference` or `callback_settings.otel.mapper_names`.
 
-![LiteLLM trace in Phoenix](/img/observability/otel_v2_phoenix.png)
+![Lumina trace in Phoenix](/img/observability/otel_v2_phoenix.png)
 
 ## Configuration
 
 | Variable | Required | Notes |
 |---|---|---|
-| `PHOENIX_API_KEY` | Phoenix Cloud only | Required when the endpoint is on `app.phoenix.arize.com`; litellm raises without it. Self-hosted Phoenix does not need one |
+| `PHOENIX_API_KEY` | Phoenix Cloud only | Required when the endpoint is on `app.phoenix.arize.com`; lumina raises without it. Self-hosted Phoenix does not need one |
 | `PHOENIX_COLLECTOR_HTTP_ENDPOINT` | No | Collector endpoint; takes precedence over `PHOENIX_COLLECTOR_ENDPOINT` when both are set |
 | `PHOENIX_COLLECTOR_ENDPOINT` | No | Collector endpoint, used when the HTTP variable is unset |
 | `PHOENIX_PROJECT_NAME` | No | Defaults to `default`; also readable as `PHOENIX_COLLECTOR_PROJECT_NAME`. This is the fallback project when a key or team does not set `phoenix_project_name` |
 
-If neither endpoint variable is set, litellm falls back to `http://localhost:6006/v1/traces`.
+If neither endpoint variable is set, lumina falls back to `http://localhost:6006/v1/traces`.
 
 ### Protocol is inferred from the endpoint, not the variable name
 
-Neither variable is tied to a protocol. litellm picks the protocol from the value you give it: an endpoint starting with `grpc://`, or containing `:4317` without a `/v1/traces` path, exports over gRPC, and anything else exports over HTTP. So a Phoenix Cloud URL works in either variable, and pointing `PHOENIX_COLLECTOR_ENDPOINT` at `https://app.phoenix.arize.com/v1/traces` sends over HTTP as intended.
+Neither variable is tied to a protocol. lumina picks the protocol from the value you give it: an endpoint starting with `grpc://`, or containing `:4317` without a `/v1/traces` path, exports over gRPC, and anything else exports over HTTP. So a Phoenix Cloud URL works in either variable, and pointing `PHOENIX_COLLECTOR_ENDPOINT` at `https://app.phoenix.arize.com/v1/traces` sends over HTTP as intended.
 
 ### Picking the right collector endpoint
 
@@ -137,7 +137,7 @@ Phoenix has more than one collector endpoint shape, and picking the wrong one is
 
 ## Route traces to a Phoenix project per team or key
 
-One Phoenix collector can hold many projects. On the LiteLLM proxy, set `phoenix_project_name` on a team or a virtual key so that team's (or that key's) LLM spans land in their own Phoenix project. Keys with no project name keep using `PHOENIX_PROJECT_NAME`.
+One Phoenix collector can hold many projects. On the Lumina proxy, set `phoenix_project_name` on a team or a virtual key so that team's (or that key's) LLM spans land in their own Phoenix project. Keys with no project name keep using `PHOENIX_PROJECT_NAME`.
 
 This is how you split traces by team without standing up a Phoenix instance per tenant. The project comes only from the team or key the proxy resolved at auth. A caller who puts `phoenix_project_name` in the request body is ignored; the call still returns 200 and no attacker-chosen project is created.
 
@@ -228,7 +228,7 @@ This is different from [per-team credentials](./opentelemetry_v2#per-key--per-te
 Presets compose, so you can run both backends from one proxy:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["arize_phoenix", "arize"]
 ```
 
@@ -240,6 +240,6 @@ Looking for prompt management rather than tracing? See [Arize Phoenix Prompt Man
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

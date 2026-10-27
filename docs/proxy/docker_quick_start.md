@@ -1,6 +1,6 @@
 ---
 title: Quickstart
-description: Start LiteLLM with one command or one click and go from zero to your first gateway request in about five minutes, using the Admin UI for everything after startup.
+description: Start Lumina with one command or one click and go from zero to your first gateway request in about five minutes, using the Admin UI for everything after startup.
 ---
 
 import Image from '@theme/IdealImage';
@@ -12,7 +12,7 @@ import {OneClickDeploy} from '@site/src/components/Conversion';
 
 # Quickstart
 
-LiteLLM ships as a ready-to-run gateway. You start it with one command (or one click), then do everything else in your browser: connect providers, add models, create keys, and send test requests from the built-in Admin UI. No config files are required for this guide.
+Lumina ships as a ready-to-run gateway. You start it with one command (or one click), then do everything else in your browser: connect providers, add models, create keys, and send test requests from the built-in Admin UI. No config files are required for this guide.
 
 <QuickStartBox variant="gateway" showTitle={false} heading="Up and running in a minute" source="docker-quickstart">
 
@@ -20,17 +20,17 @@ When the command finishes, open the Admin UI. Then you can [add your models](#3-
 
 </QuickStartBox>
 
-For detailed installation steps, follow the rest of the guide. By the end you will have LiteLLM running at `http://localhost:4000` with a model connected, a virtual key issued, and a request served through the gateway.
+For detailed installation steps, follow the rest of the guide. By the end you will have Lumina running at `http://localhost:4000` with a model connected, a virtual key issued, and a request served through the gateway.
 
-## 1. Start LiteLLM
+## 1. Start Lumina
 
 ```bash
-curl -sSLO https://github.com/BerriAI/litellm/raw/main/docker/docker-compose.quickstart.yml
+curl -sSLO https://github.com/Soventra/lumina/raw/main/docker/docker-compose.quickstart.yml
 printf 'LUMINA_MASTER_KEY=sk-%s\nLUMINA_SALT_KEY=sk-%s\n' "$(openssl rand -hex 32)" "$(openssl rand -hex 32)" > .env
 docker compose -f docker-compose.quickstart.yml up -d
 ```
 
-This brings up the gateway on port 4000 and a Postgres database that stores your models, keys, and spend logs. The [compose file](https://github.com/BerriAI/litellm/blob/main/docker/docker-compose.quickstart.yml) defines just those two services and now sits in your working directory, so you can read it before starting it, and edit it afterwards to pin a specific release tag.
+This brings up the gateway on port 4000 and a Postgres database that stores your models, keys, and spend logs. The [compose file](https://github.com/Soventra/lumina/blob/main/docker/docker-compose.quickstart.yml) defines just those two services and now sits in your working directory, so you can read it before starting it, and edit it afterwards to pin a specific release tag.
 
 The second command generates your master key, which is the credential you will use for every request below. The proxy refuses to start without it. Keep the `.env` file: regenerating `LUMINA_SALT_KEY` makes credentials already stored in the database unreadable.
 
@@ -48,11 +48,11 @@ Running locally, the command above generated both into `.env` and the compose fi
 
 Open [http://localhost:4000/ui](http://localhost:4000/ui). The username is `admin` and the password is your `LUMINA_MASTER_KEY` value, the one in the `.env` file you just generated.
 
-<Image img={require('../../img/ui_quickstart_login.png')} dark={require('../../img/ui_quickstart_login_dark.png')} alt="LiteLLM Admin UI login page" />
+<Image img={require('../../img/ui_quickstart_login.png')} dark={require('../../img/ui_quickstart_login_dark.png')} alt="Lumina Admin UI login page" />
 
 ## 3. Add your first model
 
-Go to **Models + Endpoints**, open the **Add Model** tab, pick your provider and the models you want to expose, and paste your provider API key. LiteLLM ships with each provider's model catalog, so you select models rather than type them.
+Go to **Models + Endpoints**, open the **Add Model** tab, pick your provider and the models you want to expose, and paste your provider API key. Lumina ships with each provider's model catalog, so you select models rather than type them.
 
 <Image img={require('../../img/ui_quickstart_add_model.png')} dark={require('../../img/ui_quickstart_add_model_dark.png')} alt="Add Model form with OpenAI provider and gpt-5.5 selected" />
 
@@ -61,7 +61,7 @@ Click **Test Connect** to verify the key against the provider, then **Add Model*
 <Image img={require('../../img/ui_quickstart_models_list.png')} dark={require('../../img/ui_quickstart_models_list_dark.png')} alt="Deployed Models list showing the newly added model with cost data" />
 
 :::tip[Keep provider keys out of the UI]
-If you prefer to manage provider keys as environment variables, download the compose file, add them to the `litellm` service (for example `OPENAI_API_KEY: ${OPENAI_API_KEY}`), and enter `os.environ/OPENAI_API_KEY` in the API key field instead of the raw key.
+If you prefer to manage provider keys as environment variables, download the compose file, add them to the `lumina` service (for example `OPENAI_API_KEY: ${OPENAI_API_KEY}`), and enter `os.environ/OPENAI_API_KEY` in the API key field instead of the raw key.
 :::
 
 ## 4. Send a test message
@@ -175,10 +175,10 @@ console.log(response.choices[0].message.content);
 
 ## Running without a database
 
-If you only need the OpenAI-compatible API (no Admin UI model management, virtual keys, or spend tracking), you can run the plain `litellm` image with a config file instead:
+If you only need the OpenAI-compatible API (no Admin UI model management, virtual keys, or spend tracking), you can run the plain `lumina` image with a config file instead:
 
 ```yaml
-# litellm_config.yaml
+# lumina_config.yaml
 model_list:
   - model_name: {{openai_large}}
     lumina_params:
@@ -188,11 +188,11 @@ model_list:
 
 ```bash
 docker run \
-  -v $(pwd)/litellm_config.yaml:/app/config.yaml \
+  -v $(pwd)/lumina_config.yaml:/app/config.yaml \
   -e OPENAI_API_KEY=<your-openai-key> \
   -e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
   -p 4000:4000 \
-  docker.litellm.ai/berriai/litellm:latest \
+  docker.lumina.ai/soventra/lumina:latest \
   --config /app/config.yaml
 ```
 
@@ -200,14 +200,14 @@ Requests authenticate with the master key. See the [full config reference](./con
 
 :::warning[Budgets are not enforced without a database]
 
-`litellm_settings.max_budget` is not a spend cap on this path. Loading the proxy's global spend requires a database client, so without one the running total stays unknown and the global budget check never fires; a proxy configured with `max_budget: 100` keeps serving requests past $100 with no per-request error and no budget alert. The proxy does log a one-time warning at startup when a budget is configured with no database connected, and that startup line is the only signal you get
+`lumina_settings.max_budget` is not a spend cap on this path. Loading the proxy's global spend requires a database client, so without one the running total stays unknown and the global budget check never fires; a proxy configured with `max_budget: 100` keeps serving requests past $100 with no per-request error and no budget alert. The proxy does log a one-time warning at startup when a budget is configured with no database connected, and that startup line is the only signal you get
 
 Key and team budgets are not an alternative here either, because virtual keys themselves need a database (requests carrying one fail with `No connected db.`), so the master key is the only credential and it has no budget of its own
 
-If a budget is part of how you bound spend, run LiteLLM with a database as shown at the top of this page. Without one, bound spend upstream instead, at your provider's own spending limits
+If a budget is part of how you bound spend, run Lumina with a database as shown at the top of this page. Without one, bound spend upstream instead, at your provider's own spending limits
 
 :::
 
 ## Next steps
 
-Going to production: the [Production Deployment guide](./deploy.md) covers Helm, Terraform, and Kubernetes on AWS, GCP, and Azure, and the [production checklist](./prod.md) covers hardening and tuning. Full container and database options, including Redis and Prometheus, are covered in the repo [docker-compose.yml](https://github.com/BerriAI/litellm/blob/main/docker-compose.yml).
+Going to production: the [Production Deployment guide](./deploy.md) covers Helm, Terraform, and Kubernetes on AWS, GCP, and Azure, and the [production checklist](./prod.md) covers hardening and tuning. Full container and database options, including Redis and Prometheus, are covered in the repo [docker-compose.yml](https://github.com/Soventra/lumina/blob/main/docker-compose.yml).

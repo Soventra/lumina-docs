@@ -23,7 +23,7 @@ Looking for Qualifire Guardrails? Check out the [Qualifire Guardrails Integratio
 2. Get your API key and webhook URL from the Qualifire dashboard
 
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ## Quick Start
@@ -31,11 +31,11 @@ uv add litellm
 Use just 2 lines of code to instantly log your responses **across all providers** with Qualifire.
 
 ```python
-litellm.callbacks = ["qualifire_eval"]
+lumina.callbacks = ["qualifire_eval"]
 ```
 
 ```python
-import litellm
+import lumina
 import os
 
 # Set Qualifire credentials
@@ -45,11 +45,11 @@ os.environ["QUALIFIRE_WEBHOOK_URL"] = "https://your-qualifire-webhook-url"
 # LLM API Keys
 os.environ['OPENAI_API_KEY'] = "your-openai-api-key"
 
-# Set qualifire_eval as a callback & LiteLLM will send the data to Qualifire
-litellm.callbacks = ["qualifire_eval"]
+# Set qualifire_eval as a callback & Lumina will send the data to Qualifire
+lumina.callbacks = ["qualifire_eval"]
 
 # OpenAI call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_large}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -57,7 +57,7 @@ response = litellm.completion(
 )
 ```
 
-## Using with LiteLLM Proxy
+## Using with Lumina Proxy
 
 1. Setup config.yaml
 
@@ -68,11 +68,11 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["qualifire_eval"]
 
 general_settings:
-  master_key: "sk-<your-litellm-master-key>"
+  master_key: "sk-<your-lumina-master-key>"
 
 environment_variables:
   QUALIFIRE_API_KEY: "your-qualifire-api-key"
@@ -82,7 +82,7 @@ environment_variables:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it!
@@ -103,7 +103,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ## What Gets Logged?
 
-The [LiteLLM Standard Logging Payload](https://docs.litellm.ai/docs/proxy/logging_spec) is sent to your Qualifire endpoint on each successful LLM API call.
+The [Lumina Standard Logging Payload](https://docs.lumina.ai/docs/proxy/logging_spec) is sent to your Qualifire endpoint on each successful LLM API call.
 
 This includes:
 

@@ -1,36 +1,36 @@
 # MCP OBO Auth
 
-OAuth 2.0 On-Behalf-Of (OBO) auth lets LiteLLM exchange a user's incoming bearer token for a scoped token that is valid for a specific MCP server.
+OAuth 2.0 On-Behalf-Of (OBO) auth lets Lumina exchange a user's incoming bearer token for a scoped token that is valid for a specific MCP server.
 
 Use OBO when:
 
 - Your MCP server should receive a token minted specifically for that MCP server.
-- Your identity provider supports [RFC 8693 OAuth 2.0 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693), or is Microsoft Entra ID, which LiteLLM speaks natively (see [Microsoft Entra ID](#microsoft-entra-id-azure-ad) below).
-- You want LiteLLM to keep the user's raw token from being forwarded directly to the MCP server.
+- Your identity provider supports [RFC 8693 OAuth 2.0 Token Exchange](https://datatracker.ietf.org/doc/html/rfc8693), or is Microsoft Entra ID, which Lumina speaks natively (see [Microsoft Entra ID](#microsoft-entra-id-azure-ad) below).
+- You want Lumina to keep the user's raw token from being forwarded directly to the MCP server.
 
 ## How It Works
 
 ```mermaid
 flowchart TD
-    A[User or agent calls LiteLLM with a bearer token] --> B[LiteLLM identifies the target MCP server]
+    A[User or agent calls Lumina with a bearer token] --> B[Lumina identifies the target MCP server]
     B --> C{MCP server auth_type is oauth2_token_exchange?}
     C -- No --> D[Use the server's configured auth flow]
-    C -- Yes --> E[LiteLLM extracts the caller bearer token as the subject token]
-    E --> F[LiteLLM POSTs an RFC 8693 token exchange request to the IdP]
+    C -- Yes --> E[Lumina extracts the caller bearer token as the subject token]
+    E --> F[Lumina POSTs an RFC 8693 token exchange request to the IdP]
     F --> G[IdP validates the subject token, audience, client, and scopes]
     G --> H[IdP returns a scoped access token for the MCP server]
-    H --> I[LiteLLM caches the scoped token per subject token and MCP server]
-    I --> J[LiteLLM calls the MCP server with the scoped bearer token]
+    H --> I[Lumina caches the scoped token per subject token and MCP server]
+    I --> J[Lumina calls the MCP server with the scoped bearer token]
     J --> K[MCP server executes the tool and returns the result]
 ```
 
 In short:
 
-1. The client sends a request to LiteLLM with a bearer token.
-2. LiteLLM uses that bearer token as the RFC 8693 `subject_token`.
-3. LiteLLM exchanges it at your identity provider's token exchange endpoint.
-4. LiteLLM forwards only the exchanged scoped token to the MCP server.
-5. LiteLLM caches the exchanged token until it expires, so repeated calls avoid another identity provider round trip.
+1. The client sends a request to Lumina with a bearer token.
+2. Lumina uses that bearer token as the RFC 8693 `subject_token`.
+3. Lumina exchanges it at your identity provider's token exchange endpoint.
+4. Lumina forwards only the exchanged scoped token to the MCP server.
+5. Lumina caches the exchanged token until it expires, so repeated calls avoid another identity provider round trip.
 
 ## Configure an MCP Server for OBO
 
@@ -66,10 +66,10 @@ mcp_servers:
 |-------|----------|-------------|
 | `auth_type` | Yes | Must be `oauth2_token_exchange`. |
 | `token_exchange_endpoint` | Yes | The identity provider endpoint that accepts RFC 8693 token exchange requests. |
-| `client_id` | Yes | OAuth client identifier LiteLLM uses when calling the token exchange endpoint. |
-| `client_secret` | Yes | OAuth client secret LiteLLM uses when calling the token exchange endpoint. |
-| `audience` | Recommended | Resource identifier for the MCP server. LiteLLM sends this as the token exchange `audience`. |
-| `scopes` | Optional | Scopes LiteLLM requests for the exchanged token. LiteLLM joins the list into the OAuth `scope` parameter. |
+| `client_id` | Yes | OAuth client identifier Lumina uses when calling the token exchange endpoint. |
+| `client_secret` | Yes | OAuth client secret Lumina uses when calling the token exchange endpoint. |
+| `audience` | Recommended | Resource identifier for the MCP server. Lumina sends this as the token exchange `audience`. |
+| `scopes` | Optional | Scopes Lumina requests for the exchanged token. Lumina joins the list into the OAuth `scope` parameter. |
 | `subject_token_type` | Optional | RFC 8693 subject token type. Defaults to `urn:ietf:params:oauth:token-type:access_token`. |
 | `upstream_token_header` | Optional | Which upstream header carries the exchanged token. Defaults to `Authorization`. See [sending the token on a different header](#sending-the-exchanged-token-on-a-different-header). |
 | `token_exchange_profile` | Optional | Wire dialect for the exchange. `rfc8693` (default) speaks the standard token-exchange grant; `entra_obo` speaks Microsoft Entra ID's On-Behalf-Of flow. See [Microsoft Entra ID](#microsoft-entra-id-azure-ad). |
@@ -115,7 +115,7 @@ origins will not see the credential on the second hop.
 
 ## Token Exchange Request
 
-For each uncached subject token and MCP server pair, LiteLLM sends a form-encoded request like this to `token_exchange_endpoint`:
+For each uncached subject token and MCP server pair, Lumina sends a form-encoded request like this to `token_exchange_endpoint`:
 
 ```http
 POST /oauth2/token
@@ -140,7 +140,7 @@ Your identity provider should return an access token:
 }
 ```
 
-LiteLLM then calls the MCP server with:
+Lumina then calls the MCP server with:
 
 ```http
 Authorization: Bearer scoped-token-for-mcp-server
@@ -148,7 +148,7 @@ Authorization: Bearer scoped-token-for-mcp-server
 
 ## Microsoft Entra ID (Azure AD)
 
-Microsoft Entra ID doesn't implement the RFC 8693 token-exchange grant above. Its On-Behalf-Of flow uses the RFC 7523 `jwt-bearer` grant instead: the caller's token rides as `assertion` rather than `subject_token`, there's no `audience` parameter, and a Microsoft-only `requested_token_use=on_behalf_of` extension is what turns the grant into a delegation rather than a plain jwt-bearer exchange. LiteLLM treats Entra as a first-class profile, so pointing at Entra is a config change, not a different integration: set `token_exchange_profile: entra_obo` and LiteLLM builds the jwt-bearer form instead of the RFC 8693 form.
+Microsoft Entra ID doesn't implement the RFC 8693 token-exchange grant above. Its On-Behalf-Of flow uses the RFC 7523 `jwt-bearer` grant instead: the caller's token rides as `assertion` rather than `subject_token`, there's no `audience` parameter, and a Microsoft-only `requested_token_use=on_behalf_of` extension is what turns the grant into a delegation rather than a plain jwt-bearer exchange. Lumina treats Entra as a first-class profile, so pointing at Entra is a config change, not a different integration: set `token_exchange_profile: entra_obo` and Lumina builds the jwt-bearer form instead of the RFC 8693 form.
 
 ```yaml title="config.yaml" showLineNumbers
 mcp_servers:
@@ -161,7 +161,7 @@ mcp_servers:
     # Your Entra tenant's v2.0 token endpoint
     token_exchange_endpoint: "https://login.microsoftonline.com/<tenant-id>/oauth2/v2.0/token"
 
-    # App registration LiteLLM uses to call the token endpoint. The caller's
+    # App registration Lumina uses to call the token endpoint. The caller's
     # token must have been issued with this client_id as its `aud`.
     client_id: "<entra-app-client-id>"
     client_secret: "<entra-app-client-secret>"
@@ -174,7 +174,7 @@ mcp_servers:
 
 `audience` and `subject_token_type` are unused with `entra_obo`: Entra has no audience parameter (the target resource goes in `scope` instead), and the jwt-bearer grant doesn't examine subject token type.
 
-For each uncached caller token and MCP server pair, LiteLLM sends:
+For each uncached caller token and MCP server pair, Lumina sends:
 
 ```http
 POST /<tenant-id>/oauth2/v2.0/token
@@ -188,32 +188,32 @@ grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer
 &client_secret=<entra-app-client-secret>
 ```
 
-Entra returns the same access token response shape shown above, and LiteLLM caches and forwards the exchanged token the same way regardless of profile.
+Entra returns the same access token response shape shown above, and Lumina caches and forwards the exchanged token the same way regardless of profile.
 
 :::note
-The caller's token must be issued for LiteLLM's app registration, not some other Entra app. If your harness authenticates against a different app registration, have it request a token for this app's scope first, then send that token to LiteLLM.
+The caller's token must be issued for Lumina's app registration, not some other Entra app. If your harness authenticates against a different app registration, have it request a token for this app's scope first, then send that token to Lumina.
 :::
 
 ## Calling an OBO MCP Server
 
-The inbound request must include the user's bearer token so LiteLLM has a `subject_token` to exchange.
+The inbound request must include the user's bearer token so Lumina has a `subject_token` to exchange.
 
-For direct MCP calls, keep the LiteLLM key in `x-litellm-api-key` and leave `Authorization` for the user token:
+For direct MCP calls, keep the Lumina key in `x-lumina-api-key` and leave `Authorization` for the user token:
 
 ```bash title="Direct MCP call" showLineNumbers
-curl -X POST "https://litellm.example.com/internal_tools/mcp" \
+curl -X POST "https://lumina.example.com/internal_tools/mcp" \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer <litellm-api-key>" \
+  -H "x-lumina-api-key: Bearer <lumina-api-key>" \
   -H "Authorization: Bearer <user-token>" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
-For the Responses API, pass MCP tool headers with the LiteLLM key separated from the user token:
+For the Responses API, pass MCP tool headers with the Lumina key separated from the user token:
 
 ```bash title="Responses API with MCP OBO" showLineNumbers
-curl -X POST "https://litellm.example.com/v1/responses" \
+curl -X POST "https://lumina.example.com/v1/responses" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <litellm-api-key>" \
+  -H "Authorization: Bearer <lumina-api-key>" \
   -d '{
     "model": "{{openai_large}}",
     "input": "List the available internal tools",
@@ -221,10 +221,10 @@ curl -X POST "https://litellm.example.com/v1/responses" \
       {
         "type": "mcp",
         "server_label": "internal_tools",
-        "server_url": "https://litellm.example.com/internal_tools/mcp",
+        "server_url": "https://lumina.example.com/internal_tools/mcp",
         "require_approval": "never",
         "headers": {
-          "x-litellm-api-key": "Bearer <litellm-api-key>",
+          "x-lumina-api-key": "Bearer <lumina-api-key>",
           "Authorization": "Bearer <user-token>"
         }
       }
@@ -233,23 +233,23 @@ curl -X POST "https://litellm.example.com/v1/responses" \
 ```
 
 :::tip
-If the MCP client can only send one `Authorization` header, use `x-litellm-api-key` for the LiteLLM key and reserve `Authorization` for the user's token. LiteLLM needs the user token as the OBO `subject_token`.
+If the MCP client can only send one `Authorization` header, use `x-lumina-api-key` for the Lumina key and reserve `Authorization` for the user's token. Lumina needs the user token as the OBO `subject_token`.
 :::
 
 ## Caching Behavior
 
-LiteLLM caches exchanged tokens by:
+Lumina caches exchanged tokens by:
 
 - subject token
 - MCP server ID
 
 This means two different users get separate exchanged tokens, while repeated calls from the same user to the same MCP server reuse the cached token until it expires.
 
-The cache TTL is based on `expires_in` minus LiteLLM's OAuth expiry buffer. If `expires_in` is missing or invalid, LiteLLM uses the default OAuth token cache TTL.
+The cache TTL is based on `expires_in` minus Lumina's OAuth expiry buffer. If `expires_in` is missing or invalid, Lumina uses the default OAuth token cache TTL.
 
 ## Requests Without a Subject Token
 
-If a request to an `oauth2_token_exchange` server carries no user bearer token, LiteLLM rejects it with `401 Unauthorized` and `WWW-Authenticate: Bearer resource_metadata="/.well-known/oauth-protected-resource/mcp/<server_name>", error="invalid_token", error_description="Missing or invalid subject token; authenticate with the IdP and retry"`. There is no fallback to OAuth `client_credentials` and the request is never forwarded to the MCP server without an exchanged token.
+If a request to an `oauth2_token_exchange` server carries no user bearer token, Lumina rejects it with `401 Unauthorized` and `WWW-Authenticate: Bearer resource_metadata="/.well-known/oauth-protected-resource/mcp/<server_name>", error="invalid_token", error_description="Missing or invalid subject token; authenticate with the IdP and retry"`. There is no fallback to OAuth `client_credentials` and the request is never forwarded to the MCP server without an exchanged token.
 
 If you also need machine-to-machine access to the same MCP server, register a separate server entry with `auth_type: oauth2` and `client_id`, `client_secret`, and `token_url` configured. Set `oauth2_flow: client_credentials` on that entry; the proxy refuses to start an `oauth2` server without an explicit `oauth2_flow`.
 
@@ -257,7 +257,7 @@ If you also need machine-to-machine access to the same MCP server, register a se
 
 | Symptom | Check |
 |---------|-------|
-| MCP server receives the LiteLLM key | Move the LiteLLM key to `x-litellm-api-key` and use `Authorization` for the user token. |
+| MCP server receives the Lumina key | Move the Lumina key to `x-lumina-api-key` and use `Authorization` for the user token. |
 | Token exchange endpoint returns 400 | Confirm `audience`, `scopes`, `client_id`, and `subject_token_type` match your identity provider configuration. |
 | MCP server receives no `Authorization` header | Confirm the MCP server has `auth_type: oauth2_token_exchange` and the inbound request includes a user bearer token. |
 | Identity provider is called on every request | Confirm the identity provider returns `expires_in`, and that the same user token and MCP server are being reused. |

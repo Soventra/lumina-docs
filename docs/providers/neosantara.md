@@ -8,15 +8,15 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Neosantara provides an OpenAI-compatible API for chat completions and the Responses API. |
-| Provider Route on LiteLLM | `neosantara/` |
+| Provider Route on Lumina | `neosantara/` |
 | Link to Provider Doc | [Neosantara ↗](https://docs.neosantara.xyz) |
 | Base URL | `https://api.neosantara.xyz/v1` |
-| Supported Operations | [`/chat/completions`](#usage---litellm-python-sdk), [`/responses`](#responses-api), [function calling](#function-calling) |
+| Supported Operations | [`/chat/completions`](#usage---lumina-python-sdk), [`/responses`](#responses-api), [function calling](#function-calling) |
 
 <br />
 <br />
 
-**We support Neosantara models through the `neosantara/` prefix in LiteLLM.**
+**We support Neosantara models through the `neosantara/` prefix in Lumina.**
 
 ## Required Variables
 
@@ -32,19 +32,19 @@ You can override the default base URL with:
 os.environ["NEOSANTARA_API_BASE"] = "https://api.neosantara.xyz/v1"
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Neosantara Non-streaming Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
 response = completion(
     model="neosantara/gemini-3.1-flash-lite",
-    messages=[{"role": "user", "content": "Hello from LiteLLM"}],
+    messages=[{"role": "user", "content": "Hello from Lumina"}],
     max_tokens=64,
 )
 
@@ -55,7 +55,7 @@ print(response.choices[0].message.content)
 
 ```python showLineNumbers title="Neosantara Streaming Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
@@ -75,11 +75,11 @@ for chunk in response:
 
 ### Chat Completions
 
-Function calling works on Neosantara through `completion()`. Depending on the model, LiteLLM may require explicitly allowing the OpenAI params on this provider route.
+Function calling works on Neosantara through `completion()`. Depending on the model, Lumina may require explicitly allowing the OpenAI params on this provider route.
 
 ```python showLineNumbers title="Neosantara Function Calling via completion()"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
@@ -112,11 +112,11 @@ print(response.choices[0].message.tool_calls)
 
 ## Responses API
 
-Neosantara also supports LiteLLM's `responses()` interface.
+Neosantara also supports Lumina's `responses()` interface.
 
 ```python showLineNumbers title="Neosantara Responses API"
 import os
-from litellm import responses
+from lumina import responses
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
@@ -135,7 +135,7 @@ Function calling also works through `responses()`:
 
 ```python showLineNumbers title="Neosantara Function Calling via responses()"
 import os
-from litellm import responses
+from lumina import responses
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
@@ -164,17 +164,17 @@ print(response.output)
 
 ## Parameter Compatibility
 
-LiteLLM maps `max_completion_tokens` to `max_tokens` for Neosantara automatically.
+Lumina maps `max_completion_tokens` to `max_tokens` for Neosantara automatically.
 
 ```python showLineNumbers title="Neosantara max_completion_tokens Compatibility"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
 response = completion(
     model="neosantara/gemini-3.1-flash-lite",
-    messages=[{"role": "user", "content": "Summarize LiteLLM in one sentence"}],
+    messages=[{"role": "user", "content": "Summarize Lumina in one sentence"}],
     max_completion_tokens=64,
 )
 
@@ -183,11 +183,11 @@ print(response.choices[0].message.content)
 
 ## Reasoning Effort
 
-LiteLLM can pass `reasoning_effort` through to Neosantara, but like tool calling on `completion()`, you should explicitly allow the parameter on this provider route.
+Lumina can pass `reasoning_effort` through to Neosantara, but like tool calling on `completion()`, you should explicitly allow the parameter on this provider route.
 
 ```python showLineNumbers title="Neosantara reasoning_effort"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["NEOSANTARA_API_KEY"] = ""
 
@@ -202,9 +202,9 @@ response = completion(
 print(response.choices[0].message.content)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add the following to your LiteLLM Proxy configuration file:
+Add the following to your Lumina Proxy configuration file:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -217,13 +217,13 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-Start your LiteLLM Proxy server:
+Start your Lumina Proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
+```bash showLineNumbers title="Start Lumina Proxy"
 export NEOSANTARA_API_KEY="your-neosantara-api-key"
 export LUMINA_MASTER_KEY="${LUMINA_MASTER_KEY:-sk-$(openssl rand -hex 16)}"
 printf 'Local proxy key: %s\n' "$LUMINA_MASTER_KEY"
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -252,14 +252,14 @@ print(response.choices[0].message.content)
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Neosantara via Proxy - LiteLLM SDK"
+```python showLineNumbers title="Neosantara via Proxy - Lumina SDK"
 import os
-import litellm
+import lumina
 
-response = litellm.completion(
-    model="litellm_proxy/neosantara-gemini-flash-lite",
+response = lumina.completion(
+    model="lumina_proxy/neosantara-gemini-flash-lite",
     messages=[{"role": "user", "content": "Say hello from the proxy"}],
     api_base="http://localhost:4000",
     api_key=os.environ["LUMINA_MASTER_KEY"],
@@ -310,12 +310,12 @@ model_list:
 
 ### Spend Tracking on the Proxy
 
-Neosantara models are not in LiteLLM's model cost map, so the proxy records $0 spend for them and key or team budgets never move. To track spend, set `input_cost_per_token` and `output_cost_per_token` in `lumina_params`, as shown in [Custom Pricing](../proxy/custom_pricing). Both are in USD per token, so divide a Neosantara price per million tokens by 1,000,000.
+Neosantara models are not in Lumina's model cost map, so the proxy records $0 spend for them and key or team budgets never move. To track spend, set `input_cost_per_token` and `output_cost_per_token` in `lumina_params`, as shown in [Custom Pricing](../proxy/custom_pricing). Both are in USD per token, so divide a Neosantara price per million tokens by 1,000,000.
 
 ## Notes
 
-- Use the `neosantara/` model prefix when calling Neosantara through LiteLLM.
+- Use the `neosantara/` model prefix when calling Neosantara through Lumina.
 - The default auth env var is `NEOSANTARA_API_KEY`.
-- `NEOSANTARA_API_BASE` can be used to point LiteLLM at a custom Neosantara-compatible base URL.
+- `NEOSANTARA_API_BASE` can be used to point Lumina at a custom Neosantara-compatible base URL.
 - `max_completion_tokens` is mapped to `max_tokens` automatically.
-- On `completion()` and on the proxy, `tools`, `tool_choice`, `parallel_tool_calls`, and `reasoning_effort` may require `allowed_openai_params` so LiteLLM will pass them through.
+- On `completion()` and on the proxy, `tools`, `tool_choice`, `parallel_tool_calls`, and `reasoning_effort` may require `allowed_openai_params` so Lumina will pass them through.

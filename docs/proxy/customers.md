@@ -10,22 +10,22 @@ Track spend, set budgets and permissions for your customers.
 
 ### 1. Make LLM API call w/ Customer ID
 
-LiteLLM checks for a customer/end-user ID in the following order (first match wins):
+Lumina checks for a customer/end-user ID in the following order (first match wins):
 
 | Priority | Method | Where | Notes |
 |----------|--------|-------|-------|
-| 1 | `x-litellm-customer-id` header | Request headers | Standard header, always checked |
-| 2 | `x-litellm-end-user-id` header | Request headers | Standard header, always checked |
+| 1 | `x-lumina-customer-id` header | Request headers | Standard header, always checked |
+| 2 | `x-lumina-end-user-id` header | Request headers | Standard header, always checked |
 | 3 | Custom header via `user_header_mappings` | Request headers | Configured in `general_settings` |
 | 4 | Custom header via `user_header_name` | Request headers | Deprecated — use `user_header_mappings` |
 | 5 | `user` field | Request body | Standard OpenAI field |
-| 6 | `litellm_metadata.user` field | Request body | Anthropic-style metadata |
+| 6 | `lumina_metadata.user` field | Request body | Anthropic-style metadata |
 | 7 | `metadata.user_id` field | Request body | Generic metadata pattern |
 | 8 | `safety_identifier` field | Request body | Responses API |
 
 :::info[JWT auth takes precedence]
 
-If [JWT auth](token_auth) is enabled with `end_user_id_jwt_field`, the customer ID from the verified JWT claim takes precedence over all headers and body fields listed above. The request-supplied fields are only used when the JWT does not yield an end-user ID. Since the claim comes from a token LiteLLM has already validated, callers cannot override it with `x-litellm-end-user-id`, `metadata.user_id`, etc.
+If [JWT auth](token_auth) is enabled with `end_user_id_jwt_field`, the customer ID from the verified JWT claim takes precedence over all headers and body fields listed above. The request-supplied fields are only used when the JWT does not yield an end-user ID. Since the claim comes from a token Lumina has already validated, callers cannot override it with `x-lumina-end-user-id`, `metadata.user_id`, etc.
 
 :::
 
@@ -35,14 +35,14 @@ If [JWT auth](token_auth) is enabled with `end_user_id_jwt_field`, the customer 
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
         --header 'Content-Type: application/json' \
         --header "Authorization: Bearer $LUMINA_API_KEY" \
-        --header 'x-litellm-end-user-id: ishaan3' \
+        --header 'x-lumina-end-user-id: ishaan3' \
         --data '{
         "model": "azure-gpt-3.5",
         "messages": [{"role": "user", "content": "what time is it"}]
         }'
 ```
 
-Both `x-litellm-customer-id` and `x-litellm-end-user-id` are supported and always checked without any configuration.
+Both `x-lumina-customer-id` and `x-lumina-end-user-id` are supported and always checked without any configuration.
 
 **Option 2: `user` field in request body** (OpenAI-compatible)
 
@@ -63,7 +63,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 general_settings:
   user_header_mappings:
     - header_name: "x-my-app-user-id"
-      litellm_user_role: "customer"
+      lumina_user_role: "customer"
 ```
 
 ```bash showLineNumbers title="Make request with custom header"
@@ -77,16 +77,16 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
         }'
 ```
 
-**Option 4: `litellm_metadata.user`** (Anthropic-style)
+**Option 4: `lumina_metadata.user`** (Anthropic-style)
 
-```bash showLineNumbers title="Make request with litellm_metadata.user"
+```bash showLineNumbers title="Make request with lumina_metadata.user"
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
         --header 'Content-Type: application/json' \
         --header "Authorization: Bearer $LUMINA_API_KEY" \
         --data '{
         "model": "{{anthropic}}",
         "messages": [{"role": "user", "content": "what time is it"}],
-        "litellm_metadata": {"user": "ishaan3"}
+        "lumina_metadata": {"user": "ishaan3"}
         }'
 ```
 
@@ -131,7 +131,7 @@ Expected Response:
     "spend": 0.001413,
     "allowed_model_region": null,
     "default_model": null,
-    "litellm_budget_table": null
+    "lumina_budget_table": null
 }
 ```
 
@@ -202,7 +202,7 @@ Expected Response
 
 ## Restricting Which IDs Become Customers
 
-Every distinct customer ID LiteLLM sees is upserted into the customer table, which becomes a problem when a client sends a per-session identifier. Claude Code, for example, puts a JSON blob in `metadata.user_id`:
+Every distinct customer ID Lumina sees is upserted into the customer table, which becomes a problem when a client sends a per-session identifier. Claude Code, for example, puts a JSON blob in `metadata.user_id`:
 
 ```json title="What Claude Code sends"
 {"device_id": "4ec41ed1...", "account_uuid": "...", "session_id": "..."}
@@ -213,7 +213,7 @@ Each session then lands in Usage -> Customer Usage as its own customer, and if y
 Set `validate_end_user_id_in_db` to keep those IDs out. Available in v1.87.0 and above.
 
 ```yaml showLineNumbers title="config.yaml"
-litellm_settings:
+lumina_settings:
   validate_end_user_id_in_db: true
 ```
 
@@ -224,20 +224,20 @@ An ID is then accepted only when it matches an existing customer's `user_id`, an
 On its own, `validate_end_user_id_in_db` drops every ID with no matching row, which works against `max_end_user_budget_id` if you rely on that to cap customers you never explicitly created. Set both and the two cooperate: JSON-shaped IDs are still dropped, while a plain-string ID with no row is preserved so the default budget still applies to it.
 
 ```yaml showLineNumbers title="config.yaml"
-litellm_settings:
+lumina_settings:
   validate_end_user_id_in_db: true
   max_end_user_budget_id: "your_default_budget_id"
 ```
 
 ### Bucketing internal traffic under one customer
 
-If you would rather label that traffic than drop it, have the client send `x-litellm-customer-id`. Headers are checked before any request body field, so the header wins over whatever the client puts in `metadata.user_id`, and Claude Code can set it through `ANTHROPIC_CUSTOM_HEADERS` with no other change, while Codex CLI does the same through `http_headers` in its `config.toml`. See [Claude Code granular cost tracking](../tutorials/claude_code_customer_tracking.md) and [Codex CLI granular cost tracking](../tutorials/codex_customer_tracking.md).
+If you would rather label that traffic than drop it, have the client send `x-lumina-customer-id`. Headers are checked before any request body field, so the header wins over whatever the client puts in `metadata.user_id`, and Claude Code can set it through `ANTHROPIC_CUSTOM_HEADERS` with no other change, while Codex CLI does the same through `http_headers` in its `config.toml`. See [Claude Code granular cost tracking](../tutorials/claude_code_customer_tracking.md) and [Codex CLI granular cost tracking](../tutorials/codex_customer_tracking.md).
 
 Create that customer through `/customer/new` with its own budget. That satisfies `validate_end_user_id_in_db`, and an explicit customer budget takes precedence over the default one, so internal traffic can carry a different limit than your real customers.
 
 ## Restricting Which Models a Customer Can Use
 
-Set `models` on a customer to limit which models requests made on its behalf can call. A request that carries this customer's ID, through the `user` field or the `x-litellm-customer-id` header, is rejected with a 403 when the requested model is not in the list, even if the virtual key and team allow it. An empty or missing list means the customer adds no model restriction. The customer list only narrows access: the key's and team's own model restrictions still apply on top, so listing a model on the customer never grants a key access to it
+Set `models` on a customer to limit which models requests made on its behalf can call. A request that carries this customer's ID, through the `user` field or the `x-lumina-customer-id` header, is rejected with a 403 when the requested model is not in the list, even if the virtual key and team allow it. An empty or missing list means the customer adds no model restriction. The customer list only narrows access: the key's and team's own model restrictions still apply on top, so listing a model on the customer never grants a key access to it
 
 Entries follow the same rules as key and team `models`, so a wildcard such as `anthropic/*` or a model access group name works here too
 
@@ -259,7 +259,7 @@ A request for any other model on behalf of `user_1` then fails with the same err
 curl -L -X POST 'http://localhost:4000/v1/chat/completions' \
 -H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
--H 'x-litellm-customer-id: user_1' \
+-H 'x-lumina-customer-id: user_1' \
 -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "hi"}]
@@ -378,7 +378,7 @@ curl -X GET 'http://0.0.0.0:4000/customer/info?end_user_id=user_1' \
     "agents": ["agent_1"],
     "agent_access_groups": ["basic_agents"]
   },
-  "litellm_budget_table": null
+  "lumina_budget_table": null
 }
 ```
 
@@ -455,7 +455,7 @@ curl -L -X POST 'http://localhost:4000/customer/new' \
 
 ## Setting Customer Budgets
 
-Set customer budgets (e.g. monthly budgets, tpm/rpm limits) on LiteLLM Proxy 
+Set customer budgets (e.g. monthly budgets, tpm/rpm limits) on Lumina Proxy 
 
 ### Default Budget for All Customers
 
@@ -477,7 +477,7 @@ curl -X POST 'http://localhost:4000/budget/new' \
 **Step 2: Configure the default budget ID**
 
 ```yaml showLineNumbers title="config.yaml"
-litellm_settings:
+lumina_settings:
   max_end_user_budget_id: "budget_id_from_step_1"
 ```
 
@@ -494,7 +494,7 @@ curl -X POST 'http://localhost:4000/chat/completions' \
 }'
 ```
 
-The customer will be subject to the default budget limits (RPM, TPM, and $ budget). Customers with explicit budgets are unaffected, and the default also applies to customers that don't exist in the database yet. LiteLLM caches the budget object for 60 seconds, so edits to it take up to a minute to apply.
+The customer will be subject to the default budget limits (RPM, TPM, and $ budget). Customers with explicit budgets are unaffected, and the default also applies to customers that don't exist in the database yet. Lumina caches the budget object for 60 seconds, so edits to it take up to a minute to apply.
 
 The float setting `max_end_user_budget` is no longer enforced; if you have it in your config, replace it with `max_end_user_budget_id` as shown above.
 
@@ -557,7 +557,7 @@ Create and assign customers to pricing tiers.
 </TabItem>
 <TabItem value="api" label="API">
 
-Use the `/budget/new` endpoint for creating a new budget. [API Reference](https://docs.litellm.ai/api-reference/#/budget%20management/new_budget_budget_new_post)
+Use the `/budget/new` endpoint for creating a new budget. [API Reference](https://docs.lumina.ai/api-reference/#/budget%20management/new_budget_budget_new_post)
 
 ```bash showLineNumbers title="Create budget via API"
 curl -X POST 'http://localhost:4000/budget/new' \
@@ -574,7 +574,7 @@ curl -X POST 'http://localhost:4000/budget/new' \
 
 :::info
 
-`tpm_limit` and `rpm_limit` are optional on a budget. Leaving them unset stores `null` and LiteLLM enforces no per-customer TPM or RPM limit for customers on that budget; only your provider's own rate limits apply. Set them only when you want LiteLLM to cap the customer
+`tpm_limit` and `rpm_limit` are optional on a budget. Leaving them unset stores `null` and Lumina enforces no per-customer TPM or RPM limit for customers on that budget; only your provider's own rate limits apply. Set them only when you want Lumina to cap the customer
 
 ```bash
 curl -X POST 'http://localhost:4000/budget/info' \
@@ -583,7 +583,7 @@ curl -X POST 'http://localhost:4000/budget/info' \
   -d '{"budgets": ["my-free-tier"]}'
 ```
 
-`tpm_limit` and `rpm_limit` come back as `null` when no LiteLLM limit is set
+`tpm_limit` and `rpm_limit` come back as `null` when no Lumina limit is set
 
 :::
 

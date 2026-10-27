@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Prism Inference serves open-weight models for coding agents over OpenAI Chat Completions, OpenAI Responses, and Anthropic Messages APIs, with zero data retention on inputs and outputs. |
-| Provider Route on LiteLLM | `prism/` |
+| Provider Route on Lumina | `prism/` |
 | Link to Provider Doc | [Prism Documentation ↗](https://docs.prisminference.com) |
 | Base URL | `https://api.prisminference.com/v1` |
-| Supported Operations | [`/chat/completions`](#usage---litellm-python-sdk), [`/responses`](#responses-api), [`/messages`](#anthropic-messages-api) |
+| Supported Operations | [`/chat/completions`](#usage---lumina-python-sdk), [`/responses`](#responses-api), [`/messages`](#anthropic-messages-api) |
 
 <br />
 <br />
@@ -25,7 +25,7 @@ import TabItem from '@theme/TabItem';
 | `prism/deepseek-v4.1-flash` | DeepSeek-V4.1-Flash, the current generation for coding, vision, reasoning, and tool-use loops; takes text and image input | 1,000,000 tokens | 384,000 tokens |
 | `prism/deepseek-v4-flash` | DeepSeek-V4-Flash, a text-only model for fast coding and tool loops | 1,000,000 tokens | 384,000 tokens |
 
-Both models support reasoning, function calling, JSON mode, and JSON schema output, and LiteLLM ships their pricing (input, output, and cached input) so spend is tracked out of the box. Prism's catalog at `GET https://api.prisminference.com/v1/models` lists more models (for example `glm-5.3` and `kimi-k3`); any of them works with the `prism/` prefix, but for spend tracking on those you need to pass `input_cost_per_token` and `output_cost_per_token` in `lumina_params` until they are added to LiteLLM's model cost map.
+Both models support reasoning, function calling, JSON mode, and JSON schema output, and Lumina ships their pricing (input, output, and cached input) so spend is tracked out of the box. Prism's catalog at `GET https://api.prisminference.com/v1/models` lists more models (for example `glm-5.3` and `kimi-k3`); any of them works with the `prism/` prefix, but for spend tracking on those you need to pass `input_cost_per_token` and `output_cost_per_token` in `lumina_params` until they are added to Lumina's model cost map.
 
 ## Required Variables
 
@@ -33,14 +33,14 @@ Both models support reasoning, function calling, JSON mode, and JSON schema outp
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Prism Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
@@ -59,8 +59,8 @@ print(response)
 
 ```python showLineNumbers title="Prism Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
@@ -81,8 +81,8 @@ for chunk in response:
 
 ```python showLineNumbers title="Prism Function Calling"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
@@ -120,7 +120,7 @@ print(response)
 
 ```python showLineNumbers title="Prism JSON Schema Output"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
@@ -151,7 +151,7 @@ Image input is supported on `prism/deepseek-v4.1-flash`.
 
 ```python showLineNumbers title="Prism Image Input"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
@@ -171,15 +171,15 @@ print(response)
 
 ### Responses API
 
-Prism serves the OpenAI Responses API natively, so `litellm.responses` sends the request straight to `https://api.prisminference.com/v1/responses`.
+Prism serves the OpenAI Responses API natively, so `lumina.responses` sends the request straight to `https://api.prisminference.com/v1/responses`.
 
 ```python showLineNumbers title="Prism Responses API"
 import os
-import litellm
+import lumina
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
-response = litellm.responses(
+response = lumina.responses(
     model="prism/deepseek-v4.1-flash",
     input="Say hello",
 )
@@ -189,17 +189,17 @@ print(response.output_text)
 
 ### Anthropic Messages API
 
-Prism also serves the Anthropic Messages API natively, so `litellm.anthropic.messages.acreate` sends the request straight to `https://api.prisminference.com/v1/messages`.
+Prism also serves the Anthropic Messages API natively, so `lumina.anthropic.messages.acreate` sends the request straight to `https://api.prisminference.com/v1/messages`.
 
 ```python showLineNumbers title="Prism Anthropic Messages API"
 import asyncio
 import os
-import litellm
+import lumina
 
 os.environ["PRISM_API_KEY"] = ""  # your Prism API key
 
 async def main():
-    response = await litellm.anthropic.messages.acreate(
+    response = await lumina.anthropic.messages.acreate(
         model="prism/deepseek-v4.1-flash",
         messages=[{"role": "user", "content": "Say hello"}],
         max_tokens=64,
@@ -209,7 +209,7 @@ async def main():
 asyncio.run(main())
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -275,7 +275,7 @@ curl http://0.0.0.0:4000/v1/messages \
 
 ```python showLineNumbers title="Custom API Base via env var"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["PRISM_API_BASE"] = "https://custom.prisminference.example/v1"
 os.environ["PRISM_API_KEY"] = ""  # your API key
@@ -289,7 +289,7 @@ response = completion(
 **Option 2: Pass directly**
 
 ```python showLineNumbers title="Custom API Base via parameter"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="prism/deepseek-v4.1-flash",

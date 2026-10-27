@@ -9,7 +9,7 @@
   </defs>
   <rect width="1600" height="840" rx="20" fill="url(#background)"/>
   <g font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif">
-    <text x="96" y="108" fill="#44634e" font-size="32" font-weight="600">LiteLLM Auto Router · Fuse V2</text>
+    <text x="96" y="108" fill="#44634e" font-size="32" font-weight="600">Lumina Auto Router · Fuse V2</text>
     <text x="84" y="401" fill="#173f2b" font-size="184" font-weight="750" letter-spacing="-8">25/25</text>
     <text x="96" y="501" fill="#173f2b" font-size="72" font-weight="650" letter-spacing="-2">tasks solved</text>
     <text x="100" y="598" fill="#5f7966" font-size="31">SWE-bench Verified · one trial per task</text>

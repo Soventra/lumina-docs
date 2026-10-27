@@ -3,7 +3,7 @@
 | Feature | Description | Comments |
 | --- | --- | --- |
 | Proxy | ✅ |  |
-| SDK | | Experimental access via `litellm._arealtime`. |
+| SDK | | Experimental access via `lumina._arealtime`. |
 
 
 ## Proxy Usage
@@ -22,7 +22,7 @@ model_list:
 ### Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml 
+lumina --config /path/to/config.yaml 
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -109,8 +109,8 @@ async def main():
     async with websockets.connect(
         PROXY_URL,
         additional_headers={
-            "Authorization": "Bearer sk-<your-litellm-api-key>",
-            "X-Serverless-Authorization": "Bearer sk-<your-litellm-api-key>",
+            "Authorization": "Bearer sk-<your-lumina-api-key>",
+            "X-Serverless-Authorization": "Bearer sk-<your-lumina-api-key>",
         },
     ) as ws:
         _ = json.loads(await ws.recv())  # session.created
@@ -191,14 +191,14 @@ model_list:
       model: gemini/gemini-2.5-flash-native-audio-latest
       api_key: os.environ/GEMINI_API_KEY
 
-litellm_settings:
+lumina_settings:
   # Required for tool calling with Gemini Live:
   # defer setup until client sends session.update (with tools)
   gemini_live_defer_setup: true
 ```
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 python test_realtime_tool_calling.py
 ```
 
@@ -230,7 +230,7 @@ python test_realtime_tool_calling.py
 
 
 
-## [Supported Session Params](https://github.com/BerriAI/litellm/blob/e87b536d038f77c2a2206fd7433e275c487179ee/litellm/llms/gemini/realtime/transformation.py#L155)
+## [Supported Session Params](https://github.com/Soventra/lumina/blob/e87b536d038f77c2a2206fd7433e275c487179ee/lumina/llms/gemini/realtime/transformation.py#L155)
 
 ## More Examples
 ### [Gemini Realtime API with Audio Input/Output](../../../docs/tutorials/gemini_realtime_with_audio)

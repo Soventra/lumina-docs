@@ -1,10 +1,10 @@
 # Add Rerank Provider
 
-LiteLLM **follows the Cohere Rerank API format** for all rerank providers. Here's how to add a new rerank provider:
+Lumina **follows the Cohere Rerank API format** for all rerank providers. Here's how to add a new rerank provider:
 
 ## 1. Create a transformation.py file
 
-Create a config class named `<Provider><Endpoint>Config` that inherits from [`BaseRerankConfig`](https://github.com/BerriAI/litellm/blob/main/litellm/llms/base_llm/rerank/transformation.py):
+Create a config class named `<Provider><Endpoint>Config` that inherits from [`BaseRerankConfig`](https://github.com/Soventra/lumina/blob/main/lumina/llms/base_llm/rerank/transformation.py):
 
 Every method below is abstract on `BaseRerankConfig`, so the class cannot be instantiated until all six are implemented:
 
@@ -13,10 +13,10 @@ from typing import Any
 
 import httpx
 
-from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
-from litellm.llms.base_llm.rerank.transformation import BaseRerankConfig
-from litellm.secret_managers.main import get_secret_str
-from litellm.types.rerank import OptionalRerankParams, RerankRequest, RerankResponse
+from lumina.lumina_core_utils.lumina_logging import Logging as LuminaLoggingObj
+from lumina.llms.base_llm.rerank.transformation import BaseRerankConfig
+from lumina.secret_managers.main import get_secret_str
+from lumina.types.rerank import OptionalRerankParams, RerankRequest, RerankResponse
 
 
 class YourProviderRerankConfig(BaseRerankConfig):
@@ -83,7 +83,7 @@ class YourProviderRerankConfig(BaseRerankConfig):
         model: str,
         raw_response: httpx.Response,
         model_response: RerankResponse,
-        logging_obj: LiteLLMLoggingObj,
+        logging_obj: LuminaLoggingObj,
         api_key: str | None = None,
         request_data: dict = {},
         optional_params: dict = {},
@@ -95,11 +95,11 @@ class YourProviderRerankConfig(BaseRerankConfig):
 
 
 ## 2. Register Your Provider
-Add your provider to `ProviderConfigManager.get_provider_rerank_config()` in [`litellm/utils.py`](https://github.com/BerriAI/litellm/blob/main/litellm/utils.py). Providers that are not listed there fall back to `CohereRerankConfig`, and `litellm.rerank()` then raises `Unsupported provider`:
+Add your provider to `ProviderConfigManager.get_provider_rerank_config()` in [`lumina/utils.py`](https://github.com/Soventra/lumina/blob/main/lumina/utils.py). Providers that are not listed there fall back to `CohereRerankConfig`, and `lumina.rerank()` then raises `Unsupported provider`:
 
 ```python nolint
-elif litellm.LlmProviders.YOUR_PROVIDER == provider:
-    return litellm.YourProviderRerankConfig()
+elif lumina.LlmProviders.YOUR_PROVIDER == provider:
+    return lumina.YourProviderRerankConfig()
 ```
 
 
@@ -116,12 +116,12 @@ elif _custom_llm_provider == "your_provider":
         custom_llm_provider=_custom_llm_provider,
         provider_config=rerank_provider_config,
         optional_rerank_params=optional_rerank_params,
-        logging_obj=litellm_logging_obj,
+        logging_obj=lumina_logging_obj,
         timeout=optional_params.timeout,
         api_key=dynamic_api_key or optional_params.api_key,
         api_base=api_base,
         _is_async=_is_async,
-        headers=headers or litellm.headers or {},
+        headers=headers or lumina.headers or {},
         client=client,
         model_response=model_response,
         lumina_params=rerank_lumina_params,
@@ -131,11 +131,11 @@ elif _custom_llm_provider == "your_provider":
 
 ## 4. Add Tests
 
-Add a test file to [`tests/llm_translation`](https://github.com/BerriAI/litellm/tree/main/tests/llm_translation)
+Add a test file to [`tests/llm_translation`](https://github.com/Soventra/lumina/tree/main/tests/llm_translation)
 
 ```python
 def test_basic_rerank_cohere():
-    response = litellm.rerank(
+    response = lumina.rerank(
         model="cohere/rerank-english-v3.0",
         query="hello",
         documents=["hello", "world"],
@@ -150,4 +150,4 @@ def test_basic_rerank_cohere():
 
 
 ## Reference PRs
-- [Add Infinity Rerank](https://github.com/BerriAI/litellm/pull/7321)
+- [Add Infinity Rerank](https://github.com/Soventra/lumina/pull/7321)

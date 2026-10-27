@@ -13,7 +13,7 @@ Consider migrating to the [Responses API](/docs/response_api) instead. See [Open
 
 Covers Threads, Messages, Assistants. 
 
-LiteLLM currently covers: 
+Lumina currently covers: 
 - Create Assistants 
 - Delete Assistants
 - Get Assistants
@@ -49,13 +49,13 @@ Call an existing Assistant.
 
 
 ```python
-import litellm
+import lumina
 import os 
 
 # setup env
 os.environ["OPENAI_API_KEY"] = "sk-.."
 
-assistant = litellm.create_assistants(
+assistant = lumina.create_assistants(
             custom_llm_provider="openai",
             model="{{openai_large}}",
             instructions="You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
@@ -64,7 +64,7 @@ assistant = litellm.create_assistants(
 )
 
 ### ASYNC USAGE ### 
-# assistant = await litellm.acreate_assistants(
+# assistant = await lumina.acreate_assistants(
 #             custom_llm_provider="openai",
 #             model="{{openai_large}}",
 #             instructions="You are a personal math tutor. When asked a question, write and run Python code to answer the question.",
@@ -76,7 +76,7 @@ assistant = litellm.create_assistants(
 **Get the Assistant**
 
 ```python
-from litellm import get_assistants, aget_assistants
+from lumina import get_assistants, aget_assistants
 import os 
 
 # setup env
@@ -91,7 +91,7 @@ assistants = get_assistants(custom_llm_provider="openai")
 **Create a Thread**
 
 ```python
-from litellm import create_thread, acreate_thread
+from lumina import create_thread, acreate_thread
 import os 
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -108,7 +108,7 @@ new_thread = create_thread(
 **Add Messages to the Thread**
 
 ```python
-from litellm import create_thread, get_thread, aget_thread, add_message, a_add_message
+from lumina import create_thread, get_thread, aget_thread, add_message, a_add_message
 import os 
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -141,7 +141,7 @@ added_message = add_message(
 **Run the Assistant on the Thread**
 
 ```python
-from litellm import get_assistants, create_thread, add_message, run_thread, arun_thread
+from lumina import get_assistants, create_thread, add_message, run_thread, arun_thread
 import os 
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -185,7 +185,7 @@ assistant_settings:
 ```
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -263,7 +263,7 @@ curl http://0.0.0.0:4000/v1/threads/thread_abc123/runs \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import run_thread_stream 
+from lumina import run_thread_stream 
 import os
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -296,7 +296,7 @@ curl -X POST 'http://0.0.0.0:4000/threads/{thread_id}/runs' \
 </TabItem>
 </Tabs>
 
-## [Proxy API Reference](https://docs.litellm.ai/api-reference/#/assistants)
+## [Proxy API Reference](https://docs.lumina.ai/api-reference/#/assistants)
 
 
 ## Azure OpenAI

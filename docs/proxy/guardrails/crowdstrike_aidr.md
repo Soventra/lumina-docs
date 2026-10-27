@@ -20,7 +20,7 @@ All detections are logged for analysis, attribution, and incident response.
 
   For detailed information about CrowdStrike AIDR features, policy configuration, and advanced usage, see the [official CrowdStrike AIDR documentation](https://aidr-docs.crowdstrike.com/docs/aidr/).
 
-- LiteLLM installed (via pip or Docker)
+- Lumina installed (via pip or Docker)
 - API key for your LLM provider
 
   To follow examples in this guide, you need an OpenAI API key.
@@ -29,10 +29,10 @@ All detections are logged for analysis, attribution, and incident response.
 
 In the Falcon console, click **Open menu** (** **) and go to **AI detection and response** > **Collectors**.
 
-### 1. Register LiteLLM collector
+### 1. Register Lumina collector
 
 1. On the **Collectors** page, click **+ Collector**.
-1. Choose **Gateway** as the collector type, then select **LiteLLM** and click **Next**.
+1. Choose **Gateway** as the collector type, then select **Lumina** and click **Next**.
 1. On the **Add a Collector** screen:
    - **Collector Name** - Enter a descriptive name for the collector to appear in dashboards and reports.
    - **Logging** - Select whether to log incoming (prompt) data and model responses, or only metadata submitted to AIDR.
@@ -41,12 +41,12 @@ In the Falcon console, click **Open menu** (** **) and go to **AI detection and 
      - When no policy is assigned, AIDR records activity for visibility and analysis, but does not apply detection rules to the data.
 1. Click **Save** to complete collector registration.
 
-### 2. Add CrowdStrike AIDR to your LiteLLM config.yaml
+### 2. Add CrowdStrike AIDR to your Lumina config.yaml
 
 Define the CrowdStrike AIDR guardrail under the `guardrails` section of your
 configuration file.
 
-```yaml title="config.yaml - Example LiteLLM configuration with CrowdStrike AIDR guardrail"
+```yaml title="config.yaml - Example Lumina configuration with CrowdStrike AIDR guardrail"
 model_list:
   - model_name: {{openai_large}}                       # Alias used in API requests
     lumina_params:
@@ -64,7 +64,7 @@ guardrails:
       fail_on_error: true                    # Optional. Set false to fail open on AIDR errors (default: true)
 ```
 
-### 3. Start LiteLLM Proxy (AI Gateway)
+### 3. Start Lumina Proxy (AI Gateway)
 
 Export the AIDR token and base URL as environment variables, along with the provider API key.
 You can find your AIDR token and base URL on the collector details page under the **Config** tab.
@@ -76,24 +76,24 @@ export OPENAI_API_KEY="sk-proj-54bgCI...jX6GMA"
 ```
 
 <Tabs>
-<TabItem label="LiteLLM CLI (pip package)" value="litellm-cli">
+<TabItem label="Lumina CLI (pip package)" value="lumina-cli">
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 </TabItem>
-<TabItem label="LiteLLM Docker (container)" value="litellm-docker">
+<TabItem label="Lumina Docker (container)" value="lumina-docker">
 
 ```shell
 docker run --rm \
-  --name litellm-proxy \
+  --name lumina-proxy \
   -p 4000:4000 \
   -e CS_AIDR_TOKEN=$CS_AIDR_TOKEN \
   -e CS_AIDR_BASE_URL=$CS_AIDR_BASE_URL \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:latest \
+  ghcr.io/soventra/lumina:latest \
   --config /app/config.yaml
 ```
 
@@ -249,8 +249,8 @@ Two cases stay strict even with `fail_on_error: false`:
 | Case | Behavior |
 |------|----------|
 | AIDR delivers a blocked verdict on a success response, even when the rest of the body cannot be parsed | Request is blocked with HTTP 400 |
-| AIDR delivers a transformed (redacted) response that LiteLLM cannot parse | Request fails with HTTP 500, so delivered redactions are never dropped |
+| AIDR delivers a transformed (redacted) response that Lumina cannot parse | Request fails with HTTP 500, so delivered redactions are never dropped |
 
 ## Next Steps
 
-For more details, see the [CrowdStrike AIDR LiteLLM integration guide](https://aidr-docs.crowdstrike.com/docs/aidr/collectors/gateway/litellm).
+For more details, see the [CrowdStrike AIDR Lumina integration guide](https://aidr-docs.crowdstrike.com/docs/aidr/collectors/gateway/lumina).

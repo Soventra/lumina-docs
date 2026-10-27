@@ -9,22 +9,22 @@ HuggingFace Rerank allows you to use reranking models hosted on Hugging Face inf
 | Property | Details |
 |----------|---------|
 | Description | HuggingFace Rerank enables semantic reranking of documents using models hosted on Hugging Face infrastructure or custom endpoints. |
-| Provider Route on LiteLLM | `huggingface/` in model name |
+| Provider Route on Lumina | `huggingface/` in model name |
 | Provider Doc | [Hugging Face Hub ↗](https://huggingface.co/models?pipeline_tag=sentence-similarity) |
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
-```python showLineNumbers title="Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set your HuggingFace token
 os.environ["HUGGINGFACE_API_KEY"] = "hf_xxxxxx"
 
 # Basic rerank usage
-response = litellm.rerank(
+response = lumina.rerank(
     model="huggingface/BAAI/bge-reranker-base",
     query="What is the capital of the United States?",
     documents=[
@@ -42,9 +42,9 @@ print(response)
 ### Custom Endpoint Usage
 
 ```python showLineNumbers title="Using custom HuggingFace endpoint"
-import litellm
+import lumina
 
-response = litellm.rerank(
+response = lumina.rerank(
     model="huggingface/BAAI/bge-reranker-base",
     query="hello",
     documents=["hello", "world"],
@@ -59,14 +59,14 @@ print(response)
 ### Async Usage
 
 ```python showLineNumbers title="Async rerank example"
-import litellm
+import lumina
 import asyncio
 import os
 
 os.environ["HUGGINGFACE_API_KEY"] = "hf_xxxxxx"
 
 async def async_rerank_example():
-    response = await litellm.arerank(
+    response = await lumina.arerank(
         model="huggingface/BAAI/bge-reranker-base",
         query="What is the capital of the United States?",
         documents=[
@@ -82,7 +82,7 @@ async def async_rerank_example():
 asyncio.run(async_rerank_example())
 ```
 
-## LiteLLM Proxy
+## Lumina Proxy
 
 ### 1. Configure your model in config.yaml
 
@@ -113,7 +113,7 @@ model_list:
 
 ```bash
 export HF_TOKEN="hf_xxxxxx"
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -145,10 +145,10 @@ curl http://localhost:4000/rerank \
 <TabItem value="python-sdk" label="Python SDK">
 
 ```python
-import litellm
+import lumina
 
-# Initialize with your LiteLLM proxy URL
-response = litellm.rerank(
+# Initialize with your Lumina proxy URL
+response = lumina.rerank(
     model="bge-reranker-base",
     query="What is the capital of the United States?",
     documents=[
@@ -159,7 +159,7 @@ response = litellm.rerank(
     ],
     top_n=3,
     api_base="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 print(response)
@@ -174,7 +174,7 @@ import requests
 
 url = "http://localhost:4000/rerank"
 headers = {
-    "Authorization": "Bearer your-litellm-api-key",
+    "Authorization": "Bearer your-lumina-api-key",
     "Content-Type": "application/json"
 }
 
@@ -209,7 +209,7 @@ import os
 os.environ["HUGGINGFACE_API_KEY"] = "hf_xxxxxx"
 
 # Or pass directly
-litellm.rerank(
+lumina.rerank(
     model="huggingface/BAAI/bge-reranker-base",
     api_key="hf_xxxxxx",
     # ... other params
@@ -218,7 +218,7 @@ litellm.rerank(
 
 #### Using Custom Endpoint
 ```python
-litellm.rerank(
+lumina.rerank(
     model="huggingface/BAAI/bge-reranker-base",
     api_base="https://your-custom-endpoint.com",
     api_key="your-custom-key",

@@ -5,16 +5,16 @@ import Image from '@theme/IdealImage';
 :::tip
 
 This is community maintained, Please make an issue if you run into a bug
-https://github.com/BerriAI/litellm
+https://github.com/Soventra/lumina
 
 :::
 
 
-[Sentry](https://sentry.io/) provides error monitoring for production. LiteLLM can add breadcrumbs and send exceptions to Sentry with this integration
+[Sentry](https://sentry.io/) provides error monitoring for production. Lumina can add breadcrumbs and send exceptions to Sentry with this integration
 
 Track exceptions for:
-- litellm.completion() - completion()for 100+ LLMs
-- litellm.acompletion() - async completion()
+- lumina.completion() - completion()for 100+ LLMs
+- lumina.acompletion() - async completion()
 - Streaming completion() & acompletion() calls
 
 <Image img={require('../../img/sentry.png')} />
@@ -25,18 +25,18 @@ Track exceptions for:
 ### Set SENTRY_DSN & callback
 
 ```python
-import litellm, os
+import lumina, os
 os.environ["SENTRY_DSN"] = "your-sentry-url"
-litellm.failure_callback=["sentry"]
+lumina.failure_callback=["sentry"]
 ```
 
 ### Sentry callback with completion
 ```python
-import litellm
-from litellm import completion 
+import lumina
+from lumina import completion 
 
-litellm.input_callback=["sentry"] # adds sentry breadcrumbing
-litellm.failure_callback=["sentry"] # [OPTIONAL] if you want litellm to capture -> send exception to sentry
+lumina.input_callback=["sentry"] # adds sentry breadcrumbing
+lumina.failure_callback=["sentry"] # [OPTIONAL] if you want lumina to capture -> send exception to sentry
 
 import os 
 os.environ["SENTRY_DSN"] = "your-sentry-url"
@@ -69,9 +69,9 @@ These options are useful for high-volume applications where sampling a subset of
 
 ## PII and secret scrubbing
 
-By default LiteLLM sends Sentry events with `send_default_pii` off and scrubs them before they leave the proxy, so the frame locals Sentry attaches to an exception never carry credentials or user identity
+By default Lumina sends Sentry events with `send_default_pii` off and scrubs them before they leave the proxy, so the frame locals Sentry attaches to an exception never carry credentials or user identity
 
-Secrets are always removed. API keys (any `sk-` value, wherever it appears), the request headers a virtual key arrives in (`Authorization`, `x-api-key`, `api-key`, `x-goog-api-key`, `x-litellm-api-key`), the master key, the database URL, tokens, cookies, and passwords read `[Filtered]` whether they sit in a top-level variable, in a nested dict such as `general_settings`, or inside the repr of an object such as `UserAPIKeyAuth(token='...')`
+Secrets are always removed. API keys (any `sk-` value, wherever it appears), the request headers a virtual key arrives in (`Authorization`, `x-api-key`, `api-key`, `x-goog-api-key`, `x-lumina-api-key`), the master key, the database URL, tokens, cookies, and passwords read `[Filtered]` whether they sit in a top-level variable, in a nested dict such as `general_settings`, or inside the repr of an object such as `UserAPIKeyAuth(token='...')`
 
 User identity is removed unless you opt in. `user_id`, `user_email`, `end_user_id`, the hashed virtual key (`user_api_key_hash`), and the `user_api_key_*` metadata fields read `[Filtered]` in the same three places, and any email-shaped value or 64-character hex key hash left elsewhere in the event is replaced too
 
@@ -83,7 +83,7 @@ export SENTRY_SEND_DEFAULT_PII=true
 
 ## Redacting Messages, Response Content from Sentry Logging 
 
-Set `litellm.turn_off_message_logging=True` This will prevent the messages and responses from being logged to sentry, but request metadata will still be logged.
+Set `lumina.turn_off_message_logging=True` This will prevent the messages and responses from being logged to sentry, but request metadata will still be logged.
 
-[Let us know](https://github.com/BerriAI/litellm/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature%5D%3A+) if you need any additional options from Sentry. 
+[Let us know](https://github.com/Soventra/lumina/issues/new?assignees=&labels=enhancement&projects=&template=feature_request.yml&title=%5BFeature%5D%3A+) if you need any additional options from Sentry. 
 

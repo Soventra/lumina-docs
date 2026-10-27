@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Tensormesh provides serverless AI inference with OpenAI-compatible APIs. |
-| Provider Route on LiteLLM | `tensormesh/` |
+| Provider Route on Lumina | `tensormesh/` |
 | Link to Provider Doc | [Tensormesh Documentation](https://docs.tensormesh.ai) |
 | Default Base URL | `https://serverless.tensormesh.ai/v1` |
-| Supported Operations | `/chat/completions`, `/completions`, `/responses`, `/messages` through LiteLLM's Anthropic Messages adapter |
+| Supported Operations | `/chat/completions`, `/completions`, `/responses`, `/messages` through Lumina's Anthropic Messages adapter |
 
 ## API Key
 
@@ -31,13 +31,13 @@ curl https://serverless.tensormesh.ai/v1/models
 
 Use the catalog id with the `tensormesh/` route, for example `tensormesh/openai/gpt-oss-120b`, `tensormesh/MiniMaxAI/MiniMax-M2.5`, or `tensormesh/deepseek-ai/DeepSeek-V4-Flash`.
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Chat Completions
 
 ```python showLineNumbers title="Tensormesh Chat Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
@@ -53,7 +53,7 @@ print(response.choices[0].message.content)
 
 ```python showLineNumbers title="Tensormesh Streaming Chat Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
@@ -71,7 +71,7 @@ for chunk in response:
 
 ```python showLineNumbers title="Tensormesh Tool Calling"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
@@ -108,7 +108,7 @@ Tensormesh reasoning models (for example DeepSeek-V4-Flash, Qwen3.5-397B, Qwen3.
 
 ```python showLineNumbers title="Tensormesh Reasoning"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
@@ -126,7 +126,7 @@ print(response.choices[0].message.content)
 
 ```python showLineNumbers title="Tensormesh Text Completion"
 import os
-from litellm import text_completion
+from lumina import text_completion
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
@@ -143,11 +143,11 @@ print(response.choices[0].text)
 
 ```python showLineNumbers title="Tensormesh Responses API"
 import os
-import litellm
+import lumina
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
-response = litellm.responses(
+response = lumina.responses(
     model="tensormesh/<your-model-name>",
     input="Say hello in one sentence.",
 )
@@ -155,9 +155,9 @@ response = litellm.responses(
 print(response)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add Tensormesh to your LiteLLM Proxy configuration:
+Add Tensormesh to your Lumina Proxy configuration:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -172,15 +172,15 @@ general_settings:
 
 Start the proxy:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
+```bash showLineNumbers title="Start Lumina Proxy"
 export TENSORMESH_INFERENCE_API_KEY="your-api-key"
 export LUMINA_MASTER_KEY="sk-local-tensormesh"
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-Requests to LiteLLM Proxy must use the proxy key in `Authorization: Bearer $LUMINA_MASTER_KEY`. `TENSORMESH_INFERENCE_API_KEY` is only used by LiteLLM when it calls Tensormesh upstream.
+Requests to Lumina Proxy must use the proxy key in `Authorization: Bearer $LUMINA_MASTER_KEY`. `TENSORMESH_INFERENCE_API_KEY` is only used by Lumina when it calls Tensormesh upstream.
 
 For a basic startup check, use `/health/liveliness` or `/health/readiness`. The `/health` endpoint is authenticated and may run model checks.
 
@@ -197,7 +197,7 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="tensormesh-chat",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 
 print(response.choices[0].message.content)
@@ -213,7 +213,7 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "tensormesh-chat",
-    "messages": [{"role": "user", "content": "hello from litellm"}]
+    "messages": [{"role": "user", "content": "hello from lumina"}]
   }'
 ```
 
@@ -222,15 +222,15 @@ curl http://localhost:4000/v1/chat/completions \
 
 ## Anthropic Messages Compatibility
 
-LiteLLM can translate Anthropic Messages-shaped requests to Tensormesh chat completions. In the Python SDK, use the Anthropic Messages facade:
+Lumina can translate Anthropic Messages-shaped requests to Tensormesh chat completions. In the Python SDK, use the Anthropic Messages facade:
 
-```python showLineNumbers title="Anthropic Messages through LiteLLM SDK"
+```python showLineNumbers title="Anthropic Messages through Lumina SDK"
 import os
-import litellm
+import lumina
 
 os.environ["TENSORMESH_INFERENCE_API_KEY"] = "your-api-key"
 
-response = litellm.anthropic.messages.create(
+response = lumina.anthropic.messages.create(
     model="tensormesh/<your-model-name>",
     max_tokens=128,
     messages=[{"role": "user", "content": "Say hello in one sentence."}],
@@ -239,9 +239,9 @@ response = litellm.anthropic.messages.create(
 print(response["content"][0]["text"])
 ```
 
-For HTTP clients, LiteLLM Proxy exposes the Anthropic-compatible `/v1/messages` endpoint and routes the upstream request to Tensormesh chat completions. Set `model` in the request body to the proxy `model_name`.
+For HTTP clients, Lumina Proxy exposes the Anthropic-compatible `/v1/messages` endpoint and routes the upstream request to Tensormesh chat completions. Set `model` in the request body to the proxy `model_name`.
 
-```bash showLineNumbers title="Anthropic Messages through LiteLLM Proxy"
+```bash showLineNumbers title="Anthropic Messages through Lumina Proxy"
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
@@ -253,11 +253,11 @@ curl http://localhost:4000/v1/messages \
   }'
 ```
 
-Both the SDK facade and the Proxy `/v1/messages` endpoint use LiteLLM's Anthropic Messages adapter. Tensormesh receives an OpenAI-compatible chat completion request upstream.
+Both the SDK facade and the Proxy `/v1/messages` endpoint use Lumina's Anthropic Messages adapter. Tensormesh receives an OpenAI-compatible chat completion request upstream.
 
 ## Cost Tracking
 
-Tensormesh serverless models are registered in LiteLLM's model cost map, so LiteLLM computes per-request spend automatically. On the proxy, the cost is returned in the `x-litellm-response-cost` response header and recorded in spend logs. Cached input tokens are billed at zero.
+Tensormesh serverless models are registered in Lumina's model cost map, so Lumina computes per-request spend automatically. On the proxy, the cost is returned in the `x-lumina-response-cost` response header and recorded in spend logs. Cached input tokens are billed at zero.
 
 ## Common Parameters
 
@@ -270,10 +270,10 @@ These are the common parameters to start with. Additional parameters are model-d
 | `/responses` | `input`, `max_output_tokens`, `temperature`, `top_p`, `stream`, `tools`, `tool_choice`, `text`, `extra_headers` |
 | `/messages` | `messages`, `max_tokens`, `temperature`, `top_p`, `stream`, `tools`, `tool_choice`, `extra_headers` |
 
-For chat completions, LiteLLM accepts `max_completion_tokens` and maps it to `max_tokens` for Tensormesh.
+For chat completions, Lumina accepts `max_completion_tokens` and maps it to `max_tokens` for Tensormesh.
 
 ## Notes
 
-- Use `model="tensormesh/<your-model-name>"` for direct LiteLLM SDK calls.
+- Use `model="tensormesh/<your-model-name>"` for direct Lumina SDK calls.
 - The default serverless base URL is `https://serverless.tensormesh.ai/v1`.
 - Reasoning controls (`thinking`/`enable_thinking` and `reasoning_effort`) are passed through `extra_body.chat_template_kwargs` and are honored on the reasoning-capable models.

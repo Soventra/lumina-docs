@@ -12,8 +12,8 @@ Pass-through endpoints for `/azure`
 
 ### When to use this?
 
-- For most use cases, you should use the [native LiteLLM Azure OpenAI Integration](/docs/providers/azure) (`/chat/completions`, `/embeddings`, `/completions`, `/images`, etc.)
-- Use this passthrough to call newer or less common Azure OpenAI endpoints that LiteLLM doesn't fully support yet, such as `/assistants`, `/threads`, `/vector_stores`
+- For most use cases, you should use the [native Lumina Azure OpenAI Integration](/docs/providers/azure) (`/chat/completions`, `/embeddings`, `/completions`, `/images`, etc.)
+- Use this passthrough to call newer or less common Azure OpenAI endpoints that Lumina doesn't fully support yet, such as `/assistants`, `/threads`, `/vector_stores`
 
 Simply replace your Azure endpoint (e.g. `https://<your-resource-name>.openai.azure.com`) with `LUMINA_PROXY_BASE_URL/azure`
 

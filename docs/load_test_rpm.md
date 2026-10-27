@@ -1,6 +1,6 @@
 
 
-# Multi-Instance TPM/RPM (litellm.Router)
+# Multi-Instance TPM/RPM (lumina.Router)
 
 Test if your defined tpm/rpm limits are respected across multiple instances of the Router object. 
 
@@ -23,10 +23,10 @@ Copy this script. Save it as `test_loadtest_router.py` AND run it with `python3 
 
 
 ```python
-from litellm import Router 
-import litellm
-litellm.suppress_debug_info = True
-litellm.set_verbose = False
+from lumina import Router 
+import lumina
+lumina.suppress_debug_info = True
+lumina.set_verbose = False
 import logging
 logging.basicConfig(level=logging.CRITICAL)
 import os, random, uuid, time, asyncio
@@ -149,14 +149,14 @@ router_settings:
 
 **Instance 1**
 ```bash
-litellm --config /path/to/config.yaml --port 4000
+lumina --config /path/to/config.yaml --port 4000
 
 ## RUNNING on http://0.0.0.0:4000
 ```
 
 **Instance 2**
 ```bash
-litellm --config /path/to/config.yaml --port 4001
+lumina --config /path/to/config.yaml --port 4001
 
 ## RUNNING on http://0.0.0.0:4001
 ```
@@ -170,22 +170,22 @@ Copy this script. Save it as `test_loadtest_proxy.py` AND run it with `python3 t
 ```python
 from openai import AsyncOpenAI, AsyncAzureOpenAI
 import random, uuid
-import time, asyncio, litellm
+import time, asyncio, lumina
 # import logging
 # logging.basicConfig(level=logging.DEBUG)
-#### LITELLM PROXY #### 
-litellm_client = AsyncOpenAI(
-    api_key="sk-<your-litellm-api-key>", # [CHANGE THIS]
+#### LUMINA PROXY #### 
+lumina_client = AsyncOpenAI(
+    api_key="sk-<your-lumina-api-key>", # [CHANGE THIS]
     base_url="http://0.0.0.0:4000"
 )
-litellm_client_2 = AsyncOpenAI(
-    api_key="sk-<your-litellm-api-key>", # [CHANGE THIS]
+lumina_client_2 = AsyncOpenAI(
+    api_key="sk-<your-lumina-api-key>", # [CHANGE THIS]
     base_url="http://0.0.0.0:4001"
 )
 
 async def proxy_completion_non_streaming():
   try:
-    client = random.sample([litellm_client, litellm_client_2], 1)[0] # randomly pick b/w clients
+    client = random.sample([lumina_client, lumina_client_2], 1)[0] # randomly pick b/w clients
     # print(f"client={client}")
     response = await client.chat.completions.create(
               model="fake-openai-endpoint", # [CHANGE THIS] (if you call it something else on your proxy)

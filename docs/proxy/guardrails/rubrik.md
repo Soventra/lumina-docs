@@ -87,7 +87,7 @@ guardrails:
 ### 2. Launch the Proxy
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ### 3. Test It
@@ -186,8 +186,8 @@ On `post_call` the guardrail sends a JSON envelope:
 
 ## How Batch Logging Works
 
-All LLM requests (successes and failures) are queued and sent in batches to `{api_base}/v1/litellm/batch`.
+All LLM requests (successes and failures) are queued and sent in batches to `{api_base}/v1/lumina/batch`.
 
-- Logs are flushed when the queue reaches `RUBRIK_BATCH_SIZE` (default 512) or on a periodic interval (default 5 seconds). These defaults are inherited from LiteLLM's global settings.
+- Logs are flushed when the queue reaches `RUBRIK_BATCH_SIZE` (default 512) or on a periodic interval (default 5 seconds). These defaults are inherited from Lumina's global settings.
 - Use `RUBRIK_SAMPLING_RATE` to reduce logging volume in high-traffic deployments. Sampling only affects routine logging; moderation always runs, and blocks are always logged.
-- Log IDs are normalized to `litellm_call_id` across all providers, so the moderation log, the block log, and the batch log for one request share a correlation key.
+- Log IDs are normalized to `lumina_call_id` across all providers, so the moderation log, the block log, and the batch log for one request share a correlation key.

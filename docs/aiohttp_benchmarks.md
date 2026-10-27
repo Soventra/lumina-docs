@@ -1,10 +1,10 @@
-# LiteLLM v1.71.1 Benchmarks
+# Lumina v1.71.1 Benchmarks
 
 ## Overview
 
-This document presents performance benchmarks comparing LiteLLM's v1.71.1 to prior litellm versions.
+This document presents performance benchmarks comparing Lumina's v1.71.1 to prior lumina versions.
 
-**Related PR:** [#11097](https://github.com/BerriAI/litellm/pull/11097)
+**Related PR:** [#11097](https://github.com/Soventra/lumina/pull/11097)
 
 ## Testing Methodology
 
@@ -12,16 +12,16 @@ The load testing was conducted using the following parameters:
 - **Request Rate:** 200 RPS (Requests Per Second)
 - **User Ramp Up:** 200 concurrent users
 - **Transport Comparison:** httpx (existing) vs aiohttp (new implementation)
-- **Number of pods/instance of litellm:** 1
+- **Number of pods/instance of lumina:** 1
 - **Machine Specs:** 2 vCPUs, 4GB RAM
-- **LiteLLM Settings:**
+- **Lumina Settings:**
     - Tested against a [fake openai endpoint](https://exampleopenaiendpoint-production.up.railway.app/)
-    - aiohttp was opt-in at v1.71.1, so the aiohttp run set `USE_AIOHTTP_TRANSPORT="True"`. That flag no longer exists and has no effect: aiohttp is now the default transport and needs no setting. To get the httpx transport instead (for example to reproduce the httpx baseline), set `DISABLE_AIOHTTP_TRANSPORT="True"` or `litellm.disable_aiohttp_transport = True`. Enabling HTTP/2 (`LUMINA_HTTP2="True"`) also forces httpx
+    - aiohttp was opt-in at v1.71.1, so the aiohttp run set `USE_AIOHTTP_TRANSPORT="True"`. That flag no longer exists and has no effect: aiohttp is now the default transport and needs no setting. To get the httpx transport instead (for example to reproduce the httpx baseline), set `DISABLE_AIOHTTP_TRANSPORT="True"` or `lumina.disable_aiohttp_transport = True`. Enabling HTTP/2 (`LUMINA_HTTP2="True"`) also forces httpx
 
 
 ## Benchmark Results
 
-| Metric | httpx (Existing) | aiohttp (LiteLLM v1.71.1) | Improvement | Calculation |
+| Metric | httpx (Existing) | aiohttp (Lumina v1.71.1) | Improvement | Calculation |
 |--------|------------------|-------------------|-------------|-------------|
 | **RPS** | 50.2 | 224 | **+346%** ✅ | (224 - 50.2) / 50.2 × 100 = 346% |
 | **Median Latency** | 2,500ms | 74ms | **-97%** ✅ | (74 - 2500) / 2500 × 100 = -97% |

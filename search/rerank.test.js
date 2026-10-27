@@ -9,7 +9,7 @@ const {extractStructure} = require('./page-structure');
 const config = {baseUrl: 'https://gateway.example/v1', apiKey: 'server-secret'};
 const docs = Array.from({length: 105}, (_, i) => ({id: `p${i}`, title: `Topic ${i}`, heading: 'Setup', text: 'Configure the topic for your team.', url: `/docs/topic_${i}`, type: 'docs'}));
 const corpus = {index: createIndex(docs), documents: new Map(docs.map(d => [d.id, d]))};
-const answer = (body, probability = 0.6) => new Response(JSON.stringify({model: 'jev-test', answers: Object.fromEntries(Object.keys(body.questions).map(key => [key, {type: 'noul', noul: probability}]))}), {headers: {'x-litellm-response-cost': '0.0001'}});
+const answer = (body, probability = 0.6) => new Response(JSON.stringify({model: 'jev-test', answers: Object.fromEntries(Object.keys(body.questions).map(key => [key, {type: 'noul', noul: probability}]))}), {headers: {'x-lumina-response-cost': '0.0001'}});
 
 test('reranks 100 candidates in parallel batches, preserves evidence, sums cost, and caches', async () => {
   const requests = [];
@@ -53,7 +53,7 @@ test('aborted searches do not call the provider', async () => {
 });
 
 test('extracts article structure including unselected tabs without global navigation or body prose', () => {
-  const result = extractStructure(`<title>Setup | LiteLLM</title><meta name="description" content="Configure your integration"><nav><a href="/global">Global navigation</a></nav><ul class="breadcrumbs"><li class="breadcrumbs__item">Authentication</li></ul><article class="theme-doc-markdown"><h1>Setup</h1><h2 id="provider">Provider</h2><ul class="tabs"><li role="tab">Okta</li><li role="tab">Microsoft Entra ID</li></ul><div hidden><h3 id="entra">Entra configuration</h3></div><p>Body text must not become metadata.</p><a href="/docs/teams">Team mapping</a><table><thead><tr><th>Parameter</th><th>Purpose</th></tr></thead><tbody><tr><td>body value</td><td>body value</td></tr></tbody></table><figure><img src="/img/entra.png" alt="Enterprise application"><figcaption>SSO settings</figcaption></figure><div class="codeBlockTitle_test">config.yaml</div><pre class="language-yaml">body code</pre><div class="admonitionHeading_test">Prerequisites</div></article>`, '/docs/setup');
+  const result = extractStructure(`<title>Setup | Lumina</title><meta name="description" content="Configure your integration"><nav><a href="/global">Global navigation</a></nav><ul class="breadcrumbs"><li class="breadcrumbs__item">Authentication</li></ul><article class="theme-doc-markdown"><h1>Setup</h1><h2 id="provider">Provider</h2><ul class="tabs"><li role="tab">Okta</li><li role="tab">Microsoft Entra ID</li></ul><div hidden><h3 id="entra">Entra configuration</h3></div><p>Body text must not become metadata.</p><a href="/docs/teams">Team mapping</a><table><thead><tr><th>Parameter</th><th>Purpose</th></tr></thead><tbody><tr><td>body value</td><td>body value</td></tr></tbody></table><figure><img src="/img/entra.png" alt="Enterprise application"><figcaption>SSO settings</figcaption></figure><div class="codeBlockTitle_test">config.yaml</div><pre class="language-yaml">body code</pre><div class="admonitionHeading_test">Prerequisites</div></article>`, '/docs/setup');
   assert.deepEqual(result.tabs, ['Okta', 'Microsoft Entra ID']);
   assert.ok(result.outline.some(h => h.title === 'Entra configuration'));
   assert.deepEqual(result.tables[0].columns, ['Parameter', 'Purpose']);

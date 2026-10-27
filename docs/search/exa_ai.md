@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://exa.ai](https://exa.ai)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Exa AI Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["EXA_API_KEY"] = "exa-..."
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -59,7 +59,7 @@ curl http://0.0.0.0:4000/v1/search/exa-search \
 
 ```python showLineNumbers title="Exa AI Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["EXA_API_KEY"] = "exa-..."
 
@@ -86,11 +86,11 @@ Exa results carry the same `title`, `url`, `snippet` and `date` fields as every 
 | `results[].score` | each result | you use `type="neural"` |
 | `provider_metadata` | the response | every Exa response |
 
-`highlights` are the sentences Exa picked from the page as the best match for your query. When you ask for highlights without text, `snippet` is those highlights joined together. `provider_metadata.costDollars` is what Exa charged for the call, so you can reconcile it with the cost LiteLLM tracked in `x-litellm-response-cost` and the spend logs.
+`highlights` are the sentences Exa picked from the page as the best match for your query. When you ask for highlights without text, `snippet` is those highlights joined together. `provider_metadata.costDollars` is what Exa charged for the call, so you can reconcile it with the cost Lumina tracked in `x-lumina-response-cost` and the spend logs.
 
 ```python showLineNumbers title="Exa AI Search with highlights"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["EXA_API_KEY"] = "exa-..."
 

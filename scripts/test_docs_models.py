@@ -52,7 +52,7 @@ class ModelDefaultsTests(unittest.TestCase):
                 self.assertFalse(any("{{chatgpt" in e[3] for e in errors))
 
     def test_prefixed_chatgpt_literals_are_rejected(self):
-        for prefix in ("litellm_proxy/", "litellm/", "openai/"):
+        for prefix in ("lumina_proxy/", "lumina/", "openai/"):
             with self.subTest(prefix=prefix):
                 errors = self.errors(f'```python\nmodel = "{prefix}chatgpt/gpt-5.4"\n```\n')
                 self.assertEqual([e[0] for e in errors], ["model-literal"])
@@ -61,12 +61,12 @@ class ModelDefaultsTests(unittest.TestCase):
                 self.assertEqual(self.errors(f'```python\nmodel = "{prefix}chatgpt/{{{{chatgpt}}}}"\n```\n'), [])
 
     def test_token_file_paths_are_not_models(self):
-        for path in ("/tokens/chatgpt/auth.json", "$HOME/.config/litellm/chatgpt/auth.json", "chatgpt/auth.json"):
+        for path in ("/tokens/chatgpt/auth.json", "$HOME/.config/lumina/chatgpt/auth.json", "chatgpt/auth.json"):
             with self.subTest(path=path):
                 self.assertEqual(self.errors(f'```bash\ncp {path} /destination/auth.json\n```\n'), [])
 
     def test_source_paths_are_not_models(self):
-        for path in ("litellm/llms/chatgpt/responses/transformation.py", "chatgpt/responses/transformation.py",
+        for path in ("lumina/llms/chatgpt/responses/transformation.py", "chatgpt/responses/transformation.py",
                      "chatgpt/common_utils.py"):
             with self.subTest(path=path):
                 self.assertEqual(self.errors(f'See `{path}` for the request shape.\n'), [])

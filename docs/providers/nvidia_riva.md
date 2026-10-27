@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Nvidia Riva (Speech-to-Text)
 
-LiteLLM supports NVIDIA Riva for speech-to-text via `/audio/transcriptions`. Works with both the **NVCF-hosted** Riva endpoint (e.g. Parakeet on `build.nvidia.com`) and **self-hosted** Riva deployments.
+Lumina supports NVIDIA Riva for speech-to-text via `/audio/transcriptions`. Works with both the **NVCF-hosted** Riva endpoint (e.g. Parakeet on `build.nvidia.com`) and **self-hosted** Riva deployments.
 
 | Property | Details |
 |-------|-------|
-| Description | Riva is NVIDIA's GPU-accelerated speech AI. LiteLLM streams the audio to Riva over gRPC and returns OpenAI-compatible transcripts. |
-| Provider Route on LiteLLM | `nvidia_riva/` |
+| Description | Riva is NVIDIA's GPU-accelerated speech AI. Lumina streams the audio to Riva over gRPC and returns OpenAI-compatible transcripts. |
+| Provider Route on Lumina | `nvidia_riva/` |
 | Provider Doc | [Riva ASR docs ↗](https://docs.nvidia.com/deeplearning/riva/user-guide/docs/asr/asr-overview.html) |
 | Transport | gRPC (not HTTP) |
 | Supported OpenAI Endpoints | `/audio/transcriptions` |
@@ -18,17 +18,17 @@ LiteLLM supports NVIDIA Riva for speech-to-text via `/audio/transcriptions`. Wor
 `nvidia_riva` requires the gRPC client and audio decoding libraries. Install them with:
 
 ```bash
-pip install 'litellm[stt-nvidia-riva]'
+pip install 'lumina[stt-nvidia-riva]'
 ```
 
-This pulls in `nvidia-riva-client`, `soundfile`, `audioread`, and `numpy`. They are imported lazily so the rest of LiteLLM keeps working without them.
+This pulls in `nvidia-riva-client`, `soundfile`, `audioread`, and `numpy`. They are imported lazily so the rest of Lumina keeps working without them.
 
 :::
 
 ## Quick Start
 
 ```python
-from litellm import transcription
+from lumina import transcription
 import os
 
 os.environ["NVIDIA_RIVA_API_KEY"] = "nvapi-..."   # your nvapi key
@@ -45,11 +45,11 @@ response = transcription(
 print(response.text)
 ```
 
-LiteLLM resamples the audio to 16 kHz mono LINEAR_PCM (Riva's required wire format) before streaming, so you can send mp3 / wav / flac / ogg directly. No need to preprocess.
+Lumina resamples the audio to 16 kHz mono LINEAR_PCM (Riva's required wire format) before streaming, so you can send mp3 / wav / flac / ogg directly. No need to preprocess.
 
 ## Deployment modes
 
-Riva runs in two very different shapes. The presence of `nvcf_function_id` is the signal LiteLLM uses to default `use_ssl`, but you can always override it.
+Riva runs in two very different shapes. The presence of `nvcf_function_id` is the signal Lumina uses to default `use_ssl`, but you can always override it.
 
 ### NVCF (NVIDIA-hosted)
 
@@ -63,7 +63,7 @@ model_list:
       nvcf_function_id: 1598d209-5e27-4d3c-8079-4751568b1081
 ```
 
-When `nvcf_function_id` is set, LiteLLM:
+When `nvcf_function_id` is set, Lumina:
 - enables TLS (`use_ssl=True`)
 - attaches the `function-id` gRPC metadata
 - attaches `authorization: Bearer <api_key>`
@@ -91,7 +91,7 @@ model_list:
 
 ### Offline-only models (Parakeet TDT, Whisper)
 
-Some Riva NIMs only load an offline ASR engine, so a streaming request fails with `INVALID_ARGUMENT: Unavailable model requested ... type=online`. Set `riva_offline: true` on the deployment and LiteLLM sends the whole resampled buffer through the unary `Recognize` RPC instead of `StreamingRecognize`. Available from v1.108.0.
+Some Riva NIMs only load an offline ASR engine, so a streaming request fails with `INVALID_ARGUMENT: Unavailable model requested ... type=online`. Set `riva_offline: true` on the deployment and Lumina sends the whole resampled buffer through the unary `Recognize` RPC instead of `StreamingRecognize`. Available from v1.108.0.
 
 Word timestamps work the same way as in streaming mode: send `response_format=verbose_json` together with `timestamp_granularities[]=word`, since `verbose_json` alone returns no `words`. Some offline NIMs, such as Whisper Large v3, return the transcript without word timings.
 
@@ -107,7 +107,7 @@ model_list:
       language: multi
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 ### 1. Add the model to your config
 
@@ -129,7 +129,7 @@ general_settings:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -153,7 +153,7 @@ curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000",
 )
 
@@ -189,7 +189,7 @@ Riva-specific parameters you can set in `lumina_params` (or pass directly to `tr
 | `riva_model_name` | `""` (auto-select) | Override the internal Riva model name. Leaving it empty lets Riva pick based on `language_code` + `sample_rate_hertz`. Recommended unless you know exactly what you want. |
 | `enable_automatic_punctuation` | `True` | Standard Riva flag. |
 | `endpointing_config` | unset | Pass a dict that mirrors Riva's `EndpointingConfig` (`start_threshold`, `stop_threshold`, `stop_history`, `stop_history_eou`, ...). |
-| `chunking_strategy` | unset | OpenAI-style VAD config (`{"type": "server_vad", "threshold": 0.5, "silence_duration_ms": 700, "prefix_padding_ms": 250}`). LiteLLM translates it to Riva's `EndpointingConfig`. |
+| `chunking_strategy` | unset | OpenAI-style VAD config (`{"type": "server_vad", "threshold": 0.5, "silence_duration_ms": 700, "prefix_padding_ms": 250}`). Lumina translates it to Riva's `EndpointingConfig`. |
 
 ### Why is `riva_model_name` empty by default?
 
@@ -197,9 +197,9 @@ Internal Riva deployment names like `parakeet-1.1b-en-US-asr-streaming-silero-va
 
 ## Audio formats
 
-LiteLLM decodes inbound audio with `soundfile` (wav / flac / ogg) and falls back to `audioread` for `mp3` / `m4a` / `mp4` / `webm`. Audio is then resampled to 16 kHz mono LINEAR_PCM before streaming to Riva.
+Lumina decodes inbound audio with `soundfile` (wav / flac / ogg) and falls back to `audioread` for `mp3` / `m4a` / `mp4` / `webm`. Audio is then resampled to 16 kHz mono LINEAR_PCM before streaming to Riva.
 
-If decoding fails (e.g. exotic codecs, DRM, or `audioread` not installed), LiteLLM raises a clear error asking you to convert upstream:
+If decoding fails (e.g. exotic codecs, DRM, or `audioread` not installed), Lumina raises a clear error asking you to convert upstream:
 
 ```bash
 ffmpeg -i input.mp3 -ac 1 -ar 16000 -sample_fmt s16 output.wav
@@ -215,6 +215,6 @@ ffmpeg -i input.mp3 -ac 1 -ar 16000 -sample_fmt s16 output.wav
 
 ## Notes & limitations
 
-- Transport is gRPC streaming by default, so even short files are sent as a stream. Set `riva_offline: true` for NIMs that only expose the offline engine, self-hosted or NVCF-hosted. In offline mode the whole file goes in one gRPC message, so very long files can hit the server's maximum message size, and LiteLLM returns a 413. The deployment's `timeout` applies to the offline call, and a call that runs past it returns a 408.
+- Transport is gRPC streaming by default, so even short files are sent as a stream. Set `riva_offline: true` for NIMs that only expose the offline engine, self-hosted or NVCF-hosted. In offline mode the whole file goes in one gRPC message, so very long files can hit the server's maximum message size, and Lumina returns a 413. The deployment's `timeout` applies to the offline call, and a call that runs past it returns a 408.
 - Diarization (`diarization_config`) and `srt` / `vtt` response formats aren't wired up yet. Open an issue if you need them.
-- Cost calc: Riva doesn't return token usage. LiteLLM stores the audio duration on `_hidden_params["audio_transcription_duration"]` so cost can be derived externally.
+- Cost calc: Riva doesn't return token usage. Lumina stores the audio duration on `_hidden_params["audio_transcription_duration"]` so cost can be derived externally.

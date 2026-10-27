@@ -36,7 +36,7 @@ curl http://0.0.0.0:4000/v1/responses \
 
 ## `previous_response_id` on stateless backends
 
-The native path forwards `previous_response_id` to the backend as sent, so the backend is what resolves it. OpenAI-compatible servers that do not store responses reject it, typically with a 400, and that error is returned to the caller unchanged. Against such a backend either send the full conversation history in `input` on every turn, or leave the opt-in off and use the bridged path with `store_prompts_in_spend_logs: true`, which lets LiteLLM resolve `previous_response_id` from its own spend logs
+The native path forwards `previous_response_id` to the backend as sent, so the backend is what resolves it. OpenAI-compatible servers that do not store responses reject it, typically with a 400, and that error is returned to the caller unchanged. Against such a backend either send the full conversation history in `input` on every turn, or leave the opt-in off and use the bridged path with `store_prompts_in_spend_logs: true`, which lets Lumina resolve `previous_response_id` from its own spend logs
 
 | Deployment `model` | `/v1/responses` with the opt-in | `/v1/responses` without it |
 |---|---|---|

@@ -3,11 +3,11 @@ import TabItem from '@theme/TabItem';
 
 # EnkryptAI Guardrails
 
-LiteLLM supports EnkryptAI guardrails for content moderation and safety checks on LLM inputs and outputs.
+Lumina supports EnkryptAI guardrails for content moderation and safety checks on LLM inputs and outputs.
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 Define your guardrails under the `guardrails` section:
 
@@ -35,7 +35,7 @@ guardrails:
 
 #### Available Detectors
 
-Detectors are configured in the EnkryptAI policy referenced by `policy_name`, not in the LiteLLM config. LiteLLM sends only the text and the `x-enkrypt-policy` header, so a `detectors:` block under `lumina_params` has no effect. EnkryptAI policies support these detection types:
+Detectors are configured in the EnkryptAI policy referenced by `policy_name`, not in the Lumina config. Lumina sends only the text and the `x-enkrypt-policy` header, so a `detectors:` block under `lumina_params` has no effect. EnkryptAI policies support these detection types:
 
 - **toxicity** - Detect toxic language
 - **nsfw** - Detect NSFW (Not Safe For Work) content
@@ -53,10 +53,10 @@ Detectors are configured in the EnkryptAI policy referenced by `policy_name`, no
 export ENKRYPTAI_API_KEY="your-api-key"
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test Request
@@ -140,7 +140,7 @@ guardrails:
       policy_name: "my-custom-policy"  # Sent via x-enkrypt-policy header
 ```
 
-Detection is controlled entirely by the policy referenced in `policy_name`; LiteLLM sends only the text and this header to EnkryptAI, so per-detector settings must be configured in the EnkryptAI policy itself. Any detected violation blocks the request.
+Detection is controlled entirely by the policy referenced in `policy_name`; Lumina sends only the text and this header to EnkryptAI, so per-detector settings must be configured in the EnkryptAI policy itself. Any detected violation blocks the request.
 
 ### Input and Output Guardrails
 
@@ -184,7 +184,7 @@ EnkryptAI guardrail logs include:
 - **duration**: Time taken for guardrail check
 - **start_time** and **end_time**: Timestamps
 
-These logs are available through your configured LiteLLM logging callbacks.
+These logs are available through your configured Lumina logging callbacks.
 
 ## Error Handling
 

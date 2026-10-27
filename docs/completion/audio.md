@@ -16,17 +16,17 @@ Example for creating a human-like audio response to a prompt
 
 <Tabs>
 
-<TabItem label="LiteLLM Python SDK" value="Python">
+<TabItem label="Lumina Python SDK" value="Python">
 
 ```python
 import os 
 import base64
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 
 # openai call
-completion = await litellm.acompletion(
+completion = await lumina.acompletion(
     model="gpt-4o-audio-preview",
     modalities=["text", "audio"],
     audio={"voice": "alloy", "format": "wav"},
@@ -39,7 +39,7 @@ with open("dog.wav", "wb") as f:
 ```
 
 </TabItem>
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
 1. Define an audio model on config.yaml
 
@@ -55,7 +55,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it using the OpenAI Python SDK
@@ -66,7 +66,7 @@ import base64
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    api_key="LUMINA_PROXY_KEY", # sk-<your-lumina-api-key>
     base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
@@ -101,7 +101,7 @@ with open("dog.wav", "wb") as f:
 
 <Tabs>
 
-<TabItem label="LiteLLM Python SDK" value="Python">
+<TabItem label="Lumina Python SDK" value="Python">
 
 ```python
 import base64
@@ -113,7 +113,7 @@ response.raise_for_status()
 wav_data = response.content
 encoded_string = base64.b64encode(wav_data).decode("utf-8")
 
-completion = litellm.completion(
+completion = lumina.completion(
     model="gpt-4o-audio-preview",
     modalities=["text", "audio"],
     audio={"voice": "alloy", "format": "wav"},
@@ -136,7 +136,7 @@ print(completion.choices[0].message)
 
 </TabItem>
 
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
 
 1. Define an audio model on config.yaml
@@ -153,7 +153,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it using the OpenAI Python SDK
@@ -164,7 +164,7 @@ import base64
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    api_key="LUMINA_PROXY_KEY", # sk-<your-lumina-api-key>
     base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
@@ -210,22 +210,22 @@ print(completion.choices[0].message)
 ## Checking if a model supports `audio_input` and `audio_output`
 
 <Tabs>
-<TabItem label="LiteLLM Python SDK" value="Python">
+<TabItem label="Lumina Python SDK" value="Python">
 
-Use `litellm.supports_audio_output(model="")` -> returns `True` if model can generate audio output
+Use `lumina.supports_audio_output(model="")` -> returns `True` if model can generate audio output
 
-Use `litellm.supports_audio_input(model="")` -> returns `True` if model can accept audio input
+Use `lumina.supports_audio_input(model="")` -> returns `True` if model can accept audio input
 
 ```python
-assert litellm.supports_audio_output(model="gpt-audio") == True
-assert litellm.supports_audio_input(model="gpt-audio") == True
+assert lumina.supports_audio_output(model="gpt-audio") == True
+assert lumina.supports_audio_input(model="gpt-audio") == True
 
-assert litellm.supports_audio_output(model="{{openai_small}}") == False
-assert litellm.supports_audio_input(model="{{openai_small}}") == False
+assert lumina.supports_audio_output(model="{{openai_small}}") == False
+assert lumina.supports_audio_input(model="{{openai_small}}") == False
 ```
 </TabItem>
 
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
 
 1. Define audio models on config.yaml
@@ -249,10 +249,10 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
-3. Call `/model/info` to check if your model supports audio input and output. The flags are returned under each deployment's `model_info`, either from `litellm.model_cost` or from what you set in `config.yaml`. `/model_group/info` does not return `supports_audio_input` or `supports_audio_output`
+3. Call `/model/info` to check if your model supports audio input and output. The flags are returned under each deployment's `model_info`, either from `lumina.model_cost` or from what you set in `config.yaml`. `/model_group/info` does not return `supports_audio_input` or `supports_audio_output`
 
 ```shell
 curl -X 'GET' \

@@ -35,7 +35,7 @@ Do any setup in your own code. There are no lifecycle hooks.
 box = sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"})
 await box.run(["pip", "install", "-e", ".[dev]"])
 
-async with litellm.aagent_session(Harness.CODEX, sandbox=box, model="litellm_proxy/coder") as s:
+async with lumina.aagent_session(Harness.CODEX, sandbox=box, model="lumina_proxy/coder") as s:
     ...
 ```
 

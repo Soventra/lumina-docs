@@ -3,30 +3,30 @@ import TabItem from '@theme/TabItem';
 
 # Llamafile
 
-LiteLLM supports all models on Llamafile.
+Lumina supports all models on Llamafile.
 
 | Property                  | Details                                                                                                                              |
 |---------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
 | Description               | llamafile lets you distribute and run LLMs with a single file. [Docs](https://github.com/Mozilla-Ocho/llamafile/blob/main/README.md) |
-| Provider Route on LiteLLM | `llamafile/` (for OpenAI compatible server)                                                                                          |
+| Provider Route on Lumina | `llamafile/` (for OpenAI compatible server)                                                                                          |
 | Provider Doc              | [llamafile ↗](https://github.com/Mozilla-Ocho/llamafile/blob/main/llama.cpp/server/README.md#api-endpoints)                          |
 | Supported Endpoints       | `/chat/completions`, `/embeddings`, `/completions`                                                                                   |
 
 
 ## Quick Start
 
-## Usage - litellm.completion (calling OpenAI compatible endpoint)
-llamafile Provides an OpenAI compatible endpoint for chat completions - here's how to call it with LiteLLM
+## Usage - lumina.completion (calling OpenAI compatible endpoint)
+llamafile Provides an OpenAI compatible endpoint for chat completions - here's how to call it with Lumina
 
-To use litellm to call llamafile add the following to your completion call
+To use lumina to call llamafile add the following to your completion call
 
 * `model="llamafile/<your-llamafile-model-name>"` 
 * `api_base = "your-hosted-llamafile"`
 
 ```python
-import litellm 
+import lumina 
 
-response = litellm.completion(
+response = lumina.completion(
             model="llamafile/mistralai/mistral-7b-instruct-v0.2", # pass the llamafile model name for completeness
             messages=messages,
             api_base="http://localhost:8080/v1",
@@ -37,9 +37,9 @@ print(response)
 ```
 
 
-## Usage -  LiteLLM Proxy Server (calling OpenAI compatible endpoint)
+## Usage -  Lumina Proxy Server (calling OpenAI compatible endpoint)
 
-Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
+Here's how to call an OpenAI-Compatible Endpoint with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -54,10 +54,10 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 1. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-1. Send Request to LiteLLM Proxy Server
+1. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -66,8 +66,8 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>", # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>", # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -111,7 +111,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import embedding   
+from lumina import embedding   
 import os
 
 os.environ["LLAMAFILE_API_BASE"] = "http://localhost:8080/v1"
@@ -138,7 +138,7 @@ model_list:
 1. Start the proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

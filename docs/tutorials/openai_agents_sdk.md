@@ -1,40 +1,40 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# OpenAI Agents SDK with LiteLLM
+# OpenAI Agents SDK with Lumina
 
-Use OpenAI's Agents SDK with any LLM provider through LiteLLM Proxy.
+Use OpenAI's Agents SDK with any LLM provider through Lumina Proxy.
 
-This tutorial shows you how to build AI agents using the OpenAI Agents SDK with support for multiple LLM providers through LiteLLM.
+This tutorial shows you how to build AI agents using the OpenAI Agents SDK with support for multiple LLM providers through Lumina.
 
 ## Overview
 
-The OpenAI Agents SDK provides a high-level interface for building AI agents. By integrating with LiteLLM, you can:
+The OpenAI Agents SDK provides a high-level interface for building AI agents. By integrating with Lumina, you can:
 
 - Use multiple LLM providers (Bedrock, Azure, Vertex AI, etc.) with the same agent code
 - Switch easily between models from different providers
-- Connect to a LiteLLM proxy for centralized model management
+- Connect to a Lumina proxy for centralized model management
 
-:::tip[Built-in LiteLLM Extension]
+:::tip[Built-in Lumina Extension]
 
-The OpenAI Agents SDK includes an official LiteLLM extension (`LitellmModel`) that works without a proxy. If you don't need centralized proxy features (cost tracking, rate limiting, load balancing), you can use it directly:
+The OpenAI Agents SDK includes an official Lumina extension (`LuminaModel`) that works without a proxy. If you don't need centralized proxy features (cost tracking, rate limiting, load balancing), you can use it directly:
 
 ```python
 from agents import Agent, Runner
-from agents.extensions.models.litellm_model import LitellmModel
+from agents.extensions.models.lumina_model import LuminaModel
 
 
 agent = Agent(
     name="Assistant",
     instructions="You are a helpful assistant.",
-    model=LitellmModel(model="anthropic/{{anthropic}}"),
+    model=LuminaModel(model="anthropic/{{anthropic}}"),
 )
 
 result = Runner.run_sync(agent, "Hello!")
 print(result.final_output)
 ```
 
-See the [Docs](https://openai.github.io/openai-agents-python/models/litellm/) for more details. The rest of this tutorial focuses on the **proxy-based approach** for teams that need centralized model management.
+See the [Docs](https://openai.github.io/openai-agents-python/models/lumina/) for more details. The rest of this tutorial focuses on the **proxy-based approach** for teams that need centralized model management.
 
 :::
 
@@ -47,12 +47,12 @@ See the [Docs](https://openai.github.io/openai-agents-python/models/litellm/) fo
 ## Installation
 
 ```bash showLineNumbers title="Install dependencies"
-uv add openai-agents litellm
+uv add openai-agents lumina
 ```
 
-## 1. Start LiteLLM Proxy
+## 1. Start Lumina Proxy
 
-Configure and start the LiteLLM proxy with the models you want to use:
+Configure and start the Lumina proxy with the models you want to use:
 
 ```yaml title="config.yaml" showLineNumbers
 model_list:
@@ -81,19 +81,19 @@ model_list:
 ```
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 Required environment variables:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `LUMINA_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
-| `LUMINA_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key (not your provider's key) |
+| `LUMINA_BASE_URL` | `http://localhost:4000` | Lumina proxy URL |
+| `LUMINA_API_KEY` | `sk-<your-lumina-api-key>` | Your Lumina API key (not your provider's key) |
 
 ## 2. Setting Up Environment
 
-Import the necessary libraries and configure your LiteLLM proxy connection:
+Import the necessary libraries and configure your Lumina proxy connection:
 
 ```python showLineNumbers title="Setup environment"
 from __future__ import annotations
@@ -114,16 +114,16 @@ from agents import (
     set_tracing_disabled,
 )
 
-# Point to LiteLLM proxy
+# Point to Lumina proxy
 BASE_URL = os.getenv("LUMINA_BASE_URL") or "http://localhost:4000"
-API_KEY = os.getenv("LUMINA_API_KEY") or "sk-<your-litellm-api-key>"
+API_KEY = os.getenv("LUMINA_API_KEY") or "sk-<your-lumina-api-key>"
 
 # Define model constants for cleaner code
 MODEL_BEDROCK_SONNET = "bedrock-claude-sonnet-5"
 MODEL_BEDROCK_OPUS = "bedrock-claude-opus"
 MODEL_GPT = "{{openai_large}}"
 
-# Create the OpenAI client pointed at LiteLLM
+# Create the OpenAI client pointed at Lumina
 client = AsyncOpenAI(base_url=BASE_URL, api_key=API_KEY)
 
 # Disable tracing since we're not using OpenAI's platform directly
@@ -132,10 +132,10 @@ set_tracing_disabled(disabled=True)
 
 ## 3. Create a Custom Model Provider
 
-The Agents SDK uses a `ModelProvider` to resolve model names. Create a custom provider that routes all requests through LiteLLM:
+The Agents SDK uses a `ModelProvider` to resolve model names. Create a custom provider that routes all requests through Lumina:
 
-```python showLineNumbers title="Custom LiteLLM model provider"
-class LiteLLMModelProvider(ModelProvider):
+```python showLineNumbers title="Custom Lumina model provider"
+class LuminaModelProvider(ModelProvider):
     def get_model(self, model_name: str | None) -> Model:
         return OpenAIChatCompletionsModel(
             model=model_name or MODEL_BEDROCK_SONNET,
@@ -143,7 +143,7 @@ class LiteLLMModelProvider(ModelProvider):
         )
 
 
-LUMINA_MODEL_PROVIDER = LiteLLMModelProvider()
+LUMINA_MODEL_PROVIDER = LuminaModelProvider()
 ```
 
 ## 4. Define a Simple Tool
@@ -181,7 +181,7 @@ def get_weather(city: str) -> str:
 
 ### 5.1 Using Bedrock Models
 
-```python showLineNumbers title="Bedrock model via LiteLLM proxy"
+```python showLineNumbers title="Bedrock model via Lumina proxy"
 async def test_bedrock_agent():
     print("\n--- Testing Bedrock Claude Agent ---")
 
@@ -198,7 +198,7 @@ async def test_bedrock_agent():
         "What's the weather in Tokyo?",
         run_config=RunConfig(
             model_provider=LUMINA_MODEL_PROVIDER,
-            model="bedrock-claude-sonnet-5",  # Uses the model name from your LiteLLM config
+            model="bedrock-claude-sonnet-5",  # Uses the model name from your Lumina config
         ),
     )
     print(f"<<< Agent Response: {result.final_output}")
@@ -209,7 +209,7 @@ asyncio.run(test_bedrock_agent())
 
 ### 5.2 Using OpenAI Models
 
-```python showLineNumbers title="OpenAI model via LiteLLM proxy"
+```python showLineNumbers title="OpenAI model via Lumina proxy"
 async def test_openai_agent():
     print("\n--- Testing OpenAI GPT Agent ---")
 
@@ -226,7 +226,7 @@ async def test_openai_agent():
         "What's the weather in London?",
         run_config=RunConfig(
             model_provider=LUMINA_MODEL_PROVIDER,
-            model="{{openai_large}}",  # Uses the model name from your LiteLLM config
+            model="{{openai_large}}",  # Uses the model name from your Lumina config
         ),
     )
     print(f"<<< Agent Response: {result.final_output}")
@@ -237,7 +237,7 @@ asyncio.run(test_openai_agent())
 
 ### 5.3 Using Anthropic Models
 
-```python showLineNumbers title="Anthropic model via LiteLLM proxy"
+```python showLineNumbers title="Anthropic model via Lumina proxy"
 async def test_anthropic_agent():
     print("\n--- Testing Anthropic Claude Agent ---")
 
@@ -254,7 +254,7 @@ async def test_anthropic_agent():
         "What's the weather in New York?",
         run_config=RunConfig(
             model_provider=LUMINA_MODEL_PROVIDER,
-            model="{{anthropic}}",  # Uses the model name from your LiteLLM config
+            model="{{anthropic}}",  # Uses the model name from your Lumina config
         ),
     )
     print(f"<<< Agent Response: {result.final_output}")
@@ -286,16 +286,16 @@ from agents import (
     set_tracing_disabled,
 )
 
-# Point to LiteLLM proxy
+# Point to Lumina proxy
 BASE_URL = os.getenv("LUMINA_BASE_URL") or "http://localhost:4000"
-API_KEY = os.getenv("LUMINA_API_KEY") or "sk-<your-litellm-api-key>"
+API_KEY = os.getenv("LUMINA_API_KEY") or "sk-<your-lumina-api-key>"
 MODEL_NAME = os.getenv("MODEL_NAME") or "bedrock-claude-sonnet-5"
 
 client = AsyncOpenAI(base_url=BASE_URL, api_key=API_KEY)
 set_tracing_disabled(disabled=True)
 
 
-class LiteLLMModelProvider(ModelProvider):
+class LuminaModelProvider(ModelProvider):
     def get_model(self, model_name: str | None) -> Model:
         return OpenAIChatCompletionsModel(
             model=model_name or MODEL_NAME,
@@ -303,7 +303,7 @@ class LiteLLMModelProvider(ModelProvider):
         )
 
 
-LUMINA_MODEL_PROVIDER = LiteLLMModelProvider()
+LUMINA_MODEL_PROVIDER = LuminaModelProvider()
 
 
 @function_tool
@@ -357,7 +357,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-## Why Use LiteLLM with Agents SDK?
+## Why Use Lumina with Agents SDK?
 
 | Feature | Benefit |
 |---------|---------|
@@ -370,4 +370,4 @@ if __name__ == "__main__":
 ## Related Resources
 
 - [OpenAI Agents SDK Documentation](https://openai.github.io/openai-agents-python/)
-- [LiteLLM Proxy Quick Start](../proxy/quick_start)
+- [Lumina Proxy Quick Start](../proxy/quick_start)

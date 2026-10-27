@@ -4,30 +4,30 @@ import Image from '@theme/IdealImage';
 
 # MCP Permission Management
 
-Control which MCP servers and tools can be accessed by specific keys, teams, or organizations in LiteLLM. When a client attempts to list or call tools, LiteLLM enforces access controls based on configured permissions.
+Control which MCP servers and tools can be accessed by specific keys, teams, or organizations in Lumina. When a client attempts to list or call tools, Lumina enforces access controls based on configured permissions.
 
 ## Overview
 
-LiteLLM provides fine-grained permission management for MCP servers, allowing you to:
+Lumina provides fine-grained permission management for MCP servers, allowing you to:
 
 - **Restrict MCP access by entity**: Control which keys, teams, or organizations can access specific MCP servers
 - **Tool-level filtering**: Automatically filter available tools based on entity permissions
-- **Centralized control**: Manage all MCP permissions from the LiteLLM Admin UI or API
-- **One-click public MCPs**: Mark specific servers as available to every LiteLLM API key when you don't need per-key restrictions
+- **Centralized control**: Manage all MCP permissions from the Lumina Admin UI or API
+- **One-click public MCPs**: Mark specific servers as available to every Lumina API key when you don't need per-key restrictions
 
 This ensures that only authorized entities can discover and use MCP tools, providing an additional security layer for your MCP infrastructure.
 
 :::info[Related Documentation]
-- [MCP Overview](./mcp.md) - Learn about MCP in LiteLLM
+- [MCP Overview](./mcp.md) - Learn about MCP in Lumina
 - [Grant MCP Server Access to Keys and Teams](./mcp_grant_access.md) - Step-by-step Admin UI and API procedure for key and team grants
 - [MCP Cost Tracking](./mcp_cost.md) - Track costs for MCP tool calls
 - [MCP Guardrails](./mcp_guardrail.md) - Apply security guardrails to MCP calls
-- [Using MCP](./mcp_usage.md) - How to use MCP with LiteLLM
+- [Using MCP](./mcp_usage.md) - How to use MCP with Lumina
 :::
 
 ## How It Works
 
-LiteLLM supports managing permissions for MCP Servers by Keys, Teams, Organizations (entities) on LiteLLM. When a MCP client attempts to list tools, LiteLLM will only return the tools the entity has permissions to access.
+Lumina supports managing permissions for MCP Servers by Keys, Teams, Organizations (entities) on Lumina. When a MCP client attempts to list tools, Lumina will only return the tools the entity has permissions to access.
 
 When Creating a Key, Team, or Organization, you can select the allowed MCP Servers that the entity has access to.
 
@@ -38,20 +38,20 @@ When Creating a Key, Team, or Organization, you can select the allowed MCP Serve
 
 ## Permission Hierarchy
 
-Permissions can be set at six distinct levels. When more than one level applies to a request, LiteLLM **intersects** the lists (most-restrictive wins), except for the organization level, which acts as a **ceiling**.
+Permissions can be set at six distinct levels. When more than one level applies to a request, Lumina **intersects** the lists (most-restrictive wins), except for the organization level, which acts as a **ceiling**.
 
 | Level | Source | How it composes |
 |---|---|---|
 | **Key** | `object_permission.mcp_servers` / `object_permission.mcp_access_groups` on the virtual key | If the key has an explicit list, it's used. |
 | **Team** | Same fields on the team | If both key and team have lists, the result is the **intersection** (only servers in both). If only the team has a list, the key inherits it. |
-| **End user** | Same fields on the `LiteLLM_EndUserTable` row matching `x-litellm-end-user-id` | Intersected with the running result. Skipped if no end-user-id is present on the request. |
-| **Agent** | Same fields on the agent identified by `x-litellm-agent-id`, or the agent the key is bound to (`agent_id` set at key generation) | Intersected with the running result. Skipped if no agent applies. |
+| **End user** | Same fields on the `Lumina_EndUserTable` row matching `x-lumina-end-user-id` | Intersected with the running result. Skipped if no end-user-id is present on the request. |
+| **Agent** | Same fields on the agent identified by `x-lumina-agent-id`, or the agent the key is bound to (`agent_id` set at key generation) | Intersected with the running result. Skipped if no agent applies. |
 | **Internal user** | Same fields on the internal user (the human) the request authenticated as | Intersected with the running result, so it can only narrow. Skipped if that user carries no entitlement. |
 | **Organization** | Same fields on the org owning the key/team | Acts as a **ceiling**; the final allowed-server set is intersected with the org's list. If the org has no list, no additional restriction. |
 
 If no level has a list, the request can access **every** MCP server (open by default).
 
-A key bound to an agent (`agent_id` passed to `/key/generate`) gets the same treatment as a request carrying `x-litellm-agent-id`: the agent's list is intersected with the key's on every request the key makes. Granting a server to the key alone is not enough; the agent must also hold the grant (via the Admin UI agent edit form or `PATCH /v1/agents/{agent_id}`), otherwise requests scoped to that server are denied with an error naming the agent.
+A key bound to an agent (`agent_id` passed to `/key/generate`) gets the same treatment as a request carrying `x-lumina-agent-id`: the agent's list is intersected with the key's on every request the key makes. Granting a server to the key alone is not enough; the agent must also hold the grant (via the Admin UI agent edit form or `PATCH /v1/agents/{agent_id}`), otherwise requests scoped to that server are denied with an error naming the agent.
 
 ```mermaid
 flowchart TD
@@ -98,7 +98,7 @@ general_settings:
   require_key_mcp_access_defined: true
 ```
 
-Turning this on is the recommended posture. With inheritance, every key issued under a team silently reaches every MCP server that team can reach, so access is granted implicitly and widens whenever the team's list grows; with the flag on, a key reaches only what it was explicitly granted, and the team's list caps rather than defines that grant. We're looking to make this the default behavior in a future release; follow along and weigh in on the [deprecation discussion](https://github.com/BerriAI/litellm/discussions/32090). Enable it once your keys carry their own `object_permission.mcp_servers` (or an access group), since flipping it on before that will drop MCP access for keys that were relying on inheritance.
+Turning this on is the recommended posture. With inheritance, every key issued under a team silently reaches every MCP server that team can reach, so access is granted implicitly and widens whenever the team's list grows; with the flag on, a key reaches only what it was explicitly granted, and the team's list caps rather than defines that grant. We're looking to make this the default behavior in a future release; follow along and weigh in on the [deprecation discussion](https://github.com/Soventra/lumina/discussions/32090). Enable it once your keys carry their own `object_permission.mcp_servers` (or an access group), since flipping it on before that will drop MCP access for keys that were relying on inheritance.
 
 A team with an empty `mcp_servers` list still means "no restriction" regardless of this flag, since an empty team list never restricts. The flag only changes what an empty *key* list means when the team does have a list: inherit it (default) versus grant nothing (flag on). Access-group grants on the key remain additive, so attaching a group still reaches its servers even when the flag is enabled.
 
@@ -271,7 +271,7 @@ Some MCP servers are meant to be shared broadly: internal knowledge bases, calen
 
 1. Open **MCP Servers → Add / Edit** in the Admin UI.
 2. Expand **Permission Management / Access Control**.
-3. Toggle **Allow All LiteLLM Keys** on.
+3. Toggle **Allow All Lumina Keys** on.
 
 <Image 
   img={require('../img/mcp_allow_all_ui.png')}
@@ -302,7 +302,7 @@ mcp_servers:
 - You want a “default enabled” experience for internal users, while still being able to layer tool-level restrictions.
 - You’re onboarding new teams and want the safest MCPs available out of the box.
 
-Once enabled, LiteLLM automatically includes the server for every key during tool discovery/calls, with no extra virtual-key or team configuration required.
+Once enabled, Lumina automatically includes the server for every key during tool discovery/calls, with no extra virtual-key or team configuration required.
 
 ---
 
@@ -420,7 +420,7 @@ This configuration ensures that:
 
 ## MCP Server Access Control
 
-LiteLLM Proxy provides two methods for controlling access to specific MCP servers:
+Lumina Proxy provides two methods for controlling access to specific MCP servers:
 
 1. **URL-based Namespacing** - Use URL paths to directly access specific servers or access groups
 2. **Header-based Namespacing** - Use the `x-mcp-servers` header to specify which servers to access
@@ -429,7 +429,7 @@ LiteLLM Proxy provides two methods for controlling access to specific MCP server
 
 ### Method 1: URL-based Namespacing
 
-LiteLLM Proxy supports URL-based namespacing for MCP servers using the format `/<servers or access groups>/mcp`. This allows you to:
+Lumina Proxy supports URL-based namespacing for MCP servers using the format `/<servers or access groups>/mcp`. This allows you to:
 
 - **Direct URL Access**: Point MCP clients directly to specific servers or access groups via URL
 - **Simplified Configuration**: Use URLs instead of headers for server selection
@@ -438,7 +438,7 @@ LiteLLM Proxy supports URL-based namespacing for MCP servers using the format `/
 #### URL Format
 
 ```
-<your-litellm-proxy-base-url>/<server_alias_or_access_group>/mcp
+<your-lumina-proxy-base-url>/<server_alias_or_access_group>/mcp
 ```
 
 **Examples:**
@@ -461,11 +461,11 @@ curl --location 'https://api.openai.com/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "<your-litellm-proxy-base-url>/github_mcp/mcp",
+            "server_label": "lumina",
+            "server_url": "<your-lumina-proxy-base-url>/github_mcp/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY"
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY"
             }
         }
     ],
@@ -478,10 +478,10 @@ This example uses URL namespacing to access only the "github" MCP server.
 
 </TabItem>
 
-<TabItem value="litellm" label="LiteLLM Proxy">
+<TabItem value="lumina" label="Lumina Proxy">
 
 ```bash title="cURL Example with URL Namespacing" showLineNumbers
-curl --location '<your-litellm-proxy-base-url>/v1/responses' \
+curl --location '<your-lumina-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
@@ -489,11 +489,11 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "litellm_proxy",
+            "server_label": "lumina",
+            "server_url": "lumina_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY"
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY"
             }
         }
     ],
@@ -502,7 +502,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 }'
 ```
 
-This example uses the `x-mcp-servers` header to access all servers in the "dev_group" access group. Use `server_url: "litellm_proxy"` when calling the proxy's `/v1/responses` endpoint; do not use the full proxy URL.
+This example uses the `x-mcp-servers` header to access all servers in the "dev_group" access group. Use `server_url: "lumina_proxy"` when calling the proxy's `/v1/responses` endpoint; do not use the full proxy URL.
 
 </TabItem>
 
@@ -511,10 +511,10 @@ This example uses the `x-mcp-servers` header to access all servers in the "dev_g
 ```json title="Cursor MCP Configuration with URL Namespacing" showLineNumbers
 {
   "mcpServers": {
-    "LiteLLM": {
-      "url": "<your-litellm-proxy-base-url>/github_mcp,zapier/mcp",
+    "Lumina": {
+      "url": "<your-lumina-proxy-base-url>/github_mcp,zapier/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>"
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>"
       }
     }
   }
@@ -546,7 +546,7 @@ The header accepts a comma-separated list of server aliases: `"alias_1,Server2,S
 
 **Notes:**
 - If the header is not provided, tools from all available MCP servers will be accessible
-- This method works with the standard LiteLLM MCP endpoint
+- This method works with the standard Lumina MCP endpoint
 
 <Tabs>
 <TabItem value="openai" label="OpenAI API">
@@ -560,11 +560,11 @@ curl --location 'https://api.openai.com/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "<your-litellm-proxy-base-url>/mcp/",
+            "server_label": "lumina",
+            "server_url": "<your-lumina-proxy-base-url>/mcp/",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1"
             }
         }
@@ -578,10 +578,10 @@ In this example, the request will only have access to tools from the "alias_1" M
 
 </TabItem>
 
-<TabItem value="litellm" label="LiteLLM Proxy">
+<TabItem value="lumina" label="Lumina Proxy">
 
 ```bash title="cURL Example with Header Namespacing" showLineNumbers
-curl --location '<your-litellm-proxy-base-url>/v1/responses' \
+curl --location '<your-lumina-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
@@ -589,11 +589,11 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "litellm_proxy",
+            "server_label": "lumina",
+            "server_url": "lumina_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1,Server2"
             }
         }
@@ -603,7 +603,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 }'
 ```
 
-This configuration restricts the request to only use tools from the specified MCP servers. Use `server_url: "litellm_proxy"` when calling the proxy's `/v1/responses` endpoint.
+This configuration restricts the request to only use tools from the specified MCP servers. Use `server_url: "lumina_proxy"` when calling the proxy's `/v1/responses` endpoint.
 
 </TabItem>
 
@@ -612,10 +612,10 @@ This configuration restricts the request to only use tools from the specified MC
 ```json title="Cursor MCP Configuration with Header Namespacing" showLineNumbers
 {
   "mcpServers": {
-    "LiteLLM": {
-      "url": "<your-litellm-proxy-base-url>/mcp/",
+    "Lumina": {
+      "url": "<your-lumina-proxy-base-url>/mcp/",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
         "x-mcp-servers": "alias_1,Server2"
       }
     }
@@ -635,7 +635,7 @@ This configuration in Cursor IDE settings will limit tool access to only the spe
 | Feature | Header Namespacing | URL Namespacing |
 |---------|-------------------|-----------------|
 | **Method** | Uses `x-mcp-servers` header | Uses URL path `/<servers>/mcp` |
-| **Endpoint** | Standard `litellm_proxy` endpoint | Custom `/<servers>/mcp` endpoint |
+| **Endpoint** | Standard `lumina_proxy` endpoint | Custom `/<servers>/mcp` endpoint |
 | **Configuration** | Requires additional header | Self-contained in URL |
 | **Multiple Servers** | Comma-separated in header | Comma-separated in URL path |
 | **Access Groups** | Supported via header | Supported via URL path |
@@ -654,11 +654,11 @@ curl --location 'https://api.openai.com/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "<your-litellm-proxy-base-url>/mcp/",
+            "server_label": "lumina",
+            "server_url": "<your-lumina-proxy-base-url>/mcp/",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1"
             }
         }
@@ -672,10 +672,10 @@ In this example, the request will only have access to tools from the "alias_1" M
 
 </TabItem>
 
-<TabItem value="litellm" label="LiteLLM Proxy">
+<TabItem value="lumina" label="Lumina Proxy">
 
 ```bash title="cURL Example with Server Segregation" showLineNumbers
-curl --location '<your-litellm-proxy-base-url>/v1/responses' \
+curl --location '<your-lumina-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
@@ -683,11 +683,11 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "litellm_proxy",
+            "server_label": "lumina",
+            "server_url": "lumina_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1,Server2"
             }
         }
@@ -706,10 +706,10 @@ This configuration restricts the request to only use tools from the specified MC
 ```json title="Cursor MCP Configuration with Server Segregation" showLineNumbers
 {
   "mcpServers": {
-    "LiteLLM": {
-      "url": "litellm_proxy",
+    "Lumina": {
+      "url": "lumina_proxy",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
         "x-mcp-servers": "alias_1,Server2"
       }
     }
@@ -748,7 +748,7 @@ To give an IdP group an access group, grant it to the team SCIM provisions for t
 ##### B. Creating Access Groups using UI
 
 To create an access group:
-- Go to MCP Servers in the LiteLLM UI
+- Go to MCP Servers in the Lumina UI
 - Click "Add a New MCP Server" 
 - Under "MCP Access Groups", create a new group (e.g., "dev_group") by typing it
 - Add the same group name to other servers to group them together
@@ -765,10 +765,10 @@ Include the access group name in the `x-mcp-servers` header:
 ```json title="Cursor Configuration with Access Groups" showLineNumbers
 {
   "mcpServers": {
-    "LiteLLM": {
-      "url": "litellm_proxy",
+    "Lumina": {
+      "url": "lumina_proxy",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
         "x-mcp-servers": "dev_group"
       }
     }
@@ -783,7 +783,7 @@ This gives you access to all servers in the "dev_group" access group.
 
 When creating API keys, you can assign them to specific access groups for permission management:
 
-- Go to "Keys" in the LiteLLM UI and click "Create Key"
+- Go to "Keys" in the Lumina UI and click "Create Key"
 - Select the desired MCP access groups from the dropdown
 - The key will have access to all MCP servers in those groups
 - This is reflected in the Test Key page
@@ -862,7 +862,7 @@ When the key also sets `mcp_tool_permissions` for `github_mcp`, the resulting to
 </TabItem>
 <TabItem value="agent" label="On an Agent">
 
-When an agent (identified by `x-litellm-agent-id`) calls MCP tools, the agent's own `mcp_tool_permissions` participate in the intersection. Useful for capping what an autonomous agent can do regardless of which key originally invoked it.
+When an agent (identified by `x-lumina-agent-id`) calls MCP tools, the agent's own `mcp_tool_permissions` participate in the intersection. Useful for capping what an autonomous agent can do regardless of which key originally invoked it.
 
 ```bash showLineNumbers
 curl -X PATCH "http://localhost:4000/v1/agents/{agent_id}" \
@@ -1038,12 +1038,12 @@ This is useful when you want discoverability for MCP offerings without granting 
 
 ## Publish MCP Registry
 
-If you want other systems (for example external agent frameworks such as MCP-capable IDEs running outside your network) to automatically discover the MCP servers hosted on LiteLLM, you can expose a Model Context Protocol Registry endpoint. This registry lists the built-in LiteLLM MCP server and every server you have configured, using the [official MCP Registry spec](https://github.com/modelcontextprotocol/registry).
+If you want other systems (for example external agent frameworks such as MCP-capable IDEs running outside your network) to automatically discover the MCP servers hosted on Lumina, you can expose a Model Context Protocol Registry endpoint. This registry lists the built-in Lumina MCP server and every server you have configured, using the [official MCP Registry spec](https://github.com/modelcontextprotocol/registry).
 
 1. Set `enable_mcp_registry: true` under `general_settings` in your proxy config (or DB settings) and restart the proxy.
-2. LiteLLM will serve the registry at `GET /v1/mcp/registry.json`.
+2. Lumina will serve the registry at `GET /v1/mcp/registry.json`.
 3. Each entry points to either `/mcp` (built-in server) or `/{mcp_server_name}/mcp` for your custom servers, so clients can connect directly using the advertised Streamable HTTP URL.
 
 :::note[Permissions still apply]
-The registry only advertises server URLs. Actual access control is still enforced by LiteLLM when the client connects to `/mcp` or `/{server}/mcp`, so publishing the registry does not bypass per-key permissions.
+The registry only advertises server URLs. Actual access control is still enforced by Lumina when the client connects to `/mcp` or `/{server}/mcp`, so publishing the registry does not bypass per-key permissions.
 :::

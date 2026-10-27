@@ -1,7 +1,7 @@
 ---
 title: Deploy LiteAdmin MCP on Enterprise
 sidebar_label: Deploy MCP (Enterprise)
-description: Enable LiteAdmin MCP in unified or componentized LiteLLM deployments and connect Claude Code or Codex.
+description: Enable LiteAdmin MCP in unified or componentized Lumina deployments and connect Claude Code or Codex.
 toc_max_heading_level: 2
 ---
 
@@ -16,7 +16,7 @@ Connect Claude Code or Codex to your gateway at `/admin/mcp` to manage keys, tea
 
 :::info Image availability
 
-**Available in LiteLLM 1.106.x and later.** Start with an HTTPS deployment and a database. Hosting is off by default; a base Enterprise license covers this feature
+**Available in Lumina 1.106.x and later.** Start with an HTTPS deployment and a database. Hosting is off by default; a base Enterprise license covers this feature
 
 :::
 
@@ -27,11 +27,11 @@ Keep your existing `DATABASE_URL`, `LUMINA_MASTER_KEY`, and proxy configuration.
 <Tabs groupId="liteadmin-deployment">
 <TabItem value="unified" label="Unified Docker" default>
 
-Add these entries to your existing `litellm` service. Supply the license through your secret store or Compose environment
+Add these entries to your existing `lumina` service. Supply the license through your secret store or Compose environment
 
 ```yaml title="docker-compose.yml (service fragment)"
 services:
-  litellm:
+  lumina:
     environment:
       LUMINA_ENABLE_ADMIN_MCP: "true"
       LUMINA_LICENSE: ${LUMINA_LICENSE}
@@ -41,7 +41,7 @@ services:
 Recreate the service:
 
 ```bash
-docker compose up -d litellm
+docker compose up -d lumina
 ```
 
 Route `/admin/mcp` to the container's existing port, default `4000`. This works with unified, database, and non-root images
@@ -49,7 +49,7 @@ Route `/admin/mcp` to the container's existing port, default `4000`. This works 
 </TabItem>
 <TabItem value="componentized" label="Componentized (Helm)">
 
-For the [`helm/litellm` chart](https://github.com/BerriAI/litellm/tree/main/helm/litellm), merge these entries into `backend.extraEnv`. Reuse existing license and public-URL entries to avoid duplicates
+For the [`helm/lumina` chart](https://github.com/Soventra/lumina/tree/main/helm/lumina), merge these entries into `backend.extraEnv`. Reuse existing license and public-URL entries to avoid duplicates
 
 ```yaml title="values.yaml (componentized chart fragment)"
 backend:
@@ -59,13 +59,13 @@ backend:
     - name: LUMINA_LICENSE
       valueFrom:
         secretKeyRef:
-          name: litellm-enterprise
+          name: lumina-enterprise
           key: license
     - name: PROXY_BASE_URL
       value: https://gateway.example.com
 ```
 
-Replace `litellm-enterprise` and `license` with your existing Secret name and key, then apply your Helm upgrade
+Replace `lumina-enterprise` and `license` with your existing Secret name and key, then apply your Helm upgrade
 
 The chart's ingress routes `/admin/mcp` to the backend. For custom ingress, use the backend service port, default `4001`, and preserve the path and `Authorization` header. The gateway component does not serve this endpoint
 
@@ -89,7 +89,7 @@ For native key authentication, use a personal [virtual key](./virtual_keys.md) o
 <TabItem value="claude-code" label="Claude Code" default>
 
 ```bash
-claude mcp add --scope user --transport http litellm-admin \
+claude mcp add --scope user --transport http lumina-admin \
   https://gateway.example.com/admin/mcp \
   --header 'Authorization: Bearer <your-personal-proxy-admin-key>'
 ```
@@ -100,7 +100,7 @@ Restart Claude Code and run `/mcp`. The command stores your key in Claude's conf
 <TabItem value="codex" label="Codex">
 
 ```toml title="~/.codex/config.toml"
-[mcp_servers.litellm-admin]
+[mcp_servers.lumina-admin]
 url = "https://gateway.example.com/admin/mcp"
 bearer_token_env_var = "LUMINA_API_KEY"
 ```
@@ -122,7 +122,7 @@ Keep client keys out of version control. The endpoint does not provide browser O
 <details>
 <summary id="native-key-authentication">Custom key headers</summary>
 
-Send `Authorization: Bearer ...` even with `general_settings.litellm_key_header_name`. LiteLLM forwards the same key under your configured header
+Send `Authorization: Bearer ...` even with `general_settings.lumina_key_header_name`. Lumina forwards the same key under your configured header
 
 Keep credential headers separate from identity, transport, audit, network, and policy headers. Conflicting names fail startup
 
@@ -167,12 +167,12 @@ Expect a tool catalog with an admin key, `401` without a credential, and `403` w
 <details>
 <summary>Restrict tools or change response formats</summary>
 
-Set these variables on the LiteLLM or backend container, then restart it
+Set these variables on the Lumina or backend container, then restart it
 
 | Variable | Default | Options |
 | --- | --- | --- |
 | `LUMINA_ADMIN_READ_ONLY` | `false` | `true` restricts discovery and execution to reviewed read operations; `proxy_admin` required |
-| `LUMINA_ADMIN_TOOLS` | All available reviewed operations | Comma-separated [tool names](https://github.com/BerriAI/litellm-admin-mcp/blob/main/src/litellm_admin_mcp/operations.json), such as `list_keys,list_teams`; combines with read-only restrictions |
+| `LUMINA_ADMIN_TOOLS` | All available reviewed operations | Comma-separated [tool names](https://github.com/Soventra/lumina-admin-mcp/blob/main/src/lumina_admin_mcp/operations.json), such as `list_keys,list_teams`; combines with read-only restrictions |
 | `LUMINA_ADMIN_RESPONSE_VIEW` | `full` | `full` returns results inline; `compact` can return saved-result references |
 | `LUMINA_ADMIN_SCHEMA_MODE` | `full` | `discovery` defers parameter details to `describe_admin_tool`; execution validates the full schema |
 
@@ -185,7 +185,7 @@ Keep `full` responses for multiple workers or replicas. With `compact`, send `re
 | Symptom | Check |
 | --- | --- |
 | Startup fails | Check the license, enable flag, and conflicting header names in the startup error |
-| Missing MCP dependency | Use a unified or backend image from LiteLLM 1.106.x or later |
+| Missing MCP dependency | Use a unified or backend image from Lumina 1.106.x or later |
 | `404` | Check the image version, enable flag, and container restart. Route `/admin/mcp` unchanged to the unified proxy or backend |
 | `401` or `403` in key mode | Use an active personal `proxy_admin` key |
 | OAuth2 proxy authentication fails | Check the trusted direct peer, mapped identity headers, and stored user role |

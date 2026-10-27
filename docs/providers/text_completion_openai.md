@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # OpenAI (Text Completion)
 
-LiteLLM supports OpenAI text completion models
+Lumina supports OpenAI text completion models
 
 ### Required API Keys
 
@@ -15,7 +15,7 @@ os.environ["OPENAI_API_KEY"] = "your-api-key"
 ### Usage
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 
@@ -26,9 +26,9 @@ response = completion(
 )
 ```
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
-Here's how to call OpenAI models with the LiteLLM Proxy Server
+Here's how to call OpenAI models with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -69,7 +69,7 @@ model_list:
 <TabItem value="cli" label="CLI">
 
 ```bash
-$ litellm --model gpt-3.5-turbo-instruct
+$ lumina --model gpt-3.5-turbo-instruct
 
 # Server running on http://0.0.0.0:4000
 ```
@@ -107,7 +107,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="gpt-3.5-turbo-instruct", messages = [
     {
         "role": "user",
@@ -131,7 +131,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "gpt-3.5-turbo-instruct",
     temperature=0.1
 )
@@ -141,7 +141,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)

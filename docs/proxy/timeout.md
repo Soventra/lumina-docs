@@ -11,7 +11,7 @@ The timeout set in router is for the entire length of the call, and is passed do
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 model_list = [{...}]
 
@@ -32,13 +32,13 @@ router_settings:
 **Start Proxy** 
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 </TabItem>
 </Tabs>
 
-`litellm_settings.request_timeout` (or the `REQUEST_TIMEOUT` env var) is the proxy-wide default when no router or deployment timeout is set. It applies to the native `/v1/responses` and `/v1/messages` streams as well, where it bounds each wait for the next chunk, so a stalled upstream ends the stream with an error instead of hanging. See [request timeouts on pass-through routes](./pass_through#request-timeouts) for the full precedence
+`lumina_settings.request_timeout` (or the `REQUEST_TIMEOUT` env var) is the proxy-wide default when no router or deployment timeout is set. It applies to the native `/v1/responses` and `/v1/messages` streams as well, where it bounds each wait for the next chunk, so a stalled upstream ends the stream with an error instead of hanging. See [request timeouts on pass-through routes](./pass_through#request-timeouts) for the full precedence
 
 ### Custom Timeouts & Stream Timeouts (Per Model)
 
@@ -50,15 +50,15 @@ For each model, you can set `timeout` and `stream_timeout` under `lumina_params`
 - **`stream_timeout`** → maximum time to wait for the *first chunk* (i.e., first token) in a streaming response.  
   Use this to abort “hanging” providers (e.g., Bedrock slow start) and retry another model.
 
-Some requests can't be streamed by the provider, for example a `json_schema` response format on a Bedrock model without native structured output. LiteLLM then makes one non-streaming call and sends the answer back as chunks once it is complete, so no chunk arrives until the whole answer is written. These requests use the longer of `timeout` and `stream_timeout`, so a short `stream_timeout` meant for stalled streams does not cut off a slow structured answer.
+Some requests can't be streamed by the provider, for example a `json_schema` response format on a Bedrock model without native structured output. Lumina then makes one non-streaming call and sends the answer back as chunks once it is complete, so no chunk arrives until the whole answer is written. These requests use the longer of `timeout` and `stream_timeout`, so a short `stream_timeout` meant for stalled streams does not cut off a slow structured answer.
 
-The same rules apply when you call `litellm.completion()`, `litellm.acompletion()`, or `litellm.aresponses()` directly without a Router. Pass `stream_timeout` next to `timeout`, and a live stream is bounded by `stream_timeout`, a call that is not streamed by `timeout`, and a faked stream by the longer of the two. Earlier versions ignored `stream_timeout` on direct SDK calls, so a short value you set there now cuts off a live stream that takes longer than it to send a chunk.
+The same rules apply when you call `lumina.completion()`, `lumina.acompletion()`, or `lumina.aresponses()` directly without a Router. Pass `stream_timeout` next to `timeout`, and a live stream is bounded by `stream_timeout`, a call that is not streamed by `timeout`, and a faked stream by the longer of the two. Earlier versions ignored `stream_timeout` on direct SDK calls, so a short value you set there now cuts off a live stream that takes longer than it to send a chunk.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 import asyncio
 
 model_list = [{
@@ -114,7 +114,7 @@ model_list:
 **Start Proxy**
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 
@@ -141,7 +141,7 @@ model_list:
 
 A request with `"service_tier": "flex"` in its body now waits up to 900 seconds on `/v1/chat/completions`, `/v1/responses` and every other route that accepts `service_tier`. A request without `service_tier`, or with a tier that has no entry in the map, keeps the deployment's `timeout` and `stream_timeout`, so adding the maps changes nothing for existing traffic.
 
-Per attempt, LiteLLM picks the first value that is set: a timeout sent with the request (the `timeout` parameter or the `x-litellm-timeout` header), then `timeout_by_service_tier` for the request's tier, then the deployment's `timeout`, then the router and global defaults described above. Streaming requests go through the same order with `stream_timeout_by_service_tier` and `stream_timeout`; a tier that is only listed in `timeout_by_service_tier` keeps the deployment's `stream_timeout` for its streams. Values must be numbers of seconds; the proxy refuses to start on anything else. Tier names are not checked against the provider, so a misspelled key is simply never matched.
+Per attempt, Lumina picks the first value that is set: a timeout sent with the request (the `timeout` parameter or the `x-lumina-timeout` header), then `timeout_by_service_tier` for the request's tier, then the deployment's `timeout`, then the router and global defaults described above. Streaming requests go through the same order with `stream_timeout_by_service_tier` and `stream_timeout`; a tier that is only listed in `timeout_by_service_tier` keeps the deployment's `stream_timeout` for its streams. Values must be numbers of seconds; the proxy refuses to start on anything else. Tier names are not checked against the provider, so a misspelled key is simply never matched.
 
 ### Keepalive Pings for Idle Streaming Connections
 
@@ -197,13 +197,13 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 If `allow_client_keepalive_override` isn't set, that same request body is silently ignored and the deployment's own configured value applies instead. A deployment-level `keepalive_seconds: 0` is a hard disable that takes priority over everything, including a grant of override permission: it can't be re-enabled by a request no matter what. The effective value is clamped to the range 1-300 seconds.
 
-`keepalive_seconds` can also be set with an `x-litellm-keepalive-seconds` header instead of a request body field, for clients that can set custom headers more easily than extra body fields:
+`keepalive_seconds` can also be set with an `x-lumina-keepalive-seconds` header instead of a request body field, for clients that can set custom headers more easily than extra body fields:
 
 ```shell
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H 'Content-Type: application/json' \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
-  -H 'x-litellm-keepalive-seconds: 1' \
+  -H 'x-lumina-keepalive-seconds: 1' \
   -d '{
     "model": "claude-opus",
     "messages": [{"role": "user", "content": "Think step by step about..."}],
@@ -215,10 +215,10 @@ The header goes through the same `allow_client_keepalive_override` gate as the b
 
 #### A proxy-wide default
 
-`keepalive_seconds` is per deployment. To apply one interval across every deployment, and to every pass-through route, set `sse_keepalive_ping_interval_seconds` under `litellm_settings`:
+`keepalive_seconds` is per deployment. To apply one interval across every deployment, and to every pass-through route, set `sse_keepalive_ping_interval_seconds` under `lumina_settings`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   sse_keepalive_ping_interval_seconds: 15
 ```
 
@@ -233,19 +233,19 @@ Some providers withhold their response headers until the first token, so on thos
 Two things follow from opening the response that early, and both are why this stays off until you set an interval:
 
 - The status line is committed before the outcome is known, so a request that fails after the first ping arrives as an SSE error frame under a `200` rather than as an HTTP error status. Any error transformation your callbacks apply still applies to that frame
-- LiteLLM's `x-litellm-*` response headers are not known yet, so they are absent on a stream that pinged
+- Lumina's `x-lumina-*` response headers are not known yet, so they are absent on a stream that pinged
 
 
 ### Setting Dynamic Timeouts - Per Request
 
-LiteLLM supports setting a `timeout` per request 
+Lumina supports setting a `timeout` per request 
 
 **Example Usage**
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 model_list = [{...}]
 router = Router(model_list=model_list)
@@ -309,7 +309,7 @@ print(response)
 
 To test if your retry/fallback logic can handle timeouts, you can set `mock_timeout=True` for testing. 
 
-This is currently only supported on `/chat/completions` and `/completions` endpoints. Please [let us know](https://github.com/BerriAI/litellm/issues) if you need this for other endpoints. 
+This is currently only supported on `/chat/completions` and `/completions` endpoints. Please [let us know](https://github.com/Soventra/lumina/issues) if you need this for other endpoints. 
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \

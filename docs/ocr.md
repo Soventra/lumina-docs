@@ -9,15 +9,15 @@
 
 :::tip
 
-LiteLLM follows the [Mistral API request/response for the OCR API](https://docs.mistral.ai/capabilities/vision/#optical-character-recognition-ocr)
+Lumina follows the [Mistral API request/response for the OCR API](https://docs.mistral.ai/capabilities/vision/#optical-character-recognition-ocr)
 
 :::
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 ### Quick Start 
 
 ```python
-from litellm import ocr
+from lumina import ocr
 import os
 
 os.environ["MISTRAL_API_KEY"] = "sk-.."
@@ -39,7 +39,7 @@ for page in response.pages:
 ### Async Usage 
 
 ```python
-from litellm import aocr
+from lumina import aocr
 import os, asyncio
 
 os.environ["MISTRAL_API_KEY"] = "sk-.."
@@ -63,11 +63,11 @@ asyncio.run(test_async_ocr())
 
 ### Using Local Files
 
-LiteLLM can read local files directly, with no manual base64 encoding:
+Lumina can read local files directly, with no manual base64 encoding:
 
 ```python
 from pathlib import Path
-from litellm import ocr
+from lumina import ocr
 
 # OCR with a local PDF file path (pass a pathlib.Path, a plain str is rejected)
 response = ocr(
@@ -102,17 +102,17 @@ response = ocr(
 ```
 
 The `file` field accepts:
-- **File path** (`pathlib.Path` or any `os.PathLike`): LiteLLM reads the file and detects the MIME type from the extension. A plain `str` is rejected with `OCR file input does not accept bare str values`, so wrap string paths in `Path(...)`
+- **File path** (`pathlib.Path` or any `os.PathLike`): Lumina reads the file and detects the MIME type from the extension. A plain `str` is rejected with `OCR file input does not accept bare str values`, so wrap string paths in `Path(...)`
 - **File object** (binary file-like object): e.g. `open("doc.pdf", "rb")`
 - **Raw bytes** (`bytes`): use `mime_type` to specify the content type
 
-LiteLLM automatically converts file inputs to base64 data URIs internally, so all providers work without extra handling.
+Lumina automatically converts file inputs to base64 data URIs internally, so all providers work without extra handling.
 
 ### Using Base64 Encoded Documents
 
 ```python
 import base64
-from litellm import ocr
+from lumina import ocr
 
 # Encode PDF to base64
 with open("document.pdf", "rb") as f:
@@ -144,13 +144,13 @@ response = ocr(
 )
 ```
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-LiteLLM provides a Mistral API compatible `/ocr` endpoint for OCR calls.
+Lumina provides a Mistral API compatible `/ocr` endpoint for OCR calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -160,10 +160,10 @@ model_list:
       api_key: os.environ/MISTRAL_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -209,7 +209,7 @@ curl http://0.0.0.0:4000/v1/ocr \
 
 :::info
 
-LiteLLM follows the **Mistral OCR API specification**. 
+Lumina follows the **Mistral OCR API specification**. 
 
 See the [official Mistral OCR documentation](https://docs.mistral.ai/capabilities/vision/#optical-character-recognition-ocr) for complete details.
 

@@ -1,15 +1,15 @@
 ---
 slug: typesafe_jev
-title: "TypeSafe Jev on LiteLLM"
+title: "TypeSafe Jev on Lumina"
 date: 2026-09-20T10:00:00
 authors:
   - kerry
-description: "TypeSafe AI's Jev lands in LiteLLM v1.103.0-rc: call it through the proxy with logging and cost tracking."
+description: "TypeSafe AI's Jev lands in Lumina v1.103.0-rc: call it through the proxy with logging and cost tracking."
 tags: [typesafe, jev, product]
 hide_table_of_contents: false
 ---
 
-[TypeSafe AI's Jev](https://docs.typesafe.ai/api) launches on LiteLLM today in `v1.103.0-rc`. Jev is a decision model: it returns a choice, a score, or a yes/no probability instead of text, so it has its own evaluate endpoint rather than `/chat/completions`. LiteLLM proxies that endpoint with logging and cost tracking.
+[TypeSafe AI's Jev](https://docs.typesafe.ai/api) launches on Lumina today in `v1.103.0-rc`. Jev is a decision model: it returns a choice, a score, or a yes/no probability instead of text, so it has its own evaluate endpoint rather than `/chat/completions`. Lumina proxies that endpoint with logging and cost tracking.
 
 {/* truncate */}
 
@@ -19,7 +19,7 @@ $0.042 per 1M input tokens, no output charge. Spend is logged under the versione
 
 ## Usage
 
-Set your TypeSafe key once on the proxy, then replace `https://api.typesafe.ai` with `LUMINA_PROXY_BASE_URL/typesafe`. Clients only need a LiteLLM virtual key.
+Set your TypeSafe key once on the proxy, then replace `https://api.typesafe.ai` with `LUMINA_PROXY_BASE_URL/typesafe`. Clients only need a Lumina virtual key.
 
 ```bash
 export TYPESAFE_API_KEY="your-typesafe-api-key"
@@ -49,4 +49,4 @@ The response is TypeSafe's own, unchanged. Any path under `/typesafe/` is forwar
 
 ## Feedback
 
-Running Jev through LiteLLM and hitting something unexpected? Open a [GitHub discussion](https://github.com/BerriAI/litellm/discussions).
+Running Jev through Lumina and hitting something unexpected? Open a [GitHub discussion](https://github.com/Soventra/lumina/discussions).

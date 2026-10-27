@@ -5,7 +5,7 @@ date: 2026-09-16T12:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "Join the LiteLLM September townhall on Thursday, 24 September at 7:30 AM PT to learn about LiteLLM's product updates and roadmap."
+description: "Join the Lumina September townhall on Thursday, 24 September at 7:30 AM PT to learn about Lumina's product updates and roadmap."
 tags: [announcement, townhall]
 hide_table_of_contents: true
 ---
@@ -29,7 +29,7 @@ We are hosting our September townhall on **Thursday, 24 September at 7:30 AM PT*
 
 ## Stability
 
-Our team is focused on stability: improving reliability and reducing regressions across releases. Follow the roadmap here: [Stability roadmap](https://github.com/BerriAI/litellm/issues/30484).
+Our team is focused on stability: improving reliability and reducing regressions across releases. Follow the roadmap here: [Stability roadmap](https://github.com/Soventra/lumina/issues/30484).
 
 ## How to contribute
 
@@ -37,7 +37,7 @@ Add the topics and questions you'd like us to cover when you register below. We 
 
 ## Register
 
-Register here: [LiteLLM September Townhall Form](https://forms.gle/QDK1Fq5HqouGNG9Z6)
+Register here: [Lumina September Townhall Form](https://forms.gle/QDK1Fq5HqouGNG9Z6)
 
 We will hold the townhall from **7:30 AM to 8:30 AM PT on Zoom**.
 

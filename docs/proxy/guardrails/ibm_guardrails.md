@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # IBM Guardrails
 
-LiteLLM works with [IBM's FMS Guardrails](https://github.com/foundation-model-stack/fms-guardrails-orchestrator) for content safety. You can use it to detect jailbreaks, PII, hate speech, and more. 
+Lumina works with [IBM's FMS Guardrails](https://github.com/foundation-model-stack/fms-guardrails-orchestrator) for content safety. You can use it to detect jailbreaks, PII, hate speech, and more. 
 
 ## What it does
 
@@ -56,7 +56,7 @@ export IBM_GUARDRAILS_AUTH_TOKEN="your-token"
 ### 3. Start the proxy
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Make a request

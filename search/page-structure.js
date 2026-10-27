@@ -22,7 +22,7 @@ function extractStructure(html, url) {
     links: unique(article.find('a[href]').map((_, element) => {
       const label = clean($(element).text());
       if (!label) return null;
-      try {const target = new URL($(element).attr('href'), `https://docs.litellm.ai${url}`);return /^https?:$/.test(target.protocol) ? {label, url: target.href} : null;} catch {return null;}
+      try {const target = new URL($(element).attr('href'), `https://docs.lumina.ai${url}`);return /^https?:$/.test(target.protocol) ? {label, url: target.href} : null;} catch {return null;}
     }).get()),
     tables: article.find('table').map((_, table) => ({caption: clean($(table).find('caption').text()), columns: $(table).find('tr').first().find('th,td').map((_, cell) => clean($(cell).text())).get()})).get(),
     images: unique(article.find('img').map((_, element) => ({alt: clean($(element).attr('alt')), title: clean($(element).attr('title')), file: ($(element).attr('src') || '').split('/').at(-1), caption: clean($(element).closest('figure').find('figcaption').text())})).get()),
@@ -49,7 +49,7 @@ async function buildStructure(directory) {
       const url = urls[next++];
       if (url.startsWith('/api-reference/#/')) {pages[url] = operationStructure(grouped.get(url)); continue;}
       try {
-        const response = await fetch(`https://docs.litellm.ai${url}`, {signal: AbortSignal.timeout(15000)});
+        const response = await fetch(`https://docs.lumina.ai${url}`, {signal: AbortSignal.timeout(15000)});
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         pages[url] = extractStructure(await response.text(), url);
       } catch {failures.push(url);}

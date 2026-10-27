@@ -7,9 +7,9 @@ Azure Model Router is a feature in Azure AI Foundry that automatically routes yo
 **Model pattern**: `azure_ai/model_router/<deployment-name>`
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure_ai/model_router/model-router",  # Replace with your deployment name
     messages=[{"role": "user", "content": "Hello!"}],
     api_base="https://your-endpoint.cognitiveservices.azure.com/openai/v1/",
@@ -31,7 +31,7 @@ model_list:
 ## Key Features
 
 - **Automatic Model Selection**: Azure Model Router dynamically selects the best model for your request
-- **Cost Tracking**: LiteLLM automatically tracks costs based on the actual model used (e.g., `{{openai_small}}`), plus the Model Router infrastructure fee
+- **Cost Tracking**: Lumina automatically tracks costs based on the actual model used (e.g., `{{openai_small}}`), plus the Model Router infrastructure fee
 - **Streaming Support**: Full support for streaming responses with accurate cost calculation
 - **Simple Configuration**: Easy to set up via UI or config file
 
@@ -47,21 +47,21 @@ Use the pattern: `azure_ai/model_router/<deployment-name>`
 **Example:** `azure_ai/model_router/azure-model-router`
 
 **How it works:**
-- LiteLLM automatically strips the `model_router/` prefix when sending requests to Azure
+- Lumina automatically strips the `model_router/` prefix when sending requests to Azure
 - Only your deployment name (e.g., `azure-model-router`) is sent to the Azure API
 - The full path is preserved in responses and logs for proper cost tracking
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ### Basic Usage
 
 Use the pattern `azure_ai/model_router/<deployment-name>` where `<deployment-name>` is your Azure deployment name:
 
 ```python
-import litellm
+import lumina
 import os
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure_ai/model_router/azure-model-router",  # Use your deployment name
     messages=[{"role": "user", "content": "Hello!"}],
     api_base="https://your-endpoint.cognitiveservices.azure.com/openai/v1/",
@@ -76,15 +76,15 @@ print(response)
 - `model_router` - Indicates this is a model router deployment
 - `azure-model-router` - Your actual deployment name from Azure AI Foundry
 
-LiteLLM will automatically strip the `model_router/` prefix when sending the request to Azure, so only `azure-model-router` is sent to the API.
+Lumina will automatically strip the `model_router/` prefix when sending the request to Azure, so only `azure-model-router` is sent to the API.
 
 ### Streaming with Usage Tracking
 
 ```python
-import litellm
+import lumina
 import os
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="azure_ai/model_router/azure-model-router",  # Use your deployment name
     messages=[{"role": "user", "content": "hi"}],
     api_base="https://your-endpoint.cognitiveservices.azure.com/openai/v1/",
@@ -97,7 +97,7 @@ async for chunk in response:
     print(chunk)
 ```
 
-## LiteLLM Proxy (AI Gateway)
+## Lumina Proxy (AI Gateway)
 
 ### config.yaml
 
@@ -115,7 +115,7 @@ model_list:
 ### Start Proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### Test Request
@@ -130,16 +130,16 @@ curl -X POST http://localhost:4000/chat/completions \
   }'
 ```
 
-## Add Azure Model Router via LiteLLM UI
+## Add Azure Model Router via Lumina UI
 
-This walkthrough shows how to add an Azure Model Router endpoint to LiteLLM using the Admin Dashboard.
+This walkthrough shows how to add an Azure Model Router endpoint to Lumina using the Admin Dashboard.
 
 ### Quick Start
 
-1. Navigate to the **Models** page in the LiteLLM UI
+1. Navigate to the **Models** page in the Lumina UI
 2. Select **"Azure AI Foundry (Studio)"** as the provider
 3. Enter your deployment name (e.g., `azure-model-router`)
-4. LiteLLM will automatically format it as `azure_ai/model_router/azure-model-router`
+4. Lumina will automatically format it as `azure_ai/model_router/azure-model-router`
 5. Add your API base URL and API key
 6. Test and save
 
@@ -163,11 +163,11 @@ Navigate to the Models page and select "Azure AI Foundry (Studio)" as the provid
 
 #### Step 2: Enter Deployment Name
 
-**New Simplified Method:** Just enter your deployment name directly in the text field. If your deployment name contains "model-router" or "model_router", LiteLLM will automatically format it as `azure_ai/model_router/<deployment-name>`.
+**New Simplified Method:** Just enter your deployment name directly in the text field. If your deployment name contains "model-router" or "model_router", Lumina will automatically format it as `azure_ai/model_router/<deployment-name>`.
 
 **Example:**
 - Enter: `azure-model-router`
-- LiteLLM creates: `azure_ai/model_router/azure-model-router`
+- Lumina creates: `azure_ai/model_router/azure-model-router`
 
 ##### Copy Deployment Name from Azure Portal
 
@@ -177,7 +177,7 @@ Switch to Azure AI Foundry and copy your model router deployment name.
 
 ![Copy Model Name](./img/azure_model_router_10.jpeg)
 
-##### Enter Deployment Name in LiteLLM
+##### Enter Deployment Name in Lumina
 
 Paste your deployment name (e.g., `azure-model-router`) directly into the text field.
 
@@ -185,7 +185,7 @@ Paste your deployment name (e.g., `azure-model-router`) directly into the text f
 
 **What happens behind the scenes:**
 - You enter: `azure-model-router`
-- LiteLLM automatically detects this is a model router deployment
+- Lumina automatically detects this is a model router deployment
 - The full model path becomes: `azure_ai/model_router/azure-model-router`
 - When making API calls, only `azure-model-router` is sent to Azure
 
@@ -197,7 +197,7 @@ Copy the endpoint URL and API key from Azure portal.
 
 ![Copy API Base](./img/azure_model_router_12.jpeg)
 
-##### Enter API Base in LiteLLM
+##### Enter API Base in Lumina
 
 ![Click API Base Field](./img/azure_model_router_13.jpeg)
 
@@ -207,7 +207,7 @@ Copy the endpoint URL and API key from Azure portal.
 
 ![Copy API Key](./img/azure_model_router_15.jpeg)
 
-##### Enter API Key in LiteLLM
+##### Enter API Key in Lumina
 
 ![Enter API Key](./img/azure_model_router_16.jpeg)
 
@@ -255,11 +255,11 @@ Cost is tracked based on the actual model used (e.g., `{{openai_small}}`), plus 
 
 ## Cost Tracking
 
-LiteLLM automatically handles cost tracking for Azure Model Router. Understanding how this works helps you interpret spend and debug billing.
+Lumina automatically handles cost tracking for Azure Model Router. Understanding how this works helps you interpret spend and debug billing.
 
-### How LiteLLM Calculates Cost
+### How Lumina Calculates Cost
 
-When you use Azure Model Router, LiteLLM computes **two cost components**:
+When you use Azure Model Router, Lumina computes **two cost components**:
 
 | Component | Description | When Applied |
 |-----------|-------------|--------------|
@@ -268,13 +268,13 @@ When you use Azure Model Router, LiteLLM computes **two cost components**:
 
 ### Cost Calculation Flow
 
-1. **Request model detection**: LiteLLM records the model you requested (e.g., `azure_ai/model_router/model-router`). If it contains `model_router` or `model-router`, the request is treated as a router request.
+1. **Request model detection**: Lumina records the model you requested (e.g., `azure_ai/model_router/model-router`). If it contains `model_router` or `model-router`, the request is treated as a router request.
 
-2. **Response model extraction**: Azure returns the actual model used in the response (e.g., `{{openai_small}}`). LiteLLM uses this for the model cost lookup.
+2. **Response model extraction**: Azure returns the actual model used in the response (e.g., `{{openai_small}}`). Lumina uses this for the model cost lookup.
 
-3. **Model cost**: LiteLLM looks up the response model in its pricing table and computes cost from prompt tokens and completion tokens.
+3. **Model cost**: Lumina looks up the response model in its pricing table and computes cost from prompt tokens and completion tokens.
 
-4. **Router flat cost**: Because the original request was to a model router, LiteLLM adds the flat cost ($0.14 per M input tokens) on top of the model cost.
+4. **Router flat cost**: Because the original request was to a model router, Lumina adds the flat cost ($0.14 per M input tokens) on top of the model cost.
 
 5. **Total cost**: `Total = Model Cost + Router Flat Cost`
 
@@ -283,7 +283,7 @@ When you use Azure Model Router, LiteLLM computes **two cost components**:
 For cost tracking to work correctly:
 
 - **Use the full pattern**: `azure_ai/model_router/<deployment-name>` (e.g., `azure_ai/model_router/model-router`)
-- **Proxy config**: When using the LiteLLM proxy, set `model` in `lumina_params` to the full pattern so the request model is correctly identified as a router
+- **Proxy config**: When using the Lumina proxy, set `model` in `lumina_params` to the full pattern so the request model is correctly identified as a router
 
 ```yaml
 # proxy_server_config.yaml
@@ -305,9 +305,9 @@ When you use Azure Model Router, the total cost includes:
 ### Example Response with Cost
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure_ai/model_router/azure-model-router",
     messages=[{"role": "user", "content": "Hello!"}],
     api_base="https://your-endpoint.cognitiveservices.azure.com/openai/v1/",
@@ -318,7 +318,7 @@ response = litellm.completion(
 print(f"Model used: {response.model}")  # e.g., "azure_ai/{{openai_small}}"
 
 # Get cost (includes both model cost and router flat cost)
-from litellm import completion_cost
+from lumina import completion_cost
 cost = completion_cost(completion_response=response)
 print(f"Total cost: ${cost}")
 
@@ -329,7 +329,7 @@ if hasattr(response, '_hidden_params') and 'response_cost' in response._hidden_p
 
 ### Viewing Cost Breakdown in UI
 
-When viewing logs in the LiteLLM UI, you'll see:
+When viewing logs in the Lumina UI, you'll see:
 - **Model Cost**: The cost for the actual model used
 - **Azure Model Router Flat Cost**: The $0.14/M input tokens infrastructure fee
 - **Total Cost**: Sum of both costs

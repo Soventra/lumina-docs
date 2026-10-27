@@ -1,15 +1,15 @@
 ---
-title: "LiteLLM v1.77.2-stable - Bedrock Batches API"
+title: "Lumina v1.77.2-stable - Bedrock Batches API"
 description: "Adds Bedrock batch inference jobs through the unified batch API and tiered cost tracking for Dashscope Qwen models."
 slug: "v1-77-2"
 date: 2025-09-13T10:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaffer
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
 
@@ -25,19 +25,19 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="docker" label="Docker">
 
-``` showLineNumbers title="docker run litellm"
+``` showLineNumbers title="docker run lumina"
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:main-v1.77.2-stable
+docker.lumina.ai/soventra/lumina:main-v1.77.2-stable
 ```
 
 </TabItem>
 
 <TabItem value="pip" label="Pip">
 
-``` showLineNumbers title="pip install litellm"
-pip install litellm==1.77.2.post1
+``` showLineNumbers title="pip install lumina"
+pip install lumina==1.77.2.post1
 ```
 
 </TabItem>
@@ -47,7 +47,7 @@ pip install litellm==1.77.2.post1
 
 ## Key Highlights
 
-- **Bedrock Batches API** - Support for creating Batch Inference Jobs on Bedrock using LiteLLM's unified batch API (OpenAI compatible)
+- **Bedrock Batches API** - Support for creating Batch Inference Jobs on Bedrock using Lumina's unified batch API (OpenAI compatible)
 - **Qwen API Tiered Pricing** - Cost tracking support for Dashscope (Qwen) models with multiple pricing tiers
 
 ## New Models / Updated Models
@@ -72,20 +72,20 @@ pip install litellm==1.77.2.post1
 #### Features
 
 - **[Bedrock](../../docs/providers/bedrock_batches)**
-    - Bedrock Batches API - batch processing support with file upload and request transformation - [PR #14518](https://github.com/BerriAI/litellm/pull/14518), [PR #14522](https://github.com/BerriAI/litellm/pull/14522)
+    - Bedrock Batches API - batch processing support with file upload and request transformation - [PR #14518](https://github.com/Soventra/lumina/pull/14518), [PR #14522](https://github.com/Soventra/lumina/pull/14522)
 - **[VLLM](../../docs/providers/vllm)**
-    - Added transcription endpoint support - [PR #14523](https://github.com/BerriAI/litellm/pull/14523)
+    - Added transcription endpoint support - [PR #14523](https://github.com/Soventra/lumina/pull/14523)
 - **[Ollama](../../docs/providers/ollama)**
-    - `ollama_chat/` - images, thinking, and content as list handling - [PR #14523](https://github.com/BerriAI/litellm/pull/14523)
+    - `ollama_chat/` - images, thinking, and content as list handling - [PR #14523](https://github.com/Soventra/lumina/pull/14523)
 - **General**
-    - New debug flag for detailed request/response logging [PR #14482](https://github.com/BerriAI/litellm/pull/14482)
+    - New debug flag for detailed request/response logging [PR #14482](https://github.com/Soventra/lumina/pull/14482)
 
 #### Bug Fixes
 
 - **[Azure OpenAI](../../docs/providers/azure)**
-    - Fixed extra_body injection causing payload rejection in image generation - [PR #14475](https://github.com/BerriAI/litellm/pull/14475)
+    - Fixed extra_body injection causing payload rejection in image generation - [PR #14475](https://github.com/Soventra/lumina/pull/14475)
 - **[LM Studio](/docs/providers/lm_studio)**
-    - Resolved illegal Bearer header value issue - [PR #14512](https://github.com/BerriAI/litellm/pull/14512)
+    - Resolved illegal Bearer header value issue - [PR #14512](https://github.com/Soventra/lumina/pull/14512)
 
 ---
 
@@ -94,9 +94,9 @@ pip install litellm==1.77.2.post1
 #### Bug Fixes
 
 - **[/messages](../../docs/anthropic_unified)**
-    - Don't send content block after message w/ finish reason + usage block - [PR #14477](https://github.com/BerriAI/litellm/pull/14477)
+    - Don't send content block after message w/ finish reason + usage block - [PR #14477](https://github.com/Soventra/lumina/pull/14477)
 - **[/generateContent](../../docs/generateContent)**
-    - Gemini CLI Integration - Fixed token count errors - [PR #14451](https://github.com/BerriAI/litellm/pull/14451), [PR #14417](https://github.com/BerriAI/litellm/pull/14417)
+    - Gemini CLI Integration - Fixed token count errors - [PR #14451](https://github.com/Soventra/lumina/pull/14451), [PR #14417](https://github.com/Soventra/lumina/pull/14417)
 
 ---
 
@@ -104,11 +104,11 @@ pip install litellm==1.77.2.post1
 
 #### Features
 
-- **[Qwen API Tiered Pricing](../../docs/providers/dashscope)** - Added full tiered cost tracking for Dashscope/Qwen models - [PR #14471](https://github.com/BerriAI/litellm/pull/14471), [PR #14479](https://github.com/BerriAI/litellm/pull/14479)
+- **[Qwen API Tiered Pricing](../../docs/providers/dashscope)** - Added full tiered cost tracking for Dashscope/Qwen models - [PR #14471](https://github.com/Soventra/lumina/pull/14471), [PR #14479](https://github.com/Soventra/lumina/pull/14479)
 
 #### Bug Fixes
 
-- **Provider Budgets** - Fixed provider budget calculations - [PR #14459](https://github.com/BerriAI/litellm/pull/14459)
+- **Provider Budgets** - Fixed provider budget calculations - [PR #14459](https://github.com/Soventra/lumina/pull/14459)
 
 ---
 
@@ -116,13 +116,13 @@ pip install litellm==1.77.2.post1
 
 #### Features
 
-- **User Headers Mapping** - New X-LiteLLM Users mapping feature for enhanced user tracking - [PR #14485](https://github.com/BerriAI/litellm/pull/14485)
-- **Key Unblocking** - Support for hashed tokens in `/key/unblock` endpoint - [PR #14477](https://github.com/BerriAI/litellm/pull/14477)
-- **Model Group Header Forwarding** - Enhanced wildcard model support with documentation - [PR #14528](https://github.com/BerriAI/litellm/pull/14528)
+- **User Headers Mapping** - New X-Lumina Users mapping feature for enhanced user tracking - [PR #14485](https://github.com/Soventra/lumina/pull/14485)
+- **Key Unblocking** - Support for hashed tokens in `/key/unblock` endpoint - [PR #14477](https://github.com/Soventra/lumina/pull/14477)
+- **Model Group Header Forwarding** - Enhanced wildcard model support with documentation - [PR #14528](https://github.com/Soventra/lumina/pull/14528)
 
 #### Bug Fixes
 
-- **Log Tab Key Alias** - Fixed filtering inaccuracies for failed logs - [PR #14469](https://github.com/BerriAI/litellm/pull/14469), [PR #14529](https://github.com/BerriAI/litellm/pull/14529)
+- **Log Tab Key Alias** - Fixed filtering inaccuracies for failed logs - [PR #14469](https://github.com/Soventra/lumina/pull/14469), [PR #14529](https://github.com/Soventra/lumina/pull/14529)
 
 ---
 
@@ -130,28 +130,28 @@ pip install litellm==1.77.2.post1
 
 #### Features
 
-- **Noma Integration** - Added non-blocking monitor mode with anonymize input support - [PR #14401](https://github.com/BerriAI/litellm/pull/14401)
+- **Noma Integration** - Added non-blocking monitor mode with anonymize input support - [PR #14401](https://github.com/Soventra/lumina/pull/14401)
 
 ---
 
 ## Performance / Loadbalancing / Reliability improvements
 
 #### Performance
-- Removed dynamic creation of static values - [PR #14538](https://github.com/BerriAI/litellm/pull/14538)
-- Using `_PROXY_MaxParallelRequestsHandler_v3` by default for optimal throughput - [PR #14450](https://github.com/BerriAI/litellm/pull/14450)
-- Improved execution context propagation into logging tasks - [PR #14455](https://github.com/BerriAI/litellm/pull/14455)
+- Removed dynamic creation of static values - [PR #14538](https://github.com/Soventra/lumina/pull/14538)
+- Using `_PROXY_MaxParallelRequestsHandler_v3` by default for optimal throughput - [PR #14450](https://github.com/Soventra/lumina/pull/14450)
+- Improved execution context propagation into logging tasks - [PR #14455](https://github.com/Soventra/lumina/pull/14455)
 
 ---
 
 
 
 ## New Contributors
-* @Sameerlite made their first contribution in [PR #14460](https://github.com/BerriAI/litellm/pull/14460)
-* @holzman made their first contribution in [PR #14459](https://github.com/BerriAI/litellm/pull/14459)
-* @sashank5644 made their first contribution in [PR #14469](https://github.com/BerriAI/litellm/pull/14469)
-* @TomAlon made their first contribution in [PR #14401](https://github.com/BerriAI/litellm/pull/14401)
-* @AlexsanderHamir made their first contribution in [PR #14538](https://github.com/BerriAI/litellm/pull/14538)
+* @Sameerlite made their first contribution in [PR #14460](https://github.com/Soventra/lumina/pull/14460)
+* @holzman made their first contribution in [PR #14459](https://github.com/Soventra/lumina/pull/14459)
+* @sashank5644 made their first contribution in [PR #14469](https://github.com/Soventra/lumina/pull/14469)
+* @TomAlon made their first contribution in [PR #14401](https://github.com/Soventra/lumina/pull/14401)
+* @AlexsanderHamir made their first contribution in [PR #14538](https://github.com/Soventra/lumina/pull/14538)
 
 ---
 
-## **[Full Changelog](https://github.com/BerriAI/litellm/compare/v1.77.1.dev.2...v1.77.2.dev)**
+## **[Full Changelog](https://github.com/Soventra/lumina/compare/v1.77.1.dev.2...v1.77.2.dev)**

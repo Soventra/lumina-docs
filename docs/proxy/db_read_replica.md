@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Database Read Replica
 
-LiteLLM Proxy can route read-only queries to a separate database endpoint while
+Lumina Proxy can route read-only queries to a separate database endpoint while
 writes continue to go to the primary. This is useful for Aurora-style clusters
 that expose distinct reader/writer endpoints, where directing reads at the
 reader keeps the writer free for transactional workloads.
@@ -13,8 +13,8 @@ reader keeps the writer free for transactional workloads.
 Set `DATABASE_URL_READ_REPLICA` alongside the existing `DATABASE_URL`:
 
 ```shell
-export DATABASE_URL=postgresql://user:pass@writer.db.example.com:5432/litellm
-export DATABASE_URL_READ_REPLICA=postgresql://user:pass@reader.db.example.com:5432/litellm
+export DATABASE_URL=postgresql://user:pass@writer.db.example.com:5432/lumina
+export DATABASE_URL_READ_REPLICA=postgresql://user:pass@reader.db.example.com:5432/lumina
 ```
 
 The proxy automatically detects the env var on startup and switches the
@@ -71,7 +71,7 @@ of an Azure Database for PostgreSQL Flexible Server.
 
 ### RDS IAM auth across regions
 
-With `IAM_TOKEN_DB_AUTH=True`, LiteLLM signs the writer and reader tokens
+With `IAM_TOKEN_DB_AUTH=True`, Lumina signs the writer and reader tokens
 independently, so a writer and a cross-region read replica can each be signed
 in their own region. For each connection the signing region resolves in this
 order: the connection's override, then the region in its RDS hostname, then the
@@ -91,8 +91,8 @@ export IAM_TOKEN_DB_AUTH=true
 export DATABASE_HOST=writer.abc123.us-east-1.rds.amazonaws.com
 export DATABASE_PORT=5432
 export DATABASE_USER=iam_user
-export DATABASE_NAME=litellm
-export DATABASE_URL_READ_REPLICA=postgresql://iam_user@reader.abc123.ap-northeast-1.rds.amazonaws.com:5432/litellm?sslmode=require
+export DATABASE_NAME=lumina
+export DATABASE_URL_READ_REPLICA=postgresql://iam_user@reader.abc123.ap-northeast-1.rds.amazonaws.com:5432/lumina?sslmode=require
 export AWS_RDS_REGION=us-east-1
 export AWS_RDS_READ_REPLICA_REGION=ap-northeast-1
 ```
@@ -144,7 +144,7 @@ For credential-less URLs (for example, when `IAM_TOKEN_DB_AUTH` or
 
 ```yaml
 db:
-  readReplicaUrl: "postgresql://litellm@reader.aurora.local:5432/litellm"
+  readReplicaUrl: "postgresql://lumina@reader.aurora.local:5432/lumina"
 ```
 
 Avoid this form if the URL embeds a password, since the value renders into the
@@ -160,10 +160,10 @@ Add the env var to your service:
 
 ```yaml
 services:
-  litellm:
+  lumina:
     environment:
-      DATABASE_URL: postgresql://user:pass@writer:5432/litellm
-      DATABASE_URL_READ_REPLICA: postgresql://user:pass@reader:5432/litellm
+      DATABASE_URL: postgresql://user:pass@writer:5432/lumina
+      DATABASE_URL_READ_REPLICA: postgresql://user:pass@reader:5432/lumina
 ```
 
 ## When to enable it
@@ -190,7 +190,7 @@ endpoint. If your replication lag is meaningful (>100ms) and you have flows
 that write then immediately read the same row, those reads may see stale data.
 `query_raw` and `query_first` on the proxy's Prisma client route to the reader
 like every other read, so code that needs read-your-writes consistency should
-read through `WriterPinnedClient` (from `litellm.proxy.db.routing_prisma_wrapper`)
+read through `WriterPinnedClient` (from `lumina.proxy.db.routing_prisma_wrapper`)
 or inside a transaction (`tx`), both of which run on the writer
 
 ## Related env vars

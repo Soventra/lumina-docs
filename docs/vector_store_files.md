@@ -10,7 +10,7 @@ Vector store files represent the individual files that live inside a vector stor
 
 ## Supported operations
 
-| Operation | Description | OpenAI Python Client | LiteLLM Proxy |
+| Operation | Description | OpenAI Python Client | Lumina Proxy |
 |-----------|-------------|----------------------|---------------|
 | Create vector store file | Attach a file to a vector store with optional chunking overrides | ✅ | ✅ |
 | List vector store files | Paginated listing with filters | ✅ | ✅ |
@@ -32,8 +32,8 @@ Vector store support currently works **only with OpenAI vector stores and OpenAI
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="http://localhost:4000",  # LiteLLM proxy or OpenAI base
-    api_key="sk-<your-litellm-api-key>"
+    base_url="http://localhost:4000",  # Lumina proxy or OpenAI base
+    api_key="sk-<your-lumina-api-key>"
 )
 
 vector_store_file = client.vector_stores.files.create(
@@ -96,7 +96,7 @@ print(deleted_vector_store_file)
 
 ## Proxy-only endpoints
 
-When you need raw content chunks or attribute updates, call the LiteLLM Proxy directly.
+When you need raw content chunks or attribute updates, call the Lumina Proxy directly.
 
 ### Retrieve file content
 

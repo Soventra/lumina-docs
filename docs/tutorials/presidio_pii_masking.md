@@ -2,14 +2,14 @@ import Image from '@theme/IdealImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Presidio PII Masking with LiteLLM - Complete Tutorial
+# Presidio PII Masking with Lumina - Complete Tutorial
 
-This tutorial will guide you through setting up PII (Personally Identifiable Information) masking with Microsoft Presidio and LiteLLM Gateway. By the end of this tutorial, you'll have a production-ready setup that automatically detects and masks sensitive information in your LLM requests.
+This tutorial will guide you through setting up PII (Personally Identifiable Information) masking with Microsoft Presidio and Lumina Gateway. By the end of this tutorial, you'll have a production-ready setup that automatically detects and masks sensitive information in your LLM requests.
 
 ## What You'll Learn
 
 - Deploy Presidio containers for PII detection
-- Configure LiteLLM to automatically mask sensitive data
+- Configure Lumina to automatically mask sensitive data
 - Test PII masking with real examples
 - Monitor and trace guardrail execution
 - Configure advanced features like output parsing and language support
@@ -30,7 +30,7 @@ PII masking automatically detects and redacts this information before it reaches
 
 Before starting this tutorial, ensure you have:
 - Docker installed on your machine
-- A LiteLLM API key or OpenAI API key for testing
+- A Lumina API key or OpenAI API key for testing
 - Basic familiarity with YAML configuration
 - `curl` or a similar HTTP client for testing
 
@@ -103,11 +103,11 @@ You should see a response like:
 
 ✅ **Checkpoint**: Your Presidio containers are now running and ready!
 
-## Part 2: Configure LiteLLM Gateway
+## Part 2: Configure Lumina Gateway
 
-Now let's configure LiteLLM to use Presidio for automatic PII masking.
+Now let's configure Lumina to use Presidio for automatic PII masking.
 
-### Step 2.1: Create LiteLLM Configuration
+### Step 2.1: Create Lumina Configuration
 
 Create a `config.yaml` file:
 
@@ -142,10 +142,10 @@ export PRESIDIO_ANALYZER_API_BASE="http://localhost:5002"
 export PRESIDIO_ANONYMIZER_API_BASE="http://localhost:5001"
 ```
 
-### Step 2.3: Start LiteLLM Gateway
+### Step 2.3: Start Lumina Gateway
 
 ```bash
-litellm --config config.yaml --port 4000 --detailed_debug
+lumina --config config.yaml --port 4000 --detailed_debug
 ```
 
 You should see output indicating the guardrails are loaded:
@@ -154,7 +154,7 @@ You should see output indicating the guardrails are loaded:
 Loaded guardrails: ['presidio-pii-guard']
 ```
 
-✅ **Checkpoint**: LiteLLM Gateway is running with PII masking enabled!
+✅ **Checkpoint**: Lumina Gateway is running with PII masking enabled!
 
 ## Part 3: Test PII Masking
 
@@ -385,9 +385,9 @@ This is useful when:
 
 ## Part 5: Monitoring and Tracing
 
-### View Guardrail Execution on LiteLLM UI
+### View Guardrail Execution on Lumina UI
 
-If you're using the LiteLLM Admin UI, you can see detailed guardrail traces:
+If you're using the Lumina Admin UI, you can see detailed guardrail traces:
 
 1. Navigate to the **Logs** page
 2. Click on any request that used the guardrail
@@ -407,7 +407,7 @@ If you're using the LiteLLM Admin UI, you can see detailed guardrail traces:
 If you're logging to Langfuse, guardrail information is automatically included:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]
 
 environment_variables:
@@ -425,7 +425,7 @@ environment_variables:
 You can access guardrail metadata in custom callbacks:
 
 ```python
-import litellm
+import lumina
 
 def custom_callback(kwargs, result, **callback_kwargs):
     # Access guardrail metadata
@@ -434,7 +434,7 @@ def custom_callback(kwargs, result, **callback_kwargs):
     
     print(f"Masked entities: {guardrail_results}")
     
-litellm.callbacks = [custom_callback]
+lumina.callbacks = [custom_callback]
 ```
 
 ## Part 6: Production Best Practices
@@ -534,7 +534,7 @@ Create `custom_recognizers.json`:
 ]
 ```
 
-Configure in LiteLLM:
+Configure in Lumina:
 
 ```yaml
 guardrails:
@@ -553,7 +553,7 @@ Create test cases for your PII masking:
 
 ```python
 import pytest
-from litellm import completion
+from lumina import completion
 
 def test_pii_masking_credit_card():
     """Test that credit cards are properly masked"""
@@ -665,7 +665,7 @@ deploy:
 **Solution 3: Enable caching**
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: "redis"
@@ -673,7 +673,7 @@ litellm_settings:
 
 ## Conclusion
 
-Congratulations! You've successfully set up PII masking with Presidio and LiteLLM. You now have:
+Congratulations! You've successfully set up PII masking with Presidio and Lumina. You now have:
 
 ✅ A production-ready PII masking solution  
 ✅ Automatic detection of sensitive information  
@@ -685,7 +685,7 @@ Congratulations! You've successfully set up PII masking with Presidio and LiteLL
 ## Next Steps
 
 - **[View all supported PII entity types](https://microsoft.github.io/presidio/supported_entities/)**
-- **[Explore other LiteLLM guardrails](../proxy/guardrails/quick_start)**
+- **[Explore other Lumina guardrails](../proxy/guardrails/quick_start)**
 - **[Set up multiple guardrails](/docs/proxy/guardrails/quick_start)**
 - **[Configure per-key guardrails](/docs/proxy/guardrails/quick_start#-control-guardrails-per-api-key)**
 - **[Learn about custom guardrails](../proxy/guardrails/custom_guardrail)**
@@ -693,9 +693,9 @@ Congratulations! You've successfully set up PII masking with Presidio and LiteLL
 ## Additional Resources
 
 - [Presidio Documentation](https://microsoft.github.io/presidio/)
-- [LiteLLM Guardrails Reference](../proxy/guardrails/pii_masking_v2)
-- [LiteLLM GitHub Repository](https://github.com/BerriAI/litellm)
-- [Report Issues](https://github.com/BerriAI/litellm/issues)
+- [Lumina Guardrails Reference](../proxy/guardrails/pii_masking_v2)
+- [Lumina GitHub Repository](https://github.com/Soventra/lumina)
+- [Report Issues](https://github.com/Soventra/lumina/issues)
 
 ---
 

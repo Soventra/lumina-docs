@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 800" role="img" aria-labelledby="title desc">
-<title id="title">Moyai: application, orchestration, and agent computers</title><desc id="desc">Slack and the web send messages to the Render app. Render keeps SQLite state, a Temporal worker, and a credential broker. Temporal Cloud coordinates one workflow per session. Hermes runs in Modal sandboxes and calls the broker for model and connected-app access. Render calls LiteLLM and organization integrations.</desc>
+<title id="title">Moyai: application, orchestration, and agent computers</title><desc id="desc">Slack and the web send messages to the Render app. Render keeps SQLite state, a Temporal worker, and a credential broker. Temporal Cloud coordinates one workflow per session. Hermes runs in Modal sandboxes and calls the broker for model and connected-app access. Render calls Lumina and organization integrations.</desc>
 <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto-start-reverse"><path d="M1 1 L7 4 L1 7" fill="none" stroke="#9296ac" stroke-width="1.6"/></marker></defs>
 <rect width="960" height="800" rx="20" fill="#fafaff"/>
 <g font-family="Arial, Helvetica, sans-serif" fill="#20223b">
@@ -48,7 +48,7 @@
 <polyline points="570,540 570,605 607,605 607,642" fill="none" stroke="#9296ac" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <text x="582" y="575" fill="#64677e" font-size="14" font-weight="400" text-anchor="start">Approved app tools</text>
 <rect x="280" y="645" width="190" height="108" rx="12" fill="#ecefff" stroke="#bbc3f3" stroke-width="1.5"/>
-<text x="302" y="682" fill="#3a48a5" font-size="23" font-weight="600" text-anchor="start">LiteLLM</text>
+<text x="302" y="682" fill="#3a48a5" font-size="23" font-weight="600" text-anchor="start">Lumina</text>
 <text x="302" y="710" fill="#20223b" font-size="16" font-weight="400" text-anchor="start">Model access</text>
 <text x="302" y="733" fill="#64677e" font-size="15" font-weight="400" text-anchor="start">Request costs</text>
 <rect x="500" y="645" width="215" height="108" rx="12" fill="#fff" stroke="#dedfec" stroke-width="1.5"/>

@@ -10,15 +10,15 @@ Pass a model name and one text string to `/tokenize`. Read the token count, plus
 
 ## /tokenize or token counting
 
-Use `/tokenize` to inspect how a model's tokenizer splits text. For an app that checks context limits or estimates input cost, use the token counting APIs with the request you plan to send, including messages and tools where supported. Counts can be estimates when LiteLLM uses a local tokenizer or fallback.
+Use `/tokenize` to inspect how a model's tokenizer splits text. For an app that checks context limits or estimates input cost, use the token counting APIs with the request you plan to send, including messages and tools where supported. Counts can be estimates when Lumina uses a local tokenizer or fallback.
 
 | API                                                                                                                                | Input                                                                  | Result                                                                                                                             |
 | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `/tokenize`, `litellm.tokenize()`, `litellm.atokenize()`                                                                           | One text string                                                        | Token count and available token IDs or text from vLLM or watsonx.ai.                                                               |
+| `/tokenize`, `lumina.tokenize()`, `lumina.atokenize()`                                                                           | One text string                                                        | Token count and available token IDs or text from vLLM or watsonx.ai.                                                               |
 | `/utils/token_counter`                                                                                                             | Prompt, messages, or contents; tools and system input where applicable | `total_tokens` and metadata. Uses a local tokenizer by default; `?call_endpoint=true` requests provider counting where configured. |
-| [Provider token counting](./count_tokens.md): `litellm.acount_tokens()`, `/v1/messages/count_tokens`, `/v1/responses/input_tokens` | Messages or input in the API's format; tools where supported           | A token count; see the guide for provider support and fallback behavior.                                                           |
+| [Provider token counting](./count_tokens.md): `lumina.acount_tokens()`, `/v1/messages/count_tokens`, `/v1/responses/input_tokens` | Messages or input in the API's format; tools where supported           | A token count; see the guide for provider support and fallback behavior.                                                           |
 
-For local counting in Python, [`litellm.token_counter()`](./completion/token_usage.md#3-token_counter) returns an integer. `/tokenize` accepts a single `prompt` string, not a complete chat request with `messages` and `tools`. A tokenization call returns tokens without generating an answer.
+For local counting in Python, [`lumina.token_counter()`](./completion/token_usage.md#3-token_counter) returns an integer. `/tokenize` accepts a single `prompt` string, not a complete chat request with `messages` and `tools`. A tokenization call returns tokens without generating an answer.
 
 ### Tokens and token IDs
 
@@ -41,11 +41,11 @@ During inference, the model uses each ID to look up a learned vector: a list of 
 
 **Check a vLLM deployment.** Record the IDs for a fixed prompt before and after a deployment, using the same `add_special_tokens` setting. If the IDs change, check the tokenizer version and configuration.
 
-**Replace custom provider translators.** App developers select a model through `/tokenize`. LiteLLM translates requests and responses for vLLM and watsonx.ai, while the serving team maintains provider credentials and model settings.
+**Replace custom provider translators.** App developers select a model through `/tokenize`. Lumina translates requests and responses for vLLM and watsonx.ai, while the serving team maintains provider credentials and model settings.
 
 :::info Installation
 
-`/tokenize` requires a build containing [LiteLLM PR #48079](https://github.com/BerriAI/litellm/pull/48079) and the compiled LiteLLM Rust extension. LiteLLM runs the provider integration in Rust; the provider's tokenizer computes the tokens.
+`/tokenize` requires a build containing [Lumina PR #48079](https://github.com/Soventra/lumina/pull/48079) and the compiled Lumina Rust extension. Lumina runs the provider integration in Rust; the provider's tokenizer computes the tokens.
 
 :::
 
@@ -70,7 +70,7 @@ general_settings:
 Start the gateway:
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 Pass `llama-3.1-8b` in the request to select that model:
@@ -85,7 +85,7 @@ curl --fail-with-body http://localhost:4000/tokenize \
   }'
 ```
 
-You can use `/v1/tokenize` with the same body. For applications, use a [LiteLLM virtual key](./proxy/virtual_keys.md) with access to `llama-3.1-8b`.
+You can use `/v1/tokenize` with the same body. For applications, use a [Lumina virtual key](./proxy/virtual_keys.md) with access to `llama-3.1-8b`.
 
 ### Choose a model on each request
 
@@ -123,21 +123,21 @@ curl --fail-with-body http://localhost:4000/tokenize \
   }'
 ```
 
-The endpoint and JSON fields stay the same; the `model` value selects the tokenizer. LiteLLM translates `prompt` to watsonx.ai's `input`, adds the configured project, and returns the shared response fields.
+The endpoint and JSON fields stay the same; the `model` value selects the tokenizer. Lumina translates `prompt` to watsonx.ai's `input`, adds the configured project, and returns the shared response fields.
 
 For a stable client request, choose a shared gateway name such as `text-tokenizer` and update the model behind that name in gateway configuration. Clients keep sending `"model": "text-tokenizer"` when you change providers. The upstream tokenizer determines the token values and count, so a model change can change the result.
 
 ## Python SDK
 
-Use `litellm.tokenize()` for synchronous calls and `litellm.atokenize()` for asynchronous calls. These examples call the provider through LiteLLM's SDK; `api_base` is the provider's URL.
+Use `lumina.tokenize()` for synchronous calls and `lumina.atokenize()` for asynchronous calls. These examples call the provider through Lumina's SDK; `api_base` is the provider's URL.
 
 ### Synchronous vLLM call
 
 ```python
 import os
-import litellm
+import lumina
 
-response = litellm.tokenize(
+response = lumina.tokenize(
     model="hosted_vllm/meta-llama/Llama-3.1-8B-Instruct",
     prompt="Hello world",
     api_base=os.environ["HOSTED_VLLM_API_BASE"],
@@ -154,11 +154,11 @@ print(response.tokens)
 ```python
 import asyncio
 import os
-import litellm
+import lumina
 
 
 async def main():
-    response = await litellm.atokenize(
+    response = await lumina.atokenize(
         model="watsonx/ibm/granite-3-3-8b-instruct",
         prompt="Hello world",
         api_base=os.environ["WATSONX_API_BASE"],
@@ -171,7 +171,7 @@ async def main():
 asyncio.run(main())
 ```
 
-Use `router.tokenize()` and `router.atokenize()` with [LiteLLM Router](./routing.md) model aliases configured in `model_list`.
+Use `router.tokenize()` and `router.atokenize()` with [Lumina Router](./routing.md) model aliases configured in `model_list`.
 
 ## Supported providers
 
@@ -189,11 +189,11 @@ Both gateway paths accept a JSON object with these required fields:
 | Field    | Type   | Description                                                                                        |
 | -------- | ------ | -------------------------------------------------------------------------------------------------- |
 | `model`  | string | Configured gateway model name, such as `llama-3.1-8b`, or provider-prefixed model name in the SDK. |
-| `prompt` | string | Text to tokenize. LiteLLM accepts an empty string; the provider applies its own validation.        |
+| `prompt` | string | Text to tokenize. Lumina accepts an empty string; the provider applies its own validation.        |
 
 Pass provider options as additional top-level fields in the JSON body or as SDK keyword arguments. To keep clients portable between providers, configure provider-specific options in the gateway's `lumina_params` and send only `model` and `prompt` from the client.
 
-An explicit caller option overrides its configured default. LiteLLM ignores unrelated defaults on a model deployment, such as `temperature` and `max_tokens`, when it tokenizes. It rejects unsupported provider options supplied by the caller.
+An explicit caller option overrides its configured default. Lumina ignores unrelated defaults on a model deployment, such as `temperature` and `max_tokens`, when it tokenizes. It rejects unsupported provider options supplied by the caller.
 
 ### vLLM options
 
@@ -201,9 +201,9 @@ An explicit caller option overrides its configured default. LiteLLM ignores unre
 | -------------------- | ------- | ------- | -------------------------------------------------------------------- |
 | `add_special_tokens` | boolean | `true`  | Include the tokenizer's special tokens. Set to `false` to omit them. |
 
-Set `api_base` or `HOSTED_VLLM_API_BASE`. A base ending in `/v1` works: LiteLLM calls the sibling `/tokenize` endpoint. LiteLLM preserves any reverse proxy path prefix.
+Set `api_base` or `HOSTED_VLLM_API_BASE`. A base ending in `/v1` works: Lumina calls the sibling `/tokenize` endpoint. Lumina preserves any reverse proxy path prefix.
 
-Authentication uses `api_key` or `HOSTED_VLLM_API_KEY` when present. LiteLLM requests token strings alongside IDs; servers that omit token strings produce `tokens: null`.
+Authentication uses `api_key` or `HOSTED_VLLM_API_KEY` when present. Lumina requests token strings alongside IDs; servers that omit token strings produce `tokens: null`.
 
 ### watsonx.ai options
 
@@ -215,9 +215,9 @@ Authentication uses `api_key` or `HOSTED_VLLM_API_KEY` when present. LiteLLM req
 | `token`       | string | `WATSONX_TOKEN`                                     | Existing bearer token.                                           |
 | `zen_api_key` | string | `WATSONX_ZENAPIKEY`                                 | Zen API key for deployments that use this authentication scheme. |
 
-Provide a project or a space. A resolved project takes precedence over a space. Set `api_base` or `WATSONX_API_BASE`; LiteLLM accepts `WATSONX_URL` as an alternative.
+Provide a project or a space. A resolved project takes precedence over a space. Set `api_base` or `WATSONX_API_BASE`; Lumina accepts `WATSONX_URL` as an alternative.
 
-For IBM Cloud authentication, set `api_key` or `WATSONX_APIKEY` and LiteLLM obtains an IAM token. Authentication precedence is an explicit `Authorization` header, a bearer `token`, a `zen_api_key`, then an API key for IAM. Keep gateway credentials in deployment configuration or environment variables.
+For IBM Cloud authentication, set `api_key` or `WATSONX_APIKEY` and Lumina obtains an IAM token. Authentication precedence is an explicit `Authorization` header, a bearer `token`, a `zen_api_key`, then an API key for IAM. Keep gateway credentials in deployment configuration or environment variables.
 
 ### SDK connection options
 
@@ -235,7 +235,7 @@ The gateway returns JSON. The SDK returns a `TokenizeResponse` with the same fie
 
 | Field       | Type                                    | Description                                                                                                          |
 | ----------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `model`     | string                                  | Resolved upstream model name, without the LiteLLM provider prefix. This can differ from the requested gateway alias. |
+| `model`     | string                                  | Resolved upstream model name, without the Lumina provider prefix. This can differ from the requested gateway alias. |
 | `count`     | nonnegative integer                     | Number of tokens the provider returns.                                                                               |
 | `token_ids` | array of nonnegative integers or `null` | Numeric token IDs, when the provider exposes them.                                                                   |
 | `tokens`    | array of strings or `null`              | Token strings, when the provider exposes them.                                                                       |
@@ -264,4 +264,4 @@ Illustrative response for the `granite-3.3-8b` request:
 }
 ```
 
-`null` means the provider does not expose that representation in its response. An empty array means the provider returned zero tokens. LiteLLM preserves this distinction and does not invent token IDs for watsonx.ai.
+`null` means the provider does not expose that representation in its response. An empty array means the provider returned zero tokens. Lumina preserves this distinction and does not invent token IDs for watsonx.ai.

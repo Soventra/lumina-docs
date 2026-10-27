@@ -1,7 +1,7 @@
 {
   "id": "lens-signals",
   "title": "Flagging problems in agent traces",
-  "description": "621 yes/no calls (207 synthetic traces x 3 signals) plus an evidence pick for each yes. Every model got the same requests through LiteLLM /v1/decisions, flagged at p ≥ 0.5.",
+  "description": "621 yes/no calls (207 synthetic traces x 3 signals) plus an evidence pick for each yes. Every model got the same requests through Lumina /v1/decisions, flagged at p ≥ 0.5.",
   "date": "2026-10",
   "total": 621,
   "costUnit": "traces",
@@ -12,7 +12,7 @@
     "noAnswer": "no answer"
   },
   "topTier": 4,
-  "footnote": "Oct 2026. Labels checked by an independent judge. ai_decide matched OpenJev and pplx-decider v1 matched v1.1 on every call. Strands failed on 9 traces (6 too long for its context, 3 server errors), counted as no answer. Cost and p50 are per trace, one request for all three signals, from x-litellm-response-cost; Databricks cost is not tracked yet.",
+  "footnote": "Oct 2026. Labels checked by an independent judge. ai_decide matched OpenJev and pplx-decider v1 matched v1.1 on every call. Strands failed on 9 traces (6 too long for its context, 3 server errors), counted as no answer. Cost and p50 are per trace, one request for all three signals, from x-lumina-response-cost; Databricks cost is not tracked yet.",
   "groups": [
     {
       "label": "Hosted APIs",

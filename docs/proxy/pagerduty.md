@@ -41,10 +41,10 @@ general_settings:
 3. Test it 
 
 
-Start LiteLLM Proxy
+Start Lumina Proxy
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### LLM API Failure Alert

@@ -5,8 +5,8 @@ import TabItem from '@theme/TabItem';
 https://digitalocean.com/products/gradientai
 
 
-LiteLLM provides native support for GradientAI models.
-To use a GradientAI model, specify it as `gradient_ai/<model-name>` in your LiteLLM requests.
+Lumina provides native support for GradientAI models.
+To use a GradientAI model, specify it as `gradient_ai/<model-name>` in your Lumina requests.
 
 
 ## API Key & Endpoint
@@ -18,7 +18,7 @@ import os
 os.environ['GRADIENT_AI_API_KEY'] = "your-api-key"
 ```
 
-To call a GradientAI agent instead, set `GRADIENT_AI_AGENT_ENDPOINT` (or pass `api_base`) to the agent's base URL. LiteLLM appends `/api/v1/chat/completions` to it, so do not include a path:
+To call a GradientAI agent instead, set `GRADIENT_AI_AGENT_ENDPOINT` (or pass `api_base`) to the agent's base URL. Lumina appends `/api/v1/chat/completions` to it, so do not include a path:
 
 ```python
 os.environ['GRADIENT_AI_AGENT_ENDPOINT'] = "https://<agent-id>.agents.do-ai.run"  # optional, agents only
@@ -27,7 +27,7 @@ os.environ['GRADIENT_AI_AGENT_ENDPOINT'] = "https://<agent-id>.agents.do-ai.run"
 ## Sample Usage
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GRADIENT_AI_API_KEY'] = "your-api-key"
@@ -43,7 +43,7 @@ print(response.choices[0].message.content)
 ## Streaming Example
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GRADIENT_AI_API_KEY'] = "your-api-key"

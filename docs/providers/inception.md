@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Inception serves the Mercury family of diffusion LLMs (dLLMs). The API is OpenAI-compatible. |
-| Provider Route on LiteLLM | `inception/` (chat), `text-completion-inception/` (fill-in-the-middle) |
+| Provider Route on Lumina | `inception/` (chat), `text-completion-inception/` (fill-in-the-middle) |
 | Link to Provider Doc | [Inception Platform Documentation ↗](https://docs.inceptionlabs.ai/) |
 | Base URL | `https://api.inceptionlabs.ai/v1` |
-| Supported Operations | [`/chat/completions`](#usage---litellm-python-sdk), [`/fim/completions`](#fill-in-the-middle-fim) |
+| Supported Operations | [`/chat/completions`](#usage---lumina-python-sdk), [`/fim/completions`](#fill-in-the-middle-fim) |
 
 <br />
 <br />
@@ -29,14 +29,14 @@ import TabItem from '@theme/TabItem';
 os.environ["INCEPTION_API_KEY"] = ""  # your Inception API key
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Inception Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["INCEPTION_API_KEY"] = ""  # your Inception API key
 
@@ -55,8 +55,8 @@ print(response)
 
 ```python showLineNumbers title="Inception Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["INCEPTION_API_KEY"] = ""  # your Inception API key
 
@@ -79,7 +79,7 @@ Mercury exposes a `reasoning_effort` control with an Inception-specific `instant
 
 ```python showLineNumbers title="Inception Reasoning"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["INCEPTION_API_KEY"] = ""  # your Inception API key
 
@@ -98,7 +98,7 @@ print(response.reasoning_summary)  # {"content": "...", "status": "complete"}
 
 ```python showLineNumbers title="Inception Function Calling"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["INCEPTION_API_KEY"] = ""  # your Inception API key
 
@@ -138,7 +138,7 @@ print(response)
 
 ```python showLineNumbers title="Inception FIM"
 import os
-from litellm import text_completion
+from lumina import text_completion
 
 os.environ["INCEPTION_API_KEY"] = ""  # your Inception API key
 
@@ -152,7 +152,7 @@ response = text_completion(
 print(response.choices[0].text)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:

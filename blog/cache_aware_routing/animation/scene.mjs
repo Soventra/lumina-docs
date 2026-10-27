@@ -6,7 +6,7 @@ export const DURATION = 8;
 export const FPS = 25;
 const c = { ink:'#3657F5', light:'#F2F7FF', top:'#EAF3FF', left:'#D8E7FF', right:'#BDD3FF', wire:'#8CB6FF', grid:'#C4D9FF', blue:'#4055FF', cyan:'#13A5E9', white:'#FFFFFF' };
 const assets = {};
-for (const name of ['claude-code', 'codex', 'kubernetes', 'litellm', 'vllm']) {
+for (const name of ['claude-code', 'codex', 'kubernetes', 'lumina', 'vllm']) {
   let svg = fs.readFileSync(new URL(`./assets/${name}.svg`, import.meta.url), 'utf8');
   if (name === 'codex') svg = svg.replace('url(#codex-gradient)', '#6C7EFF').replace(/<defs>[\s\S]*?<\/defs>/, '');
   const tag = svg.match(/<svg\b([^>]*)>([\s\S]*)<\/svg>/);
@@ -89,7 +89,7 @@ function states(t){
 export function frame(time) {
   iconNumber = 0;
   const t=((time%DURATION)+DURATION)%DURATION, st=states(t);
-  let s=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}"><title>Cache-aware routing through LiteLLM</title><desc>Claude Code and Codex requests pass through the LiteLLM gateway to Kubernetes inference pods running vLLM. Repeated blue requests return to the same pod and its cache; cyan requests return to a second pod.</desc>`;
+  let s=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}"><title>Cache-aware routing through Lumina</title><desc>Claude Code and Codex requests pass through the Lumina gateway to Kubernetes inference pods running vLLM. Repeated blue requests return to the same pod and its cache; cyan requests return to a second pod.</desc>`;
   // Sparse drafting marks, all opaque flat colors on a transparent canvas.
   s+=cross(83,155,12)+cross(1362,704,12);
   for(let r=0;r<3;r++)for(let q=0;q<5;q++)s+=`<circle cx="${89+q*23}" cy="${671+r*21}" r="1.6" fill="#ACC9FF"/>`;
@@ -109,13 +109,13 @@ export function frame(time) {
   s+=line(inputs.a,c.blue,2.4)+line(inputs.b,c.cyan,2.4);
   s+=line(outputs.a,c.blue,2.4)+line(outputs.b,c.cyan,2.4);
   s+=line([[688,422],[744,389],[844,332],[1064,332],[1064,410]],'#A3B9E8',1.7,'4 8');
-  // The LiteLLM gateway remains a rectangular block with only its train icon.
+  // The Lumina gateway remains a rectangular block with only its train icon.
   s+=slab(182,272,168,97,20,{top:'#F4F8FF',left:'#DFEAFF',right:'#BFD4FF'},c.ink,2);
   s+=topIcon('claude-code',182,269,79);
   s+=slab(182,550,168,97,20,{top:'#F4F8FF',left:'#DFEAFF',right:'#BFD4FF'},c.ink,2);
   s+=topIcon('codex',182,547,84);
   s+=slab(520,395,220,127,54,{top:'#ECF4FF',left:'#D1E2FF',right:'#AFCBFF'},c.ink,st.gateway?3.5:2.3);
-  s+=topIcon('litellm',520,390,100);
+  s+=topIcon('lumina',520,390,100);
   // Back pods first, then the front pod, for coherent occlusion.
   const hitB=st.b?1+Math.min(2,Math.floor((st.b.age-2.22)*5)):0;
   const hitA=st.a?1+Math.min(2,Math.floor((st.a.age-2.22)*5)):0;

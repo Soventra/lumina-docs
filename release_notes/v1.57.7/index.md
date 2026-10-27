@@ -1,15 +1,15 @@
 ---
-title: "LiteLLM v1.57.7"
+title: "Lumina v1.57.7"
 description: "Marks Langfuse prompt management as beta, adds Hashicorp Vault secret support and UI team and organization management. Also adds Prometheus metrics."
 slug: v1.57.7
 date: 2025-01-10T10:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://media.licdn.com/dms/image/v2/D4D03AQGrlsJ3aqpHmQ/profile-displayphoto-shrink_400_400/B4DZSAzgP7HYAg-/0/1737327772964?e=1749686400&v=beta&t=Hkl3U8Ps0VtvNxX0BNNq24b4dtX5wQaPFp6oiKCIHD8
   - name: Ishaan Jaffer
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://media.licdn.com/dms/image/v2/D4D03AQGiM7ZrUwqu_Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1675971026692?e=1741824000&v=beta&t=eQnRdXPJo4eiINWTZARoYTfqh064pgZ-E21pQTSy8jc
 tags: [langfuse, management endpoints, ui, prometheus, secret management]
@@ -28,7 +28,7 @@ Changes:
 - Log the 'prompt_id' and 'prompt_variables' in the logged request (e.g. to s3/langfuse). 
 
 
-[Start Here](https://docs.litellm.ai/docs/proxy/prompt_management)
+[Start Here](https://docs.lumina.ai/docs/proxy/prompt_management)
 
 ## Team/Organization Management + UI Improvements
 
@@ -42,13 +42,13 @@ Changes:
 - Assign teams to orgs on the UI
 - Auto-assign SSO users to teams
 
-[Start Here](https://docs.litellm.ai/docs/proxy/self_serve)
+[Start Here](https://docs.lumina.ai/docs/proxy/self_serve)
 
 ## Hashicorp Vault Support
 
-We now support writing LiteLLM Virtual API keys to Hashicorp Vault. 
+We now support writing Lumina Virtual API keys to Hashicorp Vault. 
 
-[Start Here](https://docs.litellm.ai/docs/proxy/vault)
+[Start Here](https://docs.lumina.ai/docs/proxy/vault)
 
 ## Custom Prometheus Metrics
 
@@ -56,5 +56,5 @@ Define custom prometheus metrics, and track usage/latency/no. of requests agains
 
 This allows for more fine-grained tracking - e.g. on prompt template passed in request metadata
 
-[Start Here](https://docs.litellm.ai/docs/proxy/prometheus#beta-custom-metrics)
+[Start Here](https://docs.lumina.ai/docs/proxy/prometheus#beta-custom-metrics)
 

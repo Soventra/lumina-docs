@@ -6,7 +6,7 @@ authors:
   - tin
 description: "Shadow evaluations duplicate a sampled slice of one key's live traffic through an auto-router and have an LLM judge blindly compare the answers. On our own traffic the router matched or beat the current model on 88.1% of judged responses, measured before a single user-facing response changed."
 image: ./hero.png
-keywords: [shadow evaluation, shadow testing, auto router, llm quality evaluation, llm as a judge, model routing, litellm auto routing, llm gateway]
+keywords: [shadow evaluation, shadow testing, auto router, llm quality evaluation, llm as a judge, model routing, lumina auto routing, llm gateway]
 tags: [routing, complexity-router, evals, quality, engineering]
 hide_table_of_contents: false
 ---
@@ -19,9 +19,9 @@ We have shown the Auto-Router [saving 51% in production](/blog/auto-router-produ
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::
 
@@ -101,7 +101,7 @@ The judge defaults to `anthropic/claude-sonnet-5`; a mid-tier judge is the sweet
 
 :::info
 
-Start a shadow eval against a key you already run in production and let it judge a week of real traffic. Share numbers or questions in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner).
+Start a shadow eval against a key you already run in production and let it judge a week of real traffic. Share numbers or questions in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner).
 
 :::
 

@@ -108,7 +108,7 @@ export default function NavbarMoreMenu() {
           <a
             className={styles.item}
             role="menuitem"
-            href="https://litellmossslack.slack.com/"
+            href="https://luminaossslack.slack.com/"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => close(false)}>
@@ -121,7 +121,7 @@ export default function NavbarMoreMenu() {
           <a
             className={styles.item}
             role="menuitem"
-            href="https://trust.litellm.ai/"
+            href="https://trust.lumina.ai/"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => close(false)}>

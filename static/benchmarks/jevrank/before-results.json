@@ -7,15 +7,15 @@
       "case": "pointwise_sync",
       "request": {
         "model": "openai/typesafe/jev-latest",
-        "api_base": "https://gateway.litellm-sandbox.ai/v1",
+        "api_base": "https://gateway.lumina-sandbox.ai/v1",
         "rerank_mode": "decisions",
         "decision_rerank": {
           "strategy": "pointwise",
           "max_concurrency": 8
         },
-        "query": "What is LiteLLM used for?",
+        "query": "What is Lumina used for?",
         "documents": [
-          "LiteLLM is a gateway and SDK for calling many language models through a consistent API.",
+          "Lumina is a gateway and SDK for calling many language models through a consistent API.",
           "Bananas are yellow fruit commonly used in smoothies."
         ],
         "return_documents": true,
@@ -23,7 +23,7 @@
         "num_retries": 0
       },
       "exception_type": "APIConnectionError",
-      "error": "litellm.APIConnectionError: APIConnectionError: OpenAIException - Unsupported provider: openai",
+      "error": "lumina.APIConnectionError: APIConnectionError: OpenAIException - Unsupported provider: openai",
       "latency_seconds": 0.12,
       "network_connection_attempts": 0,
       "real_api_key_used": false
@@ -32,15 +32,15 @@
       "case": "pointwise_async",
       "request": {
         "model": "openai/typesafe/jev-latest",
-        "api_base": "https://gateway.litellm-sandbox.ai/v1",
+        "api_base": "https://gateway.lumina-sandbox.ai/v1",
         "rerank_mode": "decisions",
         "decision_rerank": {
           "strategy": "pointwise",
           "max_concurrency": 8
         },
-        "query": "What is LiteLLM used for?",
+        "query": "What is Lumina used for?",
         "documents": [
-          "LiteLLM is a gateway and SDK for calling many language models through a consistent API.",
+          "Lumina is a gateway and SDK for calling many language models through a consistent API.",
           "Bananas are yellow fruit commonly used in smoothies."
         ],
         "return_documents": true,
@@ -48,7 +48,7 @@
         "num_retries": 0
       },
       "exception_type": "APIConnectionError",
-      "error": "litellm.APIConnectionError: APIConnectionError: OpenAIException - Unsupported provider: openai",
+      "error": "lumina.APIConnectionError: APIConnectionError: OpenAIException - Unsupported provider: openai",
       "latency_seconds": 0.005,
       "network_connection_attempts": 0,
       "real_api_key_used": false
@@ -57,15 +57,15 @@
       "case": "multiple_choice",
       "request": {
         "model": "openai/typesafe/jev-latest",
-        "api_base": "https://gateway.litellm-sandbox.ai/v1",
+        "api_base": "https://gateway.lumina-sandbox.ai/v1",
         "rerank_mode": "decisions",
         "decision_rerank": {
           "strategy": "multiple_choice",
           "max_concurrency": 8
         },
-        "query": "What is LiteLLM used for?",
+        "query": "What is Lumina used for?",
         "documents": [
-          "LiteLLM is a gateway and SDK for calling many language models through a consistent API.",
+          "Lumina is a gateway and SDK for calling many language models through a consistent API.",
           "Bananas are yellow fruit commonly used in smoothies."
         ],
         "return_documents": true,
@@ -73,7 +73,7 @@
         "num_retries": 0
       },
       "exception_type": "APIConnectionError",
-      "error": "litellm.APIConnectionError: APIConnectionError: OpenAIException - Unsupported provider: openai",
+      "error": "lumina.APIConnectionError: APIConnectionError: OpenAIException - Unsupported provider: openai",
       "latency_seconds": 0.007,
       "network_connection_attempts": 0,
       "real_api_key_used": false

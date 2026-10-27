@@ -5,7 +5,7 @@ import { MultiRegionArchitecture } from '@site/src/components/CloudArchitecture'
 
 # Multi-Region Deployment
 
-Run LiteLLM proxy instances in multiple regions of the same cloud provider, all connected to one shared PostgreSQL database. Clients get routed to the nearest region for low latency, while keys, teams, users, and spend tracking stay consistent everywhere because there is a single source of truth.
+Run Lumina proxy instances in multiple regions of the same cloud provider, all connected to one shared PostgreSQL database. Clients get routed to the nearest region for low latency, while keys, teams, users, and spend tracking stay consistent everywhere because there is a single source of truth.
 
 This page covers the supported topology, how licensing works across regions, and step-by-step setup. For deploying the proxy itself in each region, see [Production Deployment](./deploy.md).
 
@@ -23,7 +23,7 @@ The same topology runs active-active (DNS routes every client to its nearest reg
 
 ## Licensing across regions
 
-A single LiteLLM Enterprise license covers all regions, as long as all regions share one database.
+A single Lumina Enterprise license covers all regions, as long as all regions share one database.
 
 Each proxy instance independently validates the `LUMINA_LICENSE` key it is given (offline against a signed payload, or against the license server), and nothing in the license check counts instances or regions. The quantitative limits a license carries, maximum users and maximum teams, are counted from the database. When every region shares one database, those counts exist once, so the license is enforced once, globally.
 
@@ -77,7 +77,7 @@ Deploy the proxy in every region exactly as you would for a single region, with 
 <TabItem value="primary" label="Primary region (us-east-1)">
 
 ```bash
-DATABASE_URL="postgresql://litellm:<password>@db.us-east-1.internal:5432/litellm?sslmode=require"
+DATABASE_URL="postgresql://lumina:<password>@db.us-east-1.internal:5432/lumina?sslmode=require"
 LUMINA_MASTER_KEY="sk-<same-everywhere>"
 LUMINA_SALT_KEY="sk-<same-everywhere-never-rotate>"
 LUMINA_LICENSE="<same-everywhere>"
@@ -92,7 +92,7 @@ REDIS_PASSWORD="<regional>"
 
 ```bash
 # Same database as the primary region
-DATABASE_URL="postgresql://litellm:<password>@db.us-east-1.internal:5432/litellm?sslmode=require"
+DATABASE_URL="postgresql://lumina:<password>@db.us-east-1.internal:5432/lumina?sslmode=require"
 LUMINA_MASTER_KEY="sk-<same-everywhere>"
 LUMINA_SALT_KEY="sk-<same-everywhere-never-rotate>"
 LUMINA_LICENSE="<same-everywhere>"
@@ -103,7 +103,7 @@ REDIS_PORT="6379"
 REDIS_PASSWORD="<regional>"
 
 # Optional: regional read replica (see next section)
-DATABASE_URL_READ_REPLICA="postgresql://litellm:<password>@db-replica.eu-west-1.internal:5432/litellm"
+DATABASE_URL_READ_REPLICA="postgresql://lumina:<password>@db-replica.eu-west-1.internal:5432/lumina"
 ```
 
 </TabItem>
@@ -111,7 +111,7 @@ DATABASE_URL_READ_REPLICA="postgresql://litellm:<password>@db-replica.eu-west-1.
 
 ### 4. Optional: add regional read replicas
 
-Every request authenticates its key against the database (with in-memory caching, so steady-state traffic does not hit the database on every call). Secondary regions can still cut their database read latency by running a PostgreSQL read replica in-region and setting `DATABASE_URL_READ_REPLICA`. LiteLLM routes read-only queries to the replica and all writes to the primary. See [Database Read Replica](./db_read_replica.md) for what routes where and how to handle replication lag.
+Every request authenticates its key against the database (with in-memory caching, so steady-state traffic does not hit the database on every call). Secondary regions can still cut their database read latency by running a PostgreSQL read replica in-region and setting `DATABASE_URL_READ_REPLICA`. Lumina routes read-only queries to the replica and all writes to the primary. See [Database Read Replica](./db_read_replica.md) for what routes where and how to handle replication lag.
 
 Writes (key creation, config changes, spend updates) always go to the primary region's database. Spend updates are batched, so cross-region write latency does not sit in the request path.
 
@@ -145,7 +145,7 @@ By default every instance serves both LLM traffic and admin traffic (UI and mana
 ```bash
 # Serves the UI and management APIs, refuses LLM traffic
 DISABLE_LLM_API_ENDPOINTS="true"
-DATABASE_URL="postgresql://...@db.us-east-1.internal:5432/litellm"
+DATABASE_URL="postgresql://...@db.us-east-1.internal:5432/lumina"
 LUMINA_MASTER_KEY="sk-<same-everywhere>"
 ```
 
@@ -156,7 +156,7 @@ LUMINA_MASTER_KEY="sk-<same-everywhere>"
 # Serve LLM traffic, refuse admin traffic
 DISABLE_ADMIN_UI="true"
 DISABLE_ADMIN_ENDPOINTS="true"
-DATABASE_URL="postgresql://...@db.us-east-1.internal:5432/litellm"
+DATABASE_URL="postgresql://...@db.us-east-1.internal:5432/lumina"
 LUMINA_MASTER_KEY="sk-<same-everywhere>"
 ```
 
@@ -180,5 +180,5 @@ The shared-database topology itself runs on the open source proxy. Enterprise fe
 **What happens if the primary region's database goes down?**
 All regions lose database access: key validation falls back to caches, and management operations fail until the database returns. The database is the single point of coupling in this architecture. Set `general_settings.allow_requests_on_db_unavailable: true` so proxies keep serving traffic for already-cached keys during the outage (see [graceful DB unavailability](./prod.md#gracefully-handle-db-unavailability)), run the database multi-AZ with automated failover, and if that is still not enough isolation, consider the [Global Control Plane](./global_control_plane.md) instead.
 
-**Can I run different LiteLLM versions in different regions?**
+**Can I run different Lumina versions in different regions?**
 Briefly, during a rolling upgrade. Do not run mixed versions steady-state; the shared database schema follows the newest version, and migrations should run exactly once per upgrade.

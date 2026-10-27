@@ -5,27 +5,27 @@ date: 2026-09-02T10:00:00
 authors:
   - tin
 image: ./hero.png
-description: "Heuristic v2 is a new classifier for LiteLLM's AutoRouter, pretrained across multiple rounds of graded response data so it ships with zero cold start. On a 21-task Terminal-Bench 2.0 subset it solved 3 more tasks than Heuristic v1, at 45% lower cost per solved task and lower latency."
-keywords: [heuristic router, complexity router, auto router, model routing, llm cost savings, terminal bench, litellm auto routing, probability routing]
+description: "Heuristic v2 is a new classifier for Lumina's AutoRouter, pretrained across multiple rounds of graded response data so it ships with zero cold start. On a 21-task Terminal-Bench 2.0 subset it solved 3 more tasks than Heuristic v1, at 45% lower cost per solved task and lower latency."
+keywords: [heuristic router, complexity router, auto router, model routing, llm cost savings, terminal bench, lumina auto routing, probability routing]
 tags: [routing, complexity-router, cost, benchmarks, engineering, product]
 hide_table_of_contents: false
 ---
 
 ![Heuristic v2 is cheaper, faster, and better: -45% cost per solved task, -20% median task time, +27% more quality than Heuristic v1, on a 21-task Terminal-Bench 2.0 subset](./hero.png)
 
-**Heuristic v2, LiteLLM's new AutoRouter classifier, is up to 45% more efficient than Heuristic v1: more tasks solved, at lower cost, in less time.** Only the classifier changed.
+**Heuristic v2, Lumina's new AutoRouter classifier, is up to 45% more efficient than Heuristic v1: more tasks solved, at lower cost, in less time.** Only the classifier changed.
 
 {/* truncate */}
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -121,7 +121,7 @@ model_list:
 
 :::note[Free trial scope]
 
-The free trial covers Heuristic v2 on one auto router. If you want it on more than one, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner) and we'll sort it out with you directly.
+The free trial covers Heuristic v2 on one auto router. If you want it on more than one, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner) and we'll sort it out with you directly.
 
 :::
 
@@ -129,7 +129,7 @@ Heuristic v2 makes no LLM classifier call on the request path, and reuses the sa
 
 ## How it was measured
 
-- **Benchmark:** a 21-task subset of Terminal-Bench 2.0, both classifiers run concurrently through one LiteLLM proxy, harbor 0.20.0 + terminus-2, `max_turns=50`, `-n 6` per arm, 1 trial per task
+- **Benchmark:** a 21-task subset of Terminal-Bench 2.0, both classifiers run concurrently through one Lumina proxy, harbor 0.20.0 + terminus-2, `max_turns=50`, `-n 6` per arm, 1 trial per task
 - **Tiers:** identical for both arms, SIMPLE to `claude-haiku-4-5`, MEDIUM to `claude-sonnet-5`, COMPLEX and REASONING to `claude-opus-5` at high effort. Only `classifier_type` differs
 - **Cost:** total USD across all 21 tasks from gateway spend logs
 - **Latency:** per-LLM-call latency measured at the proxy, 437 calls for Heuristic v1 against 496 for Heuristic v2
@@ -137,10 +137,10 @@ Heuristic v2 makes no LLM classifier call on the request path, and reuses the sa
 
 ## Related reading
 
-[Opus-level quality at 27% lower cost](/blog/auto-router-terminal-bench-benchmark), [LiteLLM Fusion: 56% more tasks solved than Fable 5](/blog/fusion-terminal-bench-benchmark), and [what auto-routing saved in production](/blog/auto-router-production-savings).
+[Opus-level quality at 27% lower cost](/blog/auto-router-terminal-bench-benchmark), [Lumina Fusion: 56% more tasks solved than Fable 5](/blog/fusion-terminal-bench-benchmark), and [what auto-routing saved in production](/blog/auto-router-production-savings).
 
 :::info
 
-Point Heuristic v2 at your own workload and compare it against your current classifier. Share numbers or questions in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner).
+Point Heuristic v2 at your own workload and compare it against your current classifier. Share numbers or questions in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner).
 
 :::

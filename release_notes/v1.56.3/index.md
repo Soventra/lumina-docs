@@ -1,15 +1,15 @@
 ---
-title: "LiteLLM v1.56.3"
+title: "Lumina v1.56.3"
 description: "Adds guardrail trace logging, a /guardrails/list endpoint and mock_response support for guardrails. Also assigns keys to users in the Proxy UI."
 slug: v1.56.3
 date: 2024-12-28T10:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://media.licdn.com/dms/image/v2/D4D03AQGrlsJ3aqpHmQ/profile-displayphoto-shrink_400_400/B4DZSAzgP7HYAg-/0/1737327772964?e=1749686400&v=beta&t=Hkl3U8Ps0VtvNxX0BNNq24b4dtX5wQaPFp6oiKCIHD8
   - name: Ishaan Jaffer
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://media.licdn.com/dms/image/v2/D4D03AQGiM7ZrUwqu_Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1675971026692?e=1741824000&v=beta&t=eQnRdXPJo4eiINWTZARoYTfqh064pgZ-E21pQTSy8jc
 tags: [guardrails, logging, virtual key management, new models]
@@ -22,7 +22,7 @@ import Image from '@theme/IdealImage';
 
 :::info
 
-Get a 7 day free trial for LiteLLM Enterprise [here](https://litellm.ai/#trial).
+Get a 7 day free trial for Lumina Enterprise [here](https://lumina.ai/#trial).
 
 **no call needed**
 
@@ -32,7 +32,7 @@ Get a 7 day free trial for LiteLLM Enterprise [here](https://litellm.ai/#trial).
 
 ### ✨ Log Guardrail Traces 
 
-Track guardrail failure rate and if a guardrail is going rogue and failing requests. [Start here](https://docs.litellm.ai/docs/proxy/guardrails/quick_start)
+Track guardrail failure rate and if a guardrail is going rogue and failing requests. [Start here](https://docs.lumina.ai/docs/proxy/guardrails/quick_start)
 
 
 #### Traced Guardrail Success
@@ -82,7 +82,7 @@ Expected response
 ### ✨ Guardrails with Mock LLM 
 
 
-Send `mock_response` to test guardrails without making an LLM call. More info on `mock_response` [here](https://docs.litellm.ai/docs/proxy/guardrails/quick_start)
+Send `mock_response` to test guardrails without making an LLM call. More info on `mock_response` [here](https://docs.lumina.ai/docs/proxy/guardrails/quick_start)
 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
@@ -114,5 +114,5 @@ You can now assign keys to users via Proxy UI
 
 ## Fixes 
 
-- Fix `vertex_ai/` mistral model pricing: https://github.com/BerriAI/litellm/pull/7345
-- Missing model_group field in logs for aspeech call types https://github.com/BerriAI/litellm/pull/7392
+- Fix `vertex_ai/` mistral model pricing: https://github.com/Soventra/lumina/pull/7345
+- Missing model_group field in logs for aspeech call types https://github.com/Soventra/lumina/pull/7392

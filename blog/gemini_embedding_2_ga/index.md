@@ -1,10 +1,10 @@
 ---
 slug: gemini_embedding_2_ga
-title: "Gemini Embedding 2 (GA): Multimodal Embeddings on LiteLLM"
+title: "Gemini Embedding 2 (GA): Multimodal Embeddings on Lumina"
 date: 2026-04-24T10:00:00
 authors:
   - sameer
-description: "Use generally available gemini-embedding-2 for multimodal embeddings on LiteLLM via Gemini API and Vertex AI—the same flows as preview, stable model id."
+description: "Use generally available gemini-embedding-2 for multimodal embeddings on Lumina via Gemini API and Vertex AI—the same flows as preview, stable model id."
 tags: [gemini, embeddings, multimodal, vertex ai]
 hide_table_of_contents: false
 ---
@@ -14,7 +14,7 @@ import TabItem from '@theme/TabItem';
 
 # Gemini Embedding 2 (GA): Multimodal Embeddings
 
-Litellm now fully supports Gemini Embedding 2 GA.
+Lumina now fully supports Gemini Embedding 2 GA.
 
 :::info
 For end-to-end behavior, input shapes, and MIME types, see the [Gemini Embedding 2 Preview walkthrough](/blog/gemini_embedding_2_multimodal). This post focuses on **GA naming**, **cost map** coverage.
@@ -34,7 +34,7 @@ For end-to-end behavior, input shapes, and MIME types, see the [Gemini Embedding
 
 ## Input Formats
 
-LiteLLM accepts three input formats for multimodal content:
+Lumina accepts three input formats for multimodal content:
 
 1. **Data URIs** – Base64-encoded inline: `data:image/png;base64,<encoded_data>`
 2. **GCS URLs** – Cloud Storage paths (Vertex AI): `gs://bucket/path/to/file.png`
@@ -46,7 +46,7 @@ LiteLLM accepts three input formats for multimodal content:
 <TabItem value="gemini" label="Gemini API">
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -67,11 +67,11 @@ print(response)
 <TabItem value="vertex" label="Vertex AI">
 
 ```python
-import litellm
-from litellm import embedding
+import lumina
+from lumina import embedding
 
-litellm.vertex_project = "your-project-id"
-litellm.vertex_location = "us-central1"
+lumina.vertex_project = "your-project-id"
+lumina.vertex_location = "us-central1"
 
 # Text + Image (GCS URL)
 response = embedding(
@@ -86,7 +86,7 @@ print(response)
 
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Config (config.yaml)**
 
@@ -109,7 +109,7 @@ general_settings:
 **2. Start proxy**
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 **3. Call embeddings** (OpenAI-compatible **`POST /v1/embeddings`** on the proxy)

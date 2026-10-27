@@ -50,7 +50,7 @@ JEV logs a separate `typesafe/<model>` classifier call attributed through the pa
 - **Per request:** what the router picked, why, and what the same request would have cost on the most expensive model in the hardest configured tier. The difference, net of any classifier call, is stamped on the request.
 - **Rolled up:** into the daily spend tables, so it shows per key, team, tag, and organization.
 - **Usage tab:** total estimated savings, sessions and turns, prompt-cache hit rate by turn type. A 30-day window over 400k sessions reads in 38 ms.
-- **Classifier cost:** returned per request in the `x-litellm-classifier-cost` header when a classifier cost was recorded, including a successful JEV classification
+- **Classifier cost:** returned per request in the `x-lumina-classifier-cost` header when a classifier cost was recorded, including a successful JEV classification
 - **Honest baseline:** priced with a warm cache on continuing turns; a fresh cache write after a switch counts against the saving, so a single request can read negative. Formula and every surface: [Reported savings](/docs/proxy/auto_routing#reported-savings).
 
 <NavigationCards

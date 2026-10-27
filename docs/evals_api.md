@@ -1,6 +1,6 @@
 # /evals
 
-LiteLLM Proxy supports OpenAI's Evaluations (Evals) API, allowing you to create, manage, and run evaluations to measure model performance against defined testing criteria.
+Lumina Proxy supports OpenAI's Evaluations (Evals) API, allowing you to create, manage, and run evaluations to measure model performance against defined testing criteria.
 
 ## What are Evals?
 
@@ -11,12 +11,12 @@ OpenAI Evals API provides a structured way to:
 
 ## Quick Start
 
-### Setup LiteLLM Proxy
+### Setup Lumina Proxy
 
-First, start your LiteLLM Proxy server:
+First, start your Lumina Proxy server:
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 
 # Proxy will run on http://localhost:4000
 ```
@@ -26,9 +26,9 @@ litellm --config config.yaml
 ```python
 from openai import OpenAI
 
-# Point to your LiteLLM Proxy
+# Point to your Lumina Proxy
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM proxy API key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina proxy API key
     base_url="http://localhost:4000"  # Your proxy URL
 )
 ```
@@ -40,7 +40,7 @@ For async operations:
 from openai import AsyncOpenAI
 
 client = AsyncOpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 ```
@@ -59,7 +59,7 @@ Create an evaluation with testing criteria and data source configuration.
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -105,7 +105,7 @@ This example shows how to monitor prompt changes for regressions in a push notif
 from openai import AsyncOpenAI
 
 client = AsyncOpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -244,7 +244,7 @@ from openai import AsyncOpenAI
 import asyncio
 
 client = AsyncOpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 

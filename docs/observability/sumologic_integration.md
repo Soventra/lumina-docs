@@ -3,13 +3,13 @@ import TabItem from '@theme/TabItem';
 
 # Sumo Logic
 
-Send LiteLLM logs to Sumo Logic for observability, monitoring, and analysis.
+Send Lumina logs to Sumo Logic for observability, monitoring, and analysis.
 
 Sumo Logic is a cloud-native machine data analytics platform that provides real-time insights into your applications and infrastructure.
 https://www.sumologic.com/
 
 :::info
-We want to learn how we can make the callbacks better! Meet the LiteLLM [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version) or
+We want to learn how we can make the callbacks better! Meet the Lumina [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version) or
 join our [discord](https://discord.gg/wuPM9dRgDw)
 :::
 
@@ -25,7 +25,7 @@ join our [discord](https://discord.gg/wuPM9dRgDw)
 For more details, see the [HTTP Logs & Metrics Source](https://www.sumologic.com/help/docs/send-data/hosted-collectors/http-source/logs-metrics/) documentation.
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
 ## Quick Start
@@ -38,11 +38,11 @@ The Sumo Logic HTTP Source URL includes the authentication token, so no separate
 <TabItem value="python" label="SDK">
 
 ```python
-litellm.callbacks = ["sumologic"]
+lumina.callbacks = ["sumologic"]
 ```
 
 ```python
-import litellm
+import lumina
 import os
 
 # Sumo Logic HTTP Source URL (includes auth token)
@@ -52,10 +52,10 @@ os.environ["SUMOLOGIC_WEBHOOK_URL"] = "https://collectors.sumologic.com/receiver
 os.environ['OPENAI_API_KEY'] = ""
 
 # Set sumologic as a callback
-litellm.callbacks = ["sumologic"]
+lumina.callbacks = ["sumologic"]
 
 # OpenAI call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_small}}",
   messages=[
     {"role": "user", "content": "Hi - I'm testing Sumo Logic integration"}
@@ -64,7 +64,7 @@ response = litellm.completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -75,17 +75,17 @@ model_list:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["sumologic"]
 
 environment_variables:
   SUMOLOGIC_WEBHOOK_URL: os.environ/SUMOLOGIC_WEBHOOK_URL
 ```
 
-2. Start LiteLLM Proxy
+2. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -110,7 +110,7 @@ curl -L -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ## What Data is Logged?
 
-LiteLLM sends the [Standard Logging Payload](https://docs.litellm.ai/docs/proxy/logging_spec) to Sumo Logic, which includes:
+Lumina sends the [Standard Logging Payload](https://docs.lumina.ai/docs/proxy/logging_spec) to Sumo Logic, which includes:
 
 - **Request details**: Model, messages, parameters
 - **Response details**: Completion text, token usage, latency
@@ -122,7 +122,7 @@ Example payload:
 ```json
 {
   "id": "chatcmpl-123",
-  "call_type": "litellm.completion",
+  "call_type": "lumina.completion",
   "model": "{{openai_small}}",
   "messages": [
     {"role": "user", "content": "Hello"}
@@ -166,7 +166,7 @@ Each log entry is sent as a separate line in the HTTP request:
 With NDJSON format, you can create Field Extraction Rules directly:
 
 ```
-_sourceCategory=litellm/logs
+_sourceCategory=lumina/logs
 | json field=_raw "model", "response_cost", "user" as model, cost, user
 ```
 
@@ -186,7 +186,7 @@ _sourceCategory=litellm/logs
 If you need to change the log format (not recommended for Sumo Logic), define the full `generic_api` callback in `callback_settings`. `endpoint` and `headers` are required; a block with only `log_format` is skipped with a `missing endpoint or headers` warning and the proxy then fails to start with `ValueError: Empty module name`
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["sumologic"]
 
 callback_settings:
@@ -200,17 +200,17 @@ callback_settings:
 
 ### Batching Settings
 
-Control how LiteLLM batches logs before sending to Sumo Logic:
+Control how Lumina batches logs before sending to Sumo Logic:
 
 <Tabs>
 <TabItem value="python" label="SDK">
 
 ```python
-import litellm
+import lumina
 
 os.environ["SUMOLOGIC_WEBHOOK_URL"] = "https://collectors.sumologic.com/receiver/v1/http/your-token"
 
-litellm.callbacks = ["sumologic"]
+lumina.callbacks = ["sumologic"]
 
 # Configure batch settings (optional)
 # These are inherited from CustomBatchLogger
@@ -219,10 +219,10 @@ litellm.callbacks = ["sumologic"]
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["sumologic"]
 
 environment_variables:
@@ -234,7 +234,7 @@ environment_variables:
 
 ### Compressed Data
 
-Sumo Logic supports compressed data (gzip or deflate). LiteLLM automatically handles compression when beneficial.
+Sumo Logic supports compressed data (gzip or deflate). Lumina automatically handles compression when beneficial.
 
 Benefits:
 - Reduced network usage
@@ -246,7 +246,7 @@ Benefits:
 Once logs are flowing to Sumo Logic, you can query them using the Sumo Logic Query Language:
 
 ```sql
-_sourceCategory=litellm
+_sourceCategory=lumina
 | json "model", "response_cost", "usage.total_tokens" as model, cost, tokens
 | sum(cost) by model
 ```
@@ -255,7 +255,7 @@ Example queries:
 
 **Total cost by model:**
 ```sql
-_sourceCategory=litellm
+_sourceCategory=lumina
 | json "model", "response_cost" as model, cost
 | sum(cost) as total_cost by model
 | sort by total_cost desc
@@ -263,7 +263,7 @@ _sourceCategory=litellm
 
 **Average response time:**
 ```sql
-_sourceCategory=litellm
+_sourceCategory=lumina
 | json "start_time", "end_time" as start, end
 | parse regex field=start "(?<start_ms>\d+)"
 | parse regex field=end "(?<end_ms>\d+)"
@@ -273,7 +273,7 @@ _sourceCategory=litellm
 
 **Requests per user:**
 ```sql
-_sourceCategory=litellm
+_sourceCategory=lumina
 | json "model_parameters.user" as user
 | count by user
 ```
@@ -295,8 +295,8 @@ The Sumo Logic HTTP Source URL includes the authentication token, so you only ne
 3. Click **Add Source** next to a Hosted Collector
 4. Select **HTTP Logs & Metrics**
 5. Configure the source:
-   - **Name**: LiteLLM Logs
-   - **Source Category**: litellm (optional, but helps with queries)
+   - **Name**: Lumina Logs
+   - **Source Category**: lumina (optional, but helps with queries)
 6. Click **Save**
 7. Copy the displayed URL - it will look like:
    ```
@@ -310,9 +310,9 @@ The Sumo Logic HTTP Source URL includes the authentication token, so you only ne
 1. **Verify the URL**: Make sure `SUMOLOGIC_WEBHOOK_URL` is set correctly
 2. **Check the HTTP Source**: Ensure it's active in Sumo Logic UI
 3. **Wait for batching**: Logs are sent in batches, flushed every 5 seconds by default (`DEFAULT_FLUSH_INTERVAL_SECONDS`)
-4. **Check for errors**: Enable debug logging in LiteLLM:
+4. **Check for errors**: Enable debug logging in Lumina:
    ```python
-   litellm.set_verbose = True
+   lumina.set_verbose = True
    ```
 
 ### URL Format
@@ -331,6 +331,6 @@ If you get authentication errors, regenerate the HTTP Source URL in Sumo Logic:
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

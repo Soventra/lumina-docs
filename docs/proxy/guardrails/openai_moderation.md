@@ -17,7 +17,7 @@ import TabItem from '@theme/TabItem';
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section:
 
@@ -65,10 +65,10 @@ export OPENAI_API_KEY="your-openai-api-key"
 </TabItem>
 </Tabs>
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request 
@@ -295,7 +295,7 @@ guardrails:
 Enable detailed logging to troubleshoot issues:
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 Look for logs starting with `OpenAI Moderation:` to trace guardrail execution.
@@ -308,5 +308,5 @@ The OpenAI Moderation API is **free to use** for content policy compliance. This
 
 For additional support:
 - Check the [OpenAI Moderation API documentation](https://platform.openai.com/docs/guides/moderation)
-- Review [LiteLLM Guardrails documentation](./quick_start)
+- Review [Lumina Guardrails documentation](./quick_start)
 - Join our [Discord community](https://discord.gg/wuPM9dRgDw) 

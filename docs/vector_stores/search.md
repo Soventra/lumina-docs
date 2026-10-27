@@ -18,16 +18,16 @@ For **retrieve, list, update, and delete** over HTTP (including `custom_llm_prov
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 #### Non-streaming example
 ```python showLineNumbers title="Search Vector Store - Basic"
-import litellm
+import lumina
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="vs_abc123",
     query="What is the capital of France?"
 )
@@ -36,9 +36,9 @@ print(response)
 
 #### Synchronous example
 ```python showLineNumbers title="Search Vector Store - Sync"
-import litellm
+import lumina
 
-response = litellm.vector_stores.search(
+response = lumina.vector_stores.search(
     vector_store_id="vs_abc123",
     query="What is the capital of France?"
 )
@@ -51,9 +51,9 @@ print(response)
 
 #### With filters and ranking options
 ```python showLineNumbers title="Search Vector Store - Advanced"
-import litellm
+import lumina
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="vs_abc123",
     query="What is the capital of France?",
     filters={
@@ -74,9 +74,9 @@ print(response)
 
 #### Searching with multiple queries
 ```python showLineNumbers title="Search Vector Store - Multiple Queries"
-import litellm
+import lumina
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="vs_abc123",
     query=[
         "What is the capital of France?",
@@ -93,13 +93,13 @@ print(response)
 
 #### Using OpenAI provider explicitly
 ```python showLineNumbers title="Search Vector Store - OpenAI Provider"
-import litellm
+import lumina
 import os
 
 # Set API key
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="vs_abc123",
     query="What is the capital of France?",
     custom_llm_provider="openai"
@@ -113,19 +113,19 @@ print(response)
 
 #### Using Azure AI Search
 ```python showLineNumbers title="Search Vector Store - Azure AI Provider"
-import litellm
+import lumina
 import os
 
 # Set credentials
 os.environ["AZURE_SEARCH_API_KEY"] = "your-search-api-key"
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="my-vector-index",
     query="What is the capital of France?",
     custom_llm_provider="azure_ai",
     azure_search_service_name="your-search-service",
-    litellm_embedding_model="azure/text-embedding-3-large",
-    litellm_embedding_config={
+    lumina_embedding_model="azure/text-embedding-3-large",
+    lumina_embedding_config={
         "api_base": "your-embedding-endpoint",
         "api_key": "your-embedding-api-key",
     },
@@ -142,19 +142,19 @@ print(response)
 
 #### Using Milvus
 ```python showLineNumbers title="Search Vector Store - Milvus Provider"
-import litellm
+import lumina
 import os
 
 # Set credentials
 os.environ["MILVUS_API_KEY"] = "your-milvus-api-key"
 os.environ["MILVUS_API_BASE"] = "https://your-milvus-instance.milvus.io"
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="my-collection-name",
     query="What is the capital of France?",
     custom_llm_provider="milvus",
-    litellm_embedding_model="azure/text-embedding-3-large",
-    litellm_embedding_config={
+    lumina_embedding_model="azure/text-embedding-3-large",
+    lumina_embedding_config={
         "api_base": "your-embedding-endpoint",
         "api_key": "your-embedding-api-key",
     },
@@ -172,14 +172,14 @@ print(response)
 
 #### Using MongoDB (BETA)
 
-Search an existing MongoDB Vector Search index on Atlas or a self-managed deployment. Install `litellm[mongodb]`, then set `MONGODB_CONNECTION_STRING` and your embedding provider's credentials. Replace the placeholders with your index, collection fields, and the model used to embed your documents.
+Search an existing MongoDB Vector Search index on Atlas or a self-managed deployment. Install `lumina[mongodb]`, then set `MONGODB_CONNECTION_STRING` and your embedding provider's credentials. Replace the placeholders with your index, collection fields, and the model used to embed your documents.
 
 ```python showLineNumbers title="Search Vector Store - MongoDB Provider (BETA)"
 import os
 
-import litellm
+import lumina
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="<index-name>",  # Exact MongoDB Vector Search index name
     query="<question-about-your-documents>",
     custom_llm_provider="mongodb",
@@ -188,7 +188,7 @@ response = await litellm.vector_stores.asearch(
     mongodb_collection="<collection-name>",
     mongodb_text_field="<text-field>",
     mongodb_embedding_field="<vector-field>",
-    litellm_embedding_model="<provider>/<embedding-model>",
+    lumina_embedding_model="<provider>/<embedding-model>",
     max_num_results=3,
 )
 print(response)
@@ -204,15 +204,15 @@ The embedding model must match the one used for the stored vectors. This BETA in
 
 #### Using Valkey
 ```python showLineNumbers title="Search Vector Store - Valkey Provider"
-import litellm
+import lumina
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="my-search-index",  # name of the FT index in Valkey
     query="What is the capital of France?",
     custom_llm_provider="valkey",
     valkey_host="my-valkey.example.com",
     valkey_port=6379,
-    litellm_embedding_model="openai/text-embedding-3-small",
+    lumina_embedding_model="openai/text-embedding-3-small",
     max_num_results=3,
 )
 print(response)
@@ -226,13 +226,13 @@ print(response)
 
 #### Using Gemini File Search
 ```python showLineNumbers title="Search Vector Store - Gemini Provider"
-import litellm
+import lumina
 import os
 
 # Set credentials
 os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="fileSearchStores/your-store-id",
     query="What is the capital of France?",
     custom_llm_provider="gemini",
@@ -243,9 +243,9 @@ print(response)
 
 **With Metadata Filter:**
 ```python showLineNumbers title="Search with Metadata Filter"
-response = await litellm.vector_stores.asearch(
+response = await lumina.vector_stores.asearch(
     vector_store_id="fileSearchStores/your-store-id",
-    query="What is LiteLLM?",
+    query="What is Lumina?",
     custom_llm_provider="gemini",
     filters={"author": "John Doe", "category": "documentation"},
     max_num_results=5
@@ -258,7 +258,7 @@ print(response)
 </TabItem>
 </Tabs>
 
-### LiteLLM Proxy Server
+### Lumina Proxy Server
 
 <Tabs>
 <TabItem value="proxy-setup" label="Setup & Usage">
@@ -279,18 +279,18 @@ general_settings:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it with OpenAI SDK!
 
-```python showLineNumbers title="OpenAI SDK via LiteLLM Proxy"
+```python showLineNumbers title="OpenAI SDK via Lumina Proxy"
 from openai import OpenAI
 
-# Point OpenAI SDK to LiteLLM proxy
+# Point OpenAI SDK to Lumina proxy
 client = OpenAI(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM API key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina API key
 )
 
 search_results = client.beta.vector_stores.search(
@@ -368,7 +368,7 @@ A structured data store returns each record under `attributes.structData`.
 
 ## Setting Up Vector Stores
 
-To search a store that already exists on a provider, register it with LiteLLM first via `config.yaml`, `POST /vector_store/new`, or the Admin UI; see [Managed Vector Stores](./managed_vector_stores.md). For provider-specific configuration, see the [Vector Store Configuration Guide](../completion/knowledgebase.md):
+To search a store that already exists on a provider, register it with Lumina first via `config.yaml`, `POST /vector_store/new`, or the Admin UI; see [Managed Vector Stores](./managed_vector_stores.md). For provider-specific configuration, see the [Vector Store Configuration Guide](../completion/knowledgebase.md):
 
 - Provider-specific configuration (Bedrock, OpenAI, Azure, Vertex AI, PG Vector)
 - Python SDK and Proxy setup examples  

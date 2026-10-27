@@ -1,6 +1,6 @@
 ---
 title: Activate your license
-description: Set LUMINA_LICENSE on each LiteLLM gateway instance, confirm that the gateway shows Enterprise Edition, and see which features the license key enables.
+description: Set LUMINA_LICENSE on each Lumina gateway instance, confirm that the gateway shows Enterprise Edition, and see which features the license key enables.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,9 +8,9 @@ import TabItem from '@theme/TabItem';
 
 # Activate your license
 
-LiteLLM Enterprise is a license key for the gateway image that you run now. The key enables the Enterprise features. You do not install a different image, and you do not migrate data.
+Lumina Enterprise is a license key for the gateway image that you run now. The key enables the Enterprise features. You do not install a different image, and you do not migrate data.
 
-The license key is a JWT. LiteLLM gives you the key when you buy a license or start a [30-day trial](https://www.litellm.ai/enterprise#trial).
+The license key is a JWT. Lumina gives you the key when you buy a license or start a [30-day trial](https://www.lumina.ai/enterprise#trial).
 
 ## Set the license key
 
@@ -33,7 +33,7 @@ docker run \
   -e LUMINA_LICENSE="eyJ..." \
   -e STORE_MODEL_IN_DB=True \
   -p 4000:4000 \
-  docker.litellm.ai/berriai/litellm:latest
+  docker.lumina.ai/soventra/lumina:latest
 ```
 
 </TabItem>
@@ -42,11 +42,11 @@ docker run \
 Put the key in the Secret that your Deployment loads with `envFrom`:
 
 ```bash
-kubectl create secret generic litellm-secrets \
+kubectl create secret generic lumina-secrets \
   --from-literal=LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
   --from-literal=LUMINA_SALT_KEY="sk-<paste-a-long-random-salt>" \
   --from-literal=LUMINA_LICENSE="eyJ..." \
-  --from-literal=DATABASE_URL="postgresql://user:pass@host:5432/litellm"
+  --from-literal=DATABASE_URL="postgresql://user:pass@host:5432/lumina"
 ```
 
 </TabItem>
@@ -55,19 +55,19 @@ kubectl create secret generic litellm-secrets \
 Create a Secret and list it in `environmentSecrets` in your values file:
 
 ```bash
-kubectl create secret generic litellm-env-secret \
+kubectl create secret generic lumina-env-secret \
   --from-literal=LUMINA_LICENSE="eyJ..."
 ```
 
 ```yaml title="values.yaml"
 environmentSecrets:
-  - litellm-env-secret
+  - lumina-env-secret
 ```
 
 </TabItem>
 </Tabs>
 
-You can also set the key as `litellm_license` in `general_settings`, or keep an encrypted key in `LUMINA_SECRET_AWS_KMS_LUMINA_LICENSE` for AWS KMS. Refer to the [configuration reference](../proxy/config_settings.md).
+You can also set the key as `lumina_license` in `general_settings`, or keep an encrypted key in `LUMINA_SECRET_AWS_KMS_LUMINA_LICENSE` for AWS KMS. Refer to the [configuration reference](../proxy/config_settings.md).
 
 If you run the gateway in more than one region, use the same key in each region. Each instance does a check of the key independently. One license covers all the regions that share one database. Refer to [Multi-region deployment](../proxy/multi_region.md#licensing-across-regions).
 
@@ -89,8 +89,8 @@ Some features have special conditions:
 - SSO for the Admin UI is free for up to 5 users. For more users, you must have a license. Refer to [SSO for the Admin UI](../proxy/admin_ui_sso.md).
 - Audit logs are on by default when the gateway has a license. Refer to [Audit logs](../proxy/audit_logs.md).
 - Some guardrail integrations need a license. Refer to [Which guardrails need a license?](../enterprise.md#guardrails-oss-vs-enterprise).
-- Pages with a **Free Enterprise feature** note do not need a license. Examples are [managed files](../proxy/litellm_managed_files.md) and [managed batches](../proxy/managed_batches.md).
-- [Billable request metering](../proxy/billing_metrics.md) needs the license key and the metering credentials from your LiteLLM onboarding.
+- Pages with a **Free Enterprise feature** note do not need a license. Examples are [managed files](../proxy/lumina_managed_files.md) and [managed batches](../proxy/managed_batches.md).
+- [Billable request metering](../proxy/billing_metrics.md) needs the license key and the metering credentials from your Lumina onboarding.
 
 ## Next steps
 

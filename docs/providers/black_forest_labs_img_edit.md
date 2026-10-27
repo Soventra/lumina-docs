@@ -10,7 +10,7 @@ Black Forest Labs provides powerful image editing capabilities using their FLUX 
 | Property | Details |
 |----------|---------|
 | Description | Black Forest Labs Image Editing uses FLUX Kontext and other models to modify, inpaint, and expand images based on text prompts. |
-| Provider Route on LiteLLM | `black_forest_labs/` |
+| Provider Route on Lumina | `black_forest_labs/` |
 | Provider Doc | [Black Forest Labs API ↗](https://docs.bfl.ai/) |
 | Supported Operations | [`/images/edits`](#image-editing) |
 
@@ -38,20 +38,20 @@ Get your API key from [Black Forest Labs](https://blackforestlabs.ai/).
 
 ## Image Editing
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic-edit" label="Basic Usage">
 
 ```python showLineNumbers title="Basic Image Editing"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Edit an image with a prompt
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-kontext-pro",
     image=open("path/to/your/image.png", "rb"),
     prompt="Add a green leaf to the scene",
@@ -68,13 +68,13 @@ print(response.data[0].url)
 ```python showLineNumbers title="Async Image Editing"
 import os
 import asyncio
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 async def edit_image():
-    response = await litellm.aimage_edit(
+    response = await lumina.aimage_edit(
         model="black_forest_labs/flux-kontext-pro",
         image=open("path/to/your/image.png", "rb"),
         prompt="Make this image look like a watercolor painting",
@@ -91,13 +91,13 @@ asyncio.run(edit_image())
 
 ```python showLineNumbers title="Inpainting with Mask"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Use flux-pro-1.0-fill for inpainting
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-pro-1.0-fill",
     image=open("path/to/your/image.png", "rb"),
     mask=open("path/to/mask.png", "rb"),  # White areas will be edited
@@ -115,13 +115,13 @@ print(response.data[0].url)
 
 ```python showLineNumbers title="Outpainting - Expand Image Borders"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Use flux-pro-1.0-expand to extend image borders
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-pro-1.0-expand",
     image=open("path/to/your/image.png", "rb"),
     prompt="Continue the scene with a mountain landscape",
@@ -140,13 +140,13 @@ print(response.data[0].url)
 
 ```python showLineNumbers title="Advanced Image Editing with BFL Parameters"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Edit image with BFL-specific parameters
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-kontext-pro",
     image=open("path/to/your/image.png", "rb"),
     prompt="Transform into cyberpunk style with neon lights",
@@ -162,7 +162,7 @@ print(response.data[0].url)
 </TabItem>
 </Tabs>
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Configure your config.yaml
 
@@ -200,10 +200,10 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-#### 2. Start LiteLLM Proxy Server
+#### 2. Start Lumina Proxy Server
 
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -219,7 +219,7 @@ from openai import OpenAI
 # Initialize client with your proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Edit image with FLUX Kontext Pro
@@ -281,19 +281,19 @@ curl --location 'http://localhost:4000/v1/images/edits' \
 
 Black Forest Labs uses a polling-based API:
 
-1. **Submit Request**: LiteLLM sends your image and prompt to BFL
+1. **Submit Request**: Lumina sends your image and prompt to BFL
 2. **Get Task ID**: BFL returns a task ID and polling URL
-3. **Poll for Result**: LiteLLM automatically polls until the image is ready
+3. **Poll for Result**: Lumina automatically polls until the image is ready
 4. **Return Result**: The generated image URL is returned
 
-This polling is handled automatically by LiteLLM - you just call `image_edit()` and get the result.
+This polling is handled automatically by Lumina - you just call `image_edit()` and get the result.
 
 ## Getting Started
 
 1. Create an account at [Black Forest Labs](https://blackforestlabs.ai/)
 2. Get your API key from the dashboard
 3. Set your `BFL_API_KEY` environment variable
-4. Use `litellm.image_edit()` with any supported model
+4. Use `lumina.image_edit()` with any supported model
 
 ## Additional Resources
 

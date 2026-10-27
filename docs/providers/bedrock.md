@@ -7,14 +7,14 @@ ALL Bedrock models (Anthropic, Meta, Deepseek, Mistral, Amazon, etc.) are Suppor
 | Property | Details |
 |-------|-------|
 | Description | Amazon Bedrock is a fully managed service that offers a choice of high-performing foundation models (FMs). |
-| Provider Route on LiteLLM | `bedrock/` ([native Chat Completions](#native-chat-completions-route) for GPT-5.6 and newer), [`bedrock/chat_completions/`](#native-chat-completions-route), [`bedrock/converse/`](#set-converse--invoke-route), [`bedrock/invoke/`](/docs/providers/bedrock#set-converse--invoke-route), [`bedrock/converse_like/`](/docs/providers/bedrock#calling-via-internal-proxy-not-bedrock-url-compatible), `bedrock/llama/`, `bedrock/deepseek_r1/`, `bedrock/qwen3/`, [`bedrock/qwen2/`](./bedrock_imported.md#qwen2-imported-models), [`bedrock/openai/`](./bedrock_imported.md#openai-compatible-imported-models-qwen-25-vl-etc), [`bedrock/moonshot`](./bedrock_imported.md#moonshot-kimi-k2-thinking) |
+| Provider Route on Lumina | `bedrock/` ([native Chat Completions](#native-chat-completions-route) for GPT-5.6 and newer), [`bedrock/chat_completions/`](#native-chat-completions-route), [`bedrock/converse/`](#set-converse--invoke-route), [`bedrock/invoke/`](/docs/providers/bedrock#set-converse--invoke-route), [`bedrock/converse_like/`](/docs/providers/bedrock#calling-via-internal-proxy-not-bedrock-url-compatible), `bedrock/llama/`, `bedrock/deepseek_r1/`, `bedrock/qwen3/`, [`bedrock/qwen2/`](./bedrock_imported.md#qwen2-imported-models), [`bedrock/openai/`](./bedrock_imported.md#openai-compatible-imported-models-qwen-25-vl-etc), [`bedrock/moonshot`](./bedrock_imported.md#moonshot-kimi-k2-thinking) |
 | Provider Doc | [Amazon Bedrock ↗](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html) |
 | Supported OpenAI Endpoints | `/chat/completions`, `/completions`, `/embeddings`, `/images/generations`, `/v1/realtime`|
 | Rerank Endpoint | `/rerank` |
 | Pass-through Endpoint | [Supported](../pass_through/bedrock.md) |
 
 
-LiteLLM requires `boto3` to be installed on your system for Bedrock requests
+Lumina requires `boto3` to be installed on your system for Bedrock requests
 ```shell
 uv add boto3>=1.28.57
 ```
@@ -29,11 +29,11 @@ For **Amazon Nova Models**: Bump to v1.53.5+
 
 :::info
 
-LiteLLM uses boto3 to handle authentication. All these options are supported - https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html#credentials.
+Lumina uses boto3 to handle authentication. All these options are supported - https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html#credentials.
 
 :::
  
-LiteLLM supports API key authentication in addition to traditional boto3 authentication methods. For additional API key details, refer to [docs](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html).
+Lumina supports API key authentication in addition to traditional boto3 authentication methods. For additional API key details, refer to [docs](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html).
 
 Option 1: use the AWS_BEARER_TOKEN_BEDROCK environment variable 
 
@@ -66,14 +66,14 @@ model_list:
 
 ## Usage
 
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/LiteLLM_Bedrock.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_Bedrock.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -85,9 +85,9 @@ response = completion(
 )
 ```
 
-## LiteLLM Proxy Usage 
+## Lumina Proxy Usage 
 
-Here's how to call Bedrock with the LiteLLM Proxy Server
+Here's how to call Bedrock with the Lumina Proxy Server
 
 ### 1. Setup config.yaml
 
@@ -119,7 +119,7 @@ api_key: Optional[str],
 ### 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 ### 3. Test it
 
@@ -151,7 +151,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="bedrock-claude-v1", messages = [
     {
         "role": "user",
@@ -175,7 +175,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "bedrock-claude-v1",
     temperature=0.1
 )
@@ -185,7 +185,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -202,7 +202,7 @@ print(response)
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -239,7 +239,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="bedrock-claude-v1", messages = [
     {
         "role": "user",
@@ -259,14 +259,14 @@ print(response)
 
 ## Pass provider-specific params 
 
-If you pass a non-openai param to litellm, we'll assume it's provider-specific and send it as a kwarg in the request body. [See more](../completion/input.md#litellm-specific-params)
+If you pass a non-openai param to lumina, we'll assume it's provider-specific and send it as a kwarg in the request body. [See more](../completion/input.md#lumina-specific-params)
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -301,7 +301,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="bedrock-claude-v1", messages = [
     {
         "role": "user",
@@ -330,7 +330,7 @@ Attach metadata to Bedrock requests for logging and cost attribution.
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -382,10 +382,10 @@ response = client.chat.completions.create(
 
 ### Forward key, team, and org identity from the proxy
 
-The proxy can fill request metadata for you from the virtual key that made the call, so Bedrock [model invocation logs](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html) carry the same key, team, and org attribution as LiteLLM spend logs without any change to your clients. It is off by default and available in `v1.99.0` and later. List the fields to forward under `litellm_settings`:
+The proxy can fill request metadata for you from the virtual key that made the call, so Bedrock [model invocation logs](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html) carry the same key, team, and org attribution as Lumina spend logs without any change to your clients. It is off by default and available in `v1.99.0` and later. List the fields to forward under `lumina_settings`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   bedrock_request_metadata_fields:
     - user_api_key_org_alias
     - user_api_key_team_alias
@@ -412,23 +412,23 @@ With that config a request made with a key on team `growth` in org `platform` re
 
 Only text fields are forwarded, because Bedrock accepts string values only. The numeric spend and budget fields (`user_api_key_spend`, `user_api_key_max_budget`, and the user and team variants) and `user_api_key_auth_metadata` are skipped even when listed. A field with no value on a given request, such as `user_api_key_team_alias` for a key without a team, is left out.
 
-`spend_logs_metadata` is the way to forward your own dimensions like agent or cost center without touching agent code. Set it once in the key or team `metadata` and LiteLLM merges it into every request made with that key, with values sent on the request winning over the key and team defaults. The same pairs then land in LiteLLM spend logs and in Bedrock.
+`spend_logs_metadata` is the way to forward your own dimensions like agent or cost center without touching agent code. Set it once in the key or team `metadata` and Lumina merges it into every request made with that key, with values sent on the request winning over the key and team defaults. The same pairs then land in Lumina spend logs and in Bedrock.
 
 Bedrock allows at most 16 pairs per request, keys and values of up to 256 characters, and only the characters `a-z A-Z 0-9`, whitespace, and `:_@$#=/+,.-`. Identity fields are placed first, in the order you list them, so they always get a slot. On Converse, any `requestMetadata` the caller sends comes next and `spend_logs_metadata` fills whatever is left, with the earlier value winning when both use the same key. An identity or `spend_logs_metadata` pair that breaks Bedrock's rules is dropped and the request still succeeds, so a team alias with an apostrophe in it never turns into a failed call. A malformed `requestMetadata` the caller sends gets a 400, like Bedrock would return, unless `drop_params` is on, in which case only its bad pairs are dropped. With this setting off, the `/bedrock` pass-through routes send the body exactly as you wrote it and Bedrock answers a malformed one itself, while chat completions still drops the bad pairs under `drop_params`. Keys starting with `user_api_key_` are reserved for the proxy, so a caller cannot forge identity through `requestMetadata` or `spend_logs_metadata`, and any `X-Amzn-Bedrock-Request-Metadata` header the caller sends is replaced.
 
-LiteLLM writes the metadata to the `requestMetadata` body field on Converse and to the signed `X-Amzn-Bedrock-Request-Metadata` header on Invoke, which covers `/chat/completions`, `/v1/messages`, and, from `v1.108.0`, the `converse`, `converse-stream`, `invoke`, and `invoke-with-response-stream` actions of the `/bedrock` [pass-through routes](../pass_through/bedrock.md). On a pass-through Invoke call LiteLLM uses the body field instead when the caller's body already has `requestMetadata`. On every Invoke route, the pairs that would push the header past Bedrock's 8,500-character limit are dropped from the end, so the identity fields are always sent. While the setting is on, models that default to the [Native Chat Completions route](#native-chat-completions-route) use Converse instead, since that endpoint has no request metadata. AWS does not support request metadata on `bedrock-mantle` models.
+Lumina writes the metadata to the `requestMetadata` body field on Converse and to the signed `X-Amzn-Bedrock-Request-Metadata` header on Invoke, which covers `/chat/completions`, `/v1/messages`, and, from `v1.108.0`, the `converse`, `converse-stream`, `invoke`, and `invoke-with-response-stream` actions of the `/bedrock` [pass-through routes](../pass_through/bedrock.md). On a pass-through Invoke call Lumina uses the body field instead when the caller's body already has `requestMetadata`. On every Invoke route, the pairs that would push the header past Bedrock's 8,500-character limit are dropped from the end, so the identity fields are always sent. While the setting is on, models that default to the [Native Chat Completions route](#native-chat-completions-route) use Converse instead, since that endpoint has no request metadata. AWS does not support request metadata on `bedrock-mantle` models.
 
-AWS records request metadata only when model invocation logging is enabled in the call's region, and it does not appear in Cost Explorer or CUR. `user_api_key_user_email` and `user_api_key_hash` end up in your AWS logs where LiteLLM cannot delete them, so leave them out unless you need them.
+AWS records request metadata only when model invocation logging is enabled in the call's region, and it does not appear in Cost Explorer or CUR. `user_api_key_user_email` and `user_api_key_hash` end up in your AWS logs where Lumina cannot delete them, so leave them out unless you need them.
 
 ## Usage - Function Calling / Tool calling
 
-LiteLLM supports tool calling via Bedrock's Converse and Invoke API's.
+Lumina supports tool calling via Bedrock's Converse and Invoke API's.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -485,7 +485,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -538,7 +538,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ## Usage - Vision 
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -556,7 +556,7 @@ def encode_image(image_path):
 image_path = "../proxy/cached_logo.jpg"
 # Getting the base64 string
 base64_image = encode_image(image_path)
-resp = litellm.completion(
+resp = lumina.completion(
     model="bedrock/us.anthropic.{{anthropic}}",
     messages=[
         {
@@ -598,7 +598,7 @@ The `signature` is required by Anthropic on subsequent calls, if 'thinking' cont
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -630,7 +630,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -638,7 +638,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "bedrock-claude-3-7",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -725,14 +725,14 @@ If your tool returns search sources and you want citation metadata in the final 
     {
       "role": "tool",
       "tool_call_id": "tooluse_a4rBqeZNRTKj2lTskvaO4H",
-      "content": "XX is a company that makes calls to Bedrock using passthrough APIs via LiteLLM",
+      "content": "XX is a company that makes calls to Bedrock using passthrough APIs via Lumina",
       "search_results": [
         {
           "source": "https://www.xx.com/about",
           "title": "About XX",
           "content": [
             {
-              "text": "XX is a company that makes calls to Bedrock using passthrough APIs via LiteLLM"
+              "text": "XX is a company that makes calls to Bedrock using passthrough APIs via Lumina"
             }
           ],
           "citations": {
@@ -747,7 +747,7 @@ If your tool returns search sources and you want citation metadata in the final 
 
 ### What you get back
 
-LiteLLM returns regular assistant text in `message.content` and citation metadata in `message.annotations`:
+Lumina returns regular assistant text in `message.content` and citation metadata in `message.annotations`:
 
 ```json
 {
@@ -780,7 +780,7 @@ If you only send plain `tool.content` text (without `search_results`), you will 
 
 ## Usage - Anthropic Beta Features
 
-LiteLLM supports Anthropic's beta features on AWS Bedrock through the `anthropic-beta` header. This enables access to experimental features like:
+Lumina supports Anthropic's beta features on AWS Bedrock through the `anthropic-beta` header. This enables access to experimental features like:
 
 - **1M Context Window** - Up to 1 million tokens of context (Claude Opus 4.6, Sonnet 4.5, Sonnet 4)
 - **Computer Use Tools** - AI that can interact with computer interfaces
@@ -806,7 +806,7 @@ LiteLLM supports Anthropic's beta features on AWS Bedrock through the `anthropic
 **Single Beta Feature**
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 import os
 
 # set env
@@ -828,7 +828,7 @@ response = completion(
 **Multiple Beta Features**
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 # Combine multiple beta features (comma-separated)
 response = completion(
@@ -844,7 +844,7 @@ response = completion(
 **Computer Use Tools with Beta Features**
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 # Computer use tools automatically add computer-use-2024-10-22
 # You can add additional beta features
@@ -923,13 +923,13 @@ Beta features may require special access or permissions in your AWS account. Som
 
 ### Eager Input Streaming for Tool Calls
 
-By default Claude buffers a tool call's whole input JSON before streaming it, so a large tool call (a big file write, say) can leave the stream silent long enough to trip a client read timeout. Set `eager_input_streaming: true` on a tool and its input streams as it is generated. LiteLLM turns the flag into the `fine-grained-tool-streaming-2025-05-14` beta on every Bedrock route (Converse and Invoke, `/v1/chat/completions`, `/v1/messages`, and `/v1/responses`), so it works on every Claude model on Bedrock, including older ones that reject the per-tool field. The beta is request-wide: once one tool sets it, every tool's input streams eagerly, and the streamed deltas can be partial JSON until the block ends.
+By default Claude buffers a tool call's whole input JSON before streaming it, so a large tool call (a big file write, say) can leave the stream silent long enough to trip a client read timeout. Set `eager_input_streaming: true` on a tool and its input streams as it is generated. Lumina turns the flag into the `fine-grained-tool-streaming-2025-05-14` beta on every Bedrock route (Converse and Invoke, `/v1/chat/completions`, `/v1/messages`, and `/v1/responses`), so it works on every Claude model on Bedrock, including older ones that reject the per-tool field. The beta is request-wide: once one tool sets it, every tool's input streams eagerly, and the streamed deltas can be partial JSON until the block ends.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0",
@@ -1046,7 +1046,7 @@ curl http://0.0.0.0:4000/v1/responses \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os 
 from pydantic import BaseModel
 
@@ -1091,7 +1091,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -1153,7 +1153,7 @@ Valid from v1.65.1+
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/anthropic.{{anthropic}}",
@@ -1178,7 +1178,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -1209,7 +1209,7 @@ Control the processing tier for your Bedrock requests using `serviceTier`. Valid
 
 ### OpenAI-compatible `service_tier` parameter
 
-LiteLLM also supports the OpenAI-style `service_tier` parameter, which is automatically translated to Bedrock's native `serviceTier` format:
+Lumina also supports the OpenAI-style `service_tier` parameter, which is automatically translated to Bedrock's native `serviceTier` format:
 
 | OpenAI `service_tier` | Bedrock `serviceTier` |
 |-----------------------|----------------------|
@@ -1219,7 +1219,7 @@ LiteLLM also supports the OpenAI-style `service_tier` parameter, which is automa
 | `"auto"` | `{"type": "default"}` |
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # Using OpenAI-style service_tier parameter
 response = completion(
@@ -1235,7 +1235,7 @@ response = completion(
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/converse/qwen.qwen3-235b-a22b-2507-v1:0",
@@ -1262,7 +1262,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -1282,11 +1282,11 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 </Tabs>
 ## Usage - Bedrock Guardrails
 
-Example of using [Bedrock Guardrails with LiteLLM](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-use-converse-api.html)
+Example of using [Bedrock Guardrails with Lumina](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-use-converse-api.html)
 
 ### Selective Content Moderation with `guarded_text`
 
-LiteLLM supports selective content moderation using the `guarded_text` content type. This allows you to wrap only specific content that should be moderated by Bedrock Guardrails, rather than evaluating the entire conversation.
+Lumina supports selective content moderation using the `guarded_text` content type. This allows you to wrap only specific content that should be moderated by Bedrock Guardrails, rather than evaluating the entire conversation.
 
 **How it works:**
 - Content with `type: "guarded_text"` gets automatically wrapped in `guardrailConverseContent` blocks
@@ -1298,10 +1298,10 @@ If `guarded_text` is not used, the entire conversation history will be sent to t
 :::
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -1353,7 +1353,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="us.anthropic.{{anthropic}}", messages = [
     {
         "role": "user",
@@ -1396,7 +1396,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1409,7 +1409,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="bedrock-claude-v1", messages = [
     {
         "role": "user",
@@ -1449,7 +1449,7 @@ The returned completion will _**not**_ include your "pre-fill" text, since it is
 
 ```python keep-model-ids
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -1478,7 +1478,7 @@ If you're using Anthropic's Claude 2.1 with Bedrock, `system` role messages are 
 
 ```python keep-model-ids
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -1506,7 +1506,7 @@ Assistant:
 ## Usage - Streaming
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -1545,13 +1545,13 @@ for chunk in response:
 
 ## Cross-region inferencing 
 
-LiteLLM supports Bedrock [cross-region inferencing](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html) across all [supported bedrock models](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference-support.html).
+Lumina supports Bedrock [cross-region inferencing](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html) across all [supported bedrock models](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference-support.html).
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import os 
 
 
@@ -1560,7 +1560,7 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 os.environ["AWS_REGION_NAME"] = ""
 
 
-litellm.set_verbose = True # SEE RAW REQUEST
+lumina.set_verbose = True # SEE RAW REQUEST
 
 response = completion(
     model="bedrock/us.anthropic.{{anthropic}}",
@@ -1591,7 +1591,7 @@ model_list:
 #### 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 #### 3. Test it
@@ -1624,7 +1624,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="bedrock-claude-sonnet", messages = [
     {
         "role": "user",
@@ -1648,7 +1648,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "bedrock-claude-sonnet",
     temperature=0.1
 )
@@ -1658,7 +1658,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -1676,11 +1676,11 @@ print(response)
 
 :::info
 
-Supported from LiteLLM Version `v1.53.5`
+Supported from Lumina Version `v1.53.5`
 
 :::
 
-LiteLLM defaults to the `invoke` route. LiteLLM uses the `converse` route for Bedrock models that support it.
+Lumina defaults to the `invoke` route. Lumina uses the `converse` route for Bedrock models that support it.
 
 To explicitly set the route, do `bedrock/converse/<model>` or `bedrock/invoke/<model>`.
 
@@ -1693,7 +1693,7 @@ E.g.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 completion(model="bedrock/converse/us.amazon.nova-pro-v1:0")
 ```
@@ -1713,9 +1713,9 @@ model_list:
 
 ## Native Chat Completions route
 
-AWS serves some Bedrock models on an OpenAI-compatible endpoint, `https://bedrock-runtime.{region}.amazonaws.com/openai/v1/chat/completions`. For those models LiteLLM can send your `/chat/completions` request to that endpoint in the shape it arrived in, instead of translating it to Converse and back. Fewer translations means less latency and fewer places for a parameter to get lost.
+AWS serves some Bedrock models on an OpenAI-compatible endpoint, `https://bedrock-runtime.{region}.amazonaws.com/openai/v1/chat/completions`. For those models Lumina can send your `/chat/completions` request to that endpoint in the shape it arrived in, instead of translating it to Converse and back. Fewer translations means less latency and fewer places for a parameter to get lost.
 
-| Model | LiteLLM model name | Default route |
+| Model | Lumina model name | Default route |
 |-------|--------------------|---------------|
 | GPT-5.6 Sol, Terra, Luna | `bedrock/us.openai.gpt-5.6-sol`, `bedrock/global.openai.gpt-5.6-sol`, and the `terra` / `luna` variants | Native Chat Completions |
 | GPT-6 Sol, Astra, Luna | `bedrock/us.openai.gpt-6-sol`, `bedrock/global.openai.gpt-6-sol`, and the `astra` / `luna` variants | Native Chat Completions |
@@ -1724,27 +1724,27 @@ AWS serves some Bedrock models on an OpenAI-compatible endpoint, `https://bedroc
 | Grok 4.6 | `bedrock/us.xai.grok-4.6`, `bedrock/global.xai.grok-4.6`, `bedrock/us-gov.xai.grok-4.6` | Converse; `bedrock/chat_completions/us.xai.grok-4.6` for native Chat Completions |
 | Everything else (Claude, Nova, Llama, Mistral, ...) | `bedrock/<model-id>` | Converse or Invoke, as before |
 
-GPT-5.6 and newer (`openai.gpt-5.6-*`, `openai.gpt-6-*`, `openai.gpt-6.1-*`, and later versions) take the native route by default when their entry in the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) lists `/v1/chat/completions` under `supported_endpoints`, the same key that opts a model into the native `/v1/responses` route. Older GPT ids, GPT-OSS, and Grok keep the Converse route they had before unless you prefix the model with `bedrock/chat_completions/`, and `bedrock/converse/` pins any model to Converse. Authentication, regions, `aws_bedrock_runtime_endpoint`, and cost tracking work the same on both routes. A region path in the model name (`bedrock/chat_completions/us-gov-west-1/openai.gpt-oss-20b-1:0`) works the same too: the region picks the endpoint and the id after it is what AWS receives, and an explicit `aws_region_name` still wins over the path. [`bedrock/openai/<imported-model-arn>`](./bedrock_imported.md#openai-compatible-imported-models-qwen-25-vl-etc) is a separate route for imported models and is unchanged.
+GPT-5.6 and newer (`openai.gpt-5.6-*`, `openai.gpt-6-*`, `openai.gpt-6.1-*`, and later versions) take the native route by default when their entry in the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) lists `/v1/chat/completions` under `supported_endpoints`, the same key that opts a model into the native `/v1/responses` route. Older GPT ids, GPT-OSS, and Grok keep the Converse route they had before unless you prefix the model with `bedrock/chat_completions/`, and `bedrock/converse/` pins any model to Converse. Authentication, regions, `aws_bedrock_runtime_endpoint`, and cost tracking work the same on both routes. A region path in the model name (`bedrock/chat_completions/us-gov-west-1/openai.gpt-oss-20b-1:0`) works the same too: the region picks the endpoint and the id after it is what AWS receives, and an explicit `aws_region_name` still wins over the path. [`bedrock/openai/<imported-model-arn>`](./bedrock_imported.md#openai-compatible-imported-models-qwen-25-vl-etc) is a separate route for imported models and is unchanged.
 
-The trade-off is that the OpenAI-compatible endpoint has no equivalent for a few Converse features, so LiteLLM falls back to Converse per request when you use one of them:
+The trade-off is that the OpenAI-compatible endpoint has no equivalent for a few Converse features, so Lumina falls back to Converse per request when you use one of them:
 
 | Request | Route used | Why |
 |---------|------------|-----|
-| `guardrailConfig` in the request body | Converse | AWS takes guardrails on the OpenAI-compatible endpoint as `X-Amzn-Bedrock-Guardrail*` headers and rejects a `guardrailConfig` body field, so LiteLLM keeps those requests on Converse and your guardrail behavior does not change |
+| `guardrailConfig` in the request body | Converse | AWS takes guardrails on the OpenAI-compatible endpoint as `X-Amzn-Bedrock-Guardrail*` headers and rejects a `guardrailConfig` body field, so Lumina keeps those requests on Converse and your guardrail behavior does not change |
 | `requestMetadata`, `performanceConfig`, `serviceTier`, or `outputConfig` in the request body | Converse | These Converse body fields are rejected as malformed input on the OpenAI-compatible endpoint |
-| `bedrock_request_metadata_fields` set in `litellm_settings` | Converse, for every request | LiteLLM only writes the operator's request metadata onto the Converse body |
-| Application inference profile ARN as the model | Converse | LiteLLM cannot tell from the ARN which model it fronts |
+| `bedrock_request_metadata_fields` set in `lumina_settings` | Converse, for every request | Lumina only writes the operator's request metadata onto the Converse body |
+| Application inference profile ARN as the model | Converse | Lumina cannot tell from the ARN which model it fronts |
 | Function `tools` with `reasoning_effort` other than `"none"` (or unset), on a model without `"supports_bedrock_runtime_chat_completions_tools_with_reasoning": true` in the cost map (the GPT-5.6, GPT-6, and GPT-6.1 families today) | Converse | AWS only accepts function tools on Chat Completions for these models when `reasoning_effort` is `"none"`, and GPT-6.1 does not accept `"none"` at all, so its tool calls always go through Converse; GPT-OSS and Grok carry the flag and take tools with any effort |
-| `response_format` with `"type": "json_object"`, with or without LiteLLM's `response_schema` key, on any model | Converse | AWS's OpenAI-compatible endpoint answers 400 for `json_object` unless a message contains the word "json", so LiteLLM keeps Converse's handling: a `response_schema` becomes a forced `json_tool_call` tool that returns the JSON you asked for, and a schema-less `json_object` behaves as it did on Converse before |
-| A JSON schema `response_format` (`{"type": "json_schema", ...}` or a Pydantic model), on a model without `"supports_bedrock_runtime_chat_completions_response_format": true` in the cost map (GPT-OSS today) | Converse | AWS accepts `response_format` for GPT-OSS on Chat Completions but answers with free text anyway, so LiteLLM keeps the Converse emulation (a forced `json_tool_call` tool) that returns the JSON you asked for; GPT-5.6 and newer and Grok carry the flag and enforce the schema natively |
+| `response_format` with `"type": "json_object"`, with or without Lumina's `response_schema` key, on any model | Converse | AWS's OpenAI-compatible endpoint answers 400 for `json_object` unless a message contains the word "json", so Lumina keeps Converse's handling: a `response_schema` becomes a forced `json_tool_call` tool that returns the JSON you asked for, and a schema-less `json_object` behaves as it did on Converse before |
+| A JSON schema `response_format` (`{"type": "json_schema", ...}` or a Pydantic model), on a model without `"supports_bedrock_runtime_chat_completions_response_format": true` in the cost map (GPT-OSS today) | Converse | AWS accepts `response_format` for GPT-OSS on Chat Completions but answers with free text anyway, so Lumina keeps the Converse emulation (a forced `json_tool_call` tool) that returns the JSON you asked for; GPT-5.6 and newer and Grok carry the flag and enforce the schema natively |
 | `stop` sequences | Converse | Converse forwards `stop` as `stopSequences`, which AWS answers with a 400 for these models, the same as before this route existed; sent natively, GPT-OSS and Grok apply `stop` to their hidden reasoning too and answer with empty content, which is worse than the error |
 | `top_k` or `additionalModelRequestFields` | Converse | Only Converse forwards these model-specific fields |
-| A `thinking` block on `/chat/completions` | Converse | The OpenAI-compatible endpoint has no `thinking` field; on `/v1/messages` LiteLLM maps `thinking` to `reasoning_effort` and the request stays native |
+| A `thinking` block on `/chat/completions` | Converse | The OpenAI-compatible endpoint has no `thinking` field; on `/v1/messages` Lumina maps `thinking` to `reasoning_effort` and the request stays native |
 | `bedrock/converse/<model>` | Converse | You asked for it explicitly |
 
-What you will notice on the native route: the response carries AWS's own `id` and `service_tier` fields, tool call ids are AWS's own (`call_0` for the GPT-5.6 and newer families and Grok, `chatcmpl-tool-...` for GPT-OSS) instead of `tooluse_...`, `max_tokens` is sent as `max_completion_tokens`, a JSON schema `response_format` and `service_tier` are sent through as you wrote them, `n` greater than 1 is unsupported (as on Converse), GPT-OSS reasoning comes back in `reasoning_content` (LiteLLM splits it out of the inline `<reasoning>...</reasoning>` prefix AWS returns) without the Converse-only `thinking_blocks` field, an `http(s)://` image URL in a message is downloaded by LiteLLM and sent inline as a `data:` URL because the endpoint does not fetch remote images itself, and Grok drops `reasoning_effort: "none"` (it always reasons) while `low`, `medium`, `high`, and `xhigh` are sent through.
+What you will notice on the native route: the response carries AWS's own `id` and `service_tier` fields, tool call ids are AWS's own (`call_0` for the GPT-5.6 and newer families and Grok, `chatcmpl-tool-...` for GPT-OSS) instead of `tooluse_...`, `max_tokens` is sent as `max_completion_tokens`, a JSON schema `response_format` and `service_tier` are sent through as you wrote them, `n` greater than 1 is unsupported (as on Converse), GPT-OSS reasoning comes back in `reasoning_content` (Lumina splits it out of the inline `<reasoning>...</reasoning>` prefix AWS returns) without the Converse-only `thinking_blocks` field, an `http(s)://` image URL in a message is downloaded by Lumina and sent inline as a `data:` URL because the endpoint does not fetch remote images itself, and Grok drops `reasoning_effort: "none"` (it always reasons) while `low`, `medium`, `high`, and `xhigh` are sent through.
 
-On the GPT-5.6 and newer families, AWS ties `temperature`, `top_p`, `frequency_penalty`, `presence_penalty`, `logprobs`, and `top_logprobs` to reasoning being off: with `reasoning_effort: "none"` LiteLLM sends them through as you wrote them, and with any other effort, or none set, AWS would answer 400, so LiteLLM answers 400 up front naming the parameters, or drops them when `drop_params` is on. GPT-6.1 does not take `"none"` at all, so it never samples on Bedrock. Converse rejects `temperature` and `top_p` for these models at every effort, so `reasoning_effort: "none"` on the native route is the one way to sample them. GPT-OSS always refuses `logit_bias` and Grok always refuses the penalties, at any effort, with the same 400-or-drop handling.
+On the GPT-5.6 and newer families, AWS ties `temperature`, `top_p`, `frequency_penalty`, `presence_penalty`, `logprobs`, and `top_logprobs` to reasoning being off: with `reasoning_effort: "none"` Lumina sends them through as you wrote them, and with any other effort, or none set, AWS would answer 400, so Lumina answers 400 up front naming the parameters, or drops them when `drop_params` is on. GPT-6.1 does not take `"none"` at all, so it never samples on Bedrock. Converse rejects `temperature` and `top_p` for these models at every effort, so `reasoning_effort: "none"` on the native route is the one way to sample them. GPT-OSS always refuses `logit_bias` and Grok always refuses the penalties, at any effort, with the same 400-or-drop handling.
 
 To send GPT-OSS or Grok to the native endpoint, prefix the model with `bedrock/chat_completions/`:
 
@@ -1752,7 +1752,7 @@ To send GPT-OSS or Grok to the native endpoint, prefix the model with `bedrock/c
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 completion(model="bedrock/chat_completions/openai.gpt-oss-20b-1:0", messages=[{"role": "user", "content": "Hello"}])
 ```
@@ -1776,7 +1776,7 @@ To keep a GPT-5.6 or newer model on Converse for every request, set the route ex
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 completion(model="bedrock/converse/us.openai.gpt-5.6-sol", messages=[{"role": "user", "content": "Hello"}])
 ```
@@ -1809,7 +1809,7 @@ model_list:
 
 OR 
 
-just set `litellm.modify_params=True` and LiteLLM will automatically handle this with a default user_continue_message.
+just set `lumina.modify_params=True` and Lumina will automatically handle this with a default user_continue_message.
 
 ```yaml
 model_list:
@@ -1817,7 +1817,7 @@ model_list:
     lumina_params:
       model: "bedrock/us.anthropic.{{anthropic}}"
 
-litellm_settings:
+lumina_settings:
    modify_params: true
 ```
 
@@ -1835,11 +1835,11 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ## Usage - PDF / Document Understanding
 
-LiteLLM supports Document Understanding for Bedrock models - [AWS Bedrock Docs](https://docs.aws.amazon.com/nova/latest/userguide/modalities-document.html).
+Lumina supports Document Understanding for Bedrock models - [AWS Bedrock Docs](https://docs.aws.amazon.com/nova/latest/userguide/modalities-document.html).
 
 :::info
 
-LiteLLM supports ALL Bedrock document types - 
+Lumina supports ALL Bedrock document types - 
 
 E.g.: "pdf", "csv", "doc", "docx", "xls", "xlsx", "html", "txt", "md"
 
@@ -1853,7 +1853,7 @@ You can also pass these as either `image_url` or `base64`
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm.utils import supports_pdf_input, completion
+from lumina.utils import supports_pdf_input, completion
 
 # set aws credentials
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -1911,7 +1911,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1942,7 +1942,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm.utils import supports_pdf_input, completion
+from lumina.utils import supports_pdf_input, completion
 
 # set aws credentials
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -1997,7 +1997,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2032,7 +2032,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python title="GPT OSS SDK Usage" showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 # Set AWS credentials
@@ -2080,8 +2080,8 @@ model_list:
 
 **2. Start proxy**
 
-```bash title="Start LiteLLM Proxy" showLineNumbers
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy" showLineNumbers
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -2108,20 +2108,20 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## OpenAI models on the native Responses API
 
-AWS serves its OpenAI models on bedrock-runtime's own Responses endpoint, `https://bedrock-runtime.{region}.amazonaws.com/openai/v1/responses`. For the models that opt in, LiteLLM sends your `/v1/responses` request there in the shape it arrived in, instead of translating it into Converse through the Chat Completions bridge. That is what makes Responses-only parameters work: `prompt_cache_key` reaches Bedrock and the repeat call reports cached tokens in `usage.input_tokens_details`, where the bridge answered 400 with `bedrock does not support parameters: ['prompt_cache_key']`.
+AWS serves its OpenAI models on bedrock-runtime's own Responses endpoint, `https://bedrock-runtime.{region}.amazonaws.com/openai/v1/responses`. For the models that opt in, Lumina sends your `/v1/responses` request there in the shape it arrived in, instead of translating it into Converse through the Chat Completions bridge. That is what makes Responses-only parameters work: `prompt_cache_key` reaches Bedrock and the repeat call reports cached tokens in `usage.input_tokens_details`, where the bridge answered 400 with `bedrock does not support parameters: ['prompt_cache_key']`.
 
-A model opts in through `"supported_endpoints": ["/v1/responses"]` on its entry in the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). Today that is the `us.` and `global.` inference profiles of GPT-5.4, GPT-5.5, GPT-5.6 (Sol, Terra, Luna), and GPT-6 (Astra, Sol, Luna), so `bedrock/us.openai.gpt-6-astra` and `bedrock/global.openai.gpt-5.6-sol` take the native route while `bedrock/openai.gpt-oss-120b-1:0` keeps the bridge. The flag can be overridden per deployment through `model_info` on the proxy or `litellm.register_model` in the SDK, so onboarding a model is a JSON change.
+A model opts in through `"supported_endpoints": ["/v1/responses"]` on its entry in the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json). Today that is the `us.` and `global.` inference profiles of GPT-5.4, GPT-5.5, GPT-5.6 (Sol, Terra, Luna), and GPT-6 (Astra, Sol, Luna), so `bedrock/us.openai.gpt-6-astra` and `bedrock/global.openai.gpt-5.6-sol` take the native route while `bedrock/openai.gpt-oss-120b-1:0` keeps the bridge. The flag can be overridden per deployment through `model_info` on the proxy or `lumina.register_model` in the SDK, so onboarding a model is a JSON change.
 
 Authentication, regions, and cost tracking work the same as on Converse: SigV4 credentials or a Bedrock API key as `api_key`, with the host picked from the region's partition. An `aws_bedrock_runtime_endpoint` that already ends in `/openai/v1/responses`, `/v1/responses`, or `/responses` is used as is.
 
-What is different on the native route: `background` is dropped with a proxy-log warning, since bedrock-runtime rejects it and the bridge never forwarded it either. A `web_search` tool is dropped with a warning, since bedrock-runtime answers that web search is not supported. `file_search` keeps LiteLLM's emulation. Remote `http(s)` image URLs, in `input_image` blocks, in `function_call_output` lists, and in `computer_call_output` screenshots, are downloaded and inlined as data URIs, because bedrock-runtime accepts only `data:` and `s3://` images. Streaming works as on OpenAI.
+What is different on the native route: `background` is dropped with a proxy-log warning, since bedrock-runtime rejects it and the bridge never forwarded it either. A `web_search` tool is dropped with a warning, since bedrock-runtime answers that web search is not supported. `file_search` keeps Lumina's emulation. Remote `http(s)` image URLs, in `input_image` blocks, in `function_call_output` lists, and in `computer_call_output` screenshots, are downloaded and inlined as data URIs, because bedrock-runtime accepts only `data:` and `s3://` images. Streaming works as on OpenAI.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python title="Native Responses API SDK Usage" showLineNumbers
 import os
-from litellm import responses
+from lumina import responses
 
 os.environ["AWS_ACCESS_KEY_ID"] = "your-aws-access-key"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "your-aws-secret-key"
@@ -2152,7 +2152,7 @@ model_list:
 **2. Start the proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Call `/v1/responses`**
@@ -2173,7 +2173,7 @@ curl http://0.0.0.0:4000/v1/responses \
 
 ## TwelveLabs Pegasus - Video Understanding
 
-TwelveLabs Pegasus 1.2 is a video understanding model that can analyze and describe video content. LiteLLM supports this model through Bedrock's `/invoke` endpoint.
+TwelveLabs Pegasus 1.2 is a video understanding model that can analyze and describe video content. Lumina supports this model through Bedrock's `/invoke` endpoint.
 
 | Property | Details |
 |----------|---------|
@@ -2194,7 +2194,7 @@ TwelveLabs Pegasus 1.2 is a video understanding model that can analyze and descr
 <TabItem value="sdk" label="SDK">
 
 ```python title="TwelveLabs Pegasus SDK Usage" showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 # Set AWS credentials
@@ -2235,8 +2235,8 @@ model_list:
 
 **2. Start proxy**
 
-```bash title="Start LiteLLM Proxy" showLineNumbers
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy" showLineNumbers
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -2273,7 +2273,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 You can also pass video content directly as base64:
 
 ```python title="Base64 Video Input" showLineNumbers
-from litellm import completion
+from lumina import completion
 import base64
 
 # Read video file and encode to base64
@@ -2303,8 +2303,8 @@ To use provisioned throughput Bedrock models pass
 
 Completion
 ```python
-import litellm
-response = litellm.completion(
+import lumina
+response = lumina.completion(
     model="bedrock/anthropic.{{anthropic}}",
     model_id="provisioned-model-arn",
     messages=[{"content": "Hello, how are you?", "role": "user"}]
@@ -2313,8 +2313,8 @@ response = litellm.completion(
 
 Embedding
 ```python
-import litellm
-response = litellm.embedding(
+import lumina
+response = lumina.embedding(
     model="bedrock/amazon.titan-embed-text-v1",
     model_id="provisioned-model-arn",
     input=["hi"],
@@ -2324,9 +2324,9 @@ response = litellm.embedding(
 
 ## Supported AWS Bedrock Models
 
-LiteLLM supports ALL Bedrock models. 
+Lumina supports ALL Bedrock models. 
 
-Here's an example of using a bedrock model with LiteLLM. For a complete list, refer to the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json)
+Here's an example of using a bedrock model with Lumina. For a complete list, refer to the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json)
 
 | Model Name                 | Command                                                          |
 |----------------------------|------------------------------------------------------------------|
@@ -2365,7 +2365,7 @@ Here's an example of using a bedrock model with LiteLLM. For a complete list, re
 ## Bedrock Embedding
 
 ### API keys
-This can be set as env variables or passed as **params to litellm.embedding()**
+This can be set as env variables or passed as **params to lumina.embedding()**
 ```python
 import os
 os.environ["AWS_ACCESS_KEY_ID"] = ""        # Access key
@@ -2375,28 +2375,28 @@ os.environ["AWS_REGION_NAME"] = ""           # us-east-1, us-east-2, us-west-1, 
 
 ### Usage
 ```python
-from litellm import embedding
+from lumina import embedding
 response = embedding(
     model="bedrock/amazon.titan-embed-text-v1",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
 
 #### Titan V2 - encoding_format support
 ```python
-from litellm import embedding
+from lumina import embedding
 # Float format (default)
 response = embedding(
     model="bedrock/amazon.titan-embed-text-v2:0",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
     encoding_format="float"  # Returns float array
 )
 
 # Binary format
 response = embedding(
     model="bedrock/amazon.titan-embed-text-v2:0",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
     encoding_format="base64"  # Returns base64 encoded binary
 )
 ```
@@ -2406,14 +2406,14 @@ response = embedding(
 | Model Name           | Usage                               | Supported Additional OpenAI params |
 |----------------------|---------------------------------------------|-----|
 | Titan Embeddings V2 | `embedding(model="bedrock/amazon.titan-embed-text-v2:0", input=input)` | `dimensions`, `encoding_format` |
-| Titan Embeddings - V1 | `embedding(model="bedrock/amazon.titan-embed-text-v1", input=input)` | [here](https://github.com/BerriAI/litellm/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/litellm/llms/bedrock/embed/amazon_titan_g1_transformation.py#L53)
-| Titan Multimodal Embeddings | `embedding(model="bedrock/amazon.titan-embed-image-v1", input=input)` | [here](https://github.com/BerriAI/litellm/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/litellm/llms/bedrock/embed/amazon_titan_multimodal_transformation.py#L28) |
-| Cohere Embeddings - English | `embedding(model="bedrock/cohere.embed-english-v3", input=input)` | [here](https://github.com/BerriAI/litellm/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/litellm/llms/bedrock/embed/cohere_transformation.py#L18)
-| Cohere Embeddings - Multilingual | `embedding(model="bedrock/cohere.embed-multilingual-v3", input=input)` | [here](https://github.com/BerriAI/litellm/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/litellm/llms/bedrock/embed/cohere_transformation.py#L18)
+| Titan Embeddings - V1 | `embedding(model="bedrock/amazon.titan-embed-text-v1", input=input)` | [here](https://github.com/Soventra/lumina/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/lumina/llms/bedrock/embed/amazon_titan_g1_transformation.py#L53)
+| Titan Multimodal Embeddings | `embedding(model="bedrock/amazon.titan-embed-image-v1", input=input)` | [here](https://github.com/Soventra/lumina/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/lumina/llms/bedrock/embed/amazon_titan_multimodal_transformation.py#L28) |
+| Cohere Embeddings - English | `embedding(model="bedrock/cohere.embed-english-v3", input=input)` | [here](https://github.com/Soventra/lumina/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/lumina/llms/bedrock/embed/cohere_transformation.py#L18)
+| Cohere Embeddings - Multilingual | `embedding(model="bedrock/cohere.embed-multilingual-v3", input=input)` | [here](https://github.com/Soventra/lumina/blob/f5905e100068e7a4d61441d7453d7cf5609c2121/lumina/llms/bedrock/embed/cohere_transformation.py#L18)
 
-### Advanced - [Drop Unsupported Params](https://docs.litellm.ai/docs/completion/drop_params#openai-proxy-usage)
+### Advanced - [Drop Unsupported Params](https://docs.lumina.ai/docs/completion/drop_params#openai-proxy-usage)
 
-### Advanced - [Pass model/provider-specific Params](https://docs.litellm.ai/docs/completion/provider_specific_params#proxy-usage)
+### Advanced - [Pass model/provider-specific Params](https://docs.lumina.ai/docs/completion/provider_specific_params#proxy-usage)
 
 ## Image Generation
 
@@ -2437,7 +2437,7 @@ You can either pass it in the model name - `model="bedrock/arn:...` or as a sepa
 <TabItem label="SDK" value="sdk">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -2470,7 +2470,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2501,10 +2501,10 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 ## Boto3 - Authentication
 
 ### Passing credentials as parameters - Completion()
-Pass AWS credentials as parameters to litellm.completion
+Pass AWS credentials as parameters to lumina.completion
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="bedrock/us.anthropic.{{anthropic}}",
@@ -2524,10 +2524,10 @@ This can be used to override existing headers (e.g. `Authorization`) when callin
 
 ```python
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
-litellm.set_verbose = True # SEE RAW REQUEST
+lumina.set_verbose = True # SEE RAW REQUEST
 
 response = completion(
             model="bedrock/us.anthropic.{{anthropic}}",
@@ -2560,7 +2560,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml --detailed_debug
+lumina --config /path/to/config.yaml --detailed_debug
 ```
 
 3. Test it! 
@@ -2594,7 +2594,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="bedrock/us.anthropic.{{anthropic}}",
@@ -2606,7 +2606,7 @@ or pass `aws_profile_name`:
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="bedrock/us.anthropic.{{anthropic}}",
@@ -2620,7 +2620,7 @@ response = completion(
 - Set `aws_role_name` and `aws_session_name`
 
 
-| LiteLLM Parameter | Boto3 Parameter | Description | Boto3 Documentation |
+| Lumina Parameter | Boto3 Parameter | Description | Boto3 Documentation |
 |------------------|-----------------|-------------|-------------------|
 | `aws_access_key_id` | `aws_access_key_id` | AWS access key associated with an IAM user or role | [Credentials](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) |
 | `aws_secret_access_key` | `aws_secret_access_key` | AWS secret key associated with the access key | [Credentials](https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html) |
@@ -2632,7 +2632,7 @@ response = completion(
 
 `aws_session_tags` attaches [STS session tags](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_session-tags.html) to the AssumeRole call. Each tag lands on the assumed session as `aws:PrincipalTag/<Key>`, so the role's trust policy and downstream resource policies can key on it. The AssumeRole event in CloudTrail lists the tags under `requestParameters.tags`, so role sessions can be attributed by tag
 
-Tags are set per deployment, so every request routed to that model entry carries the same tags. Tag order does not matter, and deployments with the same tags on the same role share one cached STS session. This applies to Bedrock chat and invoke, embeddings, batches and SageMaker deployments, anywhere LiteLLM performs the AssumeRole itself. The target role's trust policy must allow `sts:TagSession` next to `sts:AssumeRole`; see [Trust policy for session tags](#trust-policy-for-session-tags)
+Tags are set per deployment, so every request routed to that model entry carries the same tags. Tag order does not matter, and deployments with the same tags on the same role share one cached STS session. This applies to Bedrock chat and invoke, embeddings, batches and SageMaker deployments, anywhere Lumina performs the AssumeRole itself. The target role's trust policy must allow `sts:TagSession` next to `sts:AssumeRole`; see [Trust policy for session tags](#trust-policy-for-session-tags)
 
 Like `aws_role_name`, `aws_session_name` and `aws_external_id`, this is an operator-side setting. The proxy rejects `aws_session_tags` in client request bodies with HTTP 401 unless the admin opts in with `general_settings.allow_client_side_credentials: true` or lists it under `configurable_clientside_auth_params` on the deployment. See [Clientside LLM Credentials](../proxy/clientside_auth.md). On the proxy's model management endpoints (`/model/new`, `/model/update` and `PATCH /model/{model_id}/update`), only a proxy admin can set or change `aws_session_tags`. A team admin editing a team model gets HTTP 403 unless the tags stay the same
 
@@ -2640,14 +2640,14 @@ Like `aws_role_name`, `aws_session_name` and `aws_external_id`, this is an opera
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/us.anthropic.{{anthropic_large}}",
     messages=[{"role": "user", "content": "Hello!"}],
     aws_region_name="us-east-1",
-    aws_role_name="arn:aws:iam::123456789012:role/litellm-bedrock",
-    aws_session_name="litellm-proxy",
+    aws_role_name="arn:aws:iam::123456789012:role/lumina-bedrock",
+    aws_session_name="lumina-proxy",
     aws_session_tags=[{"Key": "team", "Value": "genai"}],
 )
 ```
@@ -2661,8 +2661,8 @@ model_list:
     lumina_params:
       model: bedrock/us.anthropic.{{anthropic_large}}
       aws_region_name: us-east-1
-      aws_role_name: arn:aws:iam::123456789012:role/litellm-bedrock
-      aws_session_name: litellm-proxy
+      aws_role_name: arn:aws:iam::123456789012:role/lumina-bedrock
+      aws_session_name: lumina-proxy
       aws_session_tags:
         - Key: team
           Value: genai
@@ -2678,7 +2678,7 @@ model_list:
 **Setup**: Configure the [AWS Signing Helper](https://docs.aws.amazon.com/rolesanywhere/latest/userguide/credential-helper.html) as a credential process in `~/.aws/config`:
 
 ```ini
-[profile litellm-roles-anywhere]
+[profile lumina-roles-anywhere]
 credential_process = aws_signing_helper credential-process \
     --certificate /path/to/certificate.pem \
     --private-key /path/to/private-key.pem \
@@ -2687,18 +2687,18 @@ credential_process = aws_signing_helper credential-process \
     --role-arn arn:aws:iam::123456789012:role/MyBedrockRole
 ```
 
-**Usage**: Reference the profile in LiteLLM:
+**Usage**: Reference the profile in Lumina:
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/us.anthropic.{{anthropic}}",
     messages=[{"role": "user", "content": "Hello!"}],
-    aws_profile_name="litellm-roles-anywhere",
+    aws_profile_name="lumina-roles-anywhere",
 )
 ```
 
@@ -2710,7 +2710,7 @@ model_list:
   - model_name: bedrock-claude
     lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
-      aws_profile_name: "litellm-roles-anywhere"
+      aws_profile_name: "lumina-roles-anywhere"
 ```
 
 </TabItem>
@@ -2726,13 +2726,13 @@ Make the bedrock completion call
 
 ### Required AWS IAM Policy for AssumeRole
 
-To use `aws_role_name` (STS AssumeRole) with LiteLLM, your IAM user or role **must** have permission to call `sts:AssumeRole` on the target role. If you see an error like:
+To use `aws_role_name` (STS AssumeRole) with Lumina, your IAM user or role **must** have permission to call `sts:AssumeRole` on the target role. If you see an error like:
 
 ```
-An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:sts::...:assumed-role/litellm-ecs-task-role/... is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::...:role/Enterprise/BedrockCrossAccountConsumer
+An error occurred (AccessDenied) when calling the AssumeRole operation: User: arn:aws:sts::...:assumed-role/lumina-ecs-task-role/... is not authorized to perform: sts:AssumeRole on resource: arn:aws:iam::...:role/Enterprise/BedrockCrossAccountConsumer
 ```
 
-This means the IAM identity running LiteLLM does **not** have permission to assume the target role. You must update your IAM policy to allow this action.
+This means the IAM identity running Lumina does **not** have permission to assume the target role. You must update your IAM policy to allow this action.
 
 #### Example IAM Policy
 
@@ -2755,7 +2755,7 @@ Replace `<TARGET_ROLE_ARN>` with the ARN of the role you want to assume (e.g., `
 
 #### Trust policy for session tags
 
-When a deployment sets `aws_session_tags`, the target role's trust policy must also allow `sts:TagSession`. Without it, AssumeRole fails with `AccessDenied ... is not authorized to perform: sts:TagSession`. Replace `<LUMINA_IDENTITY_ARN>` with the IAM identity running LiteLLM. The `Condition` is optional and makes the role admit only sessions that carry the expected tag:
+When a deployment sets `aws_session_tags`, the target role's trust policy must also allow `sts:TagSession`. Without it, AssumeRole fails with `AccessDenied ... is not authorized to perform: sts:TagSession`. Replace `<LUMINA_IDENTITY_ARN>` with the IAM identity running Lumina. The `Condition` is optional and makes the role admit only sessions that carry the expected tag:
 
 ```json
 {
@@ -2777,7 +2777,7 @@ When a deployment sets `aws_session_tags`, the target role's trust policy must a
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="bedrock/us.anthropic.{{anthropic}}",
@@ -2792,7 +2792,7 @@ response = completion(
 If you also need to dynamically set the aws user accessing the role, add the additional args in the completion()/embedding() function
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="bedrock/us.anthropic.{{anthropic}}",
@@ -2828,7 +2828,7 @@ model_list:
 
 ### Passing an external BedrockRuntime.Client as a parameter - Completion()
   
-This is a deprecated flow. Boto3 is not async. And boto3.client does not let us make the http call through httpx. Pass in your aws params through the method above. [See Auth Code](https://github.com/BerriAI/litellm/blob/55a20c7cce99a93d36a82bf3ae90ba3baf9a7f89/litellm/llms/bedrock_httpx.py#L284) [Add new auth flow](https://github.com/BerriAI/litellm/issues)
+This is a deprecated flow. Boto3 is not async. And boto3.client does not let us make the http call through httpx. Pass in your aws params through the method above. [See Auth Code](https://github.com/Soventra/lumina/blob/55a20c7cce99a93d36a82bf3ae90ba3baf9a7f89/lumina/llms/bedrock_httpx.py#L284) [Add new auth flow](https://github.com/Soventra/lumina/issues)
 
 :::warning
 
@@ -2841,12 +2841,12 @@ Experimental - 2024-Jun-23:
 
 :::
 
-Pass an external BedrockRuntime.Client object as a parameter to litellm.completion. Useful when using an AWS credentials profile, SSO session, assumed role session, or if environment variables are not available for auth.
+Pass an external BedrockRuntime.Client object as a parameter to lumina.completion. Useful when using an AWS credentials profile, SSO session, assumed role session, or if environment variables are not available for auth.
 
 Create a client from session credentials:
 ```python
 import boto3
-from litellm import completion
+from lumina import completion
 
 bedrock = boto3.client(
             service_name="bedrock-runtime",
@@ -2866,7 +2866,7 @@ response = completion(
 Create a client from AWS profile in `~/.aws/config`:
 ```python
 import boto3
-from litellm import completion
+from lumina import completion
 
 dev_session = boto3.Session(profile_name="dev-profile")
 bedrock = dev_session.client(
@@ -2888,19 +2888,19 @@ Use the `bedrock/converse_like/model` endpoint to call bedrock converse model vi
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/converse_like/some-model",
     messages=[{"role": "user", "content": "What's AWS?"}],
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     api_base="https://some-api-url/models",
     extra_headers={"test": "hello world"},
 )
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -2915,7 +2915,7 @@ model_list:
 2. Start proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

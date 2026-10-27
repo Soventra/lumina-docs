@@ -3,13 +3,13 @@ import TabItem from '@theme/TabItem';
 
 # Billable Request Metering
 
-LiteLLM Enterprise [pricing is usage-based](../enterprise#how-is-pricing-structured). Billable request metering reports that usage. The proxy counts successful requests to LLM, MCP, and A2A endpoints and pushes one OpenTelemetry counter to LiteLLM's collector, authenticated with the mTLS client certificate issued for your deployment.
+Lumina Enterprise [pricing is usage-based](../enterprise#how-is-pricing-structured). Billable request metering reports that usage. The proxy counts successful requests to LLM, MCP, and A2A endpoints and pushes one OpenTelemetry counter to Lumina's collector, authenticated with the mTLS client certificate issued for your deployment.
 
 Only the request count is sent. Prompts, responses, virtual keys, and your license key never leave the deployment. Metering runs separately from any [OTEL logging](../observability/opentelemetry_integration) you configure and never touches your own metrics pipeline.
 
 :::info
 
-You need a `LUMINA_LICENSE` and metering credentials (`client.crt` and `client.key`) from your LiteLLM onboarding. Missing either? [Contact us](https://enterprise.litellm.ai/demo).
+You need a `LUMINA_LICENSE` and metering credentials (`client.crt` and `client.key`) from your Lumina onboarding. Missing either? [Contact us](https://enterprise.lumina.ai/demo).
 
 :::
 
@@ -19,17 +19,17 @@ You need a `LUMINA_LICENSE` and metering credentials (`client.crt` and `client.k
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `LUMINA_BILLING_METRICS_ENDPOINT` | Yes | Collector URL. Use `https://telemetry.litellm.ai` |
+| `LUMINA_BILLING_METRICS_ENDPOINT` | Yes | Collector URL. Use `https://telemetry.lumina.ai` |
 | `LUMINA_BILLING_METRICS_CLIENT_CERT` | Yes | mTLS client certificate. File path or inline PEM |
 | `LUMINA_BILLING_METRICS_CLIENT_KEY` | Yes | Private key for the certificate. File path or inline PEM |
-| `LUMINA_BILLING_METRICS_CA_CERT` | No | CA bundle for the collector. Leave unset for `telemetry.litellm.ai` |
+| `LUMINA_BILLING_METRICS_CA_CERT` | No | CA bundle for the collector. Leave unset for `telemetry.lumina.ai` |
 | `LUMINA_BILLING_METRICS_EXPORT_INTERVAL_MS` | No | Push interval in milliseconds. Default `60000` |
 
 ```bash
 export LUMINA_LICENSE="eyJ..."
-export LUMINA_BILLING_METRICS_ENDPOINT="https://telemetry.litellm.ai"
-export LUMINA_BILLING_METRICS_CLIENT_CERT="/etc/litellm/billing-mtls/client.crt"
-export LUMINA_BILLING_METRICS_CLIENT_KEY="/etc/litellm/billing-mtls/client.key"
+export LUMINA_BILLING_METRICS_ENDPOINT="https://telemetry.lumina.ai"
+export LUMINA_BILLING_METRICS_CLIENT_CERT="/etc/lumina/billing-mtls/client.crt"
+export LUMINA_BILLING_METRICS_CLIENT_KEY="/etc/lumina/billing-mtls/client.key"
 ```
 
 The certificate variables accept a file path or the PEM content itself. Use inline PEM when your secret store injects values as environment variables and cannot mount files, for example ECS with AWS Secrets Manager or Cloud Run with Secret Manager.
@@ -38,7 +38,7 @@ You can also set these in the config file:
 
 ```yaml
 environment_variables:
-  LUMINA_BILLING_METRICS_ENDPOINT: "https://telemetry.litellm.ai"
+  LUMINA_BILLING_METRICS_ENDPOINT: "https://telemetry.lumina.ai"
   LUMINA_BILLING_METRICS_CLIENT_CERT: "-----BEGIN CERTIFICATE-----\n..."
   LUMINA_BILLING_METRICS_CLIENT_KEY: "-----BEGIN PRIVATE KEY-----\n..."
 ```
@@ -46,7 +46,7 @@ environment_variables:
 ### 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Verify
@@ -54,7 +54,7 @@ litellm --config config.yaml
 The line below is logged at INFO level, so it only shows when the proxy runs with `LUMINA_LOG=INFO` (or `--detailed_debug`). Send a request through the proxy, then check the logs for:
 
 ```
-Enterprise billing metrics enabled: exporting to https://telemetry.litellm.ai every 60000 ms
+Enterprise billing metrics enabled: exporting to https://telemetry.lumina.ai every 60000 ms
 ```
 
 If this line is missing, look for a warning naming the misconfigured variable. Metering problems never affect request serving. On any error the exporter is disabled and the proxy runs normally.
@@ -64,12 +64,12 @@ If this line is missing, look for a warning naming the misconfigured variable. M
 <Tabs>
 <TabItem value="helm" label="Helm">
 
-Both the [standard chart](https://github.com/BerriAI/litellm/tree/main/helm/litellm-helm) and the [microservices chart](./deploy#deploy-with-helm) have a `billingMetrics` block, off by default.
+Both the [standard chart](https://github.com/Soventra/lumina/tree/main/helm/lumina-helm) and the [microservices chart](./deploy#deploy-with-helm) have a `billingMetrics` block, off by default.
 
 1. Create a TLS Secret from your issued certificate:
 
 ```bash
-kubectl create secret tls litellm-billing-metrics-mtls --cert=client.crt --key=client.key
+kubectl create secret tls lumina-billing-metrics-mtls --cert=client.crt --key=client.key
 ```
 
 2. Enable metering in your values:
@@ -79,23 +79,23 @@ billingMetrics:
   enabled: true
 ```
 
-The chart looks for the Secret name `litellm-billing-metrics-mtls` by default.
+The chart looks for the Secret name `lumina-billing-metrics-mtls` by default.
 
 | Value | Default | Description |
 |-------|---------|-------------|
 | `billingMetrics.enabled` | `false` | Enable metering |
-| `billingMetrics.endpoint` | `https://telemetry.litellm.ai` | Collector URL |
-| `billingMetrics.secretName` | `litellm-billing-metrics-mtls` | Existing TLS Secret with `tls.crt` and `tls.key` |
+| `billingMetrics.endpoint` | `https://telemetry.lumina.ai` | Collector URL |
+| `billingMetrics.secretName` | `lumina-billing-metrics-mtls` | Existing TLS Secret with `tls.crt` and `tls.key` |
 | `billingMetrics.caSecretName` | `""` | Existing Secret with `ca.crt`. Leave empty for the default collector |
 | `billingMetrics.exportIntervalMs` | `""` | Push interval. The proxy defaults to `60000` |
 
 </TabItem>
 <TabItem value="terraform" label="Terraform (AWS / GCP)">
 
-The reference stacks at [`terraform/litellm/aws`](https://github.com/BerriAI/litellm/tree/main/terraform/litellm/aws) (ECS Fargate) and [`terraform/litellm/gcp`](https://github.com/BerriAI/litellm/tree/main/terraform/litellm/gcp) (Cloud Run) enable metering when `billing_metrics_endpoint` is set:
+The reference stacks at [`terraform/lumina/aws`](https://github.com/Soventra/lumina/tree/main/terraform/lumina/aws) (ECS Fargate) and [`terraform/lumina/gcp`](https://github.com/Soventra/lumina/tree/main/terraform/lumina/gcp) (Cloud Run) enable metering when `billing_metrics_endpoint` is set:
 
 ```hcl
-billing_metrics_endpoint = "https://telemetry.litellm.ai"
+billing_metrics_endpoint = "https://telemetry.lumina.ai"
 ```
 
 ```bash
@@ -111,12 +111,12 @@ The stack stores the certificate and key in Secrets Manager (AWS) or Secret Mana
 ```bash
 docker run \
   -e LUMINA_LICENSE="eyJ..." \
-  -e LUMINA_BILLING_METRICS_ENDPOINT="https://telemetry.litellm.ai" \
+  -e LUMINA_BILLING_METRICS_ENDPOINT="https://telemetry.lumina.ai" \
   -e LUMINA_BILLING_METRICS_CLIENT_CERT="$(cat client.crt)" \
   -e LUMINA_BILLING_METRICS_CLIENT_KEY="$(cat client.key)" \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -p 4000:4000 \
-  ghcr.io/berriai/litellm:main-stable \
+  ghcr.io/soventra/lumina:main-stable \
   --config /app/config.yaml
 ```
 

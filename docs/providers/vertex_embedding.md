@@ -10,20 +10,20 @@ import TabItem from '@theme/TabItem';
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-from litellm import embedding
-litellm.vertex_project = "hardy-device-38811" # Your Project ID
-litellm.vertex_location = "us-central1"  # proj location
+import lumina
+from lumina import embedding
+lumina.vertex_project = "hardy-device-38811" # Your Project ID
+lumina.vertex_location = "us-central1"  # proj location
 
 response = embedding(
     model="vertex_ai/textembedding-gecko",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 
 1. Add model to config.yaml
@@ -36,14 +36,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: adroit-crow-413218-a956eef1a2a8.json 
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request using OpenAI Python SDK, Langchain Python SDK
@@ -51,11 +51,11 @@ $ litellm --config /path/to/config.yaml
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="snowflake-arctic-embed-m-long-1731622468876", 
-    input = ["good morning from litellm", "this is another item"],
+    input = ["good morning from lumina", "this is another item"],
 )
 
 print(response)
@@ -66,7 +66,7 @@ print(response)
 </Tabs>
 
 #### Supported Embedding Models
-All models listed [here](https://github.com/BerriAI/litellm/blob/57f37f743886a0249f630a6792d49dffc2c5d9b7/model_prices_and_context_window.json#L835) are supported
+All models listed [here](https://github.com/Soventra/lumina/blob/57f37f743886a0249f630a6792d49dffc2c5d9b7/model_prices_and_context_window.json#L835) are supported
 
 | Model Name               | Function Call                                                                                                                                                      |
 |--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -85,7 +85,7 @@ All models listed [here](https://github.com/BerriAI/litellm/blob/57f37f743886a02
 
 ### Supported OpenAI (Unified) Params
 
-| [param](../embedding/supported_embedding.md#input-params-for-litellmembedding) | type | [vertex equivalent](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api) |
+| [param](../embedding/supported_embedding.md#input-params-for-luminaembedding) | type | [vertex equivalent](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api) |
 |-------|-------------|--------------------|
 | `input` | **string or List[string]** | `instances` |
 | `dimensions` | **int** | `output_dimensionality` |
@@ -98,25 +98,25 @@ All models listed [here](https://github.com/BerriAI/litellm/blob/57f37f743886a02
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.embedding(
+response = lumina.embedding(
     model="vertex_ai/text-embedding-004",
-    input=["good morning from litellm", "gm"],
+    input=["good morning from lumina", "gm"],
     input_type = "RETRIEVAL_DOCUMENT",
     dimensions=1,
 )
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="text-embedding-004", 
-    input = ["good morning from litellm", "gm"],
+    input = ["good morning from lumina", "gm"],
     dimensions=1,
     extra_body = {
         "input_type": "RETRIEVAL_QUERY",
@@ -147,9 +147,9 @@ You can pass any vertex specific params to the embedding model. Just pass them t
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.embedding(
+response = lumina.embedding(
     model="vertex_ai/text-embedding-004",
-    input=["good morning from litellm", "gm"],
+    input=["good morning from lumina", "gm"],
     task_type = "RETRIEVAL_DOCUMENT",
     title = "test",
     dimensions=1,
@@ -157,17 +157,17 @@ response = litellm.embedding(
 )
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="text-embedding-004", 
-    input = ["good morning from litellm", "gm"],
+    input = ["good morning from lumina", "gm"],
     dimensions=1,
     extra_body = {
         "task_type": "RETRIEVAL_QUERY",
@@ -191,9 +191,9 @@ Use BGE (Baidu General Embedding) models deployed on Vertex AI.
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers title="Using BGE on Vertex AI"
-import litellm
+import lumina
 
-response = litellm.embedding(
+response = lumina.embedding(
     model="vertex_ai/bge/<your-endpoint-id>",
     input=["Hello", "World"],
     vertex_project="your-project-id",
@@ -205,7 +205,7 @@ print(response)
 
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 1. Add model to config.yaml
 ```yaml showLineNumbers title="config.yaml"
@@ -217,14 +217,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: your-credentials.json
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request using OpenAI Python SDK
@@ -232,11 +232,11 @@ $ litellm --config /path/to/config.yaml
 ```python showLineNumbers title="Making requests to BGE"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="bge-embedding",
-    input=["good morning from litellm", "this is another item"]
+    input=["good morning from lumina", "this is another item"]
 )
 
 print(response)
@@ -283,11 +283,11 @@ This differs from the Gemini API path (`gemini/gemini-embedding-2-preview`), whi
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-from litellm import embedding
+import lumina
+from lumina import embedding
 
-litellm.vertex_project = "your-project-id"
-litellm.vertex_location = "us-central1"
+lumina.vertex_project = "your-project-id"
+lumina.vertex_location = "us-central1"
 
 # Text + Image (GCS URL)
 response = embedding(
@@ -309,7 +309,7 @@ response = embedding(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 ```yaml
 model_list:
@@ -335,7 +335,7 @@ curl -X POST http://localhost:4000/embeddings \
 
 #### Video Clips and Explicit MIME Types
 
-To embed one window of a video, or to name a MIME type LiteLLM cannot infer from a GCS extension or a data URI, pass the element as the OpenAI file content block that [chat completions](./vertex#video-metadata-control) already take: `file.file_id` (`gs://...`) or `file.file_data` (a data URI), an optional `file.format` MIME type, and an optional `file.video_metadata` with `fps`, `start_offset`, and `end_offset`, which LiteLLM forwards as the part's `videoMetadata`. On Vertex the block is combined with the other elements into the single vector like any other part; nested lists stay unsupported on this path.
+To embed one window of a video, or to name a MIME type Lumina cannot infer from a GCS extension or a data URI, pass the element as the OpenAI file content block that [chat completions](./vertex#video-metadata-control) already take: `file.file_id` (`gs://...`) or `file.file_data` (a data URI), an optional `file.format` MIME type, and an optional `file.video_metadata` with `fps`, `start_offset`, and `end_offset`, which Lumina forwards as the part's `videoMetadata`. On Vertex the block is combined with the other elements into the single vector like any other part; nested lists stay unsupported on this path.
 
 ```python
 response = embedding(
@@ -369,7 +369,7 @@ Known Limitations:
 Using GCS Images
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input="gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png" # will be sent as a gcs image
 )
@@ -378,14 +378,14 @@ response = await litellm.aembedding(
 Using base 64 encoded images
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input="data:image/jpeg;base64,..." # will be sent as a base64 encoded image
 )
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY (Unified Endpoint)">
+<TabItem value="proxy" label="Lumina PROXY (Unified Endpoint)">
 
 1. Add model to config.yaml
 ```yaml
@@ -397,14 +397,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: adroit-crow-413218-a956eef1a2a8.json 
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request use OpenAI Python SDK, Langchain Python SDK
@@ -419,9 +419,9 @@ Requests with GCS Image / Video URI
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = "gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png",
@@ -435,9 +435,9 @@ Requests with base64 encoded images
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = "data:image/jpeg;base64,...",
@@ -459,7 +459,7 @@ embeddings_models = "multimodalembedding@001"
 embeddings = OpenAIEmbeddings(
     model="multimodalembedding@001",
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",  # type: ignore
+    api_key="sk-<your-lumina-api-key>",  # type: ignore
 )
 
 
@@ -480,7 +480,7 @@ embeddings_models = "multimodalembedding@001"
 embeddings = OpenAIEmbeddings(
     model="multimodalembedding@001",
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",  # type: ignore
+    api_key="sk-<your-lumina-api-key>",  # type: ignore
 )
 
 
@@ -497,7 +497,7 @@ print(query_result)
 </TabItem>
 
 
-<TabItem value="proxy-vtx" label="LiteLLM PROXY (Vertex SDK)">
+<TabItem value="proxy-vtx" label="Lumina PROXY (Vertex SDK)">
 
 1. Add model to config.yaml
 ```yaml
@@ -510,7 +510,7 @@ default_vertex_config:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request use OpenAI Python SDK
@@ -523,7 +523,7 @@ from vertexai.vision_models import VideoSegmentConfig
 from google.auth.credentials import Credentials
 
 
-LUMINA_PROXY_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_PROXY_API_KEY = "sk-<your-lumina-api-key>"
 LUMINA_PROXY_BASE = "http://0.0.0.0:4000/vertex-ai"
 
 import datetime
@@ -585,7 +585,7 @@ print(f"Text Embedding: {embeddings.text_embedding}")
 Text + Image 
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input=["hey", "gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png"] # will be sent as a gcs image
 )
@@ -594,7 +594,7 @@ response = await litellm.aembedding(
 Text + Video 
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input=["hey", "gs://my-bucket/embeddings/supermarket-video.mp4"] # will be sent as a gcs image
 )
@@ -603,7 +603,7 @@ response = await litellm.aembedding(
 Image + Video 
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input=["gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png", "gs://my-bucket/embeddings/supermarket-video.mp4"] # will be sent as a gcs image
 )
@@ -611,7 +611,7 @@ response = await litellm.aembedding(
 
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY (Unified Endpoint)">
+<TabItem value="proxy" label="Lumina PROXY (Unified Endpoint)">
 
 1. Add model to config.yaml
 ```yaml
@@ -623,14 +623,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: adroit-crow-413218-a956eef1a2a8.json 
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request use OpenAI Python SDK, Langchain Python SDK
@@ -641,9 +641,9 @@ Text + Image
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = ["hey", "gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png"],
@@ -656,9 +656,9 @@ Text + Video
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = ["hey", "gs://my-bucket/embeddings/supermarket-video.mp4"],
@@ -671,9 +671,9 @@ Image + Video
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = ["gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png", "gs://my-bucket/embeddings/supermarket-video.mp4"],

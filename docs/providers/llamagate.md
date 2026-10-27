@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | LlamaGate is an OpenAI-compatible API gateway for open-source LLMs with credit-based billing. Access 26+ open-source models including Llama, Mistral, DeepSeek, and Qwen at competitive prices. |
-| Provider Route on LiteLLM | `llamagate/` |
+| Provider Route on Lumina | `llamagate/` |
 | Link to Provider Doc | [LlamaGate Documentation ↗](https://llamagate.dev/docs) |
 | Base URL | `https://api.llamagate.dev/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/llamagate#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](/docs/providers/llamagate#usage---lumina-python-sdk) |
 
 <br />
 
@@ -67,17 +67,17 @@ Get your API key from [llamagate.dev](https://llamagate.dev).
 | UI-TARS 1.5 7B | `llamagate/ui-tars-7b` |
 
 :::info
-LiteLLM currently supports LlamaGate for `/chat/completions` only. `litellm.embedding()` is not supported for the `llamagate/` route.
+Lumina currently supports LlamaGate for `/chat/completions` only. `lumina.embedding()` is not supported for the `llamagate/` route.
 :::
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="LlamaGate Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LLAMAGATE_API_KEY"] = ""  # your LlamaGate API key
 
@@ -96,8 +96,8 @@ print(response)
 
 ```python showLineNumbers title="LlamaGate Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LLAMAGATE_API_KEY"] = ""  # your LlamaGate API key
 
@@ -118,8 +118,8 @@ for chunk in response:
 
 ```python showLineNumbers title="LlamaGate Vision Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LLAMAGATE_API_KEY"] = ""  # your LlamaGate API key
 
@@ -142,7 +142,7 @@ response = completion(
 print(response)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 

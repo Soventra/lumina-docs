@@ -4,9 +4,9 @@ title: "51% Cost Savings Reported From a Live Production Deployment"
 date: 2026-08-10T10:00:00
 authors:
   - tin
-description: "A LiteLLM customer rolled the Auto Router out to 450+ users in production and shared four months of numbers: 272,876 requests, 7.08 billion tokens, and $12,249 saved against an all-flagship baseline."
+description: "A Lumina customer rolled the Auto Router out to 450+ users in production and shared four months of numbers: 272,876 requests, 7.08 billion tokens, and $12,249 saved against an all-flagship baseline."
 image: ./hero.png
-keywords: [auto router, llm cost savings, model routing, complexity router, production llm costs, litellm auto routing, llm gateway, cheaper llm inference]
+keywords: [auto router, llm cost savings, model routing, complexity router, production llm costs, lumina auto routing, llm gateway, cheaper llm inference]
 tags: [routing, complexity-router, cost, case-study, engineering]
 hide_table_of_contents: false
 ---
@@ -21,9 +21,9 @@ They rolled out the Auto-Router to 450+ users across dev, staging, and prod inst
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::
 
@@ -84,11 +84,11 @@ This is production traffic rather than a curated benchmark. 450+ real people, ev
 
 The method matters as much as the number, so here it is in full.
 
-- Numbers come straight from **`LiteLLM_SpendLogs`**, with no sampling and no estimation
+- Numbers come straight from **`Lumina_SpendLogs`**, with no sampling and no estimation
 - Every row records the requested `model_group`, the model the router **actually** served, and the full token split: fresh input, cache read, cache write, output
 - For each request, the **exact same tokens**, with the same cache read and write split, are re-priced at that router's **REASONING-tier model**
 - That re-price is the counterfactual, meaning "what if we had always called the flagship"
-- Prices come from **the same loaded LiteLLM cost map** that produced the recorded spend, so both sides are like-for-like USD list price
+- Prices come from **the same loaded Lumina cost map** that produced the recorded spend, so both sides are like-for-like USD list price
 - Flagship prices did not change over the window (opus $5/$25, gemini pro $2/$12, gpt flagship $5/$30 per 1M), so the baseline needs no time-varying assumption
 
 Two caveats belong with the number:
@@ -129,12 +129,12 @@ model_list:
 
 Note that SIMPLE and MEDIUM both point at the cheapest model rather than doubling up on the flagship, which is where most of the 95% below-flagship share comes from. The flagship stays reserved for the REASONING tier, which is also the tier the counterfactual prices against.
 
-Point a client at `claude-auto-latest` and every response carries `x-litellm-model-name` and `x-litellm-response-cost`, which is the same instrumentation this study was built on. Full reference, including the classifier and tier-boundary knobs, on the [Auto Routing docs page](/docs/proxy/auto_routing).
+Point a client at `claude-auto-latest` and every response carries `x-lumina-model-name` and `x-lumina-response-cost`, which is the same instrumentation this study was built on. Full reference, including the classifier and tier-boundary knobs, on the [Auto Routing docs page](/docs/proxy/auto_routing).
 
 ## Try it
 
 :::info
 
-Point an agent at an auto router and compare it against your current single model on your own workload. Share numbers or questions in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner).
+Point an agent at an auto router and compare it against your current single model on your own workload. Share numbers or questions in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner).
 
 :::

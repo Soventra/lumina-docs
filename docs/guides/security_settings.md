@@ -8,12 +8,12 @@ import TabItem from '@theme/TabItem';
 # SSL, HTTP Proxy Security Settings
 
 If you're in an environment using an older TTS bundle, with an older encryption, follow this guide. By default
-LiteLLM uses the certifi CA bundle for SSL verification, which is compatible with most modern servers.
+Lumina uses the certifi CA bundle for SSL verification, which is compatible with most modern servers.
  However, if you need to disable SSL verification or use a custom CA bundle, you can do so by following the steps below.
 
 Be aware that environmental variables take precedence over the settings in the SDK.
 
-LiteLLM uses HTTPX for network requests, unless otherwise specified.
+Lumina uses HTTPX for network requests, unless otherwise specified.
 
 ## 1. Custom CA Bundle
 
@@ -23,14 +23,14 @@ You can set a custom CA bundle file path using the `SSL_CERT_FILE` environmental
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-litellm.ssl_verify = "client.pem"
+import lumina
+lumina.ssl_verify = "client.pem"
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_verify: "client.pem"
 ```
 
@@ -50,14 +50,14 @@ export SSL_CERT_FILE="client.pem"
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-litellm.ssl_verify = False
+import lumina
+lumina.ssl_verify = False
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_verify: false
 ```
 
@@ -78,14 +78,14 @@ The `ssl_security_level` allows setting a lower security level for SSL connectio
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-litellm.ssl_security_level = "DEFAULT@SECLEVEL=1"
+import lumina
+lumina.ssl_security_level = "DEFAULT@SECLEVEL=1"
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_security_level: "DEFAULT@SECLEVEL=1"
 ```
 </TabItem>
@@ -105,14 +105,14 @@ The `SSL_CERTIFICATE` environmental variable or `ssl_certificate` attribute allo
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-litellm.ssl_certificate = "/path/to/certificate.pem"
+import lumina
+lumina.ssl_certificate = "/path/to/certificate.pem"
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_certificate: "/path/to/certificate.pem"
 ```
 </TabItem>
@@ -135,15 +135,15 @@ The `ssl_ecdh_curve` setting allows you to configure the Elliptic Curve Diffie-H
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-litellm.ssl_ecdh_curve = "X25519"  # Disables PQC for better performance
+import lumina
+lumina.ssl_ecdh_curve = "X25519"  # Disables PQC for better performance
 ```
 
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_ecdh_curve: "X25519"
 ```
 
@@ -164,11 +164,11 @@ export SSL_ECDH_CURVE="X25519"
 - `secp384r1` - NIST P-384 curve
 - `secp521r1` - NIST P-521 curve
 
-**Note:** If an invalid curve name is provided or if your Python/OpenSSL version doesn't support this feature, LiteLLM will log a warning and continue with default curves.
+**Note:** If an invalid curve name is provided or if your Python/OpenSSL version doesn't support this feature, Lumina will log a warning and continue with default curves.
 
 ## 6. Use HTTP_PROXY environment variable
 
-LiteLLM resolves `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` from the environment for every LLM request on both the default aiohttp transport and the httpx transport (`DISABLE_AIOHTTP_TRANSPORT=True`), with or without `force_ipv4`. No extra flag is needed; set the variables before the proxy or SDK starts:
+Lumina resolves `HTTP_PROXY`, `HTTPS_PROXY` and `NO_PROXY` from the environment for every LLM request on both the default aiohttp transport and the httpx transport (`DISABLE_AIOHTTP_TRANSPORT=True`), with or without `force_ipv4`. No extra flag is needed; set the variables before the proxy or SDK starts:
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
@@ -188,18 +188,18 @@ export NO_PROXY='localhost,127.0.0.1'
 </TabItem>
 </Tabs>
 
-Set `DISABLE_AIOHTTP_TRUST_ENV=True` (or `litellm.disable_aiohttp_trust_env = True`) to make the aiohttp transport ignore these variables. `AIOHTTP_TRUST_ENV` (or `litellm.aiohttp_trust_env`) is unrelated to proxy selection: it passes `trust_env=True` to the aiohttp session so aiohttp itself also reads `~/.netrc` and `SSL_CERT_FILE` / `SSL_CERT_DIR`.
+Set `DISABLE_AIOHTTP_TRUST_ENV=True` (or `lumina.disable_aiohttp_trust_env = True`) to make the aiohttp transport ignore these variables. `AIOHTTP_TRUST_ENV` (or `lumina.aiohttp_trust_env`) is unrelated to proxy selection: it passes `trust_env=True` to the aiohttp session so aiohttp itself also reads `~/.netrc` and `SSL_CERT_FILE` / `SSL_CERT_DIR`.
 ## 7. Per-Service SSL Verification
 
-LiteLLM allows you to override SSL verification settings for specific services or provider calls. This is useful when different services (e.g., an internal guardrail vs. a public LLM provider) require different CA certificates.
+Lumina allows you to override SSL verification settings for specific services or provider calls. This is useful when different services (e.g., an internal guardrail vs. a public LLM provider) require different CA certificates.
 
 ### Bedrock (SDK)
 You can pass `ssl_verify` directly in the `completion` call.
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/us.anthropic.{{anthropic}}",
     messages=[{"role": "user", "content": "hi"}],
     ssl_verify="path/to/bedrock_cert.pem" # Or False to disable
@@ -229,8 +229,8 @@ guardrails:
 ```
 
 ### Priority Logic
-LiteLLM resolves `ssl_verify` using the following priority:
+Lumina resolves `ssl_verify` using the following priority:
 1. **Explicit Parameter**: Passed in `completion()` or guardrail config.
 2. **Environment Variable**: `SSL_VERIFY` environment variable.
-3. **Global Setting**: `litellm.ssl_verify` setting.
+3. **Global Setting**: `lumina.ssl_verify` setting.
 4. **System Standard**: `SSL_CERT_FILE` environment variable.

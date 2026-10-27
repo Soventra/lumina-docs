@@ -1,16 +1,16 @@
-# LiteLLM SDK vs OpenAI
+# Lumina SDK vs OpenAI
 
-Here is a script to load test LiteLLM vs OpenAI 
+Here is a script to load test Lumina vs OpenAI 
 
 ```python
 from openai import AsyncOpenAI, AsyncAzureOpenAI
 import random, uuid
-import time, asyncio, litellm
+import time, asyncio, lumina
 # import logging
 # logging.basicConfig(level=logging.DEBUG)
-#### LITELLM PROXY #### 
-litellm_client = AsyncOpenAI(
-    api_key="sk-<your-litellm-api-key>", # [CHANGE THIS]
+#### LUMINA PROXY #### 
+lumina_client = AsyncOpenAI(
+    api_key="sk-<your-lumina-api-key>", # [CHANGE THIS]
     base_url="http://0.0.0.0:4000"
 )
 
@@ -22,7 +22,7 @@ client = AsyncAzureOpenAI(
 )
 
 
-#### LITELLM ROUTER #### 
+#### LUMINA ROUTER #### 
 model_list = [
   {
     "model_name": "azure-canada",
@@ -35,7 +35,7 @@ model_list = [
   }
 ]
 
-router = litellm.Router(model_list=model_list)
+router = lumina.Router(model_list=model_list)
 
 async def openai_completion():
   try:
@@ -64,7 +64,7 @@ async def router_completion():
 
 async def proxy_completion_non_streaming():
   try:
-    response = await litellm_client.chat.completions.create(
+    response = await lumina_client.chat.completions.create(
               model="sagemaker-models", # [CHANGE THIS] (if you call it something else on your proxy)
               messages=[{"role": "user", "content": f"This is a test: {uuid.uuid4()}"}],
           )

@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # LangGraph
 
-Call LangGraph agents through LiteLLM using the OpenAI chat completions format.
+Call LangGraph agents through Lumina using the OpenAI chat completions format.
 
 | Property | Details |
 |----------|---------|
-| Description | LangGraph is a framework for building stateful, multi-actor applications with LLMs. LiteLLM supports calling LangGraph agents via their streaming and non-streaming endpoints. |
-| Provider Route on LiteLLM | `langgraph/{agent_id}` |
+| Description | LangGraph is a framework for building stateful, multi-actor applications with LLMs. Lumina supports calling LangGraph agents via their streaming and non-streaming endpoints. |
+| Provider Route on Lumina | `langgraph/{agent_id}` |
 | Provider Doc | [LangGraph Platform ↗](https://langchain-ai.github.io/langgraph/cloud/quick_start/) |
 
 **Prerequisites:** You need a running LangGraph server. See [Setting Up a Local LangGraph Server](#setting-up-a-local-langgraph-server) below.
@@ -24,12 +24,12 @@ langgraph/{agent_id}
 **Example:**
 - `langgraph/agent` - calls the default agent
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Basic LangGraph Completion"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="langgraph/agent",
     messages=[
         {"role": "user", "content": "What is 25 * 4?"}
@@ -41,9 +41,9 @@ print(response.choices[0].message.content)
 ```
 
 ```python showLineNumbers title="Streaming LangGraph Response"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="langgraph/agent",
     messages=[
         {"role": "user", "content": "What is the weather in Tokyo?"}
@@ -57,14 +57,14 @@ for chunk in response:
         print(chunk.choices[0].delta.content, end="")
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your model in config.yaml
 
 <Tabs>
 <TabItem value="config-yaml" label="config.yaml">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration"
+```yaml showLineNumbers title="Lumina Proxy Configuration"
 model_list:
   - model_name: langgraph-agent
     lumina_params:
@@ -75,10 +75,10 @@ model_list:
 </TabItem>
 </Tabs>
 
-#### 2. Start the LiteLLM Proxy
+#### 2. Start the Lumina Proxy
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 ```
 
 #### 3. Make requests to your LangGraph agent
@@ -115,12 +115,12 @@ curl http://localhost:4000/v1/chat/completions \
 
 <TabItem value="openai-sdk" label="OpenAI Python SDK">
 
-```python showLineNumbers title="Using OpenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Using OpenAI SDK with Lumina Proxy"
 from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 response = client.chat.completions.create(
@@ -138,7 +138,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 stream = client.chat.completions.create(
@@ -177,7 +177,7 @@ for chunk in stream:
 
 ## Setting Up a Local LangGraph Server
 
-Before using LiteLLM with LangGraph, you need a running LangGraph server.
+Before using Lumina with LangGraph, you need a running LangGraph server.
 
 ### Prerequisites
 
@@ -233,9 +233,9 @@ curl -s --request POST \
 
 
 
-## LiteLLM A2A Gateway
+## Lumina A2A Gateway
 
-You can register LangGraph agents in LiteLLM's [A2A (Agent-to-Agent) Gateway](../a2a.md), discover their upstream agent card, curate skills and capabilities, and invoke them through the LiteLLM proxy.
+You can register LangGraph agents in Lumina's [A2A (Agent-to-Agent) Gateway](../a2a.md), discover their upstream agent card, curate skills and capabilities, and invoke them through the Lumina proxy.
 
 ### 1. Navigate to Agents
 
@@ -272,11 +272,11 @@ The preview is a form. You can:
 
 - **Edit** the name, description, provider, icon URL, and documentation URL.
 - **Add, remove, or reorder skills**, and edit each skill's name, description, tags, examples, and input/output modes.
-- **Toggle capabilities** that LiteLLM supports.
+- **Toggle capabilities** that Lumina supports.
 
-Select or deselect skills and capabilities before saving. LiteLLM only persists what you keep in the form.
+Select or deselect skills and capabilities before saving. Lumina only persists what you keep in the form.
 
-Fields LiteLLM does not proxy are not shown. For the full support matrix, see [Agent card support](../a2a_agent_card.md#agent-card-support).
+Fields Lumina does not proxy are not shown. For the full support matrix, see [Agent card support](../a2a_agent_card.md#agent-card-support).
 
 ![Agent Card Fields on UI](../../img/providers/langgraph/agent-card-fields-on-ui.png)
 
@@ -288,7 +288,7 @@ Click on Next to save. And complete the rest of the steps
 
 ### 6: Verify the served card
 
-From your terminal, fetch the agent card LiteLLM is serving:
+From your terminal, fetch the agent card Lumina is serving:
 
 ```bash
 curl -H "Authorization: Bearer $LUMINA_API_KEY" \
@@ -297,8 +297,8 @@ curl -H "Authorization: Bearer $LUMINA_API_KEY" \
 
 You should see the card you saved, with:
 
-- `supportedInterfaces[0].url` pointing at LiteLLM, not the upstream
-- `securitySchemes` showing `LiteLLMKey` (HTTP bearer)
+- `supportedInterfaces[0].url` pointing at Lumina, not the upstream
+- `securitySchemes` showing `LuminaKey` (HTTP bearer)
 - The skills you kept during registration
 
 ### 7. Test in Playground
@@ -319,7 +319,7 @@ Pick your LangGraph agent from the dropdown and send a test message.
 
 ### 9: Invoke the agent manually
 
-Send an A2A `message/send` request to the LiteLLM proxy URL:
+Send an A2A `message/send` request to the Lumina proxy URL:
 
 ```bash
 curl -X POST http://localhost:4000/a2a/{agent_id} \
@@ -352,7 +352,7 @@ See also [Invoking A2A Agents](../a2a_invoking_agents.md) for SDK examples.
 - [LangGraph A2A endpoint docs](https://docs.langchain.com/langsmith/server-a2a)
 - [LangGraph GitHub](https://github.com/langchain-ai/langgraph)
 - [A2A Agent Gateway](../a2a.md)
-- [A2A Agent Card on LiteLLM](../a2a_agent_card.md)
+- [A2A Agent Card on Lumina](../a2a_agent_card.md)
 - [A2A Cost Tracking](../a2a_cost_tracking.md)
 - [A2A Protocol Specification](https://a2a-protocol.org/latest/specification/)
 

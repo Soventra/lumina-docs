@@ -35,7 +35,7 @@ Make sure the response type follows the `UserAPIKeyAuth` pydantic object. This i
 
 ```python
 from fastapi import Request
-from litellm.proxy._types import UserAPIKeyAuth
+from lumina.proxy._types import UserAPIKeyAuth
 
 async def user_api_key_auth(request: Request, api_key: str) -> UserAPIKeyAuth: 
     try: 
@@ -58,7 +58,7 @@ model_list:
     lumina_params: 
       model: "{{openai_small}}"
 
-litellm_settings:
+lumina_settings:
   drop_params: True
   set_verbose: True
 
@@ -66,11 +66,11 @@ general_settings:
   custom_auth: custom_auth.user_api_key_auth
 ```
 
-[**Implementation Code**](https://github.com/BerriAI/litellm/blob/caf2a6b279ddbe89ebd1d8f4499f65715d684851/litellm/proxy/utils.py#L122)
+[**Implementation Code**](https://github.com/Soventra/lumina/blob/caf2a6b279ddbe89ebd1d8f4499f65715d684851/lumina/proxy/utils.py#L122)
 
 #### 3. Start the proxy
 ```shell
-$ litellm --config /path/to/config.yaml 
+$ lumina --config /path/to/config.yaml 
 ```
 
 ## UserAPIKeyAuth Fields Reference
@@ -79,7 +79,7 @@ These fields are read straight off the returned object and enforced with no flag
 
 ### Identity
 
-Who the request belongs to. The `*_id` fields also tell LiteLLM which DB records to load when `custom_auth_run_common_checks: true`.
+Who the request belongs to. The `*_id` fields also tell Lumina which DB records to load when `custom_auth_run_common_checks: true`.
 
 ```python
 def UserAPIKeyAuth(
@@ -88,7 +88,7 @@ def UserAPIKeyAuth(
     key_alias: Optional[str] = None,                  # Key alias for identification
     user_id: Optional[str] = None,                    # User identifier (also used to load the user record)
     user_email: Optional[str] = None,                 # User email address
-    user_role: Optional[LitellmUserRoles] = None,     # User role (PROXY_ADMIN, INTERNAL_USER, etc.)
+    user_role: Optional[LuminaUserRoles] = None,     # User role (PROXY_ADMIN, INTERNAL_USER, etc.)
     team_id: Optional[str] = None,                    # Team identifier (also used to load the team record)
     org_id: Optional[str] = None,                     # Organization identifier (also used to load the org record)
     end_user_id: Optional[str] = None,                # End-user identifier (also used to load the end-user record)
@@ -144,7 +144,7 @@ def UserAPIKeyAuth(
 ### Object permission (MCP, agents, etc.)
 
 ```python
-from litellm.proxy._experimental.mcp_server.mcp_server_manager import (
+from lumina.proxy._experimental.mcp_server.mcp_server_manager import (
     global_mcp_server_manager,
 )
 
@@ -154,7 +154,7 @@ def _server_id(name: str) -> str:
         raise ValueError(f"Unknown MCP server '{name}'")
     return server.server_id
 
-object_permission = LiteLLM_ObjectPermissionTable(
+object_permission = Lumina_ObjectPermissionTable(
     mcp_servers=[_server_id("deepwiki"), _server_id("everything")], # MCP servers this key is allowed to use
     mcp_tool_permissions={"deepwiki": ["search", "read_doc"]},      # optional per-server tool allow-list
 )
@@ -174,7 +174,7 @@ general_settings:
   custom_auth_run_common_checks: true
 ```
 
-Your handler returns the IDs; the budgets and allowlists live on the matching DB records (`/team/new`, `/user/new`, `/project/new`, `/customer/new`, or the UI), which LiteLLM loads and enforces.
+Your handler returns the IDs; the budgets and allowlists live on the matching DB records (`/team/new`, `/user/new`, `/project/new`, `/customer/new`, or the UI), which Lumina loads and enforces.
 
 For example, a team with a budget and model allowlist:
 
@@ -216,20 +216,20 @@ These are separate controls:
 | Field | Where it is enforced | Source of truth |
 | --- | --- | --- |
 | `models` on `UserAPIKeyAuth` | Key-level allowlist | Value you return from custom auth |
-| `project_id` on `UserAPIKeyAuth` | Project-level allowlist | `models` on the **project record in LiteLLM's DB** |
+| `project_id` on `UserAPIKeyAuth` | Project-level allowlist | `models` on the **project record in Lumina's DB** |
 
-An empty `models` list (`[]`) means no restriction. Names must match the model group in your config (wildcards supported). See [Project Management](./project_management) and [Config Settings](/docs/proxy/config_settings#litellm_settings---reference).
+An empty `models` list (`[]`) means no restriction. Names must match the model group in your config (wildcards supported). See [Project Management](./project_management) and [Config Settings](/docs/proxy/config_settings#lumina_settings---reference).
 
 ## Key-level enforcement
 
-The following are enforced from the returned object, but only when `litellm.enable_post_custom_auth_checks: true` is also set:
+The following are enforced from the returned object, but only when `lumina.enable_post_custom_auth_checks: true` is also set:
 
 ```yaml
 general_settings:
   custom_auth: custom_auth.user_api_key_auth
   custom_auth_run_common_checks: true   # required for the key models allowlist
 
-litellm_settings:
+lumina_settings:
   enable_post_custom_auth_checks: true
 ```
 
@@ -246,11 +246,11 @@ return UserAPIKeyAuth(
 
 This path also enforces end-user budgets and per-model end-user budgets when `end_user_id` is set.
 
-## Support LiteLLM Virtual Keys + Custom Auth
+## Support Lumina Virtual Keys + Custom Auth
 
 Supported from v1.72.2+
 
-<EnterpriseFeature feature="Using Custom Auth with LiteLLM Virtual Keys" />
+<EnterpriseFeature feature="Using Custom Auth with Lumina Virtual Keys" />
 
 ### Usage
 
@@ -266,7 +266,7 @@ from typing import Union
 
 from fastapi import Request
 
-from litellm.proxy._types import UserAPIKeyAuth
+from lumina.proxy._types import UserAPIKeyAuth
 
 
 async def user_api_key_auth(
@@ -284,7 +284,7 @@ async def user_api_key_auth(
 
 2. Setup config.yaml
 
-Key change set `mode: auto`. This will check both litellm api key auth + custom auth.
+Key change set `mode: auto`. This will check both lumina api key auth + custom auth.
 
 ```yaml
 model_list: 
@@ -296,12 +296,12 @@ model_list:
 general_settings:
   custom_auth: custom_auth_auto.user_api_key_auth
   custom_auth_settings:
-    mode: "auto" # can be 'on', 'off', 'auto' - 'auto' checks both litellm api key auth + custom auth
+    mode: "auto" # can be 'on', 'off', 'auto' - 'auto' checks both lumina api key auth + custom auth
 ```
 
 Flow:
 1. Checks custom auth first
-2. If custom auth fails, checks litellm api key auth
+2. If custom auth fails, checks lumina api key auth
 3. If both fail, returns 401
 
 
@@ -340,7 +340,7 @@ from typing import Union
 
 from fastapi import Request
 
-from litellm.proxy._types import UserAPIKeyAuth, ProxyException
+from lumina.proxy._types import UserAPIKeyAuth, ProxyException
 
 
 async def user_api_key_auth(

@@ -1,6 +1,6 @@
 ---
 slug: lens-failure-patterns
-title: "How LiteLLM Lens finds repeated failures across 1,000s of agent traces"
+title: "How Lumina Lens finds repeated failures across 1,000s of agent traces"
 date: 2026-10-05
 authors:
   - moe
@@ -16,7 +16,7 @@ export const Hero = LensHero;
 
 A research agent can finish a report after reading the first 8,000 characters of each page. If its web tool cuts off a source and the agent fills in the gaps, you get a completed run with unsupported claims.
 
-Across thousands of runs, you need to find the affected sessions and what they have in common. [LiteLLM Lens](/blog/litellm-lens-launch) uses agents to do that work.
+Across thousands of runs, you need to find the affected sessions and what they have in common. [Lumina Lens](/blog/lumina-lens-launch) uses agents to do that work.
 
 Here's how it works behind the scenes: reviewers inspect executions in parallel, grouping agents connect related observations, and investigators check each candidate pattern against the original traces.
 
@@ -78,11 +78,11 @@ A search in that session returned more than 544,000 characters. Tool access give
 
 ## How results reach Lens
 
-The worker sends progress and findings to the LiteLLM gateway, so you can watch completed reviews appear while other agents are still working. The findings link back to the original steps for inspection.
+The worker sends progress and findings to the Lumina gateway, so you can watch completed reviews appear while other agents are still working. The findings link back to the original steps for inspection.
 
-![The Lens worker polls LiteLLM for investigations, reads evidence and calls models through the gateway, then reports progress and findings.](./assets/06-deployment.svg)
+![The Lens worker polls Lumina for investigations, reads evidence and calls models through the gateway, then reports progress and findings.](./assets/06-deployment.svg)
 
-The worker runs on your infrastructure and polls LiteLLM for jobs. It uses the gateway for evidence and calls to your chosen analysis model. ClickHouse stores traces, and Postgres stores investigation state. The [pipeline and tools](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/lens/context_pipeline.py) are open source.
+The worker runs on your infrastructure and polls Lumina for jobs. It uses the gateway for evidence and calls to your chosen analysis model. ClickHouse stores traces, and Postgres stores investigation state. The [pipeline and tools](https://github.com/Soventra/lumina/blob/main/lumina/proxy/lens/context_pipeline.py) are open source.
 
 For our architecture experiments, we built a golden dataset with 25 investigations, 3,752 sessions, and 99,797 spans. The controlled cases include nested agents, long tool results, healthy runs, and failures followed by recovery. Our architecture found all 11 expected failure patterns: **100% recall**.
 

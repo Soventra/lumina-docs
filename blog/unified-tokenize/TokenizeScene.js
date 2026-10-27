@@ -107,7 +107,7 @@ export default function TokenizeScene() {
     <figure
       className={styles.scene}
       onPointerEnter={() => setRun((value) => value + 1)}
-      aria-label="A prompt flows through LiteLLM to a unified JSON response"
+      aria-label="A prompt flows through Lumina to a unified JSON response"
     >
       <div className={styles.stage}>
         <svg
@@ -170,7 +170,7 @@ export default function TokenizeScene() {
           </span>
         </button>
         <div className={styles.label}>
-          <span className={styles.eyebrow}>02 / LITELLM</span>
+          <span className={styles.eyebrow}>02 / LUMINA</span>
           <strong>/tokenize</strong>
           <span className={styles.providerLogos}>
             <ProviderLabel provider="vllm" />

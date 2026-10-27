@@ -96,7 +96,7 @@ model_list:
 
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
-  database_url: "postgresql://user:password@localhost:5432/litellm"
+  database_url: "postgresql://user:password@localhost:5432/lumina"
   
   # Reject client-side tags
   reject_clientside_metadata_tags: true

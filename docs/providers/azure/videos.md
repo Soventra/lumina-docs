@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Azure Video Generation
 
-LiteLLM supports Azure OpenAI's video generation models including Sora with full end-to-end integration.
+Lumina supports Azure OpenAI's video generation models including Sora with full end-to-end integration.
 
 | Property | Details |
 |-------|-------|
 | Description | Azure OpenAI's video generation models including Sora-2 |
-| Provider Route on LiteLLM | `azure/` |
+| Provider Route on Lumina | `azure/` |
 | Supported Models | `sora-2` |
 | Cost Tracking | ✅ Duration-based pricing ($0.10/second) |
 | Logging Support | ✅ Full request/response logging |
@@ -30,7 +30,7 @@ os.environ["AZURE_API_BASE"] = "https://your-resource.openai.azure.com/"
 ### Basic Usage
 
 ```python
-from litellm import video_generation, video_status, video_content
+from lumina import video_generation, video_status, video_content
 import os
 import time
 
@@ -74,9 +74,9 @@ with open("generated_video.mp4", "wb") as f:
     f.write(video_bytes)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
-Here's how to call Azure video generation models with the LiteLLM Proxy Server
+Here's how to call Azure video generation models with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -103,7 +103,7 @@ model_list:
 <TabItem value="cli" label="CLI">
 
 ```bash
-$ litellm --model azure/sora-2
+$ lumina --model azure/sora-2
 
 # Server running on http://0.0.0.0:4000
 ```
@@ -139,7 +139,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.videos.create(
     model="azure-sora-2",
     prompt="A cat playing with a ball of yarn in a sunny garden",
@@ -175,7 +175,7 @@ All video generation requests are automatically logged with:
 
 ### Logging Providers
 
-Video generation works with all LiteLLM logging providers:
+Video generation works with all Lumina logging providers:
 
 - **Datadog**: Real-time monitoring and alerting
 - **Helicone**: Request tracing and debugging
@@ -216,12 +216,12 @@ with open("video.mp4", "wb") as f:
 ## Complete Workflow
 
 ```python
-import litellm
+import lumina
 import time
 
 def generate_and_download_video(prompt):
     # Step 1: Generate video
-    response = litellm.video_generation(
+    response = lumina.video_generation(
         prompt=prompt,
         model="azure/sora-2",
         seconds="8",
@@ -235,7 +235,7 @@ def generate_and_download_video(prompt):
     time.sleep(30)
     
     # Step 3: Download video
-    video_bytes = litellm.video_content(
+    video_bytes = lumina.video_content(
         video_id=video_id
     )
     
@@ -255,7 +255,7 @@ video_file = generate_and_download_video(
 
 ```python
 # Video editing with reference image
-response = litellm.video_remix(
+response = lumina.video_remix(
     video_id="video_456",
     prompt="Make the cat jump higher",
     input_reference=open("path/to/image.jpg", "rb"),  # Reference image as file object
@@ -268,7 +268,7 @@ print(f"Video ID: {response.id}")
 ## Error Handling
 
 ```python
-from litellm.exceptions import BadRequestError, AuthenticationError
+from lumina.exceptions import BadRequestError, AuthenticationError
 
 try:
     response = video_generation(

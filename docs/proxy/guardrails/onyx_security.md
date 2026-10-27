@@ -11,11 +11,11 @@ import TabItem from '@theme/TabItem';
 Go to [Onyx's platform](https://app.onyx.security) and create a new AI Guard policy.
 After creating the policy, copy the generated API key.
 
-### 2. Define Guardrails on your LiteLLM config.yaml
+### 2. Define Guardrails on your Lumina config.yaml
 
 Define your guardrails under the `guardrails` section:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -38,10 +38,10 @@ guardrails:
 - `post_call` Run **after** LLM call, on **input & output**
 - `during_call` Run **during** LLM call, on **input**. Same as `pre_call` but runs in parallel with the LLM call. Response not returned until guardrail check completes
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test request

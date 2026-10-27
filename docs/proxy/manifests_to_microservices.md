@@ -1,24 +1,24 @@
 ---
 title: Migrate from Kubernetes Manifests to the Microservices Chart
-description: Move a LiteLLM proxy deployed with raw Kubernetes manifests onto the componentized litellm Helm chart so gateway, backend, and UI scale independently.
+description: Move a Lumina proxy deployed with raw Kubernetes manifests onto the componentized lumina Helm chart so gateway, backend, and UI scale independently.
 ---
 
 # Migrate from Kubernetes Manifests to the Microservices Chart
 
-This guide moves a LiteLLM proxy that runs from hand-written Kubernetes manifests (the [Kubernetes without Helm](./deploy.md#kubernetes-without-helm) layout: one `Deployment`, one `Service`, a `ConfigMap`, and a `Secret`) onto the componentized `litellm` Helm chart, where LLM traffic (`gateway`), management APIs (`backend`), and the Admin UI (`ui`) run as separate Deployments with their own autoscaling. The existing Postgres database and Redis are kept; no data moves. The old Deployment stays up until the new release serves traffic, so the switch is reversible at every step.
+This guide moves a Lumina proxy that runs from hand-written Kubernetes manifests (the [Kubernetes without Helm](./deploy.md#kubernetes-without-helm) layout: one `Deployment`, one `Service`, a `ConfigMap`, and a `Secret`) onto the componentized `lumina` Helm chart, where LLM traffic (`gateway`), management APIs (`backend`), and the Admin UI (`ui`) run as separate Deployments with their own autoscaling. The existing Postgres database and Redis are kept; no data moves. The old Deployment stays up until the new release serves traffic, so the switch is reversible at every step.
 
-You need `helm` 3.8 or newer, `kubectl` access to the target namespace, the current manifests, and network reachability from the cluster to Postgres and Redis. For what each value does, see the chart's [`values.yaml`](https://github.com/BerriAI/litellm/blob/main/helm/litellm/values.yaml); for the architecture behind the two modes, see [Production Deployment](./deploy.md#architecture).
+You need `helm` 3.8 or newer, `kubectl` access to the target namespace, the current manifests, and network reachability from the cluster to Postgres and Redis. For what each value does, see the chart's [`values.yaml`](https://github.com/Soventra/lumina/blob/main/helm/lumina/values.yaml); for the architecture behind the two modes, see [Production Deployment](./deploy.md#architecture).
 
 ## 1. Capture the current deployment
 
 Record the image tag, replica count, config, and every environment variable the proxy reads today, so nothing is lost in translation.
 
 ```bash
-kubectl get deploy litellm-deployment -o yaml > old-deployment.yaml
-kubectl get cm litellm-config-file -o yaml > old-config.yaml
-kubectl get svc litellm-service -o yaml > old-service.yaml
+kubectl get deploy lumina-deployment -o yaml > old-deployment.yaml
+kubectl get cm lumina-config-file -o yaml > old-config.yaml
+kubectl get svc lumina-service -o yaml > old-service.yaml
 kubectl get ingress -o yaml > old-ingress.yaml
-kubectl get secret litellm-secrets -o jsonpath='{.data}' | jq 'keys'
+kubectl get secret lumina-secrets -o jsonpath='{.data}' | jq 'keys'
 ```
 
 Adjust the names to match your manifests. From `old-deployment.yaml` note `spec.replicas`, `spec.template.spec.containers[0].image`, `env`, `envFrom`, `resources`, and any probe overrides. From `old-config.yaml` keep the `config.yaml` body; it is reused verbatim in step 4.
@@ -28,21 +28,21 @@ Adjust the names to match your manifests. From `old-deployment.yaml` note `spec.
 The chart never reads `DATABASE_URL`. It sets `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USER`, and `DATABASE_PASSWORD` from discrete values and a Secret, and the proxy builds the URL itself. Take the pieces out of your existing URL (`postgresql://USER:PASSWORD@HOST:PORT/DBNAME`) and create the Secret:
 
 ```bash
-kubectl create secret generic litellm-db \
+kubectl create secret generic lumina-db \
   --from-literal=username='USER' \
   --from-literal=password='PASSWORD'
 ```
 
 Passwords with `@`, `/`, or `%` need no escaping here; the proxy percent-encodes them.
 
-Keep the existing `litellm-secrets` Secret. The chart references the master key from it directly, and provider keys in it are mounted whole in step 4. If `LUMINA_SALT_KEY` is set in the old Deployment, keep it in the same Secret; changing it makes stored provider credentials unreadable.
+Keep the existing `lumina-secrets` Secret. The chart references the master key from it directly, and provider keys in it are mounted whole in step 4. If `LUMINA_SALT_KEY` is set in the old Deployment, keep it in the same Secret; changing it makes stored provider credentials unreadable.
 
 ## 3. Choose the chart version
 
 Pin the chart to the version that matches, or is newer than, your current proxy image; component image tags default to the chart version, so a proxy on `v1.90.2` moves to chart `1.90.2`. Chart `1.89.0` is the oldest supported.
 
 ```bash
-helm show chart oci://ghcr.io/berriai/litellm/chart/litellm --version 1.90.2
+helm show chart oci://ghcr.io/soventra/lumina/chart/lumina --version 1.90.2
 ```
 
 ## 4. Write `values.yaml`
@@ -62,20 +62,20 @@ Translate the manifests with this mapping.
 | `args: ["--config", ...]` | drop; the chart sets `CONFIG_FILE_PATH` |
 | `Ingress` host | `ingress.host` |
 
-A manifest deployment with two replicas, provider keys in `litellm-secrets`, and Redis at `redis.internal` becomes:
+A manifest deployment with two replicas, provider keys in `lumina-secrets`, and Redis at `redis.internal` becomes:
 
 ```yaml title="values.yaml"
 masterKey:
-  secretName: litellm-secrets
+  secretName: lumina-secrets
   secretKey: LUMINA_MASTER_KEY
 
 database:
   writer:
     host: postgres.internal
     port: 5432
-    dbname: litellm
+    dbname: lumina
     passwordSecret:
-      name: litellm-db
+      name: lumina-db
       usernameKey: username
       passwordKey: password
 
@@ -83,12 +83,12 @@ redis:
   host: redis.internal
   port: 6379
   passwordSecret:
-    name: litellm-secrets
+    name: lumina-secrets
     passwordKey: REDIS_PASSWORD
 
 gateway:
   envSecrets:
-    - litellm-secrets
+    - lumina-secrets
   resources:
     requests: { cpu: "1", memory: 4Gi }
     limits: { cpu: "2", memory: 4Gi }
@@ -106,7 +106,7 @@ gateway:
         redis_host: os.environ/REDIS_HOST
         redis_port: os.environ/REDIS_PORT
         redis_password: os.environ/REDIS_PASSWORD
-      litellm_settings:
+      lumina_settings:
         cache: true
         cache_params:
           type: redis
@@ -116,7 +116,7 @@ gateway:
 
 backend:
   envSecrets:
-    - litellm-secrets
+    - lumina-secrets
 
 ingress:
   enabled: false
@@ -127,24 +127,24 @@ Drop the `redis.passwordSecret` block if your Redis has no password. If the old 
 Render and check the result before installing:
 
 ```bash
-helm template litellm oci://ghcr.io/berriai/litellm/chart/litellm \
+helm template lumina oci://ghcr.io/soventra/lumina/chart/lumina \
   --version 1.90.2 -f values.yaml | kubectl apply --dry-run=server -f -
 ```
 
 ## 5. Install alongside the old deployment
 
-The chart's resource names (`litellm-gateway`, `litellm-backend`, `litellm-ui`, `litellm-gateway-config`) do not collide with the manifest names, so both can run in the same namespace.
+The chart's resource names (`lumina-gateway`, `lumina-backend`, `lumina-ui`, `lumina-gateway-config`) do not collide with the manifest names, so both can run in the same namespace.
 
 ```bash
-helm upgrade --install litellm oci://ghcr.io/berriai/litellm/chart/litellm \
+helm upgrade --install lumina oci://ghcr.io/soventra/lumina/chart/lumina \
   --version 1.90.2 -f values.yaml --wait --timeout 10m
 ```
 
 Helm runs the migrations Job as a pre-install hook before creating the Deployments. It applies the same Prisma migrations the old image applied at startup, so on an up-to-date database it is a no-op. The old pods keep running against the same schema throughout.
 
 ```bash
-kubectl get pods -l app.kubernetes.io/instance=litellm
-kubectl logs job/litellm-migrations
+kubectl get pods -l app.kubernetes.io/instance=lumina
+kubectl logs job/lumina-migrations
 ```
 
 If the Job fails, fix the database values and rerun the same `helm upgrade` command; nothing else has been created yet.
@@ -154,9 +154,9 @@ If the Job fails, fix the database values and rerun the same `helm upgrade` comm
 Test each component through its own Service before exposing it.
 
 ```bash
-kubectl port-forward svc/litellm-gateway 4000:4000 &
-kubectl port-forward svc/litellm-backend 4001:4001 &
-kubectl port-forward svc/litellm-ui 3000:3000 &
+kubectl port-forward svc/lumina-gateway 4000:4000 &
+kubectl port-forward svc/lumina-backend 4001:4001 &
+kubectl port-forward svc/lumina-ui 3000:3000 &
 
 curl -s localhost:4000/health/readiness
 curl -s localhost:4000/v1/models -H "Authorization: Bearer $LUMINA_MASTER_KEY"
@@ -171,7 +171,7 @@ The readiness response should report `"cache": "redis"` and `/v1/models` should 
 
 ## 7. Move traffic
 
-Point the ingress at the chart. Enable the chart's ingress on the same host as the old one and delete the old Ingress in the same step, or, if you manage ingress outside the chart, repoint your rules by path: `/v1/*`, `/chat/*`, `/health`, `/metrics` and other LLM routes to `litellm-gateway:4000`, `/ui`, `/_next`, `/litellm-asset-prefix`, and `/` to `litellm-ui:3000`, and everything else (`/key/*`, `/team/*`, `/user/*`, ...) to `litellm-backend:4001`. The full path split is in [`templates/ingress.yaml`](https://github.com/BerriAI/litellm/blob/main/helm/litellm/templates/ingress.yaml).
+Point the ingress at the chart. Enable the chart's ingress on the same host as the old one and delete the old Ingress in the same step, or, if you manage ingress outside the chart, repoint your rules by path: `/v1/*`, `/chat/*`, `/health`, `/metrics` and other LLM routes to `lumina-gateway:4000`, `/ui`, `/_next`, `/lumina-asset-prefix`, and `/` to `lumina-ui:3000`, and everything else (`/key/*`, `/team/*`, `/user/*`, ...) to `lumina-backend:4001`. The full path split is in [`templates/ingress.yaml`](https://github.com/Soventra/lumina/blob/main/helm/lumina/templates/ingress.yaml).
 
 ```yaml title="values.yaml"
 ingress:
@@ -184,7 +184,7 @@ ingress:
 
 ```bash
 kubectl delete -f old-ingress.yaml
-helm upgrade litellm oci://ghcr.io/berriai/litellm/chart/litellm \
+helm upgrade lumina oci://ghcr.io/soventra/lumina/chart/lumina \
   --version 1.90.2 -f values.yaml --wait
 ```
 
@@ -202,7 +202,7 @@ ingress:
     backend: backend.example.com
     gateway: gateway.example.com
   tls:
-    - secretName: litellm-component-tls
+    - secretName: lumina-component-tls
       hosts:
         - ui.example.com
         - backend.example.com
@@ -220,7 +220,7 @@ The chart renders these values on the following components:
 
 | Chart value | Component and rendered configuration |
 | --- | --- |
-| `ui.backendUrl` | The UI Deployment receives `LUMINA_BACKEND_URL` only when `ingress.componentHosts` is configured. The UI serves it as `backend_url` from `/ui/litellm-runtime-config.json`. |
+| `ui.backendUrl` | The UI Deployment receives `LUMINA_BACKEND_URL` only when `ingress.componentHosts` is configured. The UI serves it as `backend_url` from `/ui/lumina-runtime-config.json`. |
 | `ui.publicUrl` | The backend and gateway Deployments receive `LUMINA_CORS_ORIGINS`. The backend also receives `LUMINA_CORS_ALLOW_CREDENTIALS=true`. |
 | `backend.gatewayUrl` | The backend Deployment receives `LUMINA_GATEWAY_URL`. The backend includes it as `gateway_base_url` in UI discovery configuration. |
 
@@ -245,13 +245,13 @@ In component-host mode, the chart requires all three `ingress.componentHosts` va
 
 SSO login is not supported yet when the UI uses a separate hostname because the callback is built from the backend request URL and returns to the backend host. The Playground's "Custom Proxy Base URL" setting also continues to override the discovered gateway URL.
 
-Clients that used the in-cluster Service name (`litellm-service:4000`) must switch to `litellm-gateway:4000` for LLM calls and `litellm-backend:4001` for management calls.
+Clients that used the in-cluster Service name (`lumina-service:4000`) must switch to `lumina-gateway:4000` for LLM calls and `lumina-backend:4001` for management calls.
 
 Watch the gateway HPA and error rate for a few minutes:
 
 ```bash
-kubectl get hpa litellm-gateway -w
-kubectl logs deploy/litellm-gateway -f | grep -i error
+kubectl get hpa lumina-gateway -w
+kubectl logs deploy/lumina-gateway -f | grep -i error
 ```
 
 ## 8. Scale the gateway
@@ -271,4 +271,4 @@ kubectl delete -f old-config.yaml
 
 ## Roll back
 
-While the old Deployment still exists, revert the ingress change from step 7 (`kubectl apply -f old-ingress.yaml` and `helm upgrade ... --set ingress.enabled=false`) and traffic returns to the old pods. The database is unchanged by the migration, provided the chart version was not newer than the old image; if you moved to a newer chart, schema changes it applied are forward-only, and the rollback target must be an image of at least that version. To remove the chart entirely, `helm uninstall litellm`, which leaves the external database, Redis, and your Secrets in place.
+While the old Deployment still exists, revert the ingress change from step 7 (`kubectl apply -f old-ingress.yaml` and `helm upgrade ... --set ingress.enabled=false`) and traffic returns to the old pods. The database is unchanged by the migration, provided the chart version was not newer than the old image; if you moved to a newer chart, schema changes it applied are forward-only, and the rollback target must be an image of at least that version. To remove the chart entirely, `helm uninstall lumina`, which leaves the external database, Redis, and your Secrets in place.

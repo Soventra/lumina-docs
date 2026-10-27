@@ -9,20 +9,20 @@
 
 :::tip
 
-LiteLLM follows the [Perplexity API request/response for the Search API](https://docs.perplexity.ai/api-reference/search-post)
+Lumina follows the [Perplexity API request/response for the Search API](https://docs.perplexity.ai/api-reference/search-post)
 
 :::
 
 :::info
 
-Supported from LiteLLM v1.78.7+
+Supported from Lumina v1.78.7+
 :::
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 ### Quick Start 
 
 ```python showLineNumbers title="Basic Search"
-from litellm import search
+from lumina import search
 import os
 
 os.environ["PERPLEXITYAI_API_KEY"] = "pplx-..."
@@ -44,7 +44,7 @@ To use [Parallel AI Search](./parallel_ai.md), set `PARALLEL_API_KEY` and pass `
 ### Async Usage 
 
 ```python showLineNumbers title="Async Search"
-from litellm import asearch
+from lumina import asearch
 import os, asyncio
 
 os.environ["PERPLEXITYAI_API_KEY"] = "pplx-..."
@@ -79,13 +79,13 @@ response = search(
 )
 ```
 
-## **LiteLLM AI Gateway Usage**
+## **Lumina AI Gateway Usage**
 
-LiteLLM provides a Perplexity API compatible `/search` endpoint for search calls.
+Lumina provides a Perplexity API compatible `/search` endpoint for search calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -111,10 +111,10 @@ search_tools:
       api_key: os.environ/PARALLEL_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -189,7 +189,7 @@ curl http://0.0.0.0:4000/v1/search/my-search \
 
 ### Custom Per-Query Pricing
 
-Set `input_cost_per_query` under a search tool's `lumina_params` to charge your own price per search query. LiteLLM uses it instead of the cost map price for that tool, so `x-litellm-response-cost` and the spend logs match the rate you pay. It works for every search provider, and a tool without it keeps the provider's cost map price.
+Set `input_cost_per_query` under a search tool's `lumina_params` to charge your own price per search query. Lumina uses it instead of the cost map price for that tool, so `x-lumina-response-cost` and the spend logs match the rate you pay. It works for every search provider, and a tool without it keeps the provider's cost map price.
 
 ```yaml showLineNumbers title="config.yaml with a custom price"
 search_tools:
@@ -258,7 +258,7 @@ Setting the flag back to `false` restores the earlier behavior, where an empty o
 
 :::info
 
-LiteLLM follows the **Perplexity Search API specification**. 
+Lumina follows the **Perplexity Search API specification**. 
 
 See the [official Perplexity Search documentation](https://docs.perplexity.ai/api-reference/search-post) for complete details.
 

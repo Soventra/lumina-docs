@@ -4,16 +4,16 @@ title: "Announcing Componentized Deployments"
 date: 2026-05-18T09:00:00
 authors:
   - yassin
-description: "How LiteLLM's componentized deployment isolates the management/UI control plane from the LLM data plane, improving reliability at scale."
+description: "How Lumina's componentized deployment isolates the management/UI control plane from the LLM data plane, improving reliability at scale."
 tags: [performance, reliability, kubernetes, scaling, ai-gateway]
 hide_table_of_contents: true
 ---
 
 *Last Updated: May 2026*
 
-The LiteLLM proxy container does 2 very different things. It's an **LLM data plane**, `/chat/completions`, `/v1/messages`, embeddings, passthroughs, where latency is measured in single-digit milliseconds of overhead and traffic is high-volume and bursty. It's also a **management control plane** for keys, teams, SSO, audit logs, and the spend/usage analytics that power the dashboard, where a single request can scan millions of rows.
+The Lumina proxy container does 2 very different things. It's an **LLM data plane**, `/chat/completions`, `/v1/messages`, embeddings, passthroughs, where latency is measured in single-digit milliseconds of overhead and traffic is high-volume and bursty. It's also a **management control plane** for keys, teams, SSO, audit logs, and the spend/usage analytics that power the dashboard, where a single request can scan millions of rows.
 
-Run both on the same event loop, and the slowest thing the control plane does sets the reliability floor for the fastest thing the data plane does. This post is about how we've improved LiteLLM's reliability at scale by offering a componentized deployment model.
+Run both on the same event loop, and the slowest thing the control plane does sets the reliability floor for the fastest thing the data plane does. This post is about how we've improved Lumina's reliability at scale by offering a componentized deployment model.
 
 {/* truncate */}
 
@@ -40,7 +40,7 @@ Code optimizations were necessary to address the example incident. But, as long 
 
 ## The componentized deployment
 
-LiteLLM now offers a Helm chart that runs LiteLLM as three independent microservices plus a one-shot migrations Job.
+Lumina now offers a Helm chart that runs Lumina as three independent microservices plus a one-shot migrations Job.
 
 | Component | Port | Surface |
 |---|---|---|
@@ -80,36 +80,36 @@ This isolates expensive read queries from the connection pool that the spend-tra
 
 ## Using the Helm chart
 
-The componentized deployment ships as an OCI Helm chart published to GitHub Container Registry: [`ghcr.io/berriai/litellm/chart/litellm`](https://github.com/BerriAI/litellm/pkgs/container/litellm%2Fchart%2Flitellm).
+The componentized deployment ships as an OCI Helm chart published to GitHub Container Registry: [`ghcr.io/soventra/lumina/chart/lumina`](https://github.com/Soventra/lumina/pkgs/container/lumina%2Fchart%2Flumina).
 
 Sensitive values are passed by Secret reference only. Create them first:
 
 ```bash
-kubectl create namespace litellm
+kubectl create namespace lumina
 
-kubectl -n litellm create secret generic litellm-master-key-secret \
+kubectl -n lumina create secret generic lumina-master-key-secret \
   --from-literal=master-key="sk-..."
 
-kubectl -n litellm create secret generic litellm-writer-secret \
-  --from-literal=username=litellm --from-literal=password="..."
+kubectl -n lumina create secret generic lumina-writer-secret \
+  --from-literal=username=lumina --from-literal=password="..."
 
-kubectl -n litellm create secret generic litellm-reader-secret \
-  --from-literal=username=litellm --from-literal=password="..."
+kubectl -n lumina create secret generic lumina-reader-secret \
+  --from-literal=username=lumina --from-literal=password="..."
 ```
 
 Then install (or `helm upgrade --install`) straight from the OCI registry:
 
 ```bash
-helm upgrade --install litellm \
-  oci://ghcr.io/berriai/litellm/chart/litellm \
+helm upgrade --install lumina \
+  oci://ghcr.io/soventra/lumina/chart/lumina \
   --version 1.86.0-dev \
-  -n litellm \
+  -n lumina \
   -f values.yaml
 ```
 
 The chart runs `prisma migrate deploy` as a pre-install/pre-upgrade hook Job, then brings up the gateway, backend, and ui Deployments. Set `ingress.enabled=true` to front all three behind one host (data-plane prefixes → gateway, UI assets → ui, catch-all → backend).
 
-![Reference architecture: LiteLLM on Amazon EKS, with gateway, backend, and ui behind one ALB Ingress, plus Aurora Postgres, ElastiCache Redis, S3/CloudWatch, and Secrets Manager](/img/blog/componentized_deployment/eks_topline.png)
+![Reference architecture: Lumina on Amazon EKS, with gateway, backend, and ui behind one ALB Ingress, plus Aurora Postgres, ElastiCache Redis, S3/CloudWatch, and Secrets Manager](/img/blog/componentized_deployment/eks_topline.png)
 
 ### Separate read and write databases
 
@@ -118,17 +118,17 @@ Routing the heavy analytics reads off the writer is just the `database.reader` b
 ```yaml
 # values.yaml
 masterKey:
-  secretName: litellm-master-key-secret   # Secret holding the proxy master key
+  secretName: lumina-master-key-secret   # Secret holding the proxy master key
   secretKey: master-key
 
 database:
   # Writer — all writes (spend logs, tokens, config) land here
   writer:
-    host: litellm-pg-rw.litellm.svc
+    host: lumina-pg-rw.lumina.svc
     port: 5432
-    dbname: litellm
+    dbname: lumina
     passwordSecret:
-      name: litellm-writer-secret
+      name: lumina-writer-secret
       usernameKey: username
       passwordKey: password
 
@@ -136,11 +136,11 @@ database:
   # (find_*, count, group_by, raw reads) to the replica.
   # Unset reader fields fall back to the writer's values.
   reader:
-    host: litellm-pg-ro.litellm.svc
+    host: lumina-pg-ro.lumina.svc
     port: 5432
-    dbname: litellm
+    dbname: lumina
     passwordSecret:
-      name: litellm-reader-secret
+      name: lumina-reader-secret
       usernameKey: username
       passwordKey: password
 ```
@@ -148,11 +148,11 @@ database:
 ## Key takeaways
 
 - A monolithic proxy gives the control plane and the data plane **shared fate**: one slow management query can fail the liveness probe and recycle the pods serving inference.
-- The componentized Helm chart runs LiteLLM as three microservices: **gateway**, **backend**, **ui** + a one-shot migrations Job.
+- The componentized Helm chart runs Lumina as three microservices: **gateway**, **backend**, **ui** + a one-shot migrations Job.
 - Each component has its **own probes and its own HPA**, so a failure or a load spike is contained to the surface that caused it.
 - An optional read replica isolates heavy backend analytics reads from spend-tracking writes on the primary.
 
 
 ## Conclusion
 
-Part of reliability at scale is about controlling blast radius. A heavy dashboard query is a normal thing for a control plane to do; it should never bring down pods serving model traffic. Splitting LiteLLM into microservices ensures that downtime is contained to the surface that caused it.
+Part of reliability at scale is about controlling blast radius. A heavy dashboard query is a normal thing for a control plane to do; it should never bring down pods serving model traffic. Splitting Lumina into microservices ensures that downtime is contained to the surface that caused it.

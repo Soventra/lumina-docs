@@ -7,9 +7,9 @@ Track Spend, and control model access via virtual keys for the proxy
 
 :::info
 
-- [UI to Generate, Edit, Delete Keys (with SSO)](https://docs.litellm.ai/docs/proxy/ui)
-- [Deploy LiteLLM Proxy with Key Management](https://docs.litellm.ai/docs/proxy/deploy#provision-the-data-stores)
-- [Dockerfile.database for LiteLLM Proxy + Key Management](https://github.com/BerriAI/litellm/blob/main/docker/Dockerfile.database)
+- [UI to Generate, Edit, Delete Keys (with SSO)](https://docs.lumina.ai/docs/proxy/ui)
+- [Deploy Lumina Proxy with Key Management](https://docs.lumina.ai/docs/proxy/deploy#provision-the-data-stores)
+- [Dockerfile.database for Lumina Proxy + Key Management](https://github.com/Soventra/lumina/blob/main/docker/Dockerfile.database)
 
 
 :::
@@ -33,7 +33,7 @@ export DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<dbname>
 
 You can then generate keys by hitting the `/key/generate` endpoint.
 
-[**See code**](https://github.com/BerriAI/litellm/blob/7a669a36d2689c7f7890bc9c93e04ff3c2641299/litellm/proxy/proxy_server.py#L672)
+[**See code**](https://github.com/Soventra/lumina/blob/7a669a36d2689c7f7890bc9c93e04ff3c2641299/lumina/proxy/proxy_server.py#L672)
 
 ## **Quick Start - Generate a Key**
 **Step 1: Save postgres db url**
@@ -52,10 +52,10 @@ general_settings:
   database_url: "postgresql://<user>:<password>@<host>:<port>/<dbname>" # KEY CHANGE
 ```
 
-**Step 2: Start litellm**
+**Step 2: Start lumina**
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **Step 3: Generate keys**
@@ -83,18 +83,18 @@ Inheritance is not uniform across permission surfaces. Model access and MCP acce
 ## Spend Tracking 
 
 Get spend per:
-- key - via `/key/info` [Swagger](https://docs.litellm.ai/api-reference/#/key%20management/info_key_fn_key_info_get)
-- user - via `/user/info` [Swagger](https://docs.litellm.ai/api-reference/#/Internal%20User%20management/user_info_user_info_get)
-- team - via `/team/info` [Swagger](https://docs.litellm.ai/api-reference/#/team%20management/team_info_team_info_get)  
-- end-users - via `/end_user/info` - [Comment on this issue for end-user cost tracking](https://github.com/BerriAI/litellm/issues/2633)
+- key - via `/key/info` [Swagger](https://docs.lumina.ai/api-reference/#/key%20management/info_key_fn_key_info_get)
+- user - via `/user/info` [Swagger](https://docs.lumina.ai/api-reference/#/Internal%20User%20management/user_info_user_info_get)
+- team - via `/team/info` [Swagger](https://docs.lumina.ai/api-reference/#/team%20management/team_info_team_info_get)  
+- end-users - via `/end_user/info` - [Comment on this issue for end-user cost tracking](https://github.com/Soventra/lumina/issues/2633)
 
 **How is it calculated?**
 
-The cost per model is stored [here](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) and calculated by the [`completion_cost`](https://github.com/BerriAI/litellm/blob/db7974f9f216ee50b53c53120d1e3fc064173b60/litellm/utils.py#L3771) function.
+The cost per model is stored [here](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) and calculated by the [`completion_cost`](https://github.com/Soventra/lumina/blob/db7974f9f216ee50b53c53120d1e3fc064173b60/lumina/utils.py#L3771) function.
 
 **How is it tracking?**
 
-Spend is automatically tracked for the key in the "LiteLLM_VerificationTokenTable". If the key has an attached 'user_id' or 'team_id', the spend for that user is tracked in the "LiteLLM_UserTable", and team in the "LiteLLM_TeamTable".
+Spend is automatically tracked for the key in the "Lumina_VerificationTokenTable". If the key has an attached 'user_id' or 'team_id', the spend for that user is tracked in the "Lumina_UserTable", and team in the "Lumina_TeamTable".
 
 <Tabs>
 <TabItem value="key-info" label="Key Spend">
@@ -107,7 +107,7 @@ curl 'http://0.0.0.0:4000/key/info?key=<user-key>' \
      -H 'Authorization: Bearer <your-master-key>'
 ```
 
-This is automatically updated (in USD) when calls are made to /completions, /chat/completions, /embeddings using litellm's completion_cost() function. [**See Code**](https://github.com/BerriAI/litellm/blob/1a6ea20a0bb66491968907c2bfaabb7fe45fc064/litellm/utils.py#L1654). 
+This is automatically updated (in USD) when calls are made to /completions, /chat/completions, /embeddings using lumina's completion_cost() function. [**See Code**](https://github.com/Soventra/lumina/blob/1a6ea20a0bb66491968907c2bfaabb7fe45fc064/lumina/utils.py#L1654). 
 
 **Sample response**
 
@@ -305,11 +305,11 @@ curl -X POST "http://0.0.0.0:4000/chat/completions" \
 
 ## Advanced
 
-### Pass LiteLLM Key in custom header
+### Pass Lumina Key in custom header
 
-Use this to make LiteLLM proxy look for the virtual key in a custom header instead of the default `"Authorization"` header
+Use this to make Lumina proxy look for the virtual key in a custom header instead of the default `"Authorization"` header
 
-**Step 1** Define `litellm_key_header_name` name on litellm config.yaml
+**Step 1** Define `lumina_key_header_name` name on lumina config.yaml
 
 ```yaml
 model_list:
@@ -321,13 +321,13 @@ model_list:
 
 general_settings: 
   master_key: os.environ/LUMINA_MASTER_KEY 
-  litellm_key_header_name: "X-Litellm-Key" # Key Change
+  lumina_key_header_name: "X-Lumina-Key" # Key Change
 
 ```
 
 **Step 2** Test it
 
-In this request, litellm will use the Virtual key in the `X-Litellm-Key` header
+In this request, lumina will use the Virtual key in the `X-Lumina-Key` header
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -335,7 +335,7 @@ In this request, litellm will use the Virtual key in the `X-Litellm-Key` header
 ```shell
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-Litellm-Key: Bearer $LUMINA_API_KEY" \
+  -H "X-Lumina-Key: Bearer $LUMINA_API_KEY" \
   -H "Authorization: Bearer bad-key" \
   -d '{
     "model": "fake-openai-endpoint",
@@ -347,7 +347,7 @@ curl http://localhost:4000/v1/chat/completions \
 
 **Expected Response**
 
-Expect to see a successful response from the litellm proxy since the key passed in `X-Litellm-Key` is valid
+Expect to see a successful response from the lumina proxy since the key passed in `X-Lumina-Key` is valid
 ```shell
 {"id":"chatcmpl-f9b2b79a7c30477ab93cd0e717d1773e","choices":[{"finish_reason":"stop","index":0,"message":{"content":"\n\nHello there, how may I assist you today?","role":"assistant","tool_calls":null,"function_call":null}}],"created":1677652288,"model":"{{openai_small}}","object":"chat.completion","system_fingerprint":"fp_44709d6fcb","usage":{"completion_tokens":12,"prompt_tokens":9,"total_tokens":21}
 ```
@@ -359,10 +359,10 @@ Expect to see a successful response from the litellm proxy since the key passed 
 ```python
 client = openai.OpenAI(
     api_key="not-used",
-    base_url="https://api-gateway-url.com/llmservc/api/litellmp",
+    base_url="https://api-gateway-url.com/llmservc/api/luminap",
     default_headers={
         "Authorization": f"Bearer {API_GATEWAY_TOKEN}", # (optional) For your API Gateway
-        "X-Litellm-Key": f"Bearer sk-<your-litellm-api-key>"              # For LiteLLM Proxy
+        "X-Lumina-Key": f"Bearer sk-<your-lumina-api-key>"              # For Lumina Proxy
     }
 )
 ```
@@ -377,14 +377,14 @@ Available in `v1.95.0` and later.
 
 :::
 
-Many providers use the request's end-user identifier (the `user` field) to monitor and detect abuse and to trace activity back to an individual end user, so that one user's misuse is less likely to disrupt access for your whole organization. Because that field is set by the caller, a client can change it to dissociate its activity from a given identity. Turn on `overwrite_user_with_key_hash` when you want the `user` the provider sees to be a stable, tamper-proof identifier tied to the LiteLLM key that made the call, so any provider-side handling keyed on `user` maps back to exactly one key no matter what the client sent.
+Many providers use the request's end-user identifier (the `user` field) to monitor and detect abuse and to trace activity back to an individual end user, so that one user's misuse is less likely to disrupt access for your whole organization. Because that field is set by the caller, a client can change it to dissociate its activity from a given identity. Turn on `overwrite_user_with_key_hash` when you want the `user` the provider sees to be a stable, tamper-proof identifier tied to the Lumina key that made the call, so any provider-side handling keyed on `user` maps back to exactly one key no matter what the client sent.
 
-When enabled, the proxy force-sets the outgoing `user` on chat/completions requests to the calling key's identity, always overriding any `user` in the request body and setting it even when the client omits `user`. For a virtual key the value is the key's sha256 token hash, which is the same value stored as `user_api_key_hash` in spend logs, so you can map the provider-visible id back to a key and its owner without any extra plumbing. For requests authenticated with the master key the value is the fixed alias `litellm_proxy_master_key`, so neither the master key nor its hash is ever forwarded.
+When enabled, the proxy force-sets the outgoing `user` on chat/completions requests to the calling key's identity, always overriding any `user` in the request body and setting it even when the client omits `user`. For a virtual key the value is the key's sha256 token hash, which is the same value stored as `user_api_key_hash` in spend logs, so you can map the provider-visible id back to a key and its owner without any extra plumbing. For requests authenticated with the master key the value is the fixed alias `lumina_proxy_master_key`, so neither the master key nor its hash is ever forwarded.
 
 The flag is off by default and only affects keys the proxy itself validated (virtual keys and the master key). It behaves the same regardless of whether a virtual key has a user or sits under a team; the stamp is always the key hash. Requests authenticated by a custom auth handler or a JWT are left untouched, and with the flag off the caller-supplied `user` is preserved, so existing behavior does not change.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   overwrite_user_with_key_hash: true
 ```
 
@@ -405,7 +405,7 @@ The provider receives `user` set to the key's sha256 hash (e.g. `98e983...6401`)
 
 :::info
 
-Whether the `user` value reaches the provider on the wire is each provider's existing behavior, which this setting does not change. Some providers forward `user` as-is, some map it onto their own end-user field, and some drop it; this flag only controls the value LiteLLM sets, not whether a given provider transmits it.
+Whether the `user` value reaches the provider on the wire is each provider's existing behavior, which this setting does not change. Some providers forward `user` as-is, some map it onto their own end-user field, and some drop it; this flag only controls the value Lumina sets, not whether a given provider transmits it.
 
 :::
 
@@ -454,13 +454,13 @@ If you need to add custom logic before generating a Proxy API Key (Example Valid
 #### 1. Write a custom `custom_generate_key_fn`
 
 
-The input to the custom_generate_key_fn function is a single parameter: `data` [(Type: GenerateKeyRequest)](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/_types.py#L125)
+The input to the custom_generate_key_fn function is a single parameter: `data` [(Type: GenerateKeyRequest)](https://github.com/Soventra/lumina/blob/main/lumina/proxy/_types.py#L125)
 
 The output of your `custom_generate_key_fn` should be a dictionary with the following structure
 ```python
 {
     "decision": False,
-    "message": "This violates LiteLLM Proxy Rules. No team id provided.",
+    "message": "This violates Lumina Proxy Rules. No team id provided.",
 }
 
 ```
@@ -482,7 +482,7 @@ async def custom_generate_key_fn(data: GenerateKeyRequest)-> dict:
             dict: A dictionary containing the decision and an optional message.
             {
                 "decision": False,
-                "message": "This violates LiteLLM Proxy Rules. No team id provided.",
+                "message": "This violates Lumina Proxy Rules. No team id provided.",
             }
         """
         
@@ -503,8 +503,8 @@ async def custom_generate_key_fn(data: GenerateKeyRequest)-> dict:
         tpm_limit = data_json.get("tpm_limit")
         rpm_limit = data_json.get("rpm_limit")
 
-        if team_id is not None and team_id == "litellm-core-infra@gmail.com":
-            # only team_id="litellm-core-infra@gmail.com" can make keys
+        if team_id is not None and team_id == "lumina-core-infra@gmail.com":
+            # only team_id="lumina-core-infra@gmail.com" can make keys
             return {
                 "decision": True,
             }
@@ -512,7 +512,7 @@ async def custom_generate_key_fn(data: GenerateKeyRequest)-> dict:
             print("Failed custom auth")
             return {
                 "decision": False,
-                "message": "This violates LiteLLM Proxy Rules. No team id provided.",
+                "message": "This violates Lumina Proxy Rules. No team id provided.",
             }
 ```
 
@@ -528,7 +528,7 @@ model_list:
     lumina_params: 
       model: "{{openai_small}}"
 
-litellm_settings:
+lumina_settings:
   drop_params: True
   set_verbose: True
 
@@ -548,14 +548,14 @@ If you enforce a policy with `custom_key_generate`, set `custom_key_update` to k
 
 #### 1. Write a custom `custom_update_key_fn`
 
-The input to the `custom_update_key_fn` function is a single parameter: `data` [(Type: UpdateKeyRequest)](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/_types.py)
+The input to the `custom_update_key_fn` function is a single parameter: `data` [(Type: UpdateKeyRequest)](https://github.com/Soventra/lumina/blob/main/lumina/proxy/_types.py)
 
 The output contract is the same as `custom_generate_key_fn`: return `{"decision": True}` to allow the update, or `{"decision": False, "message": "..."}` to reject it. Rejected updates fail with a `403`.
 
 Update requests only contain the fields being changed, so an unset field means "leave as is", not "clear". Use `data.model_fields_set` to tell an omitted field apart from one explicitly set to `None`. For example, the Admin UI sends `duration: null` when a key is edited to "Never expires", which the function below rejects.
 
 ```python
-from litellm.proxy._types import UpdateKeyRequest
+from lumina.proxy._types import UpdateKeyRequest
 
 
 async def custom_update_key_fn(data: UpdateKeyRequest) -> dict:
@@ -571,7 +571,7 @@ async def custom_update_key_fn(data: UpdateKeyRequest) -> dict:
     if "duration" in data.model_fields_set and data.duration is None:
         return {
             "decision": False,
-            "message": "This violates LiteLLM Proxy Rules. Keys must keep an expiration date.",
+            "message": "This violates Lumina Proxy Rules. Keys must keep an expiration date.",
         }
     return {"decision": True}
 ```
@@ -607,7 +607,7 @@ async def custom_key_policy_fn(policy_request) -> dict:
     if expires is None or expires > datetime.now(timezone.utc) + MAX_KEY_LIFETIME:
         return {
             "decision": False,
-            "message": f"This violates LiteLLM Proxy Rules. Keys must expire within {MAX_KEY_LIFETIME.days} days.",
+            "message": f"This violates Lumina Proxy Rules. Keys must expire within {MAX_KEY_LIFETIME.days} days.",
         }
     return {"decision": True}
 ```
@@ -632,10 +632,10 @@ general_settings:
 
 ### Enforce a key_alias naming pattern
 
-Set `litellm_settings.key_alias_pattern` to a regex and every `key_alias` sent to `/key/generate`, `/key/service-account/generate`, `/key/update`, and `/key/{key}/regenerate` has to match it, which covers the Admin UI create, edit, and regenerate key flows. The whole alias has to match (Python `re.fullmatch`), so `team-[a-z]+` accepts `team-search` and rejects `team-search-2`. Aliases are capped at 255 characters before the pattern runs, so a pattern that backtracks badly never sees an unbounded alias
+Set `lumina_settings.key_alias_pattern` to a regex and every `key_alias` sent to `/key/generate`, `/key/service-account/generate`, `/key/update`, and `/key/{key}/regenerate` has to match it, which covers the Admin UI create, edit, and regenerate key flows. The whole alias has to match (Python `re.fullmatch`), so `team-[a-z]+` accepts `team-search` and rejects `team-search-2`. Aliases are capped at 255 characters before the pattern runs, so a pattern that backtracks badly never sees an unbounded alias
 
 ```yaml
-litellm_settings:
+lumina_settings:
   key_alias_pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
 ```
 
@@ -652,14 +652,14 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 {"error": {"message": "Invalid key_alias format. Must be at most 255 characters and match the configured key_alias_pattern: ^[a-z0-9]+(-[a-z0-9]+)*$", "type": "bad_request_error", "param": "key_alias", "code": "400"}}
 ```
 
-`key_alias_pattern` replaces the built-in rule that `enable_key_alias_format_validation` turns on, so set one or the other. An update or regenerate that leaves `key_alias` unchanged is not checked, so keys named before the pattern was configured can still be edited, and the pattern applies the moment the alias changes. Path traversal and control characters in an alias are rejected whatever the pattern allows. A pattern that does not compile fails proxy startup with `Invalid regex set for litellm_settings.key_alias_pattern`
+`key_alias_pattern` replaces the built-in rule that `enable_key_alias_format_validation` turns on, so set one or the other. An update or regenerate that leaves `key_alias` unchanged is not checked, so keys named before the pattern was configured can still be edited, and the pattern applies the moment the alias changes. Path traversal and control characters in an alias are rejected whatever the pattern allows. A pattern that does not compile fails proxy startup with `Invalid regex set for lumina_settings.key_alias_pattern`
 
 ### Upperbound /key/generate params
 Use this, if you need to set default upperbounds for `max_budget`, `budget_duration` or any `key/generate` param per key. 
 
-Set `litellm_settings:upperbound_key_generate_params`:
+Set `lumina_settings:upperbound_key_generate_params`:
 ```yaml
-litellm_settings:
+lumina_settings:
   upperbound_key_generate_params:
     max_budget: 100 # Optional[float], optional): upperbound of $100, for all /key/generate requests
     budget_duration: "10d" # Optional[str], optional): upperbound of 10 days for budget_duration values
@@ -682,9 +682,9 @@ When a `/key/generate` request does not specify `max_budget`, it will use the `m
 
 Every route in this `allowed_routes` list is granted to eligible new keys whatever the owner's role, so list only routes you want those keys to reach. Since the routes come from the proxy admin, a key owner who is not a proxy admin cannot change them later with `/key/update`, which includes picking a different key type for the key in the Admin UI. A proxy admin can, and an owner who needs full access can create a key with the `default` key type. Service account keys from `/key/service-account/generate` do not get this default, so they keep access to `/key/generate` and `/key/update`. The routes are copied into each key when it is created, so changing or removing this default later leaves existing keys with the routes they already have.
 
-Set `litellm_settings:default_key_generate_params`:
+Set `lumina_settings:default_key_generate_params`:
 ```yaml
-litellm_settings:
+lumina_settings:
   default_key_generate_params:
     max_budget: 1.5000
     models: ["azure-gpt-3.5"]
@@ -724,14 +724,14 @@ curl 'http://localhost:4000/key/sk-<virtual-key>/regenerate' \
 
 **Read More**
 
-- [Write rotated keys to secrets manager](https://docs.litellm.ai/docs/secret#aws-secret-manager)
+- [Write rotated keys to secrets manager](https://docs.lumina.ai/docs/secret#aws-secret-manager)
 
-[** API REFERENCE DOCS**](https://docs.litellm.ai/api-reference/#/key%20management/regenerate_key_fn_key__key__regenerate_post)
+[** API REFERENCE DOCS**](https://docs.lumina.ai/api-reference/#/key%20management/regenerate_key_fn_key__key__regenerate_post)
 
 
 ### Scheduled Key Rotations
 
-LiteLLM can rotate **virtual keys automatically** based on time intervals you define.
+Lumina can rotate **virtual keys automatically** based on time intervals you define.
 
 #### Prerequisites
 
@@ -742,9 +742,9 @@ LiteLLM can rotate **virtual keys automatically** based on time intervals you de
 #### How it works
 
 1. When creating a virtual key, set `auto_rotate: true` and `rotation_interval` (duration string)
-2. LiteLLM calculates the next rotation time as `now + rotation_interval` and stores it in the database
+2. Lumina calculates the next rotation time as `now + rotation_interval` and stores it in the database
 3. A background job periodically checks for keys where the rotation time has passed
-4. When a key is due for rotation, LiteLLM automatically regenerates it and invalidates the old key string
+4. When a key is due for rotation, Lumina automatically regenerates it and invalidates the old key string
 5. The new rotation time is calculated and the cycle continues
 
 #### Create a key with auto rotation
@@ -761,9 +761,9 @@ curl 'http://0.0.0.0:4000/key/generate' \
       }'
 ```
 
-**LiteLLM UI**
+**Lumina UI**
 
-On the LiteLLM UI, Navigate to the Keys page and click on `Create New Key` > `Optional Settings` > `Key Lifecycle` > `Auto-Rotation Settings` > `Enable Auto-Rotation`
+On the Lumina UI, Navigate to the Keys page and click on `Create New Key` > `Optional Settings` > `Key Lifecycle` > `Auto-Rotation Settings` > `Enable Auto-Rotation`
 <Image 
   img={require('../../img/key_r.png')}
   dark={require('../../img/key_r_dark.png')}
@@ -793,9 +793,9 @@ curl 'http://0.0.0.0:4000/key/update' \
       }'
 ```
 
-**LiteLLM UI**
+**Lumina UI**
 
-On the LiteLLM UI, Navigate to the Keys page. Select the key you want to update and click on `Edit Settings` > `Auto-Rotation Settings`
+On the Lumina UI, Navigate to the Keys page. Select the key you want to update and click on `Edit Settings` > `Auto-Rotation Settings`
 
 <Image 
   img={require('../../img/key_u.png')}
@@ -820,7 +820,7 @@ export LUMINA_KEY_ROTATION_ENABLED=true
 export LUMINA_KEY_ROTATION_CHECK_INTERVAL_SECONDS=3600  # Check every hour
 export LUMINA_KEY_ROTATION_GRACE_PERIOD=48h  # Keep old key valid for 48h during cutover
 
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### Temporary Budget Increase
@@ -834,7 +834,7 @@ curl -L -X POST 'http://localhost:4000/key/update' \
 -d '{"key": "sk-b3Z3Lqdb_detHXSUp4ol4Q", "temp_budget_increase": 100, "temp_budget_expiry": "2026-10-15"}'
 ```
 
-[API Reference](https://docs.litellm.ai/api-reference/#/key%20management/update_key_fn_key_update_post)
+[API Reference](https://docs.lumina.ai/api-reference/#/key%20management/update_key_fn_key_update_post)
 
 ### Let key owners edit their own key budgets
 
@@ -870,7 +870,7 @@ See [Set multiple budget windows on a key](./users#set-multiple-budget-windows-o
 Use this to control who can generate keys. Useful when letting others create keys on the UI. 
 
 ```yaml
-litellm_settings:
+lumina_settings:
   key_generation_settings:
     team_key_generation:
       allowed_team_member_roles: ["admin"]
@@ -898,11 +898,11 @@ class TeamUIKeyGenerationConfig(TypedDict):
 
 
 class PersonalUIKeyGenerationConfig(TypedDict):
-    allowed_user_roles: List[LitellmUserRoles] 
+    allowed_user_roles: List[LuminaUserRoles] 
     required_params: List[str] # require params on `/key/generate` to be set if a personal key (no team_id in request) is being generated
 
 
-class LitellmUserRoles(str, enum.Enum):
+class LuminaUserRoles(str, enum.Enum):
     """
     Admin Roles:
     PROXY_ADMIN: admin over the platform
@@ -944,21 +944,21 @@ class LitellmUserRoles(str, enum.Enum):
 
 ## **Next Steps - Set Budgets, Rate Limits per Virtual Key**
 
-[Follow this doc to set budgets, rate limiters per virtual key with LiteLLM](users)
+[Follow this doc to set budgets, rate limiters per virtual key with Lumina](users)
 
 ## Endpoint Reference (Spec)
 
 ### Keys 
 
-#### [** API REFERENCE DOCS**](https://docs.litellm.ai/api-reference/#/key%20management/)
+#### [** API REFERENCE DOCS**](https://docs.lumina.ai/api-reference/#/key%20management/)
 
 ### Users
 
-#### [** API REFERENCE DOCS**](https://docs.litellm.ai/api-reference/#/Internal%20User%20management/)
+#### [** API REFERENCE DOCS**](https://docs.lumina.ai/api-reference/#/Internal%20User%20management/)
 
 
 ### Teams
 
-#### [** API REFERENCE DOCS**](https://docs.litellm.ai/api-reference/#/team%20management)
+#### [** API REFERENCE DOCS**](https://docs.lumina.ai/api-reference/#/team%20management)
 
 

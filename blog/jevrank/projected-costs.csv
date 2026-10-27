@@ -1,4 +1,4 @@
-model,method,ndcg_at_10,projected_usd_per_million_queries,cost_source,measurement_origin,litellm_reproduction
+model,method,ndcg_at_10,projected_usd_per_million_queries,cost_source,measurement_origin,lumina_reproduction
 Perplexity Decider v1.2,Multiple choice,0.777,146,Table 8,external_reference_via_openrouter,pending
 TypeSafe Jev 1.14,Per-document,0.776,580,"Table 2, rounded cost × 1,000",external_reference_via_openrouter,pending
 Perplexity Decider Flash v1.2,Multiple choice,0.775,73,Table 8,external_reference_via_openrouter,pending

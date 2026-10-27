@@ -2,7 +2,7 @@ import Image from '@theme/IdealImage';
 
 # Customize UI Logo
 
-Personalize your LiteLLM dashboard by replacing the default logo with your own company branding. You can set a custom logo via the UI or the API.
+Personalize your Lumina dashboard by replacing the default logo with your own company branding. You can set a custom logo via the UI or the API.
 
 ## Via the UI
 
@@ -42,9 +42,9 @@ Select **Copy Image Address** from the context menu to copy the URL.
 
 ![Copy Image Address](https://colony-recorder.s3.amazonaws.com/files/2026-03-13/c25637be-383a-498b-ad11-eb1761d52757/ascreenshot_b237ee800979462189a02c1e1942ebf1_text_export.jpeg)
 
-### 7. Switch Back to LiteLLM
+### 7. Switch Back to Lumina
 
-Navigate back to the LiteLLM UI tab (e.g., press **Cmd + Left** or click the tab).
+Navigate back to the Lumina UI tab (e.g., press **Cmd + Left** or click the tab).
 
 ![Switch Back](https://colony-recorder.s3.amazonaws.com/files/2026-03-13/f0647856-679c-4591-9ff7-7fd3cfbc70b4/ascreenshot_3ce46dae64c94891ac0983f5ed8f085a_text_export.jpeg)
 
@@ -60,15 +60,15 @@ Click **Save Changes** to apply your new logo.
 
 ![Save Changes](https://colony-recorder.s3.amazonaws.com/files/2026-03-13/4baf6494-d146-4600-b6f2-ef667338d580/ascreenshot_722cbcd568ec4267af5122b3958bb248_text_export.jpeg)
 
-Your custom logo will now appear in the LiteLLM dashboard sidebar and login page.
+Your custom logo will now appear in the Lumina dashboard sidebar and login page.
 
 ## Dark Mode Logo
 
-A logo drawn for a light background rarely reads well on a dark one, so you can set a second logo that LiteLLM uses whenever the dashboard is in dark mode. Fill in **Custom Logo URL (dark mode)** on the same UI Theme page, or set `UI_LOGO_PATH_DARK`
+A logo drawn for a light background rarely reads well on a dark one, so you can set a second logo that Lumina uses whenever the dashboard is in dark mode. Fill in **Custom Logo URL (dark mode)** on the same UI Theme page, or set `UI_LOGO_PATH_DARK`
 
-Leaving it empty is a valid choice. Dark mode then reuses whatever you set for the light logo, so your branding still shows rather than reverting to LiteLLM's. The same thing happens if the dark logo is set but cannot be loaded, which means a broken or deleted image never costs you your branding
+Leaving it empty is a valid choice. Dark mode then reuses whatever you set for the light logo, so your branding still shows rather than reverting to Lumina's. The same thing happens if the dark logo is set but cannot be loaded, which means a broken or deleted image never costs you your branding
 
-Setting only the dark logo leaves light mode on the default LiteLLM logo, so set both if you want your own artwork in each theme
+Setting only the dark logo leaves light mode on the default Lumina logo, so set both if you want your own artwork in each theme
 
 ## Via the API
 
@@ -108,7 +108,7 @@ curl -X GET 'http://localhost:4000/get/ui_theme_settings'
 
 ### Reset to Default Logo
 
-Send an empty `logo_url` to restore the default LiteLLM logo:
+Send an empty `logo_url` to restore the default Lumina logo:
 
 ```bash
 curl -X PATCH 'http://localhost:4000/update/ui_theme_settings' \
@@ -124,7 +124,7 @@ curl -X PATCH 'http://localhost:4000/update/ui_theme_settings' \
 You can also set the logo URL in your proxy configuration file:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   ui_theme_config:
     logo_url: "https://example.com/your-company-logo.png"
     logo_url_dark: "https://example.com/your-company-logo-dark.png"  # optional

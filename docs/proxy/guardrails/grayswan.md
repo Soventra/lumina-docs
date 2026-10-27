@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 Use [Gray Swan Cygnal](https://docs.grayswan.ai/cygnal/monitor-requests) to continuously monitor conversations for policy violations, indirect prompt injection (IPI), jailbreak attempts, and other safety risks.
 
-Cygnal returns a `violation` score between `0` and `1` (higher means more likely to violate policy), plus metadata such as violated rule indices, mutation detection, and IPI flags. LiteLLM can automatically block or monitor requests based on this signal.
+Cygnal returns a `violation` score between `0` and `1` (higher means more likely to violate policy), plus metadata such as violated rule indices, mutation detection, and IPI flags. Lumina can automatically block or monitor requests based on this signal.
 
 ---
 
@@ -20,7 +20,7 @@ Cygnal returns a `violation` score between `0` and `1` (higher means more likely
     For new users, please register at this [page](https://hubs.ly/Q03-sX1J0) and we are more than happy to give you an onboarding!
 
 
-2. Configure environment variables for the LiteLLM proxy host:
+2. Configure environment variables for the Lumina proxy host:
 
     ```bash
     export GRAYSWAN_API_KEY="your-grayswan-key"
@@ -32,7 +32,7 @@ Cygnal returns a `violation` score between `0` and `1` (higher means more likely
 Add a guardrail entry that references the Gray Swan integration. Below is our recommended settings.
 
 ```yaml
-model_list:                                 # this part is a standard litellm configuration for reference
+model_list:                                 # this part is a standard lumina configuration for reference
   - model_name: openai/{{openai_small}}
     lumina_params:
       model: openai/{{openai_small}}
@@ -56,16 +56,16 @@ guardrails:
       fail_open: true                         # Defaults to true; set to false to propagate guardrail errors.
 
 general_settings:
-  master_key: "your-litellm-master-key"
+  master_key: "your-lumina-master-key"
 
-litellm_settings:
+lumina_settings:
   set_verbose: true
 ```
 
 ### 3. Launch the Proxy
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ---
@@ -92,11 +92,11 @@ When using `during_call` with `on_flagged_action: block` or `on_flagged_action: 
 
 ### What Cygnal receives on `post_call`
 
-On `post_call`, LiteLLM sends Cygnal the request conversation followed by the model's answer, so Cygnal can tell whether the answer, and any tool call in it, is justified by what came before. The answer includes its tool calls, and the request's `tools` definitions are sent alongside the messages. This means a `post_call`-only setup also sends the user's prompts and tool results for that request to Gray Swan
+On `post_call`, Lumina sends Cygnal the request conversation followed by the model's answer, so Cygnal can tell whether the answer, and any tool call in it, is justified by what came before. The answer includes its tool calls, and the request's `tools` definitions are sent alongside the messages. This means a `post_call`-only setup also sends the user's prompts and tool results for that request to Gray Swan
 
 Answers that contain only tool calls are scanned too. With `on_flagged_action: block` a flagged tool call returns 400 instead of reaching the client, and with `fail_open: false` a Cygnal error fails the request the same way it does for a text answer
 
-The [skip flags](./quick_start#skip-system-messages-in-guardrail-evaluation) limit what is sent. `skip_system_message_in_guardrail` and `skip_tool_message_in_guardrail` drop those messages from the conversation, and `scan_only_tool_results` keeps only tool results and leaves out the request `tools`. The model's answer is always sent. If LiteLLM cannot read the conversation for an endpoint, Cygnal receives the answer alone
+The [skip flags](./quick_start#skip-system-messages-in-guardrail-evaluation) limit what is sent. `skip_system_message_in_guardrail` and `skip_tool_message_in_guardrail` drop those messages from the conversation, and `scan_only_tool_results` keeps only tool results and leaves out the request `tools`. The model's answer is always sent. If Lumina cannot read the conversation for an endpoint, Cygnal receives the answer alone
 
 With streaming and no `streaming_end_of_stream_only`, each sampled chunk check carries the same conversation, so set `streaming_end_of_stream_only: true` to send it once per response
 
@@ -104,13 +104,13 @@ With streaming and no `streaming_end_of_stream_only`, each sampled chunk check c
 
 ## Work with Claude Code
 
-Follow the official litellm [guide](https://docs.litellm.ai/docs/tutorials/claude_responses_api) on setting up Claude Code with litellm, with the guardrail part mentioned above added to your litellm configuration. Cygnal natively supports coding agent policies defense. Define your own policy or use the provided coding policies on the platform. The example config we show above is also the recommended setup for Claude Code (with the `policy_id` replaced with an appropriate one).
+Follow the official lumina [guide](https://docs.lumina.ai/docs/tutorials/claude_responses_api) on setting up Claude Code with lumina, with the guardrail part mentioned above added to your lumina configuration. Cygnal natively supports coding agent policies defense. Define your own policy or use the provided coding policies on the platform. The example config we show above is also the recommended setup for Claude Code (with the `policy_id` replaced with an appropriate one).
 
 ---
 
 ## Per-request overrides via `extra_body`
 
-You can override parts of the Gray Swan guardrail configuration on a per-request basis by passing `litellm_metadata.guardrails[*].grayswan.extra_body`.
+You can override parts of the Gray Swan guardrail configuration on a per-request basis by passing `lumina_metadata.guardrails[*].grayswan.extra_body`.
 
 `extra_body` is merged into the Cygnal request body and takes precedence over specific fields from `config.yaml`, which are `policy_id`, `violation_threshold`, and `reasoning_mode`.
 
@@ -125,7 +125,7 @@ curl -X POST "http://0.0.0.0:4000/v1/messages?beta=true" \
   -d '{
     "model": "openrouter/anthropic/{{anthropic}}",
     "messages": [{"role": "user", "content": "hello"}],
-    "litellm_metadata": {
+    "lumina_metadata": {
       "guardrails": [
         {
           "cygnal-monitor": {
@@ -153,7 +153,7 @@ resp = client.responses.create(
     model="openrouter/anthropic/{{anthropic}}",
     input="hello",
     extra_body={
-        "litellm_metadata": {
+        "lumina_metadata": {
             "guardrails": [
                 {
                     "cygnal-monitor": {
@@ -181,7 +181,7 @@ resp = client.messages.create(
     max_tokens=256,
     messages=[{"role": "user", "content": "hello"}],
     extra_body={
-        "litellm_metadata": {
+        "lumina_metadata": {
             "guardrails": [
                 {
                     "cygnal-monitor": {

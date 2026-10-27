@@ -1,15 +1,15 @@
 # Vector Stores - Overview
 
-LiteLLM has three distinct ways to work with vector stores. They are separate APIs with separate endpoints, and knowing which one you need saves a lot of confusion:
+Lumina has three distinct ways to work with vector stores. They are separate APIs with separate endpoints, and knowing which one you need saves a lot of confusion:
 
-1. **LiteLLM Managed Vector Stores**: you already have a vector store on a provider (a Bedrock Knowledge Base, a Vertex AI Search datastore, an Azure AI Search index, ...). You register it with LiteLLM once, and LiteLLM stores the provider, credentials, and id mapping. Every key on the proxy can then query it through one OpenAI-compatible endpoint, or attach it to `/chat/completions` and `/v1/responses` requests for RAG. Registration happens in `config.yaml`, over the [management API](./managed_vector_stores.md) (`POST /vector_store/new`), or in the Admin UI.
+1. **Lumina Managed Vector Stores**: you already have a vector store on a provider (a Bedrock Knowledge Base, a Vertex AI Search datastore, an Azure AI Search index, ...). You register it with Lumina once, and Lumina stores the provider, credentials, and id mapping. Every key on the proxy can then query it through one OpenAI-compatible endpoint, or attach it to `/chat/completions` and `/v1/responses` requests for RAG. Registration happens in `config.yaml`, over the [management API](./managed_vector_stores.md) (`POST /vector_store/new`), or in the Admin UI.
 
-2. **OpenAI-compatible vector store API**: create and manage vector stores *on the provider itself* through LiteLLM, using the OpenAI API shape. `POST /v1/vector_stores` creates a new store upstream, `/v1/vector_stores/{id}/files` manages its files, and `/rag/ingest` wraps upload, chunking, embedding, and store creation in one call.
+2. **OpenAI-compatible vector store API**: create and manage vector stores *on the provider itself* through Lumina, using the OpenAI API shape. `POST /v1/vector_stores` creates a new store upstream, `/v1/vector_stores/{id}/files` manages its files, and `/rag/ingest` wraps upload, chunking, embedding, and store creation in one call.
 
 3. **Pass-through provider APIs**: call the provider's native API (native request and response shapes) through the proxy, for example `/vertex_ai/discovery/...` or `/bedrock/knowledgebases/...`. Use this when you need provider features the unified API does not expose.
 
 :::info[Terminology]
-A **managed vector store** in LiteLLM is a *registration*, not a new store: LiteLLM saves which provider a store lives on and how to authenticate to it, so requests can reference it by id. Nothing is created on the provider. Older docs call this concept a "knowledge base"; it is the same thing.
+A **managed vector store** in Lumina is a *registration*, not a new store: Lumina saves which provider a store lives on and how to authenticate to it, so requests can reference it by id. Nothing is created on the provider. Older docs call this concept a "knowledge base"; it is the same thing.
 :::
 
 ## Which endpoint do I need?
@@ -25,7 +25,7 @@ A **managed vector store** in LiteLLM is a *registration*, not a new store: Lite
 | Manage the files inside a store | `/v1/vector_stores/{id}/files` | [Files](../vector_store_files.md) |
 | Call the provider's native API directly | Pass-through routes | [Vertex AI Search](../pass_through/vertex_ai_search_datastores.md), [Azure AI (passthrough)](../providers/azure_ai/azure_ai_vector_stores_passthrough.md) |
 
-Note the two similarly named create endpoints. `POST /v1/vector_stores` (plural) creates a new store **on the provider**. `POST /vector_store/new` (singular) registers an **existing** store with LiteLLM. See [Managed Vector Stores](./managed_vector_stores.md) for the full management API.
+Note the two similarly named create endpoints. `POST /v1/vector_stores` (plural) creates a new store **on the provider**. `POST /vector_store/new` (singular) registers an **existing** store with Lumina. See [Managed Vector Stores](./managed_vector_stores.md) for the full management API.
 
 ## Provider support
 
@@ -42,7 +42,7 @@ Support for the unified endpoints varies by provider. `Search` is `POST /v1/vect
 | `gemini` (File Search) | Yes | Yes | [Setup](../providers/gemini_file_search.md) |
 | `milvus` | Yes | No | Searches an existing collection, [setup](../providers/milvus_vector_stores.md) |
 | `mongodb` (BETA) | Yes | No | Searches existing MongoDB Vector Search indexes on Atlas or self-managed deployments. [Setup](../providers/mongodb_vector_stores.md), [chat completions](../providers/mongodb_vector_stores.md#use-mongodb-in-chat-completions), [worked example](../tutorials/mongodb_vector_search.md) |
-| `pg_vector` | Yes | Yes | Requires the [litellm-pgvector](../completion/knowledgebase.md) connector |
+| `pg_vector` | Yes | Yes | Requires the [lumina-pgvector](../completion/knowledgebase.md) connector |
 | `s3_vectors` | Yes | No | Create via [/rag/ingest](../rag_ingest.md), [Setup](../providers/s3_vectors.md) |
 | `valkey` | Yes | No | Searches an existing valkey-search index, [setup](../providers/valkey_vector_stores.md) |
 | `ragflow` | No | Yes | Dataset management only, [setup](../providers/ragflow_vector_store.md) |

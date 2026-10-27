@@ -14,14 +14,14 @@ os.environ['DEEPSEEK_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DEEPSEEK_API_KEY'] = ""
 response = completion(
     model="deepseek/deepseek-chat", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -29,14 +29,14 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DEEPSEEK_API_KEY'] = ""
 response = completion(
     model="deepseek/deepseek-chat", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )
@@ -70,7 +70,7 @@ Enable thinking mode for DeepSeek reasoner models using `thinking` or `reasoning
 <TabItem value="thinking" label="thinking param">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DEEPSEEK_API_KEY'] = ""
@@ -88,7 +88,7 @@ print(resp.choices[0].message.content)  # Final answer
 <TabItem value="reasoning_effort" label="reasoning_effort param">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DEEPSEEK_API_KEY'] = ""
@@ -115,7 +115,7 @@ DeepSeek only supports `{"type": "enabled"}` - unlike Anthropic, it doesn't supp
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DEEPSEEK_API_KEY'] = ""
@@ -145,7 +145,7 @@ model_list:
 2. Run proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -185,4 +185,4 @@ DeepSeek bills half its listed rate outside its peak hours. Peak hours are 01:00
 | deepseek-v4-pro | Peak | $1.32 | $3.96 | $0.044 |
 | deepseek-v4-pro | Off-peak | $0.66 | $1.98 | $0.022 |
 
-LiteLLM's cost tracking applies the off-peak rate automatically. The built-in cost map entries for these models carry the schedule above, and each request is priced from the UTC time and weekday it completes at, so tracked spend matches the DeepSeek invoice with no extra configuration. Chinese public holidays are not modeled, so on those days peak hours bill at the peak rate, a small overestimate. The legacy `deepseek-v4-flash` and `deepseek-v4-flash-vision-exp` names are served by DeepSeek-V4.1-Flash and billed at the Flash rate, off-peak included. To change the schedule or rates, or to set one on another deployment, see [Off-Peak Pricing](../proxy/off_peak_pricing)
+Lumina's cost tracking applies the off-peak rate automatically. The built-in cost map entries for these models carry the schedule above, and each request is priced from the UTC time and weekday it completes at, so tracked spend matches the DeepSeek invoice with no extra configuration. Chinese public holidays are not modeled, so on those days peak hours bill at the peak rate, a small overestimate. The legacy `deepseek-v4-flash` and `deepseek-v4-flash-vision-exp` names are served by DeepSeek-V4.1-Flash and billed at the Flash rate, off-peak included. To change the schedule or rates, or to set one on another deployment, see [Off-Peak Pricing](../proxy/off_peak_pricing)

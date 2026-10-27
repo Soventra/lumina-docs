@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 # MCP Guardrails
 
-LiteLLM supports applying guardrails to MCP tool calls to ensure security and compliance. You can configure guardrails to run before, during, or after MCP calls to validate tool inputs and tool results and block or mask sensitive information.
+Lumina supports applying guardrails to MCP tool calls to ensure security and compliance. You can configure guardrails to run before, during, or after MCP calls to validate tool inputs and tool results and block or mask sensitive information.
 
 ### Supported MCP Guardrail Modes
 
@@ -49,15 +49,15 @@ guardrails:
       default_on: true
 ```
 
-For custom guardrails, implement `apply_guardrail` on your `CustomGuardrail` subclass. LiteLLM calls it with `input_type="response"` and the tool result's text values. If you override `get_supported_event_hooks`, include `post_mcp_call` in the list. An unsupported mode causes initialization to log an error and skip that guardrail while the proxy continues starting. Check the startup logs to confirm registration.
+For custom guardrails, implement `apply_guardrail` on your `CustomGuardrail` subclass. Lumina calls it with `input_type="response"` and the tool result's text values. If you override `get_supported_event_hooks`, include `post_mcp_call` in the list. An unsupported mode causes initialization to log an error and skip that guardrail while the proxy continues starting. Check the startup logs to confirm registration.
 
 On `/mcp`, a blocked result is returned as an MCP tool error (`result.isError: true`), which can arrive with HTTP 200. For `/v1/responses` MCP auto-execution, the model receives a tool error instead of the blocked content and can continue generating a response. A guardrail block does not by itself make the overall Responses request return HTTP 400.
 
-PANW support requires a LiteLLM version containing [the integration fix](https://github.com/BerriAI/litellm/pull/43109).
+PANW support requires a Lumina version containing [the integration fix](https://github.com/Soventra/lumina/pull/43109).
 
 ### Scanning Tool Descriptions on Discovery
 
-A `pre_mcp_call` guardrail also runs on every tool an upstream server returns from `tools/list`, before the gateway serves the listing. What the guardrail sees on that pass is the tool's description plus every `description` inside its input schema; at call time it sees the arguments, as before. The scan covers `tools/list` over `/mcp` and `/{server_name}/mcp`, `GET /mcp-rest/tools/list`, and the discovery a `/v1/responses` or `/v1/chat/completions` request runs with `server_url: "litellm_proxy"`
+A `pre_mcp_call` guardrail also runs on every tool an upstream server returns from `tools/list`, before the gateway serves the listing. What the guardrail sees on that pass is the tool's description plus every `description` inside its input schema; at call time it sees the arguments, as before. The scan covers `tools/list` over `/mcp` and `/{server_name}/mcp`, `GET /mcp-rest/tools/list`, and the discovery a `/v1/responses` or `/v1/chat/completions` request runs with `server_url: "lumina_proxy"`
 
 - A tool whose description the guardrail blocks is left out of the listing, so no model ever reads it
 - A tool whose description the guardrail masks is listed with the masked text
@@ -74,7 +74,7 @@ mcp_servers:
 guardrails:
   - guardrail_name: mcp-injection-filter
     lumina_params:
-      guardrail: litellm_content_filter
+      guardrail: lumina_content_filter
       mode: pre_mcp_call
       default_on: true
       categories:
@@ -142,14 +142,14 @@ response = client.chat.completions.create(
     messages=[
         {"role": "user", "content": "Send an email to 555-123-4567 with my SSN 123-45-6789"}
     ],
-    tools=[{"type": "mcp", "server_label": "litellm", "server_url": "litellm_proxy"}],
+    tools=[{"type": "mcp", "server_label": "lumina", "server_url": "lumina_proxy"}],
     extra_body={"guardrails": ["mcp-input-validation"]},
 )
 ```
 
 ### Supported Guardrail Providers
 
-MCP guardrails work with all LiteLLM-supported guardrail providers:
+MCP guardrails work with all Lumina-supported guardrail providers:
 
 - **Presidio**: PII detection and masking
 - **Bedrock**: AWS Bedrock guardrails

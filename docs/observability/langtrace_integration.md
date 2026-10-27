@@ -6,17 +6,17 @@ import TabItem from '@theme/TabItem';
 Open-source observability and evaluations for LLM applications, at [langtrace.ai](https://langtrace.ai/).
 
 :::info
-We want to learn how we can make the callbacks better! Meet the LiteLLM [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version) or
+We want to learn how we can make the callbacks better! Meet the Lumina [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version) or
 join our [discord](https://discord.gg/wuPM9dRgDw)
 :::
 
 ## Pre-Requisites
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
-Langtrace ingests OTLP at a custom path (`/api/trace`) with an `x-api-key` header, whereas OpenTelemetry v2 exports to `/v1/traces` with no Langtrace credentials. With `LUMINA_OTEL_V2=true`, run an OpenTelemetry Collector between them: litellm exports to the collector, and the collector forwards the spans to Langtrace with your key. The `langtrace` preset applies Langtrace's attribute schema; the collector only handles delivery, which is why `LANGTRACE_API_KEY` lives in the collector's environment rather than the proxy's
+Langtrace ingests OTLP at a custom path (`/api/trace`) with an `x-api-key` header, whereas OpenTelemetry v2 exports to `/v1/traces` with no Langtrace credentials. With `LUMINA_OTEL_V2=true`, run an OpenTelemetry Collector between them: lumina exports to the collector, and the collector forwards the spans to Langtrace with your key. The `langtrace` preset applies Langtrace's attribute schema; the collector only handles delivery, which is why `LANGTRACE_API_KEY` lives in the collector's environment rather than the proxy's
 
 Without `LUMINA_OTEL_V2`, the `langtrace` callback posts directly to `https://app.langtrace.ai/api/trace` with `LANGTRACE_API_KEY` set on the proxy as the `x-api-key` header, no collector needed. Set `LANGTRACE_API_HOST` to the base URL of a self-hosted Langtrace (for example `https://langtrace.example.com`) and the callback posts to `<host>/api/trace`. See the [proxy logging guide](../proxy/logging#langtrace) for that setup
 
@@ -26,7 +26,7 @@ Without `LUMINA_OTEL_V2`, the `langtrace` callback posts directly to `https://ap
 <TabItem value="python" label="SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["LUMINA_OTEL_V2"] = "true"
@@ -34,11 +34,11 @@ os.environ["OTEL_ENDPOINT"] = "http://otel-collector:4318"
 # LLM API Keys
 os.environ["OPENAI_API_KEY"] = ""
 
-# set langtrace as a callback, litellm will send the data to langtrace
-litellm.callbacks = ["langtrace"]
+# set langtrace as a callback, lumina will send the data to langtrace
+lumina.callbacks = ["langtrace"]
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_large}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -47,7 +47,7 @@ response = litellm.completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -58,11 +58,11 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["langtrace"]
 ```
 
-2. Point litellm at your collector
+2. Point lumina at your collector
 
 ```shell
 LUMINA_OTEL_V2=true
@@ -94,10 +94,10 @@ service:
       exporters: [otlphttp/langtrace]
 ```
 
-4. Start LiteLLM Proxy
+4. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 5. Test it!
@@ -126,7 +126,7 @@ Open the Langtrace UI; the spans flow through your collector carrying the `langt
 
 The `langtrace` mapper adds `langtrace.service.name` for the provider, request and response identifiers (`llm.model`, `gen_ai.response.model`, `gen_ai.response_id`, `gen_ai.system_fingerprint`), the request params (`llm.temperature`, `top_p`, `top_k`, `max_tokens`, `frequency_penalty`, `presence_penalty`), the `llm.stream` flag, the `llm.token.counts.*` usage split, and `llm.prompts` / `llm.completions` when content capture is on. See the [full attribute table](./opentelemetry_v2#seeing-your-traces).
 
-![LiteLLM trace in Langtrace](/img/observability/otel_v2_langtrace.png)
+![Lumina trace in Langtrace](/img/observability/otel_v2_langtrace.png)
 
 ## Full OpenTelemetry reference
 
@@ -134,6 +134,6 @@ This page covers the Langtrace-specific setup. For span attributes, prompt and r
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

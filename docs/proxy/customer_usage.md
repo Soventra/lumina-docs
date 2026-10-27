@@ -54,15 +54,15 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 You can also pass the customer ID via HTTP headers. This is useful for tools that support custom headers but don't allow modifying the request body (like Claude Code with `ANTHROPIC_CUSTOM_HEADERS`).
 
-LiteLLM automatically recognizes these standard headers (no configuration required):
-- `x-litellm-customer-id`
-- `x-litellm-end-user-id`
+Lumina automatically recognizes these standard headers (no configuration required):
+- `x-lumina-customer-id`
+- `x-lumina-end-user-id`
 
 ```bash showLineNumbers title="Track spend with customer ID in header"
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   --header 'Content-Type: application/json' \
   --header "Authorization: Bearer $LUMINA_API_KEY" \
-  --header 'x-litellm-customer-id: customer-123' \
+  --header 'x-lumina-customer-id: customer-123' \
   --data '{
     "model": "{{openai_small}}",
     "messages": [
@@ -81,7 +81,7 @@ Claude Code supports custom headers via the `ANTHROPIC_CUSTOM_HEADERS` environme
 ```bash title="Configure Claude Code with customer tracking"
 export ANTHROPIC_BASE_URL="http://0.0.0.0:4000/v1/messages"
 export ANTHROPIC_API_KEY="sk-<your-api-key>"
-export ANTHROPIC_CUSTOM_HEADERS="x-litellm-customer-id: my-customer-id"
+export ANTHROPIC_CUSTOM_HEADERS="x-lumina-customer-id: my-customer-id"
 ```
 
 Now all requests from Claude Code will automatically track spend under `my-customer-id`.
@@ -93,7 +93,7 @@ The customer ID will be automatically upserted into the database with the new sp
 
 ### Example using OpenWebUI
 
-See the [Open WebUI tutorial](../tutorials/openweb_ui.md) for detailed instructions on connecting Open WebUI to LiteLLM and tracking customer usage.
+See the [Open WebUI tutorial](../tutorials/openweb_ui.md) for detailed instructions on connecting Open WebUI to Lumina and tracking customer usage.
 
 ## How to View Spend
 

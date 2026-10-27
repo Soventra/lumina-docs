@@ -1,12 +1,12 @@
 ---
-title: Using with LiteLLM AI Gateway
+title: Using with Lumina AI Gateway
 sidebar_label: Using with AI Gateway
-description: Run agents with litellm.agent() against one LiteLLM AI Gateway virtual key, pick the right harness for each job, and track spend per harness.
+description: Run agents with lumina.agent() against one Lumina AI Gateway virtual key, pick the right harness for each job, and track spend per harness.
 ---
 
-# Using with LiteLLM AI Gateway
+# Using with Lumina AI Gateway
 
-The recommended way to run an agent with `litellm.agent()` is against a [LiteLLM AI Gateway](/docs/proxy/docker_quick_start). Claude Code, Codex, OpenCode, Deep Agents and Tool Loop use different model APIs and ways to pass credentials. With the gateway they share one virtual key, the same model groups and fallbacks, and every call lands in the gateway's spend logs tagged with the harness that made it
+The recommended way to run an agent with `lumina.agent()` is against a [Lumina AI Gateway](/docs/proxy/docker_quick_start). Claude Code, Codex, OpenCode, Deep Agents and Tool Loop use different model APIs and ways to pass credentials. With the gateway they share one virtual key, the same model groups and fallbacks, and every call lands in the gateway's spend logs tagged with the harness that made it
 
 The CLI runtimes only see a per-session token for a local endpoint on your host, and that endpoint adds your virtual key when it forwards to the gateway. Deep Agents and Tool Loop call the gateway from your Python process with the virtual key. Provider keys live on the gateway and never reach your machine
 
@@ -15,7 +15,7 @@ The CLI runtimes only see a per-session token for a local endpoint on your host,
 ```mermaid
 flowchart LR
     R[Claude Code / Codex / OpenCode<br/>in sandbox] -->|session token| E[local endpoint<br/>on host]
-    E -->|virtual key<br/>x-litellm-tags: harness,codex| G[LiteLLM AI Gateway]
+    E -->|virtual key<br/>x-lumina-tags: harness,codex| G[Lumina AI Gateway]
     D[Deep Agents<br/>in your process] -->|virtual key| G
     T[Tool Loop<br/>in your process] -->|virtual key| G
     G --> P1[Anthropic]
@@ -23,7 +23,7 @@ flowchart LR
     G --> P3[OpenAI]
 ```
 
-Every forwarded request carries `x-litellm-tags: harness,<name>` (see [request tags](/docs/proxy/request_tags)), where `<name>` is `claude_code`, `codex`, `opencode`, `deepagents` or `tool_loop`, and your `metadata=` is sent as `x-litellm-spend-logs-metadata`. The `model` in each request is rewritten to the model group you passed, so a runtime's own default model name never reaches the gateway
+Every forwarded request carries `x-lumina-tags: harness,<name>` (see [request tags](/docs/proxy/request_tags)), where `<name>` is `claude_code`, `codex`, `opencode`, `deepagents` or `tool_loop`, and your `metadata=` is sent as `x-lumina-spend-logs-metadata`. The `model` in each request is rewritten to the model group you passed, so a runtime's own default model name never reaches the gateway
 
 ## 1. Configure the gateway
 
@@ -64,7 +64,7 @@ general_settings:
 ```
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 The gateway exposes every group on `/v1/messages`, `/v1/responses` and `/v1/chat/completions`, and translates between formats when a harness calls a group from another provider. A database is needed for virtual keys and spend logs.
@@ -80,9 +80,9 @@ curl -X POST http://localhost:4000/key/generate \
 
 The response contains a `key` starting with `sk-`. The key can only call the groups in `models`, and stops working once it has spent `max_budget` dollars. See [Virtual keys](/docs/proxy/virtual_keys) for rate limits and team keys.
 
-## 3. Point litellm.agent() at it
+## 3. Point lumina.agent() at it
 
-Gateway calls follow the same convention as `litellm.completion`: prefix the model group with `litellm_proxy/` and set the gateway's address and key.
+Gateway calls follow the same convention as `lumina.completion`: prefix the model group with `lumina_proxy/` and set the gateway's address and key.
 
 ```bash
 export LUMINA_PROXY_API_BASE=http://localhost:4000
@@ -90,18 +90,18 @@ export LUMINA_PROXY_API_KEY=sk-...
 ```
 
 ```python
-import litellm
-from litellm import Harness, sandbox
+import lumina
+from lumina import Harness, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.CLAUDE_CODE,
     "Find why tests/test_router.py is flaky and fix it.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/claude",
+    model="lumina_proxy/claude",
 )
 ```
 
-You can pass `api_base=` and `api_key=` on the call instead of using the environment. `api_base` is the gateway root, without `/v1`. Setting `litellm.use_litellm_proxy = True` sends every call through the gateway, even without the prefix. A model without the prefix is otherwise called directly through the LiteLLM SDK (see [Without a gateway](#without-a-gateway)).
+You can pass `api_base=` and `api_key=` on the call instead of using the environment. `api_base` is the gateway root, without `/v1`. Setting `lumina.use_lumina_proxy = True` sends every call through the gateway, even without the prefix. A model without the prefix is otherwise called directly through the Lumina SDK (see [Without a gateway](#without-a-gateway)).
 
 ## 4. Choosing a harness
 
@@ -112,8 +112,8 @@ All five harnesses take the same call, but they are good at different jobs and u
 | Claude Code | `/v1/messages` | Claude (Anthropic, Bedrock or Vertex) | long, multi-file changes in a real repo |
 | Codex | `/v1/responses` | OpenAI reasoning model | hard, well-specified tasks where reasoning depth pays off |
 | OpenCode | `/v1/chat/completions` | any | running a coding agent on non-Claude or self-hosted models |
-| Deep Agents | `/v1/chat/completions` via `litellm_proxy/` | any | agents that call your own Python functions |
-| Tool Loop | `/v1/chat/completions` via `litellm_proxy/` | any tool-calling model | a minimal loop around your own Python functions |
+| Deep Agents | `/v1/chat/completions` via `lumina_proxy/` | any | agents that call your own Python functions |
+| Tool Loop | `/v1/chat/completions` via `lumina_proxy/` | any tool-calling model | a minimal loop around your own Python functions |
 
 ### Claude Code
 
@@ -122,11 +122,11 @@ Claude Code is the most capable general coding agent of the CLI harnesses. It pl
 Its prompts are written for Claude, so point it at a Claude group. Bedrock and Vertex Claude behave the same as Anthropic direct; other models work through gateway translation but lose quality. Use `permissions="edit"` on your laptop, or `"full"` inside `sandbox.docker` when it needs to install packages and run the suite.
 
 ```python
-litellm.agent(
+lumina.agent(
     Harness.CLAUDE_CODE,
     "Fix the flaky test in tests/test_router.py without editing the test.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/claude",
+    model="lumina_proxy/claude",
     permissions="edit",
 )
 ```
@@ -138,11 +138,11 @@ Codex is strongest on self-contained, well-specified problems where a reasoning 
 It speaks the Responses API, so the best fit is an OpenAI group like `gpt`. Other providers work because the gateway translates Responses into their native format, though Codex-specific features such as reasoning summaries may not survive. Codex supports only `"read-only"` and `"full"`, so run changes inside `sandbox.docker`.
 
 ```python
-litellm.agent(
+lumina.agent(
     Harness.CODEX,
     "Upgrade pydantic to v2 and make the test suite pass.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"}),
-    model="litellm_proxy/gpt",
+    model="lumina_proxy/gpt",
     options=CodexOptions(reasoning_effort="high"),
 )
 ```
@@ -154,11 +154,11 @@ OpenCode is a capable coding agent that works with any model. It is the right pi
 It speaks plain Chat Completions, so any group works without translation. `"edit"` is a good default, and OpenCode enforces it through its own permission config.
 
 ```python
-litellm.agent(
+lumina.agent(
     Harness.OPENCODE,
     "Add a /health endpoint with a test.",
     sandbox=sandbox.local("./api"),
-    model="litellm_proxy/gemini",
+    model="lumina_proxy/gemini",
     permissions="edit",
 )
 ```
@@ -167,14 +167,14 @@ litellm.agent(
 
 Deep Agents and Tool Loop both run in your process, call your Python functions and support `s.history()`. Deep Agents also has built-in file and shell tools, which makes it useful when a task combines your internal APIs with sandbox access. It is less polished at pure coding than the CLI agents
 
-It calls the gateway directly with `litellm_proxy/<group>` and never uses the local endpoint, and it works with any group that supports tool calling. Its file and shell tools act on the sandbox; use `"edit"` unless it needs a shell.
+It calls the gateway directly with `lumina_proxy/<group>` and never uses the local endpoint, and it works with any group that supports tool calling. Its file and shell tools act on the sandbox; use `"edit"` unless it needs a shell.
 
 ```python
-litellm.agent(
+lumina.agent(
     Harness.DEEPAGENTS,
     "File a ticket with the right owner for each flaky test.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/claude",
+    model="lumina_proxy/claude",
     tools=[lookup_owner, open_ticket],
     permissions="edit",
 )
@@ -182,14 +182,14 @@ litellm.agent(
 
 ### Tool Loop
 
-Tool Loop is a minimal in-process loop around `litellm.acompletion()`. Use it when your task can be handled by your own Python functions and you don't need built-in file or shell tools
+Tool Loop is a minimal in-process loop around `lumina.acompletion()`. Use it when your task can be handled by your own Python functions and you don't need built-in file or shell tools
 
 ```python
-litellm.agent(
+lumina.agent(
     Harness.TOOL_LOOP,
     "Search the repository and summarize the relevant changes.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
     tools=[search_code, read_file],
 )
 ```
@@ -214,14 +214,14 @@ curl "http://localhost:4000/spend/logs?api_key=sk-...&start_date=2026-09-30&end_
   -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
-Each spend log row has `request_tags` set to `["harness", "codex"]` (or the matching harness) and your `metadata=` under `metadata.spend_logs_metadata`, so you can filter by a run id or a user id you passed in. `result.cost` comes from the gateway's `x-litellm-response-cost` header, so it matches what the gateway records.
+Each spend log row has `request_tags` set to `["harness", "codex"]` (or the matching harness) and your `metadata=` under `metadata.spend_logs_metadata`, so you can filter by a run id or a user id you passed in. `result.cost` comes from the gateway's `x-lumina-response-cost` header, so it matches what the gateway records.
 
 ## Without a gateway
 
-Without the `litellm_proxy/` prefix, the model is called directly through the LiteLLM SDK. Set the usual provider variable on your host and pass a full LiteLLM model string.
+Without the `lumina_proxy/` prefix, the model is called directly through the Lumina SDK. Set the usual provider variable on your host and pass a full Lumina model string.
 
 ```python
-result = litellm.agent(
+result = lumina.agent(
     Harness.CODEX,
     "Add type hints to utils.py",
     sandbox=sandbox.local("./repo"),
@@ -229,4 +229,4 @@ result = litellm.agent(
 )
 ```
 
-CLI harnesses still use the per-session endpoint to keep provider keys on the host. In-process harnesses call the LiteLLM SDK from your Python process. Cost is computed locally from LiteLLM's model cost map. You lose central spend logs, shared keys and gateway-side fallbacks. See [Models and routing](./models.md#sdk-mode) for details
+CLI harnesses still use the per-session endpoint to keep provider keys on the host. In-process harnesses call the Lumina SDK from your Python process. Cost is computed locally from Lumina's model cost map. You lose central spend logs, shared keys and gateway-side fallbacks. See [Models and routing](./models.md#sdk-mode) for details

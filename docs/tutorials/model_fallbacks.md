@@ -1,23 +1,23 @@
 ---
-description: "Implement model fallbacks (provider failover) across OpenAI, Anthropic, and Azure with LiteLLM so a failing provider fails over to a backup."
+description: "Implement model fallbacks (provider failover) across OpenAI, Anthropic, and Azure with Lumina so a failing provider fails over to a backup."
 keywords: [fallbacks, failover, provider failover, model failover, OpenAI, Anthropic, Azure, reliability]
 ---
 
-# Model Fallbacks (Provider Failover) w/ LiteLLM
+# Model Fallbacks (Provider Failover) w/ Lumina
 
-Here's how you can implement model fallbacks (provider failover) across 3 LLM providers (OpenAI, Anthropic, Azure) using LiteLLM. 
+Here's how you can implement model fallbacks (provider failover) across 3 LLM providers (OpenAI, Anthropic, Azure) using Lumina. 
 
-## 1. Install LiteLLM
+## 1. Install Lumina
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ## 2. Basic Fallbacks Code 
 ```python 
 import os
 import traceback
-import litellm
-from litellm import embedding, completion
+import lumina
+from lumina import embedding, completion
 
 # set ENV variables
 os.environ["OPENAI_API_KEY"] = ""
@@ -39,18 +39,18 @@ for model in model_fallback_list:
 ```
 
 ## 3. Context Window Exceptions 
-LiteLLM provides a sub-class of the InvalidRequestError class for Context Window Exceeded errors ([docs](https://docs.litellm.ai/docs/exception_mapping)).
+Lumina provides a sub-class of the InvalidRequestError class for Context Window Exceeded errors ([docs](https://docs.lumina.ai/docs/exception_mapping)).
 
 Implement model fallbacks based on context window exceptions. 
 
-Use `litellm.get_model_info(model)["max_input_tokens"]` to identify the context window limit that's been exceeded. `get_max_tokens()` returns the model's max output tokens, not its context window, so don't compare it against context window sizes. 
+Use `lumina.get_model_info(model)["max_input_tokens"]` to identify the context window limit that's been exceeded. `get_max_tokens()` returns the model's max output tokens, not its context window, so don't compare it against context window sizes. 
 
 The model ids in the fallback list below are illustrative and kept for their context window sizes.
 
 ```python keep-model-ids
 import os
-import litellm
-from litellm import completion, ContextWindowExceededError
+import lumina
+from lumina import completion, ContextWindowExceededError
 
 # set ENV variables
 os.environ["OPENAI_API_KEY"] = ""
@@ -71,7 +71,7 @@ def completion_with_context_window_fallbacks(messages):
     try:
         return completion(model=initial_model, messages=messages)
     except ContextWindowExceededError:
-        exceeded_limit = litellm.get_model_info(initial_model)["max_input_tokens"]
+        exceeded_limit = lumina.get_model_info(initial_model)["max_input_tokens"]
         for fallback in context_window_fallback_list:
             if exceeded_limit < fallback["max_input_tokens"]:
                 try:

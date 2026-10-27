@@ -4,9 +4,9 @@ import TabItem from '@theme/TabItem';
 
 # Open WebUI
 
-Rolling Open WebUI out to a whole company with SSO, IdP groups mapped to LiteLLM teams, skills, and artifacts? See [Open WebUI for Organizations](./openwebui_org_rollout.md).
+Rolling Open WebUI out to a whole company with SSO, IdP groups mapped to Lumina teams, skills, and artifacts? See [Open WebUI for Organizations](./openwebui_org_rollout.md).
 
-This guide walks you through connecting Open WebUI to LiteLLM. Using LiteLLM with Open WebUI allows teams to 
+This guide walks you through connecting Open WebUI to Lumina. Using Lumina with Open WebUI allows teams to 
 - Access 100+ LLMs on Open WebUI
 - Track Spend / Usage, Set Budget Limits 
 - Send Request/Response Logs to logging destinations like langfuse, s3, gcs buckets, etc.
@@ -14,53 +14,53 @@ This guide walks you through connecting Open WebUI to LiteLLM. Using LiteLLM wit
 
 ## Quickstart
 
-- Make sure to setup LiteLLM with the [LiteLLM Quickstart](https://docs.litellm.ai/docs/proxy/docker_quick_start)
+- Make sure to setup Lumina with the [Lumina Quickstart](https://docs.lumina.ai/docs/proxy/docker_quick_start)
 
 
-## 1. Start LiteLLM & Open WebUI
+## 1. Start Lumina & Open WebUI
 
 - Open WebUI starts running on [http://localhost:3000](http://localhost:3000)
-- LiteLLM starts running on [http://localhost:4000](http://localhost:4000)
+- Lumina starts running on [http://localhost:4000](http://localhost:4000)
 
 
-## 2. Create a Virtual Key on LiteLLM
+## 2. Create a Virtual Key on Lumina
 
-Virtual Keys are API Keys that allow you to authenticate to LiteLLM Proxy. We will create a Virtual Key that will allow Open WebUI to access LiteLLM.
+Virtual Keys are API Keys that allow you to authenticate to Lumina Proxy. We will create a Virtual Key that will allow Open WebUI to access Lumina.
 
-### 2.1 LiteLLM User Management Hierarchy
+### 2.1 Lumina User Management Hierarchy
 
-On LiteLLM, you can create Organizations, Teams, Users and Virtual Keys. For this tutorial, we will create a Team and a Virtual Key.
+On Lumina, you can create Organizations, Teams, Users and Virtual Keys. For this tutorial, we will create a Team and a Virtual Key.
 
 - `Organization` - An Organization is a group of Teams. (US Engineering, EU Developer Tools)
 - `Team` - A Team is a group of Users. (Open WebUI Team, Data Science Team, etc.)
-- `User` - A User is an individual user (employee, developer, eg. `krrish@litellm.ai`)
-- `Virtual Key` - A Virtual Key is an API Key that allows you to authenticate to LiteLLM Proxy. A Virtual Key is associated with a User or Team.
+- `User` - A User is an individual user (employee, developer, eg. `krrish@lumina.ai`)
+- `Virtual Key` - A Virtual Key is an API Key that allows you to authenticate to Lumina Proxy. A Virtual Key is associated with a User or Team.
 
-Once the Team is created, you can invite Users to the Team. You can read more about LiteLLM's User Management [here](https://docs.litellm.ai/docs/proxy/user_management_heirarchy).
+Once the Team is created, you can invite Users to the Team. You can read more about Lumina's User Management [here](https://docs.lumina.ai/docs/proxy/user_management_heirarchy).
 
-### 2.2 Create a Team on LiteLLM
+### 2.2 Create a Team on Lumina
 
 Navigate to [http://localhost:4000/ui](http://localhost:4000/ui) and create a new team.
 
-<Image img={require('../../img/litellm_create_team.gif')} />
+<Image img={require('../../img/lumina_create_team.gif')} />
 
-### 2.2 Create a Virtual Key on LiteLLM
+### 2.2 Create a Virtual Key on Lumina
 
 Navigate to [http://localhost:4000/ui](http://localhost:4000/ui) and create a new virtual Key. 
 
-LiteLLM allows you to specify what models are available on Open WebUI (by specifying the models the key will have access to).
+Lumina allows you to specify what models are available on Open WebUI (by specifying the models the key will have access to).
 
 <Image img={require('../../img/create_key_in_team_oweb.gif')} />
 
-## 3. Connect Open WebUI to LiteLLM
+## 3. Connect Open WebUI to Lumina
 
-On Open WebUI, navigate to Settings -> Connections and create a new connection to LiteLLM
+On Open WebUI, navigate to Settings -> Connections and create a new connection to Lumina
 
 Enter the following details:
-- URL: `http://localhost:4000` (your litellm proxy base url)
+- URL: `http://localhost:4000` (your lumina proxy base url)
 - Key: `your-virtual-key` (the key you created in the previous step)
 
-<Image img={require('../../img/litellm_setup_openweb.gif')} />
+<Image img={require('../../img/lumina_setup_openweb.gif')} />
 
 ### 3.1 Test Request
 
@@ -68,17 +68,17 @@ On the top left corner, select models you should only see the models you gave th
 
 Once you selected a model, enter your message content and click on `Submit`
 
-<Image img={require('../../img/basic_litellm.gif')} />
+<Image img={require('../../img/basic_lumina.gif')} />
 
 ### 3.2 Tracking Usage & Spend
 
 #### Basic Tracking
 
-After making requests, navigate to the `Logs` section in the LiteLLM UI to view Model, Usage and Cost information.
+After making requests, navigate to the `Logs` section in the Lumina UI to view Model, Usage and Cost information.
 
 #### Per-User Tracking
 
-To track spend and usage for each Open WebUI user, configure both Open WebUI and LiteLLM:
+To track spend and usage for each Open WebUI user, configure both Open WebUI and Lumina:
 
 1. **Enable User Info Headers in Open WebUI**
    
@@ -89,17 +89,17 @@ To track spend and usage for each Open WebUI user, configure both Open WebUI and
 
   For more details, see the [Environment Variable Configuration Guide](https://docs.openwebui.com/getting-started/env-configuration/#enable_forward_user_info_headers).
 
-2. **Configure LiteLLM to Parse User Headers**
+2. **Configure Lumina to Parse User Headers**
    
-  Add the following to your LiteLLM `config.yaml` to specify the request header mapping for user tracking:
+  Add the following to your Lumina `config.yaml` to specify the request header mapping for user tracking:
 
   ```yaml
   general_settings:
     user_header_mappings:
       - header_name: X-OpenWebUI-User-Id
-        litellm_user_role: internal_user
+        lumina_user_role: internal_user
       - header_name: X-OpenWebUI-User-Email
-        litellm_user_role: customer
+        lumina_user_role: customer
   ```
 
   ⓘ Available tracking options
@@ -115,7 +115,7 @@ To track spend and usage for each Open WebUI user, configure both Open WebUI and
   - Users can modify their own usernames
   - Administrators can modify both usernames and emails of any account
 
-This video walks through on how we can map the openweb ui headers to LiteLLM user roles 
+This video walks through on how we can map the openweb ui headers to Lumina user roles 
 
 <iframe src="https://www.loom.com/embed/a1b6a4635fc0478ba4fd34cae16e2ffd?sid=791c2dcc-7e65-45be-bf7f-27d2601c123e" frameBorder="0" allowFullScreen width="840" height="500"></iframe>
 
@@ -125,9 +125,9 @@ This video walks through on how we can map the openweb ui headers to LiteLLM use
 
 ## Render `thinking` content on Open WebUI
 
-Open WebUI requires reasoning/thinking content to be rendered with `<think></think>` tags. To render this for specific models, you can use the `merge_reasoning_content_in_choices` litellm parameter.
+Open WebUI requires reasoning/thinking content to be rendered with `<think></think>` tags. To render this for specific models, you can use the `merge_reasoning_content_in_choices` lumina parameter.
 
-Example litellm config.yaml:
+Example lumina config.yaml:
 
 ```yaml
 model_list:
@@ -148,11 +148,11 @@ model_list:
 
 On the models dropdown select `thinking-anthropic-claude-sonnet-5`
 
-<Image img={require('../../img/litellm_thinking_openweb.gif')} />
+<Image img={require('../../img/lumina_thinking_openweb.gif')} />
 
 ## Additional Resources
 
-- Running LiteLLM and Open WebUI on Windows Localhost: A Comprehensive Guide [https://www.tanyongsheng.com/note/running-litellm-and-openwebui-on-windows-localhost-a-comprehensive-guide/](https://www.tanyongsheng.com/note/running-litellm-and-openwebui-on-windows-localhost-a-comprehensive-guide/)
+- Running Lumina and Open WebUI on Windows Localhost: A Comprehensive Guide [https://www.tanyongsheng.com/note/running-lumina-and-openwebui-on-windows-localhost-a-comprehensive-guide/](https://www.tanyongsheng.com/note/running-lumina-and-openwebui-on-windows-localhost-a-comprehensive-guide/)
 - [Run Guardrails Based on User-Agent Header](../proxy/guardrails/quick_start#-tag-based-guardrail-modes)
 
 
@@ -161,7 +161,7 @@ On the models dropdown select `thinking-anthropic-claude-sonnet-5`
 You can add custom headers to the request to track spend and usage.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   extra_spend_tag_headers:
     - "x-custom-header"
 ```

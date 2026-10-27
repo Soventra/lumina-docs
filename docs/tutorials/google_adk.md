@@ -3,27 +3,27 @@ import TabItem from '@theme/TabItem';
 import Image from '@theme/IdealImage';
 
 
-# Google ADK with LiteLLM
+# Google ADK with Lumina
 
-Use Google ADK with the LiteLLM Python SDK or the LiteLLM Proxy.
+Use Google ADK with the Lumina Python SDK or the Lumina Proxy.
 
 <Image
-  img={require('../../img/litellm_adk.png')}
+  img={require('../../img/lumina_adk.png')}
   style={{width: '90%', display: 'block', margin: '2rem 0'}}
 />
 
 
-This tutorial shows you how to create intelligent agents using Agent Development Kit (ADK) with support for multiple Large Language Model (LLM) providers with LiteLLM.
+This tutorial shows you how to create intelligent agents using Agent Development Kit (ADK) with support for multiple Large Language Model (LLM) providers with Lumina.
 
 
 
 ## Overview
 
-ADK (Agent Development Kit) allows you to build intelligent agents powered by LLMs. By integrating with LiteLLM, you can:
+ADK (Agent Development Kit) allows you to build intelligent agents powered by LLMs. By integrating with Lumina, you can:
 
 - Use multiple LLM providers (OpenAI, Anthropic, Google, etc.)
 - Switch easily between models from different providers
-- Connect to a LiteLLM proxy for centralized model management
+- Connect to a Lumina proxy for centralized model management
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ ADK (Agent Development Kit) allows you to build intelligent agents powered by LL
 ## Installation
 
 ```bash showLineNumbers title="Install dependencies"
-uv add google-adk litellm
+uv add google-adk lumina
 ```
 
 ## 1. Setting Up Environment
@@ -49,7 +49,7 @@ from google.adk.models.lite_llm import LiteLlm  # For multi-model support
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
 from google.genai import types
-import litellm  # Import for proxy configuration
+import lumina  # Import for proxy configuration
 
 # Set your API keys
 os.environ["GOOGLE_API_KEY"] = "your-google-api-key"  # For Gemini models
@@ -264,30 +264,30 @@ await test_gemini_agent()
 #     asyncio.run(test_gemini_agent())
 ```
 
-## 5. Using LiteLLM Proxy with ADK
+## 5. Using Lumina Proxy with ADK
 
-LiteLLM proxy provides a unified API endpoint for multiple models, simplifying deployment and centralized management.
+Lumina proxy provides a unified API endpoint for multiple models, simplifying deployment and centralized management.
 
-Required settings for using litellm proxy 
+Required settings for using lumina proxy 
 
 | Variable | Description | 
 |----------|-------------|
-| `LUMINA_PROXY_API_KEY` | The API key for the LiteLLM proxy |
-| `LUMINA_PROXY_API_BASE` | The base URL for the LiteLLM proxy |
-| `USE_LUMINA_PROXY` or `litellm.use_litellm_proxy` | When set to True, your request will be sent to litellm proxy. |
+| `LUMINA_PROXY_API_KEY` | The API key for the Lumina proxy |
+| `LUMINA_PROXY_API_BASE` | The base URL for the Lumina proxy |
+| `USE_LUMINA_PROXY` or `lumina.use_lumina_proxy` | When set to True, your request will be sent to lumina proxy. |
 
-```python showLineNumbers title="LiteLLM proxy integration"
-# Set your LiteLLM Proxy credentials as environment variables
-os.environ["LUMINA_PROXY_API_KEY"] = "your-litellm-proxy-api-key"
-os.environ["LUMINA_PROXY_API_BASE"] = "your-litellm-proxy-url"  # e.g., "http://localhost:4000"
-# Enable the use_litellm_proxy flag
-litellm.use_litellm_proxy = True
+```python showLineNumbers title="Lumina proxy integration"
+# Set your Lumina Proxy credentials as environment variables
+os.environ["LUMINA_PROXY_API_KEY"] = "your-lumina-proxy-api-key"
+os.environ["LUMINA_PROXY_API_BASE"] = "your-lumina-proxy-url"  # e.g., "http://localhost:4000"
+# Enable the use_lumina_proxy flag
+lumina.use_lumina_proxy = True
 
 # Create a proxy-enabled agent (using environment variables)
 weather_agent_proxy_env = Agent(
     name="weather_agent_proxy_env",
-    model=LiteLlm(model="{{openai_large}}"), # this will call the `{{openai_large}}` model on LiteLLM proxy
-    description="Provides weather information using a model from LiteLLM proxy.",
+    model=LiteLlm(model="{{openai_large}}"), # this will call the `{{openai_large}}` model on Lumina proxy
+    description="Provides weather information using a model from Lumina proxy.",
     instruction="You are a helpful weather assistant. "
                 "Use the 'get_weather' tool for city weather requests. "
                 "Present information clearly.",

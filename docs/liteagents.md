@@ -13,13 +13,13 @@ liteagents lets you switch between **DeepAgents, Pydantic AI, Claude Agent SDK, 
 liteagents is in beta. This preview installs from a GitHub release wheel because the PyPI name belongs to a different package. The source, the full SDK reference, and the cookbooks are in the [liteagents repository](https://github.com/BerriAI/liteagents).
 :::
 
-[GitHub](https://github.com/BerriAI/liteagents) · [Product page](https://www.litellm.ai/liteagents) · [Introducing LiteAgents](/blog/liteagents-sdk)
+[GitHub](https://github.com/BerriAI/liteagents) · [Product page](https://www.lumina.ai/liteagents) · [Introducing LiteAgents](/blog/liteagents-sdk)
 
 ## How it works
 
-`your app → liteagents → selected harness → LiteLLM → model provider`
+`your app → liteagents → selected harness → Lumina → model provider`
 
-The harness owns the agent loop. liteagents translates shared configuration, tools, and MCP for it, then normalizes the output. LiteLLM's Python SDK handles model-provider translation. Harness-specific controls remain available through `profile.harness_options`.
+The harness owns the agent loop. liteagents translates shared configuration, tools, and MCP for it, then normalizes the output. Lumina's Python SDK handles model-provider translation. Harness-specific controls remain available through `profile.harness_options`.
 
 The streaming and conversation interface is modeled after the Claude Agent SDK, with `query()`, `LiteAgentClient`, `AssistantMessage`, and `TextBlock`. These types come from `liteagents` and work across harnesses.
 
@@ -66,7 +66,7 @@ async def main():
 asyncio.run(main())
 ```
 
-`harness` chooses the agent framework. `model` chooses the model it calls. LiteLLM's Python SDK connects to the provider with your key. In Colab, use `await main()` instead of `asyncio.run(main())`.
+`harness` chooses the agent framework. `model` chooses the model it calls. Lumina's Python SDK connects to the provider with your key. In Colab, use `await main()` instead of `asyncio.run(main())`.
 
 ### 4. Switch the harness
 
@@ -123,7 +123,7 @@ print(result.text)
 
 Regular and `async` functions work. Type hints describe the inputs, and a docstring describes the tool. MCP servers go in `profile.mcp_servers`.
 
-## Use a LiteLLM Gateway
+## Use a Lumina Gateway
 
 If you already use a gateway, set its model alias, endpoint, and key in the profile:
 

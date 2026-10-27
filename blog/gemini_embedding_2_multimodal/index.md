@@ -1,10 +1,10 @@
 ---
 slug: gemini_embedding_2_multimodal
-title: "Gemini Embedding 2 Preview: Multimodal Embeddings on LiteLLM"
+title: "Gemini Embedding 2 Preview: Multimodal Embeddings on Lumina"
 date: 2025-03-11T10:00:00
 authors:
   - sameer
-description: "Generate embeddings from text, images, audio, video, and PDFs with gemini-embedding-2-preview on LiteLLM via Gemini API (one vector per input, OpenAI-compatible) and Vertex AI (single unified vector per request)."
+description: "Generate embeddings from text, images, audio, video, and PDFs with gemini-embedding-2-preview on Lumina via Gemini API (one vector per input, OpenAI-compatible) and Vertex AI (single unified vector per request)."
 tags: [gemini, embeddings, multimodal, vertex ai]
 hide_table_of_contents: false
 ---
@@ -14,11 +14,11 @@ import TabItem from '@theme/TabItem';
 
 # Gemini Embedding 2 Preview: Multimodal Embeddings
 
-LiteLLM now supports **multimodal embeddings** with `gemini-embedding-2-preview`, mixing text, images, audio, video, and PDF content in a single request. Available via both the **Gemini API** (API key) and **Vertex AI** (GCP credentials).
+Lumina now supports **multimodal embeddings** with `gemini-embedding-2-preview`, mixing text, images, audio, video, and PDF content in a single request. Available via both the **Gemini API** (API key) and **Vertex AI** (GCP credentials).
 
 :::info[Response shape differs by provider]
 
-- **Gemini API** (`gemini/...`): each input element returns its own embedding, indexed `0..N-1`, the same shape as OpenAI's `/embeddings`. LiteLLM routes to the [`batchEmbedContents`](https://ai.google.dev/api/embeddings#method:-models.batchembedcontents) endpoint with one `EmbedContentRequest` per input.
+- **Gemini API** (`gemini/...`): each input element returns its own embedding, indexed `0..N-1`, the same shape as OpenAI's `/embeddings`. Lumina routes to the [`batchEmbedContents`](https://ai.google.dev/api/embeddings#method:-models.batchembedcontents) endpoint with one `EmbedContentRequest` per input.
 - **Vertex AI** (`vertex_ai/...`): all input elements are combined into a single unified embedding via [`embedContent`](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-embeddings-api). Vertex AI does not expose `batchEmbedContents` for Gemini embedding models, so `N` parts → `1` vector. To get one vector per item, call `embedding(...)` once per input.
 
 :::
@@ -38,7 +38,7 @@ LiteLLM now supports **multimodal embeddings** with `gemini-embedding-2-preview`
 
 ## Input Formats
 
-LiteLLM accepts three input formats for multimodal content:
+Lumina accepts three input formats for multimodal content:
 
 1. **Data URIs** – Base64-encoded inline: `data:image/png;base64,<encoded_data>`
 2. **GCS URLs** – Cloud Storage paths (Vertex AI): `gs://bucket/path/to/file.png`
@@ -50,7 +50,7 @@ LiteLLM accepts three input formats for multimodal content:
 <TabItem value="gemini" label="Gemini API">
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -71,11 +71,11 @@ print(response)
 <TabItem value="vertex" label="Vertex AI">
 
 ```python
-import litellm
-from litellm import embedding
+import lumina
+from lumina import embedding
 
-litellm.vertex_project = "your-project-id"
-litellm.vertex_location = "us-central1"
+lumina.vertex_project = "your-project-id"
+lumina.vertex_location = "us-central1"
 
 # Text + Image (GCS URL)
 response = embedding(
@@ -90,7 +90,7 @@ print(response)
 
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Config (config.yaml)**
 
@@ -113,7 +113,7 @@ general_settings:
 **2. Start proxy**
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 **3. Call embeddings**
@@ -180,7 +180,7 @@ response = embedding(
 By default the Gemini API path returns one embedding per input element (OpenAI-compatible). To fuse several modalities into a **single** vector, for example a product represented by its name + photo, wrap them in a nested list:
 
 ```python
-from litellm import embedding
+from lumina import embedding
 
 # Default: 2 inputs → 2 separate embeddings
 embedding(

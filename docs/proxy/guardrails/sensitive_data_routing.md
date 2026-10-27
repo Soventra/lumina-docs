@@ -71,7 +71,7 @@ guardrails:
 ### Step 2: Start the proxy
 
 ```bash
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### Step 3: Send a clean request (served by the cloud model)
@@ -109,7 +109,7 @@ The request is served by `on-prem-model`. Because `sticky_session` is on and the
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
 | `on_premise_model` | string | required | Model group (from `model_list`) to route sensitive requests to |
-| `prebuilt_patterns` | list[string] | none | Built-in pattern names to match (for example `us_ssn`, `credit_card`, `email`). Same library as the [LiteLLM Content Filter](./litellm_content_filter) |
+| `prebuilt_patterns` | list[string] | none | Built-in pattern names to match (for example `us_ssn`, `credit_card`, `email`). Same library as the [Lumina Content Filter](./lumina_content_filter) |
 | `regex_patterns` | list[string] | none | Custom regular expressions; a match in any message reroutes the request |
 | `keywords` | list[string] | none | Case-insensitive keywords; a match in any message reroutes the request |
 | `sticky_session` | bool | `true` | Keep the whole session on-premise after sensitive data is first detected |
@@ -119,7 +119,7 @@ At least one of `prebuilt_patterns`, `regex_patterns`, or `keywords` is required
 
 ## Session stickiness
 
-Stickiness pins a session to the on-premise model after the first detection. The session is identified by `litellm_session_id`, `metadata.session_id`, or `litellm_metadata.session_id` on the request, so the client must send a stable id across turns for stickiness to apply.
+Stickiness pins a session to the on-premise model after the first detection. The session is identified by `lumina_session_id`, `metadata.session_id`, or `lumina_metadata.session_id` on the request, so the client must send a stable id across turns for stickiness to apply.
 
 When a Redis cache is configured on the proxy, the pin is shared across all proxy workers and instances, so stickiness holds for the whole deployment and not just a single worker.
 

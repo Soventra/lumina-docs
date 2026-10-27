@@ -1,6 +1,6 @@
-# LiteLLM Proxy CLI
+# Lumina Proxy CLI
 
-The `lite` CLI is a command-line tool for managing your LiteLLM proxy
+The `lite` CLI is a command-line tool for managing your Lumina proxy
 server and for running coding agents through it. It manages models, credentials,
 API keys, teams, and users, runs chat and HTTP requests against the proxy,
 migrates at-rest credential encryption, and launches coding agents (Claude Code,
@@ -22,19 +22,19 @@ Codex, OpenCode) with their LLM traffic routed through the proxy.
 
 1. **Install the CLI**
 
-   The `lite` client is a thin laptop install: it points at a LiteLLM proxy and runs your coding agents through it, with none of the proxy server runtime pulled in. The one-line installer needs only `curl`; it bootstraps [uv](https://github.com/astral-sh/uv) when it's missing and lets uv provision a compatible Python for you:
+   The `lite` client is a thin laptop install: it points at a Lumina proxy and runs your coding agents through it, with none of the proxy server runtime pulled in. The one-line installer needs only `curl`; it bootstraps [uv](https://github.com/astral-sh/uv) when it's missing and lets uv provision a compatible Python for you:
 
    ```shell
-   curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/install-cli.sh | sh
+   curl -fsSL https://raw.githubusercontent.com/Soventra/lumina/main/scripts/install-cli.sh | sh
    ```
 
    Already have uv and prefer to drive it yourself? Install the package directly:
 
    ```shell
-   uv tool install 'litellm[cli]'
+   uv tool install 'lumina[cli]'
    ```
 
-   Any of these gives you the `lite` command. A proxy server installed from `litellm[proxy]` ships it too, but that extra leaves out `keyring`, so its credential stays in a file instead of your OS keychain. Start by typing it in your terminal:
+   Any of these gives you the `lite` command. A proxy server installed from `lumina[proxy]` ships it too, but that extra leaves out `keyring`, so its credential stays in a file instead of your OS keychain. Start by typing it in your terminal:
 
    ```shell
    lite
@@ -63,7 +63,7 @@ Codex, OpenCode) with their LLM traffic routed through the proxy.
 
 ## Authentication using CLI
 
-You can use the CLI to authenticate to the LiteLLM Gateway. This is great if you're trying to give a large number of developers self-serve access to the LiteLLM Gateway.
+You can use the CLI to authenticate to the Lumina Gateway. This is great if you're trying to give a large number of developers self-serve access to the Lumina Gateway.
 
 :::info
 
@@ -75,17 +75,17 @@ For an indepth guide, see [CLI Authentication](./cli_sso).
 
 :::warning[Beta Feature - Required Environment Variable]
 
-CLI SSO Authentication is currently in beta. You must set this environment variable **when starting up your LiteLLM Proxy**:
+CLI SSO Authentication is currently in beta. You must set this environment variable **when starting up your Lumina Proxy**:
 
 ```bash
 export EXPERIMENTAL_UI_LOGIN="True"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 Or add it to your proxy startup command:
 
 ```bash
-EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
+EXPERIMENTAL_UI_LOGIN="True" lumina --config config.yaml
 ```
 
 :::
@@ -106,7 +106,7 @@ EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
    lite login
    ```
 
-   This will open a browser window to authenticate. If you have connected LiteLLM Proxy to your SSO provider, you can login with your SSO credentials. Once logged in, you can use the CLI to make requests to the LiteLLM Gateway.
+   This will open a browser window to authenticate. If you have connected Lumina Proxy to your SSO provider, you can login with your SSO credentials. Once logged in, you can use the CLI to make requests to the Lumina Gateway.
 
    To sign in through your system browser with OAuth authorization code and PKCE instead, run `lite login --pkce`. That credential renews itself with a refresh token, and `lite auth print-token` hands it to Claude Code, OpenCode, or any OpenAI-compatible client. See [Browser sign-in with PKCE](./cli_sso#browser-sign-in-with-pkce)
 
@@ -120,7 +120,7 @@ EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
 
 ## Run coding agents through the proxy
 
-Launch a coding agent with all of its LLM traffic routed through your LiteLLM proxy. Each supported agent is its own command, so there is nothing to remember beyond the agent's name:
+Launch a coding agent with all of its LLM traffic routed through your Lumina proxy. Each supported agent is its own command, so there is nothing to remember beyond the agent's name:
 
 ```bash
 lite claude
@@ -135,7 +135,7 @@ lite claude --resume
 lite codex exec "summarize the repo"
 ```
 
-Each command resolves your LiteLLM key (logging in via SSO when none is stored and you are at a terminal; otherwise it reads `LUMINA_PROXY_API_KEY` or `--api-key`), checks the key against the proxy so bad credentials fail right away instead of deep inside the agent, exports the environment variables the agent reads, then replaces itself with the agent process.
+Each command resolves your Lumina key (logging in via SSO when none is stored and you are at a terminal; otherwise it reads `LUMINA_PROXY_API_KEY` or `--api-key`), checks the key against the proxy so bad credentials fail right away instead of deep inside the agent, exports the environment variables the agent reads, then replaces itself with the agent process.
 
 The variables are chosen per agent. Claude Code gets `ANTHROPIC_BASE_URL` (the proxy root, so it appends `/v1/messages`) and `ANTHROPIC_AUTH_TOKEN`, with any stray `ANTHROPIC_API_KEY` cleared so the proxy token wins. Codex and OpenCode get `OPENAI_BASE_URL` (the proxy plus `/v1`) and `OPENAI_API_KEY`. Codex ignores `OPENAI_BASE_URL`, so it is additionally pointed at the proxy through a custom provider passed as `-c` config overrides (HTTP/SSE Responses transport, since the proxy does not speak the Responses WebSocket protocol).
 
@@ -153,7 +153,7 @@ The token minted by `lite login` is a short-lived, per-session agent credential,
 
 The credential is short-lived by design (default 24h, configurable via `LUMINA_CLI_JWT_EXPIRATION_HOURS`); run `lite login` again to refresh it, which also re-reads your latest team and user settings. It does not appear in the Keys UI and cannot be rotated or revoked mid-session, and `lite claude`, `lite codex`, and `lite opencode` work with it on a default deployment. If you need a long-lived, rotatable key that shows up in the Keys UI, create a dedicated virtual key in the dashboard and pass it via `--api-key` or `LUMINA_PROXY_API_KEY` instead.
 
-`lite login` keeps the credential in your OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `litellm-cli` and the account `credential`. Only the non-secret half lands in `~/.litellm/token.json`: the gateway URL, your user id, email, and role, the auth header name, and the sign-in timestamp. That file is created `0600` inside a `0700` directory. Reaching the keychain needs the `keyring` package, which ships with the `cli` extra, so install with `pip install 'litellm[cli]'` rather than a bare `pip install litellm` or `pip install 'litellm[proxy]'` if you want keychain storage. Code that reads the credential back through `litellm.get_litellm_gateway_api_key()` needs `keyring` for the same reason: without it the call cannot see a keychain entry and returns `None`, even though `lite login` stored one
+`lite login` keeps the credential in your OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `lumina-cli` and the account `credential`. Only the non-secret half lands in `~/.lumina/token.json`: the gateway URL, your user id, email, and role, the auth header name, and the sign-in timestamp. That file is created `0600` inside a `0700` directory. Reaching the keychain needs the `keyring` package, which ships with the `cli` extra, so install with `pip install 'lumina[cli]'` rather than a bare `pip install lumina` or `pip install 'lumina[proxy]'` if you want keychain storage. Code that reads the credential back through `lumina.get_lumina_gateway_api_key()` needs `keyring` for the same reason: without it the call cannot see a keychain entry and returns `None`, even though `lite login` stored one
 
 A machine with no keychain, a headless Linux box for example, keeps the credential in that same owner-only file instead, and so do installs missing `keyring` and shells that set `LUMINA_CLI_DISABLE_KEYRING` to `1`, `true`, `yes`, or `on`, which turns keychain storage off entirely. `lite login` prints where the credential ended up either way. A credential written into `token.json` in plaintext by an older `lite` still authenticates: the next command that reads it moves it into the keychain and takes it out of the file
 
@@ -185,7 +185,7 @@ lite logout             # clear the keychain entry and the token file, and revok
   lite models delete <model-id>
   ```
 
-  [API used (OpenAPI)](https://docs.litellm.ai/api-reference/#/model%20management)
+  [API used (OpenAPI)](https://docs.lumina.ai/api-reference/#/model%20management)
 
 ### Credentials Management
 
@@ -204,7 +204,7 @@ lite logout             # clear the keychain entry and the token file, and revok
   lite credentials delete azure-cred
   ```
 
-  [API used (OpenAPI)](https://docs.litellm.ai/api-reference/#/credential%20management)
+  [API used (OpenAPI)](https://docs.lumina.ai/api-reference/#/credential%20management)
 
 ### Keys Management
 
@@ -222,7 +222,7 @@ lite logout             # clear the keychain entry and the token file, and revok
   lite keys delete --keys sk-key1,sk-key2 --key-aliases alias1,alias2
   ```
 
-  `lite keys import` copies keys from another LiteLLM instance into this one. Add `--dry-run` to preview without writing, and `--created-since` (`YYYY-MM-DD` or `YYYY-MM-DD_HH:MM`) to limit the import by creation date:
+  `lite keys import` copies keys from another Lumina instance into this one. Add `--dry-run` to preview without writing, and `--created-since` (`YYYY-MM-DD` or `YYYY-MM-DD_HH:MM`) to limit the import by creation date:
 
   ```bash
   lite keys import \
@@ -231,7 +231,7 @@ lite logout             # clear the keychain entry and the token file, and revok
     --created-since 2026-01-01
   ```
 
-  [API used (OpenAPI)](https://docs.litellm.ai/api-reference/#/key%20management)
+  [API used (OpenAPI)](https://docs.lumina.ai/api-reference/#/key%20management)
 
 ### User Management
 
@@ -250,7 +250,7 @@ lite logout             # clear the keychain entry and the token file, and revok
   lite users delete <user-id>
   ```
 
-  [API used (OpenAPI)](https://docs.litellm.ai/api-reference/#/Internal%20User%20management)
+  [API used (OpenAPI)](https://docs.lumina.ai/api-reference/#/Internal%20User%20management)
 
 ### Teams Management
 
@@ -265,7 +265,7 @@ lite logout             # clear the keychain entry and the token file, and revok
 
   Running `lite teams assign-key` without `--team-id` prompts you to pick a team interactively.
 
-  [API used (OpenAPI)](https://docs.litellm.ai/api-reference/#/team%20management)
+  [API used (OpenAPI)](https://docs.lumina.ai/api-reference/#/team%20management)
 
 ### Chat Completions
 
@@ -277,7 +277,7 @@ lite logout             # clear the keychain entry and the token file, and revok
   lite chat {{openai_large}} --temperature 0.9 --system "You are a helpful coding assistant"
   ```
 
-  [API used (OpenAPI)](https://docs.litellm.ai/api-reference/#/chat%2Fcompletions)
+  [API used (OpenAPI)](https://docs.lumina.ai/api-reference/#/chat%2Fcompletions)
 
 ### General HTTP Requests
 
@@ -290,7 +290,7 @@ lite logout             # clear the keychain entry and the token file, and revok
     --json '{"model": "{{openai_large}}", "messages": [{"role": "user", "content": "Hello"}]}'
   ```
 
-  [All APIs (OpenAPI)](https://docs.litellm.ai/api-reference/#/)
+  [All APIs (OpenAPI)](https://docs.lumina.ai/api-reference/#/)
 
 ### Encryption Migration
 
@@ -371,4 +371,4 @@ The CLI will display error messages for:
 
 Use the `--debug` flag for detailed debugging output.
 
-For full command reference and advanced usage, see the [CLI README](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/client/cli/README.md).
+For full command reference and advanced usage, see the [CLI README](https://github.com/Soventra/lumina/blob/main/lumina/proxy/client/cli/README.md).

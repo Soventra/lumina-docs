@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Auto-Inject Prompt Caching Checkpoints
 
-Reduce costs by up to 90% by using LiteLLM to auto-inject prompt caching checkpoints.
+Reduce costs by up to 90% by using Lumina to auto-inject prompt caching checkpoints.
 
 <Image img={require('../../img/auto_prompt_caching.png')}  style={{ width: '800px', height: 'auto' }} />
 
@@ -32,7 +32,7 @@ Provider Managed (automatic, no marker needed):
 
 :::warning Leave injection points off Gemini unless you want explicit caching
 
-Gemini 2.5 and newer models cache repeated prefixes on their own, with no marker and no extra cost. Adding `cache_control_injection_points` to a Gemini deployment switches it to Google's explicit [context caching](https://ai.google.dev/gemini-api/docs/caching): LiteLLM moves the marked messages out of the request into a separate `cachedContents` object and sends only a reference to it. That prefix is no longer part of the request, so implicit caching stops applying to it, and Google bills storage for every cache object LiteLLM creates. For most Gemini traffic the better setup is no injection points at all. Use them only when you need a guaranteed discount on a large, stable prefix that is reused often enough to cover the storage cost
+Gemini 2.5 and newer models cache repeated prefixes on their own, with no marker and no extra cost. Adding `cache_control_injection_points` to a Gemini deployment switches it to Google's explicit [context caching](https://ai.google.dev/gemini-api/docs/caching): Lumina moves the marked messages out of the request into a separate `cachedContents` object and sends only a reference to it. That prefix is no longer part of the request, so implicit caching stops applying to it, and Google bills storage for every cache object Lumina creates. For most Gemini traffic the better setup is no injection points at all. Use them only when you need a guaranteed discount on a large, stable prefix that is reused often enough to cover the storage cost
 
 Injection points were built for Anthropic-style caching, where nothing is cached unless the request carries a `cache_control` marker. Providers that cache automatically (Gemini 2.5+, OpenAI, DeepSeek, xAI) do not need them
 
@@ -40,33 +40,33 @@ Injection points were built for Anthropic-style caching, where nothing is cached
 
 ## How it works
 
-LiteLLM can automatically inject prompt caching checkpoints into your requests to LLM providers. This allows:
+Lumina can automatically inject prompt caching checkpoints into your requests to LLM providers. This allows:
 
 - **Cost Reduction**: Long, static parts of your prompts can be cached to avoid repeated processing
-- **No need to modify your application code**: You can configure the auto-caching behavior in the LiteLLM UI or in the `litellm config.yaml` file.
+- **No need to modify your application code**: You can configure the auto-caching behavior in the Lumina UI or in the `lumina config.yaml` file.
 
 ## Who the cache is shared with
 
-This is provider-side prompt caching, a different feature from [LiteLLM response caching](../proxy/caching). It needs no Redis.
+This is provider-side prompt caching, a different feature from [Lumina response caching](../proxy/caching). It needs no Redis.
 
-- The provider caches a prefix against the **upstream credentials** that sent it, not against the LiteLLM key, team or end user.
+- The provider caches a prefix against the **upstream credentials** that sent it, not against the Lumina key, team or end user.
 - Anyone whose request repeats that prefix exactly reuses it. That sharing is the point: a long system prompt cached by one user is reused by everyone else on the same credentials, and an agent benefits from a prefix a user already cached.
 - The flip side: responses report `cache_read_input_tokens`, and a cache hit is faster, so a caller repeating a prefix exactly can tell someone else on those credentials sent it recently.
 - That is bounded. The prefix must match exactly, and providers will not cache a prefix below a minimum size (for Anthropic that is model-dependent, currently 1k to 4k tokens), so it reveals *whether* a prompt the caller already holds was sent, not its contents.
-- For isolation, give tenants separate credentials. The boundary is the provider account, not anything LiteLLM can enforce.
+- For isolation, give tenants separate credentials. The boundary is the provider account, not anything Lumina can enforce.
 
 ## Automatic checkpoints for Claude models
 
 :::info
 
-Requires LiteLLM v1.94.0
+Requires Lumina v1.94.0
 
 :::
 
 Everything below asks you to decide *where* the checkpoints go. If all you want is the common case for Claude, one flag does it for you.
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   enable_anthropic_prompt_caching: true
 ```
 
@@ -84,7 +84,7 @@ It adds the same `cache_control_injection_points` you would have written by hand
 
 - **Off by default.** Upgrading changes nothing until you enable it.
 - **Claude only.** `anthropic/` and `bedrock/` models the cost map marks as supporting prompt caching. Claude on `vertex_ai/` and `azure_ai/` is not covered; use `cache_control_injection_points` for those.
-- **Never double-injects.** If the request already carries its own `cache_control`, LiteLLM stands down and the client's checkpoints win.
+- **Never double-injects.** If the request already carries its own `cache_control`, Lumina stands down and the client's checkpoints win.
 - **Explicit config wins.** The flag only fills in when no `cache_control_injection_points` are set.
 - **Respects the 4 block provider limit**, counting client-supplied blocks toward it.
 - **Works on `/v1/messages` and `/chat/completions`.**
@@ -94,14 +94,14 @@ It adds the same `cache_control_injection_points` you would have written by hand
 The default is Anthropic's 5 minute ephemeral cache, which is their API default and what Claude Code uses. For long agentic sessions you can ask for the 1 hour cache instead:
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   enable_anthropic_prompt_caching: true
   anthropic_prompt_caching_ttl: "1h"
 ```
 
 The equivalent environment variable is `LUMINA_ANTHROPIC_PROMPT_CACHING_TTL`, and the Admin UI exposes it as a dropdown. Note that a 1 hour cache write costs more than a 5 minute one, so it pays off only when the prefix is reused over a longer session.
 
-`litellm_settings` wins over the environment variable when both are set, since the config is applied after startup.
+`lumina_settings` wins over the environment variable when both are set, since the config is applied after startup.
 
 ### When to use injection points instead
 
@@ -109,11 +109,11 @@ Reach for `cache_control_injection_points`, described below, when you need a pro
 
 ## Configuration
 
-You need to specify `cache_control_injection_points` in your model configuration. This tells LiteLLM:
+You need to specify `cache_control_injection_points` in your model configuration. This tells Lumina:
 1. Where to add the caching directive (`location`)
 2. Which message to target (`role`)
 
-LiteLLM will then automatically add a `cache_control` directive to the specified messages in your requests:
+Lumina will then automatically add a `cache_control` directive to the specified messages in your requests:
 
 ```json showLineNumbers title="cache_control_directive.json"
 "cache_control": {
@@ -125,7 +125,7 @@ Configured points are added beside any `cache_control` the request already carri
 
 ### OpenAI GPT-5.6 and newer
 
-The same `cache_control_injection_points` work when the deployment resolves to an OpenAI model that supports [explicit prompt cache breakpoints](https://developers.openai.com/api/docs/guides/prompt-caching#prompt-cache-breakpoints), which the cost map marks with `supports_prompt_cache_breakpoint` (GPT-5.6 and newer on `openai/`). LiteLLM looks at the resolved deployment, not at the shape of the incoming request, so one config pattern covers a mixed Anthropic and OpenAI fleet and Anthropic-shaped clients on `/v1/messages` get the OpenAI markers too
+The same `cache_control_injection_points` work when the deployment resolves to an OpenAI model that supports [explicit prompt cache breakpoints](https://developers.openai.com/api/docs/guides/prompt-caching#prompt-cache-breakpoints), which the cost map marks with `supports_prompt_cache_breakpoint` (GPT-5.6 and newer on `openai/`). Lumina looks at the resolved deployment, not at the shape of the incoming request, so one config pattern covers a mixed Anthropic and OpenAI fleet and Anthropic-shaped clients on `/v1/messages` get the OpenAI markers too
 
 | Anthropic target | OpenAI GPT-5.6+ target |
 |---|---|
@@ -133,7 +133,7 @@ The same `cache_control_injection_points` work when the deployment resolves to a
 | nothing at the request level | `"prompt_cache_options": {"mode": "implicit"}` at the request root |
 | `control.ttl` picks the 5m or 1h cache | `control` is ignored; set `prompt_cache_options` yourself for `ttl` |
 
-The block marker pins where OpenAI writes the cache. The request-level `prompt_cache_options` LiteLLM adds is `{"mode": "implicit"}`, so OpenAI keeps its own automatic checkpoint on the latest user or tool message beside the ones you configured and also looks up earlier message boundaries, which is what lets a growing agent conversation reuse the previous turn's prefix instead of rewriting everything after the static prefix on every turn. Releases before [PR #42281](https://github.com/BerriAI/litellm/pull/42281) (`/chat/completions` and `/v1/responses`) and [PR #45121](https://github.com/BerriAI/litellm/pull/45121) (`/v1/messages`) sent `{"mode": "explicit"}` here, which made the configured checkpoints the only cache boundaries. A `prompt_cache_options` already on the request wins and is never overwritten, which is how you pin the mode or ask for the 30 minute cache per deployment:
+The block marker pins where OpenAI writes the cache. The request-level `prompt_cache_options` Lumina adds is `{"mode": "implicit"}`, so OpenAI keeps its own automatic checkpoint on the latest user or tool message beside the ones you configured and also looks up earlier message boundaries, which is what lets a growing agent conversation reuse the previous turn's prefix instead of rewriting everything after the static prefix on every turn. Releases before [PR #42281](https://github.com/Soventra/lumina/pull/42281) (`/chat/completions` and `/v1/responses`) and [PR #45121](https://github.com/Soventra/lumina/pull/45121) (`/v1/messages`) sent `{"mode": "explicit"}` here, which made the configured checkpoints the only cache boundaries. A `prompt_cache_options` already on the request wins and is never overwritten, which is how you pin the mode or ask for the 30 minute cache per deployment:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -151,36 +151,36 @@ model_list:
 
 With `mode: explicit` only the configured checkpoints write to the cache, which suits many single-turn requests that share one long system prompt, since each request's unique tail is never written. The default `implicit` suits long multi-turn sessions. Either way OpenAI serves reads from the longest cached prefix it can match. The four write slots are shared: in implicit mode OpenAI's automatic checkpoint takes one, leaving three for configured and client marks, and OpenAI does not reject a request that carries more
 
-#### What LiteLLM sends by default
+#### What Lumina sends by default
 
 | Scenario | On the targeted block | At the request root | What OpenAI does |
 |---|---|---|---|
-| A configured point lands on `/chat/completions`, `/v1/responses` or `/v1/messages` (Anthropic SDK, Claude Code) and nothing set `prompt_cache_options` | `prompt_cache_breakpoint: {"mode": "explicit"}` | `{"mode": "implicit"}`, added by LiteLLM | writes at your checkpoints and at its automatic one, reads the longest cached prefix |
+| A configured point lands on `/chat/completions`, `/v1/responses` or `/v1/messages` (Anthropic SDK, Claude Code) and nothing set `prompt_cache_options` | `prompt_cache_breakpoint: {"mode": "explicit"}` | `{"mode": "implicit"}`, added by Lumina | writes at your checkpoints and at its automatic one, reads the longest cached prefix |
 | Same, but the deployment's `lumina_params` or the request already carries `prompt_cache_options` | same | yours, mode and `ttl` untouched | whatever you chose |
 | No configured point lands, for example no message with the configured role | nothing | nothing added | its default, implicit caching |
 | The client sends its own `prompt_cache_breakpoint` marks | the client's are kept and configured ones are added beside them, up to the limit of 4 | the client's `prompt_cache_options` if it sent one, else `{"mode": "implicit"}` as in the first row | as above |
 | Custom `api_base` without `prompt_cache_options` on the deployment | Anthropic `cache_control`, which OpenAI strips | nothing added | its default, implicit caching |
 | Custom `api_base` with `prompt_cache_options` in `lumina_params` | `prompt_cache_breakpoint: {"mode": "explicit"}` | yours | whatever you chose |
-| OpenAI models before GPT-5.6, Azure OpenAI, `litellm_proxy/` deployments | not mapped | nothing added | provider-managed implicit caching |
+| OpenAI models before GPT-5.6, Azure OpenAI, `lumina_proxy/` deployments | not mapped | nothing added | provider-managed implicit caching |
 
 What to know about the OpenAI mapping:
 
 - **Block-level only.** OpenAI accepts the marker on text, image and file blocks. A string system prompt or message is wrapped into a one-block list before the marker is placed. Assistant blocks and tool results cannot carry a breakpoint, so an injection point that lands there is skipped
-- **`/v1/messages` system prompt.** OpenAI does not accept a breakpoint on the top-level `instructions` field, so when the Anthropic `system` carries a checkpoint LiteLLM sends it as a leading `developer` message instead. OpenAI treats both shapes as the same cache prefix, so switching does not cold-start the cache
+- **`/v1/messages` system prompt.** OpenAI does not accept a breakpoint on the top-level `instructions` field, so when the Anthropic `system` carries a checkpoint Lumina sends it as a leading `developer` message instead. OpenAI treats both shapes as the same cache prefix, so switching does not cold-start the cache
 - **Applies beside client markers.** A request that already carries its own `cache_control` or `prompt_cache_breakpoint` markers keeps them and the configured points are added next to them; a target the client already marked is left as is. Claude Code sets its own `cache_control`, which OpenAI never sees, so a Claude Code session on a GPT-5.6 deployment with configured points runs on the checkpoints you configured plus OpenAI's automatic one, in implicit mode like every other endpoint
 - **Respects the 4 breakpoint limit**, counting client-supplied markers first, so a configured point that would be the fifth is skipped
-- **Only for requests that go to OpenAI itself.** The mapping fires for a GPT-5.6 or newer OpenAI model (the cost map's `supports_prompt_cache_breakpoint` flag when the entry carries one, otherwise the GPT version in the model name) when the deployment talks to `api.openai.com` (or a regional `*.api.openai.com` host), meaning no `api_base` (or `base_url`) or one on those hosts. A deployment with a custom `api_base`, such as another LiteLLM proxy or gateway in front of OpenAI, keeps today's behavior unless its `lumina_params` also set `prompt_cache_options`, which opts it in. `litellm_proxy/` deployments and Azure OpenAI deployments are not covered yet
+- **Only for requests that go to OpenAI itself.** The mapping fires for a GPT-5.6 or newer OpenAI model (the cost map's `supports_prompt_cache_breakpoint` flag when the entry carries one, otherwise the GPT version in the model name) when the deployment talks to `api.openai.com` (or a regional `*.api.openai.com` host), meaning no `api_base` (or `base_url`) or one on those hosts. A deployment with a custom `api_base`, such as another Lumina proxy or gateway in front of OpenAI, keeps today's behavior unless its `lumina_params` also set `prompt_cache_options`, which opts it in. `lumina_proxy/` deployments and Azure OpenAI deployments are not covered yet
 - **`/v1/responses`.** The marker lands on `input_text` blocks of the targeted message, and a string message is wrapped into a one-block list first. OpenAI does not accept a marker on the top-level `instructions` field, so a system prompt sent there stays on implicit caching; send it as a `developer` or `system` message to get the checkpoint. A `prompt_cache_options` the client sends is forwarded as is
 - **Cost reporting is unchanged.** OpenAI's `cached_tokens` and `cache_write_tokens` already come back as `cache_read_input_tokens` and `cache_creation_input_tokens` on `/v1/messages` and as `prompt_tokens_details` on `/chat/completions`
 
-## LiteLLM Python SDK Usage
+## Lumina Python SDK Usage
 
 Use the `cache_control_injection_points` parameter in your completion calls to automatically inject caching directives.
 
 #### Basic Example - Cache System Messages
 
 ```python showLineNumbers title="cache_system_messages.py"
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["ANTHROPIC_API_KEY"] = ""
@@ -222,11 +222,11 @@ print(response.usage)
 - Use `cache_control_injection_points` parameter to specify where to inject caching
 - `location: "message"` targets messages in the conversation
 - `role: "system"` targets all system messages
-- LiteLLM automatically adds `cache_control` to the **last content block** of matching messages (per Anthropic's API specification)
+- Lumina automatically adds `cache_control` to the **last content block** of matching messages (per Anthropic's API specification)
 
-**LiteLLM's Modified Request:**
+**Lumina's Modified Request:**
 
-LiteLLM automatically transforms your request by adding `cache_control` to the last content block of the system message:
+Lumina automatically transforms your request by adding `cache_control` to the last content block of the system message:
 
 ```json showLineNumbers title="modified_request_system.json"
 {
@@ -241,7 +241,7 @@ LiteLLM automatically transforms your request by adding `cache_control` to the l
                 {
                     "type": "text",
                     "text": "Here is the full text of a complex legal agreement...",
-                    "cache_control": {"type": "ephemeral"}  // Added by LiteLLM
+                    "cache_control": {"type": "ephemeral"}  // Added by Lumina
                 }
             ]
         },
@@ -258,7 +258,7 @@ LiteLLM automatically transforms your request by adding `cache_control` to the l
 You can target specific messages by their index in the messages array. Use negative indices to target from the end.
 
 ```python showLineNumbers title="cache_by_index.py"
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["ANTHROPIC_API_KEY"] = ""
@@ -299,9 +299,9 @@ print(response.usage)
 - This follows [Anthropic's API specification](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#continuing-a-multi-turn-conversation) which requires: "When using multiple content blocks, only the last content block can have cache_control"
 - Anthropic has a maximum of 4 blocks with `cache_control` per request
 
-**LiteLLM's Modified Request:**
+**Lumina's Modified Request:**
 
-LiteLLM adds `cache_control` to the last content block of the targeted message (index -1 = last message):
+Lumina adds `cache_control` to the last content block of the targeted message (index -1 = last message):
 
 ```json showLineNumbers title="modified_request_index.json"
 {
@@ -324,7 +324,7 @@ LiteLLM adds `cache_control` to the last content block of the targeted message (
                 {
                     "type": "text",
                     "text": "Document content...",
-                    "cache_control": {"type": "ephemeral"}  // Added by LiteLLM to last content block only
+                    "cache_control": {"type": "ephemeral"}  // Added by Lumina to last content block only
                 }
             ]
         }
@@ -332,14 +332,14 @@ LiteLLM adds `cache_control` to the last content block of the targeted message (
 }
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 You can configure cache control injection in the proxy configuration file.
 
 <Tabs>
-<TabItem value="litellm config.yaml" label="litellm config.yaml">
+<TabItem value="lumina config.yaml" label="lumina config.yaml">
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: anthropic-auto-inject-cache-system-message
     lumina_params:
@@ -360,9 +360,9 @@ model_list:
 The second entry resolves to an OpenAI GPT-5.6 model, so the same injection point becomes a `prompt_cache_breakpoint` marker plus `prompt_cache_options` on the outbound request, as described in [OpenAI GPT-5.6 and newer](#openai-gpt-56-and-newer)
 </TabItem>
 
-<TabItem value="UI" label="LiteLLM UI">
+<TabItem value="UI" label="Lumina UI">
 
-On the LiteLLM UI, you can specify the `cache_control_injection_points` in the `Advanced Settings` tab when adding a model.
+On the Lumina UI, you can specify the `cache_control_injection_points` in the `Advanced Settings` tab when adding a model.
 <Image img={require('../../img/ui_auto_prompt_caching.png')}/>
 
 </TabItem>
@@ -371,7 +371,7 @@ On the LiteLLM UI, you can specify the `cache_control_injection_points` in the `
 
 ## Detailed Example
 
-### 1. Original Request to LiteLLM 
+### 1. Original Request to Lumina 
 
 In this example, we have a very long, static system message and a varying user message. It's efficient to cache the system message since it rarely changes.
 
@@ -400,9 +400,9 @@ In this example, we have a very long, static system message and a varying user m
 }
 ```
 
-### 2. LiteLLM's Modified Request
+### 2. Lumina's Modified Request
 
-LiteLLM auto-injects the caching directive into the system message based on our configuration:
+Lumina auto-injects the caching directive into the system message based on our configuration:
 
 ```json showLineNumbers title="modified_request.json"
 {

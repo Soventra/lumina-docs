@@ -3,21 +3,21 @@ import TabItem from '@theme/TabItem';
 
 # Arize AX
 
-Use Arize AX when you want the full-featured [Arize AI](https://arize.com/?utm_source=litellm-docs&utm_medium=partner&utm_campaign=partner-docs&utm_content=arize-ax-integration) platform for production LLM observability and evaluation, available as managed cloud or enterprise self-hosted deployment.
+Use Arize AX when you want the full-featured [Arize AI](https://arize.com/?utm_source=lumina-docs&utm_medium=partner&utm_campaign=partner-docs&utm_content=arize-ax-integration) platform for production LLM observability and evaluation, available as managed cloud or enterprise self-hosted deployment.
 
-Arize AX is separate from [Arize Phoenix](https://arize.com/phoenix/), the open-source tracing and evaluation project for local development, experimentation, and self-hosted workflows. LiteLLM supports both backends, but they use different callbacks, credentials, and endpoints. If you are sending traces to Phoenix, use the [Arize Phoenix setup guide](./phoenix_integration) instead.
+Arize AX is separate from [Arize Phoenix](https://arize.com/phoenix/), the open-source tracing and evaluation project for local development, experimentation, and self-hosted workflows. Lumina supports both backends, but they use different callbacks, credentials, and endpoints. If you are sending traces to Phoenix, use the [Arize Phoenix setup guide](./phoenix_integration) instead.
 
 For production evaluation workflows, see Arize's [agent evaluation guide](https://arize.com/guides/ai-agent-handbook/agent-evaluation/) and [LLM evaluation guide](https://arize.com/resources/llm-evaluation/) for examples of using traces to debug failures, compare model behavior, and improve agent reliability.
 
 :::info
-We want to learn how we can make the callbacks better! Meet the LiteLLM [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version) or
+We want to learn how we can make the callbacks better! Meet the Lumina [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version) or
 join our [discord](https://discord.gg/wuPM9dRgDw)
 :::
 
 ## Pre-Requisites
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
 ## Quick Start
@@ -26,7 +26,7 @@ uv add litellm
 <TabItem value="python" label="SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["LUMINA_OTEL_V2"] = "true"
@@ -36,11 +36,11 @@ os.environ["ARIZE_PROJECT_NAME"] = ""   # recommended: names the project traces 
 # LLM API Keys
 os.environ["OPENAI_API_KEY"] = ""
 
-# set arize as a callback, litellm will send the data to arize
-litellm.callbacks = ["arize"]
+# set arize as a callback, lumina will send the data to arize
+lumina.callbacks = ["arize"]
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_large}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -49,7 +49,7 @@ response = litellm.completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -60,7 +60,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["arize"]
 ```
 
@@ -73,10 +73,10 @@ ARIZE_API_KEY="your-api-key"
 ARIZE_PROJECT_NAME="your-project-name"   # recommended: names the project traces land in
 ```
 
-3. Start LiteLLM Proxy
+3. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it!
@@ -105,11 +105,11 @@ Open your Arize project; the trace appears under the project named by `ARIZE_PRO
 
 The `openinference` mapper stamps the OpenInference vocabulary onto the LLM-call span alongside the canonical `gen_ai.*` keys, so Arize reads its native schema without dropping the canonical ones. That covers `llm.model_name` and `llm.provider`, the `llm.token_count.*` usage split, `llm.invocation_parameters`, the `llm.input_messages.*` and `llm.output_messages.*` message arrays when content capture is on, and `llm.tools.*` for tool definitions. See the [full attribute table](./opentelemetry_v2#seeing-your-traces) or the [OpenInference spec](https://github.com/Arize-ai/openinference/blob/main/spec/semantic_conventions.md) for the definitive vocabulary.
 
-The mapper also writes each assistant tool call as structured `llm.output_messages.{idx}.message.tool_calls.{idx}.tool_call.*` attributes and the allowlisted request metadata as a `metadata` attribute, so Arize's LLM view shows the tool name and arguments and the metadata panel fills from the same allowlist as `litellm.metadata.*`. Before, a tool-calling reply showed up as `{"role": "assistant", "content": null}` with an empty metadata panel. See [OpenInference tool calls and metadata](./opentelemetry_v2#openinference-tool-calls-and-metadata) for the attributes, the `mapper_names` setting, and the attribute budget.
+The mapper also writes each assistant tool call as structured `llm.output_messages.{idx}.message.tool_calls.{idx}.tool_call.*` attributes and the allowlisted request metadata as a `metadata` attribute, so Arize's LLM view shows the tool name and arguments and the metadata panel fills from the same allowlist as `lumina.metadata.*`. Before, a tool-calling reply showed up as `{"role": "assistant", "content": null}` with an empty metadata panel. See [OpenInference tool calls and metadata](./opentelemetry_v2#openinference-tool-calls-and-metadata) for the attributes, the `mapper_names` setting, and the attribute budget.
 
 The `arize` preset names the `openinference` mapper for you, so no extra setting is needed. `MAPPER_NAMES` (or `callback_settings.otel.mapper_names`) only comes into play when you ship Arize-bound spans through your own collector on the generic OTLP path.
 
-![LiteLLM trace in Arize](/img/observability/otel_v2_arize.png)
+![Lumina trace in Arize](/img/observability/otel_v2_arize.png)
 
 ## Configuration
 
@@ -121,7 +121,7 @@ The `arize` preset names the `openinference` mapper for you, so no extra setting
 | `ARIZE_ENDPOINT` | No | gRPC endpoint, defaults to `https://otlp.arize.com/v1` |
 | `ARIZE_HTTP_ENDPOINT` | No | Use instead of `ARIZE_ENDPOINT` to export over HTTP |
 
-Setting `ARIZE_ENDPOINT` selects gRPC and `ARIZE_HTTP_ENDPOINT` selects HTTP; if neither is set, litellm uses the gRPC default.
+Setting `ARIZE_ENDPOINT` selects gRPC and `ARIZE_HTTP_ENDPOINT` selects HTTP; if neither is set, lumina uses the gRPC default.
 
 ## Advanced
 
@@ -130,7 +130,7 @@ Setting `ARIZE_ENDPOINT` selects gRPC and `ARIZE_HTTP_ENDPOINT` selects HTTP; if
 Presets compose, so listing more than one sends the same traces to each destination in that tool's native format:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["arize", "langfuse_otel"]
 ```
 
@@ -171,6 +171,6 @@ This page covers the Arize-specific setup. For span attributes, prompt and respo
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

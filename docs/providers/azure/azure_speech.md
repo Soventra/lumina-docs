@@ -5,16 +5,16 @@
 | Property | Details |
 |-------|-------|
 | Description | Convert text to natural-sounding speech using Azure OpenAI's Text to Speech models |
-| Provider Route on LiteLLM | `azure/` |
+| Provider Route on Lumina | `azure/` |
 | Supported Operations | `/audio/speech` |
 | Link to Provider Doc | [Azure OpenAI TTS ↗](https://learn.microsoft.com/en-us/azure/ai-services/openai/text-to-speech-quickstart)
 
 ## Quick Start
 
-### **LiteLLM SDK**
+### **Lumina SDK**
 
 ```python showLineNumbers title="SDK Usage"
-from litellm import speech
+from lumina import speech
 from pathlib import Path
 import os
 
@@ -33,7 +33,7 @@ response = speech(
 response.stream_to_file(speech_file_path)
 ```
 
-### **LiteLLM PROXY**
+### **Lumina PROXY**
 
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:

@@ -1,7 +1,7 @@
 
 # StandardLoggingPayload Specification
 
-Terminal success and failure callback events include `kwargs["standard_logging_object"]` when LiteLLM finishes building the standard payload. Custom logging callbacks should read request identity from `kwargs["standard_logging_object"]["metadata"]`, rather than raw `lumina_params` metadata. Optional identity fields are `null` when unavailable. Intermediate streaming events and callbacks where payload construction fails can omit `standard_logging_object`.
+Terminal success and failure callback events include `kwargs["standard_logging_object"]` when Lumina finishes building the standard payload. Custom logging callbacks should read request identity from `kwargs["standard_logging_object"]["metadata"]`, rather than raw `lumina_params` metadata. Optional identity fields are `null` when unavailable. Intermediate streaming events and callbacks where payload construction fails can omit `standard_logging_object`.
 
 ## StandardLoggingPayload
 
@@ -9,7 +9,7 @@ Terminal success and failure callback events include `kwargs["standard_logging_o
 |-------|------|-------------|
 | `id` | `str` | Unique identifier |
 | `trace_id` | `str` | Trace multiple LLM calls belonging to same overall request |
-| `session_id` | `str` | End-user/conversation session id, from `litellm_session_id`. Independent of `trace_id`; only populated when `litellm_settings.request_correlation_in_logs` is enabled. [Further docs](./debugging#request-correlation-ids) |
+| `session_id` | `str` | End-user/conversation session id, from `lumina_session_id`. Independent of `trace_id`; only populated when `lumina_settings.request_correlation_in_logs` is enabled. [Further docs](./debugging#request-correlation-ids) |
 | `call_type` | `str` | Type of call |
 | `response_cost` | `float` | Cost of the response in USD ($) |
 | `cost_breakdown` | `Optional[CostBreakdown]` | Detailed cost breakdown object |
@@ -77,7 +77,7 @@ class CostBreakdown(TypedDict, total=False):
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `user_api_key_hash` | `Optional[str]` | Hash of the litellm virtual key |
+| `user_api_key_hash` | `Optional[str]` | Hash of the lumina virtual key |
 | `user_api_key_alias` | `Optional[str]` | Alias of the API key |
 | `user_api_key_org_id` | `Optional[str]` | Organization ID associated with the key |
 | `user_api_key_team_id` | `Optional[str]` | Team ID associated with the key |
@@ -134,7 +134,7 @@ Inherits from `StandardLoggingUserAPIKeyMetadata` and adds:
 | `response_cost` | `Optional[str]` | Optional response cost |
 | `additional_headers` | `Optional[StandardLoggingAdditionalHeaders]` | Additional headers |
 | `batch_models` | `Optional[List[str]]` | Only set for Batches API. Lists the models used for cost calculation |
-| `litellm_model_name` | `Optional[str]` | Model name sent in request |
+| `lumina_model_name` | `Optional[str]` | Model name sent in request |
 
 ## StandardLoggingModelInformation
 
@@ -160,7 +160,7 @@ Inherits from `StandardLoggingUserAPIKeyMetadata` and adds:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `reason` | `Literal["missing_pricing_key", "pricing_not_applied", "cost_calculation_error"]` | Why the request priced to $0, the same value as the `reason` label on `litellm_zero_cost_requests_total` |
+| `reason` | `Literal["missing_pricing_key", "pricing_not_applied", "cost_calculation_error"]` | Why the request priced to $0, the same value as the `reason` label on `lumina_zero_cost_requests_total` |
 | `pricing_model` | `str` | The pricing entry the request was judged against, a deployment id or a model cost map key |
 | `missing_pricing_keys` | `Tuple[str, ...]` | The rate keys the usage needed that the entry does not declare, empty unless `reason` is `missing_pricing_key` |
 
@@ -278,7 +278,7 @@ Used for tracking prompt versioning and management information.
 
 ## StandardLoggingMCPToolCall
 
-Used to track Model Context Protocol (MCP) tool calls within LiteLLM requests. This provides detailed logging for external tool integrations.
+Used to track Model Context Protocol (MCP) tool calls within Lumina requests. This provides detailed logging for external tool integrations.
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -286,7 +286,7 @@ Used to track Model Context Protocol (MCP) tool calls within LiteLLM requests. T
 | `arguments` | `dict` | **Required**. Arguments passed to the tool as key-value pairs |
 | `result` | `Optional[dict]` | The response/result returned by the tool execution (populated by custom logging hooks) |
 | `mcp_server_name` | `Optional[str]` | Name of the MCP server that handled the tool call (e.g., `"weather-service"`, `"database-connector"`) |
-| `mcp_server_logo_url` | `Optional[str]` | URL for the MCP server's logo (used for UI display in LiteLLM dashboard) |
+| `mcp_server_logo_url` | `Optional[str]` | URL for the MCP server's logo (used for UI display in Lumina dashboard) |
 | `namespaced_tool_name` | `Optional[str]` | Fully qualified tool name including server prefix (e.g., `"deepwiki-mcp/get_page_content"`, `"github-mcp/create_issue"`) |
 | `mcp_server_cost_info` | `Optional[MCPServerCostInfo]` | Cost tracking information for the tool call |
 

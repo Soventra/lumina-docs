@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Azure AI Studio
 
-LiteLLM supports all models on Azure AI Studio
+Lumina supports all models on Azure AI Studio
 
 
 ## Usage
@@ -21,7 +21,7 @@ os.environ["AZURE_AI_API_BASE"] = ""
 ### Example Call
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["AZURE_AI_API_KEY"] = "azure ai key"
@@ -53,10 +53,10 @@ response = completion(
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml --debug
+  $ lumina --config /path/to/config.yaml --debug
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -65,8 +65,8 @@ response = completion(
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -118,11 +118,11 @@ response = completion(
 </Tabs>
 
 ## Passing additional params - max_tokens, temperature 
-See all litellm.completion supported params [here](../completion/input.md#translated-openai-params)
+See all lumina.completion supported params [here](../completion/input.md#translated-openai-params)
 
 ```python
-# !uv add litellm
-from litellm import completion
+# !uv add lumina
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["AZURE_AI_API_KEY"] = "azure ai api key"
@@ -155,10 +155,10 @@ response = completion(
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -167,8 +167,8 @@ response = completion(
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -211,7 +211,7 @@ response = completion(
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["AZURE_AI_API_KEY"] = "your-api-key"
@@ -303,7 +303,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Supported Models
 
-LiteLLM supports **ALL** azure ai models. Here's a few examples:
+Lumina supports **ALL** azure ai models. Here's a few examples:
 
 | Model Name               | Function Call                                                                                                                                                      |
 |--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -314,14 +314,14 @@ LiteLLM supports **ALL** azure ai models. Here's a few examples:
 
 ## Usage - Azure Anthropic (Azure Foundry Claude)
 
-LiteLLM funnels Azure Claude deployments through the `azure_ai/` provider so Claude Opus models on Azure Foundry keep working with Tool Search, Effort, streaming, and the rest of the advanced feature set. Point `AZURE_AI_API_BASE` to `https://<resource>.services.ai.azure.com/anthropic` (LiteLLM appends `/v1/messages` automatically) and authenticate with `AZURE_AI_API_KEY` or an Azure AD token.
+Lumina funnels Azure Claude deployments through the `azure_ai/` provider so Claude Opus models on Azure Foundry keep working with Tool Search, Effort, streaming, and the rest of the advanced feature set. Point `AZURE_AI_API_BASE` to `https://<resource>.services.ai.azure.com/anthropic` (Lumina appends `/v1/messages` automatically) and authenticate with `AZURE_AI_API_KEY` or an Azure AD token.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # Configure Azure credentials
 os.environ["AZURE_AI_API_KEY"] = "your-azure-ai-api-key"
@@ -341,7 +341,7 @@ for chunk in response:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Set environment variables**
 
@@ -361,10 +361,10 @@ model_list:
       api_base: os.environ/AZURE_AI_API_BASE
 ```
 
-**3. Start LiteLLM**
+**3. Start Lumina**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **4. Test the Azure Claude route**
@@ -378,7 +378,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
     "messages": [
       {
         "role": "user",
-        "content": "How do I use Claude Opus 4 via Azure Anthropic in LiteLLM?"
+        "content": "How do I use Claude Opus 4 via Azure Anthropic in Lumina?"
       }
     ],
     "max_tokens": 1024
@@ -397,10 +397,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK Usage">
+<TabItem value="sdk" label="Lumina SDK Usage">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["AZURE_AI_API_KEY"] = "sk-.."
@@ -424,13 +424,13 @@ print(response)
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy Usage">
+<TabItem value="proxy" label="Lumina Proxy Usage">
 
-LiteLLM provides an cohere api compatible `/rerank` endpoint for Rerank calls.
+Lumina provides an cohere api compatible `/rerank` endpoint for Rerank calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -445,10 +445,10 @@ model_list:
       api_base: os.environ/AZURE_AI_API_BASE
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

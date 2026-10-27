@@ -17,11 +17,11 @@ import VersionVerificationTable from '@site/src/components/VersionVerificationTa
 > **Status:** Active investigation
 > **Last updated:** March 27, 2026
 
-> **Update (March 30):** A new **clean** version of LiteLLM is now available (v1.83.0). This was released by our new [CI/CD v2](https://docs.litellm.ai/blog/ci-cd-v2-improvements) pipeline which added isolated environments, stronger security gates, and safer release separation for LiteLLM.
+> **Update (March 30):** A new **clean** version of Lumina is now available (v1.83.0). This was released by our new [CI/CD v2](https://docs.lumina.ai/blog/ci-cd-v2-improvements) pipeline which added isolated environments, stronger security gates, and safer release separation for Lumina.
 
 {/* truncate */}
 
-> **Update (March 27):** Review Townhall updates, including explanation of the incident, what we've done, and what comes next. [Learn more](https://docs.litellm.ai/blog/security-townhall-updates)
+> **Update (March 27):** Review Townhall updates, including explanation of the incident, what we've done, and what comes next. [Learn more](https://docs.lumina.ai/blog/security-townhall-updates)
 
 > **Update (March 27):** Added [Verified safe versions](#verified-safe-versions) section with SHA-256 checksums for all audited PyPI and Docker releases.
 
@@ -31,26 +31,26 @@ import VersionVerificationTable from '@site/src/components/VersionVerificationTa
 
 
 ## TLDR; 
-- The compromised PyPI packages were **litellm==1.82.7** and **litellm==1.82.8**. Those packages were live on March 24, 2026 from 10:39 UTC for about 40 minutes before being quarantined by PyPI.
+- The compromised PyPI packages were **lumina==1.82.7** and **lumina==1.82.8**. Those packages were live on March 24, 2026 from 10:39 UTC for about 40 minutes before being quarantined by PyPI.
 - We believe that the compromise originated from the [Trivy dependency](https://www.aquasec.com/blog/trivy-supply-chain-attack-what-you-need-to-know/) used in our CI/CD security scanning workflow.
-- Customers running the official LiteLLM Proxy Docker image were not impacted. That deployment path pins dependencies in requirements.txt and does not rely on the compromised PyPI packages.
-- ~~We have paused all new LiteLLM releases until we complete a broader supply-chain review and confirm the release path is safe.~~ **Updated:** We have now released a new **safe** version of LiteLLM (v1.83.0) by our new [CI/CD v2](https://docs.litellm.ai/blog/ci-cd-v2-improvements) pipeline which added isolated environments, stronger security gates, and safer release separation for LiteLLM. We have also verified the codebase is safe and no malicious code was pushed to `main`.
+- Customers running the official Lumina Proxy Docker image were not impacted. That deployment path pins dependencies in requirements.txt and does not rely on the compromised PyPI packages.
+- ~~We have paused all new Lumina releases until we complete a broader supply-chain review and confirm the release path is safe.~~ **Updated:** We have now released a new **safe** version of Lumina (v1.83.0) by our new [CI/CD v2](https://docs.lumina.ai/blog/ci-cd-v2-improvements) pipeline which added isolated environments, stronger security gates, and safer release separation for Lumina. We have also verified the codebase is safe and no malicious code was pushed to `main`.
 
 
 ## Overview
 
-LiteLLM AI Gateway is investigating a suspected supply chain attack involving unauthorized PyPI package publishes. Current evidence suggests a maintainer's PyPI account may have been compromised and used to distribute malicious code.
+Lumina AI Gateway is investigating a suspected supply chain attack involving unauthorized PyPI package publishes. Current evidence suggests a maintainer's PyPI account may have been compromised and used to distribute malicious code.
 
-At this time, we believe this incident may be linked to the broader [Trivy security compromise](https://www.aquasec.com/blog/trivy-supply-chain-attack-what-you-need-to-know/), in which stolen credentials were reportedly used to gain unauthorized access to the LiteLLM publishing pipeline.
+At this time, we believe this incident may be linked to the broader [Trivy security compromise](https://www.aquasec.com/blog/trivy-supply-chain-attack-what-you-need-to-know/), in which stolen credentials were reportedly used to gain unauthorized access to the Lumina publishing pipeline.
 
 This investigation is ongoing. Details below may change as we confirm additional findings.
 
 ## Confirmed affected versions
 
-The following LiteLLM versions published to PyPI were impacted:
+The following Lumina versions published to PyPI were impacted:
 
-- **v1.82.7**: contained a malicious payload in the LiteLLM AI Gateway `proxy_server.py`
-- **v1.82.8**: contained `litellm_init.pth` and a malicious payload in the LiteLLM AI Gateway `proxy_server.py`
+- **v1.82.7**: contained a malicious payload in the Lumina AI Gateway `proxy_server.py`
+- **v1.82.8**: contained `lumina_init.pth` and a malicious payload in the Lumina AI Gateway `proxy_server.py`
 
 If you installed or ran either of these versions, review the recommendations below immediately.
 
@@ -68,26 +68,26 @@ These compromised versions appear to have included a credential stealer designed
   - cloud provider credentials (AWS, GCP, Azure)
   - Kubernetes tokens
   - database passwords
-- Encrypt and exfiltrate data via a `POST` request to `models.litellm.cloud`, which is **not** an official BerriAI / LiteLLM domain
+- Encrypt and exfiltrate data via a `POST` request to `models.lumina.cloud`, which is **not** an official BerriAI / Lumina domain
 
 ## Who is affected
 
 You may be affected if **any** of the following are true:
 
-- You installed or upgraded LiteLLM via `pip` on **March 24, 2026**, between **10:39 UTC and 16:00 UTC**
-- You ran `pip install litellm` without pinning a version and received **v1.82.7** or **v1.82.8**
-- You built a Docker image during this window that included `pip install litellm` without a pinned version
-- A dependency in your project pulled in LiteLLM as a transitive, unpinned dependency
+- You installed or upgraded Lumina via `pip` on **March 24, 2026**, between **10:39 UTC and 16:00 UTC**
+- You ran `pip install lumina` without pinning a version and received **v1.82.7** or **v1.82.8**
+- You built a Docker image during this window that included `pip install lumina` without a pinned version
+- A dependency in your project pulled in Lumina as a transitive, unpinned dependency
   (for example through AI agent frameworks, MCP servers, or LLM orchestration tools)
 
 You are **not** affected if any of the following are true:
 
-**LiteLLM AI Gateway/Proxy users:** Customers running the official LiteLLM Proxy Docker image were not impacted. That deployment path pins dependencies in requirements.txt and does not rely on the compromised PyPI packages.
+**Lumina AI Gateway/Proxy users:** Customers running the official Lumina Proxy Docker image were not impacted. That deployment path pins dependencies in requirements.txt and does not rely on the compromised PyPI packages.
 
-- You are using **LiteLLM Cloud**
-- You are using the official LiteLLM AI Gateway Docker image: `ghcr.io/berriai/litellm`
+- You are using **Lumina Cloud**
+- You are using the official Lumina AI Gateway Docker image: `ghcr.io/soventra/lumina`
 - You are on **v1.82.6 or earlier** and did not upgrade during the affected window
-- You installed LiteLLM from source via the GitHub repository, which was **not** compromised
+- You installed Lumina from source via the GitHub repository, which was **not** compromised
 
 
 ### How to check if you are affected
@@ -96,12 +96,12 @@ You are **not** affected if any of the following are true:
 <TabItem value="sdk" label="SDK">
 
 ```bash
-pip show litellm
+pip show lumina
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
-Go to the proxy base url, and check the version of the installed LiteLLM.
+Go to the proxy base url, and check the version of the installed Lumina.
 
 ![Proxy version check](../../img/security_update_march_2026/proxy_version.png)
 </TabItem>
@@ -120,7 +120,7 @@ export GITHUB_TOKEN="your-github-pat"
 **Run:**
 
 ```bash
-python find_litellm_github.py
+python find_lumina_github.py
 ```
 
 Set the `ORG` variable in the script to your GitHub organization name.
@@ -128,13 +128,13 @@ Set the `ORG` variable in the script to your GitHub organization name.
 Both scripts default to scanning jobs from **today**. Adjust the `WINDOW_START` and `WINDOW_END` constants to cover **March 24, 2026** (the incident date) if running on a different day.
 
 <details>
-<summary>View full script (find_litellm_github.py)</summary>
+<summary>View full script (find_lumina_github.py)</summary>
 
 ```python
 #!/usr/bin/env python3
 """
 Scan all GitHub Actions jobs in a GitHub org that ran between
-0800-1244 UTC today and identify any that installed litellm 1.82.7 or 1.82.8.
+0800-1244 UTC today and identify any that installed lumina 1.82.7 or 1.82.8.
 
 Adjust WINDOW_START / WINDOW_END to cover March 24, 2026 if running later.
 """
@@ -158,7 +158,7 @@ WINDOW_START = datetime(TODAY.year, TODAY.month, TODAY.day,  8,  0, 0, tzinfo=ti
 WINDOW_END   = datetime(TODAY.year, TODAY.month, TODAY.day, 12, 44, 0, tzinfo=timezone.utc)
 
 TARGET_VERSIONS = {"1.82.7", "1.82.8"}
-VERSION_PATTERN = re.compile(r"litellm[=\-](\d+\.\d+\.\d+)", re.IGNORECASE)
+VERSION_PATTERN = re.compile(r"lumina[=\-](\d+\.\d+\.\d+)", re.IGNORECASE)
 
 SESSION = requests.Session()
 SESSION.headers.update({
@@ -290,7 +290,7 @@ def main():
         sys.exit(1)
 
     print(f"Time window : {WINDOW_START.isoformat()} -> {WINDOW_END.isoformat()}")
-    print(f"Hunting for : litellm {', '.join(sorted(TARGET_VERSIONS))}")
+    print(f"Hunting for : lumina {', '.join(sorted(TARGET_VERSIONS))}")
     print()
 
     print(f"Fetching repositories for org '{ORG}'...")
@@ -343,13 +343,13 @@ def main():
                 hits.append(result)
             print(
                 f"  [{done}/{total}] {full_name} job {jid}" +
-                (f"  *** HIT: litellm {result['versions']} ***" if result else ""),
+                (f"  *** HIT: lumina {result['versions']} ***" if result else ""),
                 flush=True,
             )
 
     print()
     print("=" * 72)
-    print(f"RESULTS: {len(hits)} job(s) installed litellm {' or '.join(sorted(TARGET_VERSIONS))}")
+    print(f"RESULTS: {len(hits)} job(s) installed lumina {' or '.join(sorted(TARGET_VERSIONS))}")
     print("=" * 72)
 
     if not hits:
@@ -362,7 +362,7 @@ def main():
         print(f"  Job       : {h['job_name']} (#{h['job_id']})")
         print(f"  Run ID    : {h['run_id']}")
         print(f"  Started   : {h['started_at']}")
-        print(f"  Versions  : litellm {', '.join(h['versions'])}")
+        print(f"  Versions  : lumina {', '.join(h['versions'])}")
         print(f"  URL       : {h['job_url']}")
         print(f"  Log lines :")
         for line in h["context"]:
@@ -391,7 +391,7 @@ export GITLAB_TOKEN="your-gitlab-pat"
 **Run:**
 
 ```bash
-python find_litellm_jobs.py
+python find_lumina_jobs.py
 ```
 
 Set the `GROUP_NAME` variable in the script to your GitLab group name.
@@ -399,13 +399,13 @@ Set the `GROUP_NAME` variable in the script to your GitLab group name.
 Both scripts default to scanning jobs from **today**. Adjust the `WINDOW_START` and `WINDOW_END` constants to cover **March 24, 2026** (the incident date) if running on a different day.
 
 <details>
-<summary>View full script (find_litellm_jobs.py)</summary>
+<summary>View full script (find_lumina_jobs.py)</summary>
 
 ```python
 #!/usr/bin/env python3
 """
 Scan all GitLab CI/CD jobs in a GitLab group that ran between
-0800-1244 UTC today and identify any that installed litellm 1.82.7 or 1.82.8.
+0800-1244 UTC today and identify any that installed lumina 1.82.7 or 1.82.8.
 
 Adjust WINDOW_START / WINDOW_END to cover March 24, 2026 if running later.
 """
@@ -427,7 +427,7 @@ WINDOW_START = datetime(TODAY.year, TODAY.month, TODAY.day, 8, 0, 0, tzinfo=time
 WINDOW_END   = datetime(TODAY.year, TODAY.month, TODAY.day, 12, 44, 0, tzinfo=timezone.utc)
 
 TARGET_VERSIONS = {"1.82.7", "1.82.8"}
-VERSION_PATTERN = re.compile(r"litellm[=\-](\d+\.\d+\.\d+)", re.IGNORECASE)
+VERSION_PATTERN = re.compile(r"lumina[=\-](\d+\.\d+\.\d+)", re.IGNORECASE)
 
 HEADERS = {"PRIVATE-TOKEN": TOKEN}
 SESSION = requests.Session()
@@ -563,7 +563,7 @@ def main():
         sys.exit(1)
 
     print(f"Time window : {WINDOW_START.isoformat()} -> {WINDOW_END.isoformat()}")
-    print(f"Hunting for : litellm {', '.join(sorted(TARGET_VERSIONS))}")
+    print(f"Hunting for : lumina {', '.join(sorted(TARGET_VERSIONS))}")
     print()
 
     print(f"Resolving group '{GROUP_NAME}'...")
@@ -610,12 +610,12 @@ def main():
             if result:
                 hits.append(result)
             print(f"  [{done}/{total}] checked {pname} job {jid}" +
-                  (f"  *** HIT: litellm {result['versions']} ***" if result else ""),
+                  (f"  *** HIT: lumina {result['versions']} ***" if result else ""),
                   flush=True)
 
     print()
     print("=" * 72)
-    print(f"RESULTS: {len(hits)} job(s) installed litellm {' or '.join(sorted(TARGET_VERSIONS))}")
+    print(f"RESULTS: {len(hits)} job(s) installed lumina {' or '.join(sorted(TARGET_VERSIONS))}")
     print("=" * 72)
 
     if not hits:
@@ -628,7 +628,7 @@ def main():
         print(f"  Job       : {h['job_name']} (#{h['job_id']})")
         print(f"  Branch/tag: {h['ref']}")
         print(f"  Started   : {h['started_at']}")
-        print(f"  Versions  : litellm {', '.join(h['versions'])}")
+        print(f"  Versions  : lumina {', '.join(h['versions'])}")
         print(f"  URL       : {h['job_url']}")
         print(f"  Log lines :")
         for line in h["context"]:
@@ -651,11 +651,11 @@ if __name__ == "__main__":
 
 Review affected systems for the following indicators:
 
-- `litellm_init.pth` present in your `site-packages`
-- Outbound traffic or requests to `models.litellm[.]cloud`
-  This domain is **not** affiliated with LiteLLM
+- `lumina_init.pth` present in your `site-packages`
+- Outbound traffic or requests to `models.lumina[.]cloud`
+  This domain is **not** affiliated with Lumina
 - Outbound traffic or requests to `checkmarx[.]zone`
-  This domain is **not** affiliated with LiteLLM
+  This domain is **not** affiliated with Lumina
 
 
 ## Immediate actions for affected users
@@ -675,10 +675,10 @@ Treat any credentials present on the affected systems as compromised, including:
 
 ### 2. Inspect your filesystem
 
-Check your `site-packages` directory for a file named `litellm_init.pth`:
+Check your `site-packages` directory for a file named `lumina_init.pth`:
 
 ```bash
-find /usr/lib/python3.13/site-packages/ -name "litellm_init.pth"
+find /usr/lib/python3.13/site-packages/ -name "lumina_init.pth"
 ```
 
 If present:
@@ -698,12 +698,12 @@ Review your:
 
 Confirm whether **v1.82.7** or **v1.82.8** was installed anywhere.
 
-Pin LiteLLM to a known safe version such as **v1.82.6 or earlier**, or to a later verified release once announced.
+Pin Lumina to a known safe version such as **v1.82.6 or earlier**, or to a later verified release once announced.
 
 
 ## Response and remediation
 
-The LiteLLM AI Gateway team has already taken the following steps:
+The Lumina AI Gateway team has already taken the following steps:
 
 - Removed compromised packages from PyPI
 - Rotated maintainer credentials and established new authorized maintainers
@@ -712,7 +712,7 @@ The LiteLLM AI Gateway team has already taken the following steps:
 
 ## Verify Docker image signatures
 
-Starting from `v1.83.0-nightly`, all LiteLLM Docker images published to GHCR are signed with [cosign](https://docs.sigstore.dev/cosign/overview/). Every release is signed with the same key introduced in [commit `0112e53`](https://github.com/BerriAI/litellm/commit/0112e53046018d726492c814b3644b7d376029d0).
+Starting from `v1.83.0-nightly`, all Lumina Docker images published to GHCR are signed with [cosign](https://docs.sigstore.dev/cosign/overview/). Every release is signed with the same key introduced in [commit `0112e53`](https://github.com/Soventra/lumina/commit/0112e53046018d726492c814b3644b7d376029d0).
 
 **Verify using the pinned commit hash (recommended):**
 
@@ -720,8 +720,8 @@ A commit hash is cryptographically immutable, so this is the strongest way to en
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-  ghcr.io/berriai/litellm:<release-tag>
+  --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+  ghcr.io/soventra/lumina:<release-tag>
 ```
 
 **Verify using a release tag (convenience):**
@@ -730,8 +730,8 @@ Tags are protected in this repository and resolve to the same key. This option i
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/<release-tag>/cosign.pub \
-  ghcr.io/berriai/litellm:<release-tag>
+  --key https://raw.githubusercontent.com/Soventra/lumina/<release-tag>/cosign.pub \
+  ghcr.io/soventra/lumina:<release-tag>
 ```
 
 Replace `<release-tag>` with the version you are deploying (e.g. `v1.83.0-stable`).
@@ -746,11 +746,11 @@ The following checks were performed on each of these signatures:
 
 ## Verified safe versions
 
-We have audited every LiteLLM release published between v1.78.0 and v1.82.6 across both PyPI and Docker. Each artifact was verified by:
+We have audited every Lumina release published between v1.78.0 and v1.82.6 across both PyPI and Docker. Each artifact was verified by:
 
 1. Downloading the published artifact and computing its SHA-256 digest
 2. Scanning for the known [indicators of compromise](#indicators-of-compromise-iocs) (IOCs)
-3. Comparing the artifact contents against the corresponding Git commit in the BerriAI/litellm repository
+3. Comparing the artifact contents against the corresponding Git commit in the Soventra/lumina repository
 
 **All versions listed below are confirmed clean.**
 
@@ -816,7 +816,7 @@ If you believe your systems may be affected, contact us immediately:
 
 - **Security:** `security@berri.ai`
 - **Support:** `support@berri.ai`
-- **Slack:** Reach out to the LiteLLM team directly
+- **Slack:** Reach out to the Lumina team directly
 
-For real-time updates, follow [LiteLLM (YC W23) on X](https://x.com/LiteLLM).
+For real-time updates, follow [Lumina (YC W23) on X](https://x.com/Lumina).
 

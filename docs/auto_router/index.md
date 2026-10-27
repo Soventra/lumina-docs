@@ -10,13 +10,13 @@ import AutoRouterDiagram from '@site/src/components/AutoRouterDiagram';
 
 :::info[Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
 <a className="button button--primary button--lg" href="https://calendar.app.google/i2e7qVEJphHi5S8UA">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -44,7 +44,7 @@ Already testing it? Share your results in [discussion #32168](https://github.com
 ## Quick start
 
 - **Dashboard:** Models + Endpoints, Add Model, Auto Router tab, enter a name, then click **Configure automatically** or pick a template. Review the tiers, Test Routing, and save.
-- **Agent:** tell it `run curl -fsSL https://docs.litellm.ai/skills/auto-router and follow the instructions`.
+- **Agent:** tell it `run curl -fsSL https://docs.lumina.ai/skills/auto-router and follow the instructions`.
 - **config.yaml:** one router entry whose tiers name other models in the same file.
 
 ```yaml title="config.yaml" keep-model-ids

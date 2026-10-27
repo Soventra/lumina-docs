@@ -2,7 +2,7 @@
 
 ## Concept 
 
-Each model onboarded is a "model deployment" in LiteLLM. 
+Each model onboarded is a "model deployment" in Lumina. 
 
 These model deployments are assigned to a "model group", via the "model_name" field in the config.yaml. 
 
@@ -44,7 +44,7 @@ curl --location 'http://localhost:4000/key/generate' \
 
 ## Loadbalancing 
 
-You can add multiple model deployments to a single "model group". LiteLLM will automatically load balance requests across the model deployments in the group.
+You can add multiple model deployments to a single "model group". Lumina will automatically load balance requests across the model deployments in the group.
 
 Example:
 
@@ -81,7 +81,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   fallbacks: [{"my-custom-model": ["my-other-model"]}]
 ```
 

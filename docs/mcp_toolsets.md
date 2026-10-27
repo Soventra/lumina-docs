@@ -126,7 +126,7 @@ The model now has access to exactly the tools in your toolset and nothing else.
 
 ## Use a toolset via API
 
-Pass the toolset's route as the `server_url` in your tools list. LiteLLM resolves it server-side, so no public URL is needed.
+Pass the toolset's route as the `server_url` in your tools list. Lumina resolves it server-side, so no public URL is needed.
 
 <Tabs>
 <TabItem value="responses" label="Responses API">
@@ -135,7 +135,7 @@ Pass the toolset's route as the `server_url` in your tools list. LiteLLM resolve
 import openai
 
 client = openai.OpenAI(
-    api_key="your-litellm-key",
+    api_key="your-lumina-key",
     base_url="http://your-proxy/v1",
 )
 
@@ -146,7 +146,7 @@ response = client.responses.create(
         {
             "type": "mcp",
             "server_label": "devtooling-prod",
-            "server_url": "litellm_proxy/mcp/devtooling-prod",
+            "server_url": "lumina_proxy/mcp/devtooling-prod",
             "require_approval": "never",
         }
     ],
@@ -161,7 +161,7 @@ print(response.output_text)
 import openai
 
 client = openai.OpenAI(
-    api_key="your-litellm-key",
+    api_key="your-lumina-key",
     base_url="http://your-proxy/v1",
 )
 
@@ -172,7 +172,7 @@ response = client.chat.completions.create(
         {
             "type": "mcp",
             "server_label": "devtooling-prod",
-            "server_url": "litellm_proxy/mcp/devtooling-prod",
+            "server_url": "lumina_proxy/mcp/devtooling-prod",
             "require_approval": "never",
         }
     ],
@@ -185,7 +185,7 @@ print(response.choices[0].message.content)
 
 ```bash
 curl http://your-proxy/v1/responses \
-  -H "Authorization: Bearer your-litellm-key" \
+  -H "Authorization: Bearer your-lumina-key" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",
@@ -194,7 +194,7 @@ curl http://your-proxy/v1/responses \
       {
         "type": "mcp",
         "server_label": "devtooling-prod",
-        "server_url": "litellm_proxy/mcp/devtooling-prod",
+        "server_url": "lumina_proxy/mcp/devtooling-prod",
         "require_approval": "never"
       }
     ]
@@ -211,11 +211,11 @@ curl http://your-proxy/v1/responses \
 ```bash
 # List all toolsets
 curl http://your-proxy/v1/mcp/toolset \
-  -H "Authorization: Bearer your-litellm-key"
+  -H "Authorization: Bearer your-lumina-key"
 
 # Create a toolset
 curl -X POST http://your-proxy/v1/mcp/toolset \
-  -H "Authorization: Bearer your-litellm-key" \
+  -H "Authorization: Bearer your-lumina-key" \
   -H "Content-Type: application/json" \
   -d '{
     "toolset_name": "devtooling-prod",
@@ -229,5 +229,5 @@ curl -X POST http://your-proxy/v1/mcp/toolset \
 
 # Delete a toolset
 curl -X DELETE http://your-proxy/v1/mcp/toolset/<toolset_id> \
-  -H "Authorization: Bearer your-litellm-key"
+  -H "Authorization: Bearer your-lumina-key"
 ```

@@ -9,6 +9,6 @@ import ReleaseFeed from '@site/src/components/ReleaseFeed';
 
 # Changelog
 
-The main changes in each LiteLLM release. Open a release for its full notes, upgrade steps and every merged PR. Watch [BerriAI/litellm](https://github.com/BerriAI/litellm/releases) on GitHub to hear about new releases.
+The main changes in each Lumina release. Open a release for its full notes, upgrade steps and every merged PR. Watch [Soventra/lumina](https://github.com/Soventra/lumina/releases) on GitHub to hear about new releases.
 
 <ReleaseFeed />

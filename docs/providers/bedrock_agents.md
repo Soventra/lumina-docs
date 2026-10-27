@@ -9,18 +9,18 @@ Call Bedrock Agents in the OpenAI Request/Response format.
 | Property | Details |
 |----------|---------|
 | Description | Amazon Bedrock Agents use the reasoning of foundation models (FMs), APIs, and data to break down user requests, gather relevant information, and efficiently complete tasks. |
-| Provider Route on LiteLLM | `bedrock/agent/{AGENT_ID}/{ALIAS_ID}` |
+| Provider Route on Lumina | `bedrock/agent/{AGENT_ID}/{ALIAS_ID}` |
 | Provider Doc | [AWS Bedrock Agents ↗](https://aws.amazon.com/bedrock/agents/) |
 
 ## Quick Start
 
-### Model Format to LiteLLM
+### Model Format to Lumina
 
-To call a bedrock agent through LiteLLM, you need to use the following model format to call the agent.
+To call a bedrock agent through Lumina, you need to use the following model format to call the agent.
 
-Here the `model=bedrock/agent/` tells LiteLLM to call the bedrock `InvokeAgent` API.
+Here the `model=bedrock/agent/` tells Lumina to call the bedrock `InvokeAgent` API.
 
-```shell showLineNumbers title="Model Format to LiteLLM"
+```shell showLineNumbers title="Model Format to Lumina"
 bedrock/agent/{AGENT_ID}/{ALIAS_ID}
 ```
 
@@ -31,13 +31,13 @@ bedrock/agent/{AGENT_ID}/{ALIAS_ID}
 You can find these IDs in your AWS Bedrock console under Agents.
 
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Basic Agent Completion"
-import litellm
+import lumina
 
 # Make a completion request to your Bedrock Agent
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/agent/L1RT58GYRW/MFPSBCXYTW",  # agent/{AGENT_ID}/{ALIAS_ID}
     messages=[
         {
@@ -52,10 +52,10 @@ print(f"Response cost: ${response._hidden_params['response_cost']}")
 ```
 
 ```python showLineNumbers title="Streaming Agent Responses"
-import litellm
+import lumina
 
 # Stream responses from your Bedrock Agent
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/agent/L1RT58GYRW/MFPSBCXYTW",
     messages=[
         {
@@ -72,14 +72,14 @@ for chunk in response:
 ```
 
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your model in config.yaml
 
 <Tabs>
 <TabItem value="config-yaml" label="config.yaml">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration"
+```yaml showLineNumbers title="Lumina Proxy Configuration"
 model_list:
   - model_name: bedrock-agent-1
     lumina_params:
@@ -99,10 +99,10 @@ model_list:
 </TabItem>
 </Tabs>
 
-#### 2. Start the LiteLLM Proxy
+#### 2. Start the Lumina Proxy
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 ```
 
 #### 3. Make requests to your Bedrock Agents
@@ -145,13 +145,13 @@ curl http://localhost:4000/v1/chat/completions \
 
 <TabItem value="openai-sdk" label="OpenAI Python SDK">
 
-```python showLineNumbers title="Using OpenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Using OpenAI SDK with Lumina Proxy"
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Make a completion request to your agent
@@ -173,7 +173,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000", 
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Stream agent responses
@@ -204,14 +204,14 @@ Any non-openai parameters will be passed to the agent as custom parameters.
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers title="Using custom parameters"
-from litellm import completion
+from lumina import completion
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/agent/L1RT58GYRW/MFPSBCXYTW",
     messages=[
         {
             "role": "user",
-            "content": "Hi who is ishaan cto of litellm, tell me 10 things about him",
+            "content": "Hi who is ishaan cto of lumina, tell me 10 things about him",
         }
     ],
     invocationId="my-test-invocation-id", # PROVIDER-SPECIFIC VALUE
@@ -221,7 +221,7 @@ response = litellm.completion(
 </TabItem>
 <TabItem value="proxy" label="Proxy">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration"
+```yaml showLineNumbers title="Lumina Proxy Configuration"
 model_list:
   - model_name: bedrock-agent-1
     lumina_params:
@@ -242,5 +242,5 @@ model_list:
 ## Further Reading
 
 - [AWS Bedrock Agents Documentation](https://aws.amazon.com/bedrock/agents/)
-- [LiteLLM Authentication to Bedrock](https://docs.litellm.ai/docs/providers/bedrock#boto3---authentication)
+- [Lumina Authentication to Bedrock](https://docs.lumina.ai/docs/providers/bedrock#boto3---authentication)
 

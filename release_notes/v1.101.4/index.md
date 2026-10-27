@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.101.4 supports Straiker v3 keys and fixes Azure Content Safety"
+title: "Lumina v1.101.4 supports Straiker v3 keys and fixes Azure Content Safety"
 description: "Adds Straiker v3 platform keys to the Straiker guardrail and fixes Azure Content Safety guardrails that returned 404 without an api_version."
 slug: "v1-101-4"
 date: 2026-10-01T05:10:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -33,20 +33,20 @@ docker run \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.101.4
+docker.lumina.ai/soventra/lumina:1.101.4
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.101.4
+pip install lumina==1.101.4
 ```
 
 </TabItem>
 </Tabs>
 
-This release is published as [`ghcr.io/berriai/litellm:v1.101.4`](https://github.com/BerriAI/litellm/pkgs/container/litellm). See the [GitHub release](https://github.com/BerriAI/litellm/releases/tag/v1.101.4) and the full [releases page](https://github.com/BerriAI/litellm/releases)
+This release is published as [`ghcr.io/soventra/lumina:v1.101.4`](https://github.com/Soventra/lumina/pkgs/container/lumina). See the [GitHub release](https://github.com/Soventra/lumina/releases/tag/v1.101.4) and the full [releases page](https://github.com/Soventra/lumina/releases)
 
 :::info Upgrading
 
@@ -60,7 +60,7 @@ Applies if you are upgrading from a release older than `v1.101.3`. After upgradi
 
 :::
 
-`v1.101.4` is a patch release on top of [`v1.101.3`](https://github.com/BerriAI/litellm/releases/tag/v1.101.3). It lets the Straiker guardrail use v3 platform keys and stops a shared `api_version` default from breaking Azure Content Safety guardrails. The `v1.101.4` tag points at [`f471923`](https://github.com/BerriAI/litellm/commit/f4719232112d87f9f815f37120f916c42a37a30e)
+`v1.101.4` is a patch release on top of [`v1.101.3`](https://github.com/Soventra/lumina/releases/tag/v1.101.3). It lets the Straiker guardrail use v3 platform keys and stops a shared `api_version` default from breaking Azure Content Safety guardrails. The `v1.101.4` tag points at [`f471923`](https://github.com/Soventra/lumina/commit/f4719232112d87f9f815f37120f916c42a37a30e)
 
 ## Straiker guardrail supports v3 platform keys
 
@@ -74,11 +74,11 @@ The shared guardrail params defaulted `api_version` to Javelin's `v1`, so Azure 
 
 ### What's Changed
 
-- fix(guardrails): stop the Javelin api_version default leaking into Azure Content Safety - [PR #41941](https://github.com/BerriAI/litellm/pull/41941)
-- feat(guardrails): straiker guardrail speaks the v3 platform API (/api/v3/detect) - [PR #41880](https://github.com/BerriAI/litellm/pull/41880)
-- fix(guardrails): treat an unknown straiker api_version as unset instead of skipping the guardrail - [PR #43956](https://github.com/BerriAI/litellm/pull/43956)
-- chore(deps): bump pyjwt to 2.14.0 - [`bdc4212`](https://github.com/BerriAI/litellm/commit/bdc421261e1b744bfdfe6819d652bc056146c417)
+- fix(guardrails): stop the Javelin api_version default leaking into Azure Content Safety - [PR #41941](https://github.com/Soventra/lumina/pull/41941)
+- feat(guardrails): straiker guardrail speaks the v3 platform API (/api/v3/detect) - [PR #41880](https://github.com/Soventra/lumina/pull/41880)
+- fix(guardrails): treat an unknown straiker api_version as unset instead of skipping the guardrail - [PR #43956](https://github.com/Soventra/lumina/pull/43956)
+- chore(deps): bump pyjwt to 2.14.0 - [`bdc4212`](https://github.com/Soventra/lumina/commit/bdc421261e1b744bfdfe6819d652bc056146c417)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.101.3...v1.101.4
+https://github.com/Soventra/lumina/compare/v1.101.3...v1.101.4

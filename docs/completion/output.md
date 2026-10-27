@@ -1,7 +1,7 @@
 # Output 
 
 ## Format
-Here's the exact json output and type you can expect from all litellm `completion` calls for all models
+Here's the exact json output and type you can expect from all lumina `completion` calls for all models
 
 ```python 
 {
@@ -53,7 +53,7 @@ Here's what an example response looks like
 
 ## Native Finish Reason
 
-LiteLLM maps all provider-specific `finish_reason` values to OpenAI-compatible values (`stop`, `length`, `tool_calls`, `function_call`, `content_filter`). When the original provider value differs from the mapped value, it is preserved in `provider_specific_fields["native_finish_reason"]`.
+Lumina maps all provider-specific `finish_reason` values to OpenAI-compatible values (`stop`, `length`, `tool_calls`, `function_call`, `content_filter`). When the original provider value differs from the mapped value, it is preserved in `provider_specific_fields["native_finish_reason"]`.
 
 This is useful for agent loops that need to distinguish between different stop conditions (e.g., Gemini's `MALFORMED_FUNCTION_CALL` vs a normal `stop`).
 
@@ -78,7 +78,7 @@ When the provider already returns an OpenAI-compatible value (e.g., `stop`), `na
 You can also access information like latency. 
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 

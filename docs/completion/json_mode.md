@@ -13,7 +13,7 @@ import TabItem from '@theme/TabItem';
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["OPENAI_API_KEY"] = ""
@@ -58,10 +58,10 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ### 1. Check if model supports `response_format`
 
-Call `litellm.get_supported_openai_params` to check if a model/provider supports `response_format`. 
+Call `lumina.get_supported_openai_params` to check if a model/provider supports `response_format`. 
 
 ```python
-from litellm import get_supported_openai_params
+from lumina import get_supported_openai_params
 
 params = get_supported_openai_params(model="anthropic.{{anthropic}}", custom_llm_provider="bedrock")
 
@@ -75,12 +75,12 @@ This is used to check if you can pass
 - `response_format=<Pydantic Model>`
 
 ```python
-from litellm import supports_response_schema
+from lumina import supports_response_schema
 
 assert supports_response_schema(model="{{gemini_pro}}", custom_llm_provider="bedrock")
 ```
 
-Check out [model_prices_and_context_window.json](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) for a full list of models and their support for `response_schema`.
+Check out [model_prices_and_context_window.json](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) for a full list of models and their support for `response_schema`.
 
 ## Pass in 'json_schema' 
 
@@ -107,7 +107,7 @@ Works for:
 
 ```python
 import os
-from litellm import completion 
+from lumina import completion 
 from pydantic import BaseModel
 
 # add to env var 
@@ -148,7 +148,7 @@ model_list:
 2. Start proxy with config.yaml
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Call with OpenAI SDK / Curl!
@@ -240,14 +240,14 @@ curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 ## Validate JSON Schema 
 
 
-Not all models support passing the json_schema to them natively. To solve this, LiteLLM supports client-side validation of the json schema. 
+Not all models support passing the json_schema to them natively. To solve this, Lumina supports client-side validation of the json schema. 
 
 ```
-litellm.enable_json_schema_validation=True
+lumina.enable_json_schema_validation=True
 ```
-If `litellm.enable_json_schema_validation=True` is set, LiteLLM will validate the json response using `jsonvalidator`. 
+If `lumina.enable_json_schema_validation=True` is set, Lumina will validate the json response using `jsonvalidator`. 
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/671d8ac496b6229970c7f2a3bdedd6cb84f0746b/litellm/litellm_core_utils/json_validation_rule.py#L4)
+[**See Code**](https://github.com/Soventra/lumina/blob/671d8ac496b6229970c7f2a3bdedd6cb84f0746b/lumina/lumina_core_utils/json_validation_rule.py#L4)
 
 
 <Tabs>
@@ -255,8 +255,8 @@ If `litellm.enable_json_schema_validation=True` is set, LiteLLM will validate th
 
 ```python
 # !gcloud auth application-default login - run this to add vertex credentials to your env
-import litellm, os
-from litellm import completion 
+import lumina, os
+from lumina import completion 
 from pydantic import BaseModel 
 
 
@@ -265,8 +265,8 @@ messages=[
         {"role": "user", "content": "Alice and Bob are going to a science fair on Friday."},
     ]
 
-litellm.enable_json_schema_validation = True
-litellm.set_verbose = True # see the raw request made by litellm
+lumina.enable_json_schema_validation = True
+lumina.set_verbose = True # see the raw request made by lumina
 
 class CalendarEvent(BaseModel):
   name: str
@@ -292,14 +292,14 @@ model_list:
       model: "gemini/{{gemini_flash}}"
       api_key: os.environ/GEMINI_API_KEY
 
-litellm_settings:
+lumina_settings:
   enable_json_schema_validation: True
 ```
 
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -363,7 +363,7 @@ Gemini 2.0+ models automatically use the native `responseJsonSchema` parameter, 
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 from pydantic import BaseModel
 
 class UserInfo(BaseModel):
@@ -431,4 +431,4 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 | Gemini 2.0+ | `responseJsonSchema` (JSON Schema) | ✅ Yes |
 | Gemini 1.5 | `responseSchema` (OpenAPI) | ❌ No |
 
-LiteLLM automatically selects the appropriate format based on the model version.
+Lumina automatically selects the appropriate format based on the model version.

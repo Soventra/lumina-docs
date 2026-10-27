@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Structured Output /v1/messages
 
-Use LiteLLM to call Anthropic's structured output feature via the `/v1/messages` endpoint.
+Use Lumina to call Anthropic's structured output feature via the `/v1/messages` endpoint.
 
 ## Supported Providers
 
@@ -16,7 +16,7 @@ Use LiteLLM to call Anthropic's structured output feature via the `/v1/messages`
 
 ## Usage
 
-### LiteLLM Proxy Server
+### Lumina Proxy Server
 
 <Tabs>
 <TabItem value="anthropic" label="Anthropic">
@@ -34,7 +34,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -88,7 +88,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -143,7 +143,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -198,7 +198,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!

@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.89.3 - Guardrails & Cache-Control Fixes"
+title: "Lumina v1.89.3 - Guardrails & Cache-Control Fixes"
 description: "Fixes guardrail regressions where DB guardrails re-initialized on every poll. Also caps Anthropic cache_control injection at 4 blocks."
 slug: "v1-89-3"
 date: 2026-06-20T14:45:08
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -21,7 +21,7 @@ hide_table_of_contents: false
 
 :::info[Update: no performance regression found]
 
-An earlier version of this note flagged a potential throughput regression. We investigated and could not confirm or reproduce any regression in the released version. The one report we received came from a deployment running custom code on top of what we shipped, and our testing points to those changes, not LiteLLM, as the likely cause.
+An earlier version of this note flagged a potential throughput regression. We investigated and could not confirm or reproduce any regression in the released version. The one report we received came from a deployment running custom code on top of what we shipped, and our testing points to those changes, not Lumina, as the likely cause.
 
 Correctness and error rates were never affected. If you're on this version, there's nothing you need to do.
 
@@ -41,14 +41,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.89.3
+docker.lumina.ai/soventra/lumina:1.89.3
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.89.3
+pip install lumina==1.89.3
 ```
 
 </TabItem>
@@ -58,11 +58,11 @@ pip install litellm==1.89.3
 
 ### What's Changed
 
-- fix(integrations): cap Anthropic cache_control injection at 4 blocks - [PR #30480](https://github.com/BerriAI/litellm/pull/30480)
-- fix(guardrails): run pre_call hook once for model-level guardrails - [PR #30543](https://github.com/BerriAI/litellm/pull/30543)
-- fix(guardrails): stop re-initializing DB guardrails on every poll - [PR #30542](https://github.com/BerriAI/litellm/pull/30542)
-- fix(guardrails): return 400 not 500 when AIM blocks a request - [PR #30573](https://github.com/BerriAI/litellm/pull/30573)
+- fix(integrations): cap Anthropic cache_control injection at 4 blocks - [PR #30480](https://github.com/Soventra/lumina/pull/30480)
+- fix(guardrails): run pre_call hook once for model-level guardrails - [PR #30543](https://github.com/Soventra/lumina/pull/30543)
+- fix(guardrails): stop re-initializing DB guardrails on every poll - [PR #30542](https://github.com/Soventra/lumina/pull/30542)
+- fix(guardrails): return 400 not 500 when AIM blocks a request - [PR #30573](https://github.com/Soventra/lumina/pull/30573)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.89.2...v1.89.3
+https://github.com/Soventra/lumina/compare/v1.89.2...v1.89.3

@@ -1,17 +1,17 @@
 ---
 slug: usage-page-bounded-loading
-title: "How we made the LiteLLM Usage page 120x faster"
+title: "How we made the Lumina Usage page 120x faster"
 date: 2026-09-30T09:00:00
 authors:
   - yassin
-description: "From six minutes to 3.2 seconds: how moving aggregation into Postgres made LiteLLM's Usage page roughly 120x faster in our benchmark."
+description: "From six minutes to 3.2 seconds: how moving aggregation into Postgres made Lumina's Usage page roughly 120x faster in our benchmark."
 tags: [performance, admin-ui, postgres, engineering, ai-gateway]
 hide_table_of_contents: true
 ---
 
 import { PerformanceResults, UsageDataFlow } from './diagrams';
 
-This week, we made the LiteLLM Usage page roughly 120x faster.
+This week, we made the Lumina Usage page roughly 120x faster.
 
 With 5,000 API keys, our Usage page took **over six minutes** to show 30 days of totals. We redesigned how it loads data and brought that down to **3.2 seconds** in our benchmark. That's roughly **120x faster**.
 
@@ -39,6 +39,6 @@ For 90 days of usage, time to totals fell from **about 34 minutes to 10 seconds*
 
 We tested both designs against the same Postgres database: **5,000 API keys and 4.9 million daily rows across 91 days**. Both used production UI builds. New timings are medians of five runs with a cold browser cache; old timings come from runs allowed to finish beyond our 90-second cutoff. These measurements track time to visible totals. We later reran the final code side by side with the version we first measured, on a separate machine, and time to totals matched within 2%.
 
-![LiteLLM Usage page Key Activity tab showing complete 30-day totals for 5,000 keys, with the key list loading below.](./after_usage_30d.png)
+![Lumina Usage page Key Activity tab showing complete 30-day totals for 5,000 keys, with the key list loading below.](./after_usage_30d.png)
 
-See the changes: [database queries](https://github.com/BerriAI/litellm/pull/43398), [API routes](https://github.com/BerriAI/litellm/pull/43408), and [Admin UI](https://github.com/BerriAI/litellm/pull/43409). We're making it faster to see where your LLM spend is going, even as your deployment grows.
+See the changes: [database queries](https://github.com/Soventra/lumina/pull/43398), [API routes](https://github.com/Soventra/lumina/pull/43408), and [Admin UI](https://github.com/Soventra/lumina/pull/43409). We're making it faster to see where your LLM spend is going, even as your deployment grows.

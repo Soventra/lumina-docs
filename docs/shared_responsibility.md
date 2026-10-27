@@ -1,20 +1,20 @@
 ---
 title: Shared Responsibility Model
-description: What LiteLLM is responsible for and what you are responsible for when you self-host the gateway, and how to tell which side an issue falls on.
+description: What Lumina is responsible for and what you are responsible for when you self-host the gateway, and how to tell which side an issue falls on.
 ---
 
 # Shared Responsibility Model
 
-When you self-host LiteLLM, you run the software and we build it. That split decides who debugs what. Here, we describe which problems are our responsibility and which ones are yours, so that a report reaches the right team.
+When you self-host Lumina, you run the software and we build it. That split decides who debugs what. Here, we describe which problems are our responsibility and which ones are yours, so that a report reaches the right team.
 
 In a nutshell, we own the behavior of the product as documented on this site, and you own the environment it runs in + any code you add to it.
 
 | Area                                                                                                                      | Owner   |
 | ------------------------------------------------------------------------------------------------------------------------- | ------- |
-| Correctness of documented features and endpoints                                                                          | LiteLLM |
-| Memory leaks, hangs, and stability problems in the documented feature set                                                 | LiteLLM |
-| Provider translation, cost tracking, and routing behavior as documented                                                   | LiteLLM |
-| Security patches and the official Docker image and Helm chart                                                             | LiteLLM |
+| Correctness of documented features and endpoints                                                                          | Lumina |
+| Memory leaks, hangs, and stability problems in the documented feature set                                                 | Lumina |
+| Provider translation, cost tracking, and routing behavior as documented                                                   | Lumina |
+| Security patches and the official Docker image and Helm chart                                                             | Lumina |
 | Uptime of your instance and the infrastructure under it                                                                   | You     |
 | Custom callbacks, custom guardrails, custom auth, and other code you inject                                               | You     |
 | Infra issues due to deploying in a way that differs from our recommended path (your own Dockerfile, chart, or base image) | You     |
@@ -23,7 +23,7 @@ In a nutshell, we own the behavior of the product as documented on this site, an
 
 ## What we are responsible for
 
-We are responsible for the product working. Every feature documented on this site should behave as documented. If it does not, that is a bug for us and you should [open an issue](https://github.com/BerriAI/litellm/issues) or raise it in your enterprise support channel.
+We are responsible for the product working. Every feature documented on this site should behave as documented. If it does not, that is a bug for us and you should [open an issue](https://github.com/Soventra/lumina/issues) or raise it in your enterprise support channel.
 
 That responsibility covers stability, not only correctness. Memory growth, file descriptor or connection leaks, deadlocks, hangs, and throughput regressions within the documented feature set are our responsibility to diagnose and fix. This covers the interfaces you interact with: the public HTTP surface is governed by the [API Stability Policy](./api_stability_policy.md), version numbering and what a patch or minor bump means is documented in [Release Cycle](./proxy/release_cycle.md), and beta features moving behind Enterprise by the [Migration Policy](./migration_policy.md). We maintain the official Docker image, Helm chart, and Terraform modules described in [Production Deployment](./proxy/deploy.md), and we ship security patches for the [supported version window](./enterprise/version_support.md).
 
@@ -47,7 +47,7 @@ Also, if your deployment strategy is not following our recommended path, that pa
 
 Please include:
 
-1. The LiteLLM version
+1. The Lumina version
 2. How you deployed it
 3. A redacted config
 4. The exact request
@@ -55,4 +55,4 @@ Please include:
 6. For stability reports, we recommend including the memory or latency curve over time, the request rate, and the worker and container limits
 7. For memory and latency issues, we recommend including [Pyroscope profiling](./proxy/pyroscope_profiling.md) results
 
-Open bugs and feature requests as [GitHub issues](https://github.com/BerriAI/litellm/issues). Enterprise customers can also use their dedicated support channel. See [Support and SLA](./enterprise/support.md) for hours and SLA options.
+Open bugs and feature requests as [GitHub issues](https://github.com/Soventra/lumina/issues). Enterprise customers can also use their dedicated support channel. See [Support and SLA](./enterprise/support.md) for hours and SLA options.

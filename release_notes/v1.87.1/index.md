@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.87.1 - Azure AD, Batch Auth & Key Access Backports"
+title: "Lumina v1.87.1 - Azure AD, Batch Auth & Key Access Backports"
 description: "Fixes Azure AD token refresh, batch and video model routing and Vertex Claude effort handling. Backports five staged fixes to the 1.87 line."
 slug: "v1-87-1"
 date: 2026-06-03T21:54:19
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.87.1
+docker.lumina.ai/soventra/lumina:1.87.1
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.87.1
+pip install lumina==1.87.1
 ```
 
 </TabItem>
@@ -48,12 +48,12 @@ pip install litellm==1.87.1
 
 ### What's Changed
 
-- fix(azure): preserve AD token refresh in the v1 OpenAI client path - [PR #28627](https://github.com/BerriAI/litellm/pull/28627)
-- fix(proxy): map a stripped batch `body.model` back to the proxy alias so key access checks pass - [PR #29264](https://github.com/BerriAI/litellm/pull/29264)
-- fix(proxy): resolve managed video model ids through the router before auth, budget, and key checks - [PR #29545](https://github.com/BerriAI/litellm/pull/29545)
-- fix(key_generate): let team members create keys on org-scoped teams (regression since v1.84.0-rc.1) - [PR #29310](https://github.com/BerriAI/litellm/pull/29310)
-- fix(vertex): strip `output_config.effort` for Vertex Claude models that reject it, such as Haiku 4.5 - [PR #29585](https://github.com/BerriAI/litellm/pull/29585)
+- fix(azure): preserve AD token refresh in the v1 OpenAI client path - [PR #28627](https://github.com/Soventra/lumina/pull/28627)
+- fix(proxy): map a stripped batch `body.model` back to the proxy alias so key access checks pass - [PR #29264](https://github.com/Soventra/lumina/pull/29264)
+- fix(proxy): resolve managed video model ids through the router before auth, budget, and key checks - [PR #29545](https://github.com/Soventra/lumina/pull/29545)
+- fix(key_generate): let team members create keys on org-scoped teams (regression since v1.84.0-rc.1) - [PR #29310](https://github.com/Soventra/lumina/pull/29310)
+- fix(vertex): strip `output_config.effort` for Vertex Claude models that reject it, such as Haiku 4.5 - [PR #29585](https://github.com/Soventra/lumina/pull/29585)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.87.0...v1.87.1
+https://github.com/Soventra/lumina/compare/v1.87.0...v1.87.1

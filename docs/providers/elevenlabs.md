@@ -8,23 +8,23 @@ ElevenLabs provides high-quality AI voice technology, including speech-to-text c
 | Property | Details |
 |----------|---------|
 | Description | ElevenLabs offers advanced AI voice technology with speech-to-text transcription and text-to-speech capabilities that support multiple languages and speaker diarization. |
-| Provider Route on LiteLLM | `elevenlabs/` |
+| Provider Route on Lumina | `elevenlabs/` |
 | Provider Doc | [ElevenLabs API ↗](https://elevenlabs.io/docs/api-reference) |
 | Supported Endpoints | `/audio/transcriptions`, `/audio/speech` |
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 ```python showLineNumbers title="Basic audio transcription with ElevenLabs"
-import litellm
+import lumina
 
 # Transcribe audio file
 with open("audio.mp3", "rb") as audio_file:
-    response = litellm.transcription(
+    response = lumina.transcription(
         model="elevenlabs/scribe_v1",
         file=audio_file,
         api_key="your-elevenlabs-api-key"  # or set ELEVENLABS_API_KEY env var
@@ -38,11 +38,11 @@ print(response.text)
 <TabItem value="advanced" label="Advanced Features">
 
 ```python showLineNumbers title="Audio transcription with advanced features"
-import litellm
+import lumina
 
 # Transcribe with speaker diarization and language specification
 with open("audio.wav", "rb") as audio_file:
-    response = litellm.transcription(
+    response = lumina.transcription(
         model="elevenlabs/scribe_v1",
         file=audio_file,
         language="en",           # Language hint (maps to language_code)
@@ -65,12 +65,12 @@ if hasattr(response, 'words') and response.words:
 <TabItem value="async" label="Async Usage">
 
 ```python showLineNumbers title="Async audio transcription"
-import litellm
+import lumina
 import asyncio
 
 async def transcribe_audio():
     with open("audio.mp3", "rb") as audio_file:
-        response = await litellm.atranscription(
+        response = await lumina.atranscription(
             model="elevenlabs/scribe_v1",
             file=audio_file,
             api_key="your-elevenlabs-api-key"
@@ -86,7 +86,7 @@ print(result)
 </TabItem>
 </Tabs>
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your proxy
 
@@ -118,8 +118,8 @@ export LUMINA_MASTER_KEY="your-master-key"
 
 #### 2. Start the proxy
 
-```bash showLineNumbers title="Start LiteLLM proxy server"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina proxy server"
+lumina --config config.yaml
 
 # Proxy will be available at http://localhost:4000
 ```
@@ -143,13 +143,13 @@ curl http://localhost:4000/v1/audio/transcriptions \
 
 <TabItem value="openai-sdk" label="OpenAI Python SDK">
 
-```python showLineNumbers title="Using OpenAI SDK with LiteLLM proxy"
+```python showLineNumbers title="Using OpenAI SDK with Lumina proxy"
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Transcribe audio file
@@ -178,7 +178,7 @@ import fs from 'fs';
 
 const openai = new OpenAI({
   baseURL: 'http://localhost:4000',
-  apiKey: 'your-litellm-api-key'
+  apiKey: 'your-lumina-api-key'
 });
 
 async function transcribeAudio() {
@@ -239,7 +239,7 @@ ElevenLabs provides high-quality text-to-speech capabilities through their TTS A
 | Property | Details |
 |----------|---------|
 | Description | Convert text to natural-sounding speech using ElevenLabs' advanced TTS models |
-| Provider Route on LiteLLM | `elevenlabs/` |
+| Provider Route on Lumina | `elevenlabs/` |
 | Supported Operations | `/audio/speech` |
 | Link to Provider Doc | [ElevenLabs TTS API ↗](https://elevenlabs.io/docs/api-reference/text-to-speech) |
 
@@ -252,18 +252,18 @@ ElevenLabs provides high-quality text-to-speech capabilities through their TTS A
 
 ### Quick Start
 
-#### LiteLLM Python SDK
+#### Lumina Python SDK
 
 ```python showLineNumbers title="ElevenLabs Text-to-Speech with SDK"
-import litellm
+import lumina
 import os
 
 os.environ["ELEVENLABS_API_KEY"] = "your-elevenlabs-api-key"
 
 # Basic usage with voice mapping
-audio = litellm.speech(
+audio = lumina.speech(
     model="elevenlabs/eleven_multilingual_v2",
-    input="Testing ElevenLabs speech from LiteLLM.",
+    input="Testing ElevenLabs speech from Lumina.",
     voice="alloy",  # Maps to ElevenLabs voice ID automatically
 )
 
@@ -277,12 +277,12 @@ with open("test_output.mp3", "wb") as f:
 Eleven v3 supports [audio tags](https://elevenlabs.io/docs/overview/capabilities/text-to-speech#audio-tags) for adding sound effects and pauses directly in the text:
 
 ```python showLineNumbers title="Eleven v3 with audio tags"
-import litellm
+import lumina
 import os
 
 os.environ["ELEVENLABS_API_KEY"] = "your-elevenlabs-api-key"
 
-audio = litellm.speech(
+audio = lumina.speech(
     model="elevenlabs/eleven_v3",
     input='Welcome back. <sfx>applause</sfx> Today we have a special guest. <pause duration="1.5s"/> Let me introduce them.',
     voice="alloy",
@@ -295,15 +295,15 @@ with open("eleven_v3_output.mp3", "wb") as f:
 #### Advanced Usage: Overriding Parameters and ElevenLabs-Specific Features
 
 ```python showLineNumbers title="Advanced TTS with custom parameters"
-import litellm
+import lumina
 import os
 
 os.environ["ELEVENLABS_API_KEY"] = "your-elevenlabs-api-key"
 
 # Example showing parameter overriding and ElevenLabs-specific parameters
-audio = litellm.speech(
+audio = lumina.speech(
     model="elevenlabs/eleven_multilingual_v2",
-    input="Testing ElevenLabs speech from LiteLLM.",
+    input="Testing ElevenLabs speech from Lumina.",
     voice="alloy",  # Can use mapped voice name or raw ElevenLabs voice_id
     response_format="pcm",  # Maps to ElevenLabs output_format
     speed=1.1,  # Maps to voice_settings.speed
@@ -321,7 +321,7 @@ with open("test_output.mp3", "wb") as f:
 
 ### Voice Mapping
 
-LiteLLM automatically maps common OpenAI voice names to ElevenLabs voice IDs:
+Lumina automatically maps common OpenAI voice names to ElevenLabs voice IDs:
 
 | OpenAI Voice | ElevenLabs Voice ID | Description |
 |--------------|---------------------|-------------|
@@ -336,10 +336,10 @@ LiteLLM automatically maps common OpenAI voice names to ElevenLabs voice IDs:
 | `sage` | `CwhRBWXzGAHq8TQ4Fs17` | Roger - Calm |
 | `verse` | `CYw3kZ02Hs0563khs1Fj` | Dave - Conversational |
 
-**Using Custom Voice IDs**: You can also pass any ElevenLabs voice ID directly. If the voice name is not in the mapping, LiteLLM will use it as-is:
+**Using Custom Voice IDs**: You can also pass any ElevenLabs voice ID directly. If the voice name is not in the mapping, Lumina will use it as-is:
 
 ```python showLineNumbers title="Using custom ElevenLabs voice ID"
-audio = litellm.speech(
+audio = lumina.speech(
     model="elevenlabs/eleven_multilingual_v2",
     input="Testing with a custom voice.",
     voice="21m00Tcm4TlvDq8ikWAM",  # Direct ElevenLabs voice ID
@@ -348,7 +348,7 @@ audio = litellm.speech(
 
 ### Response Format Mapping
 
-LiteLLM maps OpenAI response formats to ElevenLabs output formats:
+Lumina maps OpenAI response formats to ElevenLabs output formats:
 
 | OpenAI Format | ElevenLabs Format |
 |---------------|-------------------|
@@ -361,7 +361,7 @@ You can also pass ElevenLabs-specific output formats directly using the `output_
 ### Supported Parameters
 
 ```python showLineNumbers title="All Supported Parameters"
-audio = litellm.speech(
+audio = lumina.speech(
     model="elevenlabs/eleven_multilingual_v2",  # Required
     input="Text to convert to speech",           # Required
     voice="alloy",                               # Required: Voice selection (mapped or raw ID)
@@ -380,7 +380,7 @@ audio = litellm.speech(
 )
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your proxy
 
@@ -407,7 +407,7 @@ curl http://localhost:4000/v1/audio/speech \
   -H "Content-Type: application/json" \
   -d '{
     "model": "elevenlabs-tts",
-    "input": "Testing ElevenLabs speech via the LiteLLM proxy.",
+    "input": "Testing ElevenLabs speech via the Lumina proxy.",
     "voice": "alloy",
     "response_format": "mp3"
   }' \
@@ -419,12 +419,12 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 response = client.audio.speech.create(
     model="elevenlabs-tts",
-    input="Testing ElevenLabs speech via the LiteLLM proxy.",
+    input="Testing ElevenLabs speech via the Lumina proxy.",
     voice="alloy",
     response_format="mp3"
 )
@@ -444,7 +444,7 @@ curl http://localhost:4000/v1/audio/speech \
   -H "Content-Type: application/json" \
   -d '{
     "model": "elevenlabs-tts",
-    "input": "Testing ElevenLabs speech via the LiteLLM proxy.",
+    "input": "Testing ElevenLabs speech via the Lumina proxy.",
     "voice": "alloy",
     "response_format": "pcm",
     "extra_body": {
@@ -466,12 +466,12 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 response = client.audio.speech.create(
     model="elevenlabs-tts",
-    input="Testing ElevenLabs speech via the LiteLLM proxy.",
+    input="Testing ElevenLabs speech via the Lumina proxy.",
     voice="alloy",
     response_format="pcm",
     extra_body={

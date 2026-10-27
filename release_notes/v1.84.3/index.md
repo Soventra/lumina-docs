@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.84.3 - Dockerfile Re-cut for Non-Root Image"
+title: "Lumina v1.84.3 - Dockerfile Re-cut for Non-Root Image"
 description: "Restores npm in the non-root build stage, which the v1.84.2 build lacked. The application code matches v1.84.2."
 slug: "v1-84-3"
 date: 2026-05-27T00:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,23 +31,23 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.84.3
+docker.lumina.ai/soventra/lumina:1.84.3
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.84.3
+pip install lumina==1.84.3
 ```
 
 </TabItem>
 </Tabs>
 
-`v1.84.3` is a Dockerfile-only re-cut of [`v1.84.2`](/release_notes/v1.84.2/v1-84-2); the application code is identical. It restores `npm` to the `Dockerfile.non_root` builder stage so the `litellm-non_root:1.84.3` image builds, which the `1.84.2` image did not.
+`v1.84.3` is a Dockerfile-only re-cut of [`v1.84.2`](/release_notes/v1.84.2/v1-84-2); the application code is identical. It restores `npm` to the `Dockerfile.non_root` builder stage so the `lumina-non_root:1.84.3` image builds, which the `1.84.2` image did not.
 
 If you are upgrading from [`v1.84.1`](/release_notes/v1.84.1/v1-84-1), see the [`v1.84.2`](/release_notes/v1.84.2/v1-84-2) notes for the underlying code changes; in particular the path-handling hardening covered in the [host-header authentication bypass advisory](/blog/host-header-auth-bypass).
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/5560f35279...v1.84.3
+https://github.com/Soventra/lumina/compare/5560f35279...v1.84.3

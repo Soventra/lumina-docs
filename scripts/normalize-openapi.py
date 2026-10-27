@@ -23,7 +23,7 @@ def normalize(value):
     if isinstance(value, str):
         # Double quotes let the shell expand the environment variable in curl.
         value = AUTH_HEADER.sub(
-            lambda match: '"' + match["header"].rstrip() + ' $LITELLM_MASTER_KEY"',
+            lambda match: '"' + match["header"].rstrip() + ' $LUMINA_MASTER_KEY"',
             value,
         )
         # Key-management examples also reference a key in a URL or JSON body.

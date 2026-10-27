@@ -3,19 +3,19 @@ import TabItem from '@theme/TabItem';
 
 # Invoking A2A Agents
 
-Learn how to invoke A2A agents through LiteLLM using different methods.
+Learn how to invoke A2A agents through Lumina using different methods.
 
 :::tip[Deploy Your Own A2A Agent]
 
 Want to test with your own agent? Deploy this template A2A agent powered by Google Gemini:
 
-[**shin-bot-litellm/a2a-gemini-agent**](https://github.com/shin-bot-litellm/a2a-gemini-agent) - Simple deployable A2A agent with streaming support
+[**shin-bot-lumina/a2a-gemini-agent**](https://github.com/shin-bot-lumina/a2a-gemini-agent) - Simple deployable A2A agent with streaming support
 
 :::
 
 ## A2A SDK
 
-Use the [A2A Python SDK](https://pypi.org/project/a2a-sdk) (**>= 1.1.0**) to invoke agents through LiteLLM using the A2A protocol.
+Use the [A2A Python SDK](https://pypi.org/project/a2a-sdk) (**>= 1.1.0**) to invoke agents through Lumina using the A2A protocol.
 
 ```bash
 pip install "a2a-sdk>=1.1.0,<2.0" httpx
@@ -46,8 +46,8 @@ from a2a.types import Message, Part, Role, SendMessageRequest
 from a2a.utils.constants import TransportProtocol
 
 # === CONFIGURE THESE ===
-LUMINA_BASE_URL = "http://localhost:4000"  # Your LiteLLM proxy URL
-LUMINA_VIRTUAL_KEY = "sk-<your-litellm-api-key>"             # Your LiteLLM Virtual Key
+LUMINA_BASE_URL = "http://localhost:4000"  # Your Lumina proxy URL
+LUMINA_VIRTUAL_KEY = "sk-<your-lumina-api-key>"             # Your Lumina Virtual Key
 # =======================
 
 
@@ -131,9 +131,9 @@ from a2a.types import Message, Part, Role, SendMessageRequest
 from a2a.utils.constants import TransportProtocol
 
 # === CONFIGURE THESE ===
-LUMINA_BASE_URL = "http://localhost:4000"  # Your LiteLLM proxy URL
-LUMINA_VIRTUAL_KEY = "sk-<your-litellm-api-key>"             # Your LiteLLM Virtual Key
-LUMINA_AGENT_NAME = "ij-local"             # Agent name registered in LiteLLM
+LUMINA_BASE_URL = "http://localhost:4000"  # Your Lumina proxy URL
+LUMINA_VIRTUAL_KEY = "sk-<your-lumina-api-key>"             # Your Lumina Virtual Key
+LUMINA_AGENT_NAME = "ij-local"             # Agent name registered in Lumina
 # =======================
 
 
@@ -189,8 +189,8 @@ You can also invoke A2A agents using the familiar OpenAI SDK by using the `a2a/`
 import openai
 
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM Virtual Key
-    base_url="http://localhost:4000"  # Your LiteLLM proxy URL
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina Virtual Key
+    base_url="http://localhost:4000"  # Your Lumina proxy URL
 )
 
 response = client.chat.completions.create(
@@ -210,8 +210,8 @@ print(response.choices[0].message.content)
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: 'sk-<your-api-key>',  // Your LiteLLM Virtual Key
-  baseURL: 'http://localhost:4000'  // Your LiteLLM proxy URL
+  apiKey: 'sk-<your-api-key>',  // Your Lumina Virtual Key
+  baseURL: 'http://localhost:4000'  // Your Lumina proxy URL
 });
 
 const response = await client.chat.completions.create({
@@ -251,8 +251,8 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 import openai
 
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM Virtual Key
-    base_url="http://localhost:4000"  # Your LiteLLM proxy URL
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina Virtual Key
+    base_url="http://localhost:4000"  # Your Lumina proxy URL
 )
 
 stream = client.chat.completions.create(
@@ -275,8 +275,8 @@ for chunk in stream:
 import OpenAI from 'openai';
 
 const client = new OpenAI({
-  apiKey: 'sk-<your-api-key>',  // Your LiteLLM Virtual Key
-  baseURL: 'http://localhost:4000'  // Your LiteLLM proxy URL
+  apiKey: 'sk-<your-api-key>',  // Your Lumina Virtual Key
+  baseURL: 'http://localhost:4000'  // Your Lumina proxy URL
 });
 
 const stream = await client.chat.completions.create({
@@ -316,7 +316,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 ## Task APIs (`tasks/get`, `tasks/list`, …)
 
-Agents that return a `submitted` task from `message/send` expect clients to poll with `tasks/get`. Call the same LiteLLM base URL with JSON-RPC:
+Agents that return a `submitted` task from `message/send` expect clients to poll with `tasks/get`. Call the same Lumina base URL with JSON-RPC:
 
 ```bash showLineNumbers title="tasks_get.sh"
 curl -X POST "http://localhost:4000/a2a/${AGENT_ID}" \
@@ -330,7 +330,7 @@ curl -X POST "http://localhost:4000/a2a/${AGENT_ID}" \
   }'
 ```
 
-LiteLLM forwards `tasks/get`, `tasks/list`, `tasks/cancel`, push-notification methods, and `agent/getAuthenticatedExtendedCard` to the upstream agent URL. See the full method list in [Supported A2A methods](./a2a_agent_card#supported-a2a-methods).
+Lumina forwards `tasks/get`, `tasks/list`, `tasks/cancel`, push-notification methods, and `agent/getAuthenticatedExtendedCard` to the upstream agent URL. See the full method list in [Supported A2A methods](./a2a_agent_card#supported-a2a-methods).
 
 ## Key Differences
 

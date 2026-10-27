@@ -6,7 +6,7 @@ Select the option(s) that best describe the memory behavior observed:
 
 - [ ] Memory scales with traffic (RPS-driven)  
 - [ ] Memory increases without a traffic increase  
-- [ ] Memory increases after a LiteLLM upgrade  
+- [ ] Memory increases after a Lumina upgrade  
 - [ ] Memory leak (memory continuously grows over time)  
 - [ ] Out of Memory (OOM) events or pod restarts
 
@@ -17,7 +17,7 @@ Select the option(s) that best describe the memory behavior observed:
 Before escalating, verify whether the memory or OOM issue can be reproduced in a test environment that mirrors your production deployment.  
 
 If reproducible, provide **detailed reproduction steps** along with any relevant requests, workloads, or configuration used.  
-For guidance on the type of information we’re looking for, see the [LiteLLM Troubleshooting Guide](../troubleshoot).
+For guidance on the type of information we’re looking for, see the [Lumina Troubleshooting Guide](../troubleshoot).
 
 ---
 

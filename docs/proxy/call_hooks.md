@@ -23,24 +23,24 @@ import Image from '@theme/IdealImage';
 | `async_post_call_response_headers_hook` | Inject custom HTTP response headers | After LLM API call (both success and failure) |
 | `async_filter_listed_models` | Hide models from the model listing per caller | On the model listing routes, before the response is built |
 
-See a complete example with our [parallel request rate limiter](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/hooks/parallel_request_limiter.py)
+See a complete example with our [parallel request rate limiter](https://github.com/Soventra/lumina/blob/main/lumina/proxy/hooks/parallel_request_limiter.py)
 
 ## Quick Start
 
 1. In your Custom Handler add a new `async_pre_call_hook` function
 
-This function is called just before a litellm completion call is made, and allows you to modify the data going into the litellm call [**See Code**](https://github.com/BerriAI/litellm/blob/589a6ca863000ba8e92c897ba0f776796e7a5904/litellm/proxy/proxy_server.py#L1000)
+This function is called just before a lumina completion call is made, and allows you to modify the data going into the lumina call [**See Code**](https://github.com/Soventra/lumina/blob/589a6ca863000ba8e92c897ba0f776796e7a5904/lumina/proxy/proxy_server.py#L1000)
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
-import litellm
-from litellm.proxy.proxy_server import UserAPIKeyAuth, DualCache
-from litellm.types.utils import ModelResponseStream
+from lumina.integrations.custom_logger import CustomLogger
+import lumina
+from lumina.proxy.proxy_server import UserAPIKeyAuth, DualCache
+from lumina.types.utils import ModelResponseStream
 from typing import Any, AsyncGenerator, Optional, Literal
 
-# This file includes the custom callbacks for LiteLLM Proxy
+# This file includes the custom callbacks for Lumina Proxy
 # Once defined, these can be passed in proxy_config.yaml
-class MyCustomHandler(CustomLogger): # https://docs.litellm.ai/docs/observability/custom_callback#callback-class
+class MyCustomHandler(CustomLogger): # https://docs.lumina.ai/docs/observability/custom_callback#callback-class
     # Class variables or attributes
     def __init__(self):
         pass
@@ -72,7 +72,7 @@ class MyCustomHandler(CustomLogger): # https://docs.litellm.ai/docs/observabilit
         Return None to use the original exception.
         
         Example:
-            if isinstance(original_exception, litellm.ContextWindowExceededError):
+            if isinstance(original_exception, lumina.ContextWindowExceededError):
                 return HTTPException(
                     status_code=400,
                     detail="Your prompt is too long. Please reduce the length and try again."
@@ -143,8 +143,8 @@ model_list:
     lumina_params:
       model: {{openai_small}}
 
-litellm_settings:
-  callbacks: custom_callbacks.proxy_handler_instance # sets litellm.callbacks = [proxy_handler_instance]
+lumina_settings:
+  callbacks: custom_callbacks.proxy_handler_instance # sets lumina.callbacks = [proxy_handler_instance]
 ```
 
 :::warning
@@ -154,7 +154,7 @@ Point `callbacks` at the class (`custom_callbacks.MyCustomHandler`) rather than 
 3. Start the server + test the request
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -182,12 +182,12 @@ Subclass `CustomGuardrail` and define an `async_moderation_hook` function
 - This function runs in parallel to the actual LLM API call. 
 - If your `async_moderation_hook` raises an Exception, we will return that to the user. 
 
-See a complete example with our [Llama Guard content moderation hook](https://github.com/BerriAI/litellm/blob/main/enterprise/enterprise_hooks/llm_guard.py) and the [custom guardrail docs](./guardrails/custom_guardrail.md)
+See a complete example with our [Llama Guard content moderation hook](https://github.com/Soventra/lumina/blob/main/enterprise/enterprise_hooks/llm_guard.py) and the [custom guardrail docs](./guardrails/custom_guardrail.md)
 
 ```python
-from litellm.integrations.custom_guardrail import CustomGuardrail
-from litellm.proxy._types import UserAPIKeyAuth
-from litellm.types.utils import CallTypesLiteral
+from lumina.integrations.custom_guardrail import CustomGuardrail
+from lumina.proxy._types import UserAPIKeyAuth
+from lumina.types.utils import CallTypesLiteral
 from fastapi import HTTPException
 
 class MyCustomGuardrail(CustomGuardrail):
@@ -228,7 +228,7 @@ guardrails:
 3. Start the server + test the request
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -247,7 +247,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 Set `enforce_user_param` to true, to require all calls to the openai endpoints to have the 'user' param. 
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/4777921a31c4c70e4d87b927cb233b6a09cd8b51/litellm/proxy/auth/auth_checks.py#L72)
+[**See Code**](https://github.com/Soventra/lumina/blob/4777921a31c4c70e4d87b927cb233b6a09cd8b51/lumina/proxy/auth/auth_checks.py#L72)
 
 ```yaml
 general_settings:
@@ -262,7 +262,7 @@ general_settings:
 
 For chat completions and text completion calls, you can return a rejected message as a user response. 
 
-Do this by returning a string. LiteLLM takes care of returning the response in the correct format depending on the endpoint and if it's streaming/non-streaming.
+Do this by returning a string. Lumina takes care of returning the response in the correct format depending on the endpoint and if it's streaming/non-streaming.
 
 For non-chat/text completion endpoints, this response is returned as a 400 status code exception. 
 
@@ -270,11 +270,11 @@ For non-chat/text completion endpoints, this response is returned as a 400 statu
 ### 1. Create Custom Handler 
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
-import litellm
-from litellm.utils import get_formatted_prompt
+from lumina.integrations.custom_logger import CustomLogger
+import lumina
+from lumina.utils import get_formatted_prompt
 
-# This file includes the custom callbacks for LiteLLM Proxy
+# This file includes the custom callbacks for Lumina Proxy
 # Once defined, these can be passed in proxy_config.yaml
 class MyCustomHandler(CustomLogger):
     def __init__(self):
@@ -308,15 +308,15 @@ model_list:
     lumina_params:
       model: {{openai_small}}
 
-litellm_settings:
-  callbacks: custom_callbacks.proxy_handler_instance # sets litellm.callbacks = [proxy_handler_instance]
+lumina_settings:
+  callbacks: custom_callbacks.proxy_handler_instance # sets lumina.callbacks = [proxy_handler_instance]
 ```
 
 
 ### 3. Test it!
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -359,10 +359,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 Transform technical API errors into user-friendly messages using `async_post_call_failure_hook`. Return an `HTTPException` to replace the original error, or `None` to use the original exception.
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
+from lumina.integrations.custom_logger import CustomLogger
 from fastapi import HTTPException
 from typing import Optional
-import litellm
+import lumina
 
 class MyErrorTransformer(CustomLogger):
     async def async_post_call_failure_hook(
@@ -372,12 +372,12 @@ class MyErrorTransformer(CustomLogger):
         user_api_key_dict: UserAPIKeyAuth,
         traceback_str: Optional[str] = None,
     ) -> Optional[HTTPException]:
-        if isinstance(original_exception, litellm.ContextWindowExceededError):
+        if isinstance(original_exception, lumina.ContextWindowExceededError):
             return HTTPException(
                 status_code=400,
                 detail="Your prompt is too long. Please reduce the length and try again."
             )
-        if isinstance(original_exception, litellm.RateLimitError):
+        if isinstance(original_exception, lumina.RateLimitError):
             return HTTPException(
                 status_code=429,
                 detail="Rate limit exceeded. Please try again in a moment."
@@ -394,8 +394,8 @@ proxy_handler_instance = MyErrorTransformer()
 Use `async_post_call_response_headers_hook` to inject custom HTTP headers into responses. This hook runs for **both successful and failed** LLM API calls.
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
-from litellm.proxy.proxy_server import UserAPIKeyAuth
+from lumina.integrations.custom_logger import CustomLogger
+from lumina.proxy.proxy_server import UserAPIKeyAuth
 from typing import Any, Dict, Optional
 
 class CustomHeaderLogger(CustomLogger):
@@ -419,7 +419,7 @@ proxy_handler_instance = CustomHeaderLogger()
 
 ## Advanced - Hide models from the model listing
 
-`async_pre_call_hook` can reject a model at request time, but the model still shows up in `GET /v1/models`, so a client's model picker lists entries that only fail later with a 403. `async_filter_listed_models` closes that gap. It runs on the model listing routes with the model names the caller would otherwise see and returns the subset to keep. Ships with [PR #43027](https://github.com/BerriAI/litellm/pull/43027)
+`async_pre_call_hook` can reject a model at request time, but the model still shows up in `GET /v1/models`, so a client's model picker lists entries that only fail later with a 403. `async_filter_listed_models` closes that gap. It runs on the model listing routes with the model names the caller would otherwise see and returns the subset to keep. Ships with [PR #43027](https://github.com/Soventra/lumina/pull/43027)
 
 ```python
 async def async_filter_listed_models(
@@ -437,7 +437,7 @@ A name left out of the return value disappears from every listing, and the route
 | `GET /v1/models`, `GET /models` | Left out |
 | `GET /v1/models/{model_id}`, `GET /models/{model_id}` | 404, as for an unknown model |
 | `GET /model/info`, `GET /v1/model/info` | Left out |
-| `GET /model/info?litellm_model_id=<id>` | 400, as for an unknown deployment id |
+| `GET /model/info?lumina_model_id=<id>` | 400, as for an unknown deployment id |
 | `GET /model_group/info` | Left out, `a2a/<agent>` groups included |
 
 The `/v1/models` filter applies to the OpenAI and the Anthropic response shape alike, and to `?scope=expand`. `/v2/model/info` and the auto-router routes are untouched, and so is inference. A caller who knows a hidden name can still call it unless `async_pre_call_hook` rejects it, so pair the two hooks as in the example below
@@ -456,8 +456,8 @@ The return value must be a sequence of strings. A bare string, `None` or anythin
 from collections.abc import Sequence
 
 from fastapi import HTTPException
-from litellm.integrations.custom_logger import CustomLogger
-from litellm.proxy._types import UserAPIKeyAuth
+from lumina.integrations.custom_logger import CustomLogger
+from lumina.proxy._types import UserAPIKeyAuth
 
 RESTRICTED = {"restricted-model"}
 
@@ -490,8 +490,8 @@ model_list:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
-  callbacks: gate.gate # sets litellm.callbacks = [gate]
+lumina_settings:
+  callbacks: gate.gate # sets lumina.callbacks = [gate]
 
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
@@ -500,7 +500,7 @@ general_settings:
 ### 3. Test it!
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 The master key is the proxy admin, and the example hides `restricted-model` from it too, since the hook runs for every caller

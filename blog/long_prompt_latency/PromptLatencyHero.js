@@ -131,7 +131,7 @@ function drawSpeedField(context, t, active) {
 }
 
 export default function PromptLatencyHero() {
-  const gatewayLogo = useBaseUrl('/img/brand/litellm-monogram-white.svg');
+  const gatewayLogo = useBaseUrl('/img/brand/lumina-monogram-white.svg');
   const rootRef = useRef(null);
   const canvasRef = useRef(null);
   const oldRef = useRef(null);
@@ -229,7 +229,7 @@ export default function PromptLatencyHero() {
   }, []);
 
   return (
-    <div ref={rootRef} className={styles.hero} role="img" aria-label="LiteLLM routes requests from Open WebUI, Claude Code, Codex and Hermes to OpenAI, Anthropic, Amazon Bedrock and Vertex AI. A local 440k-token, single-deployment benchmark using the Python request path with a mock upstream reduced median time to first byte from 553 to 35 milliseconds, 94 percent lower. Motion is illustrative.">
+    <div ref={rootRef} className={styles.hero} role="img" aria-label="Lumina routes requests from Open WebUI, Claude Code, Codex and Hermes to OpenAI, Anthropic, Amazon Bedrock and Vertex AI. A local 440k-token, single-deployment benchmark using the Python request path with a mock upstream reduced median time to first byte from 553 to 35 milliseconds, 94 percent lower. Motion is illustrative.">
       <div className={styles.blue} aria-hidden="true" />
       <div className={styles.gateway} aria-hidden="true">
         <div className={styles.gatewayEnergy} />

@@ -1,8 +1,8 @@
 # MCP Server Usage
 
-> Setup guides for connecting popular third-party MCP servers through the LiteLLM MCP Gateway.
+> Setup guides for connecting popular third-party MCP servers through the Lumina MCP Gateway.
 
-Each guide covers the server's endpoint, the auth LiteLLM needs, how to register it, and how to reach its tools from an agent. The gateway treats every server the same regardless of vendor: one endpoint for all clients, permissions by key, team, and organization, cost tracking per tool call, and a single audit trail.
+Each guide covers the server's endpoint, the auth Lumina needs, how to register it, and how to reach its tools from an agent. The gateway treats every server the same regardless of vendor: one endpoint for all clients, permissions by key, team, and organization, cost tracking per tool call, and a single audit trail.
 
 For shared endpoint, transport, and authentication rules, see the [MCP Configuration Reference](../mcp_config_reference)
 
@@ -26,8 +26,8 @@ general_settings:
   store_model_in_db: true
 ```
 
-:::warning[Put the LiteLLM key in `x-litellm-api-key`]
-Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the LiteLLM API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and the proxy forwards your LiteLLM key to the upstream server, which rejects it. This is the most common failure on all four servers. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth).
+:::warning[Put the Lumina key in `x-lumina-api-key`]
+Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the Lumina API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and the proxy forwards your Lumina key to the upstream server, which rejects it. This is the most common failure on all four servers. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth).
 :::
 
 ## Related pages

@@ -11,11 +11,11 @@ You can reach out to us anytime by [email](mailto:hello@lunary.ai) or directly [
 </video>
 
 
-## Usage with LiteLLM Python SDK
+## Usage with Lumina Python SDK
 ### Pre-Requisites
 
 ```shell
-uv add litellm lunary
+uv add lumina lunary
 ```
 
 ### Quick Start
@@ -25,41 +25,41 @@ First, get your Lunary public key on the [Lunary dashboard](https://app.lunary.a
 Use just 2 lines of code, to instantly log your responses **across all providers** with Lunary:
 
 ```python
-litellm.success_callback = ["lunary"]
-litellm.failure_callback = ["lunary"]
+lumina.success_callback = ["lunary"]
+lumina.failure_callback = ["lunary"]
 ```
 
 Complete code:
 ```python
-from litellm import completion
+from lumina import completion
 
 os.environ["LUNARY_PUBLIC_KEY"] = "your-lunary-public-key" # from https://app.lunary.ai/)
 os.environ["OPENAI_API_KEY"] = ""
 
-litellm.success_callback = ["lunary"]
-litellm.failure_callback = ["lunary"]
+lumina.success_callback = ["lunary"]
+lumina.failure_callback = ["lunary"]
 
 response = completion(
   model="{{openai_large}}",
   messages=[{"role": "user", "content": "Hi there "}],
-  user="ishaan_litellm"
+  user="ishaan_lumina"
 )
 ```
 
-### Usage with LangChain ChatLiteLLM 
+### Usage with LangChain ChatLumina 
 ```python
 import os
-from langchain.chat_models import ChatLiteLLM
+from langchain.chat_models import ChatLumina
 from langchain.schema import HumanMessage
-import litellm
+import lumina
 
 os.environ["LUNARY_PUBLIC_KEY"] = "" # from https://app.lunary.ai/settings
 os.environ['OPENAI_API_KEY']="sk-..."
 
-litellm.success_callback = ["lunary"] 
-litellm.failure_callback = ["lunary"] 
+lumina.success_callback = ["lunary"] 
+lumina.failure_callback = ["lunary"] 
 
-chat = ChatLiteLLM(
+chat = ChatLumina(
   model="{{openai_large}}"
 )
 messages = [
@@ -73,17 +73,17 @@ chat(messages)
 
 ### Usage with Prompt Templates
 
-You can use Lunary to manage [prompt templates](https://lunary.ai/docs/features/prompts) and use them across all your LLM providers with LiteLLM.
+You can use Lunary to manage [prompt templates](https://lunary.ai/docs/features/prompts) and use them across all your LLM providers with Lumina.
 
 ```python
-from litellm import completion
+from lumina import completion
 import lunary
 
 template = lunary.render_template("template-slug", {
   "name": "John", # Inject variables
 })
 
-litellm.success_callback = ["lunary"]
+lumina.success_callback = ["lunary"]
 
 result = completion(**template)
 ```
@@ -92,12 +92,12 @@ result = completion(**template)
 You can wrap your LLM calls inside custom chains, so that you can visualize them as traces.
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 import lunary
 
-litellm.success_callback = ["lunary"]
-litellm.failure_callback = ["lunary"]
+lumina.success_callback = ["lunary"]
+lumina.failure_callback = ["lunary"]
 
 @lunary.chain("My custom chain name")
 def my_chain(chain_input):
@@ -121,11 +121,11 @@ my_chain("Chain input")
 
 <Image img={require('../../img/lunary-trace.png')} />
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 ### Step1: Install dependencies and set your environment variables 
 Install the dependencies
 ```shell
-uv add litellm lunary
+uv add lumina lunary
 ```
 
 Get you Lunary public key from from https://app.lunary.ai/settings 
@@ -140,14 +140,14 @@ model_list:
   - model_name: "*"
     lumina_params:
       model: "*"
-litellm_settings:
+lumina_settings:
   success_callback: ["lunary"]
   failure_callback: ["lunary"]
 ```
 
-### Step 3: Start the LiteLLM proxy
+### Step 3: Start the Lumina proxy
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### Step 4: Make a request
@@ -170,11 +170,11 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 }'
 ```
 
-You can find more details about the different ways of making requests to the LiteLLM proxy on [this page](https://docs.litellm.ai/docs/proxy/user_keys)
+You can find more details about the different ways of making requests to the Lumina proxy on [this page](https://docs.lumina.ai/docs/proxy/user_keys)
 
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

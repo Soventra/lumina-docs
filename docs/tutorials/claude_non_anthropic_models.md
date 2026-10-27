@@ -4,11 +4,11 @@ import TabItem from '@theme/TabItem';
 
 # Use Claude Code with Non-Anthropic Models
 
-This tutorial shows how to use Claude Code with non-Anthropic models like OpenAI, Gemini, and other LLM providers through LiteLLM proxy.
+This tutorial shows how to use Claude Code with non-Anthropic models like OpenAI, Gemini, and other LLM providers through Lumina proxy.
 
 :::info 
 
-LiteLLM automatically translates between different provider formats, allowing you to use any supported LLM provider with Claude Code while maintaining the Anthropic Messages API format.
+Lumina automatically translates between different provider formats, allowing you to use any supported LLM provider with Claude Code while maintaining the Anthropic Messages API format.
 
 :::
 
@@ -19,10 +19,10 @@ LiteLLM automatically translates between different provider formats, allowing yo
 
 ## Installation
 
-First, install LiteLLM with proxy support:
+First, install Lumina with proxy support:
 
 ```bash
-uv tool install 'litellm[proxy]'
+uv tool install 'lumina[proxy]'
 ```
 
 ## Configuration
@@ -129,10 +129,10 @@ export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"
 </TabItem>
 </Tabs>
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -202,7 +202,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 
 ### 4. Configure Claude Code
 
-Configure Claude Code to use your LiteLLM proxy:
+Configure Claude Code to use your Lumina proxy:
 
 ```bash
 export ANTHROPIC_BASE_URL="http://0.0.0.0:4000"
@@ -210,7 +210,7 @@ export ANTHROPIC_AUTH_TOKEN="$LUMINA_MASTER_KEY"
 ```
 
 :::tip
-The `LUMINA_MASTER_KEY` gives Claude Code access to all proxy models. You can also create virtual keys in the LiteLLM UI to limit access to specific models.
+The `LUMINA_MASTER_KEY` gives Claude Code access to all proxy models. You can also create virtual keys in the Lumina UI to limit access to specific models.
 :::
 
 ### 5. Use Claude Code with Non-Anthropic Models
@@ -239,7 +239,7 @@ claude --model azure-gpt-5.6-terra
 
 ### 6. Switch Models at Runtime with `/model`
 
-Once Claude Code is running, you can switch between any of the models exposed by your LiteLLM proxy using the built-in `/model` command. By default the picker only shows Anthropic's hardcoded models, so to populate it with the models from your LiteLLM proxy you must opt in to **gateway model discovery**.
+Once Claude Code is running, you can switch between any of the models exposed by your Lumina proxy using the built-in `/model` command. By default the picker only shows Anthropic's hardcoded models, so to populate it with the models from your Lumina proxy you must opt in to **gateway model discovery**.
 
 Set the following environment variable before launching Claude Code:
 
@@ -247,25 +247,25 @@ Set the following environment variable before launching Claude Code:
 export CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1
 ```
 
-On startup, Claude Code will call `GET /v1/models` against your `ANTHROPIC_BASE_URL` (your LiteLLM proxy) and add each returned model to the `/model` picker, labeled **From gateway**. Inside Claude Code, run:
+On startup, Claude Code will call `GET /v1/models` against your `ANTHROPIC_BASE_URL` (your Lumina proxy) and add each returned model to the `/model` picker, labeled **From gateway**. Inside Claude Code, run:
 
 ```
 /model
 ```
 
-and select any LiteLLM-managed model (`{{openai_large}}`, `{{gemini_flash}}`, `anthropic-vertex`, etc.) to switch without restarting the session.
+and select any Lumina-managed model (`{{openai_large}}`, `{{gemini_flash}}`, `anthropic-vertex`, etc.) to switch without restarting the session.
 
 :::info[Requirements]
 
 - Claude Code **v2.1.129** or later.
-- `ANTHROPIC_BASE_URL` must point at a gateway that serves the Anthropic Messages API format. LiteLLM does this on `/v1/messages`.
+- `ANTHROPIC_BASE_URL` must point at a gateway that serves the Anthropic Messages API format. Lumina does this on `/v1/messages`.
 - Discovery is opt-in. Without `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`, Claude Code will not query your proxy's `/v1/models` and the `/model` picker only shows the built-in Anthropic models. Verified against Claude Code v2.1.247: the picker only labels models **From gateway** once the variable is set. Like `ENABLE_TOOL_SEARCH`, you can persist it in the `env` block of `.claude/settings.json`.
 
 :::
 
 :::tip[Surface only specific models]
 
-If you only want a subset of your LiteLLM models to show up in the `/model` picker, issue a [virtual key](../proxy/virtual_keys) scoped to those models and use that key as `ANTHROPIC_AUTH_TOKEN`. `/v1/models` will only return models the key can access.
+If you only want a subset of your Lumina models to show up in the `/model` picker, issue a [virtual key](../proxy/virtual_keys) scoped to those models and use that key as `ANTHROPIC_AUTH_TOKEN`. `/v1/models` will only return models the key can access.
 
 You can also add individual model entries manually via `ANTHROPIC_CUSTOM_MODEL_OPTION` instead of (or in addition to) enabling discovery.
 
@@ -289,13 +289,13 @@ The Anthropic-shaped `GET /v1/models` response now returns `"display_name": "Kim
 
 ### 8. Context Window Reported for a Gateway Model
 
-Claude Code applies its own default context window to a model name it does not recognize as one of Anthropic's, and every gateway-served name falls into that category. Declaring `max_input_tokens` under a model's `model_info` changes what `GET /v1/models`, `/model/info`, and the LiteLLM UI report, and it drives the proxy's own [context-window pre-call checks](../proxy/reliability.md#context-window-fallbacks-pre-call-checks--fallbacks), but it does not change the figure the client shows or when the client compacts.
+Claude Code applies its own default context window to a model name it does not recognize as one of Anthropic's, and every gateway-served name falls into that category. Declaring `max_input_tokens` under a model's `model_info` changes what `GET /v1/models`, `/model/info`, and the Lumina UI report, and it drives the proxy's own [context-window pre-call checks](../proxy/reliability.md#context-window-fallbacks-pre-call-checks--fallbacks), but it does not change the figure the client shows or when the client compacts.
 
 Set that side in Claude Code with `CLAUDE_CODE_AUTO_COMPACT_WINDOW`, or `autoCompactWindow` in `.claude/settings.json`; see [model configuration](https://code.claude.com/docs/en/model-config). A model whose real window is smaller than what the client assumes is the case worth checking, since the client will keep filling context the provider will then reject. Routers have the same split, covered in [Auto Router with Claude Code and Claude Desktop](./claude_code_autorouter.md#context-window-shown-in-the-client).
 
 ## How It Works
 
-LiteLLM acts as a unified interface that:
+Lumina acts as a unified interface that:
 
 1. **Receives requests** from Claude Code in Anthropic Messages API format
 2. **Translates** the request to the target provider's format (OpenAI, Gemini, etc.)
@@ -303,7 +303,7 @@ LiteLLM acts as a unified interface that:
 4. **Translates** the response back to Anthropic Messages API format
 5. **Returns** the response to Claude Code
 
-This allows you to use Claude Code's interface with any LLM provider supported by LiteLLM.
+This allows you to use Claude Code's interface with any LLM provider supported by Lumina.
 
 ## Advanced Features
 
@@ -332,7 +332,7 @@ router_settings:
 
 ### Usage Tracking and Budgets
 
-Track usage and set budgets through the LiteLLM UI:
+Track usage and set budgets through the Lumina UI:
 
 ```yaml
 general_settings:
@@ -344,7 +344,7 @@ general_settings:
 Start the proxy with the UI:
 
 ```bash
-litellm --config /path/to/config.yaml --detailed_debug
+lumina --config /path/to/config.yaml --detailed_debug
 ```
 
 Access the UI at `http://0.0.0.0:4000/ui` to:
@@ -356,7 +356,7 @@ Access the UI at `http://0.0.0.0:4000/ui` to:
 
 ## Supported Providers
 
-LiteLLM supports 100+ providers. Here are some popular ones for use with Claude Code:
+Lumina supports 100+ providers. Here are some popular ones for use with Claude Code:
 
 - **OpenAI**: gpt-5.6-terra, gpt-5.6-luna, o1, o3-mini
 - **Google**: Gemini 3.8 Flash, Gemini 3.1 Pro
@@ -367,4 +367,4 @@ LiteLLM supports 100+ providers. Here are some popular ones for use with Claude 
 - **Together AI**: Llama, Mixtral, and other open source models
 - **Deepseek**: Deepseek-chat, Deepseek-coder
 
-[View full list of supported providers →](https://docs.litellm.ai/docs/providers)
+[View full list of supported providers →](https://docs.lumina.ai/docs/providers)

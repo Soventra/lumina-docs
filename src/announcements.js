@@ -27,7 +27,7 @@ export const announcements = [
     expiresAt: '2026-10-23T15:30:00Z',
     html:
       '<a class="announcement-link" href="https://forms.gle/F8tTYR8rfjKBA4D67" target="_blank" rel="noopener noreferrer">' +
-      '<strong>LiteLLM October Town Hall.</strong> Friday, Oct 23 at 7:30 AM PT. ' +
+      '<strong>Lumina October Town Hall.</strong> Friday, Oct 23 at 7:30 AM PT. ' +
       'Product updates, roadmap and Q&amp;A. Register now &rarr;</a>',
   },
   {

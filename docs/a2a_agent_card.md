@@ -1,8 +1,8 @@
 # A2A Agent Card
 
-LiteLLM can proxy [A2A-compatible agents](https://a2a-protocol.org/latest/specification/), exposing them to your clients through LiteLLM with virtual keys, team scoping, observability, and a unified agent card.
+Lumina can proxy [A2A-compatible agents](https://a2a-protocol.org/latest/specification/), exposing them to your clients through Lumina with virtual keys, team scoping, observability, and a unified agent card.
 
-This page documents which A2A agent card fields LiteLLM supports today, how invocation works, and what to expect from the proxied agent card served at `/a2a/{agent_id}/.well-known/agent.json`.
+This page documents which A2A agent card fields Lumina supports today, how invocation works, and what to expect from the proxied agent card served at `/a2a/{agent_id}/.well-known/agent.json`.
 
 For provider-specific setup, see:
 
@@ -10,7 +10,7 @@ For provider-specific setup, see:
 
 ## Agent card support
 
-The fields below mirror the A2A v1.0 specification ([§4.4 Agent Discovery Objects](https://a2a-protocol.org/latest/specification/)). A ✅ means the field is present in the agent card LiteLLM serves to clients; a ❌ means the field is not.
+The fields below mirror the A2A v1.0 specification ([§4.4 Agent Discovery Objects](https://a2a-protocol.org/latest/specification/)). A ✅ means the field is present in the agent card Lumina serves to clients; a ❌ means the field is not.
 
 ### AgentCard (§4.4.1)
 
@@ -89,14 +89,14 @@ A `capabilities` block with no truthy `streaming` marks an agent that cannot str
 | `signature` | ❌ |
 | `header` | ❌ |
 
-## How A2A on LiteLLM works
+## How A2A on Lumina works
 
-When you register an A2A agent in LiteLLM:
+When you register an A2A agent in Lumina:
 
 1. You provide a base URL (and, for some providers, an assistant identifier).
-2. LiteLLM fetches the upstream agent card from the agent's `/.well-known/agent-card.json`, then `/.well-known/agent.json`, then `/agentCard/v1.0`, stopping at the first path that answers. Set `agent_card_path` in the agent's `lumina_params` (for example `agentCard/v1.0`, the path Microsoft Foundry serves) to fetch that path directly.
-3. You review the parsed card in the LiteLLM UI, choose which skills and fields to expose, and pick a **Protocol Version** (`1.0` or `0.3`) for clients.
-4. LiteLLM saves the curated card and serves it at:
+2. Lumina fetches the upstream agent card from the agent's `/.well-known/agent-card.json`, then `/.well-known/agent.json`, then `/agentCard/v1.0`, stopping at the first path that answers. Set `agent_card_path` in the agent's `lumina_params` (for example `agentCard/v1.0`, the path Microsoft Foundry serves) to fetch that path directly.
+3. You review the parsed card in the Lumina UI, choose which skills and fields to expose, and pick a **Protocol Version** (`1.0` or `0.3`) for clients.
+4. Lumina saves the curated card and serves it at:
 
     ```
     GET /a2a/{agent_id}/.well-known/agent.json
@@ -113,7 +113,7 @@ When you register an A2A agent in LiteLLM:
 
 ## Protocol versioning
 
-LiteLLM converts upstream agent responses to the `protocolVersion` pinned on each agent. Clients always see the version you choose, regardless of what the upstream agent speaks natively.
+Lumina converts upstream agent responses to the `protocolVersion` pinned on each agent. Clients always see the version you choose, regardless of what the upstream agent speaks natively.
 
 | `protocolVersion` | Served to clients |
 |-------------------|-------------------|
@@ -128,12 +128,12 @@ See [Protocol versioning](./a2a#protocol-versioning) for client negotiation when
 
 ## Supported A2A methods
 
-All methods below are accepted on `POST /a2a/{agent_id}` (and `POST /a2a/{agent_id}/message/send` for `message/send`). LiteLLM also accepts the PascalCase aliases from the A2A SDK (for example `GetTask` → `tasks/get`).
+All methods below are accepted on `POST /a2a/{agent_id}` (and `POST /a2a/{agent_id}/message/send` for `message/send`). Lumina also accepts the PascalCase aliases from the A2A SDK (for example `GetTask` → `tasks/get`).
 
-| Method | Supported | How LiteLLM handles it |
+| Method | Supported | How Lumina handles it |
 |---|---|---|
-| `message/send` | ✅ | Routed through LiteLLM A2A SDK (`asend_message`) — logging, guardrails, cost tracking |
-| `message/stream` | ✅ | Routed through LiteLLM streaming handler — NDJSON/SSE response |
+| `message/send` | ✅ | Routed through Lumina A2A SDK (`asend_message`) — logging, guardrails, cost tracking |
+| `message/stream` | ✅ | Routed through Lumina streaming handler — NDJSON/SSE response |
 | `tasks/get` | ✅ | JSON-RPC forwarded to the agent's `agent_card_params.url` |
 | `tasks/list` | ✅ | JSON-RPC forwarded to upstream |
 | `tasks/cancel` | ✅ | JSON-RPC forwarded to upstream |
@@ -162,9 +162,9 @@ All methods below are accepted on `POST /a2a/{agent_id}` (and `POST /a2a/{agent_
 
 ### Requirements
 
-- **Task and push-notification methods** require `agent_card_params.url` pointing at a real A2A JSON-RPC server. LiteLLM forwards the request body unchanged (aside from auth headers).
+- **Task and push-notification methods** require `agent_card_params.url` pointing at a real A2A JSON-RPC server. Lumina forwards the request body unchanged (aside from auth headers).
 - **Completion-bridge-only agents** (for example LangGraph/Bedrock AgentCore with `custom_llm_provider` and no `url`) support `message/send` and `message/stream` only. Task APIs return an error if no upstream URL is configured.
-- **`message/send` / `message/stream` only:** LiteLLM may strip LiteLLM-specific keys from `params` (for example `guardrails`). Task method `params` are forwarded as-is so A2A fields like `id` are preserved.
+- **`message/send` / `message/stream` only:** Lumina may strip Lumina-specific keys from `params` (for example `guardrails`). Task method `params` are forwarded as-is so A2A fields like `id` are preserved.
 
 ### Example: two-step task flow
 
@@ -223,11 +223,11 @@ Clients invoke a specific skill by including `skillId` in the message metadata:
 }
 ```
 
-LiteLLM forwards the entire message envelope, including metadata, to the upstream agent unchanged. The upstream agent is responsible for reading `skillId` and routing internally.
+Lumina forwards the entire message envelope, including metadata, to the upstream agent unchanged. The upstream agent is responsible for reading `skillId` and routing internally.
 
 ## Editing the agent card
 
-You can edit supported fields from the agent detail page in the LiteLLM UI. Use the **Re-sync from upstream** button to pick up new skills or capabilities the upstream agent has added since registration; it shows a diff and lets you accept changes selectively.
+You can edit supported fields from the agent detail page in the Lumina UI. Use the **Re-sync from upstream** button to pick up new skills or capabilities the upstream agent has added since registration; it shows a diff and lets you accept changes selectively.
 
 ## Related documentation
 

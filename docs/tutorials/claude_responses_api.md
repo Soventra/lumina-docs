@@ -4,11 +4,11 @@ import TabItem from '@theme/TabItem';
 
 # Claude Code Quickstart
 
-This tutorial shows how to call Claude models through LiteLLM proxy from Claude Code.
+This tutorial shows how to call Claude models through Lumina proxy from Claude Code.
 
 :::info 
 
-This tutorial is based on [Anthropic's official LiteLLM configuration documentation](https://code.claude.com/docs/en/llm-gateway#litellm-configuration). This integration allows you to use any LiteLLM supported model through Claude Code with centralized authentication, usage tracking, and cost controls.
+This tutorial is based on [Anthropic's official Lumina configuration documentation](https://code.claude.com/docs/en/llm-gateway#lumina-configuration). This integration allows you to use any Lumina supported model through Claude Code with centralized authentication, usage tracking, and cost controls.
 
 :::
 
@@ -25,10 +25,10 @@ This tutorial is based on [Anthropic's official LiteLLM configuration documentat
 
 ## Installation
 
-First, install LiteLLM with proxy support:
+First, install Lumina with proxy support:
 
 ```bash
-uv tool install 'litellm[proxy]'
+uv tool install 'lumina[proxy]'
 ```
 
 ### 1. Setup config.yaml
@@ -65,13 +65,13 @@ export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
 ```
 
 :::tip
-Alternatively, you can store `ANTHROPIC_API_KEY` in a `.env` file in your proxy directory. LiteLLM will automatically load it when starting.
+Alternatively, you can store `ANTHROPIC_API_KEY` in a `.env` file in your proxy directory. Lumina will automatically load it when starting.
 :::
 
 ### 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -95,7 +95,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 
 #### Static API key
 
-Set a fixed LiteLLM key as `ANTHROPIC_AUTH_TOKEN`:
+Set a fixed Lumina key as `ANTHROPIC_AUTH_TOKEN`:
 
 ```bash
 export ANTHROPIC_AUTH_TOKEN="$LUMINA_KEY"
@@ -107,7 +107,7 @@ export ANTHROPIC_AUTH_TOKEN="$LUMINA_KEY"
 
 #### Method 1: Unified Endpoint (Recommended)
 
-Configure Claude Code to use LiteLLM's unified endpoint:
+Configure Claude Code to use Lumina's unified endpoint:
 
 ```bash
 export ANTHROPIC_BASE_URL="http://0.0.0.0:4000"
@@ -129,7 +129,7 @@ For rotating keys or per-user authentication, Claude Code can run a script to fe
 
 ```bash
 #!/bin/bash
-# ~/bin/get-litellm-key.sh
+# ~/bin/get-lumina-key.sh
 
 # Example: Generate JWT token
 jwt encode \
@@ -142,7 +142,7 @@ jwt encode \
 
 ```json
 {
-  "apiKeyHelper": "~/bin/get-litellm-key.sh"
+  "apiKeyHelper": "~/bin/get-lumina-key.sh"
 }
 ```
 
@@ -198,9 +198,9 @@ claude --model 'claude-opus-4-7[1m]'
 :::
 
 **How it works:**
-- Claude Code strips the `[1m]` suffix before sending to LiteLLM
+- Claude Code strips the `[1m]` suffix before sending to Lumina
 - Claude Code automatically adds the header `anthropic-beta: context-1m-2025-08-07`
-- Your LiteLLM config should **NOT** include `[1m]` in model names
+- Your Lumina config should **NOT** include `[1m]` in model names
 
 **Verify 1M context is active:**
 ```bash
@@ -217,17 +217,17 @@ Common issues and solutions:
 **Claude Code not connecting:**
 - Verify your proxy is running: `curl http://0.0.0.0:4000/health`
 - Check that `ANTHROPIC_BASE_URL` is set correctly
-- Ensure your `ANTHROPIC_AUTH_TOKEN` matches your LiteLLM master key
+- Ensure your `ANTHROPIC_AUTH_TOKEN` matches your Lumina master key
 
 **Authentication errors:**
 - Verify your environment variables are set: `echo $LUMINA_MASTER_KEY`
 - Check that your API keys are valid and have sufficient credits
-- Ensure the `ANTHROPIC_AUTH_TOKEN` matches your LiteLLM master key
+- Ensure the `ANTHROPIC_AUTH_TOKEN` matches your Lumina master key
 
 **Model not found:**
 - Ensure the model name in Claude Code matches exactly with your `config.yaml`
 - Use `--model` flag or environment variables to specify the model
-- Check LiteLLM logs for detailed error messages
+- Check Lumina logs for detailed error messages
 
 **MCP tools filling the context window:**
 - Claude Code turns its tool search off when `ANTHROPIC_BASE_URL` is not a first-party Anthropic host, so `/context` shows every MCP tool schema inlined instead of `loaded on-demand`
@@ -239,7 +239,7 @@ Expand your configuration to support multiple providers and models:
 
 :::tip[Check live compatibility before you wire up a provider]
 
-Compatibility between Claude Code features and each provider (Anthropic, Bedrock, Vertex AI, Azure) changes as Claude Code and LiteLLM ship updates. The [Claude Code × LiteLLM compatibility matrix](https://docs.litellm.ai/docs/claude_code_compatibility) is regenerated daily against the latest stable LiteLLM proxy across Haiku 4.5, Sonnet 4.6, and Opus 4.7. Check it first to see which `(feature, provider)` cells are currently green.
+Compatibility between Claude Code features and each provider (Anthropic, Bedrock, Vertex AI, Azure) changes as Claude Code and Lumina ship updates. The [Claude Code × Lumina compatibility matrix](https://docs.lumina.ai/docs/claude_code_compatibility) is regenerated daily against the latest stable Lumina proxy across Haiku 4.5, Sonnet 4.6, and Opus 4.7. Check it first to see which `(feature, provider)` cells are currently green.
 
 :::
 
@@ -321,11 +321,11 @@ claude --model claude-opus-vertex
 
 ### Bedrock-specific setup for Claude Code
 
-Two extra steps make Claude Code work cleanly against Bedrock through LiteLLM today. Please do both before launching `claude` against a Bedrock-backed model.
+Two extra steps make Claude Code work cleanly against Bedrock through Lumina today. Please do both before launching `claude` against a Bedrock-backed model.
 
 :::note[Temporary workaround]
 
-The Invoke preference and the beta-header flag below are temporary. LiteLLM already re-implements many Anthropic-API features on top of Bedrock inside the gateway, and we're steadily extending that coverage on the Converse path. Soon, these workarounds will no longer be necessary.
+The Invoke preference and the beta-header flag below are temporary. Lumina already re-implements many Anthropic-API features on top of Bedrock inside the gateway, and we're steadily extending that coverage on the Converse path. Soon, these workarounds will no longer be necessary.
 
 :::
 

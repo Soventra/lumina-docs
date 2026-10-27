@@ -4,30 +4,30 @@ import Image from '@theme/IdealImage';
 
 # RAGFlow Vector Stores
 
-Litellm support creation and management of datasets for document processing and knowledge base management in Ragflow.
+Lumina support creation and management of datasets for document processing and knowledge base management in Ragflow.
 
 | Property | Details |
 |----------|---------|
 | Description | RAGFlow datasets enable document processing, chunking, and knowledge base management for RAG applications. |
-| Provider Route on LiteLLM | `ragflow` in the litellm vector_store_registry |
+| Provider Route on Lumina | `ragflow` in the lumina vector_store_registry |
 | Provider Doc | [RAGFlow API Documentation ↗](https://ragflow.io/docs) |
 | Supported Operations | Dataset Management (Create, List, Update, Delete) |
 | Search/Retrieval | ❌ Not supported (management only) |
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
-```python showLineNumbers title="Example using LiteLLM Python SDK"
+```python showLineNumbers title="Example using Lumina Python SDK"
 import os
-import litellm
+import lumina
 
 # Set RAGFlow credentials
 os.environ["RAGFLOW_API_KEY"] = "your-ragflow-api-key"
 os.environ["RAGFLOW_API_BASE"] = "http://localhost:9380"  # Optional, defaults to localhost:9380
 
 # Create a RAGFlow dataset
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="my-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -41,7 +41,7 @@ print(f"Created dataset ID: {response.id}")
 print(f"Dataset name: {response.name}")
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your vector_store_registry
 
@@ -69,9 +69,9 @@ vector_store_registry:
 
 </TabItem>
 
-<TabItem value="litellm-ui" label="LiteLLM UI">
+<TabItem value="lumina-ui" label="Lumina UI">
 
-On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Store. On this page you can create a vector store with a name, vector store id and credentials.
+On the Lumina UI, Navigate to Experimental > Vector Stores > Create Vector Store. On this page you can create a vector store with a name, vector store id and credentials.
 
 <Image 
   img={require('../../img/kb_2.png')}
@@ -107,10 +107,10 @@ curl http://localhost:4000/v1/vector_stores \
 ```python
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Create a RAGFlow dataset
@@ -150,7 +150,7 @@ You can also pass these via `lumina_params`:
 ### Basic Dataset Creation
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="basic-dataset",
     custom_llm_provider="ragflow"
 )
@@ -164,7 +164,7 @@ RAGFlow supports various chunk methods for different document types:
 <TabItem value="naive" label="Naive (General)">
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="general-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -184,7 +184,7 @@ response = litellm.vector_stores.create(
 <TabItem value="book" label="Book">
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="book-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -203,7 +203,7 @@ response = litellm.vector_stores.create(
 <TabItem value="qa" label="Q&A">
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="qa-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -222,7 +222,7 @@ response = litellm.vector_stores.create(
 <TabItem value="paper" label="Paper">
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="paper-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -244,7 +244,7 @@ response = litellm.vector_stores.create(
 Instead of using a chunk method, you can use an ingestion pipeline:
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="pipeline-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -259,7 +259,7 @@ response = litellm.vector_stores.create(
 ### Advanced Parser Configuration
 
 ```python
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="advanced-dataset",
     custom_llm_provider="ragflow",
     metadata={
@@ -329,7 +329,7 @@ RAGFlow returns error responses in the following format:
 }
 ```
 
-LiteLLM automatically maps these to appropriate exceptions:
+Lumina automatically maps these to appropriate exceptions:
 
 - `code != 0` → Raises exception with the error message
 - Missing required fields → Raises `ValueError`

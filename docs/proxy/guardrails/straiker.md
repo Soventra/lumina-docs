@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Straiker
 
-The Straiker guardrail applies runtime AI security to traffic routed through LiteLLM. On every call it inspects the prompt and the response, including tool definitions and tool calls, and can block or redact before content reaches the model or the client.
+The Straiker guardrail applies runtime AI security to traffic routed through Lumina. On every call it inspects the prompt and the response, including tool definitions and tool calls, and can block or redact before content reaches the model or the client.
 
 Straiker detects:
 
@@ -18,9 +18,9 @@ Straiker determines whether a call is agentic from its content, so there is no a
 
 ### 1. Get your Straiker API key
 
-In the Straiker console, open **Defend**, click **Add Agent**, select the **LiteLLM Gateway** tile, and copy the key from the **Connect** step.
+In the Straiker console, open **Defend**, click **Add Agent**, select the **Lumina Gateway** tile, and copy the key from the **Connect** step.
 
-### 2. Add Straiker to your LiteLLM config.yaml
+### 2. Add Straiker to your Lumina config.yaml
 
 Define the guardrail under the `guardrails` section. Register it once per hook point so both the prompt and the response are inspected.
 
@@ -51,12 +51,12 @@ guardrails:
 
 Use `fail_closed` on `pre_call` so an outage cannot let unscreened traffic reach the model, and `fail_open` on `post_call` so an outage does not withhold a response the model already produced.
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 ```shell
 export OPENAI_API_KEY=sk-...
 export STRAIKER_API_KEY=...
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Make your first request
@@ -129,7 +129,7 @@ curl -sSLX POST 'http://0.0.0.0:4000/v1/chat/completions' \
 
 With a collection-scoped API key, each distinct `agent_id` is discovered as its own application in the Straiker console, so one gateway fronting many agents produces a per-agent inventory with no additional configuration. An application-scoped key pins every call to a single application regardless of `agent_id`. Calls without an `agent_id` are attributed to `default_app`.
 
-Caller identity is taken from LiteLLM's own key, team, and user records, so creating virtual keys with an alias and a user attributes every call automatically. The OpenAI `user` field is carried through as the end user on whose behalf the call was made.
+Caller identity is taken from Lumina's own key, team, and user records, so creating virtual keys with an alias and a user attributes every call automatically. The OpenAI `user` field is carried through as the end user on whose behalf the call was made.
 
 ## Supported parameters
 
@@ -138,7 +138,7 @@ Caller identity is taken from LiteLLM's own key, team, and user records, so crea
 | Parameter | Default | Description |
 |---|---|---|
 | `api_base` | `https://api.prod.straiker.ai` | Host only. The detection path is appended automatically. Set this to your region for non-US tenants |
-| `default_app` | `LiteLLM Gateway` | Application name used when a call carries no `agent_id`. Also accepted as `source` |
+| `default_app` | `Lumina Gateway` | Application name used when a call carries no `agent_id`. Also accepted as `source` |
 | `timeout` | `5.0` | Per-attempt HTTP timeout in seconds |
 | `max_retries` | `2` | Retries on HTTP 408, 429, 500, 502, 503, 504 and network errors |
 | `initial_backoff` | `0.1` | First retry backoff in seconds |
@@ -158,5 +158,5 @@ Streaming responses are handled on `post_call`. Straiker always buffers the stre
 
 ## Further reading
 
-- [Straiker documentation](https://docs.straiker.ai/defend-ai/litellm-integration)
+- [Straiker documentation](https://docs.straiker.ai/defend-ai/lumina-integration)
 - [Straiker](https://straiker.ai)

@@ -21,9 +21,9 @@ docker run -d --name llm-shield -p 8000:8000 \
   ghcr.io/ninadphalak/llm-shield-proxy:latest
 ```
 
-`VALID_VIRTUAL_KEYS` is the key LiteLLM presents to the Shield. Restoring values returns plaintext, so the Shield refuses guardrail calls without one. The Shield is also on PyPI as `llm-shield-proxy`.
+`VALID_VIRTUAL_KEYS` is the key Lumina presents to the Shield. Restoring values returns plaintext, so the Shield refuses guardrail calls without one. The Shield is also on PyPI as `llm-shield-proxy`.
 
-### 2. Add LLM Shield Proxy to your LiteLLM config.yaml
+### 2. Add LLM Shield Proxy to your Lumina config.yaml
 
 ```yaml title="config.yaml"
 model_list:
@@ -44,12 +44,12 @@ guardrails:
 
 The same fields are available in the Admin UI under **Guardrails > Add Guardrail > LLM Shield Proxy**.
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 ```shell
 export OPENAI_API_KEY=sk-...
 export LLM_SHIELD_PROXY_API_KEY=sk-shield-change-me
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Make your first request
@@ -108,21 +108,21 @@ Tokens are forwarded as they arrive rather than buffered to the end of the respo
 
 ## What is redacted and what is restored
 
-On the request side the guardrail collects message text and tool-call arguments in chat, Responses `input`, Completions `prompt` and `suffix`, and Anthropic messages, including nested tool results. Also walked: Anthropic document parts (their `title`, `context`, and the text of a `text` source), Responses function-call outputs (a string or `output_text` parts), custom tool-call `input`, code-interpreter `code`, typed prompt variables, and anything under `extra_body`, which LiteLLM merges over the transformed request just before sending it. An unredacted `messages` or `system` there would replace the redacted one on the wire. Each request gets a fresh vault id minted by LiteLLM and namespaced to the process; nothing the caller sends is used to name a vault, so a caller cannot reach another request's values by getting a stand-in echoed back.
+On the request side the guardrail collects message text and tool-call arguments in chat, Responses `input`, Completions `prompt` and `suffix`, and Anthropic messages, including nested tool results. Also walked: Anthropic document parts (their `title`, `context`, and the text of a `text` source), Responses function-call outputs (a string or `output_text` parts), custom tool-call `input`, code-interpreter `code`, typed prompt variables, and anything under `extra_body`, which Lumina merges over the transformed request just before sending it. An unredacted `messages` or `system` there would replace the redacted one on the wire. Each request gets a fresh vault id minted by Lumina and namespaced to the process; nothing the caller sends is used to name a vault, so a caller cannot reach another request's values by getting a stand-in echoed back.
 
 Text the application wrote rather than the caller is redacted into a second vault that is never restored from: `system` and `developer` turns, `system` and `developer` items in Responses `input`, Anthropic's top-level `system`, Responses `instructions`, tool descriptions and parameter schemas, structured-output schemas, web-search user locations, and the `user` and `safety_identifier` fields. The exception is `enum` and `const` values in a schema, which go to the caller's vault so that a tool call or structured output that uses them comes back with the real value. A request nested deeper than the walk's bound is refused rather than forwarded partly unredacted.
 
 On the reply side the guardrail restores message content, tool-call arguments, Completions `text`, Anthropic text and `tool_use` input, and Responses output items, both in full replies and in streams. Each stream (each choice's content, each tool call, each Anthropic content block, each Responses delta family) keeps its own window, so text held back for one never lands in another. Image and audio parts carry no text and pass through untouched.
 
-## Using it with the LiteLLM SDK
+## Using it with the Lumina SDK
 
 Outside the proxy, attach the guardrail as a model-level callback and name it per call. The request is redacted in the deployment pre-call hook and the reply restored in the deployment post-call hook:
 
 ```python
-import litellm
-from litellm.proxy.guardrails.guardrail_hooks.llm_shield_proxy import LLMShieldProxyGuardrail
+import lumina
+from lumina.proxy.guardrails.guardrail_hooks.llm_shield_proxy import LLMShieldProxyGuardrail
 
-litellm.callbacks.append(
+lumina.callbacks.append(
     LLMShieldProxyGuardrail(
         api_base="http://localhost:8000",
         api_key="sk-shield-change-me",
@@ -130,7 +130,7 @@ litellm.callbacks.append(
     )
 )
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="openai/gpt-4.1-mini",
     messages=[{"role": "user", "content": "Email jane.doe@example.com the invoice"}],
     guardrails=["llm_shield_proxy"],
@@ -139,12 +139,12 @@ response = await litellm.acompletion(
 
 The name passed to `guardrails` must match the guardrail's `guardrail_name` (`llm_shield_proxy` unless you set your own). Two limits on this path:
 
-- **Streaming is refused.** Nothing restores an SDK stream, so a `stream=True` request here fails closed with `LLM Shield Proxy cannot restore a streamed reply for a model-level guardrail outside the LiteLLM proxy`. Send streamed requests through the proxy, which restores them incrementally.
+- **Streaming is refused.** Nothing restores an SDK stream, so a `stream=True` request here fails closed with `LLM Shield Proxy cannot restore a streamed reply for a model-level guardrail outside the Lumina proxy`. Send streamed requests through the proxy, which restores them incrementally.
 - **The response cache is bypassed.** A cache hit returns before any post-call hook runs, and a reply stored after restoration would hand one caller's values to the next caller whose redacted request matches, so model-level guardrail requests are neither read from nor written to the cache.
 
 ## Caching and telemetry through the proxy
 
-Through the proxy, LiteLLM caches the redacted reply. Restoration happens after the cache write, so the response cache never holds plaintext. Guardrail telemetry likewise records the stand-ins the guardrail sent, not the restored values.
+Through the proxy, Lumina caches the redacted reply. Restoration happens after the cache write, so the response cache never holds plaintext. Guardrail telemetry likewise records the stand-ins the guardrail sent, not the restored values.
 
 ## Supported parameters
 
@@ -160,7 +160,7 @@ Each call to the Shield times out after 10 seconds, and a timeout blocks the req
 | Mode | What it does |
 |---|---|
 | `pre_call` | Replaces personal data in the request with stand-ins held in a vault inside your Shield deployment |
-| `post_call` | Restores the original values in the reply, streaming and non-streaming. The vault stays in your deployment; LiteLLM never stores the plaintext |
+| `post_call` | Restores the original values in the reply, streaming and non-streaming. The vault stays in your deployment; Lumina never stores the plaintext |
 
 ## Further reading
 

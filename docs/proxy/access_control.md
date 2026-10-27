@@ -13,10 +13,10 @@ Role-based access control (RBAC) is based on Organizations, Teams and Internal U
 
 - `Organizations` are the top-level entities that contain Teams.
 - `Team` - A Team is a collection of multiple `Internal Users`
-- `Internal Users` - users that can create keys, make LLM API calls, view usage on LiteLLM. Users can be on multiple teams.
-- `Virtual Keys` - Keys are used for authentication to the LiteLLM API. Each key can optionally be associated with a `user_id`, a `team_id`, or both:
+- `Internal Users` - users that can create keys, make LLM API calls, view usage on Lumina. Users can be on multiple teams.
+- `Virtual Keys` - Keys are used for authentication to the Lumina API. Each key can optionally be associated with a `user_id`, a `team_id`, or both:
   - **User-only key**: Has a `user_id` but no `team_id`. Tracked individually, deleted when the user is deleted.
-  - **Team key (Service Account)**: Has a `team_id` but no `user_id`. Shared by the team, not deleted when users are removed. [Learn more about service account keys](https://docs.litellm.ai/docs/proxy/virtual_keys#service-account-keys).
+  - **Team key (Service Account)**: Has a `team_id` but no `user_id`. Shared by the team, not deleted when users are removed. [Learn more about service account keys](https://docs.lumina.ai/docs/proxy/virtual_keys#service-account-keys).
   - **User + Team key**: Has both `user_id` and `team_id`. Belongs to a specific user within a team context. Deleted when the user is removed from that team or when the user is deleted. Removed keys appear in the [Deleted Keys](./deleted_keys_teams.md) audit log.
 
 ### When to Use Each Key Type
@@ -36,7 +36,7 @@ Role-based access control (RBAC) is based on Organizations, Teams and Internal U
 
 ## User Roles
 
-LiteLLM has two types of roles:
+Lumina has two types of roles:
 
 1. **Global Proxy Roles** - Platform-wide roles that apply across all organizations and teams
 2. **Organization/Team Specific Roles** - Roles scoped to specific organizations or teams (**Premium Feature**)
@@ -68,7 +68,7 @@ The Usage page shows different data depending on the selected view and the signe
 | Organization usage | Aggregate usage for an organization, when the user's organization role permits access. |
 | Global usage | Platform-wide usage for proxy admins and proxy admin viewers. |
 
-The LiteLLM Admin UI does not host custom dashboards. For a custom view such as per-user usage within each team, query the spend data through the management API or export telemetry to an external system. See [Prometheus metrics](./prometheus.md) and [OpenTelemetry](../observability/opentelemetry_v2.md) for Grafana-compatible exports.
+The Lumina Admin UI does not host custom dashboards. For a custom view such as per-user usage within each team, query the spend data through the management API or export telemetry to an external system. See [Prometheus metrics](./prometheus.md) and [OpenTelemetry](../observability/opentelemetry_v2.md) for Grafana-compatible exports.
 
 ## What Can Each Role Do?
 
@@ -78,7 +78,7 @@ Here's what each role can actually do. Think of it like levels of access.
 
 ## Global Proxy Roles
 
-These roles apply across the entire LiteLLM platform, regardless of organization or team boundaries.
+These roles apply across the entire Lumina platform, regardless of organization or team boundaries.
 
 ### Proxy Admin - Full Access
 
@@ -93,7 +93,7 @@ The proxy admin controls everything. They're like the owner of the whole platfor
 - Update team budgets, rate limits, and models
 - Manage team members and assign roles
 
-**Who should be a proxy admin:** Only the people running the LiteLLM instance.
+**Who should be a proxy admin:** Only the people running the Lumina instance.
 
 ---
 
@@ -191,7 +191,7 @@ A team admin manages a specific team. They're like a team lead who can add peopl
 - Update team members' budgets and rate limits within the team
 - Change team rate limits (TPM/RPM) and the team's `max_budget`, limited to the fields a proxy admin enabled under [team admin editable fields](#choosing-what-team-admins-can-edit)
 - Create and delete keys for team members
-- Onboard a [team-BYOK](./team_model_add) model to LiteLLM (e.g. onboarding a team's finetuned model)
+- Onboard a [team-BYOK](./team_model_add) model to Lumina (e.g. onboarding a team's finetuned model)
 - Configure [team member permissions](#team-member-permissions) to control what regular team members can do
 
 **What they cannot do:**
@@ -207,7 +207,7 @@ On `/team/update`, a team admin can only change the fields a proxy admin enabled
 
 :::info[How to create a team admin]
 
-You need to be a LiteLLM Enterprise user to assign team admins. [Get a 30 day trial here](https://www.litellm.ai/#trial).
+You need to be a Lumina Enterprise user to assign team admins. [Get a 30 day trial here](https://www.lumina.ai/#trial).
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/team/member_add' \
@@ -393,7 +393,7 @@ Any user with role=`proxy_admin` can create a new organization
 
 **Usage**
 
-[**API Reference for /organization/new**](https://docs.litellm.ai/api-reference/#/organization%20management/new_organization_organization_new_post)
+[**API Reference for /organization/new**](https://docs.lumina.ai/api-reference/#/organization%20management/new_organization_organization_new_post)
 
 ```shell
 curl --location 'http://0.0.0.0:4000/organization/new' \

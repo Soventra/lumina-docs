@@ -6,11 +6,11 @@ https://aimlapi.com/
 | Property | Details |
 |-------|-------|
 | Description | AI/ML API provides access to state-of-the-art AI models including flux-pro/v1.1 for high-quality image generation. |
-| Provider Route on LiteLLM | `aiml/` |
+| Provider Route on Lumina | `aiml/` |
 | Link to Provider Doc | [AI/ML API ↗](https://docs.aimlapi.com/) |
 | Supported Operations | [`/chat/completions`], [`/images/generations`](/docs/providers/aiml#async-image-generation) |
 
-LiteLLM supports AI/ML API Image Generation calls.
+Lumina supports AI/ML API Image Generation calls.
 
 ## API Base, Key
 ```python
@@ -39,9 +39,9 @@ If you have any questions, feel free to reach out. We’re happy to assist! [Dis
 You can choose from LLama, Qwen, Flux, and 200+ other open and closed-source models on aimlapi.com/models. For example:
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="aiml/meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo", # The model name must include prefix "openai" + the model name from ai/ml api
     api_key="", # your aiml api-key 
     api_base="https://api.aimlapi.com/v2",
@@ -57,9 +57,9 @@ response = litellm.completion(
 ## Streaming
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="aiml/Qwen/Qwen2-72B-Instruct",  # The model name must include prefix "openai" + the model name from ai/ml api
     api_key="",  # your aiml api-key 
     api_base="https://api.aimlapi.com/v2",
@@ -80,11 +80,11 @@ for chunk in response:
 ```python
 import asyncio
 
-import litellm
+import lumina
 
 
 async def main():
-    response = await litellm.acompletion(
+    response = await lumina.acompletion(
         model="aiml/anthropic/{{anthropic}}",  # The model name must include prefix "openai" + the model name from ai/ml api
         api_key="",  # your aiml api-key
         api_base="https://api.aimlapi.com/v2",
@@ -108,13 +108,13 @@ if __name__ == "__main__":
 import asyncio
 import traceback
 
-import litellm
+import lumina
 
 
 async def main():
     try:
         print("test acompletion + streaming")
-        response = await litellm.acompletion(
+        response = await lumina.acompletion(
             model="aiml/nvidia/Llama-3.1-Nemotron-70B-Instruct-HF", # The model name must include prefix "openai" + the model name from ai/ml api
             api_key="", # your aiml api-key
             api_base="https://api.aimlapi.com/v2",
@@ -138,11 +138,11 @@ if __name__ == "__main__":
 ```python
 import asyncio
 
-import litellm
+import lumina
 
 
 async def main():
-    response = await litellm.aembedding(
+    response = await lumina.aembedding(
         model="aiml/text-embedding-3-small", # The model name must include prefix "openai" + the model name from ai/ml api
         api_key="",  # your aiml api-key
         api_base="https://api.aimlapi.com/v1", # the URL has changed from v2 to v1
@@ -160,11 +160,11 @@ if __name__ == "__main__":
 ```python
 import asyncio
 
-import litellm
+import lumina
 
 
 async def main():
-    response = await litellm.aimage_generation(
+    response = await lumina.aimage_generation(
         model="aiml/dall-e-3",  # The model name must include prefix "openai" + the model name from ai/ml api
         api_key="",  # your aiml api-key
         api_base="https://api.aimlapi.com/v1", # the URL has changed from v2 to v1

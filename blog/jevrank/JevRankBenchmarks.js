@@ -43,7 +43,7 @@ const measuredRows = [
     name: 'TypeSafe Jev 1.13.0 (JevRank)',
     provider: 'typesafe',
     method: 'Per document',
-    origin: 'LiteLLM run',
+    origin: 'Lumina run',
     score: 0.7676260618846087,
     cost: 575.39426,
     approximate: true,
@@ -52,7 +52,7 @@ const measuredRows = [
     name: 'BM25',
     provider: null,
     method: 'Local retrieval',
-    origin: 'LiteLLM run',
+    origin: 'Lumina run',
     score: 0.6863002612489066,
     cost: 0,
   },
@@ -71,7 +71,7 @@ function price(row) {
 }
 
 function rowClass(row) {
-  return row.origin === 'LiteLLM run' ? styles.measured : styles.reference;
+  return row.origin === 'Lumina run' ? styles.measured : styles.reference;
 }
 
 function Provider({row}) {
@@ -139,7 +139,7 @@ function Metric({row, cost = false}) {
         aria-hidden="true"
       >
         <span
-          className={`${styles.bar} ${!row.provider || row.provider === 'cohere' ? styles.baselineBar : ''} ${row.origin === 'LiteLLM run' || row.lowestCost ? styles.emphasisBar : ''}`}
+          className={`${styles.bar} ${!row.provider || row.provider === 'cohere' ? styles.baselineBar : ''} ${row.origin === 'Lumina run' || row.lowestCost ? styles.emphasisBar : ''}`}
           style={{
             width: `${cost ? (row.cost / 2500) * 100 : row.score * 100}%`,
           }}
@@ -227,7 +227,7 @@ export function QualityCostChart() {
         <strong>SciFact · 300 queries · 20 candidates · October 2026.</strong>{' '}
         Reference results via OpenRouter. Flash costs $73 versus Cohere Pro’s
         $2,500 per million queries, about 34× lower. These are reference
-        results, not our LiteLLM run.
+        results, not our Lumina run.
       </p>
       <p>
         Costs exclude gateway overhead; Jev 1.14 is projected from a rounded
@@ -241,12 +241,12 @@ export function MeasuredQualityChart() {
   return (
     <Comparison
       data={measuredRows}
-      title="LiteLLM benchmark"
-      caption="Two results measured by LiteLLM: TypeSafe Jev 1.13.0 and the local BM25 baseline."
+      title="Lumina benchmark"
+      caption="Two results measured by Lumina: TypeSafe Jev 1.13.0 and the local BM25 baseline."
     >
       <p>
         <strong>SciFact · 300 queries · 20 BM25 candidates per query.</strong>{' '}
-        Measured through LiteLLM. Jev’s cost is estimated from reported tokens
+        Measured through Lumina. Jev’s cost is estimated from reported tokens
         and excludes gateway overhead. BM25 adds no reranking calls.
       </p>
       <p>
@@ -454,7 +454,7 @@ function Scatter({compact}) {
               .join(' ')}
           />
           <circle
-            className={`${styles.point} ${row.origin === 'LiteLLM run' ? styles.measuredPoint : ''} ${row.provider === 'cohere' || !row.provider ? styles.baselinePoint : ''}`}
+            className={`${styles.point} ${row.origin === 'Lumina run' ? styles.measuredPoint : ''} ${row.provider === 'cohere' || !row.provider ? styles.baselinePoint : ''}`}
             cx={x(row.cost)}
             cy={y(row.score)}
             r={compact ? 4 : 5}
@@ -525,7 +525,7 @@ export function CostQualityChart() {
       <div className={styles.plotTop}>
         <span>Quality (nDCG@10) ↑</span>
         <span>
-          Hollow: reference <span aria-hidden="true">·</span> Solid: LiteLLM run
+          Hollow: reference <span aria-hidden="true">·</span> Solid: Lumina run
         </span>
       </div>
       <Scatter compact={false} />
@@ -573,7 +573,7 @@ export function CostQualityChart() {
       </p>
       <div className={styles.evidenceNote}>
         <p>
-          Reference results via OpenRouter; solid points are our LiteLLM run.
+          Reference results via OpenRouter; solid points are our Lumina run.
           Costs exclude gateway overhead. The 34× comparison applies only to
           reference Flash versus reference Cohere Pro; nearby scores do not
           establish a quality win.

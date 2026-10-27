@@ -1,12 +1,12 @@
 import Image from '@theme/IdealImage';
 
-# LiteLLM Proxy - Locust Load Test
+# Lumina Proxy - Locust Load Test
 
-## Locust Load Test LiteLLM Proxy 
+## Locust Load Test Lumina Proxy 
 
-1. Add `fake-openai-endpoint` to your proxy config.yaml and start your litellm proxy.
+1. Add `fake-openai-endpoint` to your proxy config.yaml and start your lumina proxy.
 
-LiteLLM provides a free hosted `fake-openai-endpoint` you can load test against. You can also self-host your own fake OpenAI proxy server using [github.com/BerriAI/example_openai_endpoint](https://github.com/BerriAI/example_openai_endpoint).
+Lumina provides a free hosted `fake-openai-endpoint` you can load test against. You can also self-host your own fake OpenAI proxy server using [github.com/BerriAI/example_openai_endpoint](https://github.com/BerriAI/example_openai_endpoint).
 
 ```yaml
 model_list:
@@ -19,7 +19,7 @@ model_list:
 
 2. `uv add locust`
 
-3. Create a file called `locustfile.py` on your local machine. Copy the contents from the litellm load test located [here](https://github.com/BerriAI/litellm/blob/main/.github/workflows/locustfile.py)
+3. Create a file called `locustfile.py` on your local machine. Copy the contents from the lumina load test located [here](https://github.com/Soventra/lumina/blob/main/.github/workflows/locustfile.py)
 
 4. Start locust
   Run `locust` in the same directory as your `locustfile.py` from step 2
@@ -38,7 +38,7 @@ model_list:
 
   Head to the locust UI on http://0.0.0.0:8089
 
-  Set Users=100, Ramp Up Users=10, Host=Base URL of your LiteLLM Proxy
+  Set Users=100, Ramp Up Users=10, Host=Base URL of your Lumina Proxy
 
   <Image img={require('../img/locust_load_test.png')} />
 
@@ -49,5 +49,5 @@ model_list:
 
   Avg →  /health/readiness is `219ms`
 
-  <Image img={require('../img/litellm_load_test.png')} />
+  <Image img={require('../img/lumina_load_test.png')} />
 

@@ -8,7 +8,7 @@ Log LLM Logs to [Google Cloud Storage Buckets](https://cloud.google.com/storage?
 
 ### Usage
 
-1. Add `gcs_bucket` to LiteLLM Config.yaml
+1. Add `gcs_bucket` to Lumina Config.yaml
 ```yaml
 model_list:
 - lumina_params:
@@ -17,7 +17,7 @@ model_list:
     model: openai/my-fake-model
   model_name: fake-openai-endpoint
 
-litellm_settings:
+lumina_settings:
   callbacks: ["gcs_bucket"] # KEY CHANGE # KEY CHANGE
 ```
 
@@ -31,7 +31,7 @@ GCS_PATH_SERVICE_ACCOUNT="/Users/ishaanjaffer/Downloads/adroit-crow-413218-a956e
 3. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it! 
@@ -72,6 +72,6 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

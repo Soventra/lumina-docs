@@ -3,60 +3,60 @@ import Image from '@theme/IdealImage';
 # New Relic
 
 ## Prerequisite
-To use LiteLLM with New Relic, you will need to have a New Relic account and [license key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/). If you do not have a New Relic account yet, you can create a [free tier account](https://newrelic.com/pricing/free-tier).
+To use Lumina with New Relic, you will need to have a New Relic account and [license key](https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/). If you do not have a New Relic account yet, you can create a [free tier account](https://newrelic.com/pricing/free-tier).
 
-This page covers using New Relic with LiteLLM in proxy mode. You can also use New Relic with the LiteLLM SDK by including the New Relic Python Agent in your application. Please refer to the New Relic AI Monitoring [documentation](https://docs.newrelic.com/docs/ai-monitoring/intro-to-ai-monitoring/).
+This page covers using New Relic with Lumina in proxy mode. You can also use New Relic with the Lumina SDK by including the New Relic Python Agent in your application. Please refer to the New Relic AI Monitoring [documentation](https://docs.newrelic.com/docs/ai-monitoring/intro-to-ai-monitoring/).
 
 ## Configuration
 
-### Enable New Relic LiteLLM callback
+### Enable New Relic Lumina callback
 
-The New Relic LiteLLM extension is implemented as a callback. A common way to enable the callback is via the `config.yaml` file. When configured via `config.yaml`, the `callbacks` list can include several values. As long as `newrelic` is included in the list, the New Relic LiteLLM callback will be invoked. The following example would enable the New Relic callback within LiteLLM.
+The New Relic Lumina extension is implemented as a callback. A common way to enable the callback is via the `config.yaml` file. When configured via `config.yaml`, the `callbacks` list can include several values. As long as `newrelic` is included in the list, the New Relic Lumina callback will be invoked. The following example would enable the New Relic callback within Lumina.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["newrelic"]
 ```
 
-You can also configure the callback via the LiteLLM administrative UI. If you use this option, please see the
-[LiteLLM admin UI documentation](https://docs.litellm.ai/docs/proxy/ui) to access the admin UI and include the New Relic callback within the `Settings` section.
+You can also configure the callback via the Lumina administrative UI. If you use this option, please see the
+[Lumina admin UI documentation](https://docs.lumina.ai/docs/proxy/ui) to access the admin UI and include the New Relic callback within the `Settings` section.
 
 ### Required environment variables
 
-The [New Relic Python Agent](https://docs.newrelic.com/docs/apm/agents/python-agent/getting-started/introduction-new-relic-python/) requires configuration to report telemetry to New Relic. The New Relic Python Agent supports defining [configuration](https://docs.newrelic.com/docs/apm/agents/python-agent/configuration/python-agent-configuration/) via both a configuration file and environment variables. With LiteLLM, it is recommended to use environment variables, but both options will work.
+The [New Relic Python Agent](https://docs.newrelic.com/docs/apm/agents/python-agent/getting-started/introduction-new-relic-python/) requires configuration to report telemetry to New Relic. The New Relic Python Agent supports defining [configuration](https://docs.newrelic.com/docs/apm/agents/python-agent/configuration/python-agent-configuration/) via both a configuration file and environment variables. With Lumina, it is recommended to use environment variables, but both options will work.
 
-The `NEW_RELIC_APP_NAME` environment variable should have a value for the name that you wish the LiteLLM server to appear as in New Relic's UI. The `NEW_RELIC_LICENSE_KEY` environment variable value is a license key for the New Relic account you want the telemetry to be reported to.
+The `NEW_RELIC_APP_NAME` environment variable should have a value for the name that you wish the Lumina server to appear as in New Relic's UI. The `NEW_RELIC_LICENSE_KEY` environment variable value is a license key for the New Relic account you want the telemetry to be reported to.
 
 ```shell
 NEW_RELIC_APP_NAME=<app name>
 NEW_RELIC_LICENSE_KEY=<license key>
 ```
 
-## Running LiteLLM with New Relic Python Agent
+## Running Lumina with New Relic Python Agent
 
-The [New Relic Python Agent](https://docs.newrelic.com/docs/apm/agents/python-agent/getting-started/introduction-new-relic-python/) is used within applications to report [Application Performance Monitoring (APM)](https://docs.newrelic.com/docs/apm/new-relic-apm/getting-started/introduction-apm/) telemetry to New Relic. By following the steps below, a New Relic customer will receive both the APM telemetry for LiteLLM as well as the LLM messages within [AI Monitoring](https://docs.newrelic.com/docs/ai-monitoring/intro-to-ai-monitoring/) from their LiteLLM server.
+The [New Relic Python Agent](https://docs.newrelic.com/docs/apm/agents/python-agent/getting-started/introduction-new-relic-python/) is used within applications to report [Application Performance Monitoring (APM)](https://docs.newrelic.com/docs/apm/new-relic-apm/getting-started/introduction-apm/) telemetry to New Relic. By following the steps below, a New Relic customer will receive both the APM telemetry for Lumina as well as the LLM messages within [AI Monitoring](https://docs.newrelic.com/docs/ai-monitoring/intro-to-ai-monitoring/) from their Lumina server.
 
 ### Building a New Relic-enabled container (recommended)
 
-The official LiteLLM containers include the New Relic callback, but do not include the New Relic Python Agent. The easiest way to include the New Relic Python Agent is to create a new container image that layers the agent on top of an existing LiteLLM image. By doing this, you will be able to define the official LiteLLM image version to use as a base.
+The official Lumina containers include the New Relic callback, but do not include the New Relic Python Agent. The easiest way to include the New Relic Python Agent is to create a new container image that layers the agent on top of an existing Lumina image. By doing this, you will be able to define the official Lumina image version to use as a base.
 
-To build a LiteLLM container with the New Relic Python Agent inside of it, you can use the following `Dockerfile` and `entrypoint.sh` files. This process will use an official LiteLLM container as a base image, install the New Relic Python Agent, and add a new entrypoint. The resulting container will run LiteLLM with the New Relic Python Agent reporting APM telemetry to New Relic. With the callback enabled and the environment variables set above, you will also report the LLM messages to New Relic.
+To build a Lumina container with the New Relic Python Agent inside of it, you can use the following `Dockerfile` and `entrypoint.sh` files. This process will use an official Lumina container as a base image, install the New Relic Python Agent, and add a new entrypoint. The resulting container will run Lumina with the New Relic Python Agent reporting APM telemetry to New Relic. With the callback enabled and the environment variables set above, you will also report the LLM messages to New Relic.
 
 To build the container image, copy the `Dockerfile` and `entrypoint.sh` files to a directory. From this directory, you can build an image from the CLI using the following command.
 
 ```shell
-docker build -f Dockerfile -t litellm-newrelic:local .
+docker build -f Dockerfile -t lumina-newrelic:local .
 ```
 
-If you wish to specify the LiteLLM image version to use as a base, pass `--build-arg BASE_IMAGE=…` and/or `--build-arg BASE_TAG=…` to target a different base image or tag similar to the following command.
+If you wish to specify the Lumina image version to use as a base, pass `--build-arg BASE_IMAGE=…` and/or `--build-arg BASE_TAG=…` to target a different base image or tag similar to the following command.
 
 ```shell
 BASE_TAG=v1.89.4
 docker build \
-  --build-arg BASE_IMAGE=docker.litellm.ai/berriai/litellm \
+  --build-arg BASE_IMAGE=docker.lumina.ai/soventra/lumina \
   --build-arg BASE_TAG=${BASE_TAG} \
   -f Dockerfile \
-  -t litellm-newrelic:${BASE_TAG} \
+  -t lumina-newrelic:${BASE_TAG} \
   .
 ```
 
@@ -64,10 +64,10 @@ You may use any docker name for the output image that suits your image naming po
 
 #### `Dockerfile`
 
-The Dockerfile defines the layers added on top of an official LiteLLM container. You should pick the version you want to use by setting `BASE_TAG` when you actually build the image. This Dockerfile installs the New Relic Python Agent, then adds a new entrypoint that runs LiteLLM with the New Relic Python Agent.
+The Dockerfile defines the layers added on top of an official Lumina container. You should pick the version you want to use by setting `BASE_TAG` when you actually build the image. This Dockerfile installs the New Relic Python Agent, then adds a new entrypoint that runs Lumina with the New Relic Python Agent.
 
 ```dockerfile
-ARG BASE_IMAGE=docker.litellm.ai/berriai/litellm
+ARG BASE_IMAGE=docker.lumina.ai/soventra/lumina
 ARG BASE_TAG=latest
 FROM ${BASE_IMAGE}:${BASE_TAG}
 
@@ -83,36 +83,36 @@ RUN chmod +x /app/docker/newrelic/entrypoint.sh
 # Override entrypoint to always use newrelic-admin
 ENTRYPOINT ["/app/docker/newrelic/entrypoint.sh"]
 
-LABEL org.opencontainers.image.description="LiteLLM with New Relic APM and AI monitoring"
+LABEL org.opencontainers.image.description="Lumina with New Relic APM and AI monitoring"
 ```
 
 #### `entrypoint.sh`
 
-This `entrypoint.sh` replaces LiteLLM's default `docker/prod_entrypoint.sh` and runs the `litellm` process wrapped by the New Relic Python Agent.
+This `entrypoint.sh` replaces Lumina's default `docker/prod_entrypoint.sh` and runs the `lumina` process wrapped by the New Relic Python Agent.
 
 ```sh
 #!/bin/sh
-exec newrelic-admin run-program litellm "$@"
+exec newrelic-admin run-program lumina "$@"
 ```
 
-### Running from LiteLLM source
+### Running from Lumina source
 
-The LiteLLM source uses `uv` to manage dependencies. To run the New Relic integration for LiteLLM, install the New Relic Python Agent locally first. The easiest way is to use `uv` to install it.
+The Lumina source uses `uv` to manage dependencies. To run the New Relic integration for Lumina, install the New Relic Python Agent locally first. The easiest way is to use `uv` to install it.
 
 ```shell
 make install-proxy-dev
 uv pip install 'newrelic>=12.1.0,<13'
 ```
 
-You can then run `litellm` locally from source using the New Relic Python Agent with this command. Add any additional options that you might need to the end of the command such as `--config config.yaml` or `--debug`.
+You can then run `lumina` locally from source using the New Relic Python Agent with this command. Add any additional options that you might need to the end of the command such as `--config config.yaml` or `--debug`.
 
 ```shell
-uv run newrelic-admin run-program litellm
+uv run newrelic-admin run-program lumina
 ```
 
 ### Verification
 
-#### LiteLLM container logs
+#### Lumina container logs
 
 When the New Relic callback initializes, it writes an INFO log message confirming initialization and whether LLM content recording is enabled. If INFO log messages are not visible, set the `LUMINA_LOG=INFO` environment variable to enable them. Look for a message in this form:
 
@@ -122,7 +122,7 @@ New Relic AI Monitoring initialized for app: {app-name}, content recording: {Tru
 
 #### New Relic AI Monitoring
 
-[New Relic AI Monitoring](https://docs.newrelic.com/docs/ai-monitoring/intro-to-ai-monitoring/) can be used to verify the LLM metadata and/or content have been received. From the `AI Responses` view, you should see the LLM requests in the `Responses` table shortly after a request is returned by LiteLLM. If LLM content recording is enabled, the LLM request/response messages will appear in the `Responses` table. Selecting a row on the table will display more details about the LLM request. The trace details may take 2-3 minutes to appear.
+[New Relic AI Monitoring](https://docs.newrelic.com/docs/ai-monitoring/intro-to-ai-monitoring/) can be used to verify the LLM metadata and/or content have been received. From the `AI Responses` view, you should see the LLM requests in the `Responses` table shortly after a request is returned by Lumina. If LLM content recording is enabled, the LLM request/response messages will appear in the `Responses` table. Selecting a row on the table will display more details about the LLM request. The trace details may take 2-3 minutes to appear.
 
 ## Advanced configuration options
 
@@ -133,7 +133,7 @@ You can disable sending LLM messages to New Relic in any of the following ways.
 The `config.yaml` file can be used to set a flag that will disable sending LLM messages to New Relic. As you might want LLM messages to be sent elsewhere (logs) but not to New Relic, there is a New Relic-specific configuration value that can be set. Adding the following to your `config.yaml` will prevent LLM messages from being sent to New Relic.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["newrelic"]
   newrelic_params:
     turn_off_message_logging: true
@@ -145,7 +145,7 @@ The New Relic callback also reads an environment variable option to disable reco
 NEW_RELIC_AI_MONITORING_RECORD_CONTENT_ENABLED=false
 ```
 
-If you are using the LiteLLM Administrative UI to add the New Relic callback, the form has an option that will accept a boolean value. This boolean value follows the same rules as the environment variable (`true` or blank to record LLM messages, `false` to turn off recording content messages).
+If you are using the Lumina Administrative UI to add the New Relic callback, the form has an option that will accept a boolean value. This boolean value follows the same rules as the environment variable (`true` or blank to record LLM messages, `false` to turn off recording content messages).
 
 ### New Relic Agent Configuration
 
@@ -159,7 +159,7 @@ NEW_RELIC_CONFIG_FILE=</path/to/newrelic/configuration_file>
 
 ### Recommended configuration overrides
 
-The New Relic LiteLLM Extension will send telemetry to New Relic so that the messages appear as part of the New Relic AI Monitoring feature. When using this feature, the following configurations are recommended. These configurations can be set via environment variables or in a configuration file.
+The New Relic Lumina Extension will send telemetry to New Relic so that the messages appear as part of the New Relic AI Monitoring feature. When using this feature, the following configurations are recommended. These configurations can be set via environment variables or in a configuration file.
 
 ```shell
 NEW_RELIC_CUSTOM_INSIGHTS_EVENTS_MAX_ATTRIBUTE_VALUE=4095
@@ -169,7 +169,7 @@ NEW_RELIC_CUSTOM_INSIGHTS_EVENTS_MAX_SAMPLES_STORED=100000
 
 ## Per-team routing (OTel v2)
 
-Each LiteLLM team can send its traces and cost metrics to its own New Relic account, using that team's own ingest license key. Requests from teams without a configured key export nothing to New Relic.
+Each Lumina team can send its traces and cost metrics to its own New Relic account, using that team's own ingest license key. Requests from teams without a configured key export nothing to New Relic.
 
 Requires the proxy to run with:
 
@@ -197,9 +197,9 @@ curl -X POST 'http://localhost:4000/team/{team_id}/callback' \
 
 To keep internal Redis and PostgreSQL spans out of a team's destination, set the per-destination `excluded_services` callback variable. See [the OTel v2 exclusion settings](./opentelemetry_v2#keep-redis-and-postgres-spans-out-of-tenant-traces).
 
-Traces arrive as OTLP `gen_ai.*` spans with `litellm.team.id`, `litellm.team.alias` and `litellm.cost.*` attributes. Cost metrics arrive as `litellm.requests`, `litellm.cost.usd`, `litellm.tokens.*` counts and a `litellm.request.duration_ms` summary, faceted by `team_id`, `team_alias`, `model_group`, `model`, `custom_llm_provider` and `status`.
+Traces arrive as OTLP `gen_ai.*` spans with `lumina.team.id`, `lumina.team.alias` and `lumina.cost.*` attributes. Cost metrics arrive as `lumina.requests`, `lumina.cost.usd`, `lumina.tokens.*` counts and a `lumina.request.duration_ms` summary, faceted by `team_id`, `team_alias`, `model_group`, `model`, `custom_llm_provider` and `status`.
 
-Team budgets arrive as two gauges faceted by `team_id` and `team_alias`: `litellm.team.max_budget` is the team's configured `max_budget`, and `litellm.team.remaining_budget` is `max_budget` minus the team's spend including the request that produced it. Teams without a `max_budget` send neither gauge. Query them in NRQL with `SELECT latest(litellm.team.remaining_budget) FROM Metric FACET team_alias`.
+Team budgets arrive as two gauges faceted by `team_id` and `team_alias`: `lumina.team.max_budget` is the team's configured `max_budget`, and `lumina.team.remaining_budget` is `max_budget` minus the team's spend including the request that produced it. Teams without a `max_budget` send neither gauge. Query them in NRQL with `SELECT latest(lumina.team.remaining_budget) FROM Metric FACET team_alias`.
 
 Optional operator-level fallback for traffic without team credentials:
 

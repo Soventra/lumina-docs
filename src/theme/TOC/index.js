@@ -29,11 +29,11 @@ export default function TOC({ className, ...props }) {
           width={22}
           height={22}
           sources={{
-            light: useBaseUrl('/img/brand/litellm-monogram-blue.svg'),
-            dark: useBaseUrl('/img/brand/litellm-monogram-white.svg'),
+            light: useBaseUrl('/img/brand/lumina-monogram-blue.svg'),
+            dark: useBaseUrl('/img/brand/lumina-monogram-white.svg'),
           }}
         />
-        <div className={styles.promoHeading}>LiteLLM Enterprise</div>
+        <div className={styles.promoHeading}>Lumina Enterprise</div>
         <div className={styles.promoDescription}>
           SSO/SAML, audit logs, spend tracking, multi-team management, and
           guardrails, built for production.

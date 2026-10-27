@@ -1,6 +1,6 @@
 ---
 title: Caching
-description: Cache LLM responses on the LiteLLM proxy to cut spend and latency.
+description: Cache LLM responses on the Lumina proxy to cut spend and latency.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -14,7 +14,7 @@ For OpenAI/Anthropic Prompt Caching, go [here](../completion/prompt_caching.md)
 
 :::
 
-Cache LLM Responses. LiteLLM's caching system stores and reuses LLM responses to save costs and
+Cache LLM Responses. Lumina's caching system stores and reuses LLM responses to save costs and
 reduce latency. When you make the same request twice, the cached response is returned instead of
 calling the LLM API again.
 
@@ -56,9 +56,9 @@ model_list:
     lumina_params:
       model: text-embedding-ada-002
 
-litellm_settings:
+lumina_settings:
   set_verbose: True
-  cache: True # set cache responses to True, litellm defaults to using a redis cache
+  cache: True # set cache responses to True, lumina defaults to using a redis cache
 ```
 
 ### Step 2: Add Redis credentials to .env
@@ -79,7 +79,7 @@ see [Redis socket_timeout](./caching_redis.md#redis-socket_timeout).
 ### Step 3: Run proxy with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ### Step 4: Test it
@@ -94,7 +94,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
      "model": "{{openai_small}}",
-     "messages": [{"role": "user", "content": "write a poem about litellm!"}],
+     "messages": [{"role": "user", "content": "write a poem about lumina!"}],
      "temperature": 0.7
    }'
 
@@ -102,7 +102,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
      "model": "{{openai_small}}",
-     "messages": [{"role": "user", "content": "write a poem about litellm!"}],
+     "messages": [{"role": "user", "content": "write a poem about lumina!"}],
      "temperature": 0.7
    }'
 ```
@@ -117,14 +117,14 @@ curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
   -d '{
      "model": "{{openai_small}}",
-     "input": "write a poem about litellm!"
+     "input": "write a poem about lumina!"
    }'
 
 curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
   -d '{
      "model": "{{openai_small}}",
-     "input": "write a poem about litellm!"
+     "input": "write a poem about lumina!"
    }'
 ```
 
@@ -138,21 +138,21 @@ curl --location 'http://0.0.0.0:4000/embeddings' \
   --header 'Content-Type: application/json' \
   --data ' {
   "model": "text-embedding-ada-002",
-  "input": ["write a litellm poem"]
+  "input": ["write a lumina poem"]
   }'
 
 curl --location 'http://0.0.0.0:4000/embeddings' \
   --header 'Content-Type: application/json' \
   --data ' {
   "model": "text-embedding-ada-002",
-  "input": ["write a litellm poem"]
+  "input": ["write a lumina poem"]
   }'
 ```
 
 </TabItem>
 </Tabs>
 
-The second response is served from the cache. It carries an `x-litellm-cache-key` response header,
+The second response is served from the cache. It carries an `x-lumina-cache-key` response header,
 which you can feed to [`/cache/delete`](./caching_controls.md#deleting-cache-keys---cachedelete).
 
 With `cache: True` and no `supported_call_types`, caching is on for `/chat/completions`,
@@ -173,7 +173,7 @@ them for local development rather than production.
 <TabItem value="local" label="In Memory Cache">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: local
@@ -183,11 +183,11 @@ litellm_settings:
 <TabItem value="disk" label="Disk Cache">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: disk
-    disk_cache_dir: /tmp/litellm-cache # OPTIONAL, default to ./.litellm_cache
+    disk_cache_dir: /tmp/lumina-cache # OPTIONAL, default to ./.lumina_cache
 ```
 
 </TabItem>
@@ -195,7 +195,7 @@ litellm_settings:
 
 ## Debugging Caching - `/cache/ping`
 
-LiteLLM Proxy exposes a `/cache/ping` endpoint to test if the cache is working as expected
+Lumina Proxy exposes a `/cache/ping` endpoint to test if the cache is working as expected
 
 **Usage**
 
@@ -211,7 +211,7 @@ curl --location 'http://0.0.0.0:4000/cache/ping'  -H "Authorization: Bearer $LUM
     "cache_type": "redis",
     "ping_response": true,
     "set_cache_response": "success",
-    "litellm_cache_params": {
+    "lumina_cache_params": {
         "supported_call_types": "['completion', 'acompletion', 'embedding', 'aembedding', 'atranscription', 'transcription']",
         "type": "redis",
         "namespace": "None"

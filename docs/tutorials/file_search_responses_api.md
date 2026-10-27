@@ -3,28 +3,28 @@ import TabItem from '@theme/TabItem';
 
 # File Search in the Responses API
 
-LiteLLM now supports `file_search` in the Responses API across both:
+Lumina now supports `file_search` in the Responses API across both:
 - providers that support it natively (like OpenAI / Azure), and
 - providers that do not (like Anthropic, Bedrock, and other non-native providers) via emulation.
 
 ## What this is
 
 `file_search` lets models retrieve grounded context from your vector stores and answer with citations.
-LiteLLM keeps one OpenAI-compatible output shape while routing requests through either native passthrough or an emulated fallback.
+Lumina keeps one OpenAI-compatible output shape while routing requests through either native passthrough or an emulated fallback.
 
 Two paths are covered:
 
-| Path | When it runs | What LiteLLM does |
+| Path | When it runs | What Lumina does |
 | --- | --- | --- |
 | **Native passthrough** | Provider natively supports `file_search` (OpenAI, Azure) | Decodes unified vector store ID → forwards to provider as-is |
 | **Emulated fallback** | Provider doesn't support `file_search` (Anthropic, Bedrock, etc.) | Converts to a function tool → intercepts tool call → runs vector search → synthesizes OpenAI-format output |
 
-In `tools[].vector_store_ids`, LiteLLM accepts both provider-native IDs (e.g. `vs_...`) **and** **managed vector store unified IDs** (URL-safe base64 strings from the proxy managed-vector flow), e.g. `litellm.responses(..., tools=[{"type": "file_search", "vector_store_ids": ["bGl0ZWxsbV9wcm94eT..."]}])`.
+In `tools[].vector_store_ids`, Lumina accepts both provider-native IDs (e.g. `vs_...`) **and** **managed vector store unified IDs** (URL-safe base64 strings from the proxy managed-vector flow), e.g. `lumina.responses(..., tools=[{"type": "file_search", "vector_store_ids": ["bGl0ZWxsbV9wcm94eT..."]}])`.
 
 ## Usage
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy" default>
+<TabItem value="proxy" label="Lumina Proxy" default>
 
 ### 1. Setup `config.yaml`
 
@@ -44,7 +44,7 @@ model_list:
 ### 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Call Responses API with `file_search`
@@ -56,7 +56,7 @@ client = OpenAI(base_url="http://localhost:4000", api_key="sk-your-proxy-key")
 
 response = client.responses.create(
     model="claude-sonnet",  # swap to "{{openai_large}}" for native path
-    input="What does LiteLLM support?",
+    input="What does Lumina support?",
     tools=[{
         "type": "file_search",
         "vector_store_ids": ["vs_abc123"]
@@ -68,12 +68,12 @@ print(response.output)
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ### 1. Install + set keys
 
 ```bash
-uv add litellm
+uv add lumina
 export OPENAI_API_KEY="sk-..."
 export ANTHROPIC_API_KEY="sk-ant-..."
 ```
@@ -81,11 +81,11 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 ### 2. Call Responses API with `file_search`
 
 ```python title="SDK call"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="anthropic/{{anthropic}}",  # swap to openai/{{openai_large}} for native path
-    input="What does LiteLLM support?",
+    input="What does Lumina support?",
     tools=[{
         "type": "file_search",
         "vector_store_ids": ["vs_abc123"]
@@ -104,7 +104,7 @@ print(response.output)
 | Path | SDK model | Proxy model | Behavior |
 | --- | --- | --- | --- |
 | Native passthrough | `openai/gpt-5.6-terra` | `gpt-5.6-terra` | Provider executes native `file_search` |
-| Emulated fallback | `anthropic/claude-sonnet-5` | `claude-sonnet` | LiteLLM converts to function tool and synthesizes OpenAI-format output |
+| Emulated fallback | `anthropic/claude-sonnet-5` | `claude-sonnet` | Lumina converts to function tool and synthesizes OpenAI-format output |
 
 
 
@@ -112,7 +112,7 @@ print(response.output)
 
 ```mermaid
 flowchart TD
-    A[Client SDK or Proxy Caller] --> B[LiteLLM Responses API]
+    A[Client SDK or Proxy Caller] --> B[Lumina Responses API]
     B --> C{Provider supports native file_search?}
 
     C -->|Yes| D[Native passthrough path]
@@ -122,9 +122,9 @@ flowchart TD
     D3 --> Z[OpenAI-compatible output]
 
     C -->|No| E[Emulated fallback path]
-    E --> E1[Convert file_search to litellm_file_search function tool]
+    E --> E1[Convert file_search to lumina_file_search function tool]
     E1 --> E2[First model call returns tool call with one or more queries]
-    E2 --> E3[LiteLLM executes vector search for each query]
+    E2 --> E3[Lumina executes vector search for each query]
     E3 --> E4[Second model call with tool_result context]
     E4 --> E5[Synthesize file_search_call + message + citations]
     E5 --> Z[OpenAI-compatible output]
@@ -135,7 +135,7 @@ flowchart TD
 ## Prerequisites
 
 ```bash
-uv tool install 'litellm[proxy]'
+uv tool install 'lumina[proxy]'
 export OPENAI_API_KEY="sk-..."          # for native path
 export ANTHROPIC_API_KEY="sk-ant-..."  # for emulated path
 ```
@@ -155,7 +155,7 @@ Regardless of which path ran, the response always follows the OpenAI Responses A
       "type": "file_search_call",
       "id": "fs_abc123",
       "status": "completed",
-      "queries": ["What does LiteLLM support?"],
+      "queries": ["What does Lumina support?"],
       "search_results": null
     },
     {
@@ -164,7 +164,7 @@ Regardless of which path ran, the response always follows the OpenAI Responses A
       "content": [
         {
           "type": "output_text",
-          "text": "LiteLLM is a unified interface...",
+          "text": "Lumina is a unified interface...",
           "annotations": [
             {
               "type": "file_citation",
@@ -222,10 +222,10 @@ validate_file_search_response(response)
 
 - **Why do I see `UnsupportedParamsError`?** This usually means `file_search` was passed to a provider that does not support it natively and emulation could not route correctly. Check:
   - The model string is valid (for example, `anthropic/{{anthropic}}`).
-  - `custom_llm_provider` resolves correctly so LiteLLM can load the provider config.
+  - `custom_llm_provider` resolves correctly so Lumina can load the provider config.
 - **Why does vector search return no results?** Common causes:
   - The vector store ID is wrong or has no files attached.
-  - In LiteLLM-managed stores, file ingestion is not complete (`status != completed`).
+  - In Lumina-managed stores, file ingestion is not complete (`status != completed`).
   - The query is too narrow; try a broader query.
 - **Why am I getting `403 Access denied` on vector store calls?** The caller does not have access to that vector store.
   - The store may belong to another team.

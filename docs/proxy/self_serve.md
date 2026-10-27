@@ -18,7 +18,7 @@ Go to `Internal Users` -> `+New User`
 </TabItem>
 <TabItem value="api" label="API">
 
-Create a new Internal User on LiteLLM and assign them the role `internal_user`.
+Create a new Internal User on Lumina and assign them the role `internal_user`.
 
 ```bash
 curl -X POST '<PROXY_BASE_URL>/user/new' \
@@ -41,7 +41,7 @@ Expected Response
 }
 ```
 
-Here's the available UI roles for a LiteLLM Internal User: 
+Here's the available UI roles for a Lumina Internal User: 
 
 Admin Roles:
   - `proxy_admin`: admin over the platform
@@ -116,7 +116,7 @@ Use [Email Notifications](./email.md) to email users onboarding links
 
 :::info 
 
-LiteLLM Enterprise: Enable [SSO login](./admin_ui_sso.md)
+Lumina Enterprise: Enable [SSO login](./admin_ui_sso.md)
 
 :::
 
@@ -151,7 +151,7 @@ Set their role to `Admin Viewer` - this means they can only view usage, caching 
 
 
 ## Available Roles
-Here's the available UI roles for a LiteLLM Internal User: 
+Here's the available UI roles for a Lumina Internal User: 
 
 **Admin Roles:**
   - `proxy_admin`: admin over the platform
@@ -177,11 +177,11 @@ This walks through setting up sso auto-add for **Okta, Google SSO**
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_ids_jwt_field: "groups" # CAN BE ANY FIELD
 ```
 
-This is assuming your SSO token looks like this. **If you need to inspect the JWT fields received from your SSO provider by LiteLLM, follow these instructions [here](#debugging-sso-jwt-fields)**
+This is assuming your SSO token looks like this. **If you need to inspect the JWT fields received from your SSO provider by Lumina, follow these instructions [here](#debugging-sso-jwt-fields)**
 
 ```
 {
@@ -190,7 +190,7 @@ This is assuming your SSO token looks like this. **If you need to inspect the JW
 }
 ```
 
-2. Create the teams on LiteLLM 
+2. Create the teams on Lumina 
 
 ```bash
 curl -X POST '<PROXY_BASE_URL>/team/new' \
@@ -208,7 +208,7 @@ Here's a walkthrough of [how it works](https://www.loom.com/share/8959be458edf41
 
 ### Microsoft Entra ID SSO group assignment
 
-Follow this [tutorial for auto-adding sso users to teams with Microsoft Entra ID](https://docs.litellm.ai/docs/tutorials/msft_sso)
+Follow this [tutorial for auto-adding sso users to teams with Microsoft Entra ID](https://docs.lumina.ai/docs/tutorials/msft_sso)
 
 ### Debugging SSO JWT fields 
 
@@ -232,7 +232,7 @@ export PROXY_LOGOUT_URL="https://www.google.com"
 Automatically apply budget per internal user when they sign up. By default the table will be checked every 10 minutes, for users to reset. To modify this, [see this](./users.md#reset-budgets)
 
 ```yaml
-litellm_settings:
+lumina_settings:
   max_internal_user_budget: 10
   internal_user_budget_duration: "1mo" # reset every month
 ```
@@ -275,7 +275,7 @@ Team must be created before setting it as the default team.
 :::
 
 ```yaml
-litellm_settings:
+lumina_settings:
   default_internal_user_params:    # Default Params used when a new user signs in Via SSO
       user_role: "internal_user"     # one of "internal_user", "internal_user_viewer", 
       models: ["no-default-models"] # Optional[List[str]], optional): models to be used by the user
@@ -354,18 +354,18 @@ curl -X POST '<PROXY_BASE_URL>/team/new' \
 
 ### Set default params for new teams
 
-When you connect litellm to your SSO provider, litellm can auto-create teams. Use this to set the default `models`, `max_budget`, `budget_duration` for these auto-created teams. 
+When you connect lumina to your SSO provider, lumina can auto-create teams. Use this to set the default `models`, `max_budget`, `budget_duration` for these auto-created teams. 
 
 **How it works**
 
-1. When litellm fetches `groups` from your SSO provider, it will check if the corresponding group_id exists as a `team_id` in litellm. 
-2. If the team_id does not exist, litellm will auto-create a team with the default params you've set. 
-3. If the team_id already exist, litellm will not apply any settings on the team. 
+1. When lumina fetches `groups` from your SSO provider, it will check if the corresponding group_id exists as a `team_id` in lumina. 
+2. If the team_id does not exist, lumina will auto-create a team with the default params you've set. 
+3. If the team_id already exist, lumina will not apply any settings on the team. 
 
 **Usage**
 
 ```yaml showLineNumbers title="Default Params for new teams"
-litellm_settings:
+lumina_settings:
   default_team_params:             # Applied to all /team/new calls (including SSO auto-created teams) when the field is omitted or null; an explicit budget_duration: null is honored
     max_budget: 100                # Optional[float]: $100 budget for the team
     budget_duration: 30d           # Optional[str]: 30 days budget_duration for the team
@@ -395,12 +395,12 @@ This will also prevent users from using their session tokens on the test keys ch
 ## **All Settings for Self Serve / SSO Flow**
 
 ```yaml showLineNumbers title="All Settings for Self Serve / SSO Flow"
-litellm_settings:
+lumina_settings:
   max_internal_user_budget: 10        # max budget for internal users
   internal_user_budget_duration: "1mo" # reset every month
 
   default_internal_user_params:    # Default Params used when a new user signs in Via SSO
-    user_role: "internal_user"     # one of "internal_user", "internal_user_viewer", "proxy_admin", "proxy_admin_viewer". New SSO users not in litellm will be created as this user
+    user_role: "internal_user"     # one of "internal_user", "internal_user_viewer", "proxy_admin", "proxy_admin_viewer". New SSO users not in lumina will be created as this user
     max_budget: 100                # Optional[float], optional): $100 budget for a new SSO sign in user
     budget_duration: 30d           # Optional[str], optional): 30 days budget_duration for a new SSO sign in user
     models: ["{{openai_small}}"]      # Optional[List[str]], optional): models to be used by a new SSO sign in user

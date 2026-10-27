@@ -6,11 +6,11 @@ https://stability.ai/
 | Property | Details |
 |-------|-------|
 | Description | Stability AI creates open AI models for image, video, audio, and 3D generation. Known for Stable Diffusion. |
-| Provider Route on LiteLLM | `stability/` |
+| Provider Route on Lumina | `stability/` |
 | Link to Provider Doc | [Stability AI API ↗](https://platform.stability.ai/docs/api-reference) |
 | Supported Operations | [`/images/generations`](#image-generation), [`/images/edits`](#image-editing) |
 
-LiteLLM supports Stability AI Image Generation calls via the Stability AI REST API (not via Bedrock).
+Lumina supports Stability AI Image Generation calls via the Stability AI REST API (not via Bedrock).
 
 ## API Key
 
@@ -23,10 +23,10 @@ Get your API key from the [Stability AI Platform](https://platform.stability.ai/
 
 ## Image Generation
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 ```python showLineNumbers
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -39,7 +39,7 @@ response = image_generation(
 print(response)
 ```
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Setup config.yaml
 
@@ -59,7 +59,7 @@ general_settings:
 #### 2. Start the proxy
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -79,7 +79,7 @@ curl --location 'http://0.0.0.0:4000/v1/images/generations' \
 ### Advanced Usage - With Additional Parameters
 
 ```python showLineNumbers
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -121,7 +121,7 @@ The `size` parameter is automatically mapped to Stability's `aspect_ratio`:
 You can pass parameters that are specific to Stability AI directly in your request:
 
 ```python showLineNumbers
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -176,16 +176,16 @@ Stability AI supports various image editing operations including inpainting, ups
 :::info[Optional Parameters]
 **Important:** Different Stability models have different parameter requirements:
 - Some models don't require a `prompt` (e.g., upscaling, background removal)
-- The `outpaint` model takes numeric `left` and `right` pixel counts. LiteLLM does not forward `up` or `down`, the fields Stability uses for vertical outpainting, so only horizontal outpainting works through `stability/` today
+- The `outpaint` model takes numeric `left` and `right` pixel counts. Lumina does not forward `up` or `down`, the fields Stability uses for vertical outpainting, so only horizontal outpainting works through `stability/` today
 - Style Transfer is not reachable through `stability/` today: `stability/style-transfer` resolves to the Style Guide endpoint (`/v2beta/stable-image/control/style`) and the input is always sent as `image`, while Stability's Style Transfer endpoint requires `init_image`
 :::
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 #### Inpainting (Edit with Mask)
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -204,7 +204,7 @@ print(response)
 #### Image Upscaling
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -236,7 +236,7 @@ print(response)
 #### Image Outpainting
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -255,7 +255,7 @@ print(response)
 #### Background Removal
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -272,7 +272,7 @@ print(response)
 #### Search and Replace
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -298,7 +298,7 @@ print(response)
 #### Image Control (Sketch/Structure)
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -324,7 +324,7 @@ print(response)
 #### Erase Objects
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -341,7 +341,7 @@ print(response)
 #### Style Guide
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ['STABILITY_API_KEY'] = "your-api-key"
@@ -373,7 +373,7 @@ print(response)
 | erase | `image_edit(model="stability/erase", ...)` | Erase objects |
 | style | `image_edit(model="stability/style", ...)` | Apply style guide |
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Setup config.yaml
 
@@ -400,7 +400,7 @@ general_settings:
 #### 2. Start the proxy
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -418,12 +418,12 @@ curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
 
 ## AWS Bedrock (Stability)
 
-LiteLLM also supports Stability AI models via AWS Bedrock. This is useful if you're already using AWS infrastructure.
+Lumina also supports Stability AI models via AWS Bedrock. This is useful if you're already using AWS infrastructure.
 
 ### Usage - Bedrock Stability
 
 ```python showLineNumbers
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 # Set AWS credentials
@@ -481,7 +481,7 @@ All Stability AI image edit models are available via Bedrock with the `bedrock/`
 
 ## Comparing Routes
 
-LiteLLM supports Stability AI models via two routes:
+Lumina supports Stability AI models via two routes:
 
 | Route | Provider | Use Case | Image Generation | Image Editing |
 |-------|----------|----------|------------------|---------------|

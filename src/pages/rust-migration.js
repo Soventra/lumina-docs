@@ -793,10 +793,10 @@ const BENCHMARK = [
     // Rust result as a hairline. Widths are log scaled and the axis says so.
     log: true,
     rows: [
-      {name: 'LiteLLM Rust', value: 0.7, lead: true},
+      {name: 'Lumina Rust', value: 0.7, lead: true},
       {name: 'Portkey', value: 2.3},
       {name: 'Bifrost', value: 4.5},
-      {name: 'LiteLLM Python v1', value: 257.7},
+      {name: 'Lumina Python v1', value: 257.7},
     ],
   },
   {
@@ -804,10 +804,10 @@ const BENCHMARK = [
     label: 'Maximum memory use',
     unit: 'MB',
     rows: [
-      {name: 'LiteLLM Rust', value: 21.8, lead: true},
+      {name: 'Lumina Rust', value: 21.8, lead: true},
       {name: 'Portkey', value: 90.4},
       {name: 'Bifrost', value: 199.1},
-      {name: 'LiteLLM Python v1', value: 329.5},
+      {name: 'Lumina Python v1', value: 329.5},
     ],
   },
 ];
@@ -907,11 +907,11 @@ function MigrationUpdates() {
 
 export default function RustMigrationPage() {
   return (
-    <Layout title="LiteLLM Rust Migration" description="Updates from LiteLLM's migration to Rust.">
+    <Layout title="Lumina Rust Migration" description="Updates from Lumina's migration to Rust.">
       <main className={styles.page}>
         <header className={styles.hero}>
           <p className={styles.eyebrow}>Rust Migration</p>
-          <h1 className={styles.title}>LiteLLM is moving to Rust</h1>
+          <h1 className={styles.title}>Lumina is moving to Rust</h1>
           <p className={styles.description}>See how much of the move to Rust is built and what is next.</p>
         </header>
         <MigrationTracker />

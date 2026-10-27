@@ -8,16 +8,16 @@ Create routing rules based on request metadata.
 
 ## Setup
 
-Add the following to your litellm proxy config yaml file.
+Add the following to your lumina proxy config yaml file.
 
-```yaml showLineNumbers title="litellm proxy config.yaml"
+```yaml showLineNumbers title="lumina proxy config.yaml"
 router_settings:
   enable_tag_filtering: True # Key Change
 ```
 
 ## 1. Create a tag
 
-On the LiteLLM UI, navigate to Experimental > Tag Management > Create Tag.
+On the Lumina UI, navigate to Experimental > Tag Management > Create Tag.
 
 Create a tag called `private-data` and only select the allowed models for requests with this tag. Once created, you will see the tag in the Tag Management page.
 
@@ -44,7 +44,7 @@ Here is an example sending the same request using the OpenAI Python SDK.
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000/v1/"
 )
 
@@ -98,7 +98,7 @@ Here is an example sending the same request using the OpenAI Python SDK.
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000/v1/"
 )
 
@@ -138,8 +138,8 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 
 
 ## Additional Tag Features
-- [Sending tags in request headers](https://docs.litellm.ai/docs/proxy/tag_routing#calling-via-request-header)
-- [Tag based routing](https://docs.litellm.ai/docs/proxy/tag_routing)
+- [Sending tags in request headers](https://docs.lumina.ai/docs/proxy/tag_routing#calling-via-request-header)
+- [Tag based routing](https://docs.lumina.ai/docs/proxy/tag_routing)
 - [Track spend per tag](/docs/proxy/cost_tracking#custom-tags)
 - [Setup Budgets per Virtual Key, Team](/docs/proxy/users)
 

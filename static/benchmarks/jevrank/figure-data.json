@@ -9,7 +9,7 @@
   "row_score_metric": "nDCG@10",
   "input_usd_per_million": 0.042,
   "output_usd_per_million": 0,
-  "reference_comparability": "Candidate protocols and infrastructure are not verified identical across reference and LiteLLM runs.",
+  "reference_comparability": "Candidate protocols and infrastructure are not verified identical across reference and Lumina runs.",
   "rows": [
     {
       "model": "Perplexity Decider v1.2",
@@ -48,7 +48,7 @@
       "method": "Per-document",
       "score": 0.7676260618846087,
       "cost": 575.39426,
-      "origin": "LiteLLM run",
+      "origin": "Lumina run",
       "cost_source": "Estimated from returned tokens: $0.042 / million input; $0 output"
     },
     {
@@ -56,7 +56,7 @@
       "method": "Local retrieval",
       "score": 0.6863002612489066,
       "cost": 0,
-      "origin": "LiteLLM run",
+      "origin": "Lumina run",
       "cost_source": "No reranking calls"
     }
   ]

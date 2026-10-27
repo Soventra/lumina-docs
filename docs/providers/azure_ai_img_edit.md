@@ -10,7 +10,7 @@ Azure AI provides powerful image editing capabilities using FLUX models from Bla
 | Property | Details |
 |----------|---------|
 | Description | Azure AI Image Editing uses FLUX models to modify existing images based on text prompts. |
-| Provider Route on LiteLLM | `azure_ai/` |
+| Provider Route on Lumina | `azure_ai/` |
 | Provider Doc | [Azure AI FLUX Models ↗](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/black-forest-labs-flux-1-kontext-pro-and-flux1-1-pro-now-available-in-azure-ai-f/4434659) |
 | Supported Operations | [`/images/edits`](#image-editing) |
 
@@ -40,7 +40,7 @@ FLUX 2 edits go to the same model-specific Black Forest Labs route as FLUX 2 gen
 
 ## Image Editing
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic-edit" label="Basic Usage">
@@ -50,7 +50,7 @@ import os
 import base64
 from pathlib import Path
 
-import litellm
+import lumina
 
 # Set your API credentials
 os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
@@ -58,7 +58,7 @@ os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
 os.environ["AZURE_AI_API_VERSION"] = "2025-04-01-preview"
 
 # Edit an image with a prompt
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="azure_ai/FLUX.1-Kontext-pro",
     image=open("path/to/your/image.png", "rb"),
     prompt="Add a winter theme with snow and cold colors",
@@ -82,7 +82,7 @@ import os
 import base64
 from pathlib import Path
 
-import litellm
+import lumina
 import asyncio
 
 # Set your API credentials
@@ -92,7 +92,7 @@ os.environ["AZURE_AI_API_VERSION"] = "2025-04-01-preview"
 
 async def edit_image():
     # Edit image asynchronously
-    response = await litellm.aimage_edit(
+    response = await lumina.aimage_edit(
         model="azure_ai/FLUX.1-Kontext-pro",
         image=open("path/to/your/image.png", "rb"),
         prompt="Make this image look like a watercolor painting",
@@ -118,7 +118,7 @@ import os
 import base64
 from pathlib import Path
 
-import litellm
+import lumina
 
 # Set your API credentials
 os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
@@ -126,7 +126,7 @@ os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
 os.environ["AZURE_AI_API_VERSION"] = "2025-04-01-preview"
 
 # Edit image with additional parameters
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="azure_ai/FLUX.1-Kontext-pro",
     image=open("path/to/your/image.png", "rb"),
     prompt="Add magical elements like floating crystals and mystical lighting",
@@ -150,13 +150,13 @@ import os
 import base64
 from pathlib import Path
 
-import litellm
+import lumina
 
 os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
 os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"  # e.g., https://your-resource.services.ai.azure.com
 
 # FLUX 2 Flex accepts up to 10 reference images, FLUX 2 Pro up to 8
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="azure_ai/FLUX.2-flex",
     image=[open("subject.png", "rb"), open("style.png", "rb")],
     prompt="Render the subject from the first image in the style of the second",
@@ -174,7 +174,7 @@ Path("flux2_edited_image.png").write_bytes(img_bytes)
 </TabItem>
 </Tabs>
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Configure your config.yaml
 
@@ -202,10 +202,10 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-#### 2. Start LiteLLM Proxy Server
+#### 2. Start Lumina Proxy Server
 
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -221,7 +221,7 @@ from openai import OpenAI
 # Initialize client with your proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",  # Your proxy URL
-    api_key="sk-<your-litellm-api-key>"                  # Your proxy API key
+    api_key="sk-<your-lumina-api-key>"                  # Your proxy API key
 )
 
 # Edit image with FLUX Kontext Pro
@@ -239,18 +239,18 @@ path.write_bytes(img_bytes)
 
 </TabItem>
 
-<TabItem value="litellm-edit-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-edit-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Azure AI Image Editing via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Azure AI Image Editing via Proxy - Lumina SDK"
+import lumina
 
 # Edit image through proxy
-response = litellm.image_edit(
-    model="litellm_proxy/azure-flux-kontext-edit",
+response = lumina.image_edit(
+    model="lumina_proxy/azure-flux-kontext-edit",
     image=open("path/to/your/image.png", "rb"),
     prompt="Add a mystical forest background with magical creatures",
     api_base="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 img_base64 = response.data[0].b64_json
@@ -297,7 +297,7 @@ FLUX 2 Pro and FLUX 2 Flex edits take the same parameters as [FLUX 2 generation]
 3. Get your API key and endpoint from the deployment details
 4. Set your `AZURE_AI_API_KEY`, `AZURE_AI_API_BASE` and `AZURE_AI_API_VERSION` environment variables
 5. Prepare your source image
-6. Use `litellm.image_edit()` to modify your images with text instructions
+6. Use `lumina.image_edit()` to modify your images with text instructions
 
 ## Additional Resources
 

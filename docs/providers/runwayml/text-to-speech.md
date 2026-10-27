@@ -5,16 +5,16 @@
 | Property | Details |
 |-------|-------|
 | Description | RunwayML provides high-quality AI-powered text-to-speech with natural-sounding voices |
-| Provider Route on LiteLLM | `runwayml/` |
+| Provider Route on Lumina | `runwayml/` |
 | Supported Operations | [`/audio/speech`](#quick-start) |
 | Link to Provider Doc | [RunwayML API ↗](https://docs.dev.runwayml.com/) |
 
-LiteLLM supports RunwayML's text-to-speech API with automatic task polling, allowing you to generate natural-sounding audio from text.
+Lumina supports RunwayML's text-to-speech API with automatic task polling, allowing you to generate natural-sounding audio from text.
 
 ## Quick Start
 
 ```python showLineNumbers title="Basic Text-to-Speech"
-from litellm import speech
+from lumina import speech
 import os
 
 os.environ["RUNWAYML_API_KEY"] = "your-api-key"
@@ -55,7 +55,7 @@ os.environ["RUNWAYML_API_KEY"] = "your-api-key"
 OpenAI voice names are automatically mapped to appropriate RunwayML voices:
 
 ```python showLineNumbers title="OpenAI Voice Names"
-from litellm import speech
+from lumina import speech
 
 # These OpenAI voice names work automatically
 response = speech(
@@ -78,13 +78,13 @@ response = speech(
 You can directly specify any RunwayML preset voice by passing the preset name as a string:
 
 ```python showLineNumbers title="RunwayML Preset Names"
-from litellm import speech
+from lumina import speech
 
 # Pass the RunwayML voice name as a string
 response = speech(
     model="runwayml/eleven_multilingual_v2",
     input="Hello, world!",
-    voice="Maya"  # LiteLLM automatically formats this for RunwayML
+    voice="Maya"  # Lumina automatically formats this for RunwayML
 )
 
 # Try different RunwayML voices
@@ -100,13 +100,13 @@ response = speech(
 Maya, Arjun, Serene, Bernard, Billy, Mark, Clint, Mabel, Chad, Leslie, Eleanor, Elias, Elliot, Grungle, Brodie, Sandra, Kirk, Kylie, Lara, Lisa, Malachi, Marlene, Martin, Miriam, Monster, Paula, Pip, Rusty, Ragnar, Xylar, Maggie, Jack, Katie, Noah, James, Rina, Ella, Mariah, Frank, Claudia, Niki, Vincent, Kendrick, Myrna, Tom, Wanda, Benjamin, Kiana, Rachel
 
 :::tip
-Simply pass the voice name as a string - LiteLLM automatically handles the internal RunwayML API format conversion.
+Simply pass the voice name as a string - Lumina automatically handles the internal RunwayML API format conversion.
 :::
 
 ## Async Usage
 
 ```python showLineNumbers title="Async Text-to-Speech"
-from litellm import aspeech
+from lumina import aspeech
 import os
 import asyncio
 
@@ -127,7 +127,7 @@ async def generate_speech():
 asyncio.run(generate_speech())
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 Add RunwayML to your proxy configuration:
 
@@ -142,7 +142,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 Generate speech through the proxy:
@@ -150,10 +150,10 @@ Generate speech through the proxy:
 ```bash showLineNumbers title="Proxy Request"
 curl --location 'http://localhost:4000/v1/audio/speech' \
 --header 'Content-Type: application/json' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --data '{
     "model": "runwayml/eleven_multilingual_v2",
-    "input": "Hello from the LiteLLM proxy!",
+    "input": "Hello from the Lumina proxy!",
     "voice": "alloy"
 }'
 ```
@@ -163,7 +163,7 @@ With RunwayML-specific voice:
 ```bash showLineNumbers title="Proxy Request with RunwayML Voice"
 curl --location 'http://localhost:4000/v1/audio/speech' \
 --header 'Content-Type: application/json' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --data '{
     "model": "runwayml/eleven_multilingual_v2",
     "input": "Hello with a custom RunwayML voice!",
@@ -179,10 +179,10 @@ curl --location 'http://localhost:4000/v1/audio/speech' \
 
 ## Cost Tracking
 
-LiteLLM automatically tracks RunwayML text-to-speech costs:
+Lumina automatically tracks RunwayML text-to-speech costs:
 
 ```python showLineNumbers title="Cost Tracking"
-from litellm import speech, completion_cost
+from lumina import speech, completion_cost
 
 response = speech(
     model="runwayml/eleven_multilingual_v2",
@@ -207,38 +207,38 @@ print(f"Text-to-speech cost: ${cost}")
 
 ## How It Works
 
-RunwayML uses an asynchronous task-based API pattern. LiteLLM handles the polling and response transformation automatically.
+RunwayML uses an asynchronous task-based API pattern. Lumina handles the polling and response transformation automatically.
 
 ### Complete Flow Diagram
 
 ```mermaid
 sequenceDiagram
     participant Client
-    box rgb(200, 220, 255) LiteLLM AI Gateway
-        participant LiteLLM
+    box rgb(200, 220, 255) Lumina AI Gateway
+        participant Lumina
     end
     participant RunwayML as RunwayML API
     participant Storage as Audio Storage
 
-    Client->>LiteLLM: POST /audio/speech (OpenAI format)
-    Note over LiteLLM: Transform to RunwayML format<br/>Map voice to preset ID
+    Client->>Lumina: POST /audio/speech (OpenAI format)
+    Note over Lumina: Transform to RunwayML format<br/>Map voice to preset ID
     
-    LiteLLM->>RunwayML: POST v1/text_to_speech
-    RunwayML-->>LiteLLM: 200 OK + task ID
+    Lumina->>RunwayML: POST v1/text_to_speech
+    RunwayML-->>Lumina: 200 OK + task ID
     
-    Note over LiteLLM: Automatic Polling
+    Note over Lumina: Automatic Polling
     loop Every 2 seconds
-        LiteLLM->>RunwayML: GET v1/tasks/{task_id}
-        RunwayML-->>LiteLLM: Status: RUNNING
+        Lumina->>RunwayML: GET v1/tasks/{task_id}
+        RunwayML-->>Lumina: Status: RUNNING
     end
     
-    LiteLLM->>RunwayML: GET v1/tasks/{task_id}
-    RunwayML-->>LiteLLM: Status: SUCCEEDED + audio URL
+    Lumina->>RunwayML: GET v1/tasks/{task_id}
+    RunwayML-->>Lumina: Status: SUCCEEDED + audio URL
     
-    LiteLLM->>Storage: GET audio URL
-    Storage-->>LiteLLM: Audio data (MP3)
+    Lumina->>Storage: GET audio URL
+    Storage-->>Lumina: Audio data (MP3)
     
-    Note over LiteLLM: Return audio content
-    LiteLLM-->>Client: Audio Response (binary)
+    Note over Lumina: Return audio content
+    Lumina-->>Client: Audio Response (binary)
 ```
 

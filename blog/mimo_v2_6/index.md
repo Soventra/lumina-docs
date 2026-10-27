@@ -6,7 +6,7 @@ image: ./hero.png
 authors:
   - misbah
   - mateo
-description: "Day 0 support for Xiaomi MiMo V2.6 Pro and Flash on LiteLLM, priced on the native route for the first time."
+description: "Day 0 support for Xiaomi MiMo V2.6 Pro and Flash on Lumina, priced on the native route for the first time."
 card_title: "Xiaomi MiMo V2.6"
 card_summary: "Xiaomi's Pro ($0.435 / $0.87 per 1M) and Flash ($0.14 / $0.28), same rates as V2.5, priced on the native route."
 tags: [xiaomi, mimo, mimo-v2.6, day 0 support]
@@ -16,9 +16,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Xiaomi MiMo V2.6](./hero.png)
+![Lumina x Xiaomi MiMo V2.6](./hero.png)
 
-LiteLLM supports `mimo-v2.6-pro` and `mimo-v2.6-flash` on day 0, and prices both on Xiaomi's own endpoint for the first time.
+Lumina supports `mimo-v2.6-pro` and `mimo-v2.6-flash` on day 0, and prices both on Xiaomi's own endpoint for the first time.
 
 {/* truncate */}
 
@@ -30,7 +30,7 @@ Pro reads cached input at $0.0036, about a 121st of its input rate, where most p
 
 ## Thinking is on by default
 
-Every V2.6 model reasons unless told otherwise, and Xiaomi controls that with `thinking.type` rather than `reasoning_effort`. LiteLLM treats `xiaomi_mimo` as an OpenAI-compatible provider and does not map `thinking` for it yet, so pass it through explicitly with `allowed_openai_params=["thinking"]`.
+Every V2.6 model reasons unless told otherwise, and Xiaomi controls that with `thinking.type` rather than `reasoning_effort`. Lumina treats `xiaomi_mimo` as an OpenAI-compatible provider and does not map `thinking` for it yet, so pass it through explicitly with `allowed_openai_params=["thinking"]`.
 
 In multi-turn tool calling, the `reasoning_content` from a prior assistant turn has to go back in the next request or the API returns a 400.
 
@@ -40,7 +40,7 @@ In multi-turn tool calling, the `reasoning_content` from a prior assistant turn 
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="xiaomi_mimo/mimo-v2.6-pro",
@@ -80,4 +80,4 @@ Xiaomi deprecates `mimo-v2.5-pro` and `mimo-v2.5` at 10:00 Beijing time on Octob
 
 ## Feedback
 
-Running MiMo V2.6 through LiteLLM and hitting something unexpected? Share it on {/* TODO: link the discussion once posted */} [GitHub discussions](https://github.com/BerriAI/litellm/discussions).
+Running MiMo V2.6 through Lumina and hitting something unexpected? Share it on {/* TODO: link the discussion once posted */} [GitHub discussions](https://github.com/Soventra/lumina/discussions).

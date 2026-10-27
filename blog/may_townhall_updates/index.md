@@ -5,7 +5,7 @@ date: 2026-05-26T12:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "A recap of the May LiteLLM town hall covering 89 security fixes, new release versioning, MCP toolsets, performance wins, and the LiteLLM Agent Platform."
+description: "A recap of the May Lumina town hall covering 89 security fixes, new release versioning, MCP toolsets, performance wins, and the Lumina Agent Platform."
 tags: [townhall, performance, product, agents]
 hide_table_of_contents: false
 ---
@@ -14,7 +14,7 @@ import Image from '@theme/IdealImage';
 
 Thank you to everyone who joined our May town hall.
 
-We covered security hardening, release versioning changes, new product launches (MCP toolsets, on-behalf-of OAuth), performance wins, and our biggest bet yet, the LiteLLM Agent Platform.
+We covered security hardening, release versioning changes, new product launches (MCP toolsets, on-behalf-of OAuth), performance wins, and our biggest bet yet, the Lumina Agent Platform.
 
 {/* truncate */}
 
@@ -25,7 +25,7 @@ We covered security hardening, release versioning changes, new product launches 
 All security fixes from the last 4 weeks are bundled in [v1.84.1](/release_notes/v1.84.1/v1-84-1), a patch on top of v1.84.0. Upgrade when you can.
 
 ```
-pip install --upgrade litellm
+pip install --upgrade lumina
 ```
 
 - Backwards-compatible with v1.83.x configs.
@@ -35,8 +35,8 @@ pip install --upgrade litellm
 
 We now pay for security reports.
 
-- **Scope** — the LiteLLM gateway and SDK.
-- **Submit** via [private vulnerability report on GitHub](https://github.com/BerriAI/litellm/security).
+- **Scope** — the Lumina gateway and SDK.
+- **Submit** via [private vulnerability report on GitHub](https://github.com/Soventra/lumina/security).
 - **Triaged** by maintainers and Veria Labs security team.
 
 ### Automated security review on every PR
@@ -117,7 +117,7 @@ Tools are name-scoped, so collisions across servers are safe.
 OAuth tokens are vaulted at the proxy and never returned to the client.
 
 - The client sends requests without a token.
-- LiteLLM adds the token when calling the downstream MCP server.
+- Lumina adds the token when calling the downstream MCP server.
 - Refresh happens transparently. The client never sees a 401.
 
 <Image
@@ -151,7 +151,7 @@ Streaming `/chat/completions` now handles 20% more requests per second and token
 - Focus on reducing gateway overhead under high load.
 - Tracking: TTFT, TPM (streaming); RPS, overhead % of E2E (non-streaming).
 
-## Product roadmap: the LiteLLM Agent Platform
+## Product roadmap: the Lumina Agent Platform
 
 ### Our bet
 
@@ -162,7 +162,7 @@ Signals we're seeing:
 - Enterprise asks shifting from chat to agents
 - Claude Code adoption tracking up
 
-### LiteLLM Agent Platform: run agents you can actually govern
+### Lumina Agent Platform: run agents you can actually govern
 
 Four pillars. One control plane.
 
@@ -181,4 +181,4 @@ Thank you again for all the questions and feedback. We'll keep sharing concrete 
 
 ## Hiring
 
-We are actively hiring across several roles. Apply [here](https://jobs.ashbyhq.com/litellm) if you're interested!
+We are actively hiring across several roles. Apply [here](https://jobs.ashbyhq.com/lumina) if you're interested!

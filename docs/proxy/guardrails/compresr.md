@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Context Compression (Compresr)
 
-[Compresr](https://compresr.ai) compresses LLM context against the question being asked. It keeps the tokens that matter for the answer and drops the rest. As a LiteLLM guardrail, it compresses tool outputs, retrieved documents, database results, and RAG payloads before they reach the model, so you get the same answers at a fraction of the input tokens.
+[Compresr](https://compresr.ai) compresses LLM context against the question being asked. It keeps the tokens that matter for the answer and drops the rest. As a Lumina guardrail, it compresses tool outputs, retrieved documents, database results, and RAG payloads before they reach the model, so you get the same answers at a fraction of the input tokens.
 
 This is available on `/v1/chat/completions`, `/v1/messages` (Anthropic format), and `/v1/responses`.
 
@@ -18,7 +18,7 @@ The guardrail runs in-process during the `pre_call` step and calls Compresr's ho
 Compression happens per message and is query-aware:
 
 1. **Select targets.** By default only `tool`/`function` outputs of at least 500 characters are compressed. System messages, prior history, and the last user message pass through verbatim unless opted in (`compress_system`, `compress_history`, `compress_last_user`).
-2. **Derive a query per target.** A tool output is compressed against the intent of the tool call that produced it: LiteLLM finds the assistant call by `tool_call_id` and renders it as, for example, `web_search: {"query": "2026 EV range"}`. Every other target is compressed against the last user message. A target with no query is left uncompressed.
+2. **Derive a query per target.** A tool output is compressed against the intent of the tool call that produced it: Lumina finds the assistant call by `tool_call_id` and renders it as, for example, `web_search: {"query": "2026 EV range"}`. Every other target is compressed against the last user message. A target with no query is left uncompressed.
 3. **Compress.** Targets are sent to `{api_base}/api/compress/question-specific/` (`.../batch` when there are several), authenticated via `X-API-Key`.
 4. **Rewrite.** The returned `compressed_context` replaces each target's text in place. Unselected messages stay byte-identical, multimodal parts such as images are preserved, and an identical or empty result forwards the request unchanged.
 
@@ -32,7 +32,7 @@ To pin a fixed ratio instead, set `dynamic: false` and a `target_compression_rat
 
 ## Requirements
 
-All you need is a LiteLLM build that includes the `compresr` guardrail and an API key from [compresr.ai](https://compresr.ai). For on-premises deployments, contact [founders@compresr.ai](mailto:founders@compresr.ai).
+All you need is a Lumina build that includes the `compresr` guardrail and an API key from [compresr.ai](https://compresr.ai). For on-premises deployments, contact [founders@compresr.ai](mailto:founders@compresr.ai).
 
 ## Quick Start
 
@@ -77,10 +77,10 @@ guardrails:
 
 The guardrail can also be created from the Admin UI under Guardrails, with the same fields; the [demo video](#demo) above walks through this flow.
 
-### 2. Start the LiteLLM gateway
+### 2. Start the Lumina gateway
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Send a request
@@ -115,7 +115,7 @@ curl -i http://0.0.0.0:4000/v1/messages \
     "messages": [
       {"role": "user", "content": "Which filing discusses Q3 revenue?"}
     ],
-    "litellm_metadata": {"guardrails": ["compresr-compression"]}
+    "lumina_metadata": {"guardrails": ["compresr-compression"]}
   }'
 ```
 
@@ -162,7 +162,7 @@ curl -i http://0.0.0.0:4000/v1/chat/completions \
 </TabItem>
 <TabItem label="Anthropic format" value="anthropic-perreq">
 
-`/v1/messages` has no top-level `guardrails` field, so opt in via `litellm_metadata`:
+`/v1/messages` has no top-level `guardrails` field, so opt in via `lumina_metadata`:
 
 ```shell
 curl -i http://0.0.0.0:4000/v1/messages \
@@ -172,14 +172,14 @@ curl -i http://0.0.0.0:4000/v1/messages \
     "model": "{{anthropic}}",
     "max_tokens": 1024,
     "messages": [...],
-    "litellm_metadata": {"guardrails": ["compresr-compression"]}
+    "lumina_metadata": {"guardrails": ["compresr-compression"]}
   }'
 ```
 
 </TabItem>
 </Tabs>
 
-The response includes an `x-litellm-applied-guardrails: compresr-compression` header so the caller can confirm that compression actually ran.
+The response includes an `x-lumina-applied-guardrails: compresr-compression` header so the caller can confirm that compression actually ran.
 
 ## Compression behind an auto router
 
@@ -211,7 +211,7 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://your-litellm-proxy.example.com/v1",
+    base_url="https://your-lumina-proxy.example.com/v1",
     api_key="sk-the-key-the-admin-issued",
 )
 ```
@@ -226,7 +226,7 @@ The original text of every compressed message stays available for the duration o
 2. Appends a marker to the compressed text: `[compresr hash=<hash>: parts of this content were compressed away. If you need the full original, call the compresr_retrieve tool with this hash.]`
 3. Injects a `compresr_retrieve` function tool, with one required `hash` parameter, next to the request's existing tools.
 
-When the model calls `compresr_retrieve`, LiteLLM intercepts the call, restores the original, appends a correctly paired tool round-trip, and re-issues the request, so the client sees one normal completion. This is format-correct on all three surfaces: `tool_use`/`tool_result` blocks for Anthropic, `function_call`/`function_call_output` items for the Responses API, and `role: tool` messages for chat completions. If the model mixes `compresr_retrieve` with real tool calls in one turn, only the retrieve calls are resolved server-side; the model re-plans its real calls in the follow-up, so tool calls and results stay paired.
+When the model calls `compresr_retrieve`, Lumina intercepts the call, restores the original, appends a correctly paired tool round-trip, and re-issues the request, so the client sees one normal completion. This is format-correct on all three surfaces: `tool_use`/`tool_result` blocks for Anthropic, `function_call`/`function_call_output` items for the Responses API, and `role: tool` messages for chat completions. If the model mixes `compresr_retrieve` with real tool calls in one turn, only the retrieve calls are resolved server-side; the model re-plans its real calls in the follow-up, so tool calls and results stay paired.
 
 The retrieval loop is bounded:
 
@@ -262,7 +262,7 @@ The integration went through several audit passes. Each of the following is enfo
 
 ## Validate Compresr ran
 
-1. The `x-litellm-applied-guardrails: compresr-compression` response header.
+1. The `x-lumina-applied-guardrails: compresr-compression` response header.
 2. `guardrail_information` on the spend log row: `messages_compressed`, `tokens_before`, `tokens_after`, `tokens_saved`, `compression_model`. These are recorded only when at least one message was actually compressed.
 3. The Admin UI: open any request in **Logs**, scroll to **Guardrails & Policy Compliance**, and `compresr-compression` appears under **Request Lifecycle** as a `pre-call` step with its latency, plus an entry under **Evaluation Details**.
 

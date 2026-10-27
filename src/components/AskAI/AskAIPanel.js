@@ -169,12 +169,12 @@ export default function AskAIPanel() {
   }
 
   const empty = !turns.length && !asking && !error;
-  return <aside className={styles.panel} aria-label="Ask LiteLLM AI" onKeyDown={onKeyDown}>
+  return <aside className={styles.panel} aria-label="Ask Lumina AI" onKeyDown={onKeyDown}>
     <div className={styles.resizeHandle} role="separator" aria-orientation="vertical" aria-label="Resize Ask AI" tabIndex={0}
       aria-valuenow={width ?? MIN_WIDTH} aria-valuemin={MIN_WIDTH} title="Drag to resize, double-click to reset"
       onPointerDown={startResize} onKeyDown={resizeWithKeys} onDoubleClick={() => saveWidth(MIN_WIDTH)}/>
     <header className={styles.header}>
-      <h2><Sparkles size={15} aria-hidden="true"/>Ask LiteLLM AI</h2>
+      <h2><Sparkles size={15} aria-hidden="true"/>Ask Lumina AI</h2>
       {turns.length > 0 && <button type="button" className={styles.iconButton} onClick={copyConversation} aria-label={copied ? 'Conversation copied' : 'Copy conversation'} title="Copy conversation">
         {copied ? <Check size={16}/> : <Copy size={16}/>}
       </button>}
@@ -204,10 +204,10 @@ export default function AskAIPanel() {
     </div>
     <footer className={styles.footer}>
       <p className={styles.human}>Need a person? <button type="button" onClick={() => salesForm.open({source: 'ask-ai-panel'})}>Talk to sales</button>
-        {' '}or ask the community on <a href="https://litellmossslack.slack.com/" target="_blank" rel="noopener noreferrer">Slack</a>
+        {' '}or ask the community on <a href="https://luminaossslack.slack.com/" target="_blank" rel="noopener noreferrer">Slack</a>
         {' '}or <a href="https://discord.com/invite/wuPM9dRgDw" target="_blank" rel="noopener noreferrer">Discord</a>.</p>
       <form className={styles.composer} onSubmit={event => {event.preventDefault(); submit();}}>
-        <textarea ref={composer} aria-label="Ask anything about LiteLLM" placeholder={turns.length ? 'Ask a follow-up…' : 'Ask anything about LiteLLM…'} value={draft} rows={1} disabled={asking}
+        <textarea ref={composer} aria-label="Ask anything about Lumina" placeholder={turns.length ? 'Ask a follow-up…' : 'Ask anything about Lumina…'} value={draft} rows={1} disabled={asking}
           onChange={event => setDraft(event.target.value)}
           onKeyDown={event => {if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {event.preventDefault(); submit();}}}/>
         {asking

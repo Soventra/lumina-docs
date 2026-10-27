@@ -1,12 +1,12 @@
-# Contributing to LiteLLM Docs
+# Contributing to Lumina Docs
 
-Thanks for contributing to the LiteLLM documentation! This guide will help you run the docs site locally, make changes, and verify them before opening a PR.
+Thanks for contributing to the Lumina documentation! This guide will help you run the docs site locally, make changes, and verify them before opening a PR.
 
 ## 1. Clone the docs repo
 
 ```bash
-git clone https://github.com/BerriAI/litellm-docs.git
-cd litellm-docs
+git clone https://github.com/Soventra/lumina-docs.git
+cd lumina-docs
 ```
 
 ## 2. Install dependencies
@@ -35,7 +35,7 @@ Custom standalone pages live in `src/pages/`.
 
 If you add, remove, or move docs pages, check whether `sidebars.js` needs to be updated.
 
-To mark a page or section as Enterprise-gated, put `<EnterpriseFeature />` on its own line with a blank line before and after it, instead of writing the admonition by hand. It is registered globally in `src/theme/MDXComponents.js`, so no import is needed. Pass `feature="SSO"` to name the feature in the first sentence, use `<EnterpriseFeature free />` for features that ship in `litellm[proxy]` without a license, and put a one-line note between `<EnterpriseFeature>` and `</EnterpriseFeature>` when the page needs an extra sentence, such as a user limit. The component lives in `src/components/EnterpriseFeature/`.
+To mark a page or section as Enterprise-gated, put `<EnterpriseFeature />` on its own line with a blank line before and after it, instead of writing the admonition by hand. It is registered globally in `src/theme/MDXComponents.js`, so no import is needed. Pass `feature="SSO"` to name the feature in the first sentence, use `<EnterpriseFeature free />` for features that ship in `lumina[proxy]` without a license, and put a one-line note between `<EnterpriseFeature>` and `</EnterpriseFeature>` when the page needs an extra sentence, such as a user limit. The component lives in `src/components/EnterpriseFeature/`.
 
 ## 5. Verify your changes
 
@@ -87,4 +87,4 @@ git add .
 git commit -m "docs: update contributing guide"
 ```
 
-Push your branch and open a PR against `BerriAI/litellm-docs`.
+Push your branch and open a PR against `Soventra/lumina-docs`.

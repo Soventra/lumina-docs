@@ -1,6 +1,6 @@
 ---
 title: Spend Capture Rate
-description: Compare the spend LiteLLM tracked for OpenAI against what OpenAI billed for the same days, on a schedule with Slack alerts and a Prometheus gauge, or on demand through an admin endpoint.
+description: Compare the spend Lumina tracked for OpenAI against what OpenAI billed for the same days, on a schedule with Slack alerts and a Prometheus gauge, or on demand through an admin endpoint.
 ---
 
 # Spend Capture Rate
@@ -9,18 +9,18 @@ description: Compare the spend LiteLLM tracked for OpenAI against what OpenAI bi
 The spend capture-rate check ships in an upcoming release, so it is not in the current stable version yet
 :::
 
-The capture-rate check compares the spend LiteLLM tracked for a provider against what that provider billed for the
-same UTC days, and tells you what share of the bill went through LiteLLM:
+The capture-rate check compares the spend Lumina tracked for a provider against what that provider billed for the
+same UTC days, and tells you what share of the bill went through Lumina:
 
 ```
 capture_rate = captured_spend / provider_spend
 ```
 
-A rate of 1.0 means every dollar the provider billed went through LiteLLM and was priced. A rate under 1.0 means
-requests are reaching the provider outside LiteLLM (direct API keys, another gateway) or LiteLLM's cost tracking is
-dropping spend. A rate over 1.0 means LiteLLM is pricing above the bill
+A rate of 1.0 means every dollar the provider billed went through Lumina and was priced. A rate under 1.0 means
+requests are reaching the provider outside Lumina (direct API keys, another gateway) or Lumina's cost tracking is
+dropping spend. A rate over 1.0 means Lumina is pricing above the bill
 
-Only OpenAI is wired in this release. LiteLLM's side is the `LiteLLM_DailyUserSpend` table, summed over the
+Only OpenAI is wired in this release. Lumina's side is the `Lumina_DailyUserSpend` table, summed over the
 `custom_llm_provider` values `openai` and `text-completion-openai`. OpenAI's side is the
 [Organization Costs API](https://platform.openai.com/docs/api-reference/usage/costs)
 (`GET https://api.openai.com/v1/organization/costs` with `bucket_width=1d`), read with an OpenAI Admin API key.
@@ -38,7 +38,7 @@ export OPENAI_ADMIN_KEY="sk-admin-..."
 ```
 
 This key is separate from the `OPENAI_API_KEY` your deployments use. It only reads billing data and never serves a
-request. The check also needs the proxy database, since captured spend comes from `LiteLLM_DailyUserSpend`
+request. The check also needs the proxy database, since captured spend comes from `Lumina_DailyUserSpend`
 
 ## Scheduled check
 
@@ -58,7 +58,7 @@ general_settings:
 | `providers` | `["openai"]` | Providers to check. `openai` is the only value today |
 | `threshold` | `0.9` | Alert when the rate over the window is under this. Over 0 and at most 1 |
 | `lookback_days` | `7` | Closed UTC days to compare, from yesterday back. 1 to 180 |
-| `openai_project_ids` | `[]` | OpenAI project ids to scope the bill to. Empty means the whole organization. Captured spend is never scoped, so list every project LiteLLM's OpenAI keys belong to |
+| `openai_project_ids` | `[]` | OpenAI project ids to scope the bill to. Empty means the whole organization. Captured spend is never scoped, so list every project Lumina's OpenAI keys belong to |
 
 An unknown key or an out-of-range value fails proxy boot with a validation error, so a typo never runs as a silent
 default. The section is read again right before every run, so a change that arrives through a config reload from the
@@ -83,12 +83,12 @@ published but never alerts
 
 ## Prometheus gauge
 
-With `litellm_settings.callbacks: ["prometheus"]` set (see [Prometheus metrics](./prometheus)), the scheduled check
+With `lumina_settings.callbacks: ["prometheus"]` set (see [Prometheus metrics](./prometheus)), the scheduled check
 publishes one gauge:
 
 | Metric | Labels | Value |
 | --- | --- | --- |
-| `litellm_spend_capture_rate` | `api_provider` | The rate over the check's window. `NaN` when the last check produced no rate |
+| `lumina_spend_capture_rate` | `api_provider` | The rate over the check's window. `NaN` when the last check produced no rate |
 
 Only the scheduled check sets the gauge. The on-demand endpoint below never touches it. A check that produced no rate
 (OpenAI billed nothing, `OPENAI_ADMIN_KEY` is not set, or the costs API could not be read) sets it to `NaN` rather than
@@ -99,23 +99,23 @@ instead
 The gauge exists on every proxy that has a database and the Prometheus callback, even when `spend_capture_rate_check`
 is not configured: the job then sets it to `NaN` for every supported provider, so a dashboard or rule keyed on the
 metric name finds the series before the check is turned on. With `prometheus_metrics_config` set, list
-`litellm_spend_capture_rate` under a group or it is not emitted. Excluding `api_provider` through
+`lumina_spend_capture_rate` under a group or it is not emitted. Excluding `api_provider` through
 `prometheus_exclude_labels` leaves the gauge with no labels, one series for the one supported provider
 
 A Prometheus alerting rule that fires when the rate stays under 0.9 for an hour:
 
 ```yaml
 groups:
-  - name: litellm-spend-capture-rate
+  - name: lumina-spend-capture-rate
     rules:
-      - alert: LiteLLMSpendCaptureRateLow
-        expr: litellm_spend_capture_rate < 0.9
+      - alert: LuminaSpendCaptureRateLow
+        expr: lumina_spend_capture_rate < 0.9
         for: 1h
         labels:
           severity: warning
         annotations:
-          summary: "LiteLLM is capturing under 90% of the OpenAI bill"
-          description: "Spend is reaching OpenAI outside LiteLLM, or cost tracking is dropping it. See https://docs.litellm.ai/docs/proxy/spend_capture_rate"
+          summary: "Lumina is capturing under 90% of the OpenAI bill"
+          description: "Spend is reaching OpenAI outside Lumina, or cost tracking is dropping it. See https://docs.lumina.ai/docs/proxy/spend_capture_rate"
 ```
 
 ## Check on demand
@@ -174,8 +174,8 @@ The comparison is per closed UTC day. The scheduled check never includes today, 
 today is partial on both sides, so read today's row as in progress rather than as a gap
 
 The OpenAI bill is organization-wide unless `openai_project_ids` (or `project_ids` on the endpoint) scopes it, while
-captured spend is always everything LiteLLM tracked for OpenAI. An organization with any traffic outside LiteLLM reads
-under 1.0 for that reason alone. Scope the check to every project LiteLLM's keys belong to (leaving one out makes the
+captured spend is always everything Lumina tracked for OpenAI. An organization with any traffic outside Lumina reads
+under 1.0 for that reason alone. Scope the check to every project Lumina's keys belong to (leaving one out makes the
 rate read high, since its captured spend still counts), or treat the gap as a measure of the direct traffic and raise
 it with the teams sending it
 
@@ -184,8 +184,8 @@ Every deployment configured with `custom_llm_provider: openai` counts as capture
 the OpenAI bill, so it inflates the rate. If you want the rate to mean OpenAI only, give those deployments a provider
 of their own, such as `hosted_vllm`
 
-LiteLLM prices from its own
-[cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json), so a price change on
+Lumina prices from its own
+[cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json), so a price change on
 either side moves the rate until the map catches up. A rate above 1.0 with no direct traffic usually means a cost map
 entry is higher than what OpenAI now charges
 

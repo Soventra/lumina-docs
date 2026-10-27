@@ -3,13 +3,13 @@
 Provide concrete examples of valid tool inputs to help Claude understand how to use your tools more effectively. This is particularly useful for complex tools with nested objects, optional parameters, or format-sensitive inputs.
 
 :::info
-Tool input examples is a beta feature. LiteLLM automatically detects tools with the `input_examples` field and adds the appropriate beta header based on your provider:
+Tool input examples is a beta feature. Lumina automatically detects tools with the `input_examples` field and adds the appropriate beta header based on your provider:
 
 - **Anthropic API & Microsoft Foundry**: `advanced-tool-use-2025-11-20`
 - **Amazon Bedrock**: `advanced-tool-use-2025-11-20` (Claude Opus 4.5 only)
 - **Google Cloud Vertex AI**: Not supported
 
-You don't need to manually specify beta headers; LiteLLM handles this automatically.
+You don't need to manually specify beta headers; Lumina handles this automatically.
 :::
 
 ## When to Use Input Examples
@@ -31,9 +31,9 @@ Input examples are most helpful for:
 Add an `input_examples` field to your tool definition with an array of example input objects:
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "What's the weather like in San Francisco?"}
@@ -84,7 +84,7 @@ print(response)
 
 When you provide `input_examples`:
 
-1. **LiteLLM detects** the `input_examples` field in your tool definition
+1. **Lumina detects** the `input_examples` field in your tool definition
 2. **Beta header added automatically**: The `advanced-tool-use-2025-11-20` header is injected
 3. **Examples included in prompt**: Anthropic includes the examples alongside your tool schema
 4. **Claude learns patterns**: The model uses examples to understand proper tool usage
@@ -224,7 +224,7 @@ When you provide `input_examples`:
 
 - Each example **must be valid** according to the tool's `input_schema`
 - Invalid examples will return a **400 error** from Anthropic
-- Validation happens server-side (LiteLLM passes examples through)
+- Validation happens server-side (Lumina passes examples through)
 
 ### Server-Side Tools Not Supported
 
@@ -386,14 +386,14 @@ Input examples work together with other Anthropic tool features:
 
 ## Provider Support
 
-LiteLLM supports input examples across the following Anthropic-compatible providers:
+Lumina supports input examples across the following Anthropic-compatible providers:
 
 - **Standard Anthropic API** (`anthropic/{{anthropic}}`) ✅
 - **Azure Anthropic / Microsoft Foundry** (`azure_ai/{{anthropic}}`) ✅
 - **Amazon Bedrock** (`bedrock/invoke/anthropic.claude-opus-4-5-20251101-v1:0`) ✅ (Opus 4.5 only)
 - **Google Cloud Vertex AI** (`vertex_ai/{{anthropic}}`) ❌ Not supported
 
-The beta header (`advanced-tool-use-2025-11-20`) is automatically added when LiteLLM detects tools with the `input_examples` field.
+The beta header (`advanced-tool-use-2025-11-20`) is automatically added when Lumina detects tools with the `input_examples` field.
 
 ## Troubleshooting
 

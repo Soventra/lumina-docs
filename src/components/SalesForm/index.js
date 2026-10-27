@@ -27,7 +27,7 @@ export function useSalesForm() {
 
 // Plain links to the website form, in Markdown or components, open the
 // dialog too. Modified clicks still open the website in a new tab.
-const FORM_LINK = /^https?:\/\/(www\.)?litellm\.ai\/enterprise\/?(\?[^#]*)?#(talk-to-sales|trial)$/;
+const FORM_LINK = /^https?:\/\/(www\.)?lumina\.ai\/enterprise\/?(\?[^#]*)?#(talk-to-sales|trial)$/;
 
 function emit(event, props) {
   track(`enterprise_form_${event}`, {form_location: 'docs', ...props});
@@ -168,7 +168,7 @@ function SalesFormBody({request, onClose}) {
           <iframe
             className={styles.calendar}
             src={calendlyUrl(result, who.current)}
-            title={`Schedule with the LiteLLM ${result.route} team`}
+            title={`Schedule with the Lumina ${result.route} team`}
           />
         )}
       </div>
@@ -224,7 +224,7 @@ function SalesFormBody({request, onClose}) {
           </Field>
           {big && (
             <>
-              <Field label="What are you hoping to learn about LiteLLM today?" optional wide>
+              <Field label="What are you hoping to learn about Lumina today?" optional wide>
                 <input className={styles.input} type="text" name="hoping-to-learn" />
               </Field>
               <Field label="Phone number (for text updates)" optional wide>
@@ -241,8 +241,8 @@ function SalesFormBody({request, onClose}) {
           {status === 'failed' ? (
             <>
               That did not go through. Try again, or use the{' '}
-              <a href="https://www.litellm.ai/enterprise#talk-to-sales" target="_blank" rel="noopener">
-                form on litellm.ai
+              <a href="https://www.lumina.ai/enterprise#talk-to-sales" target="_blank" rel="noopener">
+                form on lumina.ai
               </a>
               .
             </>

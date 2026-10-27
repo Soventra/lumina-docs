@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.86.2 - Path-Handling Hardening Backport"
+title: "Lumina v1.86.2 - Path-Handling Hardening Backport"
 description: "Hardens proxy path handling, so auth and routing derive the request route from the ASGI scope instead of the Host header."
 slug: "v1-86-2"
 date: 2026-05-27T00:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.86.2
+docker.lumina.ai/soventra/lumina:1.86.2
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.86.2
+pip install lumina==1.86.2
 ```
 
 </TabItem>
@@ -49,8 +49,8 @@ pip install litellm==1.86.2
 ### Bug Fixes
 
 - **Proxy auth / routing**
-    - Route the proxy's path-dependent call sites through `get_request_route()` so they all derive the request route from the ASGI scope rather than the `Host`-reconstructed URL - [PR #28547](https://github.com/BerriAI/litellm/pull/28547)
+    - Route the proxy's path-dependent call sites through `get_request_route()` so they all derive the request route from the ASGI scope rather than the `Host`-reconstructed URL - [PR #28547](https://github.com/Soventra/lumina/pull/28547)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.86.1...v1.86.2
+https://github.com/Soventra/lumina/compare/v1.86.1...v1.86.2

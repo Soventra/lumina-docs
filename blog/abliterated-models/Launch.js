@@ -7,17 +7,17 @@ import styles from './launch.module.css';
 
 const config = `model_list:
   - model_name: refuseless-chat
-    litellm_params:
+    lumina_params:
       model: refuseless/glm-5.3-abliterated
       api_key: os.environ/REFUSELESS_API_KEY
 
   - model_name: abliteration-chat
-    litellm_params:
+    lumina_params:
       model: abliteration/abliterated-model-large-v2
       api_key: os.environ/ABLITERATION_API_KEY`;
 
-const request = `curl "$LITELLM_BASE_URL/v1/chat/completions" \\
-  -H "Authorization: Bearer $LITELLM_API_KEY" \\
+const request = `curl "$LUMINA_BASE_URL/v1/chat/completions" \\
+  -H "Authorization: Bearer $LUMINA_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "model": "refuseless-chat",
@@ -54,14 +54,14 @@ export default function Launch() {
     <header className={styles.hero}>
       <div className={styles.heroMeta}><Link to="/blog">← Blog</Link><span>REFUSELESS / ABLITERATION</span></div>
       <div className={styles.art} aria-hidden="true"><canvas ref={canvas} /></div>
-      <h1><span className={styles.title}>Abliterated</span><span className={styles.subtitle}>models on LiteLLM<span aria-hidden="true">↘</span></span></h1>
-      <div className={styles.heroBottom}><p>Refuseless and Abliteration.<br />Through your LiteLLM gateway.</p><a href="#get-started">Try a model <span aria-hidden="true">↓</span></a></div>
+      <h1><span className={styles.title}>Abliterated</span><span className={styles.subtitle}>models on Lumina<span aria-hidden="true">↘</span></span></h1>
+      <div className={styles.heroBottom}><p>Refuseless and Abliteration.<br />Through your Lumina gateway.</p><a href="#get-started">Try a model <span aria-hidden="true">↓</span></a></div>
     </header>
 
     <div className={styles.article}>
       <div className={styles.byline}><PostByline horizontal /></div>
       <div className={styles.intro}>
-        <p>Abliterated models from Refuseless and Abliteration are now available through LiteLLM.</p>
+        <p>Abliterated models from Refuseless and Abliteration are now available through Lumina.</p>
         <p>Call them through the same gateway as your other models, with streaming, tool calls, structured output, and cached-token pricing. Your configured access controls, budgets, and rate limits still apply.</p>
       </div>
       <nav className={styles.contents} aria-label="In this post">
@@ -71,7 +71,7 @@ export default function Launch() {
       <Section id="abliteration" number="01" label="THE MODELS" title="What is an abliterated model?">
         <p>Abliteration modifies the weights of an open-weight model to reduce its learned refusal behavior. Developers identify directions in the model's internal representations associated with refusal, then suppress those directions.</p>
         <p><a href="https://arxiv.org/abs/2406.11717">Arditi and colleagues demonstrated this in 13 chat models</a> in 2024. Hosted providers may use different methods. Reducing refusals can also change answer quality, so evaluate the modified model on the tasks you want it to perform.</p>
-        <p>You can use these models for security research, red-teaming, and other workflows where a standard chat model refuses prompts you need to explore. The provider hosts the modified weights; LiteLLM connects your application to its API.</p>
+        <p>You can use these models for security research, red-teaming, and other workflows where a standard chat model refuses prompts you need to explore. The provider hosts the modified weights; Lumina connects your application to its API.</p>
       </Section>
 
       <Section id="providers" number="02" label="PROVIDERS" title="Supported providers">
@@ -81,7 +81,7 @@ export default function Launch() {
           ['deepseek-v4.1-flash-abliterated', '$0.22', '$0.045', '$0.75', 'DeepSeek V4.1 Flash'],
           ['deepseek-v4.1-flash-fast', '$0.05', '$0.003', '$0.15', 'DeepSeek V4.1 Flash Fast', 'Original weights'],
           ['minimax-m3.1-flash', '$0.05', '$0.002', '$0.25', 'MiniMax M3.1 Flash', 'Original weights'],
-        ]}>Refuseless serves three abliterated GLM and DeepSeek models, plus two models with original weights. Use the <code>refuseless/</code> prefix in LiteLLM.</Prices>
+        ]}>Refuseless serves three abliterated GLM and DeepSeek models, plus two models with original weights. Use the <code>refuseless/</code> prefix in Lumina.</Prices>
         <Prices name="Abliteration" href="/docs/providers/abliteration" rows={[
           ['abliterated-model', '$1.00', '$0.10', '$3.00', 'Base'],
           ['abliterated-model-large-v2', '$3.00', '$0.30', '$5.00', 'Large v2'],
@@ -91,16 +91,16 @@ export default function Launch() {
       </Section>
 
       <Section id="get-started" number="03" label="TRY IT" title="Add a model to your gateway">
-        <p>Create a key with <a href="https://refuseless.com/">Refuseless</a> or <a href="https://abliteration.ai/">Abliteration</a>. Set the matching <code>REFUSELESS_API_KEY</code> or <code>ABLITERATION_API_KEY</code> environment variable on your LiteLLM gateway.</p>
+        <p>Create a key with <a href="https://refuseless.com/">Refuseless</a> or <a href="https://abliteration.ai/">Abliteration</a>. Set the matching <code>REFUSELESS_API_KEY</code> or <code>ABLITERATION_API_KEY</code> environment variable on your Lumina gateway.</p>
         <figure className={styles.route}>
-          <div><strong>Your application</strong><small>LiteLLM virtual key</small></div><span aria-hidden="true">→</span>
-          <div><strong>LiteLLM</strong><small>Access, budgets, routing</small></div><span aria-hidden="true">→</span>
+          <div><strong>Your application</strong><small>Lumina virtual key</small></div><span aria-hidden="true">→</span>
+          <div><strong>Lumina</strong><small>Access, budgets, routing</small></div><span aria-hidden="true">→</span>
           <div><strong>Provider</strong><small>Refuseless or Abliteration</small></div>
           <figcaption>Your provider key stays on the gateway.</figcaption>
         </figure>
         <p>Add either or both deployments to your existing <code>model_list</code>, keeping your gateway's authentication settings.</p>
         <CodeBlock language="yaml" title="config.yaml">{config}</CodeBlock>
-        <p>Restart the gateway. Set <code>LITELLM_BASE_URL</code> to its base URL without a trailing slash and <code>LITELLM_API_KEY</code> to a key with access to the deployment. Then send a request:</p>
+        <p>Restart the gateway. Set <code>LUMINA_BASE_URL</code> to its base URL without a trailing slash and <code>LUMINA_API_KEY</code> to a key with access to the deployment. Then send a request:</p>
         <CodeBlock language="bash" title="Chat completion">{request}</CodeBlock>
         <p>The response includes the answer in <code>choices[0].message.content</code> and token counts in <code>usage</code>. To call Abliteration, change <code>model</code> to <code>abliteration-chat</code>.</p>
         <p className={styles.caption}>Starting a new gateway or using the Python SDK? Follow the <Link to="/docs/providers/refuseless">Refuseless guide</Link> or <Link to="/docs/providers/abliteration">Abliteration guide</Link>.</p>

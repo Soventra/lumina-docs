@@ -42,7 +42,7 @@ general_settings:
   maximum_spend_logs_cleanup_target_size: "20GB"   # Delete the oldest rows until they hold less than this
   maximum_spend_logs_size_check_interval: "1d"     # How often the size is checked (ignored when the cron above is set)
 
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: redis
@@ -56,13 +56,13 @@ When a retention period is set and `maximum_spend_logs_cleanup_cron` is not, the
 
 ### The size rule
 
-A retention period alone cannot protect a disk: a traffic spike can fill it long before any row is 30 days old, and the retention job never looks at how much space the rows take. `maximum_spend_logs_size` adds a second, independent rule. On every check the job reads what `LiteLLM_SpendLogs` and `LiteLLM_SpendLogToolIndex` take on disk (heap, indexes and TOAST, partitions included) from the Postgres catalog, the same number `SELECT pg_size_pretty(pg_total_relation_size('"LiteLLM_SpendLogs"'))` prints, and if the live data is over the limit it deletes the oldest spend logs first, with their tool-index rows, until the tables are under `maximum_spend_logs_cleanup_target_size`. With the target unset, a run stops as soon as the tables are back under the limit, so the next check may trigger again as soon as traffic pushes them over; set the target below the limit if you want quiet between runs. The two tables are the whole measurement. The rest of the database is not counted, so compare the number against your spend-log storage, not your total database size.
+A retention period alone cannot protect a disk: a traffic spike can fill it long before any row is 30 days old, and the retention job never looks at how much space the rows take. `maximum_spend_logs_size` adds a second, independent rule. On every check the job reads what `Lumina_SpendLogs` and `Lumina_SpendLogToolIndex` take on disk (heap, indexes and TOAST, partitions included) from the Postgres catalog, the same number `SELECT pg_size_pretty(pg_total_relation_size('"Lumina_SpendLogs"'))` prints, and if the live data is over the limit it deletes the oldest spend logs first, with their tool-index rows, until the tables are under `maximum_spend_logs_cleanup_target_size`. With the target unset, a run stops as soon as the tables are back under the limit, so the next check may trigger again as soon as traffic pushes them over; set the target below the limit if you want quiet between runs. The two tables are the whole measurement. The rest of the database is not counted, so compare the number against your spend-log storage, not your total database size.
 
 The size check has its own schedule. With `maximum_spend_logs_size` set and no cron, a `spend_log_size_check_job` runs every `maximum_spend_logs_size_check_interval` (default `1d`, plus the same random offset). A `1d` check only catches a spike a day late, so a deployment that fears spikes sets something like `"10m"`: a check is one catalog read and costs nothing when the tables are under the limit. With `maximum_spend_logs_cleanup_cron` set there is one schedule for both rules and the cron run does the size pass after the age pass.
 
 A size-triggered run is bounded exactly like a retention run, by the same `maximum_spend_logs_cleanup_batch_size`, `maximum_spend_logs_cleanup_max_batches`, `maximum_spend_logs_cleanup_run_budget` and `maximum_spend_logs_cleanup_batch_timeout`. At the defaults that is at most 500,000 rows per run, roughly 1 GB a day at 2 KB per row, which is not enough to take a table from 180 GB to 20 GB in a useful time. Raise `maximum_spend_logs_cleanup_max_batches` and shorten the check interval when the backlog is large; the run summary's `above_target` tells you how much is left. On a partitioned table (`use_spend_logs_partitioning: true`) the size pass drops the oldest fully elapsed day partitions first, re-measuring after each, because a `DROP` returns its disk at once, and only then deletes rows.
 
-Deleting rows does not shrink the table file. A deleted row becomes a dead tuple that still occupies its page until autovacuum turns it into free space for new rows, and even then the file keeps its size, so `pg_total_relation_size` does not move when rows are deleted and Postgres has no cheap number for how many bytes of a file are live. The job therefore keeps its own count. It stores one row in `LiteLLM_Config` (`param_name` `spend_logs_size_cleanup_state`) with the bytes it knows are reclaimable, the space inside the files that holds no live row, and rolls it forward on every check from the catalog's cumulative counters in `pg_stat_user_tables`: every row deleted since the last check (`n_tup_del`, whether by this job, the retention rule or anyone else) adds its average size, every row inserted beyond what the files grew by (`n_tup_ins`) takes it away again because it was written into free space, and a file that shrank (someone ran `VACUUM FULL`) gives the shrink back. Live bytes are the allocated bytes minus that count, which is what the limit and the target are compared against, and it does not change when autovacuum runs. On the very first check, or after the counters were reset (as after a crash), the count starts from the dead rows Postgres still knows about, so a table whose free space autovacuum reclaimed before the size rule was turned on looks fully live on that first check and may be cleaned once more than needed, within one run's `maximum_spend_logs_cleanup_max_batches`. When the row counters are entirely empty while the file holds data the job logs a warning and skips the pass; `ANALYZE "LiteLLM_SpendLogs"` repopulates them. The run summary prints `allocated_before`, `estimated_live_before`, `allocated_after`, `estimated_live_after`, `reclaimable_after`, `target`, `target_reached` and `above_target`, and when rows were deleted it reminds you that only `VACUUM FULL` or `pg_repack` on the two tables returns the allocated bytes to the filesystem. LiteLLM never runs either, because both rewrite the table under an exclusive lock.
+Deleting rows does not shrink the table file. A deleted row becomes a dead tuple that still occupies its page until autovacuum turns it into free space for new rows, and even then the file keeps its size, so `pg_total_relation_size` does not move when rows are deleted and Postgres has no cheap number for how many bytes of a file are live. The job therefore keeps its own count. It stores one row in `Lumina_Config` (`param_name` `spend_logs_size_cleanup_state`) with the bytes it knows are reclaimable, the space inside the files that holds no live row, and rolls it forward on every check from the catalog's cumulative counters in `pg_stat_user_tables`: every row deleted since the last check (`n_tup_del`, whether by this job, the retention rule or anyone else) adds its average size, every row inserted beyond what the files grew by (`n_tup_ins`) takes it away again because it was written into free space, and a file that shrank (someone ran `VACUUM FULL`) gives the shrink back. Live bytes are the allocated bytes minus that count, which is what the limit and the target are compared against, and it does not change when autovacuum runs. On the very first check, or after the counters were reset (as after a crash), the count starts from the dead rows Postgres still knows about, so a table whose free space autovacuum reclaimed before the size rule was turned on looks fully live on that first check and may be cleaned once more than needed, within one run's `maximum_spend_logs_cleanup_max_batches`. When the row counters are entirely empty while the file holds data the job logs a warning and skips the pass; `ANALYZE "Lumina_SpendLogs"` repopulates them. The run summary prints `allocated_before`, `estimated_live_before`, `allocated_after`, `estimated_live_after`, `reclaimable_after`, `target`, `target_reached` and `above_target`, and when rows were deleted it reminds you that only `VACUUM FULL` or `pg_repack` on the two tables returns the allocated bytes to the filesystem. Lumina never runs either, because both rewrite the table under an exclusive lock.
 
 ### What gets deleted
 
@@ -70,15 +70,15 @@ A run prunes these tables, each on the cutoff implied by its retention setting:
 
 | Table | Time column | Retention setting |
 | --- | --- | --- |
-| `LiteLLM_SpendLogs` | `startTime` | `maximum_spend_logs_retention_period` |
-| `LiteLLM_SpendLogToolIndex` | `start_time` | `maximum_spend_logs_retention_period` |
-| `LiteLLM_AutoRouterSession` | `last_turn_at` | `maximum_autorouter_session_retention_period` |
-| `LiteLLM_HealthCheckTable` | `checked_at` | `maximum_health_check_retention_period` |
-| `LiteLLM_DailyTagSpend` | `date` | `maximum_daily_tag_spend_retention_period` |
+| `Lumina_SpendLogs` | `startTime` | `maximum_spend_logs_retention_period` |
+| `Lumina_SpendLogToolIndex` | `start_time` | `maximum_spend_logs_retention_period` |
+| `Lumina_AutoRouterSession` | `last_turn_at` | `maximum_autorouter_session_retention_period` |
+| `Lumina_HealthCheckTable` | `checked_at` | `maximum_health_check_retention_period` |
+| `Lumina_DailyTagSpend` | `date` | `maximum_daily_tag_spend_retention_period` |
 
-`LiteLLM_SpendLogToolIndex` rows are derived from spend logs, so they expire on the same cutoff as the log rows they point at. Auto-router session rollups carry their own retention setting and their own cutoff. Setting only `maximum_autorouter_session_retention_period` is enough to register the job, in which case spend logs are left untouched and only session rollups are pruned
+`Lumina_SpendLogToolIndex` rows are derived from spend logs, so they expire on the same cutoff as the log rows they point at. Auto-router session rollups carry their own retention setting and their own cutoff. Setting only `maximum_autorouter_session_retention_period` is enough to register the job, in which case spend logs are left untouched and only session rollups are pruned
 
-`LiteLLM_DailyTagSpend` holds one row per tag, model and calendar day and backs the Tag Usage page. Its `date` column is a `YYYY-MM-DD` string, so the cutoff is a day: rows whose day is strictly older than the day the retention period reaches back to are deleted, and the horizon day itself is kept. With `maximum_daily_tag_spend_retention_period` unset the table is never touched, which is the pre-existing behavior. Tag budgets are enforced from lifetime counters and are unaffected by this pruning, but the Tag Usage chart can no longer show days that were deleted
+`Lumina_DailyTagSpend` holds one row per tag, model and calendar day and backs the Tag Usage page. Its `date` column is a `YYYY-MM-DD` string, so the cutoff is a day: rows whose day is strictly older than the day the retention period reaches back to are deleted, and the horizon day itself is kept. With `maximum_daily_tag_spend_retention_period` unset the table is never touched, which is the pre-existing behavior. Tag budgets are enforced from lifetime counters and are unaffected by this pruning, but the Tag Usage chart can no longer show days that were deleted
 
 ### Configuration Options
 
@@ -110,7 +110,7 @@ Examples:
 
 :::warning[Use day names in the weekday field]
 
-Use day names (`sun`, `mon`, ...) instead of numbers in the weekday field. LiteLLM schedules the cleanup with APScheduler, which numbers weekdays 0=Monday through 6=Sunday, while standard cron uses 0=Sunday through 6=Saturday. Numeric weekday values are not translated between the two conventions, so `"0 0 * * 0"` fires on Monday, not Sunday. Day names mean the same thing in both conventions and always behave as expected.
+Use day names (`sun`, `mon`, ...) instead of numbers in the weekday field. Lumina schedules the cleanup with APScheduler, which numbers weekdays 0=Monday through 6=Sunday, while standard cron uses 0=Sunday through 6=Saturday. Numeric weekday values are not translated between the two conventions, so `"0 0 * * 0"` fires on Monday, not Sunday. Day names mean the same thing in both conventions and always behave as expected.
 
 :::
 
@@ -118,7 +118,7 @@ The four settings below bound how much work a single run may do. Each one also h
 
 #### `maximum_spend_logs_size` (optional)
 
-The size rule. A storage size such as `"180GB"`, `"512MB"` or `"1.5TB"`, in powers of 1024 like `pg_size_pretty`. When `LiteLLM_SpendLogs` plus `LiteLLM_SpendLogToolIndex` hold more live data than this, the oldest spend logs are deleted first until the tables are under `maximum_spend_logs_cleanup_target_size`. Unset means no size rule. Independent of `maximum_spend_logs_retention_period`: a row is deleted when either rule says so.
+The size rule. A storage size such as `"180GB"`, `"512MB"` or `"1.5TB"`, in powers of 1024 like `pg_size_pretty`. When `Lumina_SpendLogs` plus `Lumina_SpendLogToolIndex` hold more live data than this, the oldest spend logs are deleted first until the tables are under `maximum_spend_logs_cleanup_target_size`. Unset means no size rule. Independent of `maximum_spend_logs_retention_period`: a row is deleted when either rule says so.
 
 #### `maximum_spend_logs_cleanup_target_size` (optional)
 
@@ -146,7 +146,7 @@ Postgres `statement_timeout` and `lock_timeout` applied to each statement the jo
 
 :::warning[Keep the batch timeout above what one batch legitimately needs]
 
-A cancelled statement counts as a batch failure, and `SPEND_LOG_CLEANUP_MAX_CONSECUTIVE_BATCH_FAILURES` failures in a row (default 3) abort the run. Set the timeout below the time a batch honestly needs and every batch is cancelled, so the run aborts having deleted nothing and logs `Aborting LiteLLM_SpendLogs cleanup after 3 consecutive batch failures; total deleted before abort: 0`. If you raise `maximum_spend_logs_cleanup_batch_size`, check that the timeout still leaves the larger statement room to finish
+A cancelled statement counts as a batch failure, and `SPEND_LOG_CLEANUP_MAX_CONSECUTIVE_BATCH_FAILURES` failures in a row (default 3) abort the run. Set the timeout below the time a batch honestly needs and every batch is cancelled, so the run aborts having deleted nothing and logs `Aborting Lumina_SpendLogs cleanup after 3 consecutive batch failures; total deleted before abort: 0`. If you raise `maximum_spend_logs_cleanup_batch_size`, check that the timeout still leaves the larger statement room to finish
 
 :::
 
@@ -154,7 +154,7 @@ A cancelled statement counts as a batch failure, and `SPEND_LOG_CLEANUP_MAX_CONS
 
 ### Step 1. Lock Acquisition (Optional with Redis)
 
-If Redis is enabled, LiteLLM uses it to make sure only one instance runs the cleanup at a time.
+If Redis is enabled, Lumina uses it to make sure only one instance runs the cleanup at a time.
 
 - If the lock is acquired:
   - This instance proceeds with cleanup
@@ -200,12 +200,12 @@ The job reports what it did through Prometheus, so you can tell a healthy steady
 
 | Metric | What it tells you |
 | --- | --- |
-| `litellm_spend_log_cleanup_rows_deleted_total` | Rows removed, per table |
-| `litellm_spend_log_cleanup_batch_duration_seconds` | How long individual batches take, which is what you watch when tuning batch size |
-| `litellm_spend_log_cleanup_rows_remaining` | Expired rows still waiting after the run |
-| `litellm_spend_log_cleanup_batch_failures_total` | Failed batches, including statements cancelled by the batch timeout |
-| `litellm_spend_log_cleanup_runs_total` | Runs by `outcome`: `completed`, `budget_exhausted`, `batch_cap_reached`, `skipped_locked`, `skipped_disabled`, or `aborted` |
-| `litellm_spend_log_storage_bytes` | The spend-log tables as last measured, by `measure`: `allocated` (what the files take on disk), `estimated_live` (allocated bytes minus the reclaimable count), `above_target` (estimated live bytes still above the size target, 0 once reached) |
+| `lumina_spend_log_cleanup_rows_deleted_total` | Rows removed, per table |
+| `lumina_spend_log_cleanup_batch_duration_seconds` | How long individual batches take, which is what you watch when tuning batch size |
+| `lumina_spend_log_cleanup_rows_remaining` | Expired rows still waiting after the run |
+| `lumina_spend_log_cleanup_batch_failures_total` | Failed batches, including statements cancelled by the batch timeout |
+| `lumina_spend_log_cleanup_runs_total` | Runs by `outcome`: `completed`, `budget_exhausted`, `batch_cap_reached`, `skipped_locked`, `skipped_disabled`, or `aborted` |
+| `lumina_spend_log_storage_bytes` | The spend-log tables as last measured, by `measure`: `allocated` (what the files take on disk), `estimated_live` (allocated bytes minus the reclaimable count), `above_target` (estimated live bytes still above the size target, 0 once reached) |
 
 `rows_remaining` is the one to alert on. Flat or near zero means retention is keeping up, and a rising line means it is not. Read it together with `runs_total`: a healthy deployment sits at `completed`, while a steady stream of `budget_exhausted` or `batch_cap_reached` says the run is being cut short every tick and the knobs need raising
 
@@ -215,7 +215,7 @@ The probe behind `rows_remaining` is bounded by `SPEND_LOG_CLEANUP_REMAINING_COU
 
 ### Indexing
 
-`LiteLLM_SpendLogs` ships with indexes on `startTime` and on `(startTime, request_id)`, which is what the delete batch needs, so there is nothing to add for retention on a default schema. On a seeded 2,000,000-row table the per-batch plan is an index scan on `LiteLLM_SpendLogs_startTime_idx` feeding a nested loop, about 1.8 ms for a 1000-row batch
+`Lumina_SpendLogs` ships with indexes on `startTime` and on `(startTime, request_id)`, which is what the delete batch needs, so there is nothing to add for retention on a default schema. On a seeded 2,000,000-row table the per-batch plan is an index scan on `Lumina_SpendLogs_startTime_idx` feeding a nested loop, about 1.8 ms for a 1000-row batch
 
 So the batch itself is cheap, and a slow run is rarely a sign of a bad plan. What a large backlog actually costs you is WAL volume and the autovacuum load created by the dead tuples the deletes leave behind. On that same table, a run that removed roughly 500,000 rows in 111 seconds left around 1,000,000 dead tuples across the spend log and tool index tables, which is enough to keep autovacuum busy on both of them well after the run finished. Tune for that, not for the delete plan
 
@@ -225,7 +225,7 @@ Batch size trades lock duration and WAL record size against throughput. Bigger b
 
 The pause between batches, a fixed 0.1s, dominates the per-batch cost at the default batch size, which puts throughput near 10,000 rows per second and makes the 500-batch cap, not the five-minute budget, the binding limit at defaults
 
-Take a deployment ingesting 5,000,000 spend log rows a day with 30 day retention. In steady state each daily run has to delete about a day of rows, so the default cap of 500,000 leaves retention permanently behind and the table grows without bound. Raising `maximum_spend_logs_cleanup_batch_size` to `5000` and `maximum_spend_logs_cleanup_max_batches` to `2000` lifts the ceiling to 10,000,000 rows and takes the run to roughly 110 seconds for 5,000,000 rows, comfortably inside the default `5m` budget, with each statement still finishing far inside the 30s batch timeout. Check `litellm_spend_log_cleanup_rows_remaining` after a few days: if it trends flat you are keeping up, and if it climbs run the cleanup more often with `maximum_spend_logs_retention_interval` rather than making batches larger still
+Take a deployment ingesting 5,000,000 spend log rows a day with 30 day retention. In steady state each daily run has to delete about a day of rows, so the default cap of 500,000 leaves retention permanently behind and the table grows without bound. Raising `maximum_spend_logs_cleanup_batch_size` to `5000` and `maximum_spend_logs_cleanup_max_batches` to `2000` lifts the ceiling to 10,000,000 rows and takes the run to roughly 110 seconds for 5,000,000 rows, comfortably inside the default `5m` budget, with each statement still finishing far inside the 30s batch timeout. Check `lumina_spend_log_cleanup_rows_remaining` after a few days: if it trends flat you are keeping up, and if it climbs run the cleanup more often with `maximum_spend_logs_retention_interval` rather than making batches larger still
 
 ### Draining a large backlog
 
@@ -237,7 +237,7 @@ If the table is large because volume is genuinely high, rather than because rete
 
 ## Partitioning for high-volume deployments
 
-At high request volume (millions of rows per day), retention via `DELETE` becomes a problem. Deleting rows does not return disk to the operating system; it leaves dead tuples ("tombstones") that autovacuum has to reclaim later. When writes outpace autovacuum, the table keeps growing on disk even though the logical row count is bounded, and `LiteLLM_SpendLogs` can reach hundreds of GB in a month.
+At high request volume (millions of rows per day), retention via `DELETE` becomes a problem. Deleting rows does not return disk to the operating system; it leaves dead tuples ("tombstones") that autovacuum has to reclaim later. When writes outpace autovacuum, the table keeps growing on disk even though the logical row count is bounded, and `Lumina_SpendLogs` can reach hundreds of GB in a month.
 
 The fix is native Postgres range partitioning on `startTime`. With a partitioned table, retention drops whole partitions with `DROP TABLE`, an instant metadata operation that frees disk immediately, with no tombstones and no vacuum. With `general_settings.use_spend_logs_partitioning: true` set and the table actually partitioned, the same cleanup job switches from batched deletes to dropping expired partitions, and it pre-creates upcoming partitions on each run so writes always have a partition to land in; both conditions are required, detection alone does not flip the behavior.
 
@@ -247,9 +247,9 @@ Partition maintenance interacts with the run budget in one way worth knowing. Th
 
 ### Converting the table
 
-Partitioning a populated table cannot be done in place, so the conversion renames the existing table aside and creates a fresh partitioned table. The partition key must be part of the primary key, so the primary key becomes the composite `("request_id", "startTime")`; LiteLLM's spend-log write path uses `INSERT ... ON CONFLICT DO NOTHING`, which is compatible with this.
+Partitioning a populated table cannot be done in place, so the conversion renames the existing table aside and creates a fresh partitioned table. The partition key must be part of the primary key, so the primary key becomes the composite `("request_id", "startTime")`; Lumina's spend-log write path uses `INSERT ... ON CONFLICT DO NOTHING`, which is compatible with this.
 
-Run the runbook in [`db_scripts/partition_spend_logs.sql`](https://github.com/BerriAI/litellm/blob/main/db_scripts/partition_spend_logs.sql) against your database (test on a staging copy and take a backup first). It creates the partitioned parent, the composite primary key, the `startTime` index, and a `DEFAULT` partition as a safety net for any out-of-range rows.
+Run the runbook in [`db_scripts/partition_spend_logs.sql`](https://github.com/Soventra/lumina/blob/main/db_scripts/partition_spend_logs.sql) against your database (test on a staging copy and take a backup first). It creates the partitioned parent, the composite primary key, the `startTime` index, and a `DEFAULT` partition as a safety net for any out-of-range rows.
 
 After converting, set a retention period as shown above and the cleanup job manages partitions for you.
 

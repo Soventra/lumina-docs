@@ -41,10 +41,10 @@ guardrails:
       mode: "pre_call"
 ```
 
-**Step 2** Run litellm proxy with `--detailed_debug` to see the server logs
+**Step 2** Run lumina proxy with `--detailed_debug` to see the server logs
 
 ```
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 **Step 3** Test it with request
@@ -67,16 +67,16 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 ```
 
 
-Expect to see the following warning on your litellm server logs
+Expect to see the following warning on your lumina server logs
 
 ```shell
-LiteLLM Proxy:WARNING: secret_detection.py:88 - Detected and redacted secrets in message: ['Secret Keyword']
+Lumina Proxy:WARNING: secret_detection.py:88 - Detected and redacted secrets in message: ['Secret Keyword']
 ```
 
 
-You can also see the raw request sent from litellm to the API Provider with (`--detailed_debug`).
+You can also see the raw request sent from lumina to the API Provider with (`--detailed_debug`).
 ```text
-POST Request Sent from LiteLLM:
+POST Request Sent from Lumina:
 curl -X POST \
 https://api.groq.com/openai/v1/ \
 -H 'Authorization: Bearer gsk_mySVchjY********************************************' \
@@ -99,7 +99,7 @@ https://api.groq.com/openai/v1/ \
 
 ## Control secret detectors
 
-LiteLLM uses the [`detect-secrets`](https://github.com/Yelp/detect-secrets) library for secret detection. See [all plugins run by default](#default-config-used)
+Lumina uses the [`detect-secrets`](https://github.com/Yelp/detect-secrets) library for secret detection. See [all plugins run by default](#default-config-used)
 
 
 ### Usage
@@ -128,7 +128,7 @@ guardrails:
 Run with `--detailed_debug` for more detailed logs. Use in dev only. 
 
 ```bash
-litellm --config /path/to/config.yaml --detailed_debug
+lumina --config /path/to/config.yaml --detailed_debug
 ```
 
 **3. Test it!**

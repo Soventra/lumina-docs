@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.84.7 - Claude Fable 5 & Batch File Authorization"
+title: "Lumina v1.84.7 - Claude Fable 5 & Batch File Authorization"
 description: "Adds Claude Fable 5 on Anthropic, Bedrock, Vertex AI and Azure AI. Authorizes batch files with the upload target_model_names."
 slug: "v1-84-7"
 date: 2026-06-10T18:11:13
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.84.7
+docker.lumina.ai/soventra/lumina:1.84.7
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.84.7
+pip install lumina==1.84.7
 ```
 
 </TabItem>
@@ -48,9 +48,9 @@ pip install litellm==1.84.7
 
 ### What's Changed
 
-- feat: add Claude Fable 5 across Anthropic, Bedrock, Vertex AI, and Azure AI - [PR #30064](https://github.com/BerriAI/litellm/pull/30064)
-- fix(proxy): authorize batch files using upload `target_model_names` (LIT-3593) - [PR #30009](https://github.com/BerriAI/litellm/pull/30009)
+- feat: add Claude Fable 5 across Anthropic, Bedrock, Vertex AI, and Azure AI - [PR #30064](https://github.com/Soventra/lumina/pull/30064)
+- fix(proxy): authorize batch files using upload `target_model_names` (LIT-3593) - [PR #30009](https://github.com/Soventra/lumina/pull/30009)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.84.6...v1.84.7
+https://github.com/Soventra/lumina/compare/v1.84.6...v1.84.7

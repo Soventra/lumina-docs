@@ -8,7 +8,7 @@ Track and visualize API endpoint usage directly in the dashboard. Monitor endpoi
 
 ## Overview
 
-Endpoint Activity enables you to track spend and usage for individual API endpoints automatically. Every time you call an endpoint through the LiteLLM proxy, activity is automatically tracked and aggregated. This allows you to:
+Endpoint Activity enables you to track spend and usage for individual API endpoints automatically. Every time you call an endpoint through the Lumina proxy, activity is automatically tracked and aggregated. This allows you to:
 
 - Track spend per endpoint automatically
 - View endpoint-level usage analytics in the Admin UI
@@ -21,7 +21,7 @@ Endpoint Activity enables you to track spend and usage for individual API endpoi
 
 ## How Endpoint Activity Works
 
-Endpoint activity is **automatically tracked** whenever you make API calls through the LiteLLM proxy. No additional configuration is required - simply call your endpoints as usual and activity will be tracked.
+Endpoint activity is **automatically tracked** whenever you make API calls through the Lumina proxy. No additional configuration is required - simply call your endpoints as usual and activity will be tracked.
 
 ### Example API Call
 
@@ -92,9 +92,9 @@ Each endpoint displays the following metrics:
 
 ## Gateway Request Counts
 
-The **Successful Requests** and **Failed Requests** tiles on the Usage page, along with the **Gateway Requests by Endpoint** chart below them, are counted by the proxy itself rather than derived from spend logs. LiteLLM's request-metrics middleware sits at the ASGI edge, classifies each inbound LLM, MCP and A2A call, and records the status the gateway returned. Those counts are folded into the `LiteLLM_DailyGatewayRequests` table, keyed by date, category and route. The key holds nothing a caller supplies and no per-key, per-user or per-deployment dimension, so the table grows with how many route classes your deployment serves and how long it has been running, never with traffic
+The **Successful Requests** and **Failed Requests** tiles on the Usage page, along with the **Gateway Requests by Endpoint** chart below them, are counted by the proxy itself rather than derived from spend logs. Lumina's request-metrics middleware sits at the ASGI edge, classifies each inbound LLM, MCP and A2A call, and records the status the gateway returned. Those counts are folded into the `Lumina_DailyGatewayRequests` table, keyed by date, category and route. The key holds nothing a caller supplies and no per-key, per-user or per-deployment dimension, so the table grows with how many route classes your deployment serves and how long it has been running, never with traffic
 
-Counting at the edge changes what the number means. A request is recorded whether or not it ever reached LiteLLM's logging callbacks, so authentication rejections, rate limit responses and provider errors land in the failed column instead of going missing; every status is counted, not just 2xx. One inbound request also counts exactly once however many upstream calls LiteLLM made to serve it, so router retries, fallbacks and internal fan-out do not inflate the total
+Counting at the edge changes what the number means. A request is recorded whether or not it ever reached Lumina's logging callbacks, so authentication rejections, rate limit responses and provider errors land in the failed column instead of going missing; every status is counted, not just 2xx. One inbound request also counts exactly once however many upstream calls Lumina made to serve it, so router retries, fallbacks and internal fan-out do not inflate the total
 
 Counts accumulate in memory and are committed on the same interval as the spend batch writer, `proxy_batch_write_at`, which defaults to 10 seconds, so a request can take a few seconds to appear. A commit that fails is merged back and retried on the next flush rather than dropped, and the accumulator is drained once more during shutdown. None of this is gated behind an enterprise license; any deployment with a database configured records these counts
 

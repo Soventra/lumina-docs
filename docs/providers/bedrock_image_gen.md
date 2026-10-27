@@ -25,7 +25,7 @@ Use Bedrock for image generation with Stable Diffusion, Amazon Titan Image Gener
 
 ```python
 import os
-from litellm import image_generation
+from lumina import image_generation
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -42,7 +42,7 @@ print(f"response: {response}")
 
 ```python
 import os
-from litellm import image_generation
+from lumina import image_generation
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -77,7 +77,7 @@ model_list:
 ### 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Test it! 
@@ -113,17 +113,17 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 
 ## Amazon Nova Canvas - Image Edit
 
-Use OpenAI-compatible `image_edit()` with Bedrock Nova Canvas (`amazon.nova-canvas-v1:0`). Requests use the same `InvokeModel` API as generation; LiteLLM maps inputs to [Nova Canvas task types](https://docs.aws.amazon.com/nova/latest/userguide/image-gen-access.html):
+Use OpenAI-compatible `image_edit()` with Bedrock Nova Canvas (`amazon.nova-canvas-v1:0`). Requests use the same `InvokeModel` API as generation; Lumina maps inputs to [Nova Canvas task types](https://docs.aws.amazon.com/nova/latest/userguide/image-gen-access.html):
 
 | Scenario | `taskType` sent to Bedrock |
 |----------|----------------------------|
 | Image + prompt (no mask) | `IMAGE_VARIATION` |
 | Image + prompt + mask | `INPAINTING` (`inPaintingParams.image`, `maskImage` or `maskPrompt`) |
-| `taskType: OUTPAINTING` + `mask` or `maskPrompt` | `OUTPAINTING` (Bedrock requires one; LiteLLM raises a clear error if both are missing) |
+| `taskType: OUTPAINTING` + `mask` or `maskPrompt` | `OUTPAINTING` (Bedrock requires one; Lumina raises a clear error if both are missing) |
 | `taskType: BACKGROUND_REMOVAL` | `BACKGROUND_REMOVAL` |
 
 ```python
-from litellm import image_edit
+from lumina import image_edit
 
 response = image_edit(
     image=open("photo.png", "rb"),
@@ -132,7 +132,7 @@ response = image_edit(
 )
 ```
 
-For **`BACKGROUND_REMOVAL`**, the AWS request must not include `imageGenerationConfig`; LiteLLM omits it for that task even if you pass `size`, `n`, `seed`, etc. Additional Nova Canvas inference IDs for image edit should set **`supports_nova_canvas_image_edit`: true** in `model_prices_and_context_window.json` (see `amazon.nova-canvas-v1:0`).
+For **`BACKGROUND_REMOVAL`**, the AWS request must not include `imageGenerationConfig`; Lumina omits it for that task even if you pass `size`, `n`, `seed`, etc. Additional Nova Canvas inference IDs for image edit should set **`supports_nova_canvas_image_edit`: true** in `model_prices_and_context_window.json` (see `amazon.nova-canvas-v1:0`).
 
 ## Using Inference Profiles with Image Generation
 
@@ -142,7 +142,7 @@ For AWS Bedrock Application Inference Profiles with image generation, use the `m
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import image_generation
+from lumina import image_generation
 
 response = image_generation(
     model="bedrock/amazon.nova-canvas-v1:0",

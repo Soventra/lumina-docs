@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 # Proxy - Load Balancing
 Load balance multiple instances of the same model
 
-The proxy will handle routing requests (using LiteLLM's Router). **Set `rpm` in the config if you want maximize throughput**
+The proxy will handle routing requests (using Lumina's Router). **Set `rpm` in the config if you want maximize throughput**
 
 
 :::info
@@ -19,7 +19,7 @@ For more details on routing strategies / params, see [Routing](../routing.md)
 
 ## How Load Balancing Works
 
-LiteLLM automatically distributes requests across multiple deployments of the same model using its built-in router. the proxy routes traffic to optimize performance and reliability.
+Lumina automatically distributes requests across multiple deployments of the same model using its built-in router. the proxy routes traffic to optimize performance and reliability.
 
 "simple-shuffle" routing strategy is used by default
 
@@ -68,7 +68,7 @@ router_settings:
   model_group_alias: {"{{openai_large}}": "{{openai_small}}"} # all requests with `{{openai_large}}` will be routed to models with `{{openai_small}}`
   num_retries: 2
   timeout: 30                                  # 30 seconds
-  redis_host: <your redis host>                # set this when using multiple litellm proxy deployments, load balancing state stored in redis
+  redis_host: <your redis host>                # set this when using multiple lumina proxy deployments, load balancing state stored in redis
   redis_password: <your redis password>
   redis_port: 1992
 ```
@@ -132,7 +132,7 @@ Response includes `retry-after: 60` header.
 
 ### Multi-Instance Deployment
 
-For multiple LiteLLM proxy instances, add Redis to share rate limit state:
+For multiple Lumina proxy instances, add Redis to share rate limit state:
 
 ```yaml
 router_settings:
@@ -151,7 +151,7 @@ Detailed information about [routing strategies can be found here](../routing)
 #### Step 2: Start Proxy with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ### Test - Simple Call
@@ -209,7 +209,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 In this request, the following will occur:
 1. A rate limit exception will be raised 
-2. LiteLLM proxy will retry the request on the model group (default retries are 3).
+2. Lumina proxy will retry the request on the model group (default retries are 3).
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
@@ -224,12 +224,12 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 }'
 ```
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/6b8806b45f970cb2446654d2c379f8dcaa93ce3c/litellm/router.py#L2535)
+[**See Code**](https://github.com/Soventra/lumina/blob/6b8806b45f970cb2446654d2c379f8dcaa93ce3c/lumina/router.py#L2535)
 
 
-## Load Balancing using multiple litellm instances (Kubernetes, Auto Scaling)
+## Load Balancing using multiple lumina instances (Kubernetes, Auto Scaling)
 
-LiteLLM Proxy supports sharing rpm/tpm shared across multiple litellm instances, pass `redis_host`, `redis_password` and `redis_port` to enable this. (LiteLLM will use Redis to track rpm/tpm usage )
+Lumina Proxy supports sharing rpm/tpm shared across multiple lumina instances, pass `redis_host`, `redis_password` and `redis_port` to enable this. (Lumina will use Redis to track rpm/tpm usage )
 
 Example config
 
@@ -268,7 +268,7 @@ model_group_alias: {
 
 These aliases are shown on `/v1/models`, `/v1/model/info`, and `/v1/model_group/info` by default.
 
-litellm.Router() settings can be set under `router_settings`. You can set `model_group_alias`, `routing_strategy`, `num_retries`,`timeout` . See all Router supported params [here](https://github.com/BerriAI/litellm/blob/1b942568897a48f014fa44618ec3ce54d7570a46/litellm/router.py#L64)
+lumina.Router() settings can be set under `router_settings`. You can set `model_group_alias`, `routing_strategy`, `num_retries`,`timeout` . See all Router supported params [here](https://github.com/Soventra/lumina/blob/1b942568897a48f014fa44618ec3ce54d7570a46/lumina/router.py#L64)
 
 
 
@@ -411,7 +411,7 @@ If a stale alias is detected and the bypass is **not** enabled, the proxy may em
 
 When load balancing OpenAI's Responses API across deployments with **different API keys** (e.g., different Azure regions or organizations), encrypted content items (like `rs_...` reasoning items) can only be decrypted by the originating API key.
 
-**Solution:** Use the `encrypted_content_affinity` pre-call check (requires LiteLLM >= 1.82.3) to automatically route follow-up requests containing encrypted items to the correct deployment:
+**Solution:** Use the `encrypted_content_affinity` pre-call check (requires Lumina >= 1.82.3) to automatically route follow-up requests containing encrypted items to the correct deployment:
 
 ```yaml
 model_list:
@@ -438,7 +438,7 @@ router_settings:
 
 This ensures requests containing encrypted content are routed to the deployment that created them, while other requests continue to load balance normally.
 
-When that deployment is not in the healthy pool for a follow-up (it is cooled down, it was removed, or the turn was routed to another model group) and no deployment has the same `api_base` and `api_key`, LiteLLM drops the encrypted reasoning from the request, keeps the rest of the conversation, forwards it to a healthy deployment, and logs a router warning, so the turn succeeds with fresh reasoning instead of failing
+When that deployment is not in the healthy pool for a follow-up (it is cooled down, it was removed, or the turn was routed to another model group) and no deployment has the same `api_base` and `api_key`, Lumina drops the encrypted reasoning from the request, keeps the rest of the conversation, forwards it to a healthy deployment, and logs a router warning, so the turn succeeds with fresh reasoning instead of failing
 
 A fallback hop does the same whether or not the check is on. An order-based hop to the next `order`, a configured `fallbacks` hop to another model group, and the retry of a Responses stream that broke mid-stream each drop the encrypted reasoning the hop target cannot decrypt and keep the summaries, with no per-deployment switch. Keep the check on for an ordered group of two providers all the same: it marks each reasoning item with the deployment that produced it, so a turn dispatched straight to `order: 2` while `order: 1` is cooled down (no hop, so no hop strip) drops the reasoning too, and the turn after a hop keeps the reasoning of the deployment that answers it instead of paying one failed call first
 

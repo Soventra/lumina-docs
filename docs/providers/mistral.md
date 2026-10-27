@@ -12,14 +12,14 @@ os.environ['MISTRAL_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['MISTRAL_API_KEY'] = ""
 response = completion(
     model="mistral/mistral-tiny", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -27,14 +27,14 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['MISTRAL_API_KEY'] = ""
 response = completion(
     model="mistral/mistral-tiny", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )
@@ -45,7 +45,7 @@ for chunk in response:
 
 
 
-## Usage with LiteLLM Proxy 
+## Usage with Lumina Proxy 
 
 ### 1. Set Mistral Models on config.yaml
 
@@ -60,7 +60,7 @@ model_list:
 ### 2. Start Proxy 
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Test it
@@ -116,7 +116,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "mistral-small-latest",
     temperature=0.1
 )
@@ -126,7 +126,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -139,7 +139,7 @@ print(response)
 ## Supported Models
 
 :::info
-All models listed here https://docs.mistral.ai/platform/endpoints are supported. We actively maintain the list of models, pricing, token window, etc. [here](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).
+All models listed here https://docs.mistral.ai/platform/endpoints are supported. We actively maintain the list of models, pricing, token window, etc. [here](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json).
 
 :::
 
@@ -164,7 +164,7 @@ All models listed here https://docs.mistral.ai/platform/endpoints are supported.
 ## Function Calling 
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["MISTRAL_API_KEY"] = "your-api-key"
@@ -207,9 +207,9 @@ assert isinstance(
 
 ## Reasoning
 
-Mistral does not directly support reasoning, instead it recommends a specific [system prompt](https://docs.mistral.ai/capabilities/reasoning/) to use with their magistral models. By setting the `reasoning_effort` parameter, LiteLLM will prepend the system prompt to the request. 
+Mistral does not directly support reasoning, instead it recommends a specific [system prompt](https://docs.mistral.ai/capabilities/reasoning/) to use with their magistral models. By setting the `reasoning_effort` parameter, Lumina will prepend the system prompt to the request. 
 
-If an existing system message is provided, LiteLLM will send both as a list of system messages (you can verify this by enabling `litellm._turn_on_debug()`).
+If an existing system message is provided, Lumina will send both as a list of system messages (you can verify this by enabling `lumina._turn_on_debug()`).
 
 ### Supported Models
 
@@ -223,7 +223,7 @@ If an existing system message is provided, LiteLLM will send both as a list of s
 The `reasoning_effort` parameter controls how much effort the model puts into reasoning. When used with magistral models.
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['MISTRAL_API_KEY'] = "your-api-key"
@@ -241,7 +241,7 @@ print(response)
 
 ### Example with System Message
 
-If you already have a system message, LiteLLM will prepend the reasoning instructions:
+If you already have a system message, Lumina will prepend the reasoning instructions:
 
 ```python
 response = completion(
@@ -259,9 +259,9 @@ response = completion(
 #  You are a helpful math tutor."
 ```
 
-### Usage with LiteLLM Proxy
+### Usage with Lumina Proxy
 
-You can also use reasoning capabilities through the LiteLLM proxy:
+You can also use reasoning capabilities through the Lumina proxy:
 
 <Tabs>
 <TabItem value="Curl" label="Curl Request">
@@ -313,12 +313,12 @@ print(response)
 
 ## Audio Transcription
 
-Use Mistral's Voxtral models for audio transcription via `litellm.transcription()`.
+Use Mistral's Voxtral models for audio transcription via `lumina.transcription()`.
 
 ### SDK Usage
 
 ```python
-from litellm import transcription
+from lumina import transcription
 import os
 
 os.environ["MISTRAL_API_KEY"] = ""
@@ -361,7 +361,7 @@ response = transcription(
 )
 ```
 
-### Usage with LiteLLM Proxy
+### Usage with Lumina Proxy
 
 ```yaml
 model_list:
@@ -374,7 +374,7 @@ model_list:
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ```bash
@@ -386,12 +386,12 @@ curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 
 ## Text to Speech
 
-Mistral's Voxtral TTS models turn text into audio through `litellm.speech()` and the proxy's `/v1/audio/speech` route. Both `mistral/voxtral-mini-tts-2603` and `mistral/voxtral-mini-tts-latest` are supported. Available from v1.102.0.
+Mistral's Voxtral TTS models turn text into audio through `lumina.speech()` and the proxy's `/v1/audio/speech` route. Both `mistral/voxtral-mini-tts-2603` and `mistral/voxtral-mini-tts-latest` are supported. Available from v1.102.0.
 
 ### SDK Usage
 
 ```python
-from litellm import speech
+from lumina import speech
 import os
 
 os.environ["MISTRAL_API_KEY"] = ""
@@ -407,7 +407,7 @@ response.write_to_file("speech.mp3")
 
 ### Voices
 
-`voice` takes either an OpenAI voice name or a native Mistral voice id. LiteLLM maps these six OpenAI names onto Mistral voices, so an integration that uses one of them keeps working without a change:
+`voice` takes either an OpenAI voice name or a native Mistral voice id. Lumina maps these six OpenAI names onto Mistral voices, so an integration that uses one of them keeps working without a change:
 
 | OpenAI voice | Mistral voice     |
 |--------------|-------------------|
@@ -422,7 +422,7 @@ Any other value passes through to Mistral untouched, so a native id such as `en_
 
 ### Response Formats
 
-`response_format` accepts `mp3`, `wav`, `pcm`, `flac`, and `opus`, and defaults to `mp3` when you leave it out. LiteLLM sets the response `content-type` to match the format you asked for, so `opus` comes back as `audio/ogg` and the other four as `audio/mpeg`, `audio/wav`, `audio/pcm`, and `audio/flac`. OpenAI's `aac` format is not supported, and Mistral rejects it with a 422. Mistral's `pcm` is raw 32-bit float little-endian samples at 24 kHz mono, not the 16-bit signed samples OpenAI's `pcm` returns, so read it as float32 or ask for `wav` instead.
+`response_format` accepts `mp3`, `wav`, `pcm`, `flac`, and `opus`, and defaults to `mp3` when you leave it out. Lumina sets the response `content-type` to match the format you asked for, so `opus` comes back as `audio/ogg` and the other four as `audio/mpeg`, `audio/wav`, `audio/pcm`, and `audio/flac`. OpenAI's `aac` format is not supported, and Mistral rejects it with a 422. Mistral's `pcm` is raw 32-bit float little-endian samples at 24 kHz mono, not the 16-bit signed samples OpenAI's `pcm` returns, so read it as float32 or ask for `wav` instead.
 
 ### Voice Cloning
 
@@ -430,7 +430,7 @@ Pass a base64 encoded audio sample as `ref_audio`, and Voxtral speaks the input 
 
 ```python
 import base64
-from litellm import speech
+from lumina import speech
 
 with open("sample.wav", "rb") as sample:
     ref_audio = base64.b64encode(sample.read()).decode()
@@ -448,9 +448,9 @@ On the proxy, send the same `ref_audio` field in the JSON body of `/v1/audio/spe
 
 ### Unsupported Parameters
 
-Mistral's speech API rejects `speed` and `instructions` with a 422, so LiteLLM drops both before sending the request instead of failing it. A call that passes either one still returns audio, generated from the parameters Mistral does accept.
+Mistral's speech API rejects `speed` and `instructions` with a 422, so Lumina drops both before sending the request instead of failing it. A call that passes either one still returns audio, generated from the parameters Mistral does accept.
 
-### Usage with LiteLLM Proxy
+### Usage with Lumina Proxy
 
 ```yaml
 model_list:
@@ -461,7 +461,7 @@ model_list:
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ```bash
@@ -478,21 +478,21 @@ curl --location 'http://0.0.0.0:4000/v1/audio/speech' \
 
 ### Cost Tracking
 
-Voxtral TTS is priced per input character, at the `input_cost_per_character` rate in the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). LiteLLM counts the non-whitespace characters of `input`, so a 19 character sentence holding 2 spaces is tracked as 17 characters. Mistral's own character meter, reported in the `x-ratelimit-input-characters-query-cost` response header, counts the spaces too, so whenever `input` contains whitespace, the spend LiteLLM tracks is lower than what Mistral meters.
+Voxtral TTS is priced per input character, at the `input_cost_per_character` rate in the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json). Lumina counts the non-whitespace characters of `input`, so a 19 character sentence holding 2 spaces is tracked as 17 characters. Mistral's own character meter, reported in the `x-ratelimit-input-characters-query-cost` response header, counts the spaces too, so whenever `input` contains whitespace, the spend Lumina tracks is lower than what Mistral meters.
 
 ## Files and Batches API
 
-LiteLLM routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to Mistral's Files and Batch APIs. See [Mistral AI Batch API](./mistral_batches) for the full flow and cost tracking.
+Lumina routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to Mistral's Files and Batch APIs. See [Mistral AI Batch API](./mistral_batches) for the full flow and cost tracking.
 
 ## Sample Usage - Embedding
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['MISTRAL_API_KEY'] = ""
 response = embedding(
     model="mistral/mistral-embed",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```

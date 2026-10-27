@@ -33,10 +33,10 @@ export function InkeepProvider({apiKey, children}) {
     {children}
     {loaded && <BrowserOnly>{() => <Suspense fallback={null}>
       <Modal
-        baseSettings={{apiKey, organizationDisplayName: 'liteLLM', primaryBrandColor: '#4965f5',
+        baseSettings={{apiKey, organizationDisplayName: 'Lumina', primaryBrandColor: '#4965f5',
           colorMode: {sync: {target: 'html', attributes: ['data-theme'], isDarkMode: attributes => attributes['data-theme'] === 'dark'}}}}
-        aiChatSettings={{aiAssistantName: 'LiteLLM AI', chatSubjectName: 'LiteLLM', chatFunctionsRef,
-          aiAssistantAvatar: '/img/brand/litellm-monogram-blue.svg', placeholder: 'Ask anything about LiteLLM...'}}
+        aiChatSettings={{aiAssistantName: 'Lumina AI', chatSubjectName: 'Lumina', chatFunctionsRef,
+          aiAssistantAvatar: '/img/brand/lumina-monogram-blue.svg', placeholder: 'Ask anything about Lumina...'}}
         modalSettings={{isOpen: open, onOpenChange: setOpen, shortcutKey: null}}
       />
     </Suspense>}</BrowserOnly>}

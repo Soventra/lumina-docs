@@ -19,7 +19,7 @@ export default function ZerobusArchitecture() {
       <div
         className={styles.diagram}
         role="img"
-        aria-label="Application requests flow through LiteLLM Gateway to model providers such as OpenAI, Anthropic, and Google. The gateway sends request logs to Databricks Zerobus Ingest, which writes them to a Unity Catalog Delta table."
+        aria-label="Application requests flow through Lumina Gateway to model providers such as OpenAI, Anthropic, and Google. The gateway sends request logs to Databricks Zerobus Ingest, which writes them to a Unity Catalog Delta table."
       >
         <div className={`${styles.node} ${styles.application}`}>
           <svg className={styles.appIcon} viewBox="0 0 32 32" aria-hidden="true">
@@ -33,7 +33,7 @@ export default function ZerobusArchitecture() {
         <div className={`${styles.arrow} ${styles.applicationArrow}`} aria-hidden="true" />
 
         <div className={`${styles.node} ${styles.gateway}`}>
-          <span className={styles.label}>LiteLLM Gateway</span>
+          <span className={styles.label}>Lumina Gateway</span>
         </div>
 
         <div className={`${styles.arrow} ${styles.providerArrow}`} aria-hidden="true" />

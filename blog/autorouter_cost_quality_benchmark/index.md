@@ -6,12 +6,12 @@ authors:
   - tin
 description: "Two independent evaluations of a four-tier Auto Router config against an all-frontier baseline: 8,619 graded prompts, 14,000 simulated real conversations, and what the cost and quality numbers actually depend on."
 image: ./hero.png
-keywords: [llm router benchmark, auto router, complexity router, llm cost savings, model routing, claude cost optimization, routerarena, litellm auto routing, cheaper llm inference]
+keywords: [llm router benchmark, auto router, complexity router, llm cost savings, model routing, claude cost optimization, routerarena, lumina auto routing, cheaper llm inference]
 tags: [routing, complexity-router, cost, benchmarks, engineering]
 hide_table_of_contents: false
 ---
 
-![Introducing LiteLLM Autorouter: 75% cost savings with near frontier model quality](./hero.png)
+![Introducing Lumina Autorouter: 75% cost savings with near frontier model quality](./hero.png)
 
 Auto routing promises a smaller bill without a worse answer. We measured both halves against a baseline that sends every request to `claude-opus-5`: 8,619 graded prompts and cost simulations over 14,000 real conversations.
 
@@ -19,13 +19,13 @@ Auto routing promises a smaller bill without a worse answer. We measured both ha
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32172](https://github.com/BerriAI/litellm/discussions/32172).
+Already testing it? Share your results in [discussion #32172](https://github.com/Soventra/lumina/discussions/32172).
 
 :::
 
@@ -47,7 +47,7 @@ Already testing it? Share your results in [discussion #32172](https://github.com
 
 - **Router arm:** one model group, four tiers. SIMPLE to `claude-haiku-4-5`, MEDIUM to `claude-sonnet-5`, COMPLEX and REASONING both to `claude-opus-5`, since Opus 5 already thinks by default. Heuristic classifier, no keyword rules, no adaptive sampling
 - **Baseline arm:** the same prompts sent straight to `claude-opus-5`, which is what most teams do today when they point a workload at one frontier model
-- **Cost savings:** what the router spent against what the baseline spent. On the live proxy, LiteLLM reports the cost of every request back in a response header; on the other legs we price the tokens each request actually used
+- **Cost savings:** what the router spent against what the baseline spent. On the live proxy, Lumina reports the cost of every request back in a response header; on the other legs we price the tokens each request actually used
 - **Quality retained:** the router's pass rate against the baseline's, evaluating identical prompts with the same grader on both arms
 
 What counts as a pass:
@@ -98,7 +98,7 @@ No. Session affinity already lets you keep a conversation on the model its first
 
 :::info
 
-Try it yourself with the configuration below, and post any feedback, questions, or numbers from your own traffic on [discussion #32172](https://github.com/BerriAI/litellm/discussions/32172). If you want to work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner).
+Try it yourself with the configuration below, and post any feedback, questions, or numbers from your own traffic on [discussion #32172](https://github.com/Soventra/lumina/discussions/32172). If you want to work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner).
 
 :::
 
@@ -130,4 +130,4 @@ model_list:
       complexity_router_default_model: claude-sonnet-5
 ```
 
-Point a client at `smart-router` and every response carries `x-litellm-model-name` and `x-litellm-response-cost`, which is all the instrumentation this study needed. Full reference, including the classifier and tier-boundary knobs, on the [Auto Routing docs page](/docs/proxy/auto_routing).
+Point a client at `smart-router` and every response carries `x-lumina-model-name` and `x-lumina-response-cost`, which is all the instrumentation this study needed. Full reference, including the classifier and tier-boundary knobs, on the [Auto Routing docs page](/docs/proxy/auto_routing).

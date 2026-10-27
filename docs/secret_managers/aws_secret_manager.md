@@ -28,10 +28,10 @@ os.environ["AWS_REGION_NAME"] = "" # us-east-1, us-east-2, us-west-1, us-west-2
 
 ```yaml
 general_settings:
-  master_key: os.environ/litellm_master_key 
+  master_key: os.environ/lumina_master_key 
   key_management_system: "aws_secret_manager" # KEY CHANGE
   key_management_settings: 
-    hosted_keys: ["litellm_master_key"] # Specify which env keys you stored on AWS
+    hosted_keys: ["lumina_master_key"] # Specify which env keys you stored on AWS
 
 ```
 
@@ -46,9 +46,9 @@ general_settings:
   key_management_system: "aws_secret_manager" # KEY CHANGE
   key_management_settings: 
     store_virtual_keys: true # OPTIONAL. Defaults to False, when True will store virtual keys in secret manager
-    prefix_for_stored_virtual_keys: "litellm/" # OPTIONAL. If set, this prefix will be used for stored virtual keys in the secret manager
+    prefix_for_stored_virtual_keys: "lumina/" # OPTIONAL. If set, this prefix will be used for stored virtual keys in the secret manager
     access_mode: "write_only" # Literal["read_only", "write_only", "read_and_write"]
-    description: "litellm virtual key" # OPTIONAL, if set will set this as the description for all virtual keys
+    description: "lumina virtual key" # OPTIONAL, if set will set this as the description for all virtual keys
     tags: # OPTIONAL, if set will set this as the tags for all virtual keys
       Environment: "Prod"
       Owner: "AI Platform team"
@@ -59,13 +59,13 @@ general_settings:
 
 ```yaml
 general_settings:
-  master_key: os.environ/litellm_master_key 
+  master_key: os.environ/lumina_master_key 
   key_management_system: "aws_secret_manager" # KEY CHANGE
   key_management_settings: 
     store_virtual_keys: true # OPTIONAL. Defaults to False, when True will store virtual keys in secret manager
-    prefix_for_stored_virtual_keys: "litellm/" # OPTIONAL. If set, this prefix will be used for stored virtual keys in the secret manager
+    prefix_for_stored_virtual_keys: "lumina/" # OPTIONAL. If set, this prefix will be used for stored virtual keys in the secret manager
     access_mode: "read_and_write" # Literal["read_only", "write_only", "read_and_write"]
-    hosted_keys: ["litellm_master_key"] # OPTIONAL. Specify which env keys you stored on AWS
+    hosted_keys: ["lumina_master_key"] # OPTIONAL. Specify which env keys you stored on AWS
 ```
 
 </TabItem>
@@ -74,12 +74,12 @@ general_settings:
 3. Run proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ## Encrypt Virtual Keys with a Customer-Managed KMS Key
 
-By default, secrets LiteLLM creates in AWS Secrets Manager are encrypted with the AWS-managed `aws/secretsmanager` key. Set `kms_key_id` to a KMS key ID, alias or ARN to encrypt them with your own customer-managed key (CMK) instead. The value is sent as `KmsKeyId` on every `CreateSecret` call, so it only applies to secrets created after the setting is in place. Existing secrets keep their current key.
+By default, secrets Lumina creates in AWS Secrets Manager are encrypted with the AWS-managed `aws/secretsmanager` key. Set `kms_key_id` to a KMS key ID, alias or ARN to encrypt them with your own customer-managed key (CMK) instead. The value is sent as `KmsKeyId` on every `CreateSecret` call, so it only applies to secrets created after the setting is in place. Existing secrets keep their current key.
 
 ```yaml
 general_settings:
@@ -90,7 +90,7 @@ general_settings:
     kms_key_id: "arn:aws:kms:us-east-1:123456789012:key/11111111-2222-3333-4444-555555555555"
 ```
 
-The IAM identity the proxy uses needs `kms:GenerateDataKey` and `kms:Decrypt` on that key in addition to its Secrets Manager permissions. You can confirm the key took effect with `aws secretsmanager describe-secret --secret-id litellm/<key_alias>`; the response's `KmsKeyId` should match the configured key.
+The IAM identity the proxy uses needs `kms:GenerateDataKey` and `kms:Decrypt` on that key in addition to its Secrets Manager permissions. You can confirm the key took effect with `aws secretsmanager describe-secret --secret-id lumina/<key_alias>`; the response's `KmsKeyId` should match the configured key.
 
 ## Using K/V pairs in 1 AWS Secret
 
@@ -104,10 +104,10 @@ general_settings:
       "OPENAI_API_KEY_MODEL_1",
       "OPENAI_API_KEY_MODEL_2",
     ]
-    primary_secret_name: "litellm_secrets" # Read multiple keys from one JSON secret
+    primary_secret_name: "lumina_secrets" # Read multiple keys from one JSON secret
 ```
 
-The `primary_secret_name` allows you to read multiple keys from a single AWS Secret as a JSON object. For example, the "litellm_secrets" would contain:
+The `primary_secret_name` allows you to read multiple keys from a single AWS Secret as a JSON object. For example, the "lumina_secrets" would contain:
 
 ```json
 {
@@ -130,8 +130,8 @@ general_settings:
   key_management_settings:
     store_virtual_keys: true
     aws_region_name: "us-east-1"
-    aws_role_name: "arn:aws:iam::123456789012:role/LiteLLMSecretManagerRole"
-    aws_session_name: "litellm-session"
+    aws_role_name: "arn:aws:iam::123456789012:role/LuminaSecretManagerRole"
+    aws_session_name: "lumina-session"
 ```
 
 ### Cross-Account Access
@@ -154,7 +154,7 @@ general_settings:
   key_management_settings:
     store_virtual_keys: true
     aws_region_name: "us-east-1"
-    aws_role_name: "arn:aws:iam::123456789012:role/LiteLLMServiceAccountRole"
+    aws_role_name: "arn:aws:iam::123456789012:role/LuminaServiceAccountRole"
     aws_web_identity_token: "os.environ/AWS_WEB_IDENTITY_TOKEN_FILE"
 ```
 
@@ -169,7 +169,7 @@ general_settings:
 | `aws_profile_name` | AWS profile from `~/.aws/credentials` |
 | `aws_web_identity_token` | OIDC token path for IRSA |
 | `aws_sts_endpoint` | Custom STS endpoint for VPC |
-| `kms_key_id` | Customer-managed KMS key (ID, alias or ARN) used to encrypt secrets LiteLLM creates |
+| `kms_key_id` | Customer-managed KMS key (ID, alias or ARN) used to encrypt secrets Lumina creates |
 
 
 

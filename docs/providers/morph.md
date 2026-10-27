@@ -1,6 +1,6 @@
 # Morph
 
-LiteLLM supports all models on [Morph](https://morphllm.com)
+Lumina supports all models on [Morph](https://morphllm.com)
 
 ## Overview
 
@@ -15,7 +15,7 @@ os.environ["MORPH_API_KEY"] = "your-api-key"
 ## Sample Usage
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env variable 
 os.environ["MORPH_API_KEY"] = "your-api-key"
@@ -41,7 +41,7 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env variable
 os.environ["MORPH_API_KEY"] = "your-api-key"
@@ -68,9 +68,9 @@ for chunk in response:
 | morph-v3-fast            | `completion('morph/morph-v3-fast', messages)` | Fastest model, optimized for quick responses | 16k tokens |
 | morph-v3-large           | `completion('morph/morph-v3-large', messages)` | Most capable model for complex tasks | 16k tokens |
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
-Here's how to use Morph with the LiteLLM Proxy Server:
+Here's how to use Morph with the Lumina Proxy Server:
 
 1. Save API key in your environment
 ```bash
@@ -91,14 +91,14 @@ model_list:
 
 3. Start the proxy server
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ## Advanced Usage
 
 ### Setting API Base
 ```python
-import litellm 
+import lumina 
 
 # set custom api base
 response = completion(
@@ -111,7 +111,7 @@ print(response)
 
 ### Setting API Key
 ```python 
-import litellm 
+import lumina 
 
 # set api key via completion
 response = completion(

@@ -1,6 +1,6 @@
 # Benchmarks
 
-Performance test results for LiteLLM Gateway.
+Performance test results for Lumina Gateway.
 
 ## High-throughput performance test results {#high-throughput-profile-3000-rps-with-50k-to-100k-token-prompts}
 
@@ -76,7 +76,7 @@ Performance test results for LiteLLM Gateway.
 | Model and network | Mock OpenAI endpoint |
 | Configuration | PostgreSQL; Redis disabled |
 | Duration | Not recorded |
-| Measurement | Locust: request throughput and full request latency. Gateway overhead: `x-litellm-overhead-duration-ms` response header |
+| Measurement | Locust: request throughput and full request latency. Gateway overhead: `x-lumina-overhead-duration-ms` response header |
 
 ## Logging callback performance test results {#logging-callbacks}
 

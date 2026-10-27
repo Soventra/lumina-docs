@@ -1,6 +1,6 @@
 # Docs preview images
 
-`npm run build` generates a separate 1200 x 630 PNG for every docs page, release note, generated category page, and blog post without a custom preview image. Each card contains the LiteLLM logo, the page's sidebar section, and its title. Blog posts use the section label `Blog`
+`npm run build` generates a separate 1200 x 630 PNG for every docs page, release note, generated category page, and blog post without a custom preview image. Each card contains the Lumina logo, the page's sidebar section, and its title. Blog posts use the section label `Blog`
 
 The `social-cards` plugin reads Docusaurus's resolved titles and permalinks, including versioned and localized docs. Theme wrappers connect the generated images to each page's server-rendered `og:image` and `twitter:image` metadata. Existing `image` frontmatter and category images take precedence
 

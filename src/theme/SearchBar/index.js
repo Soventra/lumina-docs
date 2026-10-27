@@ -11,7 +11,7 @@ import {track} from '../../components/Conversion/shared';
 import {useAskAI} from '@site/src/components/AskAI/AskAIContext';
 
 // One owner renders the modal even when the navbar and docs sidebar both mount a trigger.
-const openEvent = 'litellm:open-docs-search';
+const openEvent = 'lumina:open-docs-search';
 let owner = null;
 function Highlighted({text, terms = []}) {
   const escaped = [...new Set(terms)].filter(term => term.length > 1).sort((a,b) => b.length-a.length)
@@ -50,14 +50,14 @@ export default function SearchBar() {
   const searchSession = useRef(null);
   const analytics = useRef(null);
   if (!analytics.current) analytics.current = new SearchAnalytics({capture: (event, props) => track(event, {
-    ...props, surface: 'dialog', environment: window.location.hostname === 'docs.litellm.ai' ? 'production'
+    ...props, surface: 'dialog', environment: window.location.hostname === 'docs.lumina.ai' ? 'production'
       : /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname) ? 'local' : 'preview',
   })});
   const identity = useRef({});
   const searchUrl = useBaseUrl('/api/docs/search');
   const avatar = {
-    light: useBaseUrl('/img/brand/litellm-monogram-blue.svg'),
-    dark: useBaseUrl('/img/brand/litellm-monogram-white.svg'),
+    light: useBaseUrl('/img/brand/lumina-monogram-blue.svg'),
+    dark: useBaseUrl('/img/brand/lumina-monogram-white.svg'),
   };
 
   useEffect(() => {
@@ -184,7 +184,7 @@ export default function SearchBar() {
       <Search size={18}/><span>Search for anything...</span><kbd>{shortcut}</kbd>
     </button>
     {open && createPortal(<div className={styles.backdrop} onClick={event => {if (event.target === event.currentTarget) close();}}>
-      <section ref={dialog} className={styles.dialog} role="dialog" aria-modal="true" aria-label="Search LiteLLM documentation" onKeyDown={onKeyDown}>
+      <section ref={dialog} className={styles.dialog} role="dialog" aria-modal="true" aria-label="Search Lumina documentation" onKeyDown={onKeyDown}>
         <header className={styles.header}>
           <Search className={styles.searchIcon} size={20}/>
           <input ref={input} value={query} onChange={event => changeQuery(event.target.value)}

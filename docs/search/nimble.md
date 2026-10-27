@@ -4,14 +4,14 @@
 
 :::info
 
-Supported from LiteLLM v1.98.0+
+Supported from Lumina v1.98.0+
 :::
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Nimble Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["NIMBLE_API_KEY"] = "..."
 
@@ -22,7 +22,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -43,7 +43,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -64,7 +64,7 @@ curl http://0.0.0.0:4000/v1/search/nimble-search \
 
 ```python showLineNumbers title="Nimble Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["NIMBLE_API_KEY"] = "..."
 

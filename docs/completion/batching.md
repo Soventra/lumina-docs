@@ -6,30 +6,30 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Batching Completion()
-LiteLLM allows you to:
+Lumina allows you to:
 * Send many completion calls to 1 model
 * Send 1 completion call to many models: Return Fastest Response
 * Send 1 completion call to many models: Return All Responses
 
 :::info
 
-Trying to do batch completion on LiteLLM Proxy ? Go here: https://docs.litellm.ai/docs/proxy/user_keys#beta-batch-completions---pass-model-as-list
+Trying to do batch completion on Lumina Proxy ? Go here: https://docs.lumina.ai/docs/proxy/user_keys#beta-batch-completions---pass-model-as-list
 
 :::
 
 ## Send multiple completion calls to 1 model
 
-In the batch_completion method, you provide a list of `messages` where each sub-list of messages is passed to `litellm.completion()`, allowing you to process multiple prompts efficiently in a single API call.
+In the batch_completion method, you provide a list of `messages` where each sub-list of messages is passed to `lumina.completion()`, allowing you to process multiple prompts efficiently in a single API call.
 
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/LiteLLM_batch_completion.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_batch_completion.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 ### Example Code
 ```python
-import litellm
+import lumina
 import os
-from litellm import batch_completion
+from lumina import batch_completion
 
 os.environ['ANTHROPIC_API_KEY'] = ""
 
@@ -63,9 +63,9 @@ Use this to reduce latency
 
 ### Example Code
 ```python
-import litellm
+import lumina
 import os
-from litellm import batch_completion_models
+from lumina import batch_completion_models
 
 os.environ['ANTHROPIC_API_KEY'] = ""
 os.environ['OPENAI_API_KEY'] = ""
@@ -120,7 +120,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_large}}, groq-llama", # Comma-separated models
     messages = [
@@ -155,7 +155,7 @@ model_list:
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -198,9 +198,9 @@ Use this to process requests concurrently and get responses from multiple models
 
 ### Example Code
 ```python
-import litellm
+import lumina
 import os
-from litellm import batch_completion_models_all_responses
+from lumina import batch_completion_models_all_responses
 
 os.environ['ANTHROPIC_API_KEY'] = ""
 os.environ['OPENAI_API_KEY'] = ""

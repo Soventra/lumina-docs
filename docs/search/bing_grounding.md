@@ -4,8 +4,8 @@
 
 There are two modes, chosen by whether you set a Grounding with Bing connection:
 
-- **Web search mode** (default): the model's built-in `web_search` tool. It needs no Bing resource and pays no per-search Bing fee, so LiteLLM tracks it at zero cost
-- **Connection mode**: the paid Grounding with Bing (G1) connection, selected with `BING_GROUNDING_CONNECTION_ID`. LiteLLM tracks it at the `bing_grounding/search` map price
+- **Web search mode** (default): the model's built-in `web_search` tool. It needs no Bing resource and pays no per-search Bing fee, so Lumina tracks it at zero cost
+- **Connection mode**: the paid Grounding with Bing (G1) connection, selected with `BING_GROUNDING_CONNECTION_ID`. Lumina tracks it at the `bing_grounding/search` map price
 
 Both modes call the same model deployment, whose token usage is billed by Azure on your Foundry account
 
@@ -21,11 +21,11 @@ Both modes call the same model deployment, whose token usage is billed by Azure 
 
 The project endpoint looks like `https://<account>.services.ai.azure.com/api/projects/<project>`
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Grounding with Bing Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["BING_GROUNDING_PROJECT_ENDPOINT"] = "https://<account>.services.ai.azure.com/api/projects/<project>"
 os.environ["BING_GROUNDING_MODEL"] = "{{openai_large}}"
@@ -58,7 +58,7 @@ Or omit `BING_GROUNDING_TOKEN` and `api_key` to mint an Entra token from the sta
 
 ### Connection mode (paid Grounding with Bing)
 
-Set `BING_GROUNDING_CONNECTION_ID` to the project connection for a Grounding with Bing (G1) resource. The model then searches through that paid connection instead of the built-in tool, and LiteLLM tracks the `bing_grounding/search` cost:
+Set `BING_GROUNDING_CONNECTION_ID` to the project connection for a Grounding with Bing (G1) resource. The model then searches through that paid connection instead of the built-in tool, and Lumina tracks the `bing_grounding/search` cost:
 
 ```python showLineNumbers title="Grounding with Bing Search in connection mode"
 os.environ["BING_GROUNDING_CONNECTION_ID"] = (
@@ -73,7 +73,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -89,7 +89,7 @@ Set `BING_GROUNDING_PROJECT_ENDPOINT`, `BING_GROUNDING_MODEL`, and one of the au
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -122,7 +122,7 @@ search_tools:
     lumina_params:
       search_provider: bing_grounding
 
-litellm_settings:
+lumina_settings:
   callbacks: ["websearch_interception"]
   websearch_interception_params:
     enabled_providers: ["openai"]
@@ -144,6 +144,6 @@ Web search mode is tracked at zero cost because the built-in `web_search` tool p
 
 The Entra token (`BING_GROUNDING_TOKEN` or one minted via azure-identity) is only sent to the endpoint configured in `BING_GROUNDING_PROJECT_ENDPOINT`, so a caller-supplied `api_base` cannot exfiltrate it. A caller-supplied `api_key` is treated as an Azure API key and sent in the `api-key` header instead
 
-LiteLLM posts to `<project-endpoint>/openai/v1/responses`, appending the path automatically if the endpoint does not already end in it
+Lumina posts to `<project-endpoint>/openai/v1/responses`, appending the path automatically if the endpoint does not already end in it
 
-If the grounded search comes back `failed` or `incomplete` with no results, LiteLLM raises an error rather than returning an empty success, so a failed search is not logged as a normal zero-result hit
+If the grounded search comes back `failed` or `incomplete` with no results, Lumina raises an error rather than returning an empty success, so a failed search is not logged as a normal zero-result hit

@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 Beta feature. Use for testing only. 
 
-[Help us improve this](https://github.com/BerriAI/litellm/issues)
+[Help us improve this](https://github.com/Soventra/lumina/issues)
 :::
 
 Prioritize LLM API requests in high-traffic.
@@ -31,7 +31,7 @@ Supported Router endpoints:
 ## Quick Start 
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -59,9 +59,9 @@ except Exception as e:
     print("didn't make request")
 ```
 
-## LiteLLM Proxy
+## Lumina Proxy
 
-To prioritize requests on LiteLLM Proxy add `priority` to the request.
+To prioritize requests on Lumina Proxy add `priority` to the request.
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -91,7 +91,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -113,11 +113,11 @@ print(response)
 
 ## Advanced - Redis Caching 
 
-Use redis caching to do request prioritization across multiple instances of LiteLLM. 
+Use redis caching to do request prioritization across multiple instances of Lumina. 
 
 ### SDK 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -156,7 +156,7 @@ model_list:
         mock_response: "hello world!" 
         api_key: my-good-key
 
-litellm_settings:
+lumina_settings:
     request_timeout: 600 # Will keep retrying until timeout occurs
 
 router_settings:
@@ -166,7 +166,7 @@ router_settings:
 ```
 
 ```bash
-$ litellm --config /path/to/config.yaml 
+$ lumina --config /path/to/config.yaml 
 
 # RUNNING on http://0.0.0.0:4000s
 ```

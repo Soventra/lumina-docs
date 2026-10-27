@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 # Custom API Server (Custom Format)
 
-Call your custom torch-serve / internal LLM APIs via LiteLLM
+Call your custom torch-serve / internal LLM APIs via Lumina
 
 :::info
 
@@ -13,24 +13,24 @@ Call your custom torch-serve / internal LLM APIs via LiteLLM
 :::
 
 Supported Routes:
-- `/v1/chat/completions` -> `litellm.acompletion`
-- `/v1/completions` -> `litellm.atext_completion`
-- `/v1/embeddings` -> `litellm.aembedding`
-- `/v1/images/generations` -> `litellm.aimage_generation`
-- `/v1/images/edits` -> `litellm.aimage_edit`
+- `/v1/chat/completions` -> `lumina.acompletion`
+- `/v1/completions` -> `lumina.atext_completion`
+- `/v1/embeddings` -> `lumina.aembedding`
+- `/v1/images/generations` -> `lumina.aimage_generation`
+- `/v1/images/edits` -> `lumina.aimage_edit`
 
-- `/v1/messages` -> `litellm.acompletion`
+- `/v1/messages` -> `lumina.acompletion`
 
 ## Quick Start 
 
 ```python showLineNumbers
-import litellm
-from litellm import CustomLLM, completion, get_llm_provider
+import lumina
+from lumina import CustomLLM, completion, get_llm_provider
 
 
 class MyCustomLLM(CustomLLM):
-    def completion(self, *args, **kwargs) -> litellm.ModelResponse:
-        return litellm.completion(
+    def completion(self, *args, **kwargs) -> lumina.ModelResponse:
+        return lumina.completion(
             model="{{openai_small}}",
             messages=[{"role": "user", "content": "Hello world"}],
             mock_response="Hi!",
@@ -38,7 +38,7 @@ class MyCustomLLM(CustomLLM):
 
 my_custom_llm = MyCustomLLM()
 
-litellm.custom_provider_map = [ # KEY STEP - REGISTER HANDLER
+lumina.custom_provider_map = [ # KEY STEP - REGISTER HANDLER
         {"provider": "my-custom-llm", "custom_handler": my_custom_llm}
     ]
 
@@ -55,20 +55,20 @@ assert resp.choices[0].message.content == "Hi!"
 1. Setup your `custom_handler.py` file 
 
 ```python
-import litellm
-from litellm import CustomLLM, completion, get_llm_provider
+import lumina
+from lumina import CustomLLM, completion, get_llm_provider
 
 
 class MyCustomLLM(CustomLLM):
-    def completion(self, *args, **kwargs) -> litellm.ModelResponse:
-        return litellm.completion(
+    def completion(self, *args, **kwargs) -> lumina.ModelResponse:
+        return lumina.completion(
             model="{{openai_small}}",
             messages=[{"role": "user", "content": "Hello world"}],
             mock_response="Hi!",
         )  # type: ignore
 
-    async def acompletion(self, *args, **kwargs) -> litellm.ModelResponse:
-        return litellm.completion(
+    async def acompletion(self, *args, **kwargs) -> lumina.ModelResponse:
+        return lumina.completion(
             model="{{openai_small}}",
             messages=[{"role": "user", "content": "Hello world"}],
             mock_response="Hi!",
@@ -96,13 +96,13 @@ model_list:
     lumina_params:
       model: "my-custom-llm/my-model"
 
-litellm_settings:
+lumina_settings:
   custom_provider_map:
   - {"provider": "my-custom-llm", "custom_handler": custom_handler.my_custom_llm}
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -155,8 +155,8 @@ s/o [@Eloy Lafuente](https://github.com/stronk7) for this code example.
 ```python
 import time
 from typing import Iterator, AsyncIterator
-from litellm.types.utils import GenericStreamingChunk, ModelResponse
-from litellm import CustomLLM, completion, acompletion
+from lumina.types.utils import GenericStreamingChunk, ModelResponse
+from lumina import CustomLLM, completion, acompletion
 
 class UnixTimeLLM(CustomLLM):
     def completion(self, *args, **kwargs) -> ModelResponse:
@@ -200,9 +200,9 @@ unixtime = UnixTimeLLM()
 
 1. Setup your `custom_handler.py` file 
 ```python
-import litellm
-from litellm import CustomLLM
-from litellm.types.utils import ImageResponse, ImageObject
+import lumina
+from lumina import CustomLLM
+from lumina.types.utils import ImageResponse, ImageObject
 
 
 class MyCustomLLM(CustomLLM):
@@ -234,13 +234,13 @@ model_list:
     lumina_params:
       model: "my-custom-llm/my-model"
 
-litellm_settings:
+lumina_settings:
   custom_provider_map:
   - {"provider": "my-custom-llm", "custom_handler": custom_handler.my_custom_llm}
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -268,9 +268,9 @@ Expected Response
 
 1. Setup your `custom_handler.py` file
 ```python
-import litellm
-from litellm import CustomLLM
-from litellm.types.utils import ImageResponse, ImageObject
+import lumina
+from lumina import CustomLLM
+from lumina.types.utils import ImageResponse, ImageObject
 import time
 
 class MyCustomLLM(CustomLLM):
@@ -313,13 +313,13 @@ model_list:
     lumina_params:
       model: "my-custom-llm/my-model"
 
-litellm_settings:
+lumina_settings:
   custom_provider_map:
   - {"provider": "my-custom-llm", "custom_handler": custom_handler.my_custom_llm}
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -344,18 +344,18 @@ Expected Response
 ## Anthropic `/v1/messages`
 
 - Write the integration for .acompletion
-- litellm will transform it to /v1/messages
+- lumina will transform it to /v1/messages
 
 1. Setup your `custom_handler.py` file 
 
 ```python
-import litellm
-from litellm import CustomLLM, completion, get_llm_provider
+import lumina
+from lumina import CustomLLM, completion, get_llm_provider
 
 
 class MyCustomLLM(CustomLLM):
-    async def acompletion(self, *args, **kwargs) -> litellm.ModelResponse:
-        return litellm.completion(
+    async def acompletion(self, *args, **kwargs) -> lumina.ModelResponse:
+        return lumina.completion(
             model="{{openai_small}}",
             messages=[{"role": "user", "content": "Hello world"}],
             mock_response="Hi!",
@@ -383,13 +383,13 @@ model_list:
     lumina_params:
       model: "my-custom-llm/my-model"
 
-litellm_settings:
+lumina_settings:
   custom_provider_map:
   - {"provider": "my-custom-llm", "custom_handler": custom_handler.my_custom_llm}
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -447,14 +447,14 @@ Here's how to set this:
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-from litellm import CustomLLM, completion, get_llm_provider
+import lumina
+from lumina import CustomLLM, completion, get_llm_provider
 
 
 class MyCustomLLM(CustomLLM):
-    def completion(self, *args, **kwargs) -> litellm.ModelResponse:
+    def completion(self, *args, **kwargs) -> lumina.ModelResponse:
         assert kwargs["optional_params"] == {"my_custom_param": "my-custom-param"} # CHECK HERE
-        return litellm.completion(
+        return lumina.completion(
             model="{{openai_small}}",
             messages=[{"role": "user", "content": "Hello world"}],
             mock_response="Hi!",
@@ -462,7 +462,7 @@ class MyCustomLLM(CustomLLM):
 
 my_custom_llm = MyCustomLLM()
 
-litellm.custom_provider_map = [ # KEY STEP - REGISTER HANDLER
+lumina.custom_provider_map = [ # KEY STEP - REGISTER HANDLER
         {"provider": "my-custom-llm", "custom_handler": my_custom_llm}
     ]
 
@@ -475,9 +475,9 @@ resp = completion(model="my-custom-llm/my-model", my_custom_param="my-custom-par
 
 1. Setup your `custom_handler.py` file 
 ```python
-import litellm
-from litellm import CustomLLM
-from litellm.types.utils import ImageResponse, ImageObject
+import lumina
+from lumina import CustomLLM
+from lumina.types.utils import ImageResponse, ImageObject
 
 
 class MyCustomLLM(CustomLLM):
@@ -511,13 +511,13 @@ model_list:
       model: "my-custom-llm/my-model"
       my_custom_param: "my-custom-param" # CUSTOM PARAM
 
-litellm_settings:
+lumina_settings:
   custom_provider_map:
   - {"provider": "my-custom-llm", "custom_handler": custom_handler.my_custom_llm}
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -540,9 +540,9 @@ curl -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 ## Custom Handler Spec
 
 ```python
-from litellm.types.utils import GenericStreamingChunk, ModelResponse, ImageResponse
+from lumina.types.utils import GenericStreamingChunk, ModelResponse, ImageResponse
 from typing import Iterator, AsyncIterator, Any, Optional, Union
-from litellm.llms.base import BaseLLM
+from lumina.llms.base import BaseLLM
 
 class CustomLLMError(Exception):  # use this for all your exceptions
     def __init__(

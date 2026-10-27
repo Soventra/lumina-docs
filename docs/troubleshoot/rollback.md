@@ -1,8 +1,8 @@
 # Safe Rollback Guide
 
-This guide outlines the process for safely rolling back a LiteLLM Proxy deployment to a previous version.
+This guide outlines the process for safely rolling back a Lumina Proxy deployment to a previous version.
 
-We recommend rolling back to the previous [stable release](https://github.com/BerriAI/litellm/releases). Stable releases come out every week and follow the `vX.Y.Z` tag convention (e.g., `v1.89.4`).
+We recommend rolling back to the previous [stable release](https://github.com/Soventra/lumina/releases). Stable releases come out every week and follow the `vX.Y.Z` tag convention (e.g., `v1.89.4`).
 
 ## 1. Determine Rollback Scope
 
@@ -17,7 +17,7 @@ Before proceeding, identify why you are rolling back:
 
 ```bash
 # PostgreSQL example
-pg_dump -h <host> -U <user> -d <database> -F c -f litellm_backup_$(date +%Y%m%d_%H%M%S).dump
+pg_dump -h <host> -U <user> -d <database> -F c -f lumina_backup_$(date +%Y%m%d_%H%M%S).dump
 ```
 
 If you are on a managed database (e.g., AWS RDS, GCP Cloud SQL), create a snapshot through your cloud console instead.
@@ -38,7 +38,7 @@ Revert your deployment to the previous stable Docker image or Helm chart version
 Update your deployment manifest (e.g., K8s Deployment, Docker Compose) to use the previous version:
 ```yaml
 # Example: Reverting to the previous stable release
-image: docker.litellm.ai/berriai/litellm:v<VERSION>
+image: docker.lumina.ai/soventra/lumina:v<VERSION>
 ```
 
 See [all available images](https://github.com/orgs/BerriAI/packages).
@@ -53,11 +53,11 @@ helm rollback <release-name> [revision-number]
 
 If you are rolling back to a version that did not have a specific migration, you may need to resolve the migration state in the database.
 
-> LiteLLM uses `prisma migrate deploy` for production by default. If a migration partially failed or you are reverting code that expects an older schema, you need to clean up the migration history in the `_prisma_migrations` table. See [Best Practices for Production](../proxy/prod#use-prisma-migrate-deploy).
+> Lumina uses `prisma migrate deploy` for production by default. If a migration partially failed or you are reverting code that expects an older schema, you need to clean up the migration history in the `_prisma_migrations` table. See [Best Practices for Production](../proxy/prod#use-prisma-migrate-deploy).
 
 ### Option A: Delete stale migration entries (recommended)
 
-Connect to your PostgreSQL database and remove migration entries that belong to the version you are rolling back from. This lets LiteLLM re-apply them cleanly if you upgrade again later.
+Connect to your PostgreSQL database and remove migration entries that belong to the version you are rolling back from. This lets Lumina re-apply them cleanly if you upgrade again later.
 
 ```sql
 -- View recent migrations
@@ -71,13 +71,13 @@ DELETE FROM "_prisma_migrations"
 WHERE migration_name = '<migration_name_from_newer_version>';
 ```
 
-After deleting the entries, restart LiteLLM and it will re-apply the correct migrations for its version on startup.
+After deleting the entries, restart Lumina and it will re-apply the correct migrations for its version on startup.
 
 > **Note:** If you have `DISABLE_SCHEMA_UPDATE=true` set on your pods, migrations will not auto-run. You need to either temporarily set it to `false`, or re-run the Helm PreSync migration job targeting the older version.
 
 ### Option B: Use `prisma migrate resolve` (if you have CLI access)
 
-If you have access to the Prisma CLI (e.g., in a local development environment or a debug container with the `litellm-proxy-extras` package installed):
+If you have access to the Prisma CLI (e.g., in a local development environment or a debug container with the `lumina-proxy-extras` package installed):
 
 ```bash
 DATABASE_URL="<your_database_url>" prisma migrate resolve --rolled-back "<migration_name>"
@@ -86,7 +86,7 @@ DATABASE_URL="<your_database_url>" prisma migrate resolve --rolled-back "<migrat
 > **Note:** This requires the Prisma CLI to be available in your environment (installed via `prisma-client-py`). If you don't have CLI access (e.g., no shell into the running container), use **Option A** (direct SQL) instead.
 
 ### Auto-Recovery Logic
-LiteLLM's internal `ProxyExtrasDBManager` automatically attempts to handle idempotent migrations. In many cases, simply rolling back the version and restarting the proxy will be enough if the database changes are additive (e.g., new columns or tables).
+Lumina's internal `ProxyExtrasDBManager` automatically attempts to handle idempotent migrations. In many cases, simply rolling back the version and restarting the proxy will be enough if the database changes are additive (e.g., new columns or tables).
 
 ## 6. Verification Checklist
 
@@ -94,7 +94,7 @@ After rolling back, verify the health of the system:
 
 - [ ] **Health Endpoint**: Confirm the `/health` endpoint returns `200 OK`.
 - [ ] **Check Logs**: Confirm no Prisma errors appear. Look for `relation "..." does not exist`, `column "..." does not exist`, or `prisma migrate` failures in the logs.
-- [ ] **Spend Tracking**: Run a test completion and confirm the spend is recorded in the `LiteLLM_SpendLogs` table.
+- [ ] **Spend Tracking**: Run a test completion and confirm the spend is recorded in the `Lumina_SpendLogs` table.
 - [ ] **Billing (Lago)**: If using Lago for billing (e.g., Lago → Stripe), check proxy logs for `Logged Lago Object` to confirm usage events are being sent.
 - [ ] **State Consistency**: If using Redis for caching or rate limiting, consider clearing the cache if the newer version changed the cache key structure.
 - [ ] **Admin UI**: Verify the Admin UI loads and shows correct data for keys and teams.
@@ -110,6 +110,6 @@ If you see this error after a rollback, it means the database has a migration in
 ### "relation X does not exist"
 This typically means a migration entry exists in `_prisma_migrations` but the actual table/column was never created or was dropped.
 1. Delete the stale migration entry.
-2. Restart LiteLLM so it re-runs the migration.
+2. Restart Lumina so it re-runs the migration.
 
 For more details on Prisma errors, see [Prisma Migrations Troubleshoot](prisma_migrations).

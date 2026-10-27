@@ -4,13 +4,13 @@ import Image from '@theme/IdealImage';
 
 # MCP Overview
 
-LiteLLM Proxy provides an MCP Gateway that allows you to use a fixed endpoint for all MCP tools and control MCP access by Key, Team. 
+Lumina Proxy provides an MCP Gateway that allows you to use a fixed endpoint for all MCP tools and control MCP access by Key, Team. 
 
 <Image 
   img={require('../img/mcp_2.png')}
   style={{width: '100%', display: 'block', margin: '2rem auto'}}
 />
-<p style={{textAlign: 'left', color: '#666'}}>LiteLLM MCP Architecture: Use MCP tools with all LiteLLM supported models</p>
+<p style={{textAlign: 'left', color: '#666'}}>Lumina MCP Architecture: Use MCP tools with all Lumina supported models</p>
 
 ## Overview
 | Feature | Description |
@@ -18,11 +18,11 @@ LiteLLM Proxy provides an MCP Gateway that allows you to use a fixed endpoint fo
 | MCP Operations | • List Tools<br/>• Call Tools <br/>• Prompts <br/>• Resources |
 | Direct REST API | [`/mcp-rest/tools/list` and `/mcp-rest/tools/call`](./mcp_rest_api.md) — call tools with curl without an LLM |
 | Supported MCP Transports | • Streamable HTTP<br/>• SSE<br/>• Standard Input/Output (stdio) |
-| LiteLLM Permission Management | • By Key<br/>• By Team<br/>• By Organization |
+| Lumina Permission Management | • By Key<br/>• By Team<br/>• By Organization |
 
 :::warning[MCP protocol update]
 The gateway negotiates the protocol version during `initialize`. See [tested versions and capability limits](./mcp_config_reference#protocol-version).<br/>
-LiteLLM namespaces multiple MCP servers by prefixing each tool name with its MCP server name, so newly created servers now must use names that comply with SEP-986; noncompliant names cannot be added anymore. Existing servers that still violate SEP-986 only emit warnings today, but future MCP-side rollouts may block those names entirely, so we recommend updating any legacy server names proactively before MCP enforcement makes them unusable.
+Lumina namespaces multiple MCP servers by prefixing each tool name with its MCP server name, so newly created servers now must use names that comply with SEP-986; noncompliant names cannot be added anymore. Existing servers that still violate SEP-986 only emit warnings today, but future MCP-side rollouts may block those names entirely, so we recommend updating any legacy server names proactively before MCP enforcement makes them unusable.
 :::
 
 For a single decision reference covering which endpoint, transport, and auth pattern to use, see the [MCP Configuration Reference](./mcp_config_reference)
@@ -69,13 +69,13 @@ If `supported_db_objects` is not set, all object types are loaded from the datab
 For diagnosing connectivity problems after setup, start with the [five-minute triage](./mcp_troubleshoot.md#locate-the-error-source) and the [symptom matrix](./mcp_troubleshoot.md#symptom-matrix) in the MCP Troubleshooting Guide.
 
 <Tabs>
-<TabItem value="ui" label="LiteLLM UI">
+<TabItem value="ui" label="Lumina UI">
 
-On the LiteLLM UI, Navigate to "MCP Servers" and click "Add New MCP Server".
+On the Lumina UI, Navigate to "MCP Servers" and click "Add New MCP Server".
 
 On this form, you should enter your MCP Server URL and the transport you want to use.
 
-LiteLLM supports the following MCP transports:
+Lumina supports the following MCP transports:
 - Streamable HTTP
 - SSE (Server-Sent Events)
 - Standard Input/Output (stdio)
@@ -92,7 +92,7 @@ LiteLLM supports the following MCP transports:
 
 ### Add HTTP MCP Server
 
-This video walks through adding and using an HTTP MCP server on LiteLLM UI and using it in Cursor IDE.
+This video walks through adding and using an HTTP MCP server on Lumina UI and using it in Cursor IDE.
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/e2aebce78e8d46beafeb4bacdde31f14" frameBorder="0" allowFullScreen></iframe>
 
@@ -101,7 +101,7 @@ This video walks through adding and using an HTTP MCP server on LiteLLM UI and u
 
 ### Add SSE MCP Server
 
-This video walks through adding and using an SSE MCP server on LiteLLM UI and using it in Cursor IDE.
+This video walks through adding and using an SSE MCP server on Lumina UI and using it in Cursor IDE.
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/07e04e27f5e74475b9cf8ef8247d2c3e" frameBorder="0" allowFullScreen></iframe>
 
@@ -134,7 +134,7 @@ For stdio MCP servers, select "Standard Input/Output (stdio)" as the transport t
 
 ### OAuth Configuration & Overrides
 
-LiteLLM attempts [OAuth 2.0 Authorization Server Discovery](https://datatracker.ietf.org/doc/html/rfc8414) by default. When you create an MCP server in the UI and set `Authentication: OAuth`, LiteLLM will locate the provider metadata, dynamically register a client, and perform PKCE-based authorization without you providing any additional details.
+Lumina attempts [OAuth 2.0 Authorization Server Discovery](https://datatracker.ietf.org/doc/html/rfc8414) by default. When you create an MCP server in the UI and set `Authentication: OAuth`, Lumina will locate the provider metadata, dynamically register a client, and perform PKCE-based authorization without you providing any additional details.
 
 **Customize the OAuth flow when needed:**
 
@@ -146,13 +146,13 @@ LiteLLM attempts [OAuth 2.0 Authorization Server Discovery](https://datatracker.
 />
 
 - **Provide explicit client credentials** – If the MCP provider does not offer dynamic client registration or you prefer to manage the client yourself, fill in `client_id`, `client_secret`, and the desired `scopes`.
-- **Override discovery URLs** – In some environments, LiteLLM might not be able to reach the provider's metadata endpoints. Use the optional `authorization_url`, `token_url`, and `registration_url` fields to point LiteLLM directly to the correct endpoints.
+- **Override discovery URLs** – In some environments, Lumina might not be able to reach the provider's metadata endpoints. Use the optional `authorization_url`, `token_url`, and `registration_url` fields to point Lumina directly to the correct endpoints.
 
 <br/>
 
 ### AWS SigV4 Authentication
 
-For MCP servers hosted on [AWS Bedrock AgentCore](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html), select **AWS SigV4** as the authentication type. LiteLLM will sign every outgoing MCP request with your AWS credentials using [Signature Version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
+For MCP servers hosted on [AWS Bedrock AgentCore](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html), select **AWS SigV4** as the authentication type. Lumina will sign every outgoing MCP request with your AWS credentials using [Signature Version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html).
 
 <Image
   img={require('../img/mcp_aws_sigv4_ui.png')}
@@ -161,7 +161,7 @@ For MCP servers hosted on [AWS Bedrock AgentCore](https://docs.aws.amazon.com/be
   style={{width: '80%', display: 'block', margin: '0'}}
 />
 
-Fill in your AWS region, service name (defaults to `bedrock-agentcore`), and optionally your AWS access key and secret. If credentials are omitted, LiteLLM falls back to the boto3 credential chain (IAM roles, environment variables, etc.).
+Fill in your AWS region, service name (defaults to `bedrock-agentcore`), and optionally your AWS access key and secret. If credentials are omitted, Lumina falls back to the boto3 credential chain (IAM roles, environment variables, etc.).
 
 [**See full SigV4 setup guide**](./mcp_aws_sigv4.md)
 
@@ -209,7 +209,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: sk-xxxxxxx
 
-litellm_settings:
+lumina_settings:
   # MCP Aliases - Map aliases to server names for easier tool access
   mcp_aliases:
     "github": "github_mcp_server"
@@ -253,7 +253,7 @@ mcp_servers:
   - `http` - Streamable HTTP transport
   - `stdio` - Standard Input/Output transport
 - **Command**: The command to execute for stdio transport (required for stdio)
-- **allow_all_keys**: Set to `true` to make the server available to every LiteLLM API key, even if the key/team doesn't list the server in its MCP permissions.
+- **allow_all_keys**: Set to `true` to make the server available to every Lumina API key, even if the key/team doesn't list the server in its MCP permissions.
 - **Args**: Array of arguments to pass to the command (optional for stdio)
 - **Env**: Environment variables to set for the stdio process (optional for stdio)
 - **Description**: Optional description for the server
@@ -273,7 +273,7 @@ mcp_servers:
   | `oauth2_token_exchange` | `Authorization: Bearer <exchanged_token>` — RFC 8693 On-Behalf-Of. See [MCP OBO Auth](./mcp_obo_auth.md) |
   | `oauth2_id_jag` | `Authorization: Bearer <access_token>` — Identity Assertion Authorization Grant (two legs). See [MCP ID-JAG Auth](./mcp_id_jag.md) |
   | `true_passthrough` | The client's upstream `Authorization`, forwarded verbatim. See [MCP OAuth Passthrough](./mcp_oauth_passthrough.md) |
-  | `oauth_delegate` | A distinct client-supplied upstream bearer, after LiteLLM admission. See [MCP OAuth Passthrough](./mcp_oauth_passthrough.md) |
+  | `oauth_delegate` | A distinct client-supplied upstream bearer, after Lumina admission. See [MCP OAuth Passthrough](./mcp_oauth_passthrough.md) |
   | `aws_sigv4` | Per-request AWS SigV4 signature. See [MCP AWS SigV4](./mcp_aws_sigv4.md) |
 
   The header shown above is the default. Set `upstream_token_header` on the server to send the resolved token somewhere other than `Authorization`, which is what an MCP server behind an API gateway usually needs. See [MCP OAuth](./mcp_oauth.md#sending-the-token-on-a-different-header)
@@ -348,7 +348,7 @@ mcp_servers:
 
 ### Pinning `server_id`
 
-LiteLLM derives a config server's id from its name and connection settings. If you change those settings, the id changes and existing key or team permissions stop matching.
+Lumina derives a config server's id from its name and connection settings. If you change those settings, the id changes and existing key or team permissions stop matching.
 
 Set `server_id` to keep the same id when the server changes:
 
@@ -408,7 +408,7 @@ mcp_servers:
 
 ### MCP Aliases
 
-You can define aliases for your MCP servers in the `litellm_settings` section. This allows you to:
+You can define aliases for your MCP servers in the `lumina_settings` section. This allows you to:
 
 1. **Map friendly names to server names**: Use shorter, more memorable aliases
 2. **Override server aliases**: If a server doesn't have an alias defined, the system will use the first matching alias from `mcp_aliases`
@@ -416,7 +416,7 @@ You can define aliases for your MCP servers in the `litellm_settings` section. T
 
 **Example:**
 ```yaml
-litellm_settings:
+lumina_settings:
   mcp_aliases:
     "github": "github_mcp_server"      # Maps "github" alias to "github_mcp_server"
     "zapier": "zapier_mcp_server"      # Maps "zapier" alias to "zapier_mcp_server"
@@ -435,22 +435,22 @@ litellm_settings:
 
 ## Converting OpenAPI Specs to MCP Servers
 
-LiteLLM can convert OpenAPI specifications into MCP servers, exposing any REST API as MCP tools without writing custom server code.
+Lumina can convert OpenAPI specifications into MCP servers, exposing any REST API as MCP tools without writing custom server code.
 
 See the **[MCP from OpenAPI Specs guide](./mcp_openapi.md)** for full setup, usage examples, and how to override tool names and descriptions.
 
 ## MCP OAuth
 
-LiteLLM supports OAuth 2.0 for MCP servers -- both interactive (PKCE) flows for user-facing clients and machine-to-machine (M2M) `client_credentials` for backend services.
+Lumina supports OAuth 2.0 for MCP servers -- both interactive (PKCE) flows for user-facing clients and machine-to-machine (M2M) `client_credentials` for backend services.
 
 See the **[MCP OAuth guide](./mcp_oauth.md)** for setup instructions, sequence diagrams, and a test server.
 
 <details>
 <summary>Detailed OAuth reference (click to expand)</summary>
 
-LiteLLM v 1.77.6 added support for OAuth 2.0 Client Credentials for MCP servers.
+Lumina v 1.77.6 added support for OAuth 2.0 Client Credentials for MCP servers.
 
-You can configure this either in `config.yaml` or directly from the LiteLLM UI (MCP Servers → Authentication → OAuth). Every `auth_type: oauth2` server must declare its flow via `oauth2_flow`: `authorization_code` for interactive browser sign-in (shown below) or `client_credentials` for machine-to-machine tokens.
+You can configure this either in `config.yaml` or directly from the Lumina UI (MCP Servers → Authentication → OAuth). Every `auth_type: oauth2` server must declare its flow via `oauth2_flow`: `authorization_code` for interactive browser sign-in (shown below) or `client_credentials` for machine-to-machine tokens.
 
 ```yaml
 mcp_servers:
@@ -470,62 +470,62 @@ mcp_servers:
 sequenceDiagram
     participant Browser as User-Agent (Browser)
     participant Client as Client
-    participant LiteLLM as LiteLLM Proxy
+    participant Lumina as Lumina Proxy
     participant MCP as MCP Server (Resource Server)
     participant Auth as Authorization Server
 
-    Note over Client,LiteLLM: Step 1 – Resource discovery
-    Client->>LiteLLM: GET /.well-known/oauth-protected-resource/{mcp_server_name}/mcp
-    LiteLLM->>Client: Return resource metadata
+    Note over Client,Lumina: Step 1 – Resource discovery
+    Client->>Lumina: GET /.well-known/oauth-protected-resource/{mcp_server_name}/mcp
+    Lumina->>Client: Return resource metadata
 
-    Note over Client,LiteLLM: Step 2 – Authorization server discovery
-    Client->>LiteLLM: GET /.well-known/oauth-authorization-server/{mcp_server_name}
-    LiteLLM->>Client: Return authorization server metadata
+    Note over Client,Lumina: Step 2 – Authorization server discovery
+    Client->>Lumina: GET /.well-known/oauth-authorization-server/{mcp_server_name}
+    Lumina->>Client: Return authorization server metadata
 
     Note over Client,Auth: Step 3 – Dynamic client registration
-    Client->>LiteLLM: POST /{mcp_server_name}/register
-    LiteLLM->>Auth: Forward registration request
-    Auth->>LiteLLM: Issue client credentials
-    LiteLLM->>Client: Return client credentials
+    Client->>Lumina: POST /{mcp_server_name}/register
+    Lumina->>Auth: Forward registration request
+    Auth->>Lumina: Issue client credentials
+    Lumina->>Client: Return client credentials
 
     Note over Client,Browser: Step 4 – User authorization (PKCE)
     Client->>Browser: Open authorization URL + code_challenge + resource
     Browser->>Auth: Authorization request
     Note over Auth: User authorizes
     Auth->>Browser: Redirect with authorization code
-    Browser->>LiteLLM: Callback to LiteLLM with code
-    LiteLLM->>Browser: Redirect back with authorization code
+    Browser->>Lumina: Callback to Lumina with code
+    Lumina->>Browser: Redirect back with authorization code
     Browser->>Client: Callback with authorization code
 
     Note over Client,Auth: Step 5 – Token exchange
-    Client->>LiteLLM: Token request + code_verifier + resource
-    LiteLLM->>Auth: Forward token request
-    Auth->>LiteLLM: Access (and refresh) token
-    LiteLLM->>Client: Return tokens
+    Client->>Lumina: Token request + code_verifier + resource
+    Lumina->>Auth: Forward token request
+    Auth->>Lumina: Access (and refresh) token
+    Lumina->>Client: Return tokens
 
     Note over Client,MCP: Step 6 – Authenticated MCP call
-    Client->>LiteLLM: MCP request with access token + LiteLLM API key
-    LiteLLM->>MCP: MCP request with Bearer token
-    MCP-->>LiteLLM: MCP response
-    LiteLLM-->>Client: Return MCP response
+    Client->>Lumina: MCP request with access token + Lumina API key
+    Lumina->>MCP: MCP request with Bearer token
+    MCP-->>Lumina: MCP response
+    Lumina-->>Client: Return MCP response
 ```
 
 **Participants**
 
 - **Client** – The MCP-capable AI agent (e.g., Claude Code, Cursor, or another IDE/agent) that initiates OAuth discovery, authorization, and tool invocations on behalf of the user.
-- **LiteLLM Proxy** – Mediates all OAuth discovery, registration, token exchange, and MCP traffic while protecting stored credentials.
+- **Lumina Proxy** – Mediates all OAuth discovery, registration, token exchange, and MCP traffic while protecting stored credentials.
 - **Authorization Server** – Issues OAuth 2.0 tokens via dynamic client registration, PKCE authorization, and token endpoints.
-- **MCP Server (Resource Server)** – The protected MCP endpoint that receives LiteLLM’s authenticated JSON-RPC requests.
+- **MCP Server (Resource Server)** – The protected MCP endpoint that receives Lumina’s authenticated JSON-RPC requests.
 - **User-Agent (Browser)** – Temporarily involved so the end user can grant consent during the authorization step.
 
 **Flow Steps**
 
-1. **Resource Discovery**: The client fetches MCP resource metadata from LiteLLM’s `.well-known/oauth-protected-resource` endpoint to understand scopes and capabilities.
-2. **Authorization Server Discovery**: The client retrieves the OAuth server metadata (token endpoint, authorization endpoint, supported PKCE methods) through LiteLLM’s `.well-known/oauth-authorization-server` endpoint.
-3. **Dynamic Client Registration**: The client registers through LiteLLM, which forwards the request to the authorization server (RFC 7591). If the provider doesn’t support dynamic registration, you can pre-store `client_id`/`client_secret` in LiteLLM (e.g., GitHub MCP) and the flow proceeds the same way.
-4. **User Authorization**: The client launches a browser session (with code challenge and resource hints). The user approves access, the authorization server sends the code through LiteLLM back to the client.
-5. **Token Exchange**: The client calls LiteLLM with the authorization code, code verifier, and resource. LiteLLM exchanges them with the authorization server and returns the issued access/refresh tokens.
-6. **MCP Invocation**: With a valid token, the client sends the MCP JSON-RPC request (plus LiteLLM API key) to LiteLLM, which forwards it to the MCP server and relays the tool response.
+1. **Resource Discovery**: The client fetches MCP resource metadata from Lumina’s `.well-known/oauth-protected-resource` endpoint to understand scopes and capabilities.
+2. **Authorization Server Discovery**: The client retrieves the OAuth server metadata (token endpoint, authorization endpoint, supported PKCE methods) through Lumina’s `.well-known/oauth-authorization-server` endpoint.
+3. **Dynamic Client Registration**: The client registers through Lumina, which forwards the request to the authorization server (RFC 7591). If the provider doesn’t support dynamic registration, you can pre-store `client_id`/`client_secret` in Lumina (e.g., GitHub MCP) and the flow proceeds the same way.
+4. **User Authorization**: The client launches a browser session (with code challenge and resource hints). The user approves access, the authorization server sends the code through Lumina back to the client.
+5. **Token Exchange**: The client calls Lumina with the authorization code, code verifier, and resource. Lumina exchanges them with the authorization server and returns the issued access/refresh tokens.
+6. **MCP Invocation**: With a valid token, the client sends the MCP JSON-RPC request (plus Lumina API key) to Lumina, which forwards it to the MCP server and relays the tool response.
 
 See the official [MCP Authorization Flow](https://modelcontextprotocol.io/specification/2025-06-18/basic/authorization#authorization-flow-steps) for additional reference.
 
@@ -534,7 +534,7 @@ See the official [MCP Authorization Flow](https://modelcontextprotocol.io/specif
 
 ## Forwarding Custom Headers to MCP Servers
 
-LiteLLM supports forwarding additional custom headers from MCP clients to backend MCP servers using the `extra_headers` configuration parameter. This allows you to pass custom authentication tokens, API keys, or other headers that your MCP server requires.
+Lumina supports forwarding additional custom headers from MCP clients to backend MCP servers using the `extra_headers` configuration parameter. This allows you to pass custom authentication tokens, API keys, or other headers that your MCP server requires.
 
 **Configuration**
 
@@ -567,7 +567,7 @@ This allows you to use different authentication for different MCP servers.
 - `x-mcp-zapier-x-api-key: sk-xxxxxxxxx` - Zapier MCP server with API key
 - `x-mcp-deepwiki-authorization: Basic base64_encoded_creds` - DeepWiki MCP server with Basic auth
 
-If every server in an access group takes the same credential, send it once as `x-mcp-{access_group}-{header_name}` and LiteLLM forwards it to each server whose `access_groups` contains that group. A server-specific `x-mcp-{server_alias}-{header_name}` header still wins for that server, and servers outside the group never receive the group credential. When a server belongs to several groups and those groups carry different credentials, LiteLLM forwards none of them.
+If every server in an access group takes the same credential, send it once as `x-mcp-{access_group}-{header_name}` and Lumina forwards it to each server whose `access_groups` contains that group. A server-specific `x-mcp-{server_alias}-{header_name}` header still wins for that server, and servers outside the group never receive the group credential. When a server belongs to several groups and those groups carry different credentials, Lumina forwards none of them.
 
 ```python title="Python Client with Server-Specific Auth" showLineNumbers
 from fastmcp import Client
@@ -580,7 +580,7 @@ config = {
             "url": "http://localhost:4000/mcp/",
             "headers": {
                 "x-mcp-servers": "dev_group", # assume this gives access to github, zapier and deepwiki
-                "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+                "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
                 "x-mcp-github-authorization": "Bearer gho_token", 
                 "x-mcp-zapier-x-api-key": "sk-xxxxxxxxx",
                 "x-mcp-deepwiki-authorization": "Basic base64_encoded_creds",
@@ -641,7 +641,7 @@ config = {
         "github": {
             "url": "http://localhost:4000/github_mcp/mcp",
             "headers": {
-                "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+                "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
                 "Authorization": "Bearer gho_token", 
                 "custom_key": "custom_value",
                 "x-custom-header": "additional_data"
@@ -678,7 +678,7 @@ asyncio.run(main())
     "GitHub": {
       "url": "http://localhost:4000/github_mcp/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
         "Authorization": "Bearer $GITHUB_TOKEN",
         "custom_key": "custom_value",
         "x-custom-header": "additional_data"
@@ -695,7 +695,7 @@ asyncio.run(main())
 ```bash title="cURL with Custom Headers" showLineNumbers
 curl --location 'http://localhost:4000/github_mcp/mcp' \
 --header 'Content-Type: application/json' \
---header "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+--header "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
 --header 'Authorization: Bearer gho_token' \
 --header 'custom_key: custom_value' \
 --header 'x-custom-header: additional_data' \
@@ -713,13 +713,13 @@ curl --location 'http://localhost:4000/github_mcp/mcp' \
 
 1. **Configuration**: Define `extra_headers` in your MCP server config with the header names you want to forward
 2. **Client Headers**: Include the corresponding headers in your MCP client requests
-3. **Header Forwarding**: LiteLLM automatically forwards matching headers to the backend MCP server
+3. **Header Forwarding**: Lumina automatically forwards matching headers to the backend MCP server
 4. **Authentication**: The backend MCP server receives both the configured auth headers and the custom headers
 
 
 ### Passing Request Headers to STDIO env Vars
 
-If your stdio MCP server needs per-request credentials, you can map HTTP headers from the client request directly into the environment for the launched stdio process. Reference the header name in the env value using the `${X-HEADER_NAME}` syntax. LiteLLM will read that header from the incoming request and set the env var before starting the command.
+If your stdio MCP server needs per-request credentials, you can map HTTP headers from the client request directly into the environment for the launched stdio process. Reference the header name in the env value using the `${X-HEADER_NAME}` syntax. Lumina will read that header from the incoming request and set the env var before starting the command.
 
 ```json title="Forward X-GITHUB_PERSONAL_ACCESS_TOKEN header to stdio env" showLineNumbers
 {
@@ -746,14 +746,14 @@ In this example, when a client makes a request with the `X-GITHUB_PERSONAL_ACCES
 
 ## Control MCP Access for End Users
 
-Control which MCP servers end users of your AI application can access (e.g. users of an internal chat UI). Pass the customer ID in the `x-litellm-end-user-id` header to:
+Control which MCP servers end users of your AI application can access (e.g. users of an internal chat UI). Pass the customer ID in the `x-lumina-end-user-id` header to:
 - Enforce object permissions (limit which MCP servers they can access)
 - Apply customer-specific budgets
 - Track spend per customer
 
 **FastMCP Client Example:**
 
-```python title="Track customer spend with x-litellm-end-user-id" showLineNumbers
+```python title="Track customer spend with x-lumina-end-user-id" showLineNumbers
 from fastmcp import Client
 import asyncio
 
@@ -763,8 +763,8 @@ config = {
         "github": {
             "url": "http://localhost:4000/github_mcp/mcp",
             "headers": {
-                "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
-                "x-litellm-end-user-id": "customer_123",  # CUSTOMER ID
+                "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
+                "x-lumina-end-user-id": "customer_123",  # CUSTOMER ID
                 "Authorization": "Bearer gho_token"
             }
         }
@@ -791,8 +791,8 @@ asyncio.run(main())
     "GitHub": {
       "url": "http://localhost:4000/github_mcp/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
-        "x-litellm-end-user-id": "customer_123"
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
+        "x-lumina-end-user-id": "customer_123"
       }
     }
   }
@@ -808,13 +808,13 @@ asyncio.run(main())
 
 ## Calling the Proxy's /v1/responses Endpoint
 
-When calling your LiteLLM Proxy's `/v1/responses` endpoint to use MCP tools, use `server_url: "litellm_proxy"` for all permitted servers, or `litellm_proxy/mcp/<server_alias>` for one server in the tools array. This tells the proxy to use its configured MCP servers.
+When calling your Lumina Proxy's `/v1/responses` endpoint to use MCP tools, use `server_url: "lumina_proxy"` for all permitted servers, or `lumina_proxy/mcp/<server_alias>` for one server in the tools array. This tells the proxy to use its configured MCP servers.
 
 :::important[Do not use the full proxy URL]
 Using `server_url: "https://your-proxy.com/mcp"` is incorrect when the request is already going to the proxy. Use the [documented sentinel forms](./mcp_config_reference#endpoint-matrix) to route to configured MCP servers. Direct MCP clients use the network URL instead.
 :::
 
-```bash title="Correct: Using litellm_proxy" showLineNumbers
+```bash title="Correct: Using lumina_proxy" showLineNumbers
 curl --location 'https://your-proxy.com/v1/responses' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
@@ -823,8 +823,8 @@ curl --location 'https://your-proxy.com/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "litellm_proxy",
+            "server_label": "lumina",
+            "server_url": "lumina_proxy",
             "require_approval": "never"
         }
     ],
@@ -852,11 +852,11 @@ To pass custom headers (e.g., API keys, auth tokens) to specific MCP servers, us
 ```json
 {
     "type": "mcp",
-    "server_label": "litellm",
-    "server_url": "litellm_proxy",
+    "server_label": "lumina",
+    "server_url": "lumina_proxy",
     "require_approval": "never",
     "headers": {
-        "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+        "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
         "x-mcp-servers": "Zapier_MCP,dev-group",
         "x-mcp-weather2-authorization": "Bearer your-weather-api-token"
     }
@@ -865,7 +865,7 @@ To pass custom headers (e.g., API keys, auth tokens) to specific MCP servers, us
 
 ## Using your MCP with client side credentials
 
-Use this if you want to pass a client side authentication token to LiteLLM to then pass to your MCP to auth to your MCP.
+Use this if you want to pass a client side authentication token to Lumina to then pass to your MCP to auth to your MCP.
 
 
 ### New Server-Specific Auth Headers (Recommended)
@@ -880,13 +880,13 @@ You can specify MCP auth tokens using server-specific headers in the format `x-m
 
 ### Group-Level Auth Headers
 
-When the servers in an access group share one credential, pass `x-mcp-{access_group}-{header_name}` once instead of repeating it per server. LiteLLM uses it as the default for every server whose `access_groups` includes that group. A server-specific `x-mcp-{server_alias}-{header_name}` header overrides it for that server, servers outside the group never receive it, and if a server is in several groups that carry different credentials none of them is forwarded. Server aliases and access group names share the `x-mcp-` header namespace, so a server whose alias equals a group name keeps receiving `x-mcp-{alias}-*` as its own credential; avoid naming a server after an access group it does not belong to.
+When the servers in an access group share one credential, pass `x-mcp-{access_group}-{header_name}` once instead of repeating it per server. Lumina uses it as the default for every server whose `access_groups` includes that group. A server-specific `x-mcp-{server_alias}-{header_name}` header overrides it for that server, servers outside the group never receive it, and if a server is in several groups that carry different credentials none of them is forwarded. Server aliases and access group names share the `x-mcp-` header namespace, so a server whose alias equals a group name keeps receiving `x-mcp-{alias}-*` as its own credential; avoid naming a server after an access group it does not belong to.
 
 ```bash title="cURL Example with Group-Level Auth" showLineNumbers
 curl -X POST http://localhost:4000/mcp/dev_group \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -H "x-mcp-dev_group-authorization: Bearer SHARED_TOKEN" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
@@ -900,7 +900,7 @@ Replace the deprecated broadcast header with `x-mcp-{server_alias}-{header_name}
 
 #### Connect via OpenAI Responses API with Server-Specific Auth
 
-When calling OpenAI directly, use a publicly reachable LiteLLM MCP URL and include the gateway key and scoped upstream headers:
+When calling OpenAI directly, use a publicly reachable Lumina MCP URL and include the gateway key and scoped upstream headers:
 
 ```bash title="cURL Example with Server-Specific Auth" showLineNumbers
 curl --location 'https://api.openai.com/v1/responses' \
@@ -911,11 +911,11 @@ curl --location 'https://api.openai.com/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "https://your-litellm-proxy.example.com/mcp",
+            "server_label": "lumina",
+            "server_url": "https://your-lumina-proxy.example.com/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-github-authorization": "Bearer YOUR_GITHUB_TOKEN",
                 "x-mcp-zapier-x-api-key": "YOUR_ZAPIER_API_KEY"
             }
@@ -928,14 +928,14 @@ curl --location 'https://api.openai.com/v1/responses' \
 
 </TabItem>
 
-<TabItem value="litellm" label="LiteLLM Proxy">
+<TabItem value="lumina" label="Lumina Proxy">
 
-#### Connect via LiteLLM Proxy Responses API with Server-Specific Auth
+#### Connect via Lumina Proxy Responses API with Server-Specific Auth
 
-Use this when calling LiteLLM Proxy for LLM API requests to `/v1/responses` endpoint with server-specific authentication:
+Use this when calling Lumina Proxy for LLM API requests to `/v1/responses` endpoint with server-specific authentication:
 
 ```bash title="cURL Example with Server-Specific Auth" showLineNumbers
-curl --location '<your-litellm-proxy-base-url>/v1/responses' \
+curl --location '<your-lumina-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
@@ -943,11 +943,11 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
     "tools": [
         {
             "type": "mcp",
-            "server_label": "litellm",
-            "server_url": "litellm_proxy",
+            "server_label": "lumina",
+            "server_url": "lumina_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-github-authorization": "Bearer YOUR_GITHUB_TOKEN",
                 "x-mcp-zapier-x-api-key": "YOUR_ZAPIER_API_KEY"
             }
@@ -964,7 +964,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 
 #### Connect via Cursor IDE with Server-Specific Auth
 
-Use tools directly from Cursor IDE with LiteLLM MCP and include server-specific authentication:
+Use tools directly from Cursor IDE with Lumina MCP and include server-specific authentication:
 
 **Setup Instructions:**
 
@@ -975,10 +975,10 @@ Use tools directly from Cursor IDE with LiteLLM MCP and include server-specific 
 ```json title="Cursor MCP Configuration with Server-Specific Auth" showLineNumbers
 {
   "mcpServers": {
-    "LiteLLM": {
+    "Lumina": {
       "url": "http://localhost:4000/mcp/",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>",
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>",
         "x-mcp-github-authorization": "Bearer $GITHUB_TOKEN",
         "x-mcp-zapier-x-api-key": "$ZAPIER_API_KEY"
       }
@@ -993,7 +993,7 @@ Use tools directly from Cursor IDE with LiteLLM MCP and include server-specific 
 
 #### Connect via Streamable HTTP Transport with Server-Specific Auth
 
-Connect to LiteLLM MCP using HTTP transport with server-specific authentication:
+Connect to Lumina MCP using HTTP transport with server-specific authentication:
 
 **Server URL:**
 ```text showLineNumbers
@@ -1002,7 +1002,7 @@ http://localhost:4000/mcp/
 
 **Headers:**
 ```text showLineNumbers
-x-litellm-api-key: Bearer YOUR_LUMINA_API_KEY
+x-lumina-api-key: Bearer YOUR_LUMINA_API_KEY
 x-mcp-github-authorization: Bearer YOUR_GITHUB_TOKEN
 x-mcp-zapier-x-api-key: YOUR_ZAPIER_API_KEY
 ```
@@ -1013,7 +1013,7 @@ x-mcp-zapier-x-api-key: YOUR_ZAPIER_API_KEY
 
 #### Connect via Python FastMCP Client with Server-Specific Auth
 
-Use the Python FastMCP client to connect to your LiteLLM MCP server with server-specific authentication:
+Use the Python FastMCP client to connect to your Lumina MCP server with server-specific authentication:
 
 ```python title="Python FastMCP Example with Server-Specific Auth" showLineNumbers
 import asyncio
@@ -1022,12 +1022,12 @@ import json
 from fastmcp import Client
 from fastmcp.client.transports import StreamableHttpTransport
 
-# Create the transport with your LiteLLM MCP server URL and server-specific auth headers
+# Create the transport with your Lumina MCP server URL and server-specific auth headers
 server_url = "http://localhost:4000/mcp/"
 transport = StreamableHttpTransport(
     server_url,
     headers={
-        "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
+        "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY",
         "x-mcp-github-authorization": "Bearer YOUR_GITHUB_TOKEN",
         "x-mcp-zapier-x-api-key": "YOUR_ZAPIER_API_KEY"
     }
@@ -1039,7 +1039,7 @@ client = Client(transport=transport)
 
 async def main():
     # Connection is established here
-    print("Connecting to LiteLLM MCP server with server-specific authentication...")
+    print("Connecting to Lumina MCP server with server-specific authentication...")
     async with client:
         print(f"Client connected: {client.is_connected()}")
 
@@ -1074,13 +1074,13 @@ Existing deployments can rename the deprecated broadcast header. See the [centra
 ## Use MCP tools with `/chat/completions`
 
 :::tip[Works with all providers]
-This flow is **provider-agnostic**: the same MCP tool definition works for _every_ LLM backend behind LiteLLM (OpenAI, Azure OpenAI, Anthropic, Amazon Bedrock, Vertex, self-hosted deployments, etc.).
+This flow is **provider-agnostic**: the same MCP tool definition works for _every_ LLM backend behind Lumina (OpenAI, Azure OpenAI, Anthropic, Amazon Bedrock, Vertex, self-hosted deployments, etc.).
 :::
 
-LiteLLM Proxy also supports MCP-aware tooling on the classic `/v1/chat/completions` endpoint. Provide the MCP tool definition directly in the `tools` array and LiteLLM will fetch and transform the MCP server's tools into OpenAI-compatible function calls. When `require_approval` is set to `"never"`, the proxy automatically executes the returned tool calls and feeds the results back into the model before returning the assistant response.
+Lumina Proxy also supports MCP-aware tooling on the classic `/v1/chat/completions` endpoint. Provide the MCP tool definition directly in the `tools` array and Lumina will fetch and transform the MCP server's tools into OpenAI-compatible function calls. When `require_approval` is set to `"never"`, the proxy automatically executes the returned tool calls and feeds the results back into the model before returning the assistant response.
 
 ```bash title="Chat Completions with MCP Tools" showLineNumbers
-curl --location '<your-litellm-proxy-base-url>/v1/chat/completions' \
+curl --location '<your-lumina-proxy-base-url>/v1/chat/completions' \
 --header 'Content-Type: application/json' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
@@ -1091,7 +1091,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/chat/completions' \
   "tools": [
     {
       "type": "mcp",
-      "server_url": "litellm_proxy/mcp/github_mcp",
+      "server_url": "lumina_proxy/mcp/github_mcp",
       "server_label": "github_mcp",
       "require_approval": "never"
     }
@@ -1102,29 +1102,29 @@ curl --location '<your-litellm-proxy-base-url>/v1/chat/completions' \
 If you omit `require_approval` or set it to any value other than `"never"`, the MCP tool calls are returned to the client so that you can review and execute them manually, matching the upstream OpenAI behavior.
 
 
-## LiteLLM Proxy - Walk through MCP Gateway
-LiteLLM exposes an MCP Gateway for admins to add all their MCP servers to LiteLLM. The key benefits of using LiteLLM Proxy with MCP are:
+## Lumina Proxy - Walk through MCP Gateway
+Lumina exposes an MCP Gateway for admins to add all their MCP servers to Lumina. The key benefits of using Lumina Proxy with MCP are:
 
 1. Use a fixed endpoint for all MCP tools
 2. MCP Permission management by Key, Team, or User
 
-This video demonstrates how you can onboard an MCP server to LiteLLM Proxy, use it and set access controls.
+This video demonstrates how you can onboard an MCP server to Lumina Proxy, use it and set access controls.
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/f7aa8d217879430987f3e64291757bfc" frameBorder="0" allowFullScreen></iframe>
 
-## LiteLLM Python SDK MCP Bridge
+## Lumina Python SDK MCP Bridge
 
-LiteLLM Python SDK acts as a MCP bridge to use MCP tools with all LiteLLM supported models. LiteLLM offers the following features for using MCP
+Lumina Python SDK acts as a MCP bridge to use MCP tools with all Lumina supported models. Lumina offers the following features for using MCP
 
 - **List** Available MCP Tools: OpenAI clients can view all available MCP tools
-  - `litellm.experimental_mcp_client.load_mcp_tools` to list all available MCP tools
+  - `lumina.experimental_mcp_client.load_mcp_tools` to list all available MCP tools
 - **Call** MCP Tools: OpenAI clients can call MCP tools
-  - `litellm.experimental_mcp_client.call_openai_tool` to call an OpenAI tool on an MCP server
+  - `lumina.experimental_mcp_client.call_openai_tool` to call an OpenAI tool on an MCP server
 
 
 ### 1. List Available MCP Tools
 
-In this example we'll use `litellm.experimental_mcp_client.load_mcp_tools` to list all available MCP tools on any MCP server. This method can be used in two ways:
+In this example we'll use `lumina.experimental_mcp_client.load_mcp_tools` to list all available MCP tools on any MCP server. This method can be used in two ways:
 
 - `format="mcp"` - (default) Return MCP tools 
   - Returns: `mcp.types.Tool`
@@ -1132,15 +1132,15 @@ In this example we'll use `litellm.experimental_mcp_client.load_mcp_tools` to li
   - Returns: `openai.types.chat.ChatCompletionToolParam`
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python title="MCP Client List Tools" showLineNumbers
 # Create server parameters for stdio connection
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 import os
-import litellm
-from litellm import experimental_mcp_client
+import lumina
+from lumina import experimental_mcp_client
 
 
 server_params = StdioServerParameters(
@@ -1159,7 +1159,7 @@ async with stdio_client(server_params) as (read, write):
         print("MCP TOOLS: ", tools)
 
         messages = [{"role": "user", "content": "what's (3 + 5)"}]
-        llm_response = await litellm.acompletion(
+        llm_response = await lumina.acompletion(
             model="{{openai_large}}",
             api_key=os.getenv("OPENAI_API_KEY"),
             messages=messages,
@@ -1170,9 +1170,9 @@ async with stdio_client(server_params) as (read, write):
 
 </TabItem>
 
-<TabItem value="openai" label="OpenAI SDK + LiteLLM Proxy">
+<TabItem value="openai" label="OpenAI SDK + Lumina Proxy">
 
-In this example we'll walk through how you can use the OpenAI SDK pointed to the LiteLLM proxy to call MCP tools. The key difference here is we use the OpenAI SDK to make the LLM API request
+In this example we'll walk through how you can use the OpenAI SDK pointed to the Lumina proxy to call MCP tools. The key difference here is we use the OpenAI SDK to make the LLM API request
 
 ```python title="MCP Client List Tools" showLineNumbers
 # Create server parameters for stdio connection
@@ -1180,7 +1180,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 import os
 from openai import OpenAI
-from litellm import experimental_mcp_client
+from lumina import experimental_mcp_client
 
 server_params = StdioServerParameters(
     command="python3",
@@ -1193,14 +1193,14 @@ async with stdio_client(server_params) as (read, write):
         # Initialize the connection
         await session.initialize()
 
-        # Get tools using litellm mcp client
+        # Get tools using lumina mcp client
         tools = await experimental_mcp_client.load_mcp_tools(session=session, format="openai")
         print("MCP TOOLS: ", tools)
 
-        # Use OpenAI SDK pointed to LiteLLM proxy
+        # Use OpenAI SDK pointed to Lumina proxy
         client = OpenAI(
-            api_key="your-api-key",  # Your LiteLLM proxy API key
-            base_url="http://localhost:4000"  # Your LiteLLM proxy URL
+            api_key="your-api-key",  # Your Lumina proxy API key
+            base_url="http://localhost:4000"  # Your Lumina proxy URL
         )
 
         messages = [{"role": "user", "content": "what's (3 + 5)"}]
@@ -1218,12 +1218,12 @@ async with stdio_client(server_params) as (read, write):
 ### 2. List and Call MCP Tools
 
 In this example we'll use 
-- `litellm.experimental_mcp_client.load_mcp_tools` to list all available MCP tools on any MCP server
-- `litellm.experimental_mcp_client.call_openai_tool` to call an OpenAI tool on an MCP server
+- `lumina.experimental_mcp_client.load_mcp_tools` to list all available MCP tools on any MCP server
+- `lumina.experimental_mcp_client.call_openai_tool` to call an OpenAI tool on an MCP server
 
-The first llm response returns a list of OpenAI tools. We take the first tool call from the LLM response and pass it to `litellm.experimental_mcp_client.call_openai_tool` to call the tool on the MCP server.
+The first llm response returns a list of OpenAI tools. We take the first tool call from the LLM response and pass it to `lumina.experimental_mcp_client.call_openai_tool` to call the tool on the MCP server.
 
-#### How `litellm.experimental_mcp_client.call_openai_tool` works
+#### How `lumina.experimental_mcp_client.call_openai_tool` works
 
 - Accepts an OpenAI Tool Call from the LLM response
 - Converts the OpenAI Tool Call to an MCP Tool
@@ -1231,15 +1231,15 @@ The first llm response returns a list of OpenAI tools. We take the first tool ca
 - Returns the result of the MCP Tool call
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python title="MCP Client List and Call Tools" showLineNumbers
 # Create server parameters for stdio connection
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 import os
-import litellm
-from litellm import experimental_mcp_client
+import lumina
+from lumina import experimental_mcp_client
 
 
 server_params = StdioServerParameters(
@@ -1258,7 +1258,7 @@ async with stdio_client(server_params) as (read, write):
         print("MCP TOOLS: ", tools)
 
         messages = [{"role": "user", "content": "what's (3 + 5)"}]
-        llm_response = await litellm.acompletion(
+        llm_response = await lumina.acompletion(
             model="{{openai_large}}",
             api_key=os.getenv("OPENAI_API_KEY"),
             messages=messages,
@@ -1284,7 +1284,7 @@ async with stdio_client(server_params) as (read, write):
             }
         )
         print("final messages with tool result: ", messages)
-        llm_response = await litellm.acompletion(
+        llm_response = await lumina.acompletion(
             model="{{openai_large}}",
             api_key=os.getenv("OPENAI_API_KEY"),
             messages=messages,
@@ -1296,9 +1296,9 @@ async with stdio_client(server_params) as (read, write):
 ```
 
 </TabItem>
-<TabItem value="proxy" label="OpenAI SDK + LiteLLM Proxy">
+<TabItem value="proxy" label="OpenAI SDK + Lumina Proxy">
 
-In this example we'll walk through how you can use the OpenAI SDK pointed to the LiteLLM proxy to call MCP tools. The key difference here is we use the OpenAI SDK to make the LLM API request
+In this example we'll walk through how you can use the OpenAI SDK pointed to the Lumina proxy to call MCP tools. The key difference here is we use the OpenAI SDK to make the LLM API request
 
 ```python title="MCP Client with OpenAI SDK" showLineNumbers
 # Create server parameters for stdio connection
@@ -1306,7 +1306,7 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 import os
 from openai import OpenAI
-from litellm import experimental_mcp_client
+from lumina import experimental_mcp_client
 
 server_params = StdioServerParameters(
     command="python3",
@@ -1319,14 +1319,14 @@ async with stdio_client(server_params) as (read, write):
         # Initialize the connection
         await session.initialize()
 
-        # Get tools using litellm mcp client
+        # Get tools using lumina mcp client
         tools = await experimental_mcp_client.load_mcp_tools(session=session, format="openai")
         print("MCP TOOLS: ", tools)
 
-        # Use OpenAI SDK pointed to LiteLLM proxy
+        # Use OpenAI SDK pointed to Lumina proxy
         client = OpenAI(
-            api_key="your-api-key",  # Your LiteLLM proxy API key
-            base_url="http://localhost:4000"  # Your LiteLLM proxy URL
+            api_key="your-api-key",  # Your Lumina proxy API key
+            base_url="http://localhost:4000"  # Your Lumina proxy URL
         )
 
         messages = [{"role": "user", "content": "what's (3 + 5)"}]
@@ -1368,14 +1368,14 @@ async with stdio_client(server_params) as (read, write):
 
 ## FAQ
 
-**Q: How do I use OAuth2 client_credentials (machine-to-machine) with MCP servers behind LiteLLM?**
+**Q: How do I use OAuth2 client_credentials (machine-to-machine) with MCP servers behind Lumina?**
 
-LiteLLM supports automatic token management for the `client_credentials` grant. Configure `client_id`, `client_secret`, and `token_url` on your MCP server and LiteLLM will fetch, cache, and refresh tokens automatically. See the [MCP OAuth M2M guide](./mcp_oauth.md#machine-to-machine-m2m-auth) for setup instructions.
+Lumina supports automatic token management for the `client_credentials` grant. Configure `client_id`, `client_secret`, and `token_url` on your MCP server and Lumina will fetch, cache, and refresh tokens automatically. See the [MCP OAuth M2M guide](./mcp_oauth.md#machine-to-machine-m2m-auth) for setup instructions.
 
-**Q: When I fetch an OAuth token from the LiteLLM UI, where is it stored?**
+**Q: When I fetch an OAuth token from the Lumina UI, where is it stored?**
 
 The UI keeps only transient state in `sessionStorage` so the OAuth redirect flow can finish; the token is not persisted in the server or database.
 
 **Q: I'm seeing MCP connection errors. What should I check?**
 
-Start with the [five-minute triage](./mcp_troubleshoot.md#locate-the-error-source) in the MCP Troubleshooting Guide: one curl isolates the failing layer (Client → LiteLLM vs. LiteLLM → MCP), and the [symptom matrix](./mcp_troubleshoot.md#symptom-matrix) maps each status code and symptom to its fix. If you need to escalate, collect the [support bundle](./mcp_troubleshoot.md#support-bundle) first.
+Start with the [five-minute triage](./mcp_troubleshoot.md#locate-the-error-source) in the MCP Troubleshooting Guide: one curl isolates the failing layer (Client → Lumina vs. Lumina → MCP), and the [symptom matrix](./mcp_troubleshoot.md#symptom-matrix) maps each status code and symptom to its fix. If you need to escalate, collect the [support bundle](./mcp_troubleshoot.md#support-bundle) first.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Structural checks for LiteLLM docs.
+Structural checks for Lumina docs.
 
 Every check here is deterministic and fails the build:
 
@@ -40,7 +40,7 @@ the prose line, when the exact id is the point (a price map key, a cache key,
 a printed log).
 
 The Python version examples use ({{python_version}}, the interpreter in the
-official Docker image) and the lowest version LiteLLM supports
+official Docker image) and the lowest version Lumina supports
 ({{python_min_version}}, the pyproject floor) come from the same file, and the
 python-literal rule fails a fence or prose line that spells a version out.
 Add `keep-python-version` to the fence line, or a `{/* keep-python-version */}`
@@ -486,7 +486,7 @@ MODEL_TOKEN_RE = re.compile(r"\{\{\s*([A-Za-z0-9_]+)\s*\}\}")
 # alias such as bedrock-claude-sonnet-5 or a header name is left alone.
 LITERAL_START = r"(?<![A-Za-z0-9:@-])"
 LITERAL_END = r"(?![A-Za-z0-9@-]|[.:][0-9])"
-CHATGPT_LITERAL = r"(?<!/)(?:(?:litellm_proxy|litellm|openai)/)?chatgpt/(?![A-Za-z0-9._-]*\.(?:json|py)\b)[A-Za-z0-9][A-Za-z0-9._-]*(?!/)"
+CHATGPT_LITERAL = r"(?<!/)(?:(?:lumina_proxy|lumina|openai)/)?chatgpt/(?![A-Za-z0-9._-]*\.(?:json|py)\b)[A-Za-z0-9][A-Za-z0-9._-]*(?!/)"
 CHATGPT_LITERAL_RE = re.compile(LITERAL_START + CHATGPT_LITERAL + LITERAL_END)
 MODEL_LITERAL_RE = re.compile(
     LITERAL_START + "(?:" + CHATGPT_LITERAL + "|" + "|".join(re.escape(i) for i in sorted(MODEL_ROLES, key=len, reverse=True)) + ")" + LITERAL_END
@@ -507,7 +507,7 @@ def model_literal_message(model_id):
 def python_literal_message(literal):
     return (
         f"hardcoded Python version `{literal}`; write `{{{{python_version}}}}` (the version examples use) or "
-        f"`{{{{python_min_version}}}}` (the lowest version LiteLLM supports) so docs-models.json controls it, "
+        f"`{{{{python_min_version}}}}` (the lowest version Lumina supports) so docs-models.json controls it, "
         "or add keep-python-version if this exact version is the point"
     )
 

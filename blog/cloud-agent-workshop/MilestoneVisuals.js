@@ -1,5 +1,5 @@
 import React from 'react';
-import {LiteLLMLogo, WorkshopImage} from './Workshop';
+import {LuminaLogo, WorkshopImage} from './Workshop';
 import styles from './styles.module.css';
 
 function Icon({name, size = 18, className}) {
@@ -39,11 +39,11 @@ export function IntakeVisual() {
 }
 
 export function BuildVisual() {
-  return <Visual label="A web app and Slack connect to an agent harness running inside a sandbox, powered by LiteLLM." title="Your working v0" icon="code">
+  return <Visual label="A web app and Slack connect to an agent harness running inside a sandbox, powered by Lumina." title="Your working v0" icon="code">
     <div className={styles.clients}><div><Icon name="monitor" size={15} />Web app</div><div><WorkshopImage file="slack.svg" alt="" width="15" height="15" />Slack</div></div>
     <div className={styles.join}><Icon name="down" size={15} /></div>
     <div className={styles.sandbox}><span className={styles.sandboxLabel}>Sandbox</span><div className={styles.harnessModule}><Icon name="code" size={17} /><span>Agent harness</span></div></div>
-    <div className={styles.powered}><span>Powered by</span><LiteLLMLogo width="72" height="14" /></div>
+    <div className={styles.powered}><span>Powered by</span><LuminaLogo width="72" height="14" /></div>
   </Visual>;
 }
 
@@ -63,11 +63,11 @@ export function BetaVisual() {
 }
 
 export function SupportVisual() {
-  return <Visual label="Your team and the LiteLLM team continue reviewing feedback and planning improvements together." title="Keep building together" icon="users">
+  return <Visual label="Your team and the Lumina team continue reviewing feedback and planning improvements together." title="Keep building together" icon="users">
     <div className={styles.collaboration}>
       <div className={styles.visualTeam}><span className={styles.teamIcon}><Icon name="users" size={22} /></span><strong>Your team</strong></div>
       <Icon className={styles.teamArrow} name="both" size={26} />
-      <div className={styles.visualTeam}><span className={`${styles.teamIcon} ${styles.brandIcon}`}><LiteLLMLogo width="73" height="14" /></span><strong>LiteLLM team</strong></div>
+      <div className={styles.visualTeam}><span className={`${styles.teamIcon} ${styles.brandIcon}`}><LuminaLogo width="73" height="14" /></span><strong>Lumina team</strong></div>
     </div>
     <div className={styles.supportNotes}><span><Icon name="check" size={13} />Review feedback</span><span><Icon name="right" size={13} />Next improvements</span></div>
   </Visual>;

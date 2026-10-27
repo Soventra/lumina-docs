@@ -21,11 +21,11 @@
    - Enable **Custom Search API** for your project
    - Copy the API key for `GOOGLE_PSE_API_KEY`
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Google PSE Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["GOOGLE_PSE_API_KEY"] = "AIza..."
 os.environ["GOOGLE_PSE_ENGINE_ID"] = "your-search-engine-id"
@@ -37,7 +37,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -65,7 +65,7 @@ export GOOGLE_PSE_ENGINE_ID="your-search-engine-id"
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -86,7 +86,7 @@ curl http://0.0.0.0:4000/v1/search/google-search \
 
 ```python showLineNumbers title="Google PSE Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["GOOGLE_PSE_API_KEY"] = "AIza..."
 os.environ["GOOGLE_PSE_ENGINE_ID"] = "your-search-engine-id"

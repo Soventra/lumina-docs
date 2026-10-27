@@ -2,7 +2,7 @@
 [Huggingface](https://huggingface.co/) is an open source platform to deploy machine-learnings models. 
 
 ## Call Llama2 with Huggingface Inference Endpoints 
-LiteLLM makes it easy to call your public, private or the default huggingface endpoints. 
+Lumina makes it easy to call your public, private or the default huggingface endpoints. 
 
 In this case, let's try and call 3 models:  
 
@@ -17,10 +17,10 @@ In this case, let's try and call 3 models:
 Here's the complete example:
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 model = "meta-llama/Llama-3.1-8B-Instruct"
-messages = [{"role": "user", "content": "Hey, how's it going?"}] # LiteLLM follows the OpenAI format 
+messages = [{"role": "user", "content": "Hey, how's it going?"}] # Lumina follows the OpenAI format 
 
 ### CALLING ENDPOINT
 completion(model=model, messages=messages, custom_llm_provider="huggingface")
@@ -28,8 +28,8 @@ completion(model=model, messages=messages, custom_llm_provider="huggingface")
 
 What's happening? 
 - model: This is the name of the deployed model on huggingface 
-- messages: This is the input, in the OpenAI chat format. LiteLLM sends the messages array unchanged to the OpenAI-compatible chat completions API at `https://router.huggingface.co/v1/chat/completions` (or `<api_base>/v1/chat/completions` when you pass `api_base`), so the model must be a chat model served by Hugging Face Inference Providers. Non-chat models such as question-answering models are not supported on this route. [Relevant Code](https://github.com/BerriAI/litellm/blob/main/litellm/llms/huggingface/chat/transformation.py)
-- custom_llm_provider: Optional param. This is an optional flag, needed only for Azure, Replicate, Huggingface and Together-ai (platforms where you deploy your own models). This enables litellm to route to the right provider, for your model. 
+- messages: This is the input, in the OpenAI chat format. Lumina sends the messages array unchanged to the OpenAI-compatible chat completions API at `https://router.huggingface.co/v1/chat/completions` (or `<api_base>/v1/chat/completions` when you pass `api_base`), so the model must be a chat model served by Hugging Face Inference Providers. Non-chat models such as question-answering models are not supported on this route. [Relevant Code](https://github.com/Soventra/lumina/blob/main/lumina/llms/huggingface/chat/transformation.py)
+- custom_llm_provider: Optional param. This is an optional flag, needed only for Azure, Replicate, Huggingface and Together-ai (platforms where you deploy your own models). This enables lumina to route to the right provider, for your model. 
 
 ### Case 2: Call Llama2 public Huggingface endpoint
 
@@ -37,10 +37,10 @@ We've deployed `meta-llama/Llama-2-7b-hf` behind a public endpoint - `https://ag
 
 Let's try it out: 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 model = "meta-llama/Llama-2-7b-hf"
-messages = [{"role": "user", "content": "Hey, how's it going?"}] # LiteLLM follows the OpenAI format 
+messages = [{"role": "user", "content": "Hey, how's it going?"}] # Lumina follows the OpenAI format 
 api_base = "https://ag3dkq4zui5nu8g3.us-east-1.aws.endpoints.huggingface.cloud"
 
 ### CALLING ENDPOINT
@@ -48,13 +48,13 @@ completion(model=model, messages=messages, custom_llm_provider="huggingface", ap
 ```
 
 What's happening? 
-- api_base: Optional param. Since this uses a deployed endpoint (not the default `https://router.huggingface.co` endpoint), we pass that to LiteLLM, which appends `/v1/chat/completions` to it
+- api_base: Optional param. Since this uses a deployed endpoint (not the default `https://router.huggingface.co` endpoint), we pass that to Lumina, which appends `/v1/chat/completions` to it
 
 ### Case 3: Call Llama2 private Huggingface endpoint
 
 The only difference between this and the public endpoint, is that you need an `api_key` for this. 
 
-On LiteLLM there's 3 ways you can pass in an api_key. 
+On Lumina there's 3 ways you can pass in an api_key. 
 
 Either via environment variables, by setting it as a package variable or when calling `completion()`. 
 
@@ -66,12 +66,12 @@ os.environ["HF_TOKEN"] = "..."
 
 Here's the full code: 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 os.environ["HF_TOKEN"] = "..."
 
 model = "meta-llama/Llama-2-7b-hf"
-messages = [{"role": "user", "content": "Hey, how's it going?"}] # LiteLLM follows the OpenAI format 
+messages = [{"role": "user", "content": "Hey, how's it going?"}] # Lumina follows the OpenAI format 
 api_base = "https://ag3dkq4zui5nu8g3.us-east-1.aws.endpoints.huggingface.cloud"
 
 ### CALLING ENDPOINT
@@ -81,18 +81,18 @@ completion(model=model, messages=messages, custom_llm_provider="huggingface", ap
 **Setting it as package variable**  
 Here's the 1 line of code you need to add 
 ```python
-litellm.huggingface_key = "..."
+lumina.huggingface_key = "..."
 ```
 
 Here's the full code: 
 ```python
-import litellm
-from litellm import completion 
+import lumina
+from lumina import completion 
 
-litellm.huggingface_key = "..."
+lumina.huggingface_key = "..."
 
 model = "meta-llama/Llama-2-7b-hf"
-messages = [{"role": "user", "content": "Hey, how's it going?"}] # LiteLLM follows the OpenAI format 
+messages = [{"role": "user", "content": "Hey, how's it going?"}] # Lumina follows the OpenAI format 
 api_base = "https://ag3dkq4zui5nu8g3.us-east-1.aws.endpoints.huggingface.cloud"
 
 ### CALLING ENDPOINT
@@ -107,10 +107,10 @@ completion(..., api_key="...")
 Here's the full code: 
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 model = "meta-llama/Llama-2-7b-hf"
-messages = [{"role": "user", "content": "Hey, how's it going?"}] # LiteLLM follows the OpenAI format 
+messages = [{"role": "user", "content": "Hey, how's it going?"}] # Lumina follows the OpenAI format 
 api_base = "https://ag3dkq4zui5nu8g3.us-east-1.aws.endpoints.huggingface.cloud"
 
 ### CALLING ENDPOINT

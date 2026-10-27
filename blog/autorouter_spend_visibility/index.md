@@ -6,7 +6,7 @@ authors:
   - tin
 description: "A new Auto-Router Usage tab in Cost Optimization, per-request classifier cost reporting, preset matching against your own deployments, and two routing fixes."
 image: ./auto-router-v2-hero.png
-keywords: [auto router, llm routing, litellm, cost optimization, spend tracking, prompt caching, complexity router]
+keywords: [auto router, llm routing, lumina, cost optimization, spend tracking, prompt caching, complexity router]
 tags: [routing, complexity-router, cost-optimization, ui, engineering]
 hide_table_of_contents: false
 ---
@@ -17,13 +17,13 @@ hide_table_of_contents: false
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -51,7 +51,7 @@ Next up: benchmarking the Auto-Router quality and # of turns against equivalent 
 When the complexity router uses an LLM classifier, that classifier call is billed, but until now it was invisible on the request that triggered it. You can now quantify routing overhead per request.
 
 - The classifier call's cost is recorded on the `routing_decision` record as `classifier_cost`, so it reaches spend-log metadata and every `StandardLoggingPayload` consumer (Langfuse, OTel, S3, and the rest)
-- A new `x-litellm-classifier-cost` response header reports it per request on `/v1/chat/completions`, `/v1/messages` and `/v1/responses`, streaming included
+- A new `x-lumina-classifier-cost` response header reports it per request on `/v1/chat/completions`, `/v1/messages` and `/v1/responses`, streaming included
 
 
 ## Presets now match your actual deployments
@@ -79,7 +79,7 @@ Previously, when using semantic routing long prompts could fail due to an embedd
 
 :::info
 
-Open Cost Optimization in the dashboard and pick the Auto-Router Usage tab. Questions and results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), or [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner) to work on the Auto-Router with us directly.
+Open Cost Optimization in the dashboard and pick the Auto-Router Usage tab. Questions and results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168), or [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner) to work on the Auto-Router with us directly.
 
 :::
 

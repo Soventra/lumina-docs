@@ -6,7 +6,7 @@ https://github.com/marketplace/models
 
 :::tip
 
-**We support ALL Github models, just set `model=github/<any-model-on-github>` as a prefix when sending litellm requests**
+**We support ALL Github models, just set `model=github/<any-model-on-github>` as a prefix when sending lumina requests**
 Ignore company prefix: meta/Llama-3.2-11B-Vision-Instruct becomes model=github/Llama-3.2-11B-Vision-Instruct
 
 :::
@@ -19,14 +19,14 @@ os.environ['GITHUB_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GITHUB_API_KEY'] = ""
 response = completion(
     model="github/Llama-3.2-11B-Vision-Instruct", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -34,14 +34,14 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GITHUB_API_KEY'] = ""
 response = completion(
     model="github/Llama-3.2-11B-Vision-Instruct", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )
@@ -52,7 +52,7 @@ for chunk in response:
 
 
 
-## Usage with LiteLLM Proxy 
+## Usage with Lumina Proxy 
 
 ### 1. Set Github Models on config.yaml
 
@@ -67,12 +67,12 @@ model_list:
 ### 2. Start Proxy 
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Test it
 
-Make request to litellm proxy
+Make request to lumina proxy
 
 <Tabs>
 <TabItem value="Curl" label="Curl Request">
@@ -124,7 +124,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "github-Llama-3.2-11B-Vision-Instruct",
     temperature=0.1
 )
@@ -134,7 +134,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -214,7 +214,7 @@ tools = [
         },
     }
 ]
-response = litellm.completion(
+response = lumina.completion(
     model="github/Llama-3.2-11B-Vision-Instruct",
     messages=messages,
     tools=tools,
@@ -254,7 +254,7 @@ if tool_calls:
             }
         )  # extend conversation with function response
     print(f"messages: {messages}")
-    second_response = litellm.completion(
+    second_response = lumina.completion(
         model="github/Llama-3.2-11B-Vision-Instruct", messages=messages
     )  # get a new response from the model where it can see the function response
     print("second response\n", second_response)

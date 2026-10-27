@@ -67,10 +67,10 @@ curl -i http://localhost:4000/v1/chat/completions \
 </Tabs>
 
 
-### [API Reference](https://docs.litellm.ai/api-reference/#/key%20management/generate_key_fn_key_generate_post)
+### [API Reference](https://docs.lumina.ai/api-reference/#/key%20management/generate_key_fn_key_generate_post)
 
 ## **Restrict models by `team_id`**
-`litellm-dev` can only access `azure-gpt-3.5`
+`lumina-dev` can only access `azure-gpt-3.5`
 
 **1. Create a team via `/team/new`**
 ```shell
@@ -78,7 +78,7 @@ curl --location 'http://localhost:4000/team/new' \
 --header 'Authorization: Bearer <your-master-key>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-  "team_alias": "litellm-dev",
+  "team_alias": "lumina-dev",
   "models": ["azure-gpt-3.5"]
 }' 
 
@@ -110,10 +110,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```
 
 ```shell
-{"error":{"message":"Invalid model for team litellm-dev: BEDROCK_GROUP.  Valid models for team are: ['azure-gpt-3.5']\n\n\nTraceback (most recent call last):\n  File \"/Users/ishaanjaffer/Github/litellm/litellm/proxy/proxy_server.py\", line 2298, in chat_completion\n    _is_valid_team_configs(\n  File \"/Users/ishaanjaffer/Github/litellm/litellm/proxy/utils.py\", line 1296, in _is_valid_team_configs\n    raise Exception(\nException: Invalid model for team litellm-dev: BEDROCK_GROUP.  Valid models for team are: ['azure-gpt-3.5']\n\n","type":"None","param":"None","code":500}}%            
+{"error":{"message":"Invalid model for team lumina-dev: BEDROCK_GROUP.  Valid models for team are: ['azure-gpt-3.5']\n\n\nTraceback (most recent call last):\n  File \"/Users/ishaanjaffer/Github/lumina/lumina/proxy/proxy_server.py\", line 2298, in chat_completion\n    _is_valid_team_configs(\n  File \"/Users/ishaanjaffer/Github/lumina/lumina/proxy/utils.py\", line 1296, in _is_valid_team_configs\n    raise Exception(\nException: Invalid model for team lumina-dev: BEDROCK_GROUP.  Valid models for team are: ['azure-gpt-3.5']\n\n","type":"None","param":"None","code":500}}%            
 ```         
 
-### [API Reference](https://docs.litellm.ai/api-reference/#/team%20management/new_team_team_new_post)
+### [API Reference](https://docs.lumina.ai/api-reference/#/team%20management/new_team_team_new_post)
 
 
 ## **View Available Fallback Models**
@@ -243,7 +243,7 @@ model_list:
 A rejected request looks like this:
 
 ```json
-{"error":{"message":"litellm.BadRequestError: Deployment gpt-4o-ptu is reserved for another team until 06:00 America/New_York","type":"invalid_request_error","param":null,"code":"400"}}
+{"error":{"message":"lumina.BadRequestError: Deployment gpt-4o-ptu is reserved for another team until 06:00 America/New_York","type":"invalid_request_error","param":null,"code":"400"}}
 ```
 
 ## Advanced: Model Access Groups

@@ -7,10 +7,10 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for Claude Fable 5.1 on the LiteLLM AI Gateway, with the 0.025x cache read price tracked from the first call."
+description: "Day 0 support for Claude Fable 5.1 on the Lumina AI Gateway, with the 0.025x cache read price tracked from the first call."
 card_title: "Claude Fable 5.1"
 card_summary: "Cache reads at $0.25 / MTok (0.025x input), thinking always on, so tool_choice required now returns a 400."
-image: /img/litellm_claude_fable_5_1_announcement.png
+image: /img/lumina_claude_fable_5_1_announcement.png
 tags: [anthropic, claude, fable 5.1, day 0 support]
 hide_table_of_contents: false
 ---
@@ -18,9 +18,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Claude Fable 5.1](/img/litellm_claude_fable_5_1_announcement.png)
+![Lumina x Claude Fable 5.1](/img/lumina_claude_fable_5_1_announcement.png)
 
-LiteLLM supports [Claude Fable 5.1](https://www.anthropic.com/claude-fable-and-mythos-5-1) on Day 0 across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure, with spend, rate limits, fallbacks, and logging in one place.
+Lumina supports [Claude Fable 5.1](https://www.anthropic.com/claude-fable-and-mythos-5-1) on Day 0 across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure, with spend, rate limits, fallbacks, and logging in one place.
 
 {/* truncate */}
 
@@ -28,8 +28,8 @@ LiteLLM supports [Claude Fable 5.1](https://www.anthropic.com/claude-fable-and-m
 
 Pricing, the 1M-token context window, the 128K output ceiling, and always-on adaptive thinking carry over from Fable 5. What changed, in the order it costs a gateway work:
 
-- **Cache reads cost $0.25 / MTok, down from $1.00.** That is 0.025x base input, where every other Claude model sits at 0.1x. LiteLLM reads the rate from the cost map and falls back to base input without it, a 40x overcount.
-- **Forced tool use returns a 400.** Thinking is always on, and a forced call would skip it. LiteLLM maps OpenAI's `tool_choice: "required"` to Anthropic's `any`, so a request that worked on Fable 5 fails here unchanged. Keep `auto` with `strict: true` for schema-valid JSON, or name the tool in the prompt to force a call.
+- **Cache reads cost $0.25 / MTok, down from $1.00.** That is 0.025x base input, where every other Claude model sits at 0.1x. Lumina reads the rate from the cost map and falls back to base input without it, a 40x overcount.
+- **Forced tool use returns a 400.** Thinking is always on, and a forced call would skip it. Lumina maps OpenAI's `tool_choice: "required"` to Anthropic's `any`, so a request that worked on Fable 5 fails here unchanged. Keep `auto` with `strict: true` for schema-valid JSON, or name the tool in the prompt to force a call.
 - **Thinking blocks are bound to the model that wrote them.** Fable 5.1 reads earlier models' blocks; none of them read its own.
 - **Editing earlier turns invalidates thinking blocks.** Rebuilding `system` or `tools` mid-conversation errors with `The block is bound to a different conversation`, on accounts created from August 31, 2026.
 - **Effort is steerable per message** behind the `mid-conversation-output-config-2026-07-01` beta header, without invalidating the prompt cache.
@@ -76,7 +76,7 @@ model_list:
       vertex_location: global
 ```
 
-Google renamed Vertex AI to Gemini Enterprise Agent Platform; the LiteLLM prefix is still `vertex_ai/`. Pinned regions carry a 10% premium over global, which LiteLLM applies.
+Google renamed Vertex AI to Gemini Enterprise Agent Platform; the Lumina prefix is still `vertex_ai/`. Pinned regions carry a 10% premium over global, which Lumina applies.
 
 </TabItem>
 <TabItem value="azure" label="Azure">
@@ -108,4 +108,4 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## Feedback
 
-Hitting something unexpected? Share it on [GitHub discussion #39163](https://github.com/BerriAI/litellm/discussions/39163).
+Hitting something unexpected? Share it on [GitHub discussion #39163](https://github.com/Soventra/lumina/discussions/39163).

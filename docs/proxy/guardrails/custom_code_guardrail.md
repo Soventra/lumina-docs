@@ -32,7 +32,7 @@ guardrails:
 ### 2. Start proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Test
@@ -228,20 +228,20 @@ Every URL, redirect hops included, goes through the proxy's SSRF validation befo
     "body": None,
     "headers": {},
     "success": False,
-    "error": "Blocked URL: URL targets a blocked address (169.254.169.254). If this is a legitimate internal service, add the host to `user_url_allowed_hosts` in litellm_settings."
+    "error": "Blocked URL: URL targets a blocked address (169.254.169.254). If this is a legitimate internal service, add the host to `user_url_allowed_hosts` in lumina_settings."
 }
 ```
 
-To let a guardrail call an internal service, list its host (as written in the URL, with the port when the URL carries one) under `litellm_settings`:
+To let a guardrail call an internal service, list its host (as written in the URL, with the port when the URL carries one) under `lumina_settings`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   user_url_allowed_hosts:
     - moderation.corp.internal
     - 10.0.0.12:8080
 ```
 
-`user_url_validation: false` turns the check off for the whole proxy. Both settings are documented in [config settings](../config_settings#litellm_settings---reference). GET requests follow redirects, validating each hop; POST, PUT, PATCH and DELETE never follow redirects, so a 3xx comes back as the response.
+`user_url_validation: false` turns the check off for the whole proxy. Both settings are documented in [config settings](../config_settings#lumina_settings---reference). GET requests follow redirects, validating each hop; POST, PUT, PATCH and DELETE never follow redirects, so a 3xx comes back as the response.
 
 ### Execution timeout
 
@@ -385,7 +385,7 @@ Custom code runs in a restricted environment:
 - ❌ No file I/O
 - ❌ No `exec()` or `eval()`
 - ✅ HTTP requests via built-in `http_request`, `http_get`, `http_post` primitives, to public addresses or hosts listed in `user_url_allowed_hosts` (see [Blocked destinations](#blocked-destinations))
-- ✅ Only LiteLLM-provided primitives available
+- ✅ Only Lumina-provided primitives available
 - Each run is bounded by the guardrail's `timeout` (see [Execution timeout](#execution-timeout))
 
 ## Per-Request Usage

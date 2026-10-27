@@ -1,7 +1,7 @@
 # VoyageAI by MongoDB
 https://docs.voyageai.com/embeddings/
 
-Voyage AI is now VoyageAI by MongoDB. LiteLLM keeps the `voyage/` model prefix and picks the API host from the key you give it, the same way the official `voyageai` SDK does
+Voyage AI is now VoyageAI by MongoDB. Lumina keeps the `voyage/` model prefix and picks the API host from the key you give it, the same way the official `voyageai` SDK does
 
 ## API Key
 ```python
@@ -9,7 +9,7 @@ Voyage AI is now VoyageAI by MongoDB. LiteLLM keeps the `voyage/` model prefix a
 os.environ['VOYAGE_API_KEY']
 ```
 
-LiteLLM also reads `VOYAGE_AI_API_KEY` and `VOYAGE_AI_TOKEN` when `VOYAGE_API_KEY` is not set
+Lumina also reads `VOYAGE_AI_API_KEY` and `VOYAGE_AI_TOKEN` when `VOYAGE_API_KEY` is not set
 
 ### Which host your key goes to
 
@@ -34,13 +34,13 @@ model_list:
 
 ## Sample Usage - Embedding
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['VOYAGE_API_KEY'] = ""
 response = embedding(
     model="voyage/voyage-3.5",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
@@ -59,7 +59,7 @@ VoyageAI embeddings support the following optional parameters:
 ### Example with Parameters
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['VOYAGE_API_KEY'] = "your-api-key"
@@ -105,14 +105,14 @@ All models listed here https://docs.voyageai.com/embeddings/#models-and-specific
 
 ## Contextual Embeddings (voyage-context-4, voyage-context-3)
 
-Voyage's `voyage-context-4` and `voyage-context-3` models produce contextualized chunk embeddings: each chunk is embedded with awareness of the whole document it came from, which retrieves better on long documents than embedding the chunks on their own. LiteLLM sends any Voyage model with `context` in its name to Voyage's `/v1/contextualizedembeddings` endpoint, so the same `embedding()` call and `/v1/embeddings` proxy route work; only the input and response shapes differ from the regular models
+Voyage's `voyage-context-4` and `voyage-context-3` models produce contextualized chunk embeddings: each chunk is embedded with awareness of the whole document it came from, which retrieves better on long documents than embedding the chunks on their own. Lumina sends any Voyage model with `context` in its name to Voyage's `/v1/contextualizedembeddings` endpoint, so the same `embedding()` call and `/v1/embeddings` proxy route work; only the input and response shapes differ from the regular models
 
 ### Input shapes
 
-A flat list of strings, or a single string, embeds each string as its own document. LiteLLM forwards it with `enable_auto_chunking: true`, `chunk_size: 32000`, and `input_type: "document"`, so a string of up to 32,000 tokens comes back as one embedding and a longer one is split into chunks of up to 32,000 tokens on Voyage's side. Sending `input_type: "query"` skips those defaults and embeds each string as a search query. Any `input_type`, `chunk_size`, or `enable_auto_chunking` you pass yourself replaces the default
+A flat list of strings, or a single string, embeds each string as its own document. Lumina forwards it with `enable_auto_chunking: true`, `chunk_size: 32000`, and `input_type: "document"`, so a string of up to 32,000 tokens comes back as one embedding and a longer one is split into chunks of up to 32,000 tokens on Voyage's side. Sending `input_type: "query"` skips those defaults and embeds each string as a search query. Any `input_type`, `chunk_size`, or `enable_auto_chunking` you pass yourself replaces the default
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['VOYAGE_API_KEY'] = "your-api-key"
@@ -132,7 +132,7 @@ response = embedding(
 )
 ```
 
-A nested list is the pre-chunked form: each inner list is one document you already split into chunks, and LiteLLM forwards it unchanged
+A nested list is the pre-chunked form: each inner list is one document you already split into chunks, and Lumina forwards it unchanged
 
 ```python
 # Single document with multiple chunks
@@ -163,7 +163,7 @@ print(f"Processed {len(response.data)} documents")
 
 The response keeps Voyage's nested layout: `data` has one entry per input, and that entry's `data` holds one embedding per chunk. `response.data[0]["data"][0]["embedding"]` is the first chunk of the first input, which with flat input and the default chunk size is the whole string
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 Add the model to `config.yaml`:
 
@@ -249,7 +249,7 @@ VoyageAI by MongoDB provides reranking models to improve search relevance by reo
 ### Quick Start
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["VOYAGE_API_KEY"] = "your-api-key"
@@ -271,7 +271,7 @@ print(response)
 ### Async Usage
 
 ```python
-from litellm import arerank
+from lumina import arerank
 import os
 import asyncio
 
@@ -293,7 +293,7 @@ async def main():
 asyncio.run(main())
 ```
 
-### LiteLLM Proxy Usage
+### Lumina Proxy Usage
 
 Add to your `config.yaml`:
 

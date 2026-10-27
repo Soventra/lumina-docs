@@ -8,12 +8,12 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | CoralBricks serves open-weight GLM and DeepSeek models in FP4 over an OpenAI-compatible API |
-| Provider Route on LiteLLM | `coralbricks/` |
+| Provider Route on Lumina | `coralbricks/` |
 | Link to Provider Doc | [CoralBricks](https://www.coralbricks.ai) |
 | Default Base URL | `https://inference.coralbricks.ai/v1` |
 | Supported Operations | `/chat/completions`, `/responses`, `/messages` |
 
-CoralBricks is its own provider on LiteLLM rather than a generic OpenAI-compatible route, so its spend is priced from the CoralBricks cost map entries and reported under `coralbricks` instead of being pooled with OpenAI traffic. `/responses` and `/messages` requests are forwarded to the matching CoralBricks endpoints as they arrive, with no translation through chat completions
+CoralBricks is its own provider on Lumina rather than a generic OpenAI-compatible route, so its spend is priced from the CoralBricks cost map entries and reported under `coralbricks` instead of being pooled with OpenAI traffic. `/responses` and `/messages` requests are forwarded to the matching CoralBricks endpoints as they arrive, with no translation through chat completions
 
 ## API Key
 
@@ -33,15 +33,15 @@ os.environ["CORALBRICKS_API_BASE"] = "https://inference.coralbricks.ai/v1"  # op
 
 Every model takes up to 1,048,576 input tokens and supports tool calling, reasoning, and prompt caching. Pricing follows the [CoralBricks pricing page](https://www.coralbricks.ai/pricing): cache writes are billed at the cache write rate and cached reads are free. If your contract prices differ, set `input_cost_per_token` / `output_cost_per_token` on the deployment and those override the cost map
 
-CoralBricks still accepts the older `glm-5.3-fp4` and `deepseek-v4.1-flash-fast-fp4` names as deprecated aliases, but LiteLLM prices only the current names above, so use those in new deployments
+CoralBricks still accepts the older `glm-5.3-fp4` and `deepseek-v4.1-flash-fast-fp4` names as deprecated aliases, but Lumina prices only the current names above, so use those in new deployments
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Chat Completions
 
 ```python showLineNumbers title="CoralBricks Chat Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["CORALBRICKS_API_KEY"] = "your-api-key"
 
@@ -57,7 +57,7 @@ print(response.choices[0].message.content)
 
 ```python showLineNumbers title="CoralBricks Streaming Chat Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["CORALBRICKS_API_KEY"] = "your-api-key"
 
@@ -75,11 +75,11 @@ for chunk in response:
 
 ```python showLineNumbers title="CoralBricks Responses API"
 import os
-import litellm
+import lumina
 
 os.environ["CORALBRICKS_API_KEY"] = "your-api-key"
 
-response = litellm.responses(
+response = lumina.responses(
     model="coralbricks/deepseek-v4.1-flash-fast",
     input="Explain a binary search in two sentences",
     max_output_tokens=256,
@@ -88,9 +88,9 @@ response = litellm.responses(
 print(response.output_text)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add CoralBricks to your LiteLLM Proxy configuration:
+Add CoralBricks to your Lumina Proxy configuration:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -105,10 +105,10 @@ general_settings:
 
 Start the proxy:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
+```bash showLineNumbers title="Start Lumina Proxy"
 export CORALBRICKS_API_KEY="your-api-key"
 export LUMINA_MASTER_KEY="sk-local-coralbricks"
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -126,7 +126,7 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="deepseek-v4.1-flash",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 
 print(response.choices[0].message.content)
@@ -142,7 +142,7 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "deepseek-v4.1-flash",
-    "messages": [{"role": "user", "content": "hello from litellm"}]
+    "messages": [{"role": "user", "content": "hello from lumina"}]
   }'
 ```
 
@@ -155,13 +155,13 @@ You can also add CoralBricks from the Admin UI. Go to Models, then Add Model, pi
 
 The proxy forwards `/v1/responses` requests to the CoralBricks Responses endpoint:
 
-```bash showLineNumbers title="Responses API through LiteLLM Proxy"
+```bash showLineNumbers title="Responses API through Lumina Proxy"
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "deepseek-v4.1-flash",
-    "input": "hello from litellm",
+    "input": "hello from lumina",
     "max_output_tokens": 128
   }'
 ```
@@ -170,7 +170,7 @@ curl http://localhost:4000/v1/responses \
 
 The proxy forwards `/v1/messages` requests to the CoralBricks Messages endpoint, so Anthropic SDK clients work unchanged:
 
-```bash showLineNumbers title="Anthropic Messages through LiteLLM Proxy"
+```bash showLineNumbers title="Anthropic Messages through Lumina Proxy"
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
   -H "x-api-key: $LUMINA_MASTER_KEY" \
@@ -178,13 +178,13 @@ curl http://localhost:4000/v1/messages \
   -d '{
     "model": "deepseek-v4.1-flash",
     "max_tokens": 128,
-    "messages": [{"role": "user", "content": "hello from litellm"}]
+    "messages": [{"role": "user", "content": "hello from lumina"}]
   }'
 ```
 
 ## Cost Tracking
 
-The `coralbricks/` models are registered in LiteLLM's model cost map, so per-request spend is computed automatically on all three endpoints, returned in the `x-litellm-response-cost` response header, and recorded in spend logs under provider `coralbricks`. Cache writes and cached reads are tracked from the usage CoralBricks returns, so a repeated prompt is billed at the free cached read rate for its cached prefix
+The `coralbricks/` models are registered in Lumina's model cost map, so per-request spend is computed automatically on all three endpoints, returned in the `x-lumina-response-cost` response header, and recorded in spend logs under provider `coralbricks`. Cache writes and cached reads are tracked from the usage CoralBricks returns, so a repeated prompt is billed at the free cached read rate for its cached prefix
 
 ## Custom Endpoints
 

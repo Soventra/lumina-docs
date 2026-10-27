@@ -11,7 +11,7 @@ import {
 import styles from './subscribe.module.css';
 
 const DESCRIPTION =
-  'Get an email when LiteLLM has urgent security news, such as an out-of-band release for a severe CVE.';
+  'Get an email when Lumina has urgent security news, such as an out-of-band release for a severe CVE.';
 
 function SignupForm() {
   const [email, setEmail] = React.useState('');
@@ -91,29 +91,29 @@ export default function SecuritySubscribe() {
         <div className={styles.card}>
           <ThemedImage
             className={styles.logo}
-            alt="LiteLLM"
+            alt="Lumina"
             sources={{
-              light: useBaseUrl('/img/brand/litellm-logo-blue.png'),
-              dark: useBaseUrl('/img/brand/litellm-logo-white.png'),
+              light: useBaseUrl('/img/brand/lumina-logo-blue.png'),
+              dark: useBaseUrl('/img/brand/lumina-logo-white.png'),
             }}
           />
           <h1 className={styles.title}>Security announcements</h1>
           <p className={styles.description}>
             Get notified when we have urgent security news, such as an upcoming out-of-band release for a
-            severe CVE in LiteLLM. Low volume: we only email when there is a security issue you should
+            severe CVE in Lumina. Low volume: we only email when there is a security issue you should
             know about.
           </p>
           <SignupForm />
           <p className={styles.note}>Security notices only. No marketing, and you can unsubscribe at any time.</p>
         </div>
         <nav className={styles.links} aria-label="Security resources">
-          <Link href="https://github.com/BerriAI/litellm/security/policy">Security policy</Link>
+          <Link href="https://github.com/Soventra/lumina/security/policy">Security policy</Link>
           <span aria-hidden="true">·</span>
           <Link to="/docs/proxy/security_best_practices">Security best practices</Link>
           <span aria-hidden="true">·</span>
-          <Link href="https://github.com/BerriAI/litellm">GitHub</Link>
+          <Link href="https://github.com/Soventra/lumina">GitHub</Link>
           <span aria-hidden="true">·</span>
-          <Link href="https://www.litellm.ai">litellm.ai</Link>
+          <Link href="https://www.lumina.ai">lumina.ai</Link>
         </nav>
       </main>
     </Layout>

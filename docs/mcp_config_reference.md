@@ -1,12 +1,12 @@
 # MCP Configuration Reference
 
-This is the canonical decision reference for connecting to LiteLLM's MCP Gateway: which endpoint to use, which transport to configure, and how the two layers of authentication fit together. Use the linked guides for setup steps and provider-specific requirements
+This is the canonical decision reference for connecting to Lumina's MCP Gateway: which endpoint to use, which transport to configure, and how the two layers of authentication fit together. Use the linked guides for setup steps and provider-specific requirements
 
 Endpoint examples use `http://localhost:4000` as the proxy base URL; substitute your own. Set `LUMINA_API_KEY` to a key with access to the selected MCP servers. Selecting a server by URL or header narrows existing access; it does not grant access. See [MCP access grants](./mcp_grant_access) for key and team setup
 
 ## Protocol version
 
-The gateway and upstream MCP servers negotiate a protocol version during `initialize`. LiteLLM v1.101.0 (`18243cd7`) pins MCP SDK 1.28.1; a gateway initialization on that release negotiated `2025-11-25`. LiteLLM v1.103.0-rc.1 (`ccf5e8c9`) pins SDK 2.2.0. An SDK pin or negotiated version alone does not establish support for every optional protocol capability; inspect the `capabilities` returned by the endpoint you use
+The gateway and upstream MCP servers negotiate a protocol version during `initialize`. Lumina v1.101.0 (`18243cd7`) pins MCP SDK 1.28.1; a gateway initialization on that release negotiated `2025-11-25`. Lumina v1.103.0-rc.1 (`ccf5e8c9`) pins SDK 2.2.0. An SDK pin or negotiated version alone does not establish support for every optional protocol capability; inspect the `capabilities` returned by the endpoint you use
 
 There is no supported per-server `spec_version` configuration field. The legacy delegated-auth discovery probe sends `2025-06-18`; that probe is separate from client and upstream SDK negotiation
 
@@ -14,26 +14,26 @@ There is no supported per-server `spec_version` configuration field. The legacy 
 
 Gateway and upstream authentication are configured separately. Keep their credentials separate
 
-1. **Gateway authentication (client to LiteLLM).** Your LiteLLM virtual key. Send it in the `x-litellm-api-key` header (`x-litellm-api-key: Bearer <key>`). `Authorization: Bearer sk-...` also works, but for MCP traffic prefer `x-litellm-api-key` so the `Authorization` header stays free for OAuth tokens and upstream credentials. Use the dedicated header when sending a separate upstream bearer token
-2. **Upstream authentication (LiteLLM to the MCP server).** Configured per server via `auth_type` (static keys, OAuth, SigV4, and so on), or supplied per request by the client via `x-mcp-{server_alias}-{header_name}` headers. See [Upstream auth matrix](#upstream-auth-matrix)
+1. **Gateway authentication (client to Lumina).** Your Lumina virtual key. Send it in the `x-lumina-api-key` header (`x-lumina-api-key: Bearer <key>`). `Authorization: Bearer sk-...` also works, but for MCP traffic prefer `x-lumina-api-key` so the `Authorization` header stays free for OAuth tokens and upstream credentials. Use the dedicated header when sending a separate upstream bearer token
+2. **Upstream authentication (Lumina to the MCP server).** Configured per server via `auth_type` (static keys, OAuth, SigV4, and so on), or supplied per request by the client via `x-mcp-{server_alias}-{header_name}` headers. See [Upstream auth matrix](#upstream-auth-matrix)
 
-If you see your LiteLLM key arriving at the upstream MCP server (the debug headers show `SAME_AS_LUMINA_KEY`), you have put the LiteLLM key in `Authorization` on a server that forwards `Authorization` upstream. Move it to `x-litellm-api-key`. See [Debugging OAuth](./mcp_oauth#debugging-oauth)
+If you see your Lumina key arriving at the upstream MCP server (the debug headers show `SAME_AS_LUMINA_KEY`), you have put the Lumina key in `Authorization` on a server that forwards `Authorization` upstream. Move it to `x-lumina-api-key`. See [Debugging OAuth](./mcp_oauth#debugging-oauth)
 
 ## Endpoint matrix
 
 | Endpoint | Protocol | Use when | Required headers | Server scope | Expected response |
 |----------|----------|----------|------------------|--------------|-------------------|
-| `/mcp` | MCP JSON-RPC (streamable HTTP) | A direct MCP client (Claude Desktop/Code, Cursor, MCP Inspector, FastMCP) should see every server the key can access | `x-litellm-api-key: Bearer sk-...`; optionally `x-mcp-servers: <name1>,<group1>` to narrow the set | All servers the key/team is permitted to use, optionally narrowed by `x-mcp-servers` | MCP `initialize` / `tools/list` / `tools/call` JSON-RPC responses; tool names are prefixed with the server alias (e.g. `github_mcp-search_issues`) |
-| `/{server_name}/mcp` | MCP JSON-RPC (streamable HTTP) | A direct MCP client should see exactly one server (or a comma-separated list `/{name1,name2}/mcp`) | `x-litellm-api-key: Bearer sk-...` | The named server(s), toolset, or access group only | Same JSON-RPC responses, scoped to that server |
-| `/toolset/{toolset_name}/mcp` | MCP JSON-RPC (streamable HTTP) | A direct MCP client should see exactly the tools in a [toolset](./mcp_toolsets) | `x-litellm-api-key: Bearer sk-...` | The named toolset | Same JSON-RPC responses, scoped to the toolset |
-| `server_url: "litellm_proxy"` inside `tools` | LLM API (`/v1/responses` or `/v1/chat/completions`) | The LLM should discover and execute MCP tools during a completion. `litellm_proxy` is a literal sentinel, never a URL | `Authorization: Bearer sk-...` on the LLM request; per-server upstream creds via `x-mcp-...` headers or the tool's `headers` object | All permitted servers, or use `litellm_proxy/mcp/<server_alias>` for a server or toolset | Responses / Chat Completions output; `require_approval: "never"` enables execution of model-selected tools |
-| `GET /v1/mcp/server` | REST | List configured servers and fetch a real `server_id` / `server_name` | `Authorization: Bearer sk-...` or `x-litellm-api-key: sk-...` | All servers visible to the key | JSON array of server objects |
+| `/mcp` | MCP JSON-RPC (streamable HTTP) | A direct MCP client (Claude Desktop/Code, Cursor, MCP Inspector, FastMCP) should see every server the key can access | `x-lumina-api-key: Bearer sk-...`; optionally `x-mcp-servers: <name1>,<group1>` to narrow the set | All servers the key/team is permitted to use, optionally narrowed by `x-mcp-servers` | MCP `initialize` / `tools/list` / `tools/call` JSON-RPC responses; tool names are prefixed with the server alias (e.g. `github_mcp-search_issues`) |
+| `/{server_name}/mcp` | MCP JSON-RPC (streamable HTTP) | A direct MCP client should see exactly one server (or a comma-separated list `/{name1,name2}/mcp`) | `x-lumina-api-key: Bearer sk-...` | The named server(s), toolset, or access group only | Same JSON-RPC responses, scoped to that server |
+| `/toolset/{toolset_name}/mcp` | MCP JSON-RPC (streamable HTTP) | A direct MCP client should see exactly the tools in a [toolset](./mcp_toolsets) | `x-lumina-api-key: Bearer sk-...` | The named toolset | Same JSON-RPC responses, scoped to the toolset |
+| `server_url: "lumina_proxy"` inside `tools` | LLM API (`/v1/responses` or `/v1/chat/completions`) | The LLM should discover and execute MCP tools during a completion. `lumina_proxy` is a literal sentinel, never a URL | `Authorization: Bearer sk-...` on the LLM request; per-server upstream creds via `x-mcp-...` headers or the tool's `headers` object | All permitted servers, or use `lumina_proxy/mcp/<server_alias>` for a server or toolset | Responses / Chat Completions output; `require_approval: "never"` enables execution of model-selected tools |
+| `GET /v1/mcp/server` | REST | List configured servers and fetch a real `server_id` / `server_name` | `Authorization: Bearer sk-...` or `x-lumina-api-key: sk-...` | All servers visible to the key | JSON array of server objects |
 | `GET /mcp-rest/tools/list` | REST | List tools over plain HTTP without an LLM or MCP client | Same as above | All accessible servers, or one with `?server_id=` | JSON object with `tools`, `error`, and `message`; see [MCP REST API](./mcp_rest_api) |
 | `POST /mcp-rest/tools/call` | REST | Execute one known tool over plain HTTP | Same as above, plus `Content-Type: application/json` | The server named by the required `server_id` body field | JSON tool result; see [MCP REST API](./mcp_rest_api) for error shapes |
 
-Selection rule in one sentence: MCP-speaking clients connect to `/mcp` (all permitted servers) or `/{server_name}/mcp` (one server); LLM-driven tool use inside `/v1/responses` or `/v1/chat/completions` uses the literal `server_url: "litellm_proxy"`; and scripted HTTP calls without an MCP client use `/mcp-rest/*`
+Selection rule in one sentence: MCP-speaking clients connect to `/mcp` (all permitted servers) or `/{server_name}/mcp` (one server); LLM-driven tool use inside `/v1/responses` or `/v1/chat/completions` uses the literal `server_url: "lumina_proxy"`; and scripted HTTP calls without an MCP client use `/mcp-rest/*`
 
-Use `litellm_proxy` inside requests sent to LiteLLM's LLM API. The accepted aggregate form `litellm_proxy/mcp` has the same purpose; standardize new examples on `litellm_proxy`. For a server or toolset, use `litellm_proxy/mcp/<name>`. These selectors are not network URLs. When calling a hosted LLM API directly, supply a reachable `https://<proxy-host>/mcp` URL instead
+Use `lumina_proxy` inside requests sent to Lumina's LLM API. The accepted aggregate form `lumina_proxy/mcp` has the same purpose; standardize new examples on `lumina_proxy`. For a server or toolset, use `lumina_proxy/mcp/<name>`. These selectors are not network URLs. When calling a hosted LLM API directly, supply a reachable `https://<proxy-host>/mcp` URL instead
 
 A minimal direct-client request, useful as a smoke test:
 
@@ -41,7 +41,7 @@ A minimal direct-client request, useful as a smoke test:
 curl -s -X POST http://localhost:4000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
@@ -49,7 +49,7 @@ Expected: a JSON-RPC `result` whose `tools` array contains prefixed tool names f
 
 ## Transport matrix
 
-`transport` describes how LiteLLM connects to the upstream MCP server. Clients always reach LiteLLM over streamable HTTP regardless of the upstream transport
+`transport` describes how Lumina connects to the upstream MCP server. Clients always reach Lumina over streamable HTTP regardless of the upstream transport
 
 When `transport` is omitted in `config.yaml`, the loader defaults to `http` (streamable HTTP). The management API create/update request models default to `sse`. Set `transport` explicitly in both entry points to avoid relying on different defaults
 
@@ -65,7 +65,7 @@ mcp_servers:
     url: "https://your-sse-server.example.com/sse"
     transport: "sse"
 
-  # stdio: command required, url unused; LiteLLM launches the process
+  # stdio: command required, url unused; Lumina launches the process
   everything_mcp:
     transport: "stdio"
     command: "npx"
@@ -74,9 +74,9 @@ mcp_servers:
 
 | Transport | Required fields | When to use | Expected behavior |
 |-----------|-----------------|-------------|-------------------|
-| `http` (YAML default) | `url` | Any modern remote MCP server; this is the MCP streamable HTTP transport | LiteLLM POSTs JSON-RPC to `url` and streams responses |
-| `sse` | `url`, `transport: "sse"` | Legacy servers that only expose an SSE endpoint | LiteLLM opens an SSE stream to `url` |
-| `stdio` | `transport: "stdio"`, `command`; optional `args`, `env` | Local MCP servers launched as a subprocess on the proxy host | LiteLLM spawns `command` and speaks MCP over stdin/stdout. Per-request headers can be mapped into `env` with `${X-HEADER-NAME}` syntax; see [header-to-env forwarding](./mcp#passing-request-headers-to-stdio-env-vars) |
+| `http` (YAML default) | `url` | Any modern remote MCP server; this is the MCP streamable HTTP transport | Lumina POSTs JSON-RPC to `url` and streams responses |
+| `sse` | `url`, `transport: "sse"` | Legacy servers that only expose an SSE endpoint | Lumina opens an SSE stream to `url` |
+| `stdio` | `transport: "stdio"`, `command`; optional `args`, `env` | Local MCP servers launched as a subprocess on the proxy host | Lumina spawns `command` and speaks MCP over stdin/stdout. Per-request headers can be mapped into `env` with `${X-HEADER-NAME}` syntax; see [header-to-env forwarding](./mcp#passing-request-headers-to-stdio-env-vars) |
 
 Replace the SSE URL with a running legacy SSE server. The stdio example requires Node.js and `npx` on the proxy host and launches the pinned demonstration server; it is a connectivity control. Use your own server command for production
 
@@ -84,7 +84,7 @@ In the UI (MCP Servers, Add New MCP Server) the same three transports appear as 
 
 ## Upstream auth matrix
 
-`auth_type` selects how LiteLLM authenticates to the upstream MCP server. The YAML below configures upstream credentials. Clients still authenticate to the gateway separately. Replace example endpoints, register the required OAuth client, and set each referenced secret in the proxy environment before starting it
+`auth_type` selects how Lumina authenticates to the upstream MCP server. The YAML below configures upstream credentials. Clients still authenticate to the gateway separately. Replace example endpoints, register the required OAuth client, and set each referenced secret in the proxy environment before starting it
 
 ```yaml title="config.yaml: upstream auth side by side" showLineNumbers
 mcp_servers:
@@ -117,7 +117,7 @@ mcp_servers:
     client_id: os.environ/OAUTH_CLIENT_ID
     client_secret: os.environ/OAUTH_CLIENT_SECRET
 
-  # 5. M2M OAuth (client_credentials): LiteLLM fetches and refreshes the token
+  # 5. M2M OAuth (client_credentials): Lumina fetches and refreshes the token
   oauth_m2m_server:
     url: "https://mcp.example.com/mcp"
     transport: "http"
@@ -139,7 +139,7 @@ mcp_servers:
     audience: "https://mcp.example.com"
 ```
 
-| `auth_type` | Header LiteLLM sends upstream | Credential source | Use when | Setup guide |
+| `auth_type` | Header Lumina sends upstream | Credential source | Use when | Setup guide |
 |-------------|-------------------------------|-------------------|----------|-----------|
 | `none` (or omitted) | No auth header generated from `auth_type` | n/a | Open or network-protected servers | |
 | `api_key` | `X-API-Key: <auth_value>` | `auth_value` | Server expects a key header | |
@@ -148,7 +148,7 @@ mcp_servers:
 | `authorization` | `Authorization: <auth_value>` verbatim | `auth_value` | Server needs a nonstandard scheme | |
 | `token` | `Authorization: token <auth_value>` | `auth_value` | GitHub-style token scheme | |
 | `oauth2` + `oauth2_flow: authorization_code` | `Authorization: Bearer <per-user token>` | Interactive PKCE sign-in per user | Human users must consent individually | [MCP OAuth](./mcp_oauth#interactive-oauth-pkce) |
-| `oauth2` + `oauth2_flow: client_credentials` | `Authorization: Bearer <M2M token>` | LiteLLM fetches, caches, refreshes | Backend services, no human in the loop | [MCP OAuth M2M](./mcp_oauth#machine-to-machine-m2m-auth) |
+| `oauth2` + `oauth2_flow: client_credentials` | `Authorization: Bearer <M2M token>` | Lumina fetches, caches, refreshes | Backend services, no human in the loop | [MCP OAuth M2M](./mcp_oauth#machine-to-machine-m2m-auth) |
 | `oauth2_token_exchange` | `Authorization: Bearer <exchanged token>` | Caller token exchanged using RFC 8693 or the Entra OBO profile | On-behalf-of / delegated access | [MCP OBO Auth](./mcp_obo_auth) |
 | `oauth2_id_jag` | `Authorization: Bearer <ID-JAG assertion-derived token>` | Okta ID-JAG two-leg exchange | Okta AI agent token exchange | [MCP ID-JAG](./mcp_id_jag) |
 | `true_passthrough` / `oauth_delegate` | The caller's own token, forwarded | Client request | Upstream must see the end user's token untouched | [MCP OAuth Passthrough](./mcp_oauth_passthrough) |
@@ -163,7 +163,7 @@ For complete static credential inputs, see [non-OAuth authentication](./mcp_auth
 Two more ways to send upstream credentials that do not involve `auth_type`:
 
 - **Static headers**: `static_headers: {X-API-Key: "...", X-Custom: "..."}` on the server config attaches fixed headers to every upstream request
-- **Client-supplied per-server headers**: clients send `x-mcp-{server_alias}-{header_name}` (e.g. `x-mcp-github_mcp-authorization: Bearer gho_...`) and LiteLLM forwards `{header_name}` to that server only. This is the supported client-side credential mechanism
+- **Client-supplied per-server headers**: clients send `x-mcp-{server_alias}-{header_name}` (e.g. `x-mcp-github_mcp-authorization: Bearer gho_...`) and Lumina forwards `{header_name}` to that server only. This is the supported client-side credential mechanism
 
 ### Deprecated: `x-mcp-auth`
 
@@ -179,7 +179,7 @@ For Cursor, use a network URL and match the credential header to the configured 
     "github": {
       "url": "http://localhost:4000/github_mcp/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-virtual-key>",
+        "x-lumina-api-key": "Bearer sk-<your-virtual-key>",
         "x-mcp-github_mcp-authorization": "Bearer gho_your_token"
       }
     }
@@ -187,7 +187,7 @@ For Cursor, use a network URL and match the credential header to the configured 
 }
 ```
 
-LLM-driven tool use on the proxy's Responses API (note `server_url` is the literal string `litellm_proxy`):
+LLM-driven tool use on the proxy's Responses API (note `server_url` is the literal string `lumina_proxy`):
 
 ```bash title="Responses API with MCP tools" showLineNumbers
 curl -s http://localhost:4000/v1/responses \
@@ -198,8 +198,8 @@ curl -s http://localhost:4000/v1/responses \
     "input": "Run available tools",
     "tools": [{
       "type": "mcp",
-      "server_label": "litellm",
-      "server_url": "litellm_proxy",
+      "server_label": "lumina",
+      "server_url": "lumina_proxy",
       "require_approval": "never",
       "headers": {"x-mcp-github_mcp-authorization": "Bearer gho_your_token"}
     }],
@@ -219,7 +219,7 @@ curl -sS 'http://localhost:4000/mcp-rest/tools/list?server_id=deepwiki_mcp' \
 curl -sS -X POST http://localhost:4000/mcp-rest/tools/call \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"server_id":"deepwiki_mcp","name":"read_wiki_structure","arguments":{"repoName":"BerriAI/litellm"}}'
+  -d '{"server_id":"deepwiki_mcp","name":"read_wiki_structure","arguments":{"repoName":"Soventra/lumina"}}'
 ```
 
 Expect a tool result containing the repository's wiki structure. Omitting `server_id` returns `400 missing_parameter`, even if the tool name is prefixed. Use `{}` for tools without arguments; do not pass `null`

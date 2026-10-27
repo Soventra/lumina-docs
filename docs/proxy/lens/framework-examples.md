@@ -1,15 +1,15 @@
 ---
-title: "Framework examples through LiteLLM"
-description: "Complete framework examples for a model connection through LiteLLM."
+title: "Framework examples through Lumina"
+description: "Complete framework examples for a model connection through Lumina."
 slug: "/proxy/lens/framework-examples"
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Framework examples through LiteLLM
+# Framework examples through Lumina
 
-Use these examples if your agents call models through a LiteLLM gateway. First [create a tracing key](./first-trace.md#connect-your-agent) and copy the full Lens trace endpoint. The gateway sends model requests; Lens receives traces.
+Use these examples if your agents call models through a Lumina gateway. First [create a tracing key](./first-trace.md#connect-your-agent) and copy the full Lens trace endpoint. The gateway sends model requests; Lens receives traces.
 
 For a standalone Lens installation with a direct provider, use the [first-trace example](./first-trace.md) or the direct-provider template in your [framework's integration guide](./first-trace.md#connect-your-existing-agent).
 
@@ -29,7 +29,7 @@ export OTEL_SERVICE_NAME="research_agent"
 
 Keep your existing model configuration if you are adding tracing to an application. Initialize instrumentation before creating the agent. If your app already has an OpenTelemetry tracer provider, keep it and update its exporter instead of creating a second one.
 
-The framework examples below use LiteLLM for model calls. For a direct provider connection, use the [OpenAI Agents SDK](/docs/proxy/lens/integrations/openai-agents) or [OpenTelemetry](/docs/proxy/lens/integrations/opentelemetry) direct-provider template. Both send telemetry directly to Lens.
+The framework examples below use Lumina for model calls. For a direct provider connection, use the [OpenAI Agents SDK](/docs/proxy/lens/integrations/openai-agents) or [OpenTelemetry](/docs/proxy/lens/integrations/opentelemetry) direct-provider template. Both send telemetry directly to Lens.
 
 For the gateway examples below, also set the model connection:
 
@@ -428,7 +428,7 @@ The resource attribute supplies the agent name because this instrumentor does no
 ```bash
 python -m pip install opentelemetry-distro \
   opentelemetry-exporter-otlp-proto-http \
-  "google-adk>=1.18" litellm openinference-instrumentation-google-adk
+  "google-adk>=1.18" lumina openinference-instrumentation-google-adk
 ```
 
 Save this as `agent.py`:
@@ -536,12 +536,12 @@ sdk.start();
 registerTelemetry(new OpenTelemetry());
 
 const AGENT_NAME = "research_agent";
-const litellm = createOpenAICompatible({
-  name: "litellm",
+const lumina = createOpenAICompatible({
+  name: "lumina",
   baseURL: `${process.env.LUMINA_GATEWAY_URL}/v1`,
   apiKey: process.env.LUMINA_API_KEY,
 });
-const model = litellm(process.env.LUMINA_MODEL!);
+const model = lumina(process.env.LUMINA_MODEL!);
 
 try {
   const { text } = await generateText({
@@ -672,7 +672,7 @@ python agent.py
 
 </Tabs>
 
-For complete projects and multi-agent examples, use the **Integrations** guides in the sidebar or the [examples repository](https://github.com/BerriAI/litellm-lens-example). Those projects use `LENS_URL` for the ingestion base URL, without `/v1/traces`; their exporters append that path. The dashboard shows framework snippets directly in the tracing setup section.
+For complete projects and multi-agent examples, use the **Integrations** guides in the sidebar or the [examples repository](https://github.com/Soventra/lumina-lens-example). Those projects use `LENS_URL` for the ingestion base URL, without `/v1/traces`; their exporters append that path. The dashboard shows framework snippets directly in the tracing setup section.
 
 For a working example, use [DeepLite](https://github.com/BerriAI/deeplite). Set `LUMINA_DEV_BASE=https://<your-lens-ingestion-host>/v1/traces` and `LUMINA_DEV_KEY=<your-lens-tracing-key>` in its `.env` file, then run the agent.
 

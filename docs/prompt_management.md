@@ -4,7 +4,7 @@ title: Prompt Management with Responses API
 
 # Prompt Management with Responses API
 
-Use LiteLLM Prompt Management with `/v1/responses` by passing `prompt_id` and optional `prompt_variables`.
+Use Lumina Prompt Management with `/v1/responses` by passing `prompt_id` and optional `prompt_variables`.
 
 ## Basic Usage
 

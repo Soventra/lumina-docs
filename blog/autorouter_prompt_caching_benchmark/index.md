@@ -6,7 +6,7 @@ authors:
   - tin
 image: ./hero.png
 description: "The most common objection to auto-routing is that switching models throws away your prompt cache. We measured it across five datasets, including real gateway traffic with the provider's own cache accounting, and the answer is no."
-keywords: [prompt caching, auto router, llm cost savings, model routing, cache warming, anthropic prompt cache, litellm auto routing, prefix cache]
+keywords: [prompt caching, auto router, llm cost savings, model routing, cache warming, anthropic prompt cache, lumina auto routing, prefix cache]
 tags: [routing, complexity-router, caching, cost, benchmarks, engineering]
 hide_table_of_contents: false
 ---
@@ -19,13 +19,13 @@ hide_table_of_contents: false
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -53,7 +53,7 @@ Already testing it? Share your results in [discussion #32168](https://github.com
 
 **99.3% of the time a session switches back to a model it used earlier, that model's cache is still warm.** The router comes back long before the cache expires, so a switch is not an eviction.
 
-We measured this on **4,684 real switch-backs** from live LiteLLM gateway traffic.
+We measured this on **4,684 real switch-backs** from live Lumina gateway traffic.
 
 | Provider cache state | % of Model Returns with Warm Cache |
 | --- | --- |
@@ -93,7 +93,7 @@ GET /auto_router/benchmarks?start_date=2026-07-01&end_date=2026-07-31
 
 :::info
 
-Point a client at an auto-router with prompt caching on, then check the Auto-Router Benchmarks tab against your own traffic. Share numbers or questions on [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner).
+Point a client at an auto-router with prompt caching on, then check the Auto-Router Benchmarks tab against your own traffic. Share numbers or questions on [discussion #32168](https://github.com/Soventra/lumina/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner).
 
 :::
 
@@ -125,4 +125,4 @@ model_list:
       complexity_router_default_model: claude-sonnet-5
 ```
 
-Every response carries `x-litellm-model-name` and `x-litellm-response-cost`, and the provider's cache token counts land in the spend logs. Full reference on the [Auto Routing docs page](/docs/proxy/auto_routing).
+Every response carries `x-lumina-model-name` and `x-lumina-response-cost`, and the provider's cache token counts land in the spend logs. Full reference on the [Auto Routing docs page](/docs/proxy/auto_routing).

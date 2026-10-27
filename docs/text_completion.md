@@ -18,10 +18,10 @@ import TabItem from '@theme/TabItem';
 
 ### Usage
 <Tabs>
-<TabItem value="python" label="LiteLLM Python SDK">
+<TabItem value="python" label="Lumina Python SDK">
 
 ```python
-from litellm import text_completion
+from lumina import text_completion
 
 response = text_completion(
     model="gpt-3.5-turbo-instruct",
@@ -31,7 +31,7 @@ response = text_completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy Server">
+<TabItem value="proxy" label="Lumina Proxy Server">
 
 1. Define models on config.yaml
 
@@ -47,10 +47,10 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-2. Start litellm proxy server 
+2. Start lumina proxy server 
 
 ```
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 <Tabs>
@@ -93,7 +93,7 @@ curl --location 'http://0.0.0.0:4000/completions' \
 
 ## Input Params
 
-LiteLLM accepts and translates the [OpenAI Text Completion params](https://platform.openai.com/docs/api-reference/completions) across all supported providers.
+Lumina accepts and translates the [OpenAI Text Completion params](https://platform.openai.com/docs/api-reference/completions) across all supported providers.
 
 ### Required Fields
 

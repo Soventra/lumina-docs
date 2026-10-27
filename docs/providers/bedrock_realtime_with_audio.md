@@ -2,11 +2,11 @@
 
 ## Overview
 
-Amazon Bedrock's Nova Sonic model supports real-time bidirectional audio streaming for voice conversations. This tutorial shows how to use it through LiteLLM Proxy.
+Amazon Bedrock's Nova Sonic model supports real-time bidirectional audio streaming for voice conversations. This tutorial shows how to use it through Lumina Proxy.
 
 ## Setup
 
-### 1. Configure LiteLLM Proxy
+### 1. Configure Lumina Proxy
 
 Create a `config.yaml` file:
 
@@ -20,10 +20,10 @@ model_list:
       mode: realtime
 ```
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ## Basic Text Interaction
@@ -33,7 +33,7 @@ import asyncio
 import websockets
 import json
 
-LUMINA_API_KEY = "sk-<your-litellm-api-key>"  # Your LiteLLM API key
+LUMINA_API_KEY = "sk-<your-lumina-api-key>"  # Your Lumina API key
 LUMINA_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
 
 async def test_text_conversation():
@@ -96,7 +96,7 @@ import json
 import base64
 import pyaudio
 
-LUMINA_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_API_KEY = "sk-<your-lumina-api-key>"
 LUMINA_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
 
 # Audio configuration
@@ -195,7 +195,7 @@ import websockets
 import json
 from datetime import datetime
 
-LUMINA_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_API_KEY = "sk-<your-lumina-api-key>"
 LUMINA_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
 
 # Define tools
@@ -310,7 +310,7 @@ Available voices: `matthew`, `joanna`, `ruth`, `stephen`, `gregory`, `amy`
 
 ## Example Test Scripts
 
-Complete working examples are available in the LiteLLM repository:
+Complete working examples are available in the Lumina repository:
 
 - **Basic audio streaming**: `test_bedrock_realtime_client.py`
 - **Simple text test**: `test_bedrock_realtime_simple.py`
@@ -319,7 +319,7 @@ Complete working examples are available in the LiteLLM repository:
 ## Requirements
 
 ```bash
-uv add litellm websockets pyaudio
+uv add lumina websockets pyaudio
 ```
 
 ## AWS Configuration
@@ -341,7 +341,7 @@ aws configure
 ## Troubleshooting
 
 ### Connection Issues
-- Ensure LiteLLM proxy is running on the correct port
+- Ensure Lumina proxy is running on the correct port
 - Verify AWS credentials are properly configured
 - Check that the Bedrock model is available in your region
 
@@ -359,4 +359,4 @@ aws configure
 
 - [OpenAI Realtime API Documentation](https://platform.openai.com/docs/guides/realtime)
 - [Amazon Bedrock Nova Sonic Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/nova-sonic.html)
-- [LiteLLM Realtime API Documentation](/docs/realtime)
+- [Lumina Realtime API Documentation](/docs/realtime)

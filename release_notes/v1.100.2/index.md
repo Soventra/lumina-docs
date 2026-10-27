@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.100.2 - Claude Code Auto Mode, Bedrock GPT and Grok Fixes & TypeSafe Jev"
+title: "Lumina v1.100.2 - Claude Code Auto Mode, Bedrock GPT and Grok Fixes & TypeSafe Jev"
 description: "Lets Claude Code auto mode work through the gateway and routes Bedrock GPT and xAI Grok models on Converse. Also adds the TypeSafe Jev pass-through."
 slug: "v1-100-2"
 date: 2026-09-23T06:12:15
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -33,22 +33,22 @@ docker run \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.100.2
+docker.lumina.ai/soventra/lumina:1.100.2
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.100.2
+pip install lumina==1.100.2
 ```
 
 </TabItem>
 </Tabs>
 
-This release is published as [`ghcr.io/berriai/litellm:v1.100.2`](https://github.com/BerriAI/litellm/pkgs/container/litellm). See the [GitHub release](https://github.com/BerriAI/litellm/releases/tag/v1.100.2) and the full [releases page](https://github.com/BerriAI/litellm/releases)
+This release is published as [`ghcr.io/soventra/lumina:v1.100.2`](https://github.com/Soventra/lumina/pkgs/container/lumina). See the [GitHub release](https://github.com/Soventra/lumina/releases/tag/v1.100.2) and the full [releases page](https://github.com/Soventra/lumina/releases)
 
-`v1.100.2` is a patch release on top of [`v1.100.1`](/release_notes/v1.100.1/v1-100-1). It lets Claude Code auto mode work through the gateway, fixes Claude Code model switches to Bedrock OpenAI GPT and xAI Grok models, routes mid-stream Responses content policy errors to `content_policy_fallbacks`, and adds the TypeSafe Jev pass-through. There are no configuration changes. Both the Docker image and the PyPI package were built from [`9c1216a`](https://github.com/BerriAI/litellm/commit/9c1216a4278a4b8224ac1c8bfa922a110cdcd678)
+`v1.100.2` is a patch release on top of [`v1.100.1`](/release_notes/v1.100.1/v1-100-1). It lets Claude Code auto mode work through the gateway, fixes Claude Code model switches to Bedrock OpenAI GPT and xAI Grok models, routes mid-stream Responses content policy errors to `content_policy_fallbacks`, and adds the TypeSafe Jev pass-through. There are no configuration changes. Both the Docker image and the PyPI package were built from [`9c1216a`](https://github.com/Soventra/lumina/commit/9c1216a4278a4b8224ac1c8bfa922a110cdcd678)
 
 ## Claude Code auto mode works through the gateway
 
@@ -70,13 +70,13 @@ TypeSafe Jev is available on this line. A new `/typesafe/{endpoint}` pass-throug
 
 ### What's Changed
 
-- fix(anthropic): forward safeguards and anthropic-beta unchanged on native /v1/messages - [PR #42152](https://github.com/BerriAI/litellm/pull/42152)
-- fix(anthropic): forward Claude Code safeguards and dangerous-tool-use beta to Bedrock Invoke and Vertex on /v1/messages - [PR #42288](https://github.com/BerriAI/litellm/pull/42288)
-- fix(bedrock): clamp maxTokens to the 16-token minimum for OpenAI GPT and xAI Grok models on Converse - [PR #41870](https://github.com/BerriAI/litellm/pull/41870)
-- fix(bedrock): match any `openai.gpt-<digit>` model in the Converse reasoning gate, from [PR #31884](https://github.com/BerriAI/litellm/pull/31884)
-- fix(responses): route mid-stream error events through exception_type so content_policy_fallbacks fire - [PR #40988](https://github.com/BerriAI/litellm/pull/40988)
-- feat(proxy): add TypeSafe AI Jev evaluate passthrough with registry-priced spend tracking - [PR #41607](https://github.com/BerriAI/litellm/pull/41607)
+- fix(anthropic): forward safeguards and anthropic-beta unchanged on native /v1/messages - [PR #42152](https://github.com/Soventra/lumina/pull/42152)
+- fix(anthropic): forward Claude Code safeguards and dangerous-tool-use beta to Bedrock Invoke and Vertex on /v1/messages - [PR #42288](https://github.com/Soventra/lumina/pull/42288)
+- fix(bedrock): clamp maxTokens to the 16-token minimum for OpenAI GPT and xAI Grok models on Converse - [PR #41870](https://github.com/Soventra/lumina/pull/41870)
+- fix(bedrock): match any `openai.gpt-<digit>` model in the Converse reasoning gate, from [PR #31884](https://github.com/Soventra/lumina/pull/31884)
+- fix(responses): route mid-stream error events through exception_type so content_policy_fallbacks fire - [PR #40988](https://github.com/Soventra/lumina/pull/40988)
+- feat(proxy): add TypeSafe AI Jev evaluate passthrough with registry-priced spend tracking - [PR #41607](https://github.com/Soventra/lumina/pull/41607)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.100.1...v1.100.2
+https://github.com/Soventra/lumina/compare/v1.100.1...v1.100.2

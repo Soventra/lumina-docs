@@ -1,6 +1,6 @@
 # Vertex AI Search Datastores (Pass-through)
 
-Call the Vertex AI Discovery Engine Search API through LiteLLM, using Google's native request and response shapes.
+Call the Vertex AI Discovery Engine Search API through Lumina, using Google's native request and response shapes.
 
 Provider Doc: https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1/projects.locations.dataStores.servingConfigs/search
 
@@ -12,7 +12,7 @@ This page is the raw Google API through the proxy. If you want to query the data
 
 - The full Discovery Engine API surface, unchanged.
 - Configure credentials once on the proxy, use everywhere.
-- If the datastore id in the URL is registered as a [managed vector store](../vector_stores/managed_vector_stores.md), LiteLLM resolves its project and credentials from the registration automatically.
+- If the datastore id in the URL is registered as a [managed vector store](../vector_stores/managed_vector_stores.md), Lumina resolves its project and credentials from the registration automatically.
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ export DEFAULT_GOOGLE_APPLICATION_CREDENTIALS="/path/to/credentials.json"
 **Step 2. Start proxy**
 
 ```bash
-litellm
+lumina
 ```
 
 **Step 3. Search your datastore**
@@ -36,7 +36,7 @@ litellm
 curl -X POST \
   "http://localhost:4000/vertex_ai/discovery/v1/projects/my-project/locations/global/collections/default_collection/dataStores/my-datastore/servingConfigs/default_config:search" \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{
     "query": "How do I authenticate?",
     "pageSize": 10
@@ -57,7 +57,7 @@ Routes to `https://discoveryengine.googleapis.com`
 curl -X POST \
   "http://localhost:4000/vertex_ai/discovery/v1/projects/my-project/locations/global/collections/default_collection/dataStores/my-datastore/servingConfigs/default_config:search" \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{
     "query": "tutorials",
     "pageSize": 20,
@@ -76,7 +76,7 @@ url = "http://localhost:4000/vertex_ai/discovery/v1/projects/my-project/location
 response = requests.post(url, 
     headers={
         "Content-Type": "application/json",
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>"
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>"
     },
     json={"query": "pricing", "pageSize": 10}
 )

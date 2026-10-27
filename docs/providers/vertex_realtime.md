@@ -1,6 +1,6 @@
 # Vertex AI Gemini Live - Realtime API
 
-Use Vertex AI's Gemini Live API (BidiGenerateContent) through LiteLLM's unified `/realtime` endpoint, which speaks the OpenAI Realtime protocol.
+Use Vertex AI's Gemini Live API (BidiGenerateContent) through Lumina's unified `/realtime` endpoint, which speaks the OpenAI Realtime protocol.
 
 | Feature | Supported |
 |---------|-----------|
@@ -14,7 +14,7 @@ Use Vertex AI's Gemini Live API (BidiGenerateContent) through LiteLLM's unified 
 
 ### 1. Auth
 
-LiteLLM uses your Google Cloud credentials (OAuth2 Bearer token), not an API key.
+Lumina uses your Google Cloud credentials (OAuth2 Bearer token), not an API key.
 
 ```bash
 gcloud auth application-default login
@@ -40,12 +40,12 @@ general_settings:
   master_key: sk-your-key
 ```
 
-`vertex_location` picks the host LiteLLM dials for the Live API websocket: a region such as `us-east4` dials `us-east4-aiplatform.googleapis.com`, a multi-region (`us` or `eu`) dials `aiplatform.us.rep.googleapis.com` or `aiplatform.eu.rep.googleapis.com`, and `global` dials `aiplatform.googleapis.com`. Google decides which models each location offers. As of October 2026, `gemini-3.8-live` is not offered in `global`. Multi-region locations on `/realtime` need LiteLLM v1.106.0-rc.1 or later ([PR #45166](https://github.com/BerriAI/litellm/pull/45166)).
+`vertex_location` picks the host Lumina dials for the Live API websocket: a region such as `us-east4` dials `us-east4-aiplatform.googleapis.com`, a multi-region (`us` or `eu`) dials `aiplatform.us.rep.googleapis.com` or `aiplatform.eu.rep.googleapis.com`, and `global` dials `aiplatform.googleapis.com`. Google decides which models each location offers. As of October 2026, `gemini-3.8-live` is not offered in `global`. Multi-region locations on `/realtime` need Lumina v1.106.0-rc.1 or later ([PR #45166](https://github.com/Soventra/lumina/pull/45166)).
 
 ### 3. Start the proxy
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ## Usage
@@ -157,7 +157,7 @@ asyncio.run(main())
 
 ## Voice in / Voice out
 
-For a complete voice example see [`voice_realtime_test.py`](https://github.com/BerriAI/litellm/blob/main/voice_realtime_test.py).
+For a complete voice example see [`voice_realtime_test.py`](https://github.com/Soventra/lumina/blob/main/voice_realtime_test.py).
 
 Key settings for audio:
 - Microphone input: **16 kHz** PCM16 (`audio/pcm;rate=16000`)
@@ -220,8 +220,8 @@ async def main():
     async with websockets.connect(
         PROXY_URL,
         additional_headers={
-            "Authorization": "Bearer sk-<your-litellm-api-key>",
-            "X-Serverless-Authorization": "Bearer sk-<your-litellm-api-key>",
+            "Authorization": "Bearer sk-<your-lumina-api-key>",
+            "X-Serverless-Authorization": "Bearer sk-<your-lumina-api-key>",
         },
     ) as ws:
         _ = json.loads(await ws.recv())  # session.created
@@ -303,14 +303,14 @@ model_list:
       vertex_project: your-gcp-project-id
       vertex_location: us-central1
 
-litellm_settings:
+lumina_settings:
   # Required for tool calling with Gemini/Vertex Live:
   # defer setup until client sends session.update (with tools)
   gemini_live_defer_setup: true
 ```
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 python test_realtime_tool_calling.py
 ```
 
@@ -339,7 +339,7 @@ python test_realtime_tool_calling.py
 ## Limitations
 
 - `session.update` is not forwarded (Vertex AI only accepts one setup message per connection).
-- Audio transcription requires `outputAudioTranscription: {}` to be set in the initial setup (done automatically by LiteLLM).
+- Audio transcription requires `outputAudioTranscription: {}` to be set in the initial setup (done automatically by Lumina).
 
 ## Precaution
 

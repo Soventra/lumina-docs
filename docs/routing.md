@@ -1,5 +1,5 @@
 ---
-description: "LiteLLM Router for load balancing, routing, retries, cooldowns, and fallbacks (failover) across multiple LLM deployments and providers."
+description: "Lumina Router for load balancing, routing, retries, cooldowns, and fallbacks (failover) across multiple LLM deployments and providers."
 keywords:
   [
     router,
@@ -22,37 +22,37 @@ import TabItem from '@theme/TabItem';
 
 # Router - Load Balancing
 
-LiteLLM manages:
+Lumina manages:
 - Load-balance across multiple deployments (e.g. Azure/OpenAI)
 - Prioritizing important requests to ensure they don't fail (i.e. Queueing)
 - Basic reliability logic - cooldowns, fallbacks, timeouts and retries (fixed + exponential backoff) across multiple deployments/providers.
 
-In production, litellm supports using Redis as a way to track cooldown server and usage (managing tpm/rpm limits).
+In production, lumina supports using Redis as a way to track cooldown server and usage (managing tpm/rpm limits).
 
 :::info
 
-If you want a server to load balance across different LLM APIs, use our [LiteLLM Proxy Server](./proxy/load_balancing.md)
+If you want a server to load balance across different LLM APIs, use our [Lumina Proxy Server](./proxy/load_balancing.md)
 
 :::
 
 
 ## Load Balancing
 (s/o [@paulpierre](https://www.linkedin.com/in/paulpierre/) and [sweep proxy](https://docs.sweep.dev/blogs/openai-proxy) for their contributions to this implementation)
-[**See Code**](https://github.com/BerriAI/litellm/blob/main/litellm/router.py)
+[**See Code**](https://github.com/Soventra/lumina/blob/main/lumina/router.py)
 
 ### Quick Start
 
-Loadbalance across multiple [azure](./providers/azure)/[bedrock](./providers/bedrock.md)/[provider](./providers/) deployments. LiteLLM will handle retrying in different regions if a call fails.
+Loadbalance across multiple [azure](./providers/azure)/[bedrock](./providers/bedrock.md)/[provider](./providers/) deployments. Lumina will handle retrying in different regions if a call fails.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias -> loadbalance between models with same `model_name`
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -60,7 +60,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -68,13 +68,13 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	}
 }, {
     "model_name": "{{openai_large}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/{{openai_large}}", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_base": os.getenv("AZURE_API_BASE"),
@@ -82,7 +82,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_large}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "{{openai_large}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	}
@@ -138,7 +138,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml 
+lumina --config /path/to/config.yaml 
 ```
 
 3. Test it! 
@@ -187,7 +187,7 @@ You can also set a `weight` param, to specify which model should get picked when
 <Tabs>
 <TabItem value="rpm" label="RPM-based shuffling">
 
-##### **LiteLLM Proxy Config.yaml**
+##### **Lumina Proxy Config.yaml**
 
 ```yaml
 model_list:
@@ -210,12 +210,12 @@ model_list:
 ##### **Python SDK**
 
 ```python
-from litellm import Router 
+from lumina import Router 
 import asyncio
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -224,7 +224,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -249,7 +249,7 @@ asyncio.run(router_acompletion())
 </TabItem>
 <TabItem value="weight" label="Weight-based shuffling">
 
-##### **LiteLLM Proxy Config.yaml**
+##### **Lumina Proxy Config.yaml**
 
 ```yaml
 model_list:
@@ -272,7 +272,7 @@ model_list:
 ##### **Python SDK**
 
 ```python
-from litellm import Router 
+from lumina import Router 
 import asyncio
 
 model_list = [{
@@ -335,12 +335,12 @@ For Azure, [you get 6 RPM per 1000 TPM](https://stackoverflow.com/questions/7736
 <TabItem value="sdk" label="sdk">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -350,7 +350,7 @@ model_list = [{ # list of model deployments
 	}, 
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -360,7 +360,7 @@ model_list = [{ # list of model deployments
 	},
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 		"tpm": 100000,
@@ -388,7 +388,7 @@ print(response)
 ```yaml
 model_list:
     - model_name: {{openai_small}} # model alias 
-      lumina_params: # params for litellm completion/embedding call 
+      lumina_params: # params for lumina completion/embedding call 
         model: azure/chatgpt-v-2 # actual model name
         api_key: os.environ/AZURE_API_KEY
         api_version: os.environ/AZURE_API_VERSION
@@ -396,7 +396,7 @@ model_list:
       tpm: 100000
       rpm: 10000
     - model_name: {{openai_small}} 
-      lumina_params: # params for litellm completion/embedding call 
+      lumina_params: # params for lumina completion/embedding call 
         model: {{openai_small}} 
         api_key: os.environ/OPENAI_API_KEY
       tpm: 100000
@@ -416,7 +416,7 @@ general_settings:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Test it!**
@@ -443,10 +443,10 @@ Picks the deployment with the lowest response time.
 
 It caches, and updates the response times for deployments based on when a request was sent and received from a deployment.
 
-[**How to test**](https://github.com/BerriAI/litellm/blob/main/tests/local_testing/test_lowest_latency_routing.py)
+[**How to test**](https://github.com/Soventra/lumina/blob/main/tests/local_testing/test_lowest_latency_routing.py)
 
 ```python
-from litellm import Router 
+from lumina import Router 
 import asyncio
 
 model_list = [{ ... }]
@@ -505,11 +505,11 @@ E.g.
 if you have 5 deployments
 
 ```
-https://litellm-prod-1.openai.azure.com/: 0.07s
-https://litellm-prod-2.openai.azure.com/: 0.1s
-https://litellm-prod-3.openai.azure.com/: 0.1s
-https://litellm-prod-4.openai.azure.com/: 0.1s
-https://litellm-prod-5.openai.azure.com/: 4.66s
+https://lumina-prod-1.openai.azure.com/: 0.07s
+https://lumina-prod-2.openai.azure.com/: 0.1s
+https://lumina-prod-3.openai.azure.com/: 0.1s
+https://lumina-prod-4.openai.azure.com/: 0.1s
+https://lumina-prod-5.openai.azure.com/: 4.66s
 ```
 
 to prevent initially overloading `prod-1`, with all requests - we can set a buffer of 50%, to consider deployments `prod-2, prod-3, prod-4`. 
@@ -540,12 +540,12 @@ For Azure, your RPM = TPM/6.
 
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -555,7 +555,7 @@ model_list = [{ # list of model deployments
 	"rpm": 10000,
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -565,7 +565,7 @@ model_list = [{ # list of model deployments
 	"rpm": 1000,
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	},
@@ -593,15 +593,15 @@ print(response)
 
 Picks a deployment with the least number of ongoing calls, it's handling.
 
-[**How to test**](https://github.com/BerriAI/litellm/blob/main/tests/local_testing/test_least_busy_routing.py)
+[**How to test**](https://github.com/Soventra/lumina/blob/main/tests/local_testing/test_least_busy_routing.py)
 
 ```python
-from litellm import Router 
+from lumina import Router 
 import asyncio
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -609,7 +609,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -617,7 +617,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	}
@@ -647,7 +647,7 @@ Step 1. Define your custom routing strategy
 
 ```python
 
-from litellm.router import CustomRoutingStrategyBase
+from lumina.router import CustomRoutingStrategyBase
 class CustomRoutingStrategy(CustomRoutingStrategyBase):
     async def async_get_available_deployment(
         self,
@@ -668,7 +668,7 @@ class CustomRoutingStrategy(CustomRoutingStrategyBase):
             request_kwargs (Optional[Dict], optional): Additional request keyword arguments. Defaults to None.
 
         Returns:
-            Returns an element from litellm.router.model_list
+            Returns an element from lumina.router.model_list
 
         """
         print("In CUSTOM async get available deployment")
@@ -699,7 +699,7 @@ class CustomRoutingStrategy(CustomRoutingStrategyBase):
             request_kwargs (Optional[Dict], optional): Additional request keyword arguments. Defaults to None.
 
         Returns:
-            Returns an element from litellm.router.model_list
+            Returns an element from lumina.router.model_list
 
         """
         pass
@@ -707,7 +707,7 @@ class CustomRoutingStrategy(CustomRoutingStrategyBase):
 
 Step 2. Initialize Router with custom routing strategy
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -760,12 +760,12 @@ Picks a deployment based on the lowest cost
 How this works:
 - Get all healthy deployments
 - Select all deployments that are under their provided `rpm/tpm` limits
-- For each deployment check if `litellm_param["model"]` exists in [`litellm_model_cost_map`](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) 
-	- if deployment does not exist in `litellm_model_cost_map` -> use deployment_cost= `$1`
+- For each deployment check if `lumina_param["model"]` exists in [`lumina_model_cost_map`](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) 
+	- if deployment does not exist in `lumina_model_cost_map` -> use deployment_cost= `$1`
 - Select deployment with lowest cost
 
 ```python
-from litellm import Router 
+from lumina import Router 
 import asyncio
 
 model_list =  [
@@ -854,7 +854,7 @@ asyncio.run(router_acompletion())
 
 Apply different routing strategies to different models in the same router. A **routing group** binds a list of `model_name`s to a strategy and (optionally) strategy args. Models not claimed by any group fall back to the router's top-level `routing_strategy`.
 
-A group is also **callable as a model**: request `model: <group_name>` and LiteLLM picks among the union of every member's deployments using the group's strategy. Group names appear in `/v1/models`, so clients that discover models from the gateway (Claude Code with `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`, Codex) surface them in their pickers.
+A group is also **callable as a model**: request `model: <group_name>` and Lumina picks among the union of every member's deployments using the group's strategy. Group names appear in `/v1/models`, so clients that discover models from the gateway (Claude Code with `CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY=1`, Codex) surface them in their pickers.
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
@@ -878,7 +878,7 @@ You can also create, edit, and delete routing groups from the dashboard. See [Ma
 - The group is resolved per-request based on the post-pre-routing-hook `model` name.
 
 <Tabs>
-<TabItem value="config-yaml" label="LiteLLM Proxy Config.yaml">
+<TabItem value="config-yaml" label="Lumina Proxy Config.yaml">
 
 ```yaml
 model_list:
@@ -917,7 +917,7 @@ Behavior:
 <TabItem value="sdk" label="Python SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -992,23 +992,23 @@ router_settings:
   deployment_affinity_ttl_seconds: 3600     # optional, default 3600
 ```
 
-Send a session id with every request of the conversation. The proxy reads it from the `x-litellm-session-id` header (`x-litellm-trace-id` is interchangeable), from any `x-<vendor>-session-id` header such as `x-claude-code-session-id`, or from `metadata.session_id` in the request body.
+Send a session id with every request of the conversation. The proxy reads it from the `x-lumina-session-id` header (`x-lumina-trace-id` is interchangeable), from any `x-<vendor>-session-id` header such as `x-claude-code-session-id`, or from `metadata.session_id` in the request body.
 
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
-  -H "x-litellm-session-id: 7f1c2d1e-2b5a-4a5e-9c1f-0d5a9a3f8b21" \
+  -H "x-lumina-session-id: 7f1c2d1e-2b5a-4a5e-9c1f-0d5a9a3f8b21" \
   -d '{"model": "{{openai_large}}", "messages": [{"role": "user", "content": "hi"}]}'
 ```
 
-The `x-litellm-model-id` response header shows which deployment served the request. It stays the same for every request that carries the same session id.
+The `x-lumina-model-id` response header shows which deployment served the request. It stays the same for every request that carries the same session id.
 
 </TabItem>
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -1048,7 +1048,7 @@ print(response._hidden_params["model_id"])  # same deployment for every call wit
 
 #### Keep the replacement after failover
 
-See [PR #48206](https://github.com/BerriAI/litellm/pull/48206) for this option.
+See [PR #48206](https://github.com/Soventra/lumina/pull/48206) for this option.
 
 To keep a session on its successful replacement after the original deployment recovers, add this to the proxy configuration and restart it:
 
@@ -1099,7 +1099,7 @@ A hop to a deployment that cannot decrypt the failed deployment's encrypted reas
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 model_list = [
     {
@@ -1154,7 +1154,7 @@ This works across **simple-shuffle** routing strategy (this is the default, if n
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 model_list = [
 	{
@@ -1229,7 +1229,7 @@ If the same group also uses `order`, the order filter runs **before** the weight
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 model_list = [
     {
@@ -1313,7 +1313,7 @@ A request that arrives while every slot of the deployment is in use fails right 
 Earlier versions queued instead of rejecting: a request over the cap waited, for as long as it took, until a slot freed up, so a deployment with `rpm` or `tpm` set could silently serialize traffic with 200s and long latencies instead of 429s. If you relied on that, raise `max_parallel_requests` (or the `rpm`/`tpm` it is derived from), or handle the 429 in the caller
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 model_list = [{
 	"model_name": "{{openai_large}}",
@@ -1350,10 +1350,10 @@ router_settings:
 With the config above, four requests sent at the same time to `{{openai_large}}` get two 200s and two immediate 429s:
 
 ```json
-{"error":{"message":"litellm.RateLimitError: Deployment has all max_parallel_requests slots in use. Deployment model_group={{openai_large}}, id=... already has max_parallel_requests=2 requests in flight. Raise max_parallel_requests (or the rpm/tpm it is derived from) for this deployment. Received Model Group={{openai_large}}\nAvailable Model Group Fallbacks=None","type":"throttling_error","param":null,"code":"429"}}
+{"error":{"message":"lumina.RateLimitError: Deployment has all max_parallel_requests slots in use. Deployment model_group={{openai_large}}, id=... already has max_parallel_requests=2 requests in flight. Raise max_parallel_requests (or the rpm/tpm it is derived from) for this deployment. Received Model Group={{openai_large}}\nAvailable Model Group Fallbacks=None","type":"throttling_error","param":null,"code":"429"}}
 ```
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/a978f2d8813c04dad34802cb95e0a0e35a3324bc/litellm/utils.py#L5605)
+[**See Code**](https://github.com/Soventra/lumina/blob/a978f2d8813c04dad34802cb95e0a0e35a3324bc/lumina/utils.py#L5605)
 
 ### Cooldowns
 
@@ -1363,7 +1363,7 @@ Set the limit for how many calls a model is allowed to fail in a minute, before 
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 model_list = [{...}]
 
@@ -1431,7 +1431,7 @@ No deployments available for selected model, Try again in 60 seconds. Passed mod
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 
 router = Router(..., disable_cooldowns=True)
@@ -1455,7 +1455,7 @@ Cooldowns apply to individual deployments, not entire model groups. The router i
 
 A deployment is a single entry in your `config.yaml` model list. Each deployment represents a unique configuration with its own `lumina_params`. 
 
-LiteLLM generates a unique `model_id` for each deployment by creating a deterministic hash of all the `lumina_params`. This allows the router to track and manage each deployment independently.
+Lumina generates a unique `model_id` for each deployment by creating a deterministic hash of all the `lumina_params`. This allows the router to track and manage each deployment independently.
 
 **Example: Multiple deployments for the same model**
 
@@ -1470,7 +1470,7 @@ model_list:
     lumina_params:
       model: anthropic/{{anthropic}}
       api_key: <customer-managed-key>
-      api_base: https://proxy.litellm.ai/api.anthropic.com
+      api_base: https://proxy.lumina.ai/api.anthropic.com
       
   - model_name: sonnet-4              # Deployment 3
     lumina_params:
@@ -1516,7 +1516,7 @@ model_list:
     lumina_params:
       model: anthropic/{{anthropic}}
       api_key: <customer-managed-key>
-      api_base: https://proxy.litellm.ai/api.anthropic.com
+      api_base: https://proxy.lumina.ai/api.anthropic.com
       
   - model_name: sonnet-4              # Fallback: Vertex AI
     lumina_params:
@@ -1554,7 +1554,7 @@ For generic errors, we retry immediately
 Here's a quick look at how we can set `num_retries = 3`: 
 
 ```python 
-from litellm import Router
+from lumina import Router
 
 model_list = [{...}]
 
@@ -1573,7 +1573,7 @@ print(f"response: {response}")
 We also support setting minimum time to wait before retrying a failed request. This is via the `retry_after` param. 
 
 ```python 
-from litellm import Router
+from lumina import Router
 
 model_list = [{...}]
 
@@ -1593,18 +1593,18 @@ print(f"response: {response}")
 
 `num_retries` can come from four places. They are ranked, highest first:
 
-1. the `x-litellm-num-retries` request header (proxy only)
+1. the `x-lumina-num-retries` request header (proxy only)
 2. `num_retries` in the request body
 3. `num_retries` in a deployment's `lumina_params` in `model_list`
-4. `num_retries` in `litellm_settings` (the router-wide default)
+4. `num_retries` in `lumina_settings` (the router-wide default)
 
 So a caller can always raise or lower the retry count for one request, including setting it to `0` to
 disable retries, no matter what the deployment or the global setting says. A deployment value applies
 whenever the request carries none, and it overrides the global default.
 
-`num_retries` is not the same knob as `max_retries`. `num_retries` is LiteLLM's own retry loop, while
+`num_retries` is not the same knob as `max_retries`. `num_retries` is Lumina's own retry loop, while
 `max_retries` is the provider SDK's internal retry count. For a call that goes through the router,
-LiteLLM owns retries and pins the provider client to `max_retries: 0`, so a `max_retries` in the
+Lumina owns retries and pins the provider client to `max_retries: 0`, so a `max_retries` in the
 request body or in `lumina_params` has no effect on a proxy request. That is deliberate: it is what
 stops a deployment `num_retries: N` from being applied twice and turning one request into
 `(1 + N) ** 2` upstream calls. Use `num_retries` to control how many attempts a request gets.
@@ -1616,7 +1616,7 @@ stops a deployment `num_retries: N` from being applied twice and turning one req
 
 `RetryPolicy` takes one field per error type (`AuthenticationErrorRetries`, `TimeoutErrorRetries`, `RateLimitErrorRetries`, `ContentPolicyViolationErrorRetries`, `BadRequestErrorRetries`, `NotFoundErrorRetries`, `InternalServerErrorRetries`, `ServiceUnavailableErrorRetries`) plus `DefaultRetries` for every error none of those cover. The most specific field wins: `NotFoundErrorRetries` governs any 404 answer, whatever exception class the provider's error body mapped to, `BadRequestErrorRetries` then covers a 4xx the provider reported as an invalid request, and `DefaultRetries` applies last. A field left unset defers to the next one, so a policy that only sets `DefaultRetries` retries 404s too; set `NotFoundErrorRetries: 0` to leave them alone.
 
-[**See All Exception Types**](https://github.com/BerriAI/litellm/blob/ccda616f2f881375d4e8586c76fe4662909a7d22/litellm/types/router.py#L436)
+[**See All Exception Types**](https://github.com/Soventra/lumina/blob/ccda616f2f881375d4e8586c76fe4662909a7d22/lumina/types/router.py#L436)
 
 
 <Tabs>
@@ -1641,7 +1641,7 @@ allowed_fails_policy = AllowedFailsPolicy(
 Example Usage
 
 ```python
-from litellm.router import RetryPolicy, AllowedFailsPolicy
+from lumina.router import RetryPolicy, AllowedFailsPolicy
 
 retry_policy = RetryPolicy(
 	ContentPolicyViolationErrorRetries=3,         # run 3 retries for ContentPolicyViolationErrors
@@ -1659,11 +1659,11 @@ allowed_fails_policy = AllowedFailsPolicy(
 	RateLimitErrorAllowedFails=100,               # Allow 100 RateLimitErrors before cooling down a deployment
 )
 
-router = litellm.Router(
+router = lumina.Router(
 	model_list=[
 		{
 			"model_name": "{{openai_small}}",  # openai model name
-			"lumina_params": {  # params for litellm completion/embedding call
+			"lumina_params": {  # params for lumina completion/embedding call
 				"model": "azure/chatgpt-v-2",
 				"api_key": os.getenv("AZURE_API_KEY"),
 				"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1672,7 +1672,7 @@ router = litellm.Router(
 		},
 		{
 			"model_name": "bad-model",  # openai model name
-			"lumina_params": {  # params for litellm completion/embedding call
+			"lumina_params": {  # params for lumina completion/embedding call
 				"model": "azure/chatgpt-v-2",
 				"api_key": "bad-key",
 				"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1776,7 +1776,7 @@ Enable pre-call checks to filter out:
 
 **1. Enable pre-call checks**
 ```python 
-from litellm import Router 
+from lumina import Router 
 # ...
 router = Router(model_list=model_list, enable_pre_call_checks=True) # Set to True
 ```
@@ -1784,20 +1784,20 @@ router = Router(model_list=model_list, enable_pre_call_checks=True) # Set to Tru
 
 **2. Set Model List**
 
-For context window checks on azure deployments, set the base model. Pick the base model from [this list](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json), all the azure models start with `azure/`. 
+For context window checks on azure deployments, set the base model. Pick the base model from [this list](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json), all the azure models start with `azure/`. 
 
 For 'eu-region' filtering, Set 'region_name' of deployment. 
 
-**Note:** We automatically infer region_name for Vertex AI, Bedrock, and IBM WatsonxAI based on your litellm params. For Azure, set `litellm.enable_preview = True`.
+**Note:** We automatically infer region_name for Vertex AI, Bedrock, and IBM WatsonxAI based on your lumina params. For Azure, set `lumina.enable_preview = True`.
 
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/d33e49411d6503cb634f9652873160cd534dec96/litellm/router.py#L2958)
+[**See Code**](https://github.com/Soventra/lumina/blob/d33e49411d6503cb634f9652873160cd534dec96/lumina/router.py#L2958)
 
 ```python
 model_list = [
             {
                 "model_name": "{{openai_small}}", # model group name
-                "lumina_params": {  # params for litellm completion/embedding call
+                "lumina_params": {  # params for lumina completion/embedding call
                     "model": "azure/chatgpt-v-2",
                     "api_key": os.getenv("AZURE_API_KEY"),
                     "api_version": os.getenv("AZURE_API_VERSION"),
@@ -1808,7 +1808,7 @@ model_list = [
             },
             {
                 "model_name": "{{openai_small}}", # model group name
-                "lumina_params": {  # params for litellm completion/embedding call
+                "lumina_params": {  # params for lumina completion/embedding call
                     "model": "{{openai_small}}",
                     "api_key": os.getenv("OPENAI_API_KEY"),
                 },
@@ -1841,13 +1841,13 @@ The model ids in this example are illustrative and kept for their context window
 - Send a 5k prompt
 - Assert it works
 """
-from litellm import Router
+from lumina import Router
 import os
 
 model_list = [
 	{
 		"model_name": "gpt-3.5-turbo",  # model group name
-		"lumina_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for lumina completion/embedding call
 			"model": "azure/chatgpt-v-2",
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1860,7 +1860,7 @@ model_list = [
 	},
 	{
 		"model_name": "gpt-3.5-turbo",  # model group name
-		"lumina_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for lumina completion/embedding call
 			"model": "gpt-3.5-turbo-1106",
 			"api_key": os.getenv("OPENAI_API_KEY"),
 		},
@@ -1891,13 +1891,13 @@ print(f"response: {response}")
 - Assert it picks the eu-region model
 """
 
-from litellm import Router
+from lumina import Router
 import os
 
 model_list = [
 	{
 		"model_name": "{{openai_small}}",  # model group name
-		"lumina_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for lumina completion/embedding call
 			"model": "azure/chatgpt-v-2",
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1910,7 +1910,7 @@ model_list = [
 	},
 	{
 		"model_name": "{{openai_small}}",  # model group name
-		"lumina_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for lumina completion/embedding call
 			"model": "{{openai_small}}",
 			"api_key": os.getenv("OPENAI_API_KEY"),
 		},
@@ -1948,8 +1948,8 @@ Go [here](./proxy/reliability.md#context-window-fallbacks) for how to do this on
 If you want to cache across 2 different model groups (e.g. azure deployments, and openai), use caching groups. 
 
 ```python
-import litellm, asyncio, time
-from litellm import Router 
+import lumina, asyncio, time
+from lumina import Router 
 
 # set os env
 os.environ["OPENAI_API_KEY"] = ""
@@ -1960,7 +1960,7 @@ os.environ["AZURE_API_VERSION"] = ""
 async def test_acompletion_caching_on_router_caching_groups(): 
 	# tests acompletion + caching on router 
 	try:
-		litellm.set_verbose = True
+		lumina.set_verbose = True
 		model_list = [
 			{
 				"model_name": "openai-gpt-4o-mini",
@@ -2009,12 +2009,12 @@ Send alerts to slack / your webhook url for the following events
 Get a slack webhook url from https://api.slack.com/messaging/webhooks
 
 #### Usage
-Initialize an `AlertingConfig` and pass it to `litellm.Router`. The following code will trigger an alert because `api_key=bad-key` which is invalid
+Initialize an `AlertingConfig` and pass it to `lumina.Router`. The following code will trigger an alert because `api_key=bad-key` which is invalid
 
 ```python
-import litellm
-from litellm.router import Router
-from litellm.types.router import AlertingConfig
+import lumina
+from lumina.router import Router
+from lumina.types.router import AlertingConfig
 import os
 import asyncio
 
@@ -2057,36 +2057,36 @@ asyncio.run(main())
 
 **Problem**: Azure returns `gpt-4` in the response when `azure/gpt-4-1106-preview` is used. This leads to inaccurate cost tracking
 
-**Solution** ✅ :  Set `model_info["base_model"]` on your router init so litellm uses the correct model for calculating azure cost
+**Solution** ✅ :  Set `model_info["base_model"]` on your router init so lumina uses the correct model for calculating azure cost
 
 Step 1. Router Setup
 
 ```python
-from litellm import Router
+from lumina import Router
 
 model_list = [
 	{ # list of model deployments 
 		"model_name": "{{openai_small}}", # model alias 
-		"lumina_params": { # params for litellm completion/embedding call 
+		"lumina_params": { # params for lumina completion/embedding call 
 			"model": "azure/chatgpt-v-2", # actual model name
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
 			"api_base": os.getenv("AZURE_API_BASE")
 		},
 		"model_info": {
-			"base_model": "azure/{{openai_small}}" # azure/{{openai_small}} will be used for cost tracking, ensure this exists in litellm model_prices_and_context_window.json
+			"base_model": "azure/{{openai_small}}" # azure/{{openai_small}} will be used for cost tracking, ensure this exists in lumina model_prices_and_context_window.json
 		}
 	}, 
 	{
 		"model_name": "{{openai_large}}", 
-		"lumina_params": { # params for litellm completion/embedding call 
+		"lumina_params": { # params for lumina completion/embedding call 
 			"model": "azure/chatgpt-functioncalling", 
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
 			"api_base": os.getenv("AZURE_API_BASE")
 		},
 		"model_info": {
-			"base_model": "azure/{{openai_large}}" # azure/{{openai_large}} will be used for cost tracking, ensure this exists in litellm model_prices_and_context_window.json
+			"base_model": "azure/{{openai_large}}" # azure/{{openai_large}} will be used for cost tracking, ensure this exists in lumina model_prices_and_context_window.json
 		}
 	}
 ]
@@ -2095,11 +2095,11 @@ router = Router(model_list=model_list)
 
 ```
 
-Step 2. Access `response_cost` in the custom callback, **litellm calculates the response cost for you**
+Step 2. Access `response_cost` in the custom callback, **lumina calculates the response cost for you**
 
 ```python
-import litellm
-from litellm.integrations.custom_logger import CustomLogger
+import lumina
+from lumina.integrations.custom_logger import CustomLogger
 
 class MyCustomHandler(CustomLogger):        
 	def log_success_event(self, kwargs, response_obj, start_time, end_time): 
@@ -2108,7 +2108,7 @@ class MyCustomHandler(CustomLogger):
 		print("response_cost=", response_cost)
 
 customHandler = MyCustomHandler()
-litellm.callbacks = [customHandler]
+lumina.callbacks = [customHandler]
 
 # router completion call
 response = router.completion(
@@ -2118,14 +2118,14 @@ response = router.completion(
 ```
 
 
-#### Default litellm.completion/embedding params
+#### Default lumina.completion/embedding params
 
-You can also set default params for litellm completion/embedding calls. Here's how to do that: 
+You can also set default params for lumina completion/embedding calls. Here's how to do that: 
 
 The model ids in this example are illustrative and kept for their context window sizes.
 
 ```python keep-model-ids
-from litellm import Router
+from lumina import Router
 
 fallback_dict = {"gpt-4o-mini": "gpt-4.1"}
 
@@ -2143,13 +2143,13 @@ print(f"response: {response}")
 
 ## Custom Callbacks - Track API Key, API Endpoint, Model Used 
 
-If you need to track the api_key, api endpoint, model, custom_llm_provider used for each completion call, you can setup a [custom callback](https://docs.litellm.ai/docs/observability/custom_callback) 
+If you need to track the api_key, api endpoint, model, custom_llm_provider used for each completion call, you can setup a [custom callback](https://docs.lumina.ai/docs/observability/custom_callback) 
 
 ### Usage
 
 ```python
-import litellm
-from litellm.integrations.custom_logger import CustomLogger
+import lumina
+from lumina.integrations.custom_logger import CustomLogger
 
 class MyCustomHandler(CustomLogger):        
 	def log_success_event(self, kwargs, response_obj, start_time, end_time): 
@@ -2173,7 +2173,7 @@ class MyCustomHandler(CustomLogger):
 
 customHandler = MyCustomHandler()
 
-litellm.callbacks = [customHandler]
+lumina.callbacks = [customHandler]
 
 # Init Router
 router = Router(model_list=model_list, routing_strategy="simple-shuffle")
@@ -2187,7 +2187,7 @@ response = router.completion(
 
 ## Deploy Router 
 
-If you want a server to load balance across different LLM APIs, use our [LiteLLM Proxy Server](/docs/simple_proxy)
+If you want a server to load balance across different LLM APIs, use our [Lumina Proxy Server](/docs/simple_proxy)
 
 
 
@@ -2196,7 +2196,7 @@ If you want a server to load balance across different LLM APIs, use our [LiteLLM
 Set `Router(set_verbose=True)`
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=model_list,
@@ -2208,7 +2208,7 @@ router = Router(
 Set `Router(set_verbose=True,debug_level="DEBUG")`
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=model_list,
@@ -2218,13 +2218,13 @@ router = Router(
 ```
 
 ### Very Detailed Debugging
-Set `litellm.set_verbose=True` and `Router(set_verbose=True,debug_level="DEBUG")`
+Set `lumina.set_verbose=True` and `Router(set_verbose=True,debug_level="DEBUG")`
 
 ```python
-from litellm import Router
-import litellm
+from lumina import Router
+import lumina
 
-litellm.set_verbose = True
+lumina.set_verbose = True
 
 router = Router(
     model_list=model_list,
@@ -2249,5 +2249,5 @@ class RouterGeneralSettings(BaseModel):
     )  # this will only initialize async clients. Good for memory utils
     pass_through_all_models: bool = Field(
         default=False
-    )  # if passed a model not llm_router model list, pass through the request to litellm.acompletion/embedding
+    )  # if passed a model not llm_router model list, pass through the request to lumina.acompletion/embedding
 ```

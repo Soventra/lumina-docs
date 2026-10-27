@@ -10,7 +10,7 @@ Azure AI provides powerful image generation capabilities using FLUX models from 
 | Property | Details |
 |----------|---------|
 | Description | Azure AI Image Generation uses FLUX models to generate high-quality images from text descriptions. |
-| Provider Route on LiteLLM | `azure_ai/` |
+| Provider Route on Lumina | `azure_ai/` |
 | Provider Doc | [Azure AI FLUX Models ↗](https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/black-forest-labs-flux-1-kontext-pro-and-flux1-1-pro-now-available-in-azure-ai-f/4434659) |
 | Supported Operations | [`/images/generations`](#image-generation), [`/images/edits`](#image-editing) |
 
@@ -36,17 +36,17 @@ Get your API key and endpoint from [Azure AI Studio](https://ai.azure.com/).
 | `azure_ai/flux.2-pro` | FLUX 2 Pro model for next-generation image generation | $0.04 |
 | `azure_ai/FLUX.2-flex` | FLUX 2 Flex model with adjustable `guidance` and `steps` | $0.05 per megapixel ($0.052 at 1024x1024) |
 
-FLUX 2 models are served from Azure's Black Forest Labs route rather than the Azure OpenAI deployment route: `flux.2-pro` requests go to `/providers/blackforestlabs/v1/flux-2-pro` and `FLUX.2-flex` requests go to `/providers/blackforestlabs/v1/flux-2-flex`, both under your `api_base`. The model name is matched case-insensitively, so `azure_ai/flux.2-flex` works too. FLUX 2 Flex is billed per pixel of the generated image, so the cost LiteLLM records follows the `size` (or `width` and `height`) you request; without explicit dimensions it is recorded at 1024x1024, which is what Azure generates by default
+FLUX 2 models are served from Azure's Black Forest Labs route rather than the Azure OpenAI deployment route: `flux.2-pro` requests go to `/providers/blackforestlabs/v1/flux-2-pro` and `FLUX.2-flex` requests go to `/providers/blackforestlabs/v1/flux-2-flex`, both under your `api_base`. The model name is matched case-insensitively, so `azure_ai/flux.2-flex` works too. FLUX 2 Flex is billed per pixel of the generated image, so the cost Lumina records follows the `size` (or `width` and `height`) you request; without explicit dimensions it is recorded at 1024x1024, which is what Azure generates by default
 
 ## Image Generation
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 ```python showLineNumbers title="Basic Image Generation"
-import litellm
+import lumina
 import os
 
 # Set your API credentials
@@ -54,7 +54,7 @@ os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
 os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
 
 # Generate a single image
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="azure_ai/FLUX.1-Kontext-pro",
     prompt="A cute baby sea otter swimming in crystal clear water",
     api_base=os.environ["AZURE_AI_API_BASE"],
@@ -69,7 +69,7 @@ print(response.data[0].url)
 <TabItem value="flux11" label="FLUX 1.1 Pro">
 
 ```python showLineNumbers title="FLUX 1.1 Pro Image Generation"
-import litellm
+import lumina
 import os
 
 # Set your API credentials
@@ -77,7 +77,7 @@ os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
 os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
 
 # Generate image with FLUX 1.1 Pro
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="azure_ai/FLUX-1.1-pro",
     prompt="A futuristic cityscape at night with neon lights and flying cars",
     api_base=os.environ["AZURE_AI_API_BASE"],
@@ -92,15 +92,15 @@ print(response.data[0].url)
 <TabItem value="flux2" label="FLUX 2 Pro">
 
 ```python showLineNumbers title="FLUX 2 Pro Image Generation"
-import litellm
+import lumina
 import os
 
 # Set your API credentials
 os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
-os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"  # e.g., https://litellm-ci-cd-prod.services.ai.azure.com
+os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"  # e.g., https://lumina-ci-cd-prod.services.ai.azure.com
 
 # Generate image with FLUX 2 Pro
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="azure_ai/flux.2-pro",
     prompt="A photograph of a red fox in an autumn forest",
     api_base=os.environ["AZURE_AI_API_BASE"],
@@ -118,7 +118,7 @@ print(response.data[0].b64_json)  # FLUX 2 returns base64 encoded images
 <TabItem value="flux2flex" label="FLUX 2 Flex">
 
 ```python showLineNumbers title="FLUX 2 Flex Image Generation"
-import litellm
+import lumina
 import os
 
 # Set your API credentials
@@ -126,7 +126,7 @@ os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
 os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"  # e.g., https://your-resource.services.ai.azure.com
 
 # Generate image with FLUX 2 Flex, tuning guidance and steps
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="azure_ai/FLUX.2-flex",
     prompt="A photograph of a red fox in an autumn forest",
     api_base=os.environ["AZURE_AI_API_BASE"],
@@ -146,7 +146,7 @@ print(response.data[0].b64_json)  # FLUX 2 returns base64 encoded images
 <TabItem value="async" label="Async Usage">
 
 ```python showLineNumbers title="Async Image Generation"
-import litellm
+import lumina
 import asyncio
 import os
 
@@ -156,7 +156,7 @@ async def generate_image():
     os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
     
     # Generate image asynchronously
-    response = await litellm.aimage_generation(
+    response = await lumina.aimage_generation(
         model="azure_ai/FLUX.1-Kontext-pro",
         prompt="A beautiful sunset over mountains with vibrant colors",
         api_base=os.environ["AZURE_AI_API_BASE"],
@@ -176,7 +176,7 @@ asyncio.run(generate_image())
 <TabItem value="advanced" label="Advanced Parameters">
 
 ```python showLineNumbers title="Advanced Image Generation with Parameters"
-import litellm
+import lumina
 import os
 
 # Set your API credentials
@@ -184,7 +184,7 @@ os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
 os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
 
 # Generate image with additional parameters
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="azure_ai/FLUX-1.1-pro",
     prompt="A majestic dragon soaring over a medieval castle at dawn",
     api_base=os.environ["AZURE_AI_API_BASE"],
@@ -201,7 +201,7 @@ for image in response.data:
 </TabItem>
 </Tabs>
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Configure your config.yaml
 
@@ -245,10 +245,10 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-#### 2. Start LiteLLM Proxy Server
+#### 2. Start Lumina Proxy Server
 
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -264,7 +264,7 @@ from openai import OpenAI
 # Initialize client with your proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",  # Your proxy URL
-    api_key="sk-<your-litellm-api-key>"                  # Your proxy API key
+    api_key="sk-<your-lumina-api-key>"                  # Your proxy API key
 )
 
 # Generate image with FLUX Kontext Pro
@@ -280,17 +280,17 @@ print(response.data[0].url)
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Azure AI Image Generation via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Azure AI Image Generation via Proxy - Lumina SDK"
+import lumina
 
-# Configure LiteLLM to use your proxy
-response = litellm.image_generation(
-    model="litellm_proxy/azure-flux-11-pro",
+# Configure Lumina to use your proxy
+response = lumina.image_generation(
+    model="lumina_proxy/azure-flux-11-pro",
     prompt="A cyberpunk warrior in a neon-lit alleyway",
     api_base="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 print(response.data[0].url)
@@ -319,21 +319,21 @@ curl --location 'http://localhost:4000/v1/images/generations' \
 
 FLUX 2 Pro supports image editing by passing an input image along with a prompt describing the desired modifications.
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic-edit" label="Basic Image Edit">
 
 ```python showLineNumbers title="Basic Image Editing with FLUX 2 Pro"
-import litellm
+import lumina
 import os
 
 # Set your API credentials
 os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
-os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"  # e.g., https://litellm-ci-cd-prod.services.ai.azure.com
+os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"  # e.g., https://lumina-ci-cd-prod.services.ai.azure.com
 
 # Edit an existing image
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="azure_ai/flux.2-pro",
     prompt="Add a red hat to the subject",
     image=open("input_image.png", "rb"),
@@ -350,7 +350,7 @@ print(response.data[0].b64_json)  # FLUX 2 returns base64 encoded images
 <TabItem value="async-edit" label="Async Image Edit">
 
 ```python showLineNumbers title="Async Image Editing"
-import litellm
+import lumina
 import asyncio
 import os
 
@@ -358,7 +358,7 @@ async def edit_image():
     os.environ["AZURE_AI_API_KEY"] = "your-api-key-here"
     os.environ["AZURE_AI_API_BASE"] = "your-azure-ai-endpoint"
     
-    response = await litellm.aimage_edit(
+    response = await lumina.aimage_edit(
         model="azure_ai/flux.2-pro",
         prompt="Change the background to a sunset beach",
         image=open("input_image.png", "rb"),
@@ -375,7 +375,7 @@ asyncio.run(edit_image())
 </TabItem>
 </Tabs>
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 <Tabs>
 <TabItem value="curl-edit" label="cURL">
@@ -397,7 +397,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 response = client.images.edit(
@@ -446,7 +446,7 @@ FLUX 2 Pro and FLUX 2 Flex take `n`, `size`, `output_format`, `seed`, `safety_to
 2. Deploy a FLUX model in your Azure AI Studio workspace
 3. Get your API key and endpoint from the deployment details
 4. Set your `AZURE_AI_API_KEY` and `AZURE_AI_API_BASE` environment variables
-5. Start generating images using LiteLLM
+5. Start generating images using Lumina
 
 ## Additional Resources
 

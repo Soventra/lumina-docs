@@ -8,7 +8,7 @@ description: Compare shipping velocity, issue trends, and recorded AI spend per 
 
 Compare your team's merged changes, time to merge, bug reports, and recorded AI spend across GitHub and GitLab repositories
 
-The ROI Calculator combines repository activity with spend recorded by your LiteLLM gateway. Link repository accounts to internal users to see shipping velocity and spend per merged change for each engineer. Open **Observability > ROI Calculator** in the Admin UI
+The ROI Calculator combines repository activity with spend recorded by your Lumina gateway. Link repository accounts to internal users to see shipping velocity and spend per merged change for each engineer. Open **Observability > ROI Calculator** in the Admin UI
 
 ## Connect repositories
 
@@ -110,7 +110,7 @@ For GitHub, use a repository tag such as `repo:github.com/example/api`. For self
 The same tags can be sent through a comma-separated header:
 
 ```text
-x-litellm-tags: repo:github.com/example/api,branch:feature/search
+x-lumina-tags: repo:github.com/example/api,branch:feature/search
 ```
 
 Configure the coding tool or wrapper to send both tags on every request. See [Request tags](./request_tags.md) for client examples. Tags are stored in the spend log's `request_tags` field; plain branch metadata or a Git release tag does not replace this pair

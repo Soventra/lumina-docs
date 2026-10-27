@@ -193,7 +193,7 @@ curl -X POST "http://localhost:4000/v1/vector_stores/vs_692658d337c4819183f2ad84
     -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{
-        "query": "What is LiteLLM?",
+        "query": "What is Lumina?",
         "custom_llm_provider": "openai"
     }'
 ```
@@ -202,7 +202,7 @@ Response:
 ```json
 {
   "object": "vector_store.search_results.page",
-  "search_query": ["What is LiteLLM?"],
+  "search_query": ["What is Lumina?"],
   "data": [
     {
       "file_id": "file-M2pJJiWH56cfUP4Fe7rJay",
@@ -212,7 +212,7 @@ Response:
       "content": [
         {
           "type": "text",
-          "text": "Test document abc123 for RAG ingestion.\nThis is a sample document to test the RAG ingest API.\nLiteLLM provides a unified interface for vector stores."
+          "text": "Test document abc123 for RAG ingestion.\nThis is a sample document to test the RAG ingest API.\nLumina provides a unified interface for vector stores."
         }
       ]
     }
@@ -268,7 +268,7 @@ When `vector_store.vector_store_id` names a store in the [vector store registry]
 | `aws_region_name` | string | `us-west-2` | AWS region |
 
 :::info[Bedrock Auto-Creation]
-When `vector_store_id` is omitted, LiteLLM automatically creates:
+When `vector_store_id` is omitted, Lumina automatically creates:
 - S3 bucket for document storage
 - OpenSearch Serverless collection
 - IAM role with required permissions
@@ -312,13 +312,13 @@ When `vector_store_id` is omitted, LiteLLM automatically creates:
 | `aws_secret_access_key` | string | env | AWS secret key |
 
 :::info[S3 Vectors Auto-Creation]
-When `index_name` is omitted, LiteLLM automatically creates:
+When `index_name` is omitted, Lumina automatically creates:
 - S3 vector bucket (if it doesn't exist)
 - Vector index with auto-detected dimensions from your embedding model
 
 **Dimension Auto-Detection**: The vector dimension is automatically detected by making a test embedding request to your specified model. No need to manually specify dimensions!
 
-**Supported Embedding Models**: Works with any LiteLLM-supported embedding model (OpenAI, Cohere, Bedrock, Azure, etc.)
+**Supported Embedding Models**: Works with any Lumina-supported embedding model (OpenAI, Cohere, Bedrock, Azure, etc.)
 :::
 
 **Example with auto-detection:**

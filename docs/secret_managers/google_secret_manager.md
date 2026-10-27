@@ -32,8 +32,8 @@ general_settings:
 
 You can now test this by starting your proxy: 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
-[Quick Test Proxy](/docs/proxy/quick_start#using-litellm-proxy---curl-request-openai-package-langchain)
+[Quick Test Proxy](/docs/proxy/quick_start#using-lumina-proxy---curl-request-openai-package-langchain)
 

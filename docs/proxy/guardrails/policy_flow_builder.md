@@ -66,7 +66,7 @@ For each step you choose an action for **pass**, **fail**, and optionally **erro
 
 ## Using the Flow Builder (UI)
 
-1. Go to **Policies** in the LiteLLM Admin UI
+1. Go to **Policies** in the Lumina Admin UI
 2. Click **+ Create New Policy** or **Edit** on an existing policy
 3. Select **Flow Builder** (instead of the simple form)
 4. Design your flow:

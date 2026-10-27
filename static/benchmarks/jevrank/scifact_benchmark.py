@@ -351,21 +351,21 @@ def sanitize(value, secrets):
 def sdk_provenance(root):
     root = Path(root).resolve()
     sys.path.insert(0, str(root))
-    litellm = importlib.import_module("litellm")
-    if not Path(litellm.__file__).resolve().is_relative_to(root):
+    lumina = importlib.import_module("lumina")
+    if not Path(lumina.__file__).resolve().is_relative_to(root):
         raise ValueError("SDK import did not resolve to the requested worktree")
-    adapter = root / "litellm/rerank_api/decision_rerank.py"
+    adapter = root / "lumina/rerank_api/decision_rerank.py"
     if not adapter.exists():
         raise ValueError("Requested SDK tree does not contain the decision-rerank adapter")
     revision = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     dirty = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"], text=True)
-    return litellm, {"revision": revision, "tracked_changes": bool(dirty),
+    return lumina, {"revision": revision, "tracked_changes": bool(dirty),
                      "adapter_sha256": file_digest(adapter),
-                     "decisions_transport_sha256": file_digest(root / "litellm/decisions/call.py"),
+                     "decisions_transport_sha256": file_digest(root / "lumina/decisions/call.py"),
                      "decisions_source_sha256": {str(path.relative_to(root)): file_digest(path)
-                         for path in sorted((root / "litellm/decisions").rglob("*.py"))},
+                         for path in sorted((root / "lumina/decisions").rglob("*.py"))},
                      "httpx_version": importlib.metadata.version("httpx"),
-                     "import_path": str(Path(litellm.__file__).resolve())}
+                     "import_path": str(Path(lumina.__file__).resolve())}
 
 
 async def run(args):
@@ -386,22 +386,22 @@ async def run(args):
         "query_concurrency": 1, "automatic_retries": 0,
         "script_sha256": file_digest(__file__),
     }
-    litellm = None
+    lumina = None
     if args.mode == "sdk":
         if not args.sdk_root:
             raise ValueError("SDK mode requires --sdk-root pointing to the PR worktree")
-        litellm, run_config["sdk"] = sdk_provenance(args.sdk_root)
-        litellm.suppress_debug_info = True
-        litellm.num_retries = 0
+        lumina, run_config["sdk"] = sdk_provenance(args.sdk_root)
+        lumina.suppress_debug_info = True
+        lumina.num_retries = 0
     else:
-        env_name = config.get("gateway_url_env", "LITELLM_BASE_URL")
+        env_name = config.get("gateway_url_env", "LUMINA_BASE_URL")
         if not os.environ.get(env_name):
             raise ValueError(f"Gateway URL environment variable is missing: {env_name}")
         run_config["gateway_url"] = validated_url(os.environ[env_name])
         run_config["gateway_revision"] = config.get("gateway_revision")
     key_values = {}
     for model in config["models"]:
-        env_name = model.get("api_key_env", "LITELLM_API_KEY")
+        env_name = model.get("api_key_env", "LUMINA_API_KEY")
         if args.execute and not os.environ.get(env_name):
             raise ValueError(f"API key environment variable is missing for {model['name']}: {env_name}")
         key_values[model["name"]] = os.environ.get(env_name, "")
@@ -462,15 +462,15 @@ async def run(args):
                                      "Cache-Control": "no-cache"})
                         record["http_status"] = response.status_code
                         record["response_headers"] = {k: v for k, v in response.headers.items()
-                            if k.lower() in {"x-litellm-call-id", "x-litellm-response-cost",
-                                             "x-litellm-model-id", "x-litellm-version", "x-request-id"}}
+                            if k.lower() in {"x-lumina-call-id", "x-lumina-response-cost",
+                                             "x-lumina-model-id", "x-lumina-version", "x-request-id"}}
                         try:
                             raw = response.json()
                         except ValueError:
                             raw = {"unparsed_body": response.text}
                         record["response"] = raw
                         response.raise_for_status()
-                        reported_cost = response.headers.get("x-litellm-response-cost")
+                        reported_cost = response.headers.get("x-lumina-response-cost")
                         cost_source = "gateway_reported_cost"
                     else:
                         kwargs = dict(request, api_key=key_values[model["name"]],
@@ -483,14 +483,14 @@ async def run(args):
                                           output_cost_per_token=pricing["output_usd_per_million"] / 1_000_000)
                         if model.get("api_base_env"):
                             kwargs["api_base"] = run_config["model_api_bases"][model["name"]]
-                        result = await litellm.arerank(**kwargs)
+                        result = await lumina.arerank(**kwargs)
                         raw = result.model_dump(mode="json")
                         record["response"] = raw
                         decision_responses = getattr(result, "decision_responses", ())
                         record["decision_responses"] = [r.model_dump(mode="json") for r in decision_responses]
                         hidden = getattr(result, "_hidden_params", {})
                         reported_cost = hidden.get("response_cost")
-                        cost_source = "litellm_calculated_cost"
+                        cost_source = "lumina_calculated_cost"
                         record["resolved_models"] = sorted({r.model for r in decision_responses})
                     record["cost"] = cost_record(raw, model, reported_cost, cost_source)
                     check_model_version(record, model)
@@ -532,7 +532,7 @@ def summarize(output, records, queries, models, fingerprint):
         by_model[model["name"]] = {r["query_id"]: r for r in successful}
         summaries.append({
             "model_name": model["name"], "model_config": model,
-            "origin": "measured_via_litellm", "queries_expected": len(queries),
+            "origin": "measured_via_lumina", "queries_expected": len(queries),
             "queries_attempted": len(rows), "queries_succeeded": len(successful),
             "errors": len(rows) - len(successful), "complete": complete,
             "full_test_split": len(queries) == EXPECTED_QUERIES,

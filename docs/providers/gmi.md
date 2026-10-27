@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | GMI Cloud is a GPU cloud infrastructure provider offering access to top AI models including Claude, GPT, DeepSeek, Gemini, and more through OpenAI-compatible APIs. |
-| Provider Route on LiteLLM | `gmi/` |
+| Provider Route on Lumina | `gmi/` |
 | Link to Provider Doc | [GMI Cloud Docs ↗](https://docs.gmicloud.ai) |
 | Base URL | `https://api.gmi-serving.com/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/gmi#usage---litellm-python-sdk), [`/models`](#supported-models) |
+| Supported Operations | [`/chat/completions`](/docs/providers/gmi#usage---lumina-python-sdk), [`/models`](#supported-models) |
 
 <br />
 
@@ -28,14 +28,14 @@ os.environ["GMI_API_KEY"] = ""  # your GMI Cloud API key
 
 Get your GMI Cloud API key from [console.gmicloud.ai](https://console.gmicloud.ai).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="GMI Cloud Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["GMI_API_KEY"] = ""  # your GMI Cloud API key
 
@@ -54,8 +54,8 @@ print(response)
 
 ```python showLineNumbers title="GMI Cloud Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["GMI_API_KEY"] = ""  # your GMI Cloud API key
 
@@ -72,7 +72,7 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 

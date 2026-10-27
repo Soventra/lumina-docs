@@ -78,7 +78,7 @@ model_list:
 ### Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml 
+lumina --config /path/to/config.yaml 
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -95,7 +95,7 @@ const url = "ws://0.0.0.0:4000/v1/realtime?model=openai-gpt-4o-realtime-audio";
 // const url = "wss://my-azure-endpoint.openai.azure.com/openai/realtime?api-version=2024-10-01-preview&deployment=gpt-4o-realtime-preview";
 const ws = new WebSocket(url, {
     headers: {
-        "api-key": `sk-<your-litellm-api-key>`,
+        "api-key": `sk-<your-lumina-api-key>`,
         "OpenAI-Beta": "realtime=v1",
     },
 });
@@ -124,7 +124,7 @@ ws.on("error", function handleError(error) {
 
 Azure exposes two realtime upstreams. The GA endpoint (`/openai/v1/realtime?model=<deployment>`) speaks the GA event schema (`session.type`, `output_modalities`, nested `audio`), and the older beta endpoint (`/openai/realtime?api-version=2024-10-01-preview&deployment=<deployment>`) speaks the beta schema (`modalities`, `voice`, flat audio formats). Sending a GA-shaped `session.update` to the beta endpoint fails with `Unknown parameter: 'session.type'`
 
-LiteLLM picks the upstream from the client connection. A client that sends the `OpenAI-Beta: realtime=v1` header (the openai SDK's `client.beta.realtime.connect`) is bridged to the beta endpoint. A client without that header (the openai SDK's `client.realtime.connect`, and most voice agent frameworks) is bridged to the GA endpoint. Transcription sessions (`intent=transcription`) always use GA
+Lumina picks the upstream from the client connection. A client that sends the `OpenAI-Beta: realtime=v1` header (the openai SDK's `client.beta.realtime.connect`) is bridged to the beta endpoint. A client without that header (the openai SDK's `client.realtime.connect`, and most voice agent frameworks) is bridged to the GA endpoint. Transcription sessions (`intent=transcription`) always use GA
 
 ```python
 import os
@@ -161,13 +161,13 @@ export LUMINA_AZURE_REALTIME_PROTOCOL=beta # or GA
 
 ## Guardrails
 
-You can apply [LiteLLM guardrails](https://docs.litellm.ai/docs/proxy/guardrails/quick_start) to realtime sessions.
+You can apply [Lumina guardrails](https://docs.lumina.ai/docs/proxy/guardrails/quick_start) to realtime sessions.
 
 ### Set guardrails on a key or team
 
 The easiest production setup: attach guardrails to a virtual key or team so they always apply automatically, without any client-side changes.
 
-See [Virtual Keys → Guardrails](https://docs.litellm.ai/docs/proxy/virtual_keys#guardrails) and [Teams → Guardrails](https://docs.litellm.ai/docs/proxy/team_budgets).
+See [Virtual Keys → Guardrails](https://docs.lumina.ai/docs/proxy/virtual_keys#guardrails) and [Teams → Guardrails](https://docs.lumina.ai/docs/proxy/team_budgets).
 
 ### Pass guardrails dynamically (easy testing)
 
@@ -183,7 +183,7 @@ const url = `ws://0.0.0.0:4000/v1/realtime?model=openai-gpt-4o-realtime-audio&gu
 
 const ws = new WebSocket(url, {
     headers: {
-        "Authorization": "Bearer sk-<your-litellm-api-key>",
+        "Authorization": "Bearer sk-<your-lumina-api-key>",
     },
 });
 
@@ -215,7 +215,7 @@ async def main():
     url = "ws://0.0.0.0:4000/v1/realtime?model=openai-gpt-4o-realtime-audio&guardrails=your-guardrail-name"
     async with websockets.connect(
         url,
-        additional_headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+        additional_headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
     ) as ws:
         print("Connected — guardrail active")
         async for msg in ws:
@@ -242,7 +242,7 @@ When a guardrail blocks the request, the proxy sends an `error` event over the W
 
 ## Logging
 
-To prevent requests from being dropped, by default LiteLLM just logs these event types:
+To prevent requests from being dropped, by default Lumina just logs these event types:
 
 - `session.created`
 - `response.create`
@@ -251,7 +251,7 @@ To prevent requests from being dropped, by default LiteLLM just logs these event
 You can override this by setting the `logged_real_time_event_types` parameter in the config. For example:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   logged_real_time_event_types: "*" # Log all events
   ## OR ## 
   logged_real_time_event_types: ["session.created", "response.create", "response.done"] # Log only these event types

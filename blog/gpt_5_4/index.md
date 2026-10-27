@@ -6,7 +6,7 @@ authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "GPT-5.4 model support in LiteLLM"
+description: "GPT-5.4 model support in Lumina"
 tags: [openai, gpt-5.4, completion]
 hide_table_of_contents: false
 ---
@@ -14,20 +14,20 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports fully GPT-5.4!
+Lumina now supports fully GPT-5.4!
 
 {/* truncate */}
 
 ## Docker Image
 
 ```bash
-docker pull ghcr.io/berriai/litellm:v1.81.14-stable.gpt-5.4_patch
+docker pull ghcr.io/soventra/lumina:v1.81.14-stable.gpt-5.4_patch
 ```
 
 ## Usage
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -46,7 +46,7 @@ docker run -d \
   -p 4000:4000 \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.14-stable.gpt-5.4_patch \
+  ghcr.io/soventra/lumina:v1.81.14-stable.gpt-5.4_patch \
   --config /app/config.yaml
 ```
 
@@ -65,10 +65,10 @@ curl -X POST "http://0.0.0.0:4000/chat/completions" \
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="openai/gpt-5.4",

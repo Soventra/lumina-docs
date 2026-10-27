@@ -4,7 +4,7 @@ title: "Tokenize text across vLLM and Watsonx"
 date: 2026-10-23T13:00:00-07:00
 authors:
   - ishaan
-description: "Choose token counting for prompt budgets or /tokenize to inspect tokens. Use one request format across vLLM and Watsonx through LiteLLM."
+description: "Choose token counting for prompt budgets or /tokenize to inspect tokens. Use one request format across vLLM and Watsonx through Lumina."
 tags: [engineering]
 hide_table_of_contents: true
 custom_hero: true
@@ -15,11 +15,11 @@ import TokenizeLaunch from './TokenizeLaunch';
 
 <div data-blog-summary hidden>
 
-Send text to vLLM or Watsonx through one LiteLLM tokenization interface. Your app passes a model name, such as `llama-3.1-8b`, and a prompt to `/tokenize`. Configure the provider URL and credentials in your gateway.
+Send text to vLLM or Watsonx through one Lumina tokenization interface. Your app passes a model name, such as `llama-3.1-8b`, and a prompt to `/tokenize`. Configure the provider URL and credentials in your gateway.
 
-Choose another configured model by changing `model`; keep the same endpoint and JSON fields. Read the token count, numeric IDs and token strings where the provider supplies them. LiteLLM runs the provider integration in Rust and reuses shared HTTP clients.
+Choose another configured model by changing `model`; keep the same endpoint and JSON fields. Read the token count, numeric IDs and token strings where the provider supplies them. Lumina runs the provider integration in Rust and reuses shared HTTP clients.
 
-To run the examples, use a build containing [PR #48079](https://github.com/BerriAI/litellm/pull/48079) and its compiled Rust extension. Use token counting for context limits and input cost estimates. Choose /tokenize to inspect a text string’s token list or compare tokenizer settings across deployments.
+To run the examples, use a build containing [PR #48079](https://github.com/Soventra/lumina/pull/48079) and its compiled Rust extension. Use token counting for context limits and input cost estimates. Choose /tokenize to inspect a text string’s token list or compare tokenizer settings across deployments.
 
 </div>
 

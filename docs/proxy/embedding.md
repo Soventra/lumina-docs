@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Embeddings - `/embeddings`
 
-See supported Embedding Providers & Models [here](https://docs.litellm.ai/docs/embedding/supported_embedding)
+See supported Embedding Providers & Models [here](https://docs.lumina.ai/docs/embedding/supported_embedding)
 
 ## Supported Input Formats
 
@@ -42,7 +42,7 @@ general_settings:
 
 2. Start the proxy
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Test the embedding call
@@ -58,7 +58,7 @@ curl --location 'http://0.0.0.0:4000/v1/embeddings' \
 ```
 ## Default `encoding_format` {#embedding-encoding-format}
 
-For embeddings routed through LiteLLM’s **OpenAI-compatible embedding path** (for example OpenAI models, `openai/...` with a custom `api_base`, or the proxy `/v1/embeddings` route that forwards to that path), LiteLLM sends an explicit `encoding_format` when the caller omits it.
+For embeddings routed through Lumina’s **OpenAI-compatible embedding path** (for example OpenAI models, `openai/...` with a custom `api_base`, or the proxy `/v1/embeddings` route that forwards to that path), Lumina sends an explicit `encoding_format` when the caller omits it.
 
 **Resolution order** (first match wins):
 

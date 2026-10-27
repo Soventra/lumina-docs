@@ -2,13 +2,13 @@
 
 ## Use Callbacks to send Output Data to Posthog, Sentry etc
 
-liteLLM provides `input_callbacks`, `success_callbacks` and `failure_callbacks`, making it easy for you to send data to a particular provider depending on the status of your responses.
+Lumina provides `input_callbacks`, `success_callbacks` and `failure_callbacks`, making it easy for you to send data to a particular provider depending on the status of your responses.
 
 :::tip
-**New to LiteLLM Callbacks?**
+**New to Lumina Callbacks?**
 
-- For proxy/server logging and observability, see the [Proxy Logging Guide](https://docs.litellm.ai/docs/proxy/logging).
-- To write your own callback logic, see the [Custom Callbacks Guide](https://docs.litellm.ai/docs/observability/custom_callback).
+- For proxy/server logging and observability, see the [Proxy Logging Guide](https://docs.lumina.ai/docs/proxy/logging).
+- To write your own callback logic, see the [Custom Callbacks Guide](https://docs.lumina.ai/docs/observability/custom_callback).
 :::
 
 
@@ -31,21 +31,21 @@ This is **not** an extensive list. Please check the dropdown for all logging int
 ### Related Cookbooks
 Try out our cookbooks for code snippets and interactive demos:
 
-- [Langfuse Callback Example (Colab)](https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/logging_observability/LiteLLM_Langfuse.ipynb)
-- [Lunary Callback Example (Colab)](https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/logging_observability/LiteLLM_Lunary.ipynb)
-- [Arize Callback Example (Colab)](https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/logging_observability/LiteLLM_Arize.ipynb)
-- [Proxy + Langfuse Callback Example (Colab)](https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/logging_observability/LiteLLM_Proxy_Langfuse.ipynb)
-- [PromptLayer Callback Example (Colab)](https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/LiteLLM_PromptLayer.ipynb)
+- [Langfuse Callback Example (Colab)](https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/logging_observability/Lumina_Langfuse.ipynb)
+- [Lunary Callback Example (Colab)](https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/logging_observability/Lumina_Lunary.ipynb)
+- [Arize Callback Example (Colab)](https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/logging_observability/Lumina_Arize.ipynb)
+- [Proxy + Langfuse Callback Example (Colab)](https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/logging_observability/Lumina_Proxy_Langfuse.ipynb)
+- [PromptLayer Callback Example (Colab)](https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_PromptLayer.ipynb)
 
 ### Quick Start
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set callbacks
-litellm.input_callback=["sentry"] # for sentry breadcrumbing - logs the input being sent to the api
-litellm.success_callback=["posthog", "helicone", "langfuse", "lunary", "athina"]
-litellm.failure_callback=["sentry", "lunary", "langfuse"]
+lumina.input_callback=["sentry"] # for sentry breadcrumbing - logs the input being sent to the api
+lumina.success_callback=["posthog", "helicone", "langfuse", "lunary", "athina"]
+lumina.failure_callback=["sentry", "lunary", "langfuse"]
 
 ## set env variables
 os.environ['LUNARY_PUBLIC_KEY'] = ""

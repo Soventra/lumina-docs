@@ -1,6 +1,6 @@
 # Error Reference
 
-Every failed request through the LiteLLM AI Gateway returns an OpenAI-compatible JSON error body and an HTTP status code. This page is the reference for reading them: what the payload contains, which errors come from the gateway versus the upstream provider, what each status code and error type means, and what the gateway returns when a fallback chain runs out of targets
+Every failed request through the Lumina AI Gateway returns an OpenAI-compatible JSON error body and an HTTP status code. This page is the reference for reading them: what the payload contains, which errors come from the gateway versus the upstream provider, what each status code and error type means, and what the gateway returns when a fallback chain runs out of targets
 
 If you only need the quick provider-versus-gateway rule, see [Diagnosing Errors](/docs/proxy/error_diagnosis). For the Python SDK exception classes and the per-provider mapping table, see [Exception Mapping](/docs/exception_mapping)
 
@@ -11,7 +11,7 @@ Failed requests to the LLM API routes (`/chat/completions`, `/completions`, `/em
 ```json
 {
   "error": {
-    "message": "litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for {{openai_small}} in organization org-abc on requests per min (RPM): Limit 3, Used 3.",
+    "message": "lumina.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for {{openai_small}} in organization org-abc on requests per min (RPM): Limit 3, Used 3.",
     "type": "throttling_error",
     "param": null,
     "code": "429"
@@ -21,8 +21,8 @@ Failed requests to the LLM API routes (`/chat/completions`, `/completions`, `/em
 
 | Field | Type | Description |
 |---|---|---|
-| `error.message` | string | Human-readable description. For provider failures this is the full LiteLLM exception string, which embeds both the LiteLLM exception name and the provider exception name. This is the field you parse to attribute the error |
-| `error.type` | string or null | A coarse category. Gateway-originated errors carry a LiteLLM-specific value such as `budget_exceeded` or `key_model_access_denied`; provider-originated errors carry an OpenAI-style value such as `throttling_error` or `invalid_request_error`, and are frequently `null`. Treat this as a hint, not as the primary signal |
+| `error.message` | string | Human-readable description. For provider failures this is the full Lumina exception string, which embeds both the Lumina exception name and the provider exception name. This is the field you parse to attribute the error |
+| `error.type` | string or null | A coarse category. Gateway-originated errors carry a Lumina-specific value such as `budget_exceeded` or `key_model_access_denied`; provider-originated errors carry an OpenAI-style value such as `throttling_error` or `invalid_request_error`, and are frequently `null`. Treat this as a hint, not as the primary signal |
 | `error.param` | string or null | The request parameter at fault, when the gateway can identify one. Set to `messages` for a missing required field, `model` for a model-access rejection, `key` for a virtual-key problem |
 | `error.code` | string | Almost always the HTTP status code as a string (`"429"`, not `429`). For some provider errors it is the provider's own error code string instead, for example `"invalid_api_key"` or `"context_length_exceeded"` |
 | `error.provider_specific_fields` | object | Optional. Present only when the provider returned structured detail worth preserving, most notably Azure OpenAI's `innererror` content-filter breakdown. See [Exception Mapping](/docs/exception_mapping#accessing-provider-specific-error-details) |
@@ -35,7 +35,7 @@ An unhandled exception inside the gateway returns a deliberately minimal body wi
 {"error": {"message": "Internal server error", "type": "internal_server_error"}}
 ```
 
-A request to a route that does not exist is rejected by the web framework before LiteLLM sees it, and returns the framework's own shape rather than the `error` envelope. Getting this back usually means a wrong path or a wrong base URL, not a gateway fault:
+A request to a route that does not exist is rejected by the web framework before Lumina sees it, and returns the framework's own shape rather than the `error` envelope. Getting this back usually means a wrong path or a wrong base URL, not a gateway fault:
 
 ```json
 {"detail": "Not Found"}
@@ -47,7 +47,7 @@ A malformed body, by contrast, is normalized into the standard envelope. Unparse
 
 :::note
 
-`error.code` is a string, not an integer. This matches the [OpenAI Python library's error object](https://github.com/openai/openai-python/blob/main/src/openai/types/shared/error_object.py), so clients written against the OpenAI SDK deserialize LiteLLM errors without changes. Compare against `"429"`, or read the HTTP status line instead
+`error.code` is a string, not an integer. This matches the [OpenAI Python library's error object](https://github.com/openai/openai-python/blob/main/src/openai/types/shared/error_object.py), so clients written against the OpenAI SDK deserialize Lumina errors without changes. Compare against `"429"`, or read the HTTP status line instead
 
 :::
 
@@ -57,14 +57,14 @@ The headers on a failed response carry the diagnostic context that the JSON body
 
 | Header | When present | Description |
 |---|---|---|
-| `x-litellm-call-id` | Any failure after authentication succeeds | The request's correlation id. This is the value to quote in a support ticket and to search for in your logs; it ties the HTTP response to the gateway's log line, the spend-log row, and the OpenTelemetry trace. Absent on authentication failures, which are rejected before a call id is assigned |
+| `x-lumina-call-id` | Any failure after authentication succeeds | The request's correlation id. This is the value to quote in a support ticket and to search for in your logs; it ties the HTTP response to the gateway's log line, the spend-log row, and the OpenTelemetry trace. Absent on authentication failures, which are rejected before a call id is assigned |
 | `retry-after` | Gateway rate limits and router cooldowns | Seconds to wait. See the note below about what its presence implies |
 | `rate_limit_type` | Gateway rate limits | Which dimension was exceeded: `requests`, `tokens`, or `concurrent_requests` |
 | `reset_at` | Gateway rate limits | UTC timestamp at which the exceeded window resets |
-| `x-litellm-key-rpm-limit`, `x-litellm-key-max-budget`, `x-litellm-key-spend` | Most failures after authentication | The calling key's configured ceilings and current spend, so you can confirm whether the key itself is the constraint |
-| `x-litellm-timeout` | Failures on a request that reached a deployment | The timeout that was in force for the call, in seconds |
+| `x-lumina-key-rpm-limit`, `x-lumina-key-max-budget`, `x-lumina-key-spend` | Most failures after authentication | The calling key's configured ceilings and current spend, so you can confirm whether the key itself is the constraint |
+| `x-lumina-timeout` | Failures on a request that reached a deployment | The timeout that was in force for the call, in seconds |
 
-Three families of header appear on successful responses only, so do not build failure handling around them: `llm_provider-*` (the upstream's own response headers, forwarded verbatim with a prefix), `x-ratelimit-*` (the upstream's rate-limit counters), and `x-litellm-attempted-retries` / `x-litellm-attempted-fallbacks` (how many retries and fallback hops it took to succeed)
+Three families of header appear on successful responses only, so do not build failure handling around them: `llm_provider-*` (the upstream's own response headers, forwarded verbatim with a prefix), `x-ratelimit-*` (the upstream's rate-limit counters), and `x-lumina-attempted-retries` / `x-lumina-attempted-fallbacks` (how many retries and fallback hops it took to succeed)
 
 :::tip
 
@@ -77,9 +77,9 @@ Three families of header appear on successful responses only, so do not build fa
 The gateway wraps every upstream failure and names both layers in `error.message`. Read it from the outside in:
 
 ```
-litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached ...
+lumina.RateLimitError: RateLimitError: OpenAIException - Rate limit reached ...
 ^^^^^^^^^^^^^^^^^^^^^^                  ^^^^^^^^^^^^^^^
-LiteLLM's normalized class              the provider that actually failed
+Lumina's normalized class              the provider that actually failed
 ```
 
 The presence of a `<Provider>Exception` token means the request left the gateway, reached the provider, and the provider rejected it. Its absence means the gateway rejected the request itself, before or instead of calling a provider
@@ -87,9 +87,9 @@ The presence of a `<Provider>Exception` token means the request left the gateway
 | Signal in the response | Origin |
 |---|---|
 | `message` contains `OpenAIException`, `AnthropicException`, `AzureException`, `BedrockException`, `VertexAIException`, or any other `<Provider>Exception` | Upstream provider |
-| `message` contains no provider name, and `type` is a LiteLLM value such as `budget_exceeded`, `expired_key`, `token_not_found_in_db`, `key_model_access_denied` | LiteLLM gateway |
-| `message` starts with `No deployments available for selected model` or `There are no healthy deployments for this model` | LiteLLM gateway (routing) |
-| 429 with a `retry-after`, `rate_limit_type`, or `reset_at` header | LiteLLM gateway (rate limiting) |
+| `message` contains no provider name, and `type` is a Lumina value such as `budget_exceeded`, `expired_key`, `token_not_found_in_db`, `key_model_access_denied` | Lumina gateway |
+| `message` starts with `No deployments available for selected model` or `There are no healthy deployments for this model` | Lumina gateway (routing) |
+| 429 with a `retry-after`, `rate_limit_type`, or `reset_at` header | Lumina gateway (rate limiting) |
 | 429 with no such headers | Upstream provider |
 
 Worked example, gateway origin. The virtual key is capped below its accrued spend, so the request is rejected before any provider is contacted:
@@ -110,7 +110,7 @@ Worked example, provider origin. The same 429 status, but the message names the 
 ```json
 {
   "error": {
-    "message": "litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for {{openai_small}} in organization org-abc on requests per min (RPM): Limit 3, Used 3.",
+    "message": "lumina.RateLimitError: RateLimitError: OpenAIException - Rate limit reached for {{openai_small}} in organization org-abc on requests per min (RPM): Limit 3, Used 3.",
     "type": "throttling_error",
     "param": null,
     "code": "429"
@@ -159,7 +159,7 @@ These `error.type` values are produced by the gateway itself. Seeing one of them
 | `bad_request_error` | 400 | Generic gateway-side request rejection | Read the message |
 | `not_found_error` | 404 | The referenced object does not exist | Check the id |
 | `no_db_connection` | 503 | The endpoint needs the database and the gateway cannot reach it | Check `DATABASE_URL` and database health |
-| `internal_server_error` | 500 | Unhandled gateway exception | Check the gateway logs for the matching `x-litellm-call-id` |
+| `internal_server_error` | 500 | Unhandled gateway exception | Check the gateway logs for the matching `x-lumina-call-id` |
 
 Routing failures do not currently set a distinctive `error.type`; identify them by the message prefix instead
 
@@ -189,22 +189,22 @@ A gateway rate limit sets `retry-after`, `rate_limit_type`, and `reset_at`, and 
 
 A gateway budget cap sets `type` to `budget_exceeded` and reports the spend against the cap. A routing cooldown sets `retry-after` and opens with `No deployments available for selected model`. Anything else with a `<Provider>Exception` in the message is the provider's own throttle, and the gateway has already exhausted its configured retries and fallbacks before returning it
 
-From the Python SDK, this classification is available without parsing strings. Every `litellm.RateLimitError` carries a `category` attribute drawn from `RateLimitErrorCategory` and a `rate_limit_type` attribute drawn from `RateLimitType`:
+From the Python SDK, this classification is available without parsing strings. Every `lumina.RateLimitError` carries a `category` attribute drawn from `RateLimitErrorCategory` and a `rate_limit_type` attribute drawn from `RateLimitType`:
 
 ```python showLineNumbers
-import litellm
-from litellm.exceptions import RateLimitErrorCategory
+import lumina
+from lumina.exceptions import RateLimitErrorCategory
 
 try:
-    response = litellm.completion(model="{{openai_small}}", messages=[{"role": "user", "content": "hi"}])
-except litellm.RateLimitError as e:
+    response = lumina.completion(model="{{openai_small}}", messages=[{"role": "user", "content": "hi"}])
+except lumina.RateLimitError as e:
     if e.category == RateLimitErrorCategory.LUMINA_RATE_LIMIT:
-        print(f"LiteLLM's own limiter: {e.rate_limit_type}")
+        print(f"Lumina's own limiter: {e.rate_limit_type}")
     elif e.category == RateLimitErrorCategory.VENDOR_RATE_LIMIT:
         print("the upstream provider throttled us")
 ```
 
-`category` is one of `litellm_rate_limit`, `vendor_rate_limit`, `litellm_batch_rate_limit`, or `vendor_batch_rate_limit`. `rate_limit_type` is one of `requests`, `tokens`, `concurrent_requests`, `budget`, or `max_iterations`. Both are also written to `StandardLoggingPayload.error_information`, so custom callbacks and metrics pipelines can split 429s by cause without parsing free text
+`category` is one of `lumina_rate_limit`, `vendor_rate_limit`, `lumina_batch_rate_limit`, or `vendor_batch_rate_limit`. `rate_limit_type` is one of `requests`, `tokens`, `concurrent_requests`, `budget`, or `max_iterations`. Both are also written to `StandardLoggingPayload.error_information`, so custom callbacks and metrics pipelines can split 429s by cause without parsing free text
 
 ## Retries and fallbacks
 
@@ -217,7 +217,7 @@ The message is then extended with the fallback attempt history. Reading the exam
 ```json
 {
   "error": {
-    "message": "litellm.InternalServerError: InternalServerError: OpenAIException - The server had an error while processing your request. Sorry about that!. Received Model Group=mock-500\nAvailable Model Group Fallbacks=['mock-503']\nError doing the fallback: litellm.ServiceUnavailableError: ServiceUnavailableError: OpenAIException - The engine is currently overloaded, please try again later.No fallback model group found for original model_group=mock-503. Fallbacks=[{'mock-500': ['mock-503']}]",
+    "message": "lumina.InternalServerError: InternalServerError: OpenAIException - The server had an error while processing your request. Sorry about that!. Received Model Group=mock-500\nAvailable Model Group Fallbacks=['mock-503']\nError doing the fallback: lumina.ServiceUnavailableError: ServiceUnavailableError: OpenAIException - The engine is currently overloaded, please try again later.No fallback model group found for original model_group=mock-503. Fallbacks=[{'mock-500': ['mock-503']}]",
     "type": null,
     "param": null,
     "code": "500"
@@ -229,9 +229,9 @@ Three details follow from this design
 
 `No fallback model group found for original model_group=<name>` means no fallback was configured for that group, so the primary error was returned unchanged. It is not itself a failure; it is the gateway explaining why it did not fail over
 
-The fallback detail is appended by `litellm.expose_router_debug_in_errors`, which is on by default. Set it to `False` to strip the routing detail, including configured fallback target names, from messages returned to callers. Retry counts are appended separately and read `LiteLLM Retried: 2 times, LiteLLM Max Retries: 2`
+The fallback detail is appended by `lumina.expose_router_debug_in_errors`, which is on by default. Set it to `False` to strip the routing detail, including configured fallback target names, from messages returned to callers. Retry counts are appended separately and read `Lumina Retried: 2 times, Lumina Max Retries: 2`
 
-A fallback that *succeeds* is invisible in the response body, which is a normal 200. Detect it from the `x-litellm-attempted-fallbacks` header, and read `x-litellm-model-group` for the group that actually served the request. Those headers exist only on success, so a failed chain must be reconstructed from `error.message` or the gateway logs
+A fallback that *succeeds* is invisible in the response body, which is a normal 200. Detect it from the `x-lumina-attempted-fallbacks` header, and read `x-lumina-model-group` for the group that actually served the request. Those headers exist only on success, so a failed chain must be reconstructed from `error.message` or the gateway logs
 
 ## Streaming errors
 
@@ -243,7 +243,7 @@ Failing before the first chunk is indistinguishable from a non-streaming failure
 HTTP/1.1 500 Internal Server Error
 content-type: application/json
 
-{"error":{"message":"litellm.InternalServerError: InternalServerError: OpenAIException - ...","type":null,"param":null,"code":"500"}}
+{"error":{"message":"lumina.InternalServerError: InternalServerError: OpenAIException - ...","type":null,"param":null,"code":"500"}}
 ```
 
 Failing after streaming has begun cannot change the status code, which is already 200. The gateway emits the error as a final SSE event carrying the same `error` object:
@@ -256,7 +256,7 @@ data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":
 
 data: {"id":"chatcmpl-...","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"lo"}}]}
 
-data: {"error": {"message": "litellm.APIConnectionError: APIConnectionError: OpenAIException - The server had an error while processing your request. Sorry about that!", "type": null, "param": null, "code": "500"}}
+data: {"error": {"message": "lumina.APIConnectionError: APIConnectionError: OpenAIException - The server had an error while processing your request. Sorry about that!", "type": null, "param": null, "code": "500"}}
 ```
 
 Check every SSE payload for an `error` key before treating it as a chunk. A client that only inspects the HTTP status will record a mid-stream failure as a success with a truncated completion
@@ -283,7 +283,7 @@ The Python SDK raises typed exceptions that inherit from the corresponding OpenA
 | 503 | `ServiceUnavailableError` | |
 | >=500 | `InternalServerError` | Any unmapped 500-class provider response |
 
-Every LiteLLM exception carries `status_code`, `message`, and `llm_provider`, plus `provider_specific_fields` where the provider supplied structured detail
+Every Lumina exception carries `status_code`, `message`, and `llm_provider`, plus `provider_specific_fields` where the provider supplied structured detail
 
 ## Reproducing these errors
 
@@ -329,7 +329,7 @@ To exercise fallback exhaustion, configure a fallback from one always-failing mo
 
 ## Reporting a problem
 
-Include the `x-litellm-call-id` from the failed response. It is the join key across the gateway logs, the spend-log row, the request's OpenTelemetry trace, and the Logs page of the Admin UI, and it is the fastest way to get an answer
+Include the `x-lumina-call-id` from the failed response. It is the join key across the gateway logs, the spend-log row, the request's OpenTelemetry trace, and the Logs page of the Admin UI, and it is the fastest way to get an answer
 
 Alongside it, include the full `error` object, the HTTP status, the response headers, and the `model` you requested. If the message contains a `<Provider>Exception`, check the provider's own status page first; the gateway reported the failure but did not cause it
 
@@ -343,19 +343,19 @@ general_settings:
 On the OpenAI-shaped routes (`/v1/chat/completions`, `/v1/responses`, streaming first-chunk errors included) and on `/v1/messages`, the id sits inside the `error` object, which is the part the OpenAI SDK keeps as `e.body`:
 
 ```json
-{"error": {"message": "Invalid model name passed in model=gpt-nope", "type": "invalid_request_error", "param": "model", "code": "400", "litellm_call_id": "019b2c4d-e5f6-7890-abcd-ef1234567890"}}
+{"error": {"message": "Invalid model name passed in model=gpt-nope", "type": "invalid_request_error", "param": "model", "code": "400", "lumina_call_id": "019b2c4d-e5f6-7890-abcd-ef1234567890"}}
 ```
 
 ```json
-{"type": "error", "error": {"type": "invalid_request_error", "message": "Invalid model name passed in model=gpt-nope", "litellm_call_id": "019b2c4d-e5f6-7890-abcd-ef1234567890"}}
+{"type": "error", "error": {"type": "invalid_request_error", "message": "Invalid model name passed in model=gpt-nope", "lumina_call_id": "019b2c4d-e5f6-7890-abcd-ef1234567890"}}
 ```
 
 Pass-through routes relay the provider's own error body, so the id is added at the top level and the provider's `error` object is left as it was:
 
 ```json
-{"type": "error", "error": {"type": "not_found_error", "message": "model: claude-nope"}, "litellm_call_id": "019b2c4d-e5f6-7890-abcd-ef1234567890"}
+{"type": "error", "error": {"type": "not_found_error", "message": "model: claude-nope"}, "lumina_call_id": "019b2c4d-e5f6-7890-abcd-ef1234567890"}
 ```
 
-The setting only adds the id where the gateway already set the `x-litellm-call-id` header on a JSON body, so 422 request-validation errors, authentication failures rejected before an id exists, errors that arrive mid-stream, and non-JSON pass-through bodies are unchanged
+The setting only adds the id where the gateway already set the `x-lumina-call-id` header on a JSON body, so 422 request-validation errors, authentication failures rejected before an id exists, errors that arrive mid-stream, and non-JSON pass-through bodies are unchanged
 
-To see the exact request the gateway sent upstream, restart with `--detailed_debug` or set `LUMINA_LOG=DEBUG`, or add `"litellm_request_debug": true` to a single request body. See [Debugging](/docs/proxy/debugging)
+To see the exact request the gateway sent upstream, restart with `--detailed_debug` or set `LUMINA_LOG=DEBUG`, or add `"lumina_request_debug": true` to a single request body. See [Debugging](/docs/proxy/debugging)

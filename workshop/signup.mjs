@@ -3,7 +3,7 @@ import {isIP} from 'node:net';
 import {FIELD_LIMITS, WORKSHOP_DATES, buildWorkshopSubmission} from '../blog/cloud-agent-workshop/signup-payload.mjs';
 
 const MAX_BODY_BYTES = 16384;
-const HANDOFF_ORIGINS = new Set(['https://handoff.litellm.ai', 'https://litellm-handoff.onrender.com', 'https://litellm-workshop-directions.ishaan196385.chatgpt.site']);
+const HANDOFF_ORIGINS = new Set(['https://handoff.lumina.ai', 'https://lumina-handoff.onrender.com', 'https://lumina-workshop-directions.ishaan196385.chatgpt.site']);
 const HANDOFF_DATES = 'October 26–November 9, 2026';
 const PERSONAL_EMAIL_DOMAINS = [
   'gmail.com', 'googlemail.com',
@@ -93,7 +93,7 @@ function allowedOrigin(req, env) {
   try {
     const url = new URL(raw);
     if (url.origin !== raw) return null;
-    const origins = new Set(['https://docs.litellm.ai']);
+    const origins = new Set(['https://docs.lumina.ai']);
     if (env.DOCS_ORIGIN) origins.add(new URL(env.DOCS_ORIGIN).origin);
     for (const value of [env.VERCEL_URL, env.VERCEL_BRANCH_URL, env.VERCEL_PROJECT_PRODUCTION_URL]) {
       if (value) origins.add(new URL(`https://${value}`).origin);

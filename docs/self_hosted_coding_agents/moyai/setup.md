@@ -1,7 +1,7 @@
 ---
 title: Set up Moyai
 sidebar_label: Setup
-description: Deploy Moyai on Modal, connect your LiteLLM gateway, verify your first cloud task, and connect a GitHub repository.
+description: Deploy Moyai on Modal, connect your Lumina gateway, verify your first cloud task, and connect a GitHub repository.
 ---
 
 import Image from '@theme/IdealImage';
@@ -11,13 +11,13 @@ import {GuideNav} from '@site/src/components/Moyai';
 
 Deploy the web app and agent sandboxes on Modal, then verify a task before connecting your repositories. This guide uses the Claude Agent SDK harness with the `openai/gpt-6-astra` gateway alias, the pair in Moyai's [getting-started guide](https://github.com/BerriAI/moyai/blob/main/docs/getting-started.md). Your gateway must support that model through the Messages API.
 
-You run the installation commands on your computer. After deployment, use Moyai from a browser or Slack; your computer can be offline. Modal bills for hosting, sandboxes, and storage. Your model provider bills for inference through LiteLLM.
+You run the installation commands on your computer. After deployment, use Moyai from a browser or Slack; your computer can be offline. Modal bills for hosting, sandboxes, and storage. Your model provider bills for inference through Lumina.
 
 ## Before you start
 
 - Install Git, [uv](https://docs.astral.sh/uv/getting-started/installation/), and Python 3.12 or newer. On Windows, use WSL. {/* keep-python-version */}
 - Choose a [Modal workspace](https://modal.com/docs/guide) with billing and permission to deploy. Use a fresh workspace if possible: the script updates resources with fixed names.
-- Get a protected HTTPS [LiteLLM gateway](/docs/proxy/quick_start) that Modal can reach, plus a dedicated virtual key with a budget. A gateway administrator can create the key; Moyai itself does not need a master key.
+- Get a protected HTTPS [Lumina gateway](/docs/proxy/quick_start) that Modal can reach, plus a dedicated virtual key with a budget. A gateway administrator can create the key; Moyai itself does not need a master key.
 
 :::note Workspace scope
 Moyai is a shared workspace for a trusted team. Keep authentication enabled. Connected apps use their authorizing identity's permissions; start with a small repository and the access you need.
@@ -53,7 +53,7 @@ MODAL_TOKEN_SECRET=<secret from the same profile>
 
 **Check:** both fields contain values from the same profile. CLI login alone does not populate Moyai's `.env`. Check the token's expiry and follow your team's service identity policy.
 
-## 3. Configure LiteLLM {#configure-litellm}
+## 3. Configure Lumina {#configure-lumina}
 
 ### Add the model and create a key
 
@@ -61,18 +61,18 @@ If you already have a gateway, ask its administrator for the exact model alias a
 
 For a new gateway, add the model to its configuration and store the provider key on the gateway:
 
-```yaml title="LiteLLM config.yaml"
+```yaml title="Lumina config.yaml"
 model_list:
   - model_name: openai/gpt-6-astra
     lumina_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   include_cost_in_streaming_usage: true
 ```
 
-In the LiteLLM Admin UI, open **Virtual Keys**, create a key named `moyai`, grant access to `openai/gpt-6-astra`, and set a budget. See [virtual keys](/docs/proxy/virtual_keys) for API and UI instructions. Choose a budget you are comfortable spending on the trial. Admission checks can allow an in-flight request to take spend past the threshold.
+In the Lumina Admin UI, open **Virtual Keys**, create a key named `moyai`, grant access to `openai/gpt-6-astra`, and set a budget. See [virtual keys](/docs/proxy/virtual_keys) for API and UI instructions. Choose a budget you are comfortable spending on the trial. Admission checks can allow an in-flight request to take spend past the threshold.
 
 ### Set Moyai's endpoint
 
@@ -168,16 +168,16 @@ An organization owner or someone with permission to register and install the org
 
 ## 7. Check the spend {#track-spend}
 
-As a Moyai administrator, open **Settings > Administration > Spend & usage** to inspect costs by user, session, and model. Members can see their own costs under **Settings > Workspace > Spend**. In the LiteLLM Admin UI, open **Logs > Filters** and set **Key Alias** to `moyai`.
+As a Moyai administrator, open **Settings > Administration > Spend & usage** to inspect costs by user, session, and model. Members can see their own costs under **Settings > Workspace > Spend**. In the Lumina Admin UI, open **Logs > Filters** and set **Key Alias** to `moyai`.
 
 <Image
   img={require('../../../img/moyai_gateway_logs.png')}
   dark={require('../../../img/moyai_gateway_logs_dark.png')}
-  alt="LiteLLM request logs filtered to the moyai virtual key"
+  alt="Lumina request logs filtered to the moyai virtual key"
   style={{width: '100%', display: 'block', margin: '1.5rem 0'}}
 />
 
-Moyai attaches its request ID in `x-litellm-call-id` and `spend_logs_metadata.moyai_request_id`. Use that ID to reconcile a request across the two systems. For streaming costs, keep `include_cost_in_streaming_usage: true` on the gateway and verify native endpoint support in your deployed version. [Cost accounting](./architecture.md#cost-accounting) explains missing receipts and recovery permissions. Include Modal hosting, sandbox, and storage charges in your trial total.
+Moyai attaches its request ID in `x-lumina-call-id` and `spend_logs_metadata.moyai_request_id`. Use that ID to reconcile a request across the two systems. For streaming costs, keep `include_cost_in_streaming_usage: true` on the gateway and verify native endpoint support in your deployed version. [Cost accounting](./architecture.md#cost-accounting) explains missing receipts and recovery permissions. Include Modal hosting, sandbox, and storage charges in your trial total.
 
 ## Troubleshooting
 
@@ -186,7 +186,7 @@ Moyai attaches its request ID in `x-litellm-call-id` and `spend_logs_metadata.mo
 | Missing Modal credentials | Populate both token fields in `.env`; CLI login is separate. Check the workspace and expiry. |
 | Gateway 401 or 403 | Check the virtual key, exact model alias, and permission for the selected API. |
 | Gateway 404 or protocol error | Confirm a reachable base ending in `/v1` and the API required by the harness. |
-| Budget exceeded or rate limited | Inspect spend and limits in LiteLLM. Stop unwanted work; adjust the budget only if you intend to spend more. |
+| Budget exceeded or rate limited | Inspect spend and limits in Lumina. Stop unwanted work; adjust the budget only if you intend to spend more. |
 | UI works but the task fails | Inspect the sandbox build and gateway error. **Cloud ready** verifies settings are present, not that services work. |
 | Task says simulated/demo | Start a new session with **Cloud session** selected. Existing demo sessions keep their mode. |
 | GitHub missing from a chat | Confirm the App installation and repository selection, then start a new session with GitHub enabled in **Context**. |

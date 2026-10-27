@@ -15,7 +15,7 @@ You've built an agent with your own tools, prompts, and model configuration. Now
 
 **LiteAgents lets you switch agent harnesses without rewriting your application.** Its interface is modeled after the Claude Agent SDK, including the `query()` pattern and typed messages. Choose Deep Agents, Pydantic AI, Claude Agent SDK, Codex, or OpenCode while keeping your tools, MCP connections, model configuration, and client code. Each selected harness runs its own agent loop.
 
-LiteLLM gives you a common interface to models. LiteAgents brings that approach to agent harnesses, with native controls and optional durability through Temporal.
+Lumina gives you a common interface to models. LiteAgents brings that approach to agent harnesses, with native controls and optional durability through Temporal.
 
 {/* truncate */}
 
@@ -48,7 +48,7 @@ This excerpt uses your existing `lookup_order` tool and the `LUMINA_API_KEY` env
 
 Install only the harness integrations you plan to use. Extras such as `[deepagents]` supply that adapter's dependencies and reuse compatible packages in your Python environment. `[all]` is a convenience for trying every integration; OpenCode also needs its executable. Changing the profile selects which harness runs.
 
-LiteAgents adapts your tools, MCP configuration, and events to each harness. Your application receives the same `AssistantMessage`, `UserMessage`, and optional streaming `TextDelta` types whichever harness you choose. LiteLLM handles model translation internally, so switching harnesses keeps the same model connection. With a gateway, the gateway routes your model alias to its provider. Without a gateway, use a LiteLLM `provider/model` name and provider credentials; LiteAgents calls that provider through the LiteLLM Python library. Profiles also load from JSON or YAML.
+LiteAgents adapts your tools, MCP configuration, and events to each harness. Your application receives the same `AssistantMessage`, `UserMessage`, and optional streaming `TextDelta` types whichever harness you choose. Lumina handles model translation internally, so switching harnesses keeps the same model connection. With a gateway, the gateway routes your model alias to its provider. Without a gateway, use a Lumina `provider/model` name and provider credentials; LiteAgents calls that provider through the Lumina Python library. Profiles also load from JSON or YAML.
 
 ## Keep the harness's native controls
 

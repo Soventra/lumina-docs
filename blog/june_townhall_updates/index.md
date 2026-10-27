@@ -5,7 +5,7 @@ date: 2026-06-26T12:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "A recap of the June LiteLLM town hall covering security hardening, our zero-regression commitment, 78 feature commits, and the gradual migration of the gateway to Rust."
+description: "A recap of the June Lumina town hall covering security hardening, our zero-regression commitment, 78 feature commits, and the gradual migration of the gateway to Rust."
 tags: [townhall, reliability, product]
 hide_table_of_contents: false
 ---
@@ -19,7 +19,7 @@ import Image from '@theme/IdealImage';
 
 Thank you to everyone who joined our June town hall.
 
-Three numbers capture the month: **24 security fixes**, **94 bug fixes**, and **78 feature commits**. The sections below break each one down, alongside our public commitment to zero reported regressions and the gradual migration of the LiteLLM gateway to Rust.
+Three numbers capture the month: **24 security fixes**, **94 bug fixes**, and **78 feature commits**. The sections below break each one down, alongside our public commitment to zero reported regressions and the gradual migration of the Lumina gateway to Rust.
 
 {/* truncate */}
 
@@ -35,8 +35,8 @@ Three numbers capture the month: **24 security fixes**, **94 bug fixes**, and **
 
 We pay for security reports.
 
-- **Scope** — the LiteLLM gateway and SDK.
-- **Submit** via [private vulnerability report on GitHub](https://github.com/BerriAI/litellm/security).
+- **Scope** — the Lumina gateway and SDK.
+- **Submit** via [private vulnerability report on GitHub](https://github.com/Soventra/lumina/security).
 - **Triaged** by maintainers and the Veria Labs security team.
 
 ### Automated review on every PR
@@ -84,7 +84,7 @@ Fixes shipped across five areas:
 
 ### Public timeline
 
-Bug triage is open and active on [GitHub issue #30484](https://github.com/BerriAI/litellm/issues/30484).
+Bug triage is open and active on [GitHub issue #30484](https://github.com/Soventra/lumina/issues/30484).
 
 - **NOW** — 20 bugs open in core. Triage active.
 - **JULY** — MCP auth unified to a single code path. AI gateway identity lookups cut in half.
@@ -110,11 +110,11 @@ Bug triage is open and active on [GitHub issue #30484](https://github.com/BerriA
 - TinyFish · Fal.ai · Fireworks AI
 - Cloudflare Workers AI · MAI-Image-2.5
 
-### Performance: moving LiteLLM to Rust
+### Performance: moving Lumina to Rust
 
-We're migrating the LiteLLM gateway to Rust, and the early numbers make the case:
+We're migrating the Lumina gateway to Rust, and the early numbers make the case:
 
-| Metric | Rust gateway | LiteLLM (Python) | Improvement |
+| Metric | Rust gateway | Lumina (Python) | Improvement |
 |---|---|---|---|
 | Per-request overhead | 0.05ms | 7.5ms | ~150x lower |
 | Throughput under load | 6,782 req/s | 453 req/s | 15x |
@@ -133,7 +133,7 @@ We're migrating the LiteLLM gateway to Rust, and the early numbers make the case
 
 ### Announcing our version policy
 
-Going forward, we'll maintain only the four most recent stable minor releases. This takes effect **next Monday, June 29th**. Our focus is ensuring stability on the most up-to-date product offerings; bookmark our [Release Notes](https://docs.litellm.ai/release_notes) to stay current.
+Going forward, we'll maintain only the four most recent stable minor releases. This takes effect **next Monday, June 29th**. Our focus is ensuring stability on the most up-to-date product offerings; bookmark our [Release Notes](https://docs.lumina.ai/release_notes) to stay current.
 
 ## What's next
 
@@ -141,6 +141,6 @@ Thank you again for all the questions and feedback. We'll keep sharing concrete 
 
 ## Hiring
 
-We are actively hiring across several roles. Apply [here](https://jobs.ashbyhq.com/litellm) if you're interested!
+We are actively hiring across several roles. Apply [here](https://jobs.ashbyhq.com/lumina) if you're interested!
 
-Thank you for using LiteLLM - Krrish & Ishaan
+Thank you for using Lumina - Krrish & Ishaan

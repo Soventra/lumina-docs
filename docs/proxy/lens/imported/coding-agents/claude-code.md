@@ -1,20 +1,20 @@
 ---
 title: "Claude Code"
-description: "Connect personal Claude Code sessions to LiteLLM Lens using the maintained setup guides."
+description: "Connect personal Claude Code sessions to Lumina Lens using the maintained setup guides."
 slug: "/proxy/lens/coding-agents/claude-code"
 sidebar_label: "Claude Code"
-custom_edit_url: "https://github.com/BerriAI/litellm-lens-example/edit/main/claude-code/README.md"
+custom_edit_url: "https://github.com/Soventra/lumina-lens-example/edit/main/claude-code/README.md"
 mdx:
   format: md
 ---
 
-<!-- Generated from BerriAI/litellm-lens-example/claude-code/README.md at a2294277609202247b71c08d7b491f5212809988. Edit the source README. -->
+<!-- Generated from Soventra/lumina-lens-example/claude-code/README.md at a2294277609202247b71c08d7b491f5212809988. Edit the source README. -->
 
 # Claude Code
 
 For optional help from your coding agent, use [Set it up for me](https://github.com/BerriAI/lens/blob/main/docs/setup-with-agent.md#connect-an-agent-to-lens-already-running). It preserves your model connection and verifies a real trace after setup
 
-Send your personal Claude Code sessions to [LiteLLM Lens](/docs/proxy/lens). This folder links to the maintained integration instructions.
+Send your personal Claude Code sessions to [Lumina Lens](/docs/proxy/lens). This folder links to the maintained integration instructions.
 
 ## Prerequisites
 

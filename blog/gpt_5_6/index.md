@@ -6,7 +6,7 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for the GPT-5.6 family (Sol, Terra, and Luna) on LiteLLM."
+description: "Day 0 support for the GPT-5.6 family (Sol, Terra, and Luna) on Lumina."
 card_title: "GPT-5.6 (Sol, Terra, Luna)"
 card_summary: "The GPT-5.6 family (Sol, Terra, Luna) on OpenAI direct and Azure OpenAI, one config per variant."
 image: ./hero.png
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x GPT-5.6](./hero.png)
+![Lumina x GPT-5.6](./hero.png)
 
-LiteLLM now supports the [GPT-5.6 family](https://openai.com/index/previewing-gpt-5-6-sol/). Route traffic to OpenAI's newest frontier models through the LiteLLM AI Gateway with no code changes.
+Lumina now supports the [GPT-5.6 family](https://openai.com/index/previewing-gpt-5-6-sol/). Route traffic to OpenAI's newest frontier models through the Lumina AI Gateway with no code changes.
 
 {/* truncate */}
 
@@ -30,7 +30,7 @@ GPT-5.6 introduces a new naming system where the number identifies the generatio
 :::
 
 :::note
-**No Docker image upgrade needed.** GPT-5.6 routes through the existing `OpenAIGPT5Config` in LiteLLM (the version classifier already matches `gpt-5.4` and newer), so any recent version works out of the box. The GPT-5.6 pricing and metadata are also bundled starting in `v1.93.0-dev.2` for anyone running with `LUMINA_LOCAL_MODEL_COST_MAP=true`.
+**No Docker image upgrade needed.** GPT-5.6 routes through the existing `OpenAIGPT5Config` in Lumina (the version classifier already matches `gpt-5.4` and newer), so any recent version works out of the box. The GPT-5.6 pricing and metadata are also bundled starting in `v1.93.0-dev.2` for anyone running with `LUMINA_LOCAL_MODEL_COST_MAP=true`.
 
 For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the latest pricing from GitHub. This feature is available on `v1.76.0` and above.
 :::
@@ -38,7 +38,7 @@ For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or 
 ## Usage
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -65,7 +65,7 @@ docker run -d \
   -p 4000:4000 \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.93.0-dev.2 \
+  ghcr.io/soventra/lumina:v1.93.0-dev.2 \
   --config /app/config.yaml
 ```
 
@@ -84,10 +84,10 @@ curl -X POST "http://0.0.0.0:4000/chat/completions" \
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="openai/gpt-5.6-sol",
@@ -145,7 +145,7 @@ model_list:
 ```
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="azure/gpt-5.6-sol",
@@ -184,10 +184,10 @@ Prices are per 1M tokens (USD), shown as short context (≤272K tokens) / long c
 | `gpt-5.6-terra` | $2.50 / $5.00 | $0.25 / $0.50 | $3.125 / $6.25 | $15.00 / $22.50 |
 | `gpt-5.6-luna` | $1.00 / $2.00 | $0.10 / $0.20 | $1.25 / $2.50 | $6.00 / $9.00 |
 
-Global Azure OpenAI deployments (`azure/gpt-5.6-*`) match these OpenAI list prices. Regional deployments (`azure/us/gpt-5.6-*` and `azure/eu/gpt-5.6-*`) carry the standard 10% uplift on the base rate; LiteLLM tracks the difference automatically once you route through the regional model name.
+Global Azure OpenAI deployments (`azure/gpt-5.6-*`) match these OpenAI list prices. Regional deployments (`azure/us/gpt-5.6-*` and `azure/eu/gpt-5.6-*`) carry the standard 10% uplift on the base rate; Lumina tracks the difference automatically once you route through the regional model name.
 
 ## Notes
 
-- For cost tracking on the GPT-5.6 models, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`). Works on any LiteLLM version `v1.76.0` or newer, with no container restart or image upgrade required.
+- For cost tracking on the GPT-5.6 models, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`). Works on any Lumina version `v1.76.0` or newer, with no container restart or image upgrade required.
 - GPT-5.6 supports reasoning, function calling, parallel tool calls, vision (image input), prompt caching, web search, and structured output; see the [OpenAI provider docs](../../docs/providers/openai) for advanced usage.
 - The GPT-5.6 family launched in limited preview and OpenAI is expanding availability through the API and Codex; check your OpenAI account for model access.

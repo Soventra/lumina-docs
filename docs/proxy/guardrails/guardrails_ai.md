@@ -31,10 +31,10 @@ guardrails:
       api_base: os.environ/GUARDRAILS_AI_API_BASE   # Guardrails AI API Base. Defaults to "http://0.0.0.0:8000"
 ```
 
-2. Start LiteLLM Gateway 
+2. Start Lumina Gateway 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 3. Test request 

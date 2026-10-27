@@ -8,8 +8,8 @@ Set model list, `api_base`, `api_key`, `temperature` & proxy server settings (`m
 | Param Name           | Description                                                   |
 |----------------------|---------------------------------------------------------------|
 | `model_list`         | List of supported models on the server, with model-specific configs |
-| `router_settings`   | litellm Router settings, example `routing_strategy="least-busy"` [**see all**](./config_settings#router_settings---reference)|
-| `litellm_settings`   | litellm Module settings, example `litellm.drop_params=True`, `litellm.set_verbose=True`, `litellm.api_base`, `litellm.cache` [**see all**](./config_settings#litellm_settings---reference)|
+| `router_settings`   | lumina Router settings, example `routing_strategy="least-busy"` [**see all**](./config_settings#router_settings---reference)|
+| `lumina_settings`   | lumina Module settings, example `lumina.drop_params=True`, `lumina.set_verbose=True`, `lumina.api_base`, `lumina.cache` [**see all**](./config_settings#lumina_settings---reference)|
 | `general_settings`   | Server settings, example setting `master_key: sk-my_special_key` [**see all**](./config_settings#general_settings---reference)|
 | `environment_variables`   | Environment Variables example, `REDIS_HOST`, `REDIS_PORT` [**see all**](./config_settings#environment-variables---reference)|
 
@@ -23,8 +23,8 @@ Set a model alias for your deployments.
 In the `config.yaml` the model_name parameter is the user-facing name to use for your deployment. 
 
 In the config below:
-- `model_name`: the name to pass TO litellm from the external client  
-- `lumina_params.model`: the model string passed to the litellm.completion() function
+- `model_name`: the name to pass TO lumina from the external client  
+- `lumina_params.model`: the model string passed to the lumina.completion() function
 
 E.g.: 
 - `model=vllm-models` will route to `openai/facebook/opt-125m`. 
@@ -33,8 +33,8 @@ E.g.:
 ```yaml
 model_list:
   - model_name: {{openai_large}} ### RECEIVED MODEL NAME ###
-    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
-      model: azure/gpt-4o-eu ### MODEL NAME sent to `litellm.completion()` ###
+    lumina_params: # all params accepted by lumina.completion() - https://docs.lumina.ai/docs/completion/input
+      model: azure/gpt-4o-eu ### MODEL NAME sent to `lumina.completion()` ###
       api_base: https://my-endpoint-europe-berri-992.openai.azure.com/
       api_key: "os.environ/AZURE_API_KEY_EU" # does os.getenv("AZURE_API_KEY_EU")
       rpm: 6      # [OPTIONAL] Rate limit for this deployment: in requests per minute (rpm)
@@ -54,7 +54,7 @@ model_list:
       aws_region_name: us-east-1
   - model_name: vllm-models
     lumina_params:
-      model: openai/facebook/opt-125m # the `openai/` prefix tells litellm it's openai compatible
+      model: openai/facebook/opt-125m # the `openai/` prefix tells lumina it's openai compatible
       api_base: http://0.0.0.0:4000/v1
       api_key: none
       rpm: 1440
@@ -68,7 +68,7 @@ model_list:
     lumina_params:
       model: "*"
 
-litellm_settings: # module level litellm settings - https://github.com/BerriAI/litellm/blob/main/litellm/__init__.py
+lumina_settings: # module level lumina settings - https://github.com/Soventra/lumina/blob/main/lumina/__init__.py
   drop_params: True
   success_callback: ["langfuse"] # OPTIONAL - if you want to start sending LLM Logs to Langfuse. Make sure to set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in your env
 
@@ -85,7 +85,7 @@ For more provider-specific info, [go here](../providers/)
 #### Step 2: Start Proxy with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 :::tip
@@ -93,7 +93,7 @@ $ litellm --config /path/to/config.yaml
 Run with `--detailed_debug` if you need detailed debug logs 
 
 ```shell
-$ litellm --config /path/to/config.yaml --detailed_debug
+$ lumina --config /path/to/config.yaml --detailed_debug
 ```
 
 :::
@@ -102,7 +102,7 @@ $ litellm --config /path/to/config.yaml --detailed_debug
 
 Sends request to model where `model_name={{openai_large}}` on config.yaml. 
 
-If multiple with `model_name={{openai_large}}` does [Load Balancing](https://docs.litellm.ai/docs/proxy/load_balancing)
+If multiple with `model_name={{openai_large}}` does [Load Balancing](https://docs.lumina.ai/docs/proxy/load_balancing)
 
 **[Langchain, OpenAI SDK Usage Examples](../proxy/user_keys#request-format)**
 
@@ -123,22 +123,22 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## config.yaml vs database settings
 
-Once `store_model_in_db` is enabled (via `general_settings.store_model_in_db: true` or `STORE_MODEL_IN_DB="True"`), the Admin UI and the `/config/update` API write settings into the `LiteLLM_Config` table, and the database becomes the source of truth for whatever they wrote. On startup and on every config refresh, the proxy loads your `config.yaml` first and then overlays the database rows for `general_settings`, `router_settings`, `litellm_settings`, and `environment_variables`. The overlay is a deep merge in which the database value wins on any key that exists in both places, so editing that key in the YAML and restarting your pods will not change the running value. Treat the YAML as bootstrap for these four sections, and change UI-written keys in the UI (or delete the row from `LiteLLM_Config`) rather than in the file
+Once `store_model_in_db` is enabled (via `general_settings.store_model_in_db: true` or `STORE_MODEL_IN_DB="True"`), the Admin UI and the `/config/update` API write settings into the `Lumina_Config` table, and the database becomes the source of truth for whatever they wrote. On startup and on every config refresh, the proxy loads your `config.yaml` first and then overlays the database rows for `general_settings`, `router_settings`, `lumina_settings`, and `environment_variables`. The overlay is a deep merge in which the database value wins on any key that exists in both places, so editing that key in the YAML and restarting your pods will not change the running value. Treat the YAML as bootstrap for these four sections, and change UI-written keys in the UI (or delete the row from `Lumina_Config`) rather than in the file
 
-A few specifics are worth knowing. Database values of `null` and empty lists are treated as "no value" and do not overwrite what the YAML provides, so a key you never set in the UI still comes from the file. The overlay also applies to those four settings sections only; `model_list` is not merged this way, since models added through the UI or API are stored in `LiteLLM_ProxyModelTable` and served alongside your YAML models, meaning a database model never replaces a same-named YAML entry but becomes an additional deployment that gets load balanced with it (see [Model Management](./model_management.md)). And with `store_model_in_db` off, the database is never read for config, so your `config.yaml` is fully authoritative
+A few specifics are worth knowing. Database values of `null` and empty lists are treated as "no value" and do not overwrite what the YAML provides, so a key you never set in the UI still comes from the file. The overlay also applies to those four settings sections only; `model_list` is not merged this way, since models added through the UI or API are stored in `Lumina_ProxyModelTable` and served alongside your YAML models, meaning a database model never replaces a same-named YAML entry but becomes an additional deployment that gets load balanced with it (see [Model Management](./model_management.md)). And with `store_model_in_db` off, the database is never read for config, so your `config.yaml` is fully authoritative
 
 ## LLM configs `model_list`
 
 ### Model-specific params (API Base, Keys, Temperature, Max Tokens, Organization, Headers etc.)
 You can use the config to save model-specific information like api_base, api_key, temperature, max_tokens, etc. 
 
-[**All input params**](https://docs.litellm.ai/docs/completion/input#input-params-1)
+[**All input params**](https://docs.lumina.ai/docs/completion/input#input-params-1)
 
 **Step 1**: Create a `config.yaml` file
 ```yaml
 model_list:
   - model_name: gpt-4-team1
-    lumina_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
+    lumina_params: # params for lumina.completion() - https://docs.lumina.ai/docs/completion/input#input---request-body
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -167,19 +167,19 @@ model_list:
 **Step 2**: Start server with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 **Expected Logs:**
 
 Look for this line in your console logs to confirm the config.yaml was loaded in correctly.
 ```
-LiteLLM: Proxy initialized with Config, Set models:
+Lumina: Proxy initialized with Config, Set models:
 ```
 
 ### Embedding Models - Use Sagemaker, Bedrock, Azure, OpenAI, XInference
 
-See supported Embedding Providers & Models [here](https://docs.litellm.ai/docs/embedding/supported_embedding)
+See supported Embedding Providers & Models [here](https://docs.lumina.ai/docs/embedding/supported_embedding)
 
 
 <Tabs>
@@ -230,7 +230,7 @@ general_settings:
 </TabItem>
 
 <TabItem value="Hugging Face emb" label="Hugging Face Embeddings">
-LiteLLM Proxy supports all <a href="https://huggingface.co/models?pipeline_tag=feature-extraction">Feature-Extraction Embedding models</a>.
+Lumina Proxy supports all <a href="https://huggingface.co/models?pipeline_tag=feature-extraction">Feature-Extraction Embedding models</a>.
 
 ```yaml
 model_list:
@@ -256,7 +256,7 @@ model_list:
 model_list:
   - model_name: azure-embedding-model # model group
     lumina_params:
-      model: azure/azure-embedding-model # model name for litellm.embedding(model=azure/azure-embedding-model) call
+      model: azure/azure-embedding-model # model name for lumina.embedding(model=azure/azure-embedding-model) call
       api_base: your-azure-api-base
       api_key: your-api-key
       api_version: 2023-07-01-preview
@@ -270,7 +270,7 @@ model_list:
 model_list:
 - model_name: text-embedding-ada-002 # model group
   lumina_params:
-    model: text-embedding-ada-002 # model name for litellm.embedding(model=text-embedding-ada-002) 
+    model: text-embedding-ada-002 # model name for lumina.embedding(model=text-embedding-ada-002) 
     api_key: your-api-key-1
 - model_name: text-embedding-ada-002 
   lumina_params:
@@ -283,15 +283,15 @@ model_list:
 
 <TabItem value="xinf" label="XInference">
 
-https://docs.litellm.ai/docs/providers/xinference
+https://docs.lumina.ai/docs/providers/xinference
 
-**Note add `xinference/` prefix to `lumina_params`: `model` so litellm knows to route to OpenAI**
+**Note add `xinference/` prefix to `lumina_params`: `model` so lumina knows to route to OpenAI**
 
 ```yaml
 model_list:
 - model_name: embedding-model  # model group
   lumina_params:
-    model: xinference/bge-base-en   # model name for litellm.embedding(model=xinference/bge-base-en) 
+    model: xinference/bge-base-en   # model name for lumina.embedding(model=xinference/bge-base-en) 
     api_base: http://0.0.0.0:9997/v1
 ```
 
@@ -301,13 +301,13 @@ model_list:
 
 <p>Use this for calling <a href="https://github.com/xorbitsai/inference">/embedding endpoints on OpenAI Compatible Servers</a>.</p>
 
-**Note add `openai/` prefix to `lumina_params`: `model` so litellm knows to route to OpenAI**
+**Note add `openai/` prefix to `lumina_params`: `model` so lumina knows to route to OpenAI**
 
 ```yaml
 model_list:
 - model_name: text-embedding-ada-002  # model group
   lumina_params:
-    model: openai/<your-model-name>   # model name for litellm.embedding(model=text-embedding-ada-002) 
+    model: openai/<your-model-name>   # model name for lumina.embedding(model=text-embedding-ada-002) 
     api_base: <model-api-base>
 ```
 
@@ -317,7 +317,7 @@ model_list:
 #### Start Proxy
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 #### Make Request
@@ -353,7 +353,7 @@ Add all openai models across all OpenAI organizations with just 1 model definiti
        - org-3
 ```
 
-LiteLLM will automatically create separate deployments for each org.
+Lumina will automatically create separate deployments for each org.
 
 Confirm this via 
 
@@ -366,22 +366,22 @@ curl --location 'http://0.0.0.0:4000/v1/model/info' \
 ### Load Balancing 
 
 :::info
-For more on this, go to [this page](https://docs.litellm.ai/docs/proxy/load_balancing)
+For more on this, go to [this page](https://docs.lumina.ai/docs/proxy/load_balancing)
 :::
 
-Use this to call multiple instances of the same model and configure things like [routing strategy](https://docs.litellm.ai/docs/routing#advanced).
+Use this to call multiple instances of the same model and configure things like [routing strategy](https://docs.lumina.ai/docs/routing#advanced).
 
 For optimal performance:
 - Set `tpm/rpm` per model deployment. Weighted picks are then based on the established tpm/rpm.
 - Select your optimal routing strategy in `router_settings:routing_strategy`.
 
-LiteLLM supports
+Lumina supports
 ```text
 ["simple-shuffle", "least-busy", "usage-based-routing","latency-based-routing"], default="simple-shuffle"`
 ```
 
-When `tpm/rpm` is set + `routing_strategy==simple-shuffle` litellm will use a weighted pick based on set tpm/rpm. **In our load tests setting tpm/rpm for all deployments + `routing_strategy==simple-shuffle` maximized throughput**
-- When using multiple LiteLLM Servers / Kubernetes set redis settings `router_settings:redis_host` etc
+When `tpm/rpm` is set + `routing_strategy==simple-shuffle` lumina will use a weighted pick based on set tpm/rpm. **In our load tests setting tpm/rpm for all deployments + `routing_strategy==simple-shuffle` maximized throughput**
+- When using multiple Lumina Servers / Kubernetes set redis settings `router_settings:redis_host` etc
 
 ```yaml
 model_list:
@@ -389,7 +389,7 @@ model_list:
     lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8001
-        rpm: 60      # Optional[int]: When rpm/tpm set - litellm uses weighted pick for load balancing. rpm = Rate limit for this deployment: in requests per minute (rpm).
+        rpm: 60      # Optional[int]: When rpm/tpm set - lumina uses weighted pick for load balancing. rpm = Rate limit for this deployment: in requests per minute (rpm).
         tpm: 1000   # Optional[int]: tpm = Tokens Per Minute 
   - model_name: zephyr-beta
     lumina_params:
@@ -412,9 +412,9 @@ model_list:
         api_key: <my-openai-key>
         rpm: 100      
 
-litellm_settings:
+lumina_settings:
   num_retries: 3 # retry call 3 times on each model_name (e.g. zephyr-beta)
-  request_timeout: 10 # raise Timeout error if call takes longer than 10s. Sets litellm.request_timeout 
+  request_timeout: 10 # raise Timeout error if call takes longer than 10s. Sets lumina.request_timeout 
   fallbacks: [{"zephyr-beta": ["{{openai_small}}"]}] # fallback to {{openai_small}} if call fails num_retries 
   context_window_fallbacks: [{"zephyr-beta": ["{{openai_large}}"]}, {"{{openai_small}}": ["{{openai_large}}"]}] # fallback to {{openai_large}} if context window error
   allowed_fails: 3 # cooldown model if it fails > 1 call in a minute. 
@@ -424,12 +424,12 @@ router_settings: # router_settings are optional
   model_group_alias: {"gpt-5.6": "{{openai_small}}"} # all requests with `gpt-5.6` will be routed to models with `{{openai_small}}`
   num_retries: 2
   timeout: 30                                  # 30 seconds
-  redis_host: <your redis host>                # set this when using multiple litellm proxy deployments, load balancing state stored in redis
+  redis_host: <your redis host>                # set this when using multiple lumina proxy deployments, load balancing state stored in redis
   redis_password: <your redis password>
   redis_port: 1992
 ```
 
-You can view your cost once you set up [Virtual keys](https://docs.litellm.ai/docs/proxy/virtual_keys) or [custom_callbacks](https://docs.litellm.ai/docs/proxy/logging)
+You can view your cost once you set up [Virtual keys](https://docs.lumina.ai/docs/proxy/virtual_keys) or [custom_callbacks](https://docs.lumina.ai/docs/proxy/logging)
 
 
 ### Load API Keys / config values from Environment 
@@ -443,14 +443,14 @@ os.environ/<YOUR-ENV-VAR> # runs os.getenv("YOUR-ENV-VAR")
 ```yaml 
 model_list:
   - model_name: gpt-4-team1
-    lumina_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
+    lumina_params: # params for lumina.completion() - https://docs.lumina.ai/docs/completion/input#input---request-body
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
       api_key: os.environ/AZURE_NORTH_AMERICA_API_KEY # KEY CHANGE
 ```
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/c12d6c3fe80e1b5e704d9846b246c059defadce7/litellm/utils.py#L2366)
+[**See Code**](https://github.com/Soventra/lumina/blob/c12d6c3fe80e1b5e704d9846b246c059defadce7/lumina/utils.py#L2366)
 
 s/o to [@David Manouchehri](https://www.linkedin.com/in/davidmanouchehri/) for helping with this. 
 
@@ -465,7 +465,7 @@ model_list:
   - model_name: {{openai_large}}
     lumina_params:
       model: azure/{{openai_large}}
-      litellm_credential_name: default_azure_credential  # Reference credential below
+      lumina_credential_name: default_azure_credential  # Reference credential below
 
 credential_list:
   - credential_name: default_azure_credential
@@ -500,12 +500,12 @@ Credentials in `credential_list` can only be changed in `config.yaml`. `PATCH` a
 
 ### Load API Keys from Secret Managers (Azure Vault, etc)
 
-[**Using Secret Managers with LiteLLM Proxy**](../secret)
+[**Using Secret Managers with Lumina Proxy**](../secret)
 
 
 ### Set Supported Environments for a model - `production`, `staging`, `development`
 
-Use this if you want to control which model is exposed on a specific litellm environment
+Use this if you want to control which model is exposed on a specific lumina environment
 
 Supported Environments:
 - `production`
@@ -541,14 +541,14 @@ model_list:
 
 ### Set Custom Prompt Templates
 
-LiteLLM by default checks if a model has a [prompt template and applies it](../completion/prompt_formatting.md) (e.g. if a huggingface model has a saved chat template in it's tokenizer_config.json). However, you can also set a custom prompt template on your proxy in the `config.yaml`: 
+Lumina by default checks if a model has a [prompt template and applies it](../completion/prompt_formatting.md) (e.g. if a huggingface model has a saved chat template in it's tokenizer_config.json). However, you can also set a custom prompt template on your proxy in the `config.yaml`: 
 
 **Step 1**: Save your prompt template in a `config.yaml`
 ```yaml
 # Model-specific parameters
 model_list:
   - model_name: mistral-7b # model alias
-    lumina_params: # actual params for litellm.completion()
+    lumina_params: # actual params for lumina.completion()
       model: "huggingface/mistralai/Mistral-7B-Instruct-v0.1" 
       api_base: "<your-api-base>"
       api_key: "<your-api-key>" # [OPTIONAL] for hf inference endpoints
@@ -563,12 +563,12 @@ model_list:
 **Step 2**: Start server with config
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ``` 
 
 ### Set custom tokenizer 
 
-If you're using the [`/utils/token_counter` endpoint](https://docs.litellm.ai/api-reference/#/llm%20utils/token_counter_utils_token_counter_post), and want to set a custom huggingface tokenizer for a model, you can do so in the `config.yaml`
+If you're using the [`/utils/token_counter` endpoint](https://docs.lumina.ai/api-reference/#/llm%20utils/token_counter_utils_token_counter_post), and want to set a custom huggingface tokenizer for a model, you can do so in the `config.yaml`
 
 ```yaml
 model_list:
@@ -613,7 +613,7 @@ database_connection_pool_limit = MAX_DB_CONNECTIONS ÷ (number_of_instances × n
 
 **Example:**
 - Your database allows a maximum of **100 connections**
-- You're running **1 instance** of LiteLLM
+- You're running **1 instance** of Lumina
 - Each instance has **8 workers** (set via `--num_workers 8`)
 
 Calculation: `100 ÷ (1 × 8) = 12.5`
@@ -627,7 +627,7 @@ Since you shouldn't use 12.5, round down to **10** to leave a safety buffer. Thi
 
 If you're seeing a large number of idle Prisma connections that never close, set `database_socket_timeout` so Prisma closes any connection that's been silent past the threshold. You can also bound how long Prisma waits to open a new connection with `database_connect_timeout`, and pass arbitrary extra query-string params through to Prisma via `database_extra_connection_params`.
 
-These map to the Prisma [PostgreSQL connection URL params](https://www.prisma.io/docs/orm/overview/databases/postgresql) of the same name (minus the `database_` prefix), and LiteLLM appends them to both `DATABASE_URL` and `DIRECT_URL`.
+These map to the Prisma [PostgreSQL connection URL params](https://www.prisma.io/docs/orm/overview/databases/postgresql) of the same name (minus the `database_` prefix), and Lumina appends them to both `DATABASE_URL` and `DIRECT_URL`.
 
 ```yaml
 general_settings:
@@ -641,10 +641,10 @@ general_settings:
 ```
 
 **Notes:**
-- `database_socket_timeout` is the main knob for capping idle DB connections from LiteLLM.
+- `database_socket_timeout` is the main knob for capping idle DB connections from Lumina.
 - `database_connect_timeout` and `database_socket_timeout` are omitted from the URL when unset, so Prisma's defaults apply.
-- `database_extra_connection_params` is an untyped passthrough: any key you set here **overrides** the LiteLLM-set defaults for that key (e.g. you can override `pool_timeout` from this dict). Use it for `sslmode`, `pgbouncer`, `statement_cache_size`, or any other Prisma URL param.
-- To verify the database server certificate against a custom CA (e.g. AWS RDS), set `sslmode: "verify-full"` and `sslrootcert: "/certs/global-bundle.pem"` here or on the URL; LiteLLM translates them into Prisma's `sslcert` + `sslaccept=strict`. See [Verify the database server certificate](./prod.md#verify-the-database-server-certificate-custom-ca-eg-aws-rds).
+- `database_extra_connection_params` is an untyped passthrough: any key you set here **overrides** the Lumina-set defaults for that key (e.g. you can override `pool_timeout` from this dict). Use it for `sslmode`, `pgbouncer`, `statement_cache_size`, or any other Prisma URL param.
+- To verify the database server certificate against a custom CA (e.g. AWS RDS), set `sslmode: "verify-full"` and `sslrootcert: "/certs/global-bundle.pem"` here or on the URL; Lumina translates them into Prisma's `sslcert` + `sslaccept=strict`. See [Verify the database server certificate](./prod.md#verify-the-database-server-certificate-custom-ca-eg-aws-rds).
 
 ### Bounding Statement and Lock Time
 
@@ -658,14 +658,14 @@ general_settings:
   database_lock_timeout: 15      # seconds; fails a statement that waits this long for someone else's lock
 ```
 
-LiteLLM delivers both through the standard libpq `options` parameter on `DATABASE_URL` (`options=-c statement_timeout=60000 -c lock_timeout=15000`); Postgres has no Prisma URL parameter of its own for them. A cancelled statement surfaces to LiteLLM as SQLSTATE `57014`, `canceling statement due to statement timeout`.
+Lumina delivers both through the standard libpq `options` parameter on `DATABASE_URL` (`options=-c statement_timeout=60000 -c lock_timeout=15000`); Postgres has no Prisma URL parameter of its own for them. A cancelled statement surfaces to Lumina as SQLSTATE `57014`, `canceling statement due to statement timeout`.
 
 **Notes:**
 - Both are **opt-in**. Leave them unset and nothing changes.
 - Keep `database_lock_timeout` well below `database_statement_timeout`, so a write blocked behind another transaction's lock fails fast instead of consuming the whole statement budget.
 - Neither is applied to `DIRECT_URL`, which Prisma uses for migrations. Migrations legitimately run long and are never cancelled by these settings.
 - Any `options` value you pinned on `DATABASE_URL` yourself is preserved, and a setting you pinned there wins over the configured one. `database_extra_connection_params` wins over both.
-- These are the same bounds you would set on the server or in an RDS parameter group. Setting them here scopes them to LiteLLM's own connections instead of every client of that database.
+- These are the same bounds you would set on the server or in an RDS parameter group. Setting them here scopes them to Lumina's own connections instead of every client of that database.
 
 ### Disable Server-Side Prepared Statements
 
@@ -677,20 +677,20 @@ general_settings:
 ```
 
 Use this when:
-- LiteLLM connects to Postgres through **PgBouncer in transaction pooling mode**, where reused prepared statements break because consecutive queries can land on different server connections.
+- Lumina connects to Postgres through **PgBouncer in transaction pooling mode**, where reused prepared statements break because consecutive queries can land on different server connections.
 - You run **rolling deployments with schema migrations** and see `cached plan must not change result type` errors. The error fires when a migration changes the result type of a column referenced by a plan that a pooled connection still holds; with this flag on there is no reused plan to invalidate, so the migration is harmless.
 
 The tradeoff is that every query pays the prepare cost instead of amortizing it, which adds a small per-query overhead. An explicit `pgbouncer` key in `database_extra_connection_params` takes precedence over this flag.
 
-## LiteLLM License Key (Enterprise)
+## Lumina License Key (Enterprise)
 
-To enable [LiteLLM Enterprise features](https://docs.litellm.ai/docs/enterprise), set your license key as an environment variable:
+To enable [Lumina Enterprise features](https://docs.lumina.ai/docs/enterprise), set your license key as an environment variable:
 
 ```bash
 export LUMINA_LICENSE="eyJ..."
 ```
 
-The license key is a JWT token provided when you purchase a LiteLLM Enterprise license. Once set, LiteLLM will automatically detect and activate enterprise features.
+The license key is a JWT token provided when you purchase a Lumina Enterprise license. Once set, Lumina will automatically detect and activate enterprise features.
 
 You can also add it to your `.env` file:
 
@@ -741,7 +741,7 @@ NO_REDOC="True"
 NO_OPENAPI="True"
 ```
 
-Restart the proxy after setting these. `/redoc` and `/openapi.json` then 404 with no schema in the response, `/` returns only the plain `"LiteLLM: RUNNING"` status string, and inference and management routes are unaffected.
+Restart the proxy after setting these. `/redoc` and `/openapi.json` then 404 with no schema in the response, `/` returns only the plain `"Lumina: RUNNING"` status string, and inference and management routes are unaffected.
 
 ### Use CONFIG_FILE_PATH for proxy (Easier Azure container deployment)
 
@@ -764,17 +764,17 @@ CONFIG_FILE_PATH="/path/to/config.yaml"
 3. Start Proxy
 
 ```bash
-$ litellm 
+$ lumina 
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
 
-### Providing LiteLLM config.yaml file as a s3, GCS Bucket Object/url
+### Providing Lumina config.yaml file as a s3, GCS Bucket Object/url
 
 Use this if you cannot mount a config file on your deployment service (example - AWS Fargate, Railway etc)
 
-LiteLLM Proxy will read your config.yaml from an s3 Bucket or GCS Bucket 
+Lumina Proxy will read your config.yaml from an s3 Bucket or GCS Bucket 
 
 <Tabs>
 <TabItem value="gcs" label="GCS Bucket">
@@ -782,20 +782,20 @@ LiteLLM Proxy will read your config.yaml from an s3 Bucket or GCS Bucket
 Set the following .env vars 
 ```shell
 LUMINA_CONFIG_BUCKET_TYPE = "gcs"                              # set this to "gcs"         
-LUMINA_CONFIG_BUCKET_NAME = "litellm-proxy"                    # your bucket name on GCS
+LUMINA_CONFIG_BUCKET_NAME = "lumina-proxy"                    # your bucket name on GCS
 LUMINA_CONFIG_BUCKET_OBJECT_KEY = "proxy_config.yaml"         # object key on GCS
 ```
 
-Start litellm proxy with these env vars - litellm will read your config from GCS 
+Start lumina proxy with these env vars - lumina will read your config from GCS 
 
 ```shell
-docker run --name litellm-proxy \
+docker run --name lumina-proxy \
    -e DATABASE_URL=<database_url> \
    -e LUMINA_CONFIG_BUCKET_NAME=<bucket_name> \
    -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="<object_key>> \
    -e LUMINA_CONFIG_BUCKET_TYPE="gcs" \
    -p 4000:4000 \
-   docker.litellm.ai/berriai/litellm:latest --detailed_debug
+   docker.lumina.ai/soventra/lumina:latest --detailed_debug
 ```
 
 </TabItem>
@@ -804,19 +804,19 @@ docker run --name litellm-proxy \
 
 Set the following .env vars 
 ```shell
-LUMINA_CONFIG_BUCKET_NAME = "litellm-proxy"                    # your bucket name on s3 
-LUMINA_CONFIG_BUCKET_OBJECT_KEY = "litellm_proxy_config.yaml"  # object key on s3
+LUMINA_CONFIG_BUCKET_NAME = "lumina-proxy"                    # your bucket name on s3 
+LUMINA_CONFIG_BUCKET_OBJECT_KEY = "lumina_proxy_config.yaml"  # object key on s3
 ```
 
-Start litellm proxy with these env vars - litellm will read your config from s3 
+Start lumina proxy with these env vars - lumina will read your config from s3 
 
 ```shell
-docker run --name litellm-proxy \
+docker run --name lumina-proxy \
    -e DATABASE_URL=<database_url> \
    -e LUMINA_CONFIG_BUCKET_NAME=<bucket_name> \
    -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="<object_key>> \
    -p 4000:4000 \
-   docker.litellm.ai/berriai/litellm:latest
+   docker.lumina.ai/soventra/lumina:latest
 ```
 </TabItem>
 </Tabs>

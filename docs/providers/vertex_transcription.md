@@ -6,19 +6,19 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Gemini speech-to-text on Vertex AI via the OpenAI `/v1/audio/transcriptions` endpoint, and Chirp streaming speech-to-text via `/v1/realtime` |
-| Provider Route on LiteLLM | `vertex_ai/gemini-3.5-transcribe-preview` (batch), `vertex_ai/chirp_3` (realtime, [see below](#chirp-realtime-transcription)) |
+| Provider Route on Lumina | `vertex_ai/gemini-3.5-transcribe-preview` (batch), `vertex_ai/chirp_3` (realtime, [see below](#chirp-realtime-transcription)) |
 | Supported OpenAI Params | `language`, `response_format` (`json`, `text`) |
 
-Gemini transcribe models on Vertex AI are served from the `global` location, which LiteLLM uses by default when no `vertex_location` is set. If you set a regional location (in config, `litellm.vertex_location`, or the `VERTEXAI_LOCATION` / `VERTEX_LOCATION` env vars), that value takes precedence and Vertex returns a 404 for regions where the model is unavailable, so pin `vertex_location: global` for these models.
+Gemini transcribe models on Vertex AI are served from the `global` location, which Lumina uses by default when no `vertex_location` is set. If you set a regional location (in config, `lumina.vertex_location`, or the `VERTEXAI_LOCATION` / `VERTEX_LOCATION` env vars), that value takes precedence and Vertex returns a 404 for regions where the model is unavailable, so pin `vertex_location: global` for these models.
 
 Prefer an API key over a GCP service account? The same model is available through [Google AI Studio](./gemini.md#audio-transcription-speech-to-text) as `gemini/gemini-3.5-transcribe`.
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Gemini Transcribe Quick Start"
-from litellm import transcription
+from lumina import transcription
 
 audio_file = open("speech.wav", "rb")
 response = transcription(
@@ -31,7 +31,7 @@ response = transcription(
 print(response.text)
 ```
 
-### LiteLLM AI Gateway
+### Lumina AI Gateway
 
 **1. Setup config.yaml**
 
@@ -46,8 +46,8 @@ model_list:
 
 **2. Start the proxy**
 
-```bash title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make requests**
@@ -69,7 +69,7 @@ curl http://0.0.0.0:4000/v1/audio/transcriptions \
 ```python showLineNumbers title="Gemini Transcribe Quick Start"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 audio_file = open("speech.wav", "rb")
 response = client.audio.transcriptions.create(
@@ -89,18 +89,18 @@ print(response.text)
 
 ## Usage and Cost Tracking
 
-Vertex AI reports token usage split by modality, and LiteLLM tracks audio input tokens and text output tokens separately, so spend logs and the `x-litellm-response-cost` header reflect Google's published per-token audio transcription pricing.
+Vertex AI reports token usage split by modality, and Lumina tracks audio input tokens and text output tokens separately, so spend logs and the `x-lumina-response-cost` header reflect Google's published per-token audio transcription pricing.
 
 ## Chirp Realtime Transcription
 
-LiteLLM serves Google Cloud Speech-to-Text Chirp models through the proxy's OpenAI-compatible `/v1/realtime` endpoint. Clients speak the OpenAI Realtime transcription protocol; LiteLLM streams their PCM16 audio to Speech-to-Text v2 `StreamingRecognize` over gRPC and maps Google's interim and final results back to OpenAI events. The [Python example](#example-openai-sdk-client) below is a complete push to talk session using the OpenAI SDK
+Lumina serves Google Cloud Speech-to-Text Chirp models through the proxy's OpenAI-compatible `/v1/realtime` endpoint. Clients speak the OpenAI Realtime transcription protocol; Lumina streams their PCM16 audio to Speech-to-Text v2 `StreamingRecognize` over gRPC and maps Google's interim and final results back to OpenAI events. The [Python example](#example-openai-sdk-client) below is a complete push to talk session using the OpenAI SDK
 
 ### 1. Install the Speech-to-Text client
 
 Streaming uses `google-cloud-speech`, which the `stt-vertex-chirp` extra installs. The official Docker images already include it
 
 ```bash showLineNumbers title="Install the extra"
-pip install 'litellm[stt-vertex-chirp]'
+pip install 'lumina[stt-vertex-chirp]'
 ```
 
 Without it the first session fails with `google-cloud-speech is not installed`
@@ -117,10 +117,10 @@ model_list:
       vertex_credentials: "/path/to/service_account.json"
 ```
 
-`vertex_credentials` falls back to the `VERTEXAI_CREDENTIALS` environment variable; `vertex_project` and `vertex_location` fall back to `litellm.vertex_project` and `litellm.vertex_location`, then to `VERTEXAI_PROJECT` and `VERTEXAI_LOCATION`. The location defaults to `us` and selects the regional endpoint `<location>-speech.googleapis.com` (`speech.googleapis.com` for `global`), so pick a location where Speech-to-Text serves the model. `api_base` is optional and only its host is used. Realtime health checks are not supported for Chirp deployments: health check them with `mode: audio_transcription`, which goes through the batch `/v1/audio/transcriptions` endpoint the same deployment serves
+`vertex_credentials` falls back to the `VERTEXAI_CREDENTIALS` environment variable; `vertex_project` and `vertex_location` fall back to `lumina.vertex_project` and `lumina.vertex_location`, then to `VERTEXAI_PROJECT` and `VERTEXAI_LOCATION`. The location defaults to `us` and selects the regional endpoint `<location>-speech.googleapis.com` (`speech.googleapis.com` for `global`), so pick a location where Speech-to-Text serves the model. `api_base` is optional and only its host is used. Realtime health checks are not supported for Chirp deployments: health check them with `mode: audio_transcription`, which goes through the batch `/v1/audio/transcriptions` endpoint the same deployment serves
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Connect
@@ -131,11 +131,11 @@ ws://localhost:4000/v1/realtime?model=chirp-3&intent=transcription
 
 Authenticate with `Authorization: Bearer <proxy key>`. `model` is the `model_name` from your config and is required; `intent=transcription` alone routes to the proxy's default OpenAI transcription model. `intent=transcription` makes the session transcription-only and pins any model named in `session.update` to the one you were authorized for
 
-LiteLLM emits `session.created` with `object: realtime.transcription_session` as soon as the socket is accepted. It carries the defaults: model `chirp_3`, mono `audio/pcm` at 24000 Hz, server VAD and no language
+Lumina emits `session.created` with `object: realtime.transcription_session` as soon as the socket is accepted. It carries the defaults: model `chirp_3`, mono `audio/pcm` at 24000 Hz, server VAD and no language
 
 ### 4. Configure the session
 
-Send one `session.update` (or `transcription_session.update`). LiteLLM answers with `session.updated` echoing the normalized session, and any later update is ignored. Audio sent before the update is buffered and replayed after it, so you can start streaming right away
+Send one `session.update` (or `transcription_session.update`). Lumina answers with `session.updated` echoing the normalized session, and any later update is ignored. Audio sent before the update is buffered and replayed after it, so you can start streaming right away
 
 ```json showLineNumbers title="session.update"
 {
@@ -174,16 +174,16 @@ An invalid `session.update` (wrong encoding, channel count, sample rate, session
 
 ### 5. Stream audio
 
-`input_audio_buffer.append` carries base64 mono PCM16 at the configured rate. There is no size limit per event; LiteLLM splits the audio into gRPC requests of at most 25 KB and forwards them as they arrive, without pacing, so a file can be sent faster than real time. `input_audio_buffer.clear` discards the turn in progress, audio already sent and text not yet completed included, without any event. Every other client event, including `response.create`, is dropped
+`input_audio_buffer.append` carries base64 mono PCM16 at the configured rate. There is no size limit per event; Lumina splits the audio into gRPC requests of at most 25 KB and forwards them as they arrive, without pacing, so a file can be sent faster than real time. `input_audio_buffer.clear` discards the turn in progress, audio already sent and text not yet completed included, without any event. Every other client event, including `response.create`, is dropped
 
-Google limits how long one streaming request may run, so LiteLLM moves to a fresh stream once one has been open for 240 seconds. It waits for the next pause in speech (Google's voice activity end) before switching, and switches at 280 seconds at the latest. A push-to-talk turn carries across the switch: the text so far is kept and the `completed` after your `commit` holds the whole turn under one `item_id`. With server VAD, Google finalizes the audio sent so far when the old stream closes, so an utterance still in progress at a forced switch (continuous speech from 240 to 280 seconds) completes in two parts under two `item_id`s. Billed seconds carry across streams
+Google limits how long one streaming request may run, so Lumina moves to a fresh stream once one has been open for 240 seconds. It waits for the next pause in speech (Google's voice activity end) before switching, and switches at 280 seconds at the latest. A push-to-talk turn carries across the switch: the text so far is kept and the `completed` after your `commit` holds the whole turn under one `item_id`. With server VAD, Google finalizes the audio sent so far when the old stream closes, so an utterance still in progress at a forced switch (continuous speech from 240 to 280 seconds) completes in two parts under two `item_id`s. Billed seconds carry across streams
 
 ### 6. Read transcripts
 
 | Event | Fields | When |
 | --- | --- | --- |
 | `session.created` | `session.object: realtime.transcription_session`, default session | On connect |
-| `session.updated` | Normalized session: no `channels`, `model` is `chirp_3`, `language` as a BCP-47 tag (`en` becomes `en-US`) or absent | After LiteLLM accepts your `session.update` |
+| `session.updated` | Normalized session: no `channels`, `model` is `chirp_3`, `language` as a BCP-47 tag (`en` becomes `en-US`) or absent | After Lumina accepts your `session.update` |
 | `input_audio_buffer.speech_started` | `item_id` | Server VAD only: Google detects speech, or the first transcript text of a turn arrives |
 | `conversation.item.input_audio_transcription.delta` | `item_id`, `content_index: 0`, `delta` | Words added since the previous delta of the turn, interim results included |
 | `input_audio_buffer.speech_stopped` | `item_id` | Server VAD only: Google detects the end of the utterance, or the turn completes |
@@ -203,7 +203,7 @@ Transcripts are stored in the spend log's messages unless message logging is tur
 Guardrails with `mode: realtime_input_transcription` run on each completed transcript; see [Realtime Guardrails](/docs/proxy/guardrails/realtime_guardrails). The `completed` event reaches the client before the guardrail runs, and deltas are not checked. Select guardrails per connection with a `guardrails=name1,name2` query parameter
 
 :::warning
-With a `realtime_input_transcription` guardrail configured, LiteLLM rewrites a client's `turn_detection: null` into `{"create_response": false}` before the session is configured, so push to talk clients run in server VAD mode: utterances complete on their own and `input_audio_buffer.commit` only completes the turn in progress. Server VAD clients are unaffected
+With a `realtime_input_transcription` guardrail configured, Lumina rewrites a client's `turn_detection: null` into `{"create_response": false}` before the session is configured, so push to talk clients run in server VAD mode: utterances complete on their own and `input_audio_buffer.commit` only completes the turn in progress. Server VAD clients are unaffected
 :::
 
 ### Example OpenAI SDK client

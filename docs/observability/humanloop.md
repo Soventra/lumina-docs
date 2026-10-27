@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 ## Getting Started
 
-Use Humanloop to manage prompts across all LiteLLM Providers.
+Use Humanloop to manage prompts across all Lumina Providers.
 
 
 
@@ -19,13 +19,13 @@ Use Humanloop to manage prompts across all LiteLLM Providers.
 
 ```python
 import os 
-import litellm
+import lumina
 
 os.environ["HUMANLOOP_API_KEY"] = "" # [OPTIONAL] set here or in `.completion`
 
-litellm.set_verbose = True # see raw request to provider
+lumina.set_verbose = True # see raw request to provider
 
-resp = litellm.completion(
+resp = lumina.completion(
     model="humanloop/{{openai_small}}",
     prompt_id="test-chat-prompt",
     prompt_variables={"user_message": "this is used"}, # [OPTIONAL]
@@ -53,7 +53,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 3. Test it! 
@@ -88,7 +88,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -117,7 +117,7 @@ print(response)
 **Expected Logs:**
 
 ```
-POST Request Sent from LiteLLM:
+POST Request Sent from Lumina:
 curl -X POST \
 https://api.openai.com/v1/ \
 -d '{'model': '{{openai_small}}', 'messages': <YOUR HUMANLOOP PROMPT TEMPLATE>}'
@@ -128,15 +128,15 @@ https://api.openai.com/v1/ \
 
 ## How to set model 
 
-### Set the model on LiteLLM 
+### Set the model on Lumina 
 
-You can do `humanloop/<litellm_model_name>`
+You can do `humanloop/<lumina_model_name>`
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-litellm.completion(
+lumina.completion(
     model="humanloop/{{openai_small}}", # or `humanloop/anthropic/{{anthropic}}`
     # ...
 )
@@ -159,7 +159,7 @@ model_list:
 
 ### Set the model on Humanloop
 
-LiteLLM will call humanloop's `https://api.humanloop.com/v5/prompts/<your-prompt-id>` endpoint, to get the prompt template.
+Lumina will call humanloop's `https://api.humanloop.com/v5/prompts/<your-prompt-id>` endpoint, to get the prompt template.
 
 This also returns the template model set on Humanloop.
 

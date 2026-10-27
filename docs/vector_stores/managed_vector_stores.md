@@ -1,11 +1,11 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# LiteLLM Managed Vector Stores
+# Lumina Managed Vector Stores
 
-Register an existing provider vector store (Bedrock Knowledge Base, Vertex AI Search datastore, Azure AI Search index, Milvus collection, Valkey search index, [MongoDB Vector Search index (BETA)](../providers/mongodb_vector_stores.md), ...) with LiteLLM, so that every consumer of the proxy can use it through one OpenAI-compatible API without knowing the provider or holding its credentials.
+Register an existing provider vector store (Bedrock Knowledge Base, Vertex AI Search datastore, Azure AI Search index, Milvus collection, Valkey search index, [MongoDB Vector Search index (BETA)](../providers/mongodb_vector_stores.md), ...) with Lumina, so that every consumer of the proxy can use it through one OpenAI-compatible API without knowing the provider or holding its credentials.
 
-A managed vector store is a mapping, stored in `config.yaml` or in the LiteLLM database, of:
+A managed vector store is a mapping, stored in `config.yaml` or in the Lumina database, of:
 
 | Field | Required | Description |
 |---|---|---|
@@ -14,7 +14,7 @@ A managed vector store is a mapping, stored in `config.yaml` or in the LiteLLM d
 | `vector_store_name` | No | Human readable name shown in the UI |
 | `vector_store_description` | No | Description shown in the UI |
 | `vector_store_metadata` | No | Free-form metadata object |
-| `litellm_credential_name` | No | Name of a [stored credential](../proxy/config_settings.md) to authenticate with |
+| `lumina_credential_name` | No | Name of a [stored credential](../proxy/config_settings.md) to authenticate with |
 | `lumina_params` | No | Provider parameters, e.g. `vertex_project` and `vertex_location` for Vertex AI, `aws_region_name` for Bedrock |
 
 Registering does not create anything on the provider. To create a new store upstream, use [`POST /v1/vector_stores`](./create.md) instead.
@@ -60,7 +60,7 @@ curl -X POST 'http://localhost:4000/vector_store/new' \
   }'
 ```
 
-The store is written to the LiteLLM database and is immediately available to direct search; no restart needed. If the proxy started with no registered vector stores, chat retrieval for its first UI or API registration becomes available after database synchronization or a proxy restart. The response echoes the stored object with sensitive `lumina_params` values redacted.
+The store is written to the Lumina database and is immediately available to direct search; no restart needed. If the proxy started with no registered vector stores, chat retrieval for its first UI or API registration becomes available after database synchronization or a proxy restart. The response echoes the stored object with sensitive `lumina_params` values redacted.
 
 </TabItem>
 <TabItem value="ui" label="Admin UI">
@@ -72,7 +72,7 @@ In the Admin UI go to **Tools > Vector Stores > Add new vector store**, pick the
 
 ## Use a registered store
 
-Search it through the unified endpoint. LiteLLM resolves the provider and credentials from the registration:
+Search it through the unified endpoint. Lumina resolves the provider and credentials from the registration:
 
 ```bash showLineNumbers title="Unified search"
 curl -X POST 'http://localhost:4000/v1/vector_stores/my-datastore_1234567890/search' \
@@ -83,7 +83,7 @@ curl -X POST 'http://localhost:4000/v1/vector_stores/my-datastore_1234567890/sea
 
 The response is the OpenAI `vector_store.search_results.page` shape regardless of provider. See [Search](./search.md) for all request parameters.
 
-Or attach it to a chat completion, and LiteLLM will search the store and inject the results as context before calling the model:
+Or attach it to a chat completion, and Lumina will search the store and inject the results as context before calling the model:
 
 ```bash showLineNumbers title="RAG in /chat/completions"
 curl -X POST 'http://localhost:4000/v1/chat/completions' \
@@ -91,7 +91,7 @@ curl -X POST 'http://localhost:4000/v1/chat/completions' \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "gpt-5.6",
-    "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+    "messages": [{"role": "user", "content": "What is Lumina?"}],
     "tools": [{"type": "file_search", "vector_store_ids": ["my-datastore_1234567890"]}]
   }'
 ```
@@ -123,7 +123,7 @@ A guardrail that fails while scanning the retrieved context fails the request to
 
 ## Management API reference
 
-All endpoints require a LiteLLM key (`Authorization: Bearer ...`). Access can be restricted with `general_settings.disable_vector_stores_for_internal_users` and `allow_vector_stores_for_team_admins`; proxy admins always have access.
+All endpoints require a Lumina key (`Authorization: Bearer ...`). Access can be restricted with `general_settings.disable_vector_stores_for_internal_users` and `allow_vector_stores_for_team_admins`; proxy admins always have access.
 
 | Endpoint | Method | Body / params |
 |---|---|---|

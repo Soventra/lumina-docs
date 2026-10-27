@@ -26,7 +26,7 @@ export function CascadeFailure() {
       <div style={s.box}>
         <p style={s.label}>Without circuit breaker — cascade failure</p>
         <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:0}}>
-          <div style={s.node()}>LiteLLM Pod (×100)</div>
+          <div style={s.node()}>Lumina Pod (×100)</div>
           <SmallArrow />
           <div style={s.node()}>Rate limit / cache check</div>
           <div style={{position:'relative', display:'flex', flexDirection:'column', alignItems:'center'}}>

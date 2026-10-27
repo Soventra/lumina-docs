@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Vercel AI Gateway provides a unified interface to access multiple AI providers through a single endpoint, with built-in caching, rate limiting, and analytics. |
-| Provider Route on LiteLLM | `vercel_ai_gateway/` |
+| Provider Route on Lumina | `vercel_ai_gateway/` |
 | Link to Provider Doc | [Vercel AI Gateway Documentation ↗](https://vercel.com/docs/ai-gateway) |
 | Base URL | `https://ai-gateway.vercel.sh/v1` |
 | Supported Operations | `/chat/completions`, `/embeddings`, `/models` |
@@ -38,14 +38,14 @@ os.environ["VERCEL_APP_NAME"] = ""  # your app name
 
 Note: see the [Vercel AI Gateway docs](https://vercel.com/docs/ai-gateway#using-the-ai-gateway-with-an-api-key) for instructions on obtaining a key.
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Vercel AI Gateway Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["VERCEL_AI_GATEWAY_API_KEY"] = "your-api-key"
 
@@ -64,8 +64,8 @@ print(response)
 
 ```python showLineNumbers title="Vercel AI Gateway Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["VERCEL_AI_GATEWAY_API_KEY"] = "your-api-key"
 
@@ -86,7 +86,7 @@ for chunk in response:
 
 ```python showLineNumbers title="Vercel AI Gateway Embeddings"
 import os
-from litellm import embedding
+from lumina import embedding
 
 os.environ["VERCEL_AI_GATEWAY_API_KEY"] = "your-api-key"
 
@@ -109,9 +109,9 @@ response = embedding(
 )
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add the following to your LiteLLM Proxy configuration file:
+Add the following to your Lumina Proxy configuration file:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -131,10 +131,10 @@ model_list:
       api_key: os.environ/VERCEL_AI_GATEWAY_API_KEY
 ```
 
-Start your LiteLLM Proxy server:
+Start your Lumina Proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -183,14 +183,14 @@ for chunk in response:
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Vercel AI Gateway via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Vercel AI Gateway via Proxy - Lumina SDK"
+import lumina
 
-# Configure LiteLLM to use your proxy
-response = litellm.completion(
-    model="litellm_proxy/gpt-4o-gateway",
+# Configure Lumina to use your proxy
+response = lumina.completion(
+    model="lumina_proxy/gpt-4o-gateway",
     messages=[{"role": "user", "content": "Hello, how are you?"}],
     api_base="http://localhost:4000",
     api_key="your-proxy-api-key"
@@ -199,12 +199,12 @@ response = litellm.completion(
 print(response.choices[0].message.content)
 ```
 
-```python showLineNumbers title="Vercel AI Gateway via Proxy - LiteLLM SDK Streaming"
-import litellm
+```python showLineNumbers title="Vercel AI Gateway via Proxy - Lumina SDK Streaming"
+import lumina
 
-# Configure LiteLLM to use your proxy with streaming
-response = litellm.completion(
-    model="litellm_proxy/gpt-4o-gateway",
+# Configure Lumina to use your proxy with streaming
+response = lumina.completion(
+    model="lumina_proxy/gpt-4o-gateway",
     messages=[{"role": "user", "content": "Hello, how are you?"}],
     api_base="http://localhost:4000",
     api_key="your-proxy-api-key",
@@ -244,7 +244,7 @@ curl http://localhost:4000/v1/chat/completions \
 </TabItem>
 </Tabs>
 
-For more detailed information on using the LiteLLM Proxy, see the [LiteLLM Proxy documentation](../providers/litellm_proxy).
+For more detailed information on using the Lumina Proxy, see the [Lumina Proxy documentation](../providers/lumina_proxy).
 
 ## Additional Resources
 

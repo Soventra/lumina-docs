@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # /images/edits
 
-LiteLLM provides image editing functionality that maps to OpenAI's `/images/edits` API endpoint. Now supports both single and multiple image editing.
+Lumina provides image editing functionality that maps to OpenAI's `/images/edits` API endpoint. Now supports both single and multiple image editing.
 
 | Feature | Supported | Notes |
 |---------|-----------|--------|
@@ -14,26 +14,26 @@ LiteLLM provides image editing functionality that maps to OpenAI's `/images/edit
 | Fallbacks | ✅ | Works between supported models |
 | Loadbalancing | ✅ | Works between supported models |
 | Supported operations | Create image edits | Single and multiple images supported |
-| Supported LiteLLM SDK Versions | 1.63.8+ | Gemini support requires 1.79.3+ |
-| Supported LiteLLM Proxy Versions | 1.71.1+ | Gemini support requires 1.79.3+ |
+| Supported Lumina SDK Versions | 1.63.8+ | Gemini support requires 1.79.3+ |
+| Supported Lumina Proxy Versions | 1.71.1+ | Gemini support requires 1.79.3+ |
 | Supported LLM providers | **OpenAI**, **Gemini (Google AI Studio)**, **Vertex AI**, **OpenRouter**, **Stability AI**, **AWS Bedrock (Stability)**, **Black Forest Labs**, **Azure AI (FLUX)**, **Hosted vLLM (vLLM-Omni)** | Gemini supports the new `gemini-2.5-flash-image` family. Vertex AI supports both Gemini and Imagen models. OpenRouter routes image edits through chat completions. Stability AI and Bedrock Stability support various image editing operations. Black Forest Labs supports FLUX Kontext models. Hosted vLLM routes to a vLLM-Omni server's OpenAI-compatible `/v1/images/edits`. |
 
- #### See all supported models and providers at [models.litellm.ai](https://models.litellm.ai/)
+ #### See all supported models and providers at [models.lumina.ai](https://models.lumina.ai/)
 
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 <Tabs>
 <TabItem value="openai" label="OpenAI">
 
 #### Basic Image Edit
 ```python showLineNumbers title="OpenAI Image Edit"
-import litellm
+import lumina
 
 # Edit an image with a prompt
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="gpt-image-1",
     image=open("original_image.png", "rb"),
     prompt="Add a red hat to the person in the image",
@@ -46,10 +46,10 @@ print(response)
 
 #### Multiple Images Edit
 ```python showLineNumbers title="OpenAI Multiple Images Edit"
-import litellm
+import lumina
 
 # Edit multiple images with a prompt
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="gpt-image-1",
     image=[
         open("image1.png", "rb"),
@@ -66,10 +66,10 @@ print(response)
 
 #### Image Edit with Mask
 ```python showLineNumbers title="OpenAI Image Edit with Mask"
-import litellm
+import lumina
 
 # Edit an image with a mask to specify the area to edit
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="gpt-image-1",
     image=open("original_image.png", "rb"),
     mask=open("mask_image.png", "rb"),  # Transparent areas will be edited
@@ -84,11 +84,11 @@ print(response)
 
 #### Async Image Edit
 ```python showLineNumbers title="Async OpenAI Image Edit"
-import litellm
+import lumina
 import asyncio
 
 async def edit_image():
-    response = await litellm.aimage_edit(
+    response = await lumina.aimage_edit(
         model="gpt-image-1",
         image=open("original_image.png", "rb"),
         prompt="Make the image look like a painting",
@@ -105,11 +105,11 @@ print(response)
 
 #### Async Multiple Images Edit
 ```python showLineNumbers title="Async OpenAI Multiple Images Edit"
-import litellm
+import lumina
 import asyncio
 
 async def edit_multiple_images():
-    response = await litellm.aimage_edit(
+    response = await lumina.aimage_edit(
         model="gpt-image-1",
         image=[
             open("portrait1.png", "rb"),
@@ -129,10 +129,10 @@ print(response)
 
 #### Image Edit with Custom Parameters
 ```python showLineNumbers title="OpenAI Image Edit with Custom Parameters"
-import litellm
+import lumina
 
 # Edit image with additional parameters
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="gpt-image-1",
     image=open("portrait.png", "rb"),
     prompt="Add sunglasses and a smile",
@@ -159,7 +159,7 @@ for i, image_data in enumerate(response.data):
 ```python showLineNumbers title="Gemini Image Edit"
 import base64
 import os
-from litellm import image_edit
+from lumina import image_edit
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
 
@@ -179,7 +179,7 @@ with open("edited_image.png", "wb") as f:
 ```python showLineNumbers title="Gemini Multiple Images Edit"
 import base64
 import os
-from litellm import image_edit
+from lumina import image_edit
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
 
@@ -204,11 +204,11 @@ for idx, image_obj in enumerate(response.data):
 #### Basic Image Edit
 ```python showLineNumbers title="Black Forest Labs Image Edit"
 import os
-import litellm
+import lumina
 
 os.environ["BFL_API_KEY"] = "your-api-key"
 
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-kontext-pro",
     image=open("original_image.png", "rb"),
     prompt="Add a green leaf to the scene",
@@ -220,12 +220,12 @@ print(response.data[0].url)
 #### Inpainting with Mask
 ```python showLineNumbers title="Black Forest Labs Inpainting"
 import os
-import litellm
+import lumina
 
 os.environ["BFL_API_KEY"] = "your-api-key"
 
 # Use flux-pro-1.0-fill for inpainting
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-pro-1.0-fill",
     image=open("original_image.png", "rb"),
     mask=open("mask_image.png", "rb"),
@@ -238,12 +238,12 @@ print(response.data[0].url)
 #### Outpainting (Expand)
 ```python showLineNumbers title="Black Forest Labs Outpainting"
 import os
-import litellm
+import lumina
 
 os.environ["BFL_API_KEY"] = "your-api-key"
 
 # Use flux-pro-1.0-expand to extend image borders
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="black_forest_labs/flux-pro-1.0-expand",
     image=open("original_image.png", "rb"),
     prompt="Continue the scene with mountains",
@@ -261,14 +261,14 @@ print(response.data[0].url)
 #### Basic Image Edit (Gemini)
 ```python showLineNumbers title="Vertex AI Gemini Image Edit"
 import os
-import litellm
+import lumina
 
 # Set Vertex AI credentials
 os.environ["VERTEXAI_PROJECT"] = "your-gcp-project-id"
 os.environ["VERTEXAI_LOCATION"] = "us-central1"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/service-account.json"
 
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="vertex_ai/gemini-2.5-flash-image",
     image=open("original_image.png", "rb"),
     prompt="Add neon lights in the background",
@@ -281,7 +281,7 @@ print(response)
 #### Image Edit with Imagen (Supports Masks)
 ```python showLineNumbers title="Vertex AI Imagen Image Edit"
 import os
-import litellm
+import lumina
 
 # Set Vertex AI credentials
 os.environ["VERTEXAI_PROJECT"] = "your-gcp-project-id"
@@ -289,7 +289,7 @@ os.environ["VERTEXAI_LOCATION"] = "us-central1"
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/path/to/service-account.json"
 
 # Imagen supports mask for inpainting
-response = litellm.image_edit(
+response = lumina.image_edit(
     model="vertex_ai/imagen-3.0-capability-001",
     image=open("original_image.png", "rb"),
     mask=open("mask_image.png", "rb"),  # Optional: for inpainting
@@ -308,7 +308,7 @@ print(response)
 #### Basic Image Edit
 ```python showLineNumbers title="OpenRouter Image Edit"
 import os
-from litellm import image_edit
+from lumina import image_edit
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
 
@@ -324,7 +324,7 @@ print(response)
 #### Multiple Images Edit
 ```python showLineNumbers title="OpenRouter Multiple Images Edit"
 import os
-from litellm import image_edit
+from lumina import image_edit
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
 
@@ -348,7 +348,7 @@ print(response)
 #### Basic Image Edit
 ```python showLineNumbers title="Hosted vLLM Image Edit"
 import os
-from litellm import image_edit
+from lumina import image_edit
 
 os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8091"
 
@@ -364,13 +364,13 @@ print(response)
 </TabItem>
 </Tabs>
 
-### LiteLLM Proxy with OpenAI SDK
+### Lumina Proxy with OpenAI SDK
 
 
 <Tabs>
 <TabItem value="openai" label="OpenAI">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: gpt-image-1
@@ -379,10 +379,10 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY
 ```
 
-Start the LiteLLM proxy server:
+Start the Lumina proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -451,15 +451,15 @@ model_list:
       api_key: os.environ/GEMINI_API_KEY
 ```
 
-2. Start the LiteLLM proxy server:
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+2. Start the Lumina proxy server:
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 ```
 
 3. Make an image edit request (Gemini responses are base64-only):
 ```bash showLineNumbers title="Gemini Proxy Image Edit"
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -F "model=gemini-image-edit" \
   -F "image=@original_image.png" \
   -F "prompt=Add a warm golden-hour glow to the scene" \
@@ -481,15 +481,15 @@ model_list:
       mode: image_edit
 ```
 
-2. Start the LiteLLM proxy server:
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+2. Start the Lumina proxy server:
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 ```
 
 3. Make an image edit request:
 ```bash showLineNumbers title="Black Forest Labs Proxy Image Edit"
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -F "model=bfl-kontext-pro" \
   -F "image=@original_image.png" \
   -F "prompt=Add a sunset in the background"
@@ -517,15 +517,15 @@ model_list:
       vertex_credentials: os.environ/GOOGLE_APPLICATION_CREDENTIALS
 ```
 
-2. Start the LiteLLM proxy server:
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+2. Start the Lumina proxy server:
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 ```
 
 3. Make an image edit request:
 ```bash showLineNumbers title="Vertex AI Gemini Proxy Image Edit"
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -F "model=vertex-gemini-image-edit" \
   -F "image=@original_image.png" \
   -F "prompt=Add neon lights in the background" \
@@ -535,7 +535,7 @@ curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
 4. Imagen image edit with mask:
 ```bash showLineNumbers title="Vertex AI Imagen Proxy Image Edit with Mask"
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -F "model=vertex-imagen-image-edit" \
   -F "image=@original_image.png" \
   -F "mask=@mask_image.png" \
@@ -557,15 +557,15 @@ model_list:
       api_key: os.environ/OPENROUTER_API_KEY
 ```
 
-2. Start the LiteLLM proxy server:
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+2. Start the Lumina proxy server:
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 ```
 
 3. Make an image edit request:
 ```bash showLineNumbers title="OpenRouter Proxy Image Edit"
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -F "model=openrouter-image-edit" \
   -F "image=@original_image.png" \
   -F "prompt=Make the sky a vibrant purple sunset" \
@@ -586,15 +586,15 @@ model_list:
       mode: image_edit
 ```
 
-2. Start the LiteLLM proxy server:
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+2. Start the Lumina proxy server:
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 ```
 
 3. Make an image edit request:
 ```bash showLineNumbers title="Hosted vLLM Proxy Image Edit"
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -F "model=qwen-image-edit" \
   -F "image=@original_image.png" \
   -F "prompt=Add a red hat to the person in the image"

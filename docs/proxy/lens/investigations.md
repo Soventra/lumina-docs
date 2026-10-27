@@ -14,7 +14,7 @@ You need a [running Lens installation](./deployment.md), administrator access to
 
 Configure an analysis model and its provider credential on the Lens server using [Configure analysis models](https://github.com/BerriAI/lens/blob/main/docs/analysis.md). Then open **Settings > Analysis** and select **Check configuration**. The configured model should appear with **Analysis is configured** when the investigation worker is ready
 
-Provider credentials stay on the Lens server. You choose the analysis model and monthly spending limit for each investigation. Lens can call a provider directly or use an explicitly configured LiteLLM model endpoint. Readiness confirms configuration; the first investigation verifies actual provider access
+Provider credentials stay on the Lens server. You choose the analysis model and monthly spending limit for each investigation. Lens can call a provider directly or use an explicitly configured Lumina model endpoint. Readiness confirms configuration; the first investigation verifies actual provider access
 
 ### 2. Choose the traces {#choose-the-traces}
 

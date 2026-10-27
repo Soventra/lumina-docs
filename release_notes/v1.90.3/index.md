@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.90.3 - Bedrock Tool Config & MCP Log Redaction"
+title: "Lumina v1.90.3 - Bedrock Tool Config & MCP Log Redaction"
 description: "Drops the unsupported toolSpec.strict field for Bedrock Converse on Claude Opus 4.7 and 4.8. Also stops MCP client tool-call input logging."
 slug: "v1-90-3"
 date: 2026-07-03T19:17:20
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.90.3
+docker.lumina.ai/soventra/lumina:1.90.3
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.90.3
+pip install lumina==1.90.3
 ```
 
 </TabItem>
@@ -48,10 +48,10 @@ pip install litellm==1.90.3
 
 ### What's Changed
 
-- fix(bedrock/converse): drop toolSpec.strict for Opus 4.7/4.8 - [PR #31582](https://github.com/BerriAI/litellm/pull/31582)
-- fix(bedrock): honor ttl for tool_config cache injection points - [PR #31929](https://github.com/BerriAI/litellm/pull/31929)
-- fix(mcp): stop logging tool-call input in the MCP client - [PR #31393](https://github.com/BerriAI/litellm/pull/31393)
+- fix(bedrock/converse): drop toolSpec.strict for Opus 4.7/4.8 - [PR #31582](https://github.com/Soventra/lumina/pull/31582)
+- fix(bedrock): honor ttl for tool_config cache injection points - [PR #31929](https://github.com/Soventra/lumina/pull/31929)
+- fix(mcp): stop logging tool-call input in the MCP client - [PR #31393](https://github.com/Soventra/lumina/pull/31393)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.90.2...v1.90.3
+https://github.com/Soventra/lumina/compare/v1.90.2...v1.90.3

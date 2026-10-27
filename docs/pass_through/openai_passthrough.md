@@ -18,12 +18,12 @@ Dedicated passthrough endpoint that guarantees direct routing to OpenAI without 
 **Use this for:**
 - OpenAI Responses API (`/v1/responses`)
 - Any endpoint where you need guaranteed passthrough
-- When `/openai` routes are conflicting with LiteLLM's native implementations
+- When `/openai` routes are conflicting with Lumina's native implementations
 
 ### `/openai` - Legacy
-Standard passthrough endpoint that may conflict with LiteLLM's native implementations.
+Standard passthrough endpoint that may conflict with Lumina's native implementations.
 
-**Note:** Some endpoints like `/openai/v1/responses` will be routed to LiteLLM's native implementation instead of OpenAI.
+**Note:** Some endpoints like `/openai/v1/responses` will be routed to Lumina's native implementation instead of OpenAI.
 
 ## WebSocket endpoints are off by default
 
@@ -38,8 +38,8 @@ While it is off, a WebSocket client receives one `error` event that names this s
 
 ## When to use this?
 
-- For 90% of your use cases, you should use the [native LiteLLM OpenAI Integration](https://docs.litellm.ai/docs/providers/openai) (`/chat/completions`, `/embeddings`, `/completions`, `/images`, `/batches`, etc.)
-- Use `/openai_passthrough` to call less popular or newer OpenAI endpoints that LiteLLM doesn't fully support yet, such as `/assistants`, `/threads`, `/vector_stores`, `/responses`
+- For 90% of your use cases, you should use the [native Lumina OpenAI Integration](https://docs.lumina.ai/docs/providers/openai) (`/chat/completions`, `/embeddings`, `/completions`, `/images`, `/batches`, etc.)
+- Use `/openai_passthrough` to call less popular or newer OpenAI endpoints that Lumina doesn't fully support yet, such as `/assistants`, `/threads`, `/vector_stores`, `/responses`
 
 Simply replace `https://api.openai.com` with `LUMINA_PROXY_BASE_URL/openai_passthrough`
 

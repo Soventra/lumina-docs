@@ -4,20 +4,20 @@ title: "Announcing Router Plugins: Customize Routing Signals"
 date: 2026-07-17T12:00:00
 authors:
   - krrish
-description: "Router plugins are now live on LiteLLM. Configure a plugin pipeline to determine which models to pick for a given input. Plugins can be chained as well"
+description: "Router plugins are now live on Lumina. Configure a plugin pipeline to determine which models to pick for a given input. Plugins can be chained as well"
 tags: [routing, complexity-router, plugins, proxy, product]
 hide_table_of_contents: false
 ---
 
 :::info[Availability]
 
-Router plugins run on the proxy from **v1.94.x**. The design is still evolving; tell us how you'd use it and what you'd want next in the [autorouter discussion on GitHub (#32168)](https://github.com/BerriAI/litellm/discussions/32168).
+Router plugins run on the proxy from **v1.94.x**. The design is still evolving; tell us how you'd use it and what you'd want next in the [autorouter discussion on GitHub (#32168)](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
-Router plugins are now available on LiteLLM. Each plugin receives the routing context, enriches it, and hands it to the next before the router makes the final decision.
+Router plugins are now available on Lumina. Each plugin receives the routing context, enriches it, and hands it to the next before the router makes the final decision.
 
-The push came from the [autorouter discussion (#32168)](https://github.com/BerriAI/litellm/discussions/32168): teams wanted to layer their own signals (language detection, domain classification, tenant policy, budget caps) onto routing without waiting for each one to land in core. This plugin extension lets teams make these changes while keeping LiteLLM's routing core stable.
+The push came from the [autorouter discussion (#32168)](https://github.com/Soventra/lumina/discussions/32168): teams wanted to layer their own signals (language detection, domain classification, tenant policy, budget caps) onto routing without waiting for each one to land in core. This plugin extension lets teams make these changes while keeping Lumina's routing core stable.
 
 {/* truncate */}
 
@@ -28,7 +28,7 @@ A plugin is any object with an `async run` method that takes the routing context
 Write one next to your `config.yaml` in `plugins/cheap_first.py`:
 
 ```python
-from litellm.types.router import RoutingContext
+from lumina.types.router import RoutingContext
 
 
 class CheapFirst:
@@ -63,7 +63,7 @@ router_settings:
 Start the proxy, and every routing decision now runs through your plugin:
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ## Chaining plugins
@@ -71,7 +71,7 @@ litellm --config config.yaml
 Plugins run as a pipeline in list order, and each one sees the mutations and signals the previous plugin left behind. Add a second plugin in `plugins/enterprise_only.py` that reads the tenant off `context.metadata` and, for enterprise callers, restricts the pool to the models it left; it can also read the `cheap-first` signal published upstream:
 
 ```python
-from litellm.types.router import RoutingContext
+from lumina.types.router import RoutingContext
 
 
 class EnterpriseOnly:
@@ -138,7 +138,7 @@ For the full contract, the request lifecycle, and more on scoping plugins to the
 
 ## Register your plugin
 
-We are also making plugins discoverable with a `router_plugins.json` at the root of the LiteLLM repo.
+We are also making plugins discoverable with a `router_plugins.json` at the root of the Lumina repo.
 
 Here's a sample entry:
 
@@ -151,17 +151,17 @@ Here's a sample entry:
     "commit": "9e712819269173fc25a16f59ca3e9890f7864ac1",
     "version": "1.0.0",
     "pypi": null,
-    "litellm_version": ">=1.94.0",
-    "entrypoint": "litellm_plugin_language_detector.plugin.language_detector_plugin",
+    "lumina_version": ">=1.94.0",
+    "entrypoint": "lumina_plugin_language_detector.plugin.language_detector_plugin",
     "license": "MIT",
     "tags": ["language", "classification", "routing"]
   }
 ```
 
-The first community entry is language-detector by [Jean Nuñez](https://github.com/jeann2013), which detects the user's language and publishes a routing signal. It pins to a reviewed commit, targets litellm>=1.94.0, and its entrypoint is litellm_plugin_language_detector.plugin.language_detector_plugin; drop that string under router_settings.plugins and it runs. If you've written a plugin, add it to the catalog so others can find it.
+The first community entry is language-detector by [Jean Nuñez](https://github.com/jeann2013), which detects the user's language and publishes a routing signal. It pins to a reviewed commit, targets lumina>=1.94.0, and its entrypoint is lumina_plugin_language_detector.plugin.language_detector_plugin; drop that string under router_settings.plugins and it runs. If you've written a plugin, add it to the catalog so others can find it.
 
 ## Feedback
 
 If you have any feedback, we'd love to hear it!
 
-Please share your thoughts on the [autorouter discussion on GitHub (#32168)](https://github.com/BerriAI/litellm/discussions/32168) or just reach out to me (krrish@berri.ai) with your thoughts on how this can be improved!
+Please share your thoughts on the [autorouter discussion on GitHub (#32168)](https://github.com/Soventra/lumina/discussions/32168) or just reach out to me (krrish@berri.ai) with your thoughts on how this can be improved!

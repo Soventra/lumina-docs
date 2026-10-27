@@ -18,7 +18,7 @@ With `use_v2: true`, requests route to `noma_v2`; `monitor_mode` and `block_fail
 
 ### Quick Start
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 guardrails:
   - guardrail_name: "noma-v2-guard"
     lumina_params:
@@ -30,7 +30,7 @@ guardrails:
 
 If you want to migrate gradually without changing guardrail names yet:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 guardrails:
   - guardrail_name: "noma-guard"
     lumina_params:
@@ -66,7 +66,7 @@ export NOMA_BLOCK_FAILURES="true"                       # Optional
 
 Apply different v2 configurations for input and output:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 guardrails:
   - guardrail_name: "noma-v2-input"
     lumina_params:
@@ -110,11 +110,11 @@ curl 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 Define your guardrails under the `guardrails` section:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -144,10 +144,10 @@ guardrails:
 - `pre_mcp_call`: Scan MCP tool call inputs before execution
 - `during_mcp_call`: Monitor MCP tool calls in real-time
 
-### 2. Start LiteLLM Gateway
+### 2. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request
@@ -249,7 +249,7 @@ guardrails:
 ### Optional Parameters
 
 - **`api_base`**: Noma API base URL (defaults to `https://api.noma.security/`)
-- **`application_id`**: Your application identifier (defaults to `"litellm"`)
+- **`application_id`**: Your application identifier (defaults to `"lumina"`)
 - **`monitor_mode`**: If `true`, logs violations without blocking (defaults to `false`)
 - **`block_failures`**: If `true`, blocks requests when guardrail API failures occur (defaults to `true`)
 - **`anonymize_input`**: If `true`, replaces sensitive content with anonymized version (defaults to `false`)

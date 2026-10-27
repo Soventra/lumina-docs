@@ -28,7 +28,7 @@ Fine tuned models on vertex have a numerical model/endpoint id.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 ## set ENV variables

@@ -24,7 +24,7 @@ Use Bedrock's Rerank API in the Cohere `/rerank` format.
 <TabItem label="SDK" value="sdk">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os 
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -59,7 +59,7 @@ model_list:
 ### 2. Start proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

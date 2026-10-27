@@ -6,7 +6,7 @@ Anthropic, OpenAI, Qwen, xAI, Gemini and most of Open soured LLMs are Supported 
 
 | Property | Details |
 |-------|-------|
-| Description | Clarifai is an AI platform that provides access to a wide range of LLMs through a unified API. LiteLLM calls Clarifai's models using an OpenAI-compatible interface. |
+| Description | Clarifai is an AI platform that provides access to a wide range of LLMs through a unified API. Lumina calls Clarifai's models using an OpenAI-compatible interface. |
 | Provider Doc | [Clarifai ↗](https://docs.clarifai.com/) |
 |OpenAI compatible Endpoint for Provider | `https://api.clarifai.com/v2/ext/openai/v1` |
 | Supported Endpoints | `/chat/completions` |
@@ -14,7 +14,7 @@ Anthropic, OpenAI, Qwen, xAI, Gemini and most of Open soured LLMs are Supported 
 ## Pre-Requisites
 
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ## Required Environment Variables
@@ -24,13 +24,13 @@ To obtain your Clarifai Personal access token follow this [link](https://docs.cl
 os.environ["CLARIFAI_API_KEY"] = "your-clarifai-pat"
 ```
 
-LiteLLM reads the PAT from `CLARIFAI_API_KEY` or the `api_key` argument. `CLARIFAI_PAT` is not read
+Lumina reads the PAT from `CLARIFAI_API_KEY` or the `api_key` argument. `CLARIFAI_PAT` is not read
 
 ## Usage
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["CLARIFAI_API_KEY"] = ""
 
@@ -41,12 +41,12 @@ response = completion(
 ```
 ## Streaming Support
 
-LiteLLM supports streaming responses with Clarifai models:
+Lumina supports streaming responses with Clarifai models:
 
 ```python
-import litellm
+import lumina
 
-for chunk in litellm.completion(
+for chunk in lumina.completion(
     model="clarifai/openai.chat-completion.gpt-oss-20b",
     api_key="CLARIFAI_API_KEY",
     messages=[
@@ -59,10 +59,10 @@ for chunk in litellm.completion(
 
 ## Tool Calling (Function Calling)
 
-Clarifai models accessed via LiteLLM support function calling:
+Clarifai models accessed via Lumina support function calling:
 
 ```python
-import litellm
+import lumina
 
 tools = [{
     "type": "function",
@@ -83,7 +83,7 @@ tools = [{
     }
 }]
 
-response = litellm.completion(
+response = lumina.completion(
     model="clarifai/openai.chat-completion.gpt-oss-20b",
     api_key="CLARIFAI_API_KEY",
     messages=[{"role": "user", "content": "What is the weather in Paris today?"}],
@@ -94,7 +94,7 @@ print(response.choices[0].message.tool_calls)
 ```
 
 ## Clarifai models
-liteLLM supports all models on [Clarifai community](https://clarifai.com/explore/models?filterData=%5B%7B%22field%22%3A%22use_cases%22%2C%22value%22%3A%5B%22llm%22%5D%7D%5D&page=1&perPage=24)
+Lumina supports all models on [Clarifai community](https://clarifai.com/explore/models?filterData=%5B%7B%22field%22%3A%22use_cases%22%2C%22value%22%3A%5B%22llm%22%5D%7D%5D&page=1&perPage=24)
 
 ### OpenAI Models
 - [gpt-oss-20b](https://clarifai.com/openai/chat-completion/models/gpt-oss-20b)
@@ -164,9 +164,9 @@ liteLLM supports all models on [Clarifai community](https://clarifai.com/explore
 - [DeepSeek-R1-0528-Qwen3-8B](https://clarifai.com/deepseek-ai/deepseek-chat/models/DeepSeek-R1-0528-Qwen3-8B)
 - Many more...
 
-## Usage with LiteLLM Proxy
+## Usage with Lumina Proxy
 
-Here's how to call Clarifai with the LiteLLM Proxy Server
+Here's how to call Clarifai with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -188,7 +188,7 @@ model_list:
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # Server running on http://0.0.0.0:4000
 ```
@@ -252,7 +252,7 @@ print(response)
 
 | Question | Answer |
 |----------|---------|
-| Can I use all Clarifai models with LiteLLM? | Most chat-completion models are supported. Use the Clarifai model URL as the `model`. |
+| Can I use all Clarifai models with Lumina? | Most chat-completion models are supported. Use the Clarifai model URL as the `model`. |
 | Do I need a separate Clarifai PAT? | Yes, you must use a valid Clarifai Personal Access Token. |
 | Is tool calling supported? | Yes, provided the underlying Clarifai model supports function/tool calling. |
 | How is billing handled? | Clarifai usage is billed independently via Clarifai. |
@@ -260,5 +260,5 @@ print(response)
 ## Additional Resources
 
 - [Clarifai Documentation](https://docs.clarifai.com/)
-- [LiteLLM GitHub](https://github.com/BerriAI/litellm)
+- [Lumina GitHub](https://github.com/Soventra/lumina)
 - [Clarifai Runners Examples](https://github.com/Clarifai/runners-examples)

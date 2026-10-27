@@ -6,7 +6,7 @@ authors:
   - moe
 image: ./hero.png
 description: "The complexity router's LLM classifier can now use different compression than the model call it routes to. The classifier only needs enough context to route correctly, not to generate an answer. In internal testing, compressing it aggressively cut classification costs a further 32% beyond shared compression, with no change in routing accuracy."
-keywords: [auto router, compression, cost savings, routing classifier, prompt compression, llm gateway, litellm]
+keywords: [auto router, compression, cost savings, routing classifier, prompt compression, llm gateway, lumina]
 tags: [routing, cost, compression, engineering]
 hide_table_of_contents: false
 ---
@@ -19,13 +19,13 @@ hide_table_of_contents: false
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -106,8 +106,8 @@ In the Admin UI, open a complexity router's Detailed Configuration, then Advance
 
 :::info[Try it on your traffic]
 
-Point a shadow-eval job at your busiest team, compare your current config against one with split compression, and tell us what you see in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), or
+Point a shadow-eval job at your busiest team, compare your current config against one with split compression, and tell us what you see in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168), or
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::

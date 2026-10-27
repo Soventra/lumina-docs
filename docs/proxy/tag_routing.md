@@ -116,7 +116,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
 -H "Authorization: Bearer $LUMINA_API_KEY" \
--H 'x-litellm-tags: free,my-custom-tag' \
+-H 'x-lumina-tags: free,my-custom-tag' \
 -d '{
   "model": "{{openai_large}}",
   "messages": [
@@ -147,7 +147,7 @@ model_list:
 ### 2. Start proxy
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ### 3. Make request with no tags
@@ -292,7 +292,7 @@ curl http://localhost:4000/v1/chat/completions \
 | Ban-only request | If the request carries only `!` tags and no positive tags, the base pool mirrors untagged-request behaviour: default-tagged deployments if any exist, otherwise all deployments. The exclusion set is then applied on top of that pool |
 | All excluded | If negation tags remove every candidate, the request fails with `no_deployments_with_tag_routing` |
 | Untagged deployments | Deployments with no `tags` field are never excluded by negation tags |
-| Header | Negation tags work via `x-litellm-tags` header too: `-H 'x-litellm-tags: !provider:anthropic'` |
+| Header | Negation tags work via `x-lumina-tags` header too: `-H 'x-lumina-tags: !provider:anthropic'` |
 
 ## Required Tags (AND)
 
@@ -360,7 +360,7 @@ curl http://localhost:4000/v1/chat/completions \
 | Required-only request | If the request carries only `&` tags (no plain or negation tags), the base pool mirrors untagged-request behaviour: default-tagged deployments if any exist, otherwise all deployments. The required-tag filter is then applied on top of that pool |
 | Regex/header preference does not dilute a required-AND request | A required-AND-only request always returns every deployment satisfying the required tags, even if one of them also happens to match an unrelated `tag_regex`/User-Agent preference. It is never narrowed down to only the regex-matched deployment |
 | All eliminated | If required tags eliminate every candidate, the request fails with `no_deployments_with_tag_routing`, unless the model group opts into [`allow_fail_open`](#fail-open-fallback-allow_fail_open) |
-| Header | Required tags work via `x-litellm-tags` header too: `-H 'x-litellm-tags: &reasoning_type:high'` |
+| Header | Required tags work via `x-lumina-tags` header too: `-H 'x-lumina-tags: &reasoning_type:high'` |
 
 ## Fail-Open Fallback (`allow_fail_open`)
 
@@ -605,7 +605,7 @@ Use `tag_regex` on a deployment to match incoming requests by their headers (e.g
 :::warning
 User-Agent is a client-supplied header and can be set to any value by any caller. Use `tag_regex` for traffic classification, not access-control enforcement.
 
-Header-based routing is not a security boundary on its own. It is only meaningful when requests pass through an upstream authentication layer (e.g., an API gateway or reverse proxy that validates credentials and rejects unauthenticated traffic before it reaches LiteLLM). Without such a layer, any client can spoof the User-Agent and be routed to a deployment it should not reach.
+Header-based routing is not a security boundary on its own. It is only meaningful when requests pass through an upstream authentication layer (e.g., an API gateway or reverse proxy that validates credentials and rejects unauthenticated traffic before it reaches Lumina). Without such a layer, any client can spoof the User-Agent and be routed to a deployment it should not reach.
 :::
 
 ### 1. Config
@@ -617,7 +617,7 @@ model_list:
     lumina_params:
       model: bedrock/converse/anthropic-claude-sonnet-4-6
       aws_region_name: us-east-1
-      aws_role_name: arn:aws:iam::111122223333:role/LiteLLMClaudeCode
+      aws_role_name: arn:aws:iam::111122223333:role/LuminaClaudeCode
       tag_regex:
         - "^User-Agent: claude-code\\/"   # matches claude-code/1.x, 2.x, etc.
     model_info:
@@ -627,7 +627,7 @@ model_list:
     lumina_params:
       model: bedrock/converse/anthropic-claude-sonnet-4-6
       aws_region_name: us-east-1
-      aws_role_name: arn:aws:iam::444455556666:role/LiteLLMDefault
+      aws_role_name: arn:aws:iam::444455556666:role/LuminaDefault
       tags:
         - default
     model_info:
@@ -649,13 +649,13 @@ curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "User-Agent: claude-code/1.2.3" \
   -d '{"model": "claude-sonnet", "messages": [{"role": "user", "content": "hi"}]}'
-# -> x-litellm-model-id: claude-code-deployment
+# -> x-lumina-model-id: claude-code-deployment
 
 # Any other client (no matching User-Agent) -> default deployment
 curl http://localhost:4000/v1/chat/completions \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{"model": "claude-sonnet", "messages": [{"role": "user", "content": "hi"}]}'
-# -> x-litellm-model-id: regular-deployment
+# -> x-lumina-model-id: regular-deployment
 ```
 
 ### Matching semantics
@@ -695,7 +695,7 @@ model_list:
 curl ... -H "User-Agent: claude-code/1.2.3" \
   -d '{"model":"chat","metadata":{"tags":["!provider:anthropic"]}}'
 # anthropic-deployment is excluded; claude-code-deployment is matched by User-Agent
-# -> x-litellm-model-id: claude-code-deployment
+# -> x-lumina-model-id: claude-code-deployment
 ```
 
 **Case 2: negation removes the deployment that holds `tag_regex`; ban-only path fires**
@@ -721,7 +721,7 @@ curl ... -H "User-Agent: claude-code/1.2.3" \
   -d '{"model":"chat","metadata":{"tags":["!group:claude"]}}'
 # claude-code-deployment excluded; no tag_regex deployments remain
 # ban-only path returns openai-deployment regardless of User-Agent
-# -> x-litellm-model-id: openai-deployment
+# -> x-lumina-model-id: openai-deployment
 ```
 
 ### Observability

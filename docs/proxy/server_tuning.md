@@ -1,6 +1,6 @@
 ---
 title: Server Tuning
-description: Optional deep tuning for the LiteLLM Proxy container; alternative ASGI servers, worker recycling, hitless restarts, TLS, keepalive, and loading config from object storage.
+description: Optional deep tuning for the Lumina Proxy container; alternative ASGI servers, worker recycling, hitless restarts, TLS, keepalive, and loading config from object storage.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -12,7 +12,7 @@ Reach for this page only when the defaults are not enough. Most deployments shou
 
 ## Uvicorn vs. Gunicorn
 
-LiteLLM Proxy runs on [Uvicorn](https://uvicorn.dev/) by default. Passing `--run_gunicorn` instead starts [Gunicorn](https://gunicorn.org/) as a process manager that supervises [Uvicorn worker processes](https://uvicorn.dev/deployment/#gunicorn) (`uvicorn.workers.UvicornWorker`). In both cases your application code still runs on Uvicorn; the difference is which process manages and recycles the workers.
+Lumina Proxy runs on [Uvicorn](https://uvicorn.dev/) by default. Passing `--run_gunicorn` instead starts [Gunicorn](https://gunicorn.org/) as a process manager that supervises [Uvicorn worker processes](https://uvicorn.dev/deployment/#gunicorn) (`uvicorn.workers.UvicornWorker`). In both cases your application code still runs on Uvicorn; the difference is which process manages and recycles the workers.
 
 | | Uvicorn (default) | Gunicorn (`--run_gunicorn`) |
 |---|---|---|
@@ -72,7 +72,7 @@ A restart is "hitless" when in-flight requests finish before the process exits, 
 
 - Use a [`RollingUpdate`](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment) strategy (the Deployment default) so new pods become Ready before old pods are terminated.
 - Keep a [readiness probe](https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/) on `/health/readiness` so Kubernetes only sends traffic to pods that can serve it, and stops routing to a pod as soon as termination begins.
-- Set [`terminationGracePeriodSeconds`](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination) to comfortably exceed your longest expected request (LiteLLM's request timeout defaults to 600s; see the [recommended config](./prod.md#set-a-request-timeout)). On termination Kubernetes sends `SIGTERM`, and both Uvicorn and Gunicorn shut down [gracefully](https://uvicorn.dev/deployment/) by draining in-flight requests before exiting.
+- Set [`terminationGracePeriodSeconds`](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination) to comfortably exceed your longest expected request (Lumina's request timeout defaults to 600s; see the [recommended config](./prod.md#set-a-request-timeout)). On termination Kubernetes sends `SIGTERM`, and both Uvicorn and Gunicorn shut down [gracefully](https://uvicorn.dev/deployment/) by draining in-flight requests before exiting.
 - Optionally add a small [`preStop` hook](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#container-hooks) (for example `sleep 5`) to give the load balancer time to deregister the pod before the server begins shutting down, eliminating the brief window where traffic can still arrive at a terminating pod.
 
 ```yaml title="Kubernetes Deployment snippet for hitless rolling restarts"
@@ -86,7 +86,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 620   # > your longest request (request_timeout: 600)
       containers:
-        - name: litellm
+        - name: lumina
           readinessProbe:
             httpGet:
               path: /health/readiness
@@ -102,7 +102,7 @@ spec:
 For TLS terminated by the proxy itself (rather than your load balancer), pass the key and cert paths:
 
 ```shell
-docker run docker.litellm.ai/berriai/litellm:latest \
+docker run docker.lumina.ai/soventra/lumina:latest \
     --ssl_keyfile_path ssl_test/keyfile.key \
     --ssl_certfile_path ssl_test/certfile.crt
 ```
@@ -112,7 +112,7 @@ docker run docker.litellm.ai/berriai/litellm:latest \
 To serve HTTP/2, build an image with hypercorn installed and pass `--run_hypercorn`:
 
 ```shell
-FROM docker.litellm.ai/berriai/litellm:latest
+FROM docker.lumina.ai/soventra/lumina:latest
 WORKDIR /app
 COPY config.yaml .
 RUN chmod +x ./docker/entrypoint.sh
@@ -136,25 +136,25 @@ docker run \
 
 Available from v1.103.0.
 
-The server flags above only affect the hop from your clients to LiteLLM. Calls from LiteLLM to LLM providers use HTTP/1.1 by default because the default aiohttp transport has no HTTP/2 client. Set `http2: true` under `litellm_settings` (or the `LUMINA_HTTP2` environment variable) to have LiteLLM negotiate HTTP/2 with providers over TLS; upstreams that do not offer `h2` via ALPN fall back to HTTP/1.1 automatically, and plain `http://` upstreams stay on HTTP/1.1.
+The server flags above only affect the hop from your clients to Lumina. Calls from Lumina to LLM providers use HTTP/1.1 by default because the default aiohttp transport has no HTTP/2 client. Set `http2: true` under `lumina_settings` (or the `LUMINA_HTTP2` environment variable) to have Lumina negotiate HTTP/2 with providers over TLS; upstreams that do not offer `h2` via ALPN fall back to HTTP/1.1 automatically, and plain `http://` upstreams stay on HTTP/1.1.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   http2: true
 ```
 
-Enabling this routes provider traffic through httpx instead of aiohttp, which was chosen as the default for its higher HTTP/1.1 throughput. Load test with the flag on before enabling it fleet-wide. Clients you pass in yourself through `litellm.client_session` or `litellm.aclient_session` are used as is and are not switched to HTTP/2. Deployments on the `aiohttp_openai/` provider always use aiohttp and stay on HTTP/1.1; LiteLLM logs a warning if the flag is on for such a request.
+Enabling this routes provider traffic through httpx instead of aiohttp, which was chosen as the default for its higher HTTP/1.1 throughput. Load test with the flag on before enabling it fleet-wide. Clients you pass in yourself through `lumina.client_session` or `lumina.aclient_session` are used as is and are not switched to HTTP/2. Deployments on the `aiohttp_openai/` provider always use aiohttp and stay on HTTP/1.1; Lumina logs a warning if the flag is on for such a request.
 
 ## Granian ASGI server [Beta]
 
 :::info[Beta feature]
-`--run_granian` is in **beta**. Uvicorn is still the default server. Try Granian when you need more gateway throughput or see instability under load with uvicorn; report issues on [GitHub](https://github.com/BerriAI/litellm/issues).
+`--run_granian` is in **beta**. Uvicorn is still the default server. Try Granian when you need more gateway throughput or see instability under load with uvicorn; report issues on [GitHub](https://github.com/Soventra/lumina/issues).
 :::
 
-[Granian](https://github.com/emmett-framework/granian) is a Rust-backed ASGI server. In LiteLLM benchmarks it showed a 10 to 20 RPS improvement over uvicorn with the same worker count, steadier latency under sustained load, and lower error rates (see [PR #26027](https://github.com/BerriAI/litellm/pull/26027)). Scale throughput with `--num_workers`.
+[Granian](https://github.com/emmett-framework/granian) is a Rust-backed ASGI server. In Lumina benchmarks it showed a 10 to 20 RPS improvement over uvicorn with the same worker count, steadier latency under sustained load, and lower error rates (see [PR #26027](https://github.com/Soventra/lumina/pull/26027)). Scale throughput with `--num_workers`.
 
 ```shell
-docker run docker.litellm.ai/berriai/litellm:latest \
+docker run docker.lumina.ai/soventra/lumina:latest \
     --config /app/config.yaml \
     --port 4000 \
     --run_granian \
@@ -187,14 +187,14 @@ A slot is held for the whole response, so a streaming completion counts as one i
 
 The cap is per worker process and works the same on uvicorn and Granian. A pod started with `--num_workers 4` and `max_in_flight_requests_per_worker: 64` admits up to 256 concurrent requests, and a deployment of N replicas admits N times that, so size it from the per-worker throughput you measured rather than the deployment total. It is a good fit with an HPA: replicas that are already saturated shed load with `503`s instead of accumulating latency while new replicas come up. It complements `global_max_parallel_requests`, which is a deployment-wide limit coordinated through Redis: use the global limit to bound total load on your providers and the per-worker limit to keep any single event loop from drowning without depending on Redis.
 
-Monitor it with `/health/backlog` (fields `in_flight_requests`, `admitted_requests`, `queued_requests`, `rejected_requests`) or the Prometheus metrics `litellm_admission_admitted_requests`, `litellm_admission_queued_requests`, and `litellm_admission_rejected_requests_total{reason="queue_full"|"queue_timeout"}`; see [Pod health metrics](/docs/proxy/prometheus#pod-health-metrics). A steady stream of `queue_timeout` rejections means the worker is at capacity and needs more replicas; `queue_full` rejections mean spikes are arriving faster than the queue can absorb, so raise the queue size or add capacity.
+Monitor it with `/health/backlog` (fields `in_flight_requests`, `admitted_requests`, `queued_requests`, `rejected_requests`) or the Prometheus metrics `lumina_admission_admitted_requests`, `lumina_admission_queued_requests`, and `lumina_admission_rejected_requests_total{reason="queue_full"|"queue_timeout"}`; see [Pod health metrics](/docs/proxy/prometheus#pod-health-metrics). A steady stream of `queue_timeout` rejections means the worker is at capacity and needs more replicas; `queue_full` rejections mean spikes are arriving faster than the queue can absorb, so raise the queue size or add capacity.
 
 ## Keepalive timeout
 
 Defaults to 5 seconds; between requests, connections must receive new data within this period or be disconnected.
 
 ```shell
-docker run docker.litellm.ai/berriai/litellm:latest \
+docker run docker.lumina.ai/soventra/lumina:latest \
     --keepalive_timeout 75
 ```
 
@@ -202,31 +202,31 @@ Or set `KEEPALIVE_TIMEOUT=75` as an env var.
 
 ## Load config.yaml from S3 or GCS
 
-Use this if you cannot mount a config file on your deployment service (AWS Fargate, Railway, etc.). LiteLLM reads `config.yaml` from the bucket at startup.
+Use this if you cannot mount a config file on your deployment service (AWS Fargate, Railway, etc.). Lumina reads `config.yaml` from the bucket at startup.
 
 <Tabs>
 <TabItem value="gcs" label="GCS Bucket">
 
 ```shell
-docker run --name litellm-proxy \
+docker run --name lumina-proxy \
    -e DATABASE_URL=<database_url> \
    -e LUMINA_CONFIG_BUCKET_TYPE="gcs" \
-   -e LUMINA_CONFIG_BUCKET_NAME="litellm-proxy" \
+   -e LUMINA_CONFIG_BUCKET_NAME="lumina-proxy" \
    -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="proxy_config.yaml" \
    -p 4000:4000 \
-   docker.litellm.ai/berriai/litellm:latest
+   docker.lumina.ai/soventra/lumina:latest
 ```
 
 </TabItem>
 <TabItem value="s3" label="s3">
 
 ```shell
-docker run --name litellm-proxy \
+docker run --name lumina-proxy \
    -e DATABASE_URL=<database_url> \
-   -e LUMINA_CONFIG_BUCKET_NAME="litellm-proxy" \
-   -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="litellm_proxy_config.yaml" \
+   -e LUMINA_CONFIG_BUCKET_NAME="lumina-proxy" \
+   -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="lumina_proxy_config.yaml" \
    -p 4000:4000 \
-   docker.litellm.ai/berriai/litellm:latest
+   docker.lumina.ai/soventra/lumina:latest
 ```
 
 </TabItem>
@@ -234,4 +234,4 @@ docker run --name litellm-proxy \
 
 ## Disable pulling live model prices
 
-Set `LUMINA_LOCAL_MODEL_COST_MAP="True"` to use the bundled [model prices file](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) instead of fetching it at startup, if you see long cold starts or have network egress restrictions.
+Set `LUMINA_LOCAL_MODEL_COST_MAP="True"` to use the bundled [model prices file](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) instead of fetching it at startup, if you see long cold starts or have network egress restrictions.

@@ -4,11 +4,11 @@
 
 DeepSeek's Search API (`POST https://api.deepseek.com/v1/tools/search`) uses the same `DEEPSEEK_API_KEY` as DeepSeek chat models. See the [DeepSeek Search docs](https://api-docs.deepseek.com/guides/search/) for pricing and limits.
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="DeepSeek Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["DEEPSEEK_API_KEY"] = "sk-..."
 
@@ -19,7 +19,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -40,7 +40,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -67,7 +67,7 @@ Each result carries the standard `title`, `url`, `snippet` and `date`, plus Deep
 
 ```python showLineNumbers title="DeepSeek Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["DEEPSEEK_API_KEY"] = "sk-..."
 

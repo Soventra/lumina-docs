@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Gateway Auth Reference
 
-LiteLLM exposes two gateway surfaces that share most authentication and authorization primitives but diverge in a few important places. This page is the side-by-side reference: which header does what, where the two surfaces are symmetric, and where they're not. Each section links out to the dedicated page for full detail.
+Lumina exposes two gateway surfaces that share most authentication and authorization primitives but diverge in a few important places. This page is the side-by-side reference: which header does what, where the two surfaces are symmetric, and where they're not. Each section links out to the dedicated page for full detail.
 
 | Surface | Endpoints | Dedicated docs |
 |---|---|---|
@@ -12,25 +12,25 @@ LiteLLM exposes two gateway surfaces that share most authentication and authoriz
 
 ---
 
-## 1. Client → LiteLLM (authenticating the caller)
+## 1. Client → Lumina (authenticating the caller)
 
-Both surfaces accept the same LiteLLM Virtual Key headers and the same identification headers. The one place they diverge: the MCP **ASGI** routes (the streamable MCP endpoints at `/mcp`, `/{name}/mcp`, `/toolset/{name}/mcp`, `/sse`) bypass the standard FastAPI auth dependency and do not parse the vendor-specific auth aliases (`API-Key`, `x-api-key`, `x-goog-api-key`, `Ocp-Apim-Subscription-Key`) or `x-litellm-tags`. The MCP **REST/management** routes (`/v1/mcp/...`, `/mcp-rest/...`) and **all** A2A routes accept the full header set.
+Both surfaces accept the same Lumina Virtual Key headers and the same identification headers. The one place they diverge: the MCP **ASGI** routes (the streamable MCP endpoints at `/mcp`, `/{name}/mcp`, `/toolset/{name}/mcp`, `/sse`) bypass the standard FastAPI auth dependency and do not parse the vendor-specific auth aliases (`API-Key`, `x-api-key`, `x-goog-api-key`, `Ocp-Apim-Subscription-Key`) or `x-lumina-tags`. The MCP **REST/management** routes (`/v1/mcp/...`, `/mcp-rest/...`) and **all** A2A routes accept the full header set.
 
 | Header | Purpose | MCP ASGI | MCP REST + A2A |
 |---|---|---|---|
-| `x-litellm-api-key: Bearer sk-...` | Preferred LiteLLM Virtual Key header. Use whenever the inbound `Authorization` header may carry a different token (OAuth passthrough, OBO, A2A per-user forwarding). | ✓ | ✓ |
+| `x-lumina-api-key: Bearer sk-...` | Preferred Lumina Virtual Key header. Use whenever the inbound `Authorization` header may carry a different token (OAuth passthrough, OBO, A2A per-user forwarding). | ✓ | ✓ |
 | `Authorization: Bearer sk-...` | Standard fallback. Stripped of the `Bearer ` prefix before lookup. | ✓ | ✓ |
 | `API-Key`, `x-api-key`, `x-goog-api-key`, `Ocp-Apim-Subscription-Key` | Vendor-specific aliases (Azure, Anthropic, Google AI Studio, Azure APIM). | — | ✓ |
-| `x-litellm-end-user-id` | End-user identification. Layers per-end-user budgets, MCP access intersection, and audit log entries on top of the key. `x-litellm-customer-id` is an accepted alias. | ✓ | ✓ |
-| `x-litellm-trace-id` | Cross-request correlation ID. Falls back to `x-litellm-session-id` or any matching `x-<vendor>-session-id` header. | ✓ | ✓ |
-| `x-litellm-session-id` | Session grouping. Same parse path as trace-id, lower priority. | ✓ | ✓ |
-| `x-litellm-tags` | Comma-separated tags for spend-log labeling and tag-based routing. Body field `tags` takes precedence. | — (not parsed on MCP ASGI) | ✓ |
-| `x-litellm-mcp-debug: true` | Returns masked diagnostic response headers (`x-mcp-debug-*`). See [MCP OAuth — Debugging](./mcp_oauth#debugging-oauth). | ✓ | — |
+| `x-lumina-end-user-id` | End-user identification. Layers per-end-user budgets, MCP access intersection, and audit log entries on top of the key. `x-lumina-customer-id` is an accepted alias. | ✓ | ✓ |
+| `x-lumina-trace-id` | Cross-request correlation ID. Falls back to `x-lumina-session-id` or any matching `x-<vendor>-session-id` header. | ✓ | ✓ |
+| `x-lumina-session-id` | Session grouping. Same parse path as trace-id, lower priority. | ✓ | ✓ |
+| `x-lumina-tags` | Comma-separated tags for spend-log labeling and tag-based routing. Body field `tags` takes precedence. | — (not parsed on MCP ASGI) | ✓ |
+| `x-lumina-mcp-debug: true` | Returns masked diagnostic response headers (`x-mcp-debug-*`). See [MCP OAuth — Debugging](./mcp_oauth#debugging-oauth). | ✓ | — |
 | `x-mcp-servers` | Scope a request to specific MCP servers (comma-separated). | ✓ | — |
 
 ---
 
-## 2. LiteLLM → Backend (authenticating the gateway to the agent or MCP server)
+## 2. Lumina → Backend (authenticating the gateway to the agent or MCP server)
 
 This is the section where MCP and A2A diverge most. MCP has a first-class `auth_type` field on each server registration. **A2A has no `auth_type` field at all**; the outbound auth mode is inferred from what's present in `lumina_params`.
 
@@ -45,8 +45,8 @@ The MCP server's outbound `Authorization` header (or per-request SigV4 signature
 | `oauth2` | PKCE (interactive) or M2M `client_credentials`. Discriminated by `oauth2_flow`. | [MCP OAuth](./mcp_oauth) |
 | `oauth2_token_exchange` | RFC 8693 On-Behalf-Of (OBO) — exchange the caller's bearer token for a scoped MCP token | [MCP OBO Auth](./mcp_obo_auth) |
 | `oauth2_id_jag` | Identity Assertion Authorization Grant: two-leg exchange of the user's identity token (inbound or captured at SSO login) for an MCP access token | [MCP ID-JAG Auth](./mcp_id_jag) |
-| `true_passthrough` | No LiteLLM admission. The client's own `Authorization` is forwarded to the upstream verbatim | [MCP OAuth Passthrough](./mcp_oauth_passthrough) |
-| `oauth_delegate` | LiteLLM admits the caller on `x-litellm-api-key`, then forwards the separate upstream bearer the client sends in `Authorization`. The admission key is never forwarded | [MCP OAuth Passthrough](./mcp_oauth_passthrough) |
+| `true_passthrough` | No Lumina admission. The client's own `Authorization` is forwarded to the upstream verbatim | [MCP OAuth Passthrough](./mcp_oauth_passthrough) |
+| `oauth_delegate` | Lumina admits the caller on `x-lumina-api-key`, then forwards the separate upstream bearer the client sends in `Authorization`. The admission key is never forwarded | [MCP OAuth Passthrough](./mcp_oauth_passthrough) |
 | `aws_sigv4` | Per-request SigV4 signature using a dedicated MCP-side credential chain | [MCP AWS SigV4](./mcp_aws_sigv4) |
 
 ### A2A: auth mode inferred from `lumina_params`
@@ -63,7 +63,7 @@ The dual JWT-vs-SigV4 mode is specific to AgentCore. Other A2A providers (Vertex
 
 ### Zero-trust add-on (MCP only)
 
-If the MCP server needs to **cryptographically verify** the request came through LiteLLM, layer the [MCP JWT Signer](./mcp_zero_trust) guardrail on top. It signs every outbound tool call with a short-lived RS256 JWT and publishes a JWKS endpoint the MCP server can verify against. This is a guardrail (`guardrail: mcp_jwt_signer`, `mode: pre_mcp_call`) rather than an `auth_type`, and it composes with any `auth_type`.
+If the MCP server needs to **cryptographically verify** the request came through Lumina, layer the [MCP JWT Signer](./mcp_zero_trust) guardrail on top. It signs every outbound tool call with a short-lived RS256 JWT and publishes a JWKS endpoint the MCP server can verify against. This is a guardrail (`guardrail: mcp_jwt_signer`, `mode: pre_mcp_call`) rather than an `auth_type`, and it composes with any `auth_type`.
 
 ---
 
@@ -99,8 +99,8 @@ Both surfaces use the `object_permission` model with intersection-style resoluti
 |---|---|---|
 | **Key** | `object_permission.mcp_servers`, `object_permission.mcp_access_groups`, `object_permission.mcp_tool_permissions` | `object_permission.agents`, `object_permission.agent_access_groups` |
 | **Team** | Same | Same (inheritance-first: if the key has no list, it inherits the team's) |
-| **End user** | Same (via `x-litellm-end-user-id`) | — not resolved today |
-| **Agent** | Same (via `x-litellm-agent-id`) | — not applicable (the agent is the target) |
+| **End user** | Same (via `x-lumina-end-user-id`) | — not resolved today |
+| **Agent** | Same (via `x-lumina-agent-id`) | — not applicable (the agent is the target) |
 | **Internal user** | Same (the human the request authenticated as); intersected with the running result, so it can only narrow | — not resolved today |
 | **Org** | Same — acts as a **ceiling** | — not resolved today |
 
@@ -117,14 +117,14 @@ Both surfaces use the `object_permission` model with intersection-style resoluti
 
 ## 5. Trace IDs and identity propagation
 
-`x-litellm-trace-id` is **accepted** on every request and threaded through logging on both surfaces. A few A2A-specific extras:
+`x-lumina-trace-id` is **accepted** on every request and threaded through logging on both surfaces. A few A2A-specific extras:
 
 | Setting | Scope | Behaviour |
 |---|---|---|
-| `require_trace_id_on_calls_to_agent: true` | Per-agent, on the agent's `lumina_params` | Reject inbound `/a2a/{agent_id}` calls missing `x-litellm-trace-id` (or `x-litellm-session-id` fallback) with **HTTP 400**. See [A2A Overview — Trace ID enforcement](./a2a#trace-id-enforcement-optional-per-agent). |
+| `require_trace_id_on_calls_to_agent: true` | Per-agent, on the agent's `lumina_params` | Reject inbound `/a2a/{agent_id}` calls missing `x-lumina-trace-id` (or `x-lumina-session-id` fallback) with **HTTP 400**. See [A2A Overview — Trace ID enforcement](./a2a#trace-id-enforcement-optional-per-agent). |
 | `require_trace_id_on_calls_by_agent: true` | Per-agent, on the agent's `lumina_params` | Reverse direction — when a key **owned by** that agent makes outbound calls, require a trace ID on those. |
 
-**Sub-agent identity propagation.** When LiteLLM dispatches a downstream call as part of an A2A invocation, it forwards `X-LiteLLM-Trace-Id` and `X-LiteLLM-Agent-Id` to maintain trace continuity and spend attribution. The original virtual key and end-user identity are **not** auto-forwarded. Use `extra_headers` or the `x-a2a-{agent_name_or_id}-{header}` convention to thread identity explicitly. See [A2A Overview: Sub-agent identity propagation](./a2a#sub-agent-identity-propagation).
+**Sub-agent identity propagation.** When Lumina dispatches a downstream call as part of an A2A invocation, it forwards `X-Lumina-Trace-Id` and `X-Lumina-Agent-Id` to maintain trace continuity and spend attribution. The original virtual key and end-user identity are **not** auto-forwarded. Use `extra_headers` or the `x-a2a-{agent_name_or_id}-{header}` convention to thread identity explicitly. See [A2A Overview: Sub-agent identity propagation](./a2a#sub-agent-identity-propagation).
 
 ---
 
@@ -144,18 +144,18 @@ Both surfaces use the `object_permission` model with intersection-style resoluti
 For copy-paste, the high-frequency request headers across both surfaces:
 
 ```http
-# Always (LiteLLM-side auth and identification)
-x-litellm-api-key: Bearer sk-...
+# Always (Lumina-side auth and identification)
+x-lumina-api-key: Bearer sk-...
 # or
 Authorization: Bearer sk-...
 
-x-litellm-end-user-id: user-42
-x-litellm-trace-id: 8f4a-2b1c-d3e5-...
+x-lumina-end-user-id: user-42
+x-lumina-trace-id: 8f4a-2b1c-d3e5-...
 
 # MCP — server scoping / per-user passthrough
 x-mcp-servers: github,zapier
 x-mcp-github-authorization: Bearer ghp_<user-token>     # user passthrough to github_mcp
-x-litellm-mcp-debug: true                                # diagnostic response headers
+x-lumina-mcp-debug: true                                # diagnostic response headers
 
 # A2A — per-user passthrough
 x-a2a-my-agent-authorization: Bearer <user-token>        # caller's token to my-agent

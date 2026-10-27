@@ -10,7 +10,7 @@ sidebar_label: Claude Code
 ## Install
 
 ```bash
-pip install litellm starlette uvicorn
+pip install lumina starlette uvicorn
 npm install -g @anthropic-ai/claude-code   # inside the sandbox
 ```
 
@@ -19,19 +19,19 @@ The `claude` binary must already be on the sandbox's `PATH`. If it isn't, the ca
 ## Usage
 
 ```python
-import litellm
-from litellm import Harness, sandbox
+import lumina
+from lumina import Harness, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.CLAUDE_CODE,
     "Find why tests/test_router.py is flaky and fix it.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"}),
-    model="litellm_proxy/claude",
+    model="lumina_proxy/claude",
     permissions="edit",
 )
 ```
 
-## Use with LiteLLM AI Gateway
+## Use with Lumina AI Gateway
 
 Claude Code speaks the Anthropic Messages API, so it fits best on a Claude model group, which the gateway serves on `/v1/messages` natively. Bedrock and Vertex Claude deployments behave the same as Anthropic direct, so you can load-balance across them in one group.
 
@@ -60,17 +60,17 @@ curl -X POST http://localhost:4000/key/generate \
   -d '{"models": ["claude"], "key_alias": "claude-code"}'
 ```
 
-Then run with the `litellm_proxy/` prefix. Set the gateway in the environment, or pass it on the call.
+Then run with the `lumina_proxy/` prefix. Set the gateway in the environment, or pass it on the call.
 
 ```python
-import litellm
-from litellm import Harness, sandbox
+import lumina
+from lumina import Harness, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.CLAUDE_CODE,
     "Find why tests/test_router.py is flaky and fix it.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"}),
-    model="litellm_proxy/claude",
+    model="lumina_proxy/claude",
     api_base="http://localhost:4000",  # or LUMINA_PROXY_API_BASE
     api_key="sk-...",                  # or LUMINA_PROXY_API_KEY
     permissions="edit",
@@ -78,7 +78,7 @@ result = litellm.agent(
 )
 ```
 
-Claude Code calls `/v1/messages`. The gateway sees each request with `model` set to `claude`, the header `x-litellm-tags: harness,claude_code`, and your `metadata` as `x-litellm-spend-logs-metadata`, so the spend log row carries both.
+Claude Code calls `/v1/messages`. The gateway sees each request with `model` set to `claude`, the header `x-lumina-tags: harness,claude_code`, and your `metadata` as `x-lumina-spend-logs-metadata`, so the spend log row carries both.
 
 Claude Code also makes small background calls, such as titles and summaries. They go to the same group as `model`, like OpenCode's, so they are billed and tagged the same way.
 
@@ -91,11 +91,11 @@ class ClaudeCodeOptions:
     env: Mapping[str, str] = field(default_factory=dict)
 ```
 
-`config` passes native Claude Code settings through untyped, because those settings change often. Keys LiteLLM manages itself, such as `env`, `apiKeyHelper`, `model` and `permissions`, raise `OptionsMismatch`. Use `max_turns=` on the call to cap the tool loop, the same as every other harness.
+`config` passes native Claude Code settings through untyped, because those settings change often. Keys Lumina manages itself, such as `env`, `apiKeyHelper`, `model` and `permissions`, raise `OptionsMismatch`. Use `max_turns=` on the call to cap the tool loop, the same as every other harness.
 
 ## Models
 
-Claude Code speaks Anthropic Messages. It gets `ANTHROPIC_BASE_URL` pointing at the session's local endpoint and `ANTHROPIC_AUTH_TOKEN` set to the session token, and `CLAUDE_CONFIG_DIR` points at a temporary directory with `--setting-sources user`, so your own Claude Code login, settings and a repo's `.claude/settings.json` are never used. With a `litellm_proxy/` model the endpoint forwards `/v1/messages` to the gateway with the `harness,claude_code` tags. Without a gateway it calls `litellm.anthropic.messages.acreate`.
+Claude Code speaks Anthropic Messages. It gets `ANTHROPIC_BASE_URL` pointing at the session's local endpoint and `ANTHROPIC_AUTH_TOKEN` set to the session token, and `CLAUDE_CONFIG_DIR` points at a temporary directory with `--setting-sources user`, so your own Claude Code login, settings and a repo's `.claude/settings.json` are never used. With a `lumina_proxy/` model the endpoint forwards `/v1/messages` to the gateway with the `harness,claude_code` tags. Without a gateway it calls `lumina.anthropic.messages.acreate`.
 
 `ANTHROPIC_API_KEY` is set to an empty string in the runtime, and telemetry and nonessential traffic are turned off.
 
@@ -119,4 +119,4 @@ Skills are copied into `$CLAUDE_CONFIG_DIR/skills/<name>/`. Structured output wo
 
 ## Limits
 
-Custom Python `tools=` and `history()` raise `CapabilityUnsupported`. Subscription login (Claude Max) isn't used, because every model call goes through LiteLLM.
+Custom Python `tools=` and `history()` raise `CapabilityUnsupported`. Subscription login (Claude Max) isn't used, because every model call goes through Lumina.

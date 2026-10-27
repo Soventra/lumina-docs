@@ -2,7 +2,7 @@ import Image from '@theme/IdealImage';
 
 # Control Page Visibility for Internal Users
 
-Configure which navigation tabs and pages are visible to internal users (non-admin developers) in the LiteLLM UI.
+Configure which navigation tabs and pages are visible to internal users (non-admin developers) in the Lumina UI.
 
 Use this feature to simplify the UI and control which pages your internal users/developers can see when signing in.
 

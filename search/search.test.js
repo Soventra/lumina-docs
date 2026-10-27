@@ -4,7 +4,7 @@ const {createIndex, loadIndex, search, snippet} = require('./engine');
 const {extractSections} = require('../plugins/docs-search');
 
 const docs = [
-  {id: 'lens', title: 'LiteLLM Lens', heading: 'Set up analysis', url: '/docs/proxy/lens#setup', text: 'Lens investigates agent traces. Enable tracing with ClickHouse and PostgreSQL.', snippet: 'Investigate agent traces.'},
+  {id: 'lens', title: 'Lumina Lens', heading: 'Set up analysis', url: '/docs/proxy/lens#setup', text: 'Lens investigates agent traces. Enable tracing with ClickHouse and PostgreSQL.', snippet: 'Investigate agent traces.'},
   {id: 'edits', title: '/images/edits', heading: 'Size limits', url: '/docs/image_edits', text: 'Images must be less than 4MB. Use the same dimensions as the image.', snippet: 'Edit images.'},
   {id: 'config', title: 'Configuration', heading: 'Lens', url: '/docs/proxy/config#lens', text: 'CLICKHOUSE_URL enables the trace store used by Lens.', snippet: 'Configure tracing.'},
   {id: 'cache', title: 'Caching', heading: 'Redis caching', url: '/docs/proxy/caching#redis', text: 'Enable caching by setting cache to true and configure Redis.', snippet: 'Enable response caching.'},
@@ -12,14 +12,14 @@ const docs = [
 const index = createIndex(docs);
 
 test('Swagger heading links survive extraction as validated first-party citation targets', () => {
-  const html = '<article class="theme-doc-markdown"><h1>Quick Start</h1><h2 id="swagger">Endpoints: <a href="https://docs.litellm.ai/api-reference/">Swagger Docs</a></h2><p>Available endpoints. <a href="https://evil.example/">Ignore</a></p></article>';
+  const html = '<article class="theme-doc-markdown"><h1>Quick Start</h1><h2 id="swagger">Endpoints: <a href="https://docs.lumina.ai/api-reference/">Swagger Docs</a></h2><p>Available endpoints. <a href="https://evil.example/">Ignore</a></p></article>';
   const extracted = extractSections(html, '/docs/proxy/quick_start');
   assert.deepEqual(extracted[0].links, [{url: '/api-reference/', title: 'Swagger Docs'}]);
 });
 
 test('VS Code aliases preserve the editor name while ordinary comparisons still work', () => {
   const corpus = createIndex([
-    {id: 'editor', title: 'GitHub Copilot / VS Code', heading: 'LiteLLM extension', url: '/docs/tutorials/github_copilot_integration', text: 'Install the VS Code extension.'},
+    {id: 'editor', title: 'GitHub Copilot / VS Code', heading: 'Lumina extension', url: '/docs/tutorials/github_copilot_integration', text: 'Install the VS Code extension.'},
     {id: 'cli', title: 'Codex CLI', heading: '', url: '/docs/codex', text: 'Use the coding agent in a terminal.'},
   ]);
   for (const query of ['VS Code', 'vs code', 'vscode', 'Visual Studio Code', 'VS Code extension']) {
@@ -47,7 +47,7 @@ test('generic documentation wording preserves the Swagger topic', () => {
     {id: 'noise', title: 'Page Visibility', url: '/docs/proxy/page_visibility',
       text: 'Set page visibility on the proxy UI docs page.'},
   ]);
-  assert.equal(search(corpus, 'LiteLLM proxy Swagger UI docs page')[0].url, '/docs/proxy/ui#swagger');
+  assert.equal(search(corpus, 'Lumina proxy Swagger UI docs page')[0].url, '/docs/proxy/ui#swagger');
 });
 
 test('excerpts show a relevant match far into a section', () => {
@@ -57,7 +57,7 @@ test('excerpts show a relevant match far into a section', () => {
 });
 test('prototype property names can be indexed and searched', () => {
   const sample = createIndex([{...docs[0], text: 'constructor prototype toString'}]);
-  assert.equal(search(sample, 'constructor')[0].title, 'LiteLLM Lens');
+  assert.equal(search(sample, 'constructor')[0].title, 'Lumina Lens');
 });
 test('serialization preserves rankings', () => {
   assert.deepEqual(search(loadIndex(JSON.stringify(index)), 'lens'), search(index, 'lens'));
@@ -130,17 +130,17 @@ test('joined title aliases preserve plurals inside a compound query', () => {
 test('planner-added AI Gateway wording preserves specific subscription matches', () => {
   const index = createIndex([
     {id: 'codex', title: 'ChatGPT Subscription', heading: 'Authentication', url: '/docs/providers/chatgpt',
-      text: 'Use a ChatGPT subscription that includes Codex through LiteLLM with OAuth device flow authentication.'},
-    {id: 'harness', title: 'LiteLLM AI Gateway with Claude Code and Codex', heading: '', url: '/blog/harness', type: 'blog',
-      text: 'Route harness requests through the LiteLLM AI Gateway.'},
+      text: 'Use a ChatGPT subscription that includes Codex through Lumina with OAuth device flow authentication.'},
+    {id: 'harness', title: 'Lumina AI Gateway with Claude Code and Codex', heading: '', url: '/blog/harness', type: 'blog',
+      text: 'Route harness requests through the Lumina AI Gateway.'},
     {id: 'claude', title: 'Claude Code with a Claude Subscription', heading: '', url: '/docs/tutorials/claude',
-      text: 'Use a Claude subscription with LiteLLM AI Gateway.'},
+      text: 'Use a Claude subscription with Lumina AI Gateway.'},
   ]);
-  for (const query of ['Codex subscription', 'LiteLLM AI Gateway with Codex subscription setup',
-    'LiteLLM Codex subscription gateway setup', 'Codex subscriptions']) {
+  for (const query of ['Codex subscription', 'Lumina AI Gateway with Codex subscription setup',
+    'Lumina Codex subscription gateway setup', 'Codex subscriptions']) {
     assert.equal(search(index, query, {intent: 'setup'})[0].url, '/docs/providers/chatgpt');
   }
-  assert.ok(search(index, 'LiteLLM AI Gateway').length);
+  assert.ok(search(index, 'Lumina AI Gateway').length);
 });
 test('rendered docs preserve actual heading anchors, code, and exclude page furniture', () => {
   const html = '<nav>Secret nav noise</nav><article><div class="theme-doc-markdown"><h1>Lens</h1><p>Investigations</p><h2 id="custom-anchor">Set up<a class="hash-link">#</a></h2><pre><code>cache: true\nredis: localhost</code><button>Copy</button></pre><ul><li>Enable tracing</li></ul></div></article><footer>Footer noise</footer>';

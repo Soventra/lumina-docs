@@ -1,6 +1,6 @@
 ---
 title: Redis Sizing
-description: How to size Redis for LiteLLM Proxy, with instance recommendations for AWS, Azure, and GCP.
+description: How to size Redis for Lumina Proxy, with instance recommendations for AWS, Azure, and GCP.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Redis Sizing
 
-This page sizes the Redis instance behind LiteLLM Proxy, which you should run as soon as you have more than one gateway instance. Postgres is sized separately in [Database Sizing](./db_sizing.md). For how to wire Redis into the proxy, see the Redis section of [Production Best Practices](./prod.md#redis) and the [caching config](./caching_redis.md).
+This page sizes the Redis instance behind Lumina Proxy, which you should run as soon as you have more than one gateway instance. Postgres is sized separately in [Database Sizing](./db_sizing.md). For how to wire Redis into the proxy, see the Redis section of [Production Best Practices](./prod.md#redis) and the [caching config](./caching_redis.md).
 
 ## What the proxy asks of Redis
 
@@ -33,7 +33,7 @@ Above roughly 1000 RPS or 10 instances the buffer is what keeps Postgres from be
 <Tabs>
 <TabItem value="aws" label="AWS">
 
-Use ElastiCache with the Valkey or Redis OSS engine at 7.x or newer on a Graviton node, `cache.m7g.large` (6.38 GiB) up to 1K RPS and `cache.m7g.xlarge` (12.93 GiB) above it; the [supported node types](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/CacheNodes.SupportedTypes.html) list usable memory per node, which is below the nominal instance memory, so size against that column rather than the instance name. Run [Multi-AZ with automatic failover](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/AutoFailover.html) in production. If you outgrow a single node, prefer cluster mode with LiteLLM's [Redis Cluster config](./caching_redis.md#redis-cluster) over a larger node, since sharding spreads the counter keyspace across processes instead of piling it onto one. ElastiCache Serverless works for plain caching but not for [semantic caching on valkey-search](./caching_semantic.md#valkey), which needs a node-based cluster.
+Use ElastiCache with the Valkey or Redis OSS engine at 7.x or newer on a Graviton node, `cache.m7g.large` (6.38 GiB) up to 1K RPS and `cache.m7g.xlarge` (12.93 GiB) above it; the [supported node types](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/CacheNodes.SupportedTypes.html) list usable memory per node, which is below the nominal instance memory, so size against that column rather than the instance name. Run [Multi-AZ with automatic failover](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/AutoFailover.html) in production. If you outgrow a single node, prefer cluster mode with Lumina's [Redis Cluster config](./caching_redis.md#redis-cluster) over a larger node, since sharding spreads the counter keyspace across processes instead of piling it onto one. ElastiCache Serverless works for plain caching but not for [semantic caching on valkey-search](./caching_semantic.md#valkey), which needs a node-based cluster.
 
 </TabItem>
 <TabItem value="azure" label="Azure">
@@ -43,11 +43,11 @@ Use [Azure Managed Redis](https://learn.microsoft.com/en-us/azure/redis/overview
 </TabItem>
 <TabItem value="gcp" label="GCP">
 
-Use [Memorystore for Redis Cluster](https://cloud.google.com/memorystore/docs/cluster/cluster-node-specification), where capacity is node type times shard count rather than a single instance size. `redis-standard-small` (5.2GB writable per node) at 3 shards is a reasonable floor, `redis-highmem-medium` (10.4GB writable) at 3 shards covers the 1K to 5K row, and past that add shards rather than scaling the node type up, which is Google's own price-performance guidance since Redis performance does not scale linearly with vCPUs on a single node. Skip `redis-shared-core-nano`, which has variable performance and no SLA. Point LiteLLM at the cluster with the [Redis Cluster config](./caching_redis.md#redis-cluster).
+Use [Memorystore for Redis Cluster](https://cloud.google.com/memorystore/docs/cluster/cluster-node-specification), where capacity is node type times shard count rather than a single instance size. `redis-standard-small` (5.2GB writable per node) at 3 shards is a reasonable floor, `redis-highmem-medium` (10.4GB writable) at 3 shards covers the 1K to 5K row, and past that add shards rather than scaling the node type up, which is Google's own price-performance guidance since Redis performance does not scale linearly with vCPUs on a single node. Skip `redis-shared-core-nano`, which has variable performance and no SLA. Point Lumina at the cluster with the [Redis Cluster config](./caching_redis.md#redis-cluster).
 
 </TabItem>
 </Tabs>
 
 ## What to monitor
 
-Watch memory used against `maxmemory` and the eviction counter, since evictions are silent correctness loss here rather than a cache-hit-rate problem. On the LiteLLM side the useful Prometheus signals are `litellm_redis_spend_update_queue_size` and `litellm_in_memory_spend_update_queue_size` for spend updates that are queued rather than written, and `litellm_pod_lock_manager_size` for which pod currently holds the transaction buffer flush lock. Client connection count matters too: each managed offering caps connections per instance size, and the gateway opens pools per worker.
+Watch memory used against `maxmemory` and the eviction counter, since evictions are silent correctness loss here rather than a cache-hit-rate problem. On the Lumina side the useful Prometheus signals are `lumina_redis_spend_update_queue_size` and `lumina_in_memory_spend_update_queue_size` for spend updates that are queued rather than written, and `lumina_pod_lock_manager_size` for which pod currently holds the transaction buffer flush lock. Client connection count matters too: each managed offering caps connections per instance size, and the gateway opens pools per worker.

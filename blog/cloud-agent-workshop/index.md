@@ -4,7 +4,7 @@ title: "Workshop: Build a self-hosted cloud agent."
 date: 2026-10-13T18:00:00-04:00
 authors:
   - ishaan
-description: "Build a self-hosted cloud agent with the LiteLLM team. A two-week remote workshop, October 19–30, to build a working v0 and deploy an internal beta on your infrastructure."
+description: "Build a self-hosted cloud agent with the Lumina team. A two-week remote workshop, October 19–30, to build a working v0 and deploy an internal beta on your infrastructure."
 image: /img/cloud-agent-workshop/social.png
 tags: [agents, infrastructure, announcement]
 hide_table_of_contents: true
@@ -29,7 +29,7 @@ import styles from './styles.module.css';
 
 ## Who the workshop is for {#audience-title}
 
-Teams investing in a custom, self-hosted cloud agent platform. Build with LiteLLM engineers around your infrastructure and development workflows.
+Teams investing in a custom, self-hosted cloud agent platform. Build with Lumina engineers around your infrastructure and development workflows.
 
 <AudienceTeams />
 
@@ -77,11 +77,11 @@ We deploy to your cloud, run internal tasks, and review traces with your team. W
 
 </Milestone>
 
-<Milestone number="04" id="after" stage="AFTER THE WORKSHOP" date="FOR LITELLM USERS" visual={<SupportVisual />}>
+<Milestone number="04" id="after" stage="AFTER THE WORKSHOP" date="FOR LUMINA USERS" visual={<SupportVisual />}>
 
 ### Keep improving with our team.
 
-If you use LiteLLM, we continue working with you toward the success criteria from your intake call.
+If you use Lumina, we continue working with you toward the success criteria from your intake call.
 
 <Result label="CONTINUED SUPPORT">Help with your next improvements.</Result>
 

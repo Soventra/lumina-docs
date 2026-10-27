@@ -29,4 +29,4 @@ RUN uv sync --frozen --no-default-groups --no-editable \
 
 EXPOSE $PORT 
 
-CMD ["sh", "-c", "litellm --host 0.0.0.0 --port $PORT --workers 10 --config config.yaml"]
+CMD ["sh", "-c", "lumina --host 0.0.0.0 --port $PORT --workers 10 --config config.yaml"]

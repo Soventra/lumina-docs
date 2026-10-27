@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 Add tags to model deployments to track spend by environment, AWS account, or any custom label.
 
-Tags appear in the `request_tags` field of LiteLLM spend logs.
+Tags appear in the `request_tags` field of Lumina spend logs.
 
 :::info[Requirements]
 Virtual Keys & a database should be set up. See [Virtual Keys Setup](./virtual_keys.md).
@@ -48,15 +48,15 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   }'
 ```
 
-### Option 2: Use `x-litellm-tags` Header
+### Option 2: Use `x-lumina-tags` Header
 
-Pass tags dynamically via the `x-litellm-tags` header as a comma-separated string:
+Pass tags dynamically via the `x-lumina-tags` header as a comma-separated string:
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
-  -H 'x-litellm-tags: team-api,production,us-east-1' \
+  -H 'x-lumina-tags: team-api,production,us-east-1' \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello"}]
@@ -149,7 +149,7 @@ curl -L -X POST 'http://0.0.0.0:4000/team/new' \
 Track spend using any custom header by adding it to your config:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   extra_spend_tag_headers:
     - "x-custom-header"
     - "x-customer-id"
@@ -158,13 +158,13 @@ litellm_settings:
 **Disable User-Agent tracking:**
 
 ```yaml
-litellm_settings:
+lumina_settings:
   disable_add_user_agent_to_request_tags: true
 ```
 
 ## Spend Logs
 
-The tag from the model config appears in `LiteLLM_SpendLogs`:
+The tag from the model config appears in `Lumina_SpendLogs`:
 
 ```json
 {

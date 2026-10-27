@@ -1,6 +1,6 @@
 ---
 title: "Hermes"
-description: "Send Hermes agent activity to LiteLLM Lens."
+description: "Send Hermes agent activity to Lumina Lens."
 slug: "/proxy/lens/integrations/hermes"
 ---
 

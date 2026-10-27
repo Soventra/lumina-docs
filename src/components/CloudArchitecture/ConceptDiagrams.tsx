@@ -178,7 +178,7 @@ export function RequestFlowDiagram() {
       <div className={styles.diagram}>
         <Clients />
         <ConnectorDown label="Authorization: Bearer sk-..." />
-        <Box name="LiteLLM Gateway" badge=":4000" badgeColor="blue">
+        <Box name="Lumina Gateway" badge=":4000" badgeColor="blue">
           <StepNode n={1} title="Auth and budget checks" subtitle="virtual key: cache first, database on miss" />
           <ConnectorDown />
           <StepNode n={2} title="Rate limiting" subtitle="rpm / tpm for key, user, team, and server" />
@@ -190,7 +190,7 @@ export function RequestFlowDiagram() {
           <ConnectorDown />
           <StepNode n={3} title="Router" subtitle="load balancing, fallbacks, retries" />
           <ConnectorDown />
-          <StepNode n={4} title="Provider translation" subtitle="litellm SDK, OpenAI format in and out" />
+          <StepNode n={4} title="Provider translation" subtitle="lumina SDK, OpenAI format in and out" />
         </Box>
         <ConnectorDown label="provider-native request" />
         <PillsNode title="LLM providers" pills={['OpenAI', 'Anthropic', 'Bedrock', 'Vertex', '100+ more']} />
@@ -218,7 +218,7 @@ export function RouterFlowDiagram() {
         <ConnectorDown />
         <StepNode n={2} title="function_with_retries" subtitle="retries on another available deployment in the same group" />
         <ConnectorDown />
-        <StepNode n={3} title="litellm.completion" subtitle="makes the provider API call" />
+        <StepNode n={3} title="lumina.completion" subtitle="makes the provider API call" />
         <ConnectorDown />
         <PillsNode
           title="model group: gpt-4o"

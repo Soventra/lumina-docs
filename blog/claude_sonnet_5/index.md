@@ -6,10 +6,10 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for Claude Sonnet 5 on the LiteLLM AI Gateway. Use it across Anthropic, Azure, Vertex AI, and Bedrock."
+description: "Day 0 support for Claude Sonnet 5 on the Lumina AI Gateway. Use it across Anthropic, Azure, Vertex AI, and Bedrock."
 card_title: "Claude Sonnet 5"
 card_summary: "Opus-class quality at Sonnet pricing, adaptive thinking only, $3 / $15 per 1M ($2 / $10 intro), 1M context."
-image: /img/litellm_claude_sonnet_5_announcement.png
+image: /img/lumina_claude_sonnet_5_announcement.png
 tags: [anthropic, claude, sonnet 5, day 0 support]
 hide_table_of_contents: false
 ---
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Claude Sonnet 5](/img/litellm_claude_sonnet_5_announcement.png)
+![Lumina x Claude Sonnet 5](/img/lumina_claude_sonnet_5_announcement.png)
 
-LiteLLM now supports [Claude Sonnet 5](https://www.anthropic.com/news/claude-sonnet-5) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the LiteLLM AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
+Lumina now supports [Claude Sonnet 5](https://www.anthropic.com/news/claude-sonnet-5) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the Lumina AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
 
 {/* truncate */}
 
@@ -30,7 +30,7 @@ Sonnet 5 is the most agentic Sonnet model yet, with performance close to Opus 4.
 - **Opus-class quality, Sonnet pricing.** Anthropic reports Sonnet 5 performs close to Opus 4.8 while costing far less, and is a substantial step up from Sonnet 4.6 on reasoning, tool use, coding, and knowledge work. ([details from Anthropic](https://www.anthropic.com/news/claude-sonnet-5))
 - **Built to run agents.** It plans, drives tools like browsers and terminals, runs autonomously, and checks its own output without being asked, finishing complex tasks where earlier Sonnet models would stop short. Anthropic highlights gains on BrowseComp (agentic search) and OSWorld-Verified (computer use).
 - **Adaptive thinking only.** Sonnet 5 decides how deeply to think on its own. You steer it per request with `reasoning_effort` or `output_config.effort`; fixed thinking budgets, `temperature`, `top_p`, and assistant message prefill are not supported by the model.
-- **$3 / MTok input and $15 / MTok output**, with prompt caching at $0.30 / MTok (read) and $3.75 / MTok (write). Anthropic is running introductory pricing of $2 / MTok input and $10 / MTok output through August 31, 2026. On Bedrock, the `us.`, `eu.`, `au.`, and `jp.` inference profiles carry the usual 10% regional premium while `global.` stays at base price; LiteLLM tracks every variant automatically.
+- **$3 / MTok input and $15 / MTok output**, with prompt caching at $0.30 / MTok (read) and $3.75 / MTok (write). Anthropic is running introductory pricing of $2 / MTok input and $10 / MTok output through August 31, 2026. On Bedrock, the `us.`, `eu.`, `au.`, and `jp.` inference profiles carry the usual 10% regional premium while `global.` stays at base price; Lumina tracks every variant automatically.
 - **1M-token context**, up to 128K output tokens.
 - **One gateway, every surface.** Vision, PDF input, computer use, tool calling, prompt caching, adaptive thinking, and structured output, all available across Anthropic, Azure, Vertex AI, and Bedrock with unified spend tracking, logging, and fallbacks.
 
@@ -38,11 +38,11 @@ Sonnet 5 is the most agentic Sonnet model yet, with performance close to Opus 4.
 
 Sonnet 5 ships in the **`v1.92.0-dev.1`** image (and every release after it). How you pick it up depends on where your proxy reads pricing from:
 
-- **Default (remote cost map): no upgrade needed.** In the LiteLLM UI, open the **Price Data** tab under **Models + Endpoints** and click **Reload Price Data** (or, as a proxy admin, `POST /reload/model_cost_map`). This refetches the latest pricing from LiteLLM's cost map **and** re-registers provider routing in one step, so `claude-sonnet-5` becomes available across Anthropic, Azure, Vertex AI, and Bedrock, even if you're on an older proxy version.
+- **Default (remote cost map): no upgrade needed.** In the Lumina UI, open the **Price Data** tab under **Models + Endpoints** and click **Reload Price Data** (or, as a proxy admin, `POST /reload/model_cost_map`). This refetches the latest pricing from Lumina's cost map **and** re-registers provider routing in one step, so `claude-sonnet-5` becomes available across Anthropic, Azure, Vertex AI, and Bedrock, even if you're on an older proxy version.
 - **Running `LUMINA_LOCAL_MODEL_COST_MAP=true`?** The cost map is baked into the image, so the Reload button won't reach it. Pull `v1.92.0-dev.1` or later to get the bundled Sonnet 5 metadata:
 
   ```bash
-  docker pull ghcr.io/berriai/litellm:v1.92.0-dev.1
+  docker pull ghcr.io/soventra/lumina:v1.92.0-dev.1
   ```
 
 ## Usage
@@ -69,7 +69,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.92.0-dev.1 \
+  ghcr.io/soventra/lumina:v1.92.0-dev.1 \
   --config /app/config.yaml
 ```
 
@@ -95,7 +95,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.92.0-dev.1 \
+  ghcr.io/soventra/lumina:v1.92.0-dev.1 \
   --config /app/config.yaml
 ```
 
@@ -122,7 +122,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.92.0-dev.1 \
+  ghcr.io/soventra/lumina:v1.92.0-dev.1 \
   --config /app/config.yaml
 ```
 
@@ -142,7 +142,7 @@ model_list:
 ```
 
 :::note
-For cross-region routing, swap the model ID for a regional inference profile (`us.`, `eu.`, `au.`, or `jp.` prefix), e.g. `bedrock/converse/us.anthropic.claude-sonnet-5`. These carry a 10% regional premium; the `global.` profile stays at base price. LiteLLM tracks the cost of each variant automatically.
+For cross-region routing, swap the model ID for a regional inference profile (`us.`, `eu.`, `au.`, or `jp.` prefix), e.g. `bedrock/converse/us.anthropic.claude-sonnet-5`. These carry a 10% regional premium; the `global.` profile stays at base price. Lumina tracks the cost of each variant automatically.
 :::
 
 **2. Start the proxy**
@@ -153,7 +153,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.92.0-dev.1 \
+  ghcr.io/soventra/lumina:v1.92.0-dev.1 \
   --config /app/config.yaml
 ```
 

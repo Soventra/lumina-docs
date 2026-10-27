@@ -1,6 +1,6 @@
 # Passthrough Managed IDs
 
-When you use LiteLLM's passthrough endpoints (e.g. `/openai_passthrough/v1/files`, `/azure/openai/batches`) the upstream provider returns its own raw IDs such as `file-abc123` or `batch_xyz`. By default those IDs are returned directly to your client, which means:
+When you use Lumina's passthrough endpoints (e.g. `/openai_passthrough/v1/files`, `/azure/openai/batches`) the upstream provider returns its own raw IDs such as `file-abc123` or `batch_xyz`. By default those IDs are returned directly to your client, which means:
 
 - Any user who guesses or intercepts another user's `file-abc123` can use it.
 - You have no proxy-level record of who owns what.
@@ -31,7 +31,7 @@ The feature is active only for **OpenAI** (`/openai_passthrough/...`) and **Azur
 
 :::info[`/openai/v1/files`, `/openai/v1/batches`, and `/openai/v1/responses` are not passthrough routes]
 
-Those three paths are served by LiteLLM's native endpoints, exactly like `/v1/files`, `/v1/batches`, and `/v1/responses`, so `passthrough_managed_object_ids` never sees them. To isolate tenants there, use [`require_managed_files`](./litellm_managed_files) for files and batches and the built-in Responses API ownership checks for responses. The passthrough prefix for OpenAI is `/openai_passthrough`.
+Those three paths are served by Lumina's native endpoints, exactly like `/v1/files`, `/v1/batches`, and `/v1/responses`, so `passthrough_managed_object_ids` never sees them. To isolate tenants there, use [`require_managed_files`](./lumina_managed_files) for files and batches and the built-in Responses API ownership checks for responses. The passthrough prefix for OpenAI is `/openai_passthrough`.
 
 :::
 
@@ -40,17 +40,17 @@ Those three paths are served by LiteLLM's native endpoints, exactly like `/v1/fi
 | | Native managed endpoints | Passthrough with managed IDs |
 |---|---|---|
 | **URL prefix** | `/v1/files`, `/v1/batches` | `/openai_passthrough/v1/files`, `/azure/openai/batches` |
-| **Routing** | LiteLLM internal logic; model-based routing | Direct forward to upstream provider |
+| **Routing** | Lumina internal logic; model-based routing | Direct forward to upstream provider |
 | **Credential resolution** | Via `model_list` router | Via `PassthroughEndpointRouter` / env vars |
-| **Use when** | You want LiteLLM to pick the right deployment automatically, or you need cross-provider batching | You want to call a provider API directly (e.g. fine-tuning, responses, custom endpoints) but still need proxy-level access control |
-| **ID management** | Always managed by LiteLLM | Managed IDs only when `passthrough_managed_object_ids: true` |
+| **Use when** | You want Lumina to pick the right deployment automatically, or you need cross-provider batching | You want to call a provider API directly (e.g. fine-tuning, responses, custom endpoints) but still need proxy-level access control |
+| **ID management** | Always managed by Lumina | Managed IDs only when `passthrough_managed_object_ids: true` |
 | **Streaming ID minting** | Supported | Supported for `POST /v1/responses` with `stream: true` (the `response.id` in every event is rewritten) |
 
 ## Supported endpoints
 
 ### Response ID minting (OUTPUT)
 
-These are the specific routes where LiteLLM will mint a managed ID for raw provider IDs it sees in the **response body** and swap them before returning to the client.
+These are the specific routes where Lumina will mint a managed ID for raw provider IDs it sees in the **response body** and swap them before returning to the client.
 
 | Provider | Method | Path | Fields rewritten |
 |----------|--------|------|-----------------|
@@ -77,7 +77,7 @@ These are the specific routes where LiteLLM will mint a managed ID for raw provi
 
 ### Managed ID resolution (INPUT)
 
-This is **not route-specific**. For every OpenAI or Azure passthrough request, LiteLLM scans the entire request before forwarding it upstream:
+This is **not route-specific**. For every OpenAI or Azure passthrough request, Lumina scans the entire request before forwarding it upstream:
 
 | Location | What is scanned |
 |----------|-----------------|
@@ -121,7 +121,7 @@ sequenceDiagram
     Rewriter->>Rewriter: _walk body → training_file string
     Rewriter->>Rewriter: is_managed(training_file)? yes
     Rewriter->>Resolve: _resolve_one(managed_id, azure, user)
-    Resolve->>DB: litellm_managedfiletable lookup
+    Resolve->>DB: lumina_managedfiletable lookup
     Resolve->>Resolve: can_access_resource(user)
     Resolve-->>Rewriter: file-2dbc7561...
     Passthrough->>Azure: POST { training_file: file-2dbc7561... }
@@ -192,7 +192,7 @@ A caller with no `user_id` and no `team_id` always receives an empty list; the p
 
 ## Objects the proxy never saw
 
-Ownership is recorded when an object is created through the passthrough route with the feature on. A file, batch, or response created before you enabled it, or created straight against the provider with the same API key, has no owner on the proxy side, so any key allowed on the passthrough route can still reach it by its raw provider ID (see the limitation below). LiteLLM deliberately does not try to claim those objects for anyone.
+Ownership is recorded when an object is created through the passthrough route with the feature on. A file, batch, or response created before you enabled it, or created straight against the provider with the same API key, has no owner on the proxy side, so any key allowed on the passthrough route can still reach it by its raw provider ID (see the limitation below). Lumina deliberately does not try to claim those objects for anyone.
 
 When those pre-existing objects must be isolated too, the strict option is to stop sharing one provider key across tenants: define one [custom passthrough endpoint](./pass_through) per team, each carrying that team's own provider API key in its `headers`, and restrict every team to its endpoint with `allowed_passthrough_routes` in the team's metadata. The provider then scopes visibility itself, and managed IDs keep working on top of that.
 

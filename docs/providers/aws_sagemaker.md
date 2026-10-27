@@ -2,11 +2,11 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem'
 
 # AWS Sagemaker
-LiteLLM supports All Sagemaker Huggingface Jumpstart Models
+Lumina supports All Sagemaker Huggingface Jumpstart Models
 
 :::tip
 
-**We support ALL Sagemaker models, just set `model=sagemaker/<any-model-on-sagemaker>` as a prefix when sending litellm requests**
+**We support ALL Sagemaker models, just set `model=sagemaker/<any-model-on-sagemaker>` as a prefix when sending lumina requests**
 
 :::
 
@@ -21,7 +21,7 @@ os.environ["AWS_REGION_NAME"] = ""
 ### Usage
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -36,11 +36,11 @@ response = completion(
 ```
 
 ### Usage - Streaming
-Sagemaker currently does not support streaming - LiteLLM fakes streaming by returning chunks of the response string
+Sagemaker currently does not support streaming - Lumina fakes streaming by returning chunks of the response string
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -58,9 +58,9 @@ for chunk in response:
 ```
 
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-Here's how to call Sagemaker with the LiteLLM Proxy Server
+Here's how to call Sagemaker with the Lumina Proxy Server
 
 ### 1. Setup config.yaml
 
@@ -90,7 +90,7 @@ aws_web_identity_token: Optional[str],
 ### 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 ### 3. Test it
 
@@ -145,7 +145,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "jumpstart-model",
     temperature=0.1
 )
@@ -155,7 +155,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -172,7 +172,7 @@ print(response)
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -209,7 +209,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="jumpstart-model", messages = [
     {
         "role": "user",
@@ -229,7 +229,7 @@ print(response)
 
 ## **Allow setting temperature=0** for Sagemaker
 
-By default when `temperature=0` is sent in requests to LiteLLM, LiteLLM rounds up to `temperature=0.1` since Sagemaker fails most requests when `temperature=0`
+By default when `temperature=0` is sent in requests to Lumina, Lumina rounds up to `temperature=0.1` since Sagemaker fails most requests when `temperature=0`
 
 If you want to send `temperature=0` for your model here's how to set it up (Since Sagemaker can host any kind of model, some models allow zero temperature)
 
@@ -238,7 +238,7 @@ If you want to send `temperature=0` for your model here's how to set it up (Sinc
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -274,7 +274,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="jumpstart-model", messages = [
     {
         "role": "user",
@@ -293,14 +293,14 @@ print(response)
 
 ## Pass provider-specific params 
 
-If you pass a non-openai param to litellm, we'll assume it's provider-specific and send it as a kwarg in the request body. [See more](../completion/input.md#litellm-specific-params)
+If you pass a non-openai param to lumina, we'll assume it's provider-specific and send it as a kwarg in the request body. [See more](../completion/input.md#lumina-specific-params)
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -335,7 +335,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="jumpstart-model", messages = [
     {
         "role": "user",
@@ -362,7 +362,7 @@ If you have multiple models on an endpoint, you'll need to specify the individua
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -378,10 +378,10 @@ response = completion(
 ```
 
 ### Passing credentials as parameters - Completion()
-Pass AWS credentials as parameters to litellm.completion
+Pass AWS credentials as parameters to lumina.completion
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="sagemaker/jumpstart-dft-meta-textgeneration-llama-2-7b",
@@ -397,7 +397,7 @@ To apply the correct prompt template for your sagemaker deployment, pass in it's
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -428,10 +428,10 @@ model: sagemaker_chat/<your-endpoint-name>
 
 ```python
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
-litellm.set_verbose = True # SEE RAW REQUEST
+lumina.set_verbose = True # SEE RAW REQUEST
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -463,7 +463,7 @@ model_list:
 #### 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 #### 3. Test it
 
@@ -494,11 +494,11 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 :::tip
 
-**We support ALL Sagemaker models, just set `model=sagemaker/<any-model-on-sagemaker>` as a prefix when sending litellm requests**
+**We support ALL Sagemaker models, just set `model=sagemaker/<any-model-on-sagemaker>` as a prefix when sending lumina requests**
 
 :::
 
-Here's an example of using a sagemaker model with LiteLLM 
+Here's an example of using a sagemaker model with Lumina 
 
 | Model Name                    | Function Call                                                                                       |
 |-------------------------------|-------------------------------------------------------------------------------------------|
@@ -512,44 +512,44 @@ Here's an example of using a sagemaker model with LiteLLM
 
 ## Embedding Models
 
-LiteLLM supports all Sagemaker Jumpstart Huggingface Embedding models. Here's how to call it: 
+Lumina supports all Sagemaker Jumpstart Huggingface Embedding models. Here's how to call it: 
 
 ```python
-from litellm import completion
+from lumina import completion
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 os.environ["AWS_REGION_NAME"] = ""
 
-response = litellm.embedding(model="sagemaker/<your-deployment-name>", input=["good morning from litellm", "this is another item"])
+response = lumina.embedding(model="sagemaker/<your-deployment-name>", input=["good morning from lumina", "this is another item"])
 print(f"response: {response}")
 ```
 
 ### Embeddings on inference components
 
-If the endpoint hosts inference components, pass the component to call via `model_id`, same as for completions. LiteLLM sends it as the `InferenceComponentName` of the invoke call and keeps it out of the request body.
+If the endpoint hosts inference components, pass the component to call via `model_id`, same as for completions. Lumina sends it as the `InferenceComponentName` of the invoke call and keeps it out of the request body.
 
 ```python
-response = litellm.embedding(
+response = lumina.embedding(
     model="sagemaker/<your-endpoint-name>",
     model_id="<your-inference-component-name>",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 ```
 
 ### OpenAI-compatible embedding endpoints
 
-By default LiteLLM sends embedding requests in the Hugging Face shape (`{"inputs": [...]}`) and reads a list of vectors back. If the container behind your endpoint serves the OpenAI embeddings API instead (`{"input": [...]}` in, `{"data": [{"embedding": [...]}], "usage": {...}}` out), add the `openai/` route in front of the endpoint name. The request then goes out in the OpenAI shape with any `extra_body` fields merged in, and `data[].embedding` and `usage` are read from the response.
+By default Lumina sends embedding requests in the Hugging Face shape (`{"inputs": [...]}`) and reads a list of vectors back. If the container behind your endpoint serves the OpenAI embeddings API instead (`{"input": [...]}` in, `{"data": [{"embedding": [...]}], "usage": {...}}` out), add the `openai/` route in front of the endpoint name. The request then goes out in the OpenAI shape with any `extra_body` fields merged in, and `data[].embedding` and `usage` are read from the response.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.embedding(
+response = lumina.embedding(
     model="sagemaker/openai/<your-endpoint-name>",
     model_id="<your-inference-component-name>",  # only for endpoints with inference components
     extra_body={"model": "<model name the container expects>"},  # only if the container needs one
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 ```
 
@@ -578,7 +578,7 @@ Provider-specific keys in `lumina_params` are sent in the request body as-is, so
 
 ## Nova Models on SageMaker
 
-LiteLLM supports Amazon Nova models (Nova Micro, Nova Lite, Nova 2 Lite) deployed on SageMaker Inference real-time endpoints. These custom/fine-tuned Nova models use an OpenAI-compatible API format.
+Lumina supports Amazon Nova models (Nova Micro, Nova Lite, Nova 2 Lite) deployed on SageMaker Inference real-time endpoints. These custom/fine-tuned Nova models use an OpenAI-compatible API format.
 
 **Reference:** [AWS Blog - Amazon SageMaker Inference for Custom Amazon Nova Models](https://aws.amazon.com/blogs/aws/announcing-amazon-sagemaker-inference-for-custom-amazon-nova-models/)
 
@@ -587,7 +587,7 @@ LiteLLM supports Amazon Nova models (Nova Micro, Nova Lite, Nova 2 Lite) deploye
 Use the `sagemaker_nova/` prefix with your SageMaker endpoint name:
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -595,7 +595,7 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 os.environ["AWS_REGION_NAME"] = "us-east-1"
 
 # Basic chat completion
-response = litellm.completion(
+response = lumina.completion(
     model="sagemaker_nova/my-nova-endpoint",
     messages=[{"role": "user", "content": "Hello, how are you?"}],
     temperature=0.7,
@@ -607,7 +607,7 @@ print(response.choices[0].message.content)
 ### Streaming
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="sagemaker_nova/my-nova-endpoint",
     messages=[{"role": "user", "content": "Write a short poem"}],
     stream=True,
@@ -623,7 +623,7 @@ for chunk in response:
 Nova models on SageMaker support image inputs using base64 data URIs:
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="sagemaker_nova/my-nova-endpoint",
     messages=[
         {
@@ -661,7 +661,7 @@ All standard OpenAI parameters are supported, plus these Nova-specific parameter
 | `truncate_prompt_tokens` | integer | Truncate prompt to N tokens if it exceeds limit |
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="sagemaker_nova/my-nova-endpoint",
     messages=[{"role": "user", "content": "Think step by step: what is 2+2?"}],
     top_k=40,

@@ -29,10 +29,10 @@ The GigaChat API is served with certificates from the Russian Trusted Root CA, w
 
 :::
 
-2. Start LiteLLM Proxy
+2. Start Lumina Proxy
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```

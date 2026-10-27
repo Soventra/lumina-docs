@@ -2,14 +2,14 @@
 
 <EnterpriseFeature />
 
-LiteLLM supports two paths for Vertex AI batch jobs. The managed path handles file upload and format conversion automatically. The unmanaged path lets you upload batch files directly to GCS in Vertex AI's native format; LiteLLM skips transformation but tracks cost when enabled.
+Lumina supports two paths for Vertex AI batch jobs. The managed path handles file upload and format conversion automatically. The unmanaged path lets you upload batch files directly to GCS in Vertex AI's native format; Lumina skips transformation but tracks cost when enabled.
 
 ## How it works
 
 ```mermaid
 sequenceDiagram
     participant U as User
-    participant P as LiteLLM Proxy
+    participant P as Lumina Proxy
     participant V as Vertex AI
     participant G as GCS
     participant C as CheckBatchCost (poller)
@@ -20,7 +20,7 @@ sequenceDiagram
     V-->>P: Numeric job ID (e.g. 8823717160934178816)
     P-->>U: Batch ID
     V->>G: Write output when complete
-    C->>P: Poll LiteLLM_ManagedObjectTable
+    C->>P: Poll Lumina_ManagedObjectTable
     C->>V: Retrieve batch status + usage
     C->>P: Log cost, mark batch_processed=true
 ```
@@ -48,7 +48,7 @@ model_list:
 
 ## GCS path requirement
 
-The GCS path must include `publishers/google/models/<model-name>/` so LiteLLM can derive the model name for credential lookup.
+The GCS path must include `publishers/google/models/<model-name>/` so Lumina can derive the model name for credential lookup.
 
 ```
 gs://my-bucket/<any-prefix>/publishers/google/models/{{gemini_flash}}/<filename>.jsonl
@@ -142,7 +142,7 @@ Skipping unmanaged vertex batch 8823717160934178816: no vertex_ai deployment con
 | Batch ID format | Base64-encoded unified ID | Raw Vertex numeric ID |
 | Cost tracking | On by default | Opt-in flag |
 
-A managed batch can also take Vertex native input: set `passthrough=true` on the upload and LiteLLM stores the file byte for byte and returns the native output. See [Native Vertex JSONL passthrough](/docs/providers/vertex_batch#native-vertex-jsonl-passthrough).
+A managed batch can also take Vertex native input: set `passthrough=true` on the upload and Lumina stores the file byte for byte and returns the native output. See [Native Vertex JSONL passthrough](/docs/providers/vertex_batch#native-vertex-jsonl-passthrough).
 
 ## See also
 

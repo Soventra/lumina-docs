@@ -1,9 +1,9 @@
 ---
 slug: opencode-go
-title: "OpenCode Go is now a LiteLLM provider"
+title: "OpenCode Go is now a Lumina provider"
 date: 2026-10-24T12:00:00-07:00
 authors: [moe]
-description: "Use your OpenCode Go subscription through LiteLLM. Connect once, route models to the right API, preserve sessions, and track estimated usage."
+description: "Use your OpenCode Go subscription through Lumina. Connect once, route models to the right API, preserve sessions, and track estimated usage."
 tags: [providers, tutorial]
 hide_table_of_contents: true
 custom_hero: true

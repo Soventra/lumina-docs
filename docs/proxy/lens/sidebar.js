@@ -2,7 +2,7 @@ const imported = require('./imported/sidebar.json');
 
 module.exports = {
   type: 'category',
-  label: 'LiteLLM Lens',
+  label: 'Lumina Lens',
   link: {type: 'doc', id: 'proxy/lens/index'},
   items: [
     {
@@ -11,7 +11,7 @@ module.exports = {
       link: {type: 'doc', id: 'proxy/lens/deployment'},
       items: [
         'proxy/lens/deployment/local',
-        'proxy/lens/deployment/litellm',
+        'proxy/lens/deployment/lumina',
         'proxy/lens/deployment/kubernetes',
         'proxy/lens/deployment/server',
         'proxy/lens/deployment/docker-compose',

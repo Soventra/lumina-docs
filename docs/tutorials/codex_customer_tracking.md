@@ -2,11 +2,11 @@ import Image from '@theme/IdealImage';
 
 # Codex CLI - Granular Cost Tracking
 
-Track Codex CLI usage by customer or tags using LiteLLM proxy. This enables granular cost attribution for billing, budgeting, and analytics.
+Track Codex CLI usage by customer or tags using Lumina proxy. This enables granular cost attribution for billing, budgeting, and analytics.
 
 ## How It Works
 
-Codex reads its configuration from `~/.codex/config.toml`. The `[model_providers.<id>]` block accepts `http_headers` (static values) and `env_http_headers` (values read from environment variables when Codex starts), and Codex attaches both to every request it sends to `base_url`. This is the Codex equivalent of Claude Code's `ANTHROPIC_CUSTOM_HEADERS`: put a LiteLLM tracking header there and every `/v1/responses` call lands in the spend logs with that customer or those tags.
+Codex reads its configuration from `~/.codex/config.toml`. The `[model_providers.<id>]` block accepts `http_headers` (static values) and `env_http_headers` (values read from environment variables when Codex starts), and Codex attaches both to every request it sends to `base_url`. This is the Codex equivalent of Claude Code's `ANTHROPIC_CUSTOM_HEADERS`: put a Lumina tracking header there and every `/v1/responses` call lands in the spend logs with that customer or those tags.
 
 ## Why Set a Customer Header
 
@@ -14,20 +14,20 @@ Codex has no setting that puts an end user in the request body, so without a hea
 
 ## Option 1: Track by Customer
 
-Use this to attribute costs to specific customers or end-users. `x-litellm-customer-id` and `x-litellm-end-user-id` both land as the end user of the spend row.
+Use this to attribute costs to specific customers or end-users. `x-lumina-customer-id` and `x-lumina-end-user-id` both land as the end user of the spend row.
 
-Set `model` to a model name configured on your LiteLLM proxy.
+Set `model` to a model name configured on your Lumina proxy.
 
 ```toml
 model = "{{openai_large}}"
-model_provider = "litellm"
+model_provider = "lumina"
 
-[model_providers.litellm]
-name = "LiteLLM"
+[model_providers.lumina]
+name = "Lumina"
 base_url = "http://localhost:4000/v1"
 env_key = "LUMINA_API_KEY"
 wire_api = "responses"
-http_headers = { "x-litellm-end-user-id" = "alice" }
+http_headers = { "x-lumina-end-user-id" = "alice" }
 ```
 
 ## Option 2: Track by Tags
@@ -35,8 +35,8 @@ http_headers = { "x-litellm-end-user-id" = "alice" }
 Use this to attribute costs to projects, cost centers, or environments. Pass comma-separated tags, on their own or next to a customer header in the same provider block.
 
 ```toml
-[model_providers.litellm]
-http_headers = { "x-litellm-customer-id" = "carol", "x-litellm-tags" = "project:onboarding,team:platform" }
+[model_providers.lumina]
+http_headers = { "x-lumina-customer-id" = "carol", "x-lumina-tags" = "project:onboarding,team:platform" }
 ```
 
 ## Option 3: Per-Developer Value from an Environment Variable
@@ -44,13 +44,13 @@ http_headers = { "x-litellm-customer-id" = "carol", "x-litellm-tags" = "project:
 A shared `config.toml` cannot hard-code each developer's id. `env_http_headers` names an environment variable instead, so the file stays identical across machines and each developer runs `export LUMINA_END_USER_ID=alice` before launching Codex. When the variable is unset or empty, Codex omits the header.
 
 ```toml
-[model_providers.litellm]
-env_http_headers = { "x-litellm-end-user-id" = "LUMINA_END_USER_ID" }
+[model_providers.lumina]
+env_http_headers = { "x-lumina-end-user-id" = "LUMINA_END_USER_ID" }
 ```
 
 ## Option 4: Custom Header Name
 
-If your developers already carry an identity header, name it under `general_settings` in the proxy `config.yaml` with `user_header_name` and LiteLLM reads that header as the customer id too. The [customer id precedence table](../proxy/customers.md#1-make-llm-api-call-w-customer-id) lists `user_header_mappings` as the newer way to declare such a header.
+If your developers already carry an identity header, name it under `general_settings` in the proxy `config.yaml` with `user_header_name` and Lumina reads that header as the customer id too. The [customer id precedence table](../proxy/customers.md#1-make-llm-api-call-w-customer-id) lists `user_header_mappings` as the newer way to declare such a header.
 
 ```yaml
 general_settings:
@@ -58,7 +58,7 @@ general_settings:
 ```
 
 ```toml
-[model_providers.litellm]
+[model_providers.lumina]
 env_http_headers = { "x-okta-user" = "CODEX_OKTA_USER" }
 ```
 
@@ -66,7 +66,7 @@ env_http_headers = { "x-okta-user" = "CODEX_OKTA_USER" }
 
 ### 1. Configure and Run Codex
 
-Add the provider block from Option 1 to `~/.codex/config.toml`, then export your LiteLLM key and start Codex.
+Add the provider block from Option 1 to `~/.codex/config.toml`, then export your Lumina key and start Codex.
 
 ```bash
 export LUMINA_API_KEY=sk-<your-api-key>
@@ -75,9 +75,9 @@ codex
 
 All requests will now be tracked under the end user `alice`. Each Codex turn makes two `/v1/responses` calls and both are attributed, so one turn shows up as two spend rows.
 
-### 2. View Usage in LiteLLM UI
+### 2. View Usage in Lumina UI
 
-Navigate to the **Logs** tab in the LiteLLM UI (`http://localhost:4000/ui/?page=logs`). The End User column shows the header value on every Codex row, and the Tags column carries your `x-litellm-tags` entries next to the `User-Agent: codex-tui` tag LiteLLM adds on its own.
+Navigate to the **Logs** tab in the Lumina UI (`http://localhost:4000/ui/?page=logs`). The End User column shows the header value on every Codex row, and the Tags column carries your `x-lumina-tags` entries next to the `User-Agent: codex-tui` tag Lumina adds on its own.
 
 <Image img={require('../../img/codex_customer_tracking_logs.png')} />
 
@@ -91,15 +91,15 @@ The same rows are available over the API. [`/customer/info?end_user_id=alice`](.
 
 | Header | Description |
 |--------|-------------|
-| `x-litellm-customer-id` | Track by customer/end-user ID |
-| `x-litellm-end-user-id` | Alternative customer ID header |
-| `x-litellm-tags` | Comma-separated tags for cost attribution |
+| `x-lumina-customer-id` | Track by customer/end-user ID |
+| `x-lumina-end-user-id` | Alternative customer ID header |
+| `x-lumina-tags` | Comma-separated tags for cost attribution |
 | Header named by `user_header_name` | Custom customer ID header configured on the proxy |
 
 ## Related
 
 - [Claude Code - Granular Cost Tracking](./claude_code_customer_tracking.md)
-- [Connect Codex CLI to LiteLLM](../proxy/client_setup/codex_cli.md)
+- [Connect Codex CLI to Lumina](../proxy/client_setup/codex_cli.md)
 - [Customer Budgets](../proxy/customers.md)
 - [Tag Budgets](../proxy/tag_budgets.md)
 - [Track Usage for Coding Tools](./cost_tracking_coding.md)

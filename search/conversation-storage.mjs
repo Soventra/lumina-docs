@@ -1,6 +1,6 @@
 import {isContentUrl} from './content.js';
 
-const legacyKey = 'litellm-docs-ask-ai';
+const legacyKey = 'lumina-docs-ask-ai';
 const idKey = `${legacyKey}-id`;
 let database, sessionId, current;
 

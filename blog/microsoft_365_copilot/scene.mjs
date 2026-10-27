@@ -5,7 +5,7 @@ export const CONFIG = Object.freeze({
   mobileHeight: 700,
   light: {ink: '#242833', muted: '#BFC3C8', dots: '#87909C'},
   dark: {ink: '#E6EDF3', muted: '#71808E', dots: '#A2AFBC'},
-  alt: 'LiteLLM × Microsoft 365 Copilot'
+  alt: 'Lumina × Microsoft 365 Copilot'
 });
 
 const defaults = {microsoft: './assets/microsoft-copilot.png'};
@@ -18,7 +18,7 @@ function cross(x, y, size, colors) {
   return `<path d="M${x-size} ${y-size}L${x+size} ${y+size}M${x-size} ${y+size}L${x+size} ${y-size}" fill="none" stroke="${colors.muted}" stroke-width="4"/>`;
 }
 
-export function svgScene(logoHref = './assets/litellm-logo-blue.png', providerHrefs = defaults, dark = false) {
+export function svgScene(logoHref = './assets/lumina-logo-blue.png', providerHrefs = defaults, dark = false) {
   const c = dark ? CONFIG.dark : CONFIG.light;
   return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${CONFIG.width}" height="${CONFIG.height}" viewBox="0 0 1600 836" role="img" aria-label="${CONFIG.alt}">
 ${background(CONFIG.width, CONFIG.height, c)}
@@ -29,7 +29,7 @@ ${cross(643,418,9,c)}
 </svg>`;
 }
 
-export function mobileScene(logoHref = './assets/litellm-logo-blue.png', providerHrefs = defaults, dark = false) {
+export function mobileScene(logoHref = './assets/lumina-logo-blue.png', providerHrefs = defaults, dark = false) {
   const c = dark ? CONFIG.dark : CONFIG.light;
   return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${CONFIG.mobileWidth}" height="${CONFIG.mobileHeight}" viewBox="0 0 800 700" role="img" aria-label="${CONFIG.alt}">
 ${background(CONFIG.mobileWidth, CONFIG.mobileHeight, c)}

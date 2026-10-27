@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Google Cloud Text-to-Speech with Chirp3 HD voices and Gemini TTS |
-| Provider Route on LiteLLM | `vertex_ai/chirp` (Chirp), `vertex_ai/gemini-*-tts` (Gemini) |
+| Provider Route on Lumina | `vertex_ai/chirp` (Chirp), `vertex_ai/gemini-*-tts` (Gemini) |
 
 ## Chirp3 HD Voices
 
@@ -14,10 +14,10 @@ Google Cloud Text-to-Speech API with high-quality Chirp3 HD voices.
 
 ### Quick Start
 
-#### LiteLLM Python SDK
+#### Lumina Python SDK
 
 ```python showLineNumbers title="Chirp3 Quick Start"
-from litellm import speech
+from lumina import speech
 from pathlib import Path
 
 speech_file_path = Path(__file__).parent / "speech.mp3"
@@ -31,7 +31,7 @@ response = speech(
 response.stream_to_file(speech_file_path)
 ```
 
-#### LiteLLM AI Gateway
+#### Lumina AI Gateway
 
 **1. Setup config.yaml**
 
@@ -47,8 +47,8 @@ model_list:
 
 **2. Start the proxy**
 
-```bash title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make requests**
@@ -74,7 +74,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 ```python showLineNumbers title="Chirp3 Quick Start"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.audio.speech.create(
     model="vertex-tts",
@@ -89,7 +89,7 @@ response.stream_to_file("speech.mp3")
 
 ### Voice Mapping
 
-LiteLLM maps OpenAI voice names to Google Cloud voices. You can use either OpenAI voices or Google Cloud voices directly.
+Lumina maps OpenAI voice names to Google Cloud voices. You can use either OpenAI voices or Google Cloud voices directly.
 
 | OpenAI Voice | Google Cloud Voice |
 |-------------|-------------------|
@@ -102,10 +102,10 @@ LiteLLM maps OpenAI voice names to Google Cloud voices. You can use either OpenA
 
 ### Using Google Cloud Voices Directly
 
-#### LiteLLM Python SDK
+#### Lumina Python SDK
 
 ```python showLineNumbers title="Chirp3 HD Voice"
-from litellm import speech
+from lumina import speech
 
 # Pass Chirp3 HD voice name directly
 response = speech(
@@ -118,7 +118,7 @@ response.stream_to_file("speech.mp3")
 ```
 
 ```python showLineNumbers title="Voice as Dict (Multilingual)"
-from litellm import speech
+from lumina import speech
 
 # Pass as dict for full control over language and voice
 response = speech(
@@ -133,7 +133,7 @@ response = speech(
 response.stream_to_file("speech.mp3")
 ```
 
-#### LiteLLM AI Gateway
+#### Lumina AI Gateway
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -168,7 +168,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 ```python showLineNumbers title="Chirp3 HD Voice"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.audio.speech.create(
     model="vertex-tts",
@@ -181,7 +181,7 @@ response.stream_to_file("speech.mp3")
 ```python showLineNumbers title="Voice as Dict (Multilingual)"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.audio.speech.create(
     model="vertex-tts",
@@ -198,12 +198,12 @@ Browse available voices: [Google Cloud Text-to-Speech Console](https://console.c
 
 ### Passing Raw SSML
 
-LiteLLM auto-detects SSML when your input contains `<speak>` tags and passes it through unchanged.
+Lumina auto-detects SSML when your input contains `<speak>` tags and passes it through unchanged.
 
-#### LiteLLM Python SDK
+#### Lumina Python SDK
 
 ```python showLineNumbers title="SSML Input"
-from litellm import speech
+from lumina import speech
 
 ssml = """
 <speak>
@@ -222,7 +222,7 @@ response.stream_to_file("speech.mp3")
 ```
 
 ```python showLineNumbers title="Force SSML Mode"
-from litellm import speech
+from lumina import speech
 
 # Force SSML mode with use_ssml=True
 response = speech(
@@ -235,7 +235,7 @@ response = speech(
 response.stream_to_file("speech.mp3")
 ```
 
-#### LiteLLM AI Gateway
+#### Lumina AI Gateway
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -258,7 +258,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 ```python showLineNumbers title="SSML Input"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 ssml = """<speak><p>Hello!</p><break time="500ms"/><p>How are you?</p></speak>"""
 
@@ -287,7 +287,7 @@ response.stream_to_file("speech.mp3")
 
 ```python showLineNumbers title="Async Speech Generation"
 import asyncio
-from litellm import aspeech
+from lumina import aspeech
 
 async def main():
     response = await aspeech(
@@ -314,15 +314,15 @@ The Voice Mapping table above is for Chirp. For Gemini TTS, pass a Gemini prebui
 - Only supports `pcm16` audio format
 - Streaming not yet supported
 - Must set `modalities: ["audio"]`
-- When using via LiteLLM Proxy, must include `"allowed_openai_params": ["audio", "modalities"]` in the request body to enable audio parameters
+- When using via Lumina Proxy, must include `"allowed_openai_params": ["audio", "modalities"]` in the request body to enable audio parameters
 :::
 
 ### Quick Start
 
-#### LiteLLM Python SDK
+#### Lumina Python SDK
 
 ```python showLineNumbers title="Gemini TTS Quick Start"
-from litellm import completion
+from lumina import completion
 import json
 
 # Load credentials
@@ -342,7 +342,7 @@ response = completion(
 print(response)
 ```
 
-#### LiteLLM AI Gateway
+#### Lumina AI Gateway
 
 **1. Setup config.yaml**
 
@@ -358,8 +358,8 @@ model_list:
 
 **2. Start the proxy**
 
-```bash title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make requests**
@@ -386,7 +386,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```python showLineNumbers title="Gemini TTS Request"
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.chat.completions.create(
     model="gemini-tts",
@@ -411,7 +411,7 @@ See [Gemini TTS documentation](https://ai.google.dev/gemini-api/docs/speech-gene
 ### Advanced Usage
 
 ```python showLineNumbers title="Gemini TTS with System Prompt"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/gemini-2.5-pro-preview-tts",

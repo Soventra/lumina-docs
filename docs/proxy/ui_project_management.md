@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 
 <EnterpriseFeature />
 
-Manage projects directly from the LiteLLM Admin UI. Projects sit between teams and keys in your organizational hierarchy, enabling fine-grained access control and budget management for specific use cases or applications.
+Manage projects directly from the Lumina Admin UI. Projects sit between teams and keys in your organizational hierarchy, enabling fine-grained access control and budget management for specific use cases or applications.
 
 :::info
 Project Management is a beta feature. The API and UI are subject to change. For the full API documentation, see [Project Management](./project_management.md).
@@ -30,7 +30,7 @@ For detailed information about the project API and configuration, see [Project M
 
 - Admin or Team Admin access
 - At least one team created (projects belong to teams)
-- The LiteLLM Admin UI running locally or remote
+- The Lumina Admin UI running locally or remote
 
 ## Enable Projects in UI Settings
 

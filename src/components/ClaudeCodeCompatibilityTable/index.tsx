@@ -6,7 +6,7 @@ import styles from "./styles.module.css";
  * Claude Code compatibility matrix table.
  *
  * Renders the JSON published daily by the populator
- * (`tests/claude_code/cron_vm/run_daily.sh` in BerriAI/litellm) into a
+ * (`tests/claude_code/cron_vm/run_daily.sh` in Soventra/lumina) into a
  * features-by-providers grid. Each cell shows pass / fail / not_tested /
  * not_applicable; failure cells expose the upstream error on hover.
  *
@@ -32,7 +32,7 @@ interface Feature {
 interface Matrix {
   schema_version: string;
   generated_at: string;
-  litellm_version: string;
+  lumina_version: string;
   claude_code_version: string;
   providers: string[];
   features: Feature[];
@@ -66,7 +66,7 @@ export default function ClaudeCodeCompatibilityTable(): JSX.Element {
     <div className={styles.wrapper}>
       <div className={styles.meta}>
         <span>
-          litellm <code>{m.litellm_version}</code>
+          lumina <code>{m.lumina_version}</code>
         </span>
         <span>
           claude code <code>{m.claude_code_version}</code>

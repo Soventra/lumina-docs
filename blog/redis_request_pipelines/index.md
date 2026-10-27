@@ -1,20 +1,20 @@
 ---
 slug: redis-request-pipelines
-title: "How we cut LiteLLM's Redis round trips per request by 64%"
+title: "How we cut Lumina's Redis round trips per request by 64%"
 date: 2026-10-01T09:00:00
 authors:
   - yassin
 image: ./cover.gif
-description: "A governed request to the LiteLLM AI Gateway waited on Redis 22 times. It now waits 8 times: one pipeline per Redis backend before the model call, one after."
+description: "A governed request to the Lumina AI Gateway waited on Redis 22 times. It now waits 8 times: one pipeline per Redis backend before the model call, one after."
 tags: [performance, redis, proxy, engineering, ai-gateway]
 hide_table_of_contents: true
 ---
 
 import { PerformanceResults, RoundTripTimeline, BatchLifecycle, EndpointResults } from './diagrams';
 
-![LiteLLM's 22 Redis round trips merge into 8, a 64% reduction per request](./cover.gif)
+![Lumina's 22 Redis round trips merge into 8, a 64% reduction per request](./cover.gif)
 
-This week, we cut the number of times a request to the LiteLLM proxy waits on Redis from **22 to 8**.
+This week, we cut the number of times a request to the Lumina proxy waits on Redis from **22 to 8**.
 
 A request from a key with a budget, in a team with a budget and TPM/RPM limits, against a model group with usage-based routing and a Redis response cache, made 22 Redis round trips: 12 before the model was called and 10 after. The same request, with the same checks and the same writes, now makes **5 before and 3 after**.
 
@@ -56,4 +56,4 @@ The same request now reads whatever memory is missing with one MGET on the reque
 
 We measured both versions on the same local proxy, from the commit before this work (`27c110cb`) to main with all five changes in it (`13d004fc`): Redis 6.0 and Postgres 14, mock deployments so the count does not depend on a provider, and a tracer that logs every Redis call and every pipeline flush with its caller. A pipeline or a Lua script counts as one round trip. Every sample was preceded by a warm-up request 12 seconds earlier, and the harness idles for 65 seconds every three samples so the 60-second cache expiry never lands inside a sample. For the refresh case, the harness sent a warm-up request, waited 65 seconds and traced the next one. All requests returned HTTP 200 in both arms.
 
-See the changes: [routing reads](https://github.com/BerriAI/litellm/pull/43320), [spend counters](https://github.com/BerriAI/litellm/pull/43369), [the pre-call pipeline](https://github.com/BerriAI/litellm/pull/43407), [the post-call pipeline](https://github.com/BerriAI/litellm/pull/43779) and [the auth refresh](https://github.com/BerriAI/litellm/pull/43776).
+See the changes: [routing reads](https://github.com/Soventra/lumina/pull/43320), [spend counters](https://github.com/Soventra/lumina/pull/43369), [the pre-call pipeline](https://github.com/Soventra/lumina/pull/43407), [the post-call pipeline](https://github.com/Soventra/lumina/pull/43779) and [the auth refresh](https://github.com/Soventra/lumina/pull/43776).

@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.100.1 - Retry Breadcrumb Memory Fix"
+title: "Lumina v1.100.1 - Retry Breadcrumb Memory Fix"
 description: "Fixes a memory leak in router retry breadcrumbs that kept earlier requests in memory. Upgrade if your deployments use retries or fallbacks."
 slug: "v1-100-1"
 date: 2026-09-10T01:42:29
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,20 +31,20 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.100.1
+docker.lumina.ai/soventra/lumina:1.100.1
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.100.1
+pip install lumina==1.100.1
 ```
 
 </TabItem>
 </Tabs>
 
-`v1.100.1` is a patch release on top of [`v1.100.0`](/release_notes/v1.100.0/v1-100-0). It carries one fix: the router's retry breadcrumbs no longer retain earlier requests, which stops a memory leak that could take down a proxy under retry-heavy load. Both the Docker image and the PyPI package were built from [`1dba17b`](https://github.com/BerriAI/litellm/commit/1dba17b10ded12ad0021edb453ba2c54e4637928).
+`v1.100.1` is a patch release on top of [`v1.100.0`](/release_notes/v1.100.0/v1-100-0). It carries one fix: the router's retry breadcrumbs no longer retain earlier requests, which stops a memory leak that could take down a proxy under retry-heavy load. Both the Docker image and the PyPI package were built from [`1dba17b`](https://github.com/Soventra/lumina/commit/1dba17b10ded12ad0021edb453ba2c54e4637928).
 
 If you run `v1.100.0` behind any deployment that fails often enough to trigger retries or fallbacks, upgrade. There are no configuration changes and nothing else in the release.
 
@@ -56,8 +56,8 @@ Breadcrumbs are now built per request and capped at the four most recent attempt
 
 ### What's Changed
 
-- fix(router): keep retry breadcrumbs per request and out of the request snapshot - [PR #40455](https://github.com/BerriAI/litellm/pull/40455) (backport of [PR #39491](https://github.com/BerriAI/litellm/pull/39491))
+- fix(router): keep retry breadcrumbs per request and out of the request snapshot - [PR #40455](https://github.com/Soventra/lumina/pull/40455) (backport of [PR #39491](https://github.com/Soventra/lumina/pull/39491))
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.100.0...1dba17b10ded12ad0021edb453ba2c54e4637928
+https://github.com/Soventra/lumina/compare/v1.100.0...1dba17b10ded12ad0021edb453ba2c54e4637928

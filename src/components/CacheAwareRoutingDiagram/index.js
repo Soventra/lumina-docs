@@ -15,7 +15,7 @@ export default function CacheAwareRoutingDiagram() {
         <svg className={styles.diagram} viewBox="0 0 760 568" role="img" aria-labelledby={`${id}-title ${id}-description`}>
           <title id={`${id}-title`}>Cache-aware routing to Kubernetes inference pods</title>
           <desc id={`${id}-description`}>
-            LiteLLM discovers ready pod IPs through a headless Service, then sends
+            Lumina discovers ready pod IPs through a headless Service, then sends
             requests directly to the pods. A stable session ID selects the same
             pod while the deployment and pod set stay unchanged. Requests without
             a session ID use round robin across the pods.
@@ -38,7 +38,7 @@ export default function CacheAwareRoutingDiagram() {
 
           <path d="M 165 80 V 162" className={styles.session} markerEnd={arrow('session')} />
           <rect x="40" y="166" width="250" height="88" rx="12" className={styles.gateway} />
-          <text x="165" y="201" textAnchor="middle" className={styles.title}>LiteLLM Gateway</text>
+          <text x="165" y="201" textAnchor="middle" className={styles.title}>Lumina Gateway</text>
           <text x="165" y="225" textAnchor="middle" className={styles.subtitle}>Select deployment, then pod</text>
 
           <path d="M 458 210 H 296" className={styles.discovery} markerEnd={arrow('discovery')} />
@@ -69,7 +69,7 @@ export default function CacheAwareRoutingDiagram() {
           <text x="332" y="525" className={styles.legend}>No session ID: round robin</text>
         </svg>
       </div>
-      <figcaption>LiteLLM connects directly to the selected pod; the headless Service provides discovery.</figcaption>
+      <figcaption>Lumina connects directly to the selected pod; the headless Service provides discovery.</figcaption>
     </figure>
   );
 }

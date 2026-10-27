@@ -1,12 +1,12 @@
 ---
 slug: gpt-6-1-terra
-title: "GPT-6.1 Terra API Pricing and Day 0 Support on LiteLLM"
+title: "GPT-6.1 Terra API Pricing and Day 0 Support on Lumina"
 date: 2026-10-26T12:00:00
 authors:
   - misbah
   - mateo
   - kerry
-description: "GPT-6.1 Terra costs $1 per 1M input tokens and $5 per 1M output tokens, half the price of GPT-6.1 Sol. LiteLLM supports it on day 0."
+description: "GPT-6.1 Terra costs $1 per 1M input tokens and $5 per 1M output tokens, half the price of GPT-6.1 Sol. Lumina supports it on day 0."
 card_title: "GPT-6.1 Terra"
 card_summary: "Half the price of GPT-6.1 Sol at $1 / $5 per 1M tokens, 50.3% on Terminal-Bench 4.0, 1.05M context."
 image: ./hero.png
@@ -20,8 +20,8 @@ import TabItem from '@theme/TabItem';
 import GptTerraHero from './Hero';
 
 <Head>
-  <meta property="og:video" content="https://docs.litellm.ai/img/blog/gpt-6-1-terra/hero.mp4" />
-  <meta property="og:video:secure_url" content="https://docs.litellm.ai/img/blog/gpt-6-1-terra/hero.mp4" />
+  <meta property="og:video" content="https://docs.lumina.ai/img/blog/gpt-6-1-terra/hero.mp4" />
+  <meta property="og:video:secure_url" content="https://docs.lumina.ai/img/blog/gpt-6-1-terra/hero.mp4" />
   <meta property="og:video:type" content="video/mp4" />
   <meta property="og:video:width" content="1280" />
   <meta property="og:video:height" content="720" />
@@ -29,7 +29,7 @@ import GptTerraHero from './Hero';
 
 export const Hero = GptTerraHero;
 
-LiteLLM now supports [GPT-6.1 Terra](https://openai.com/index/introducing-gpt-6-1-terra/) on Day 0. Use it through the LiteLLM AI Gateway with the same config as every other OpenAI model. Spend, rate limits and logs are in one place.
+Lumina now supports [GPT-6.1 Terra](https://openai.com/index/introducing-gpt-6-1-terra/) on Day 0. Use it through the Lumina AI Gateway with the same config as every other OpenAI model. Spend, rate limits and logs are in one place.
 
 {/* truncate */}
 
@@ -48,7 +48,7 @@ Per OpenAI, these prices are 50% lower than the prices of GPT-5.6 Terra and GPT-
 | GPT-6.1 Sol | $2.00 | $10.00 |
 | GPT-5.6 Terra | $2.00 | $12.00 |
 
-Prices on every provider: https://models.litellm.ai/models
+Prices on every provider: https://models.lumina.ai/models
 
 ## What's new in GPT-6.1 Terra
 
@@ -57,12 +57,12 @@ Prices on every provider: https://models.litellm.ai/models
 - **Reasoning effort from `none` to `max`**, with `medium` as the default
 - **1.05M-token context window** (922K input) and up to 128K output tokens
 
-## Use GPT-6.1 Terra with LiteLLM
+## Use GPT-6.1 Terra with Lumina
 
 No upgrade needed: open **Price Data** under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map`), on `v1.76.0` and above.
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -81,7 +81,7 @@ docker run -d \
   -p 4000:4000 \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.106.2 \
+  ghcr.io/soventra/lumina:v1.106.2 \
   --config /app/config.yaml
 ```
 
@@ -101,10 +101,10 @@ curl -X POST "http://0.0.0.0:4000/chat/completions" \
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="openai/gpt-6.1-terra",
@@ -120,7 +120,7 @@ print(response.choices[0].message.content)
 </TabItem>
 </Tabs>
 
-OpenAI serves tool calling for this model through the Responses API. When reasoning is on, LiteLLM sends a `/chat/completions` request with tools to `/v1/responses` for you.
+OpenAI serves tool calling for this model through the Responses API. When reasoning is on, Lumina sends a `/chat/completions` request with tools to `/v1/responses` for you.
 
 ## FAQ
 
@@ -134,12 +134,12 @@ $1.00 per 1M input tokens and $5.00 per 1M output tokens. Cache reads cost $0.05
 
 ### How do I call GPT-6.1 Terra with an OpenAI-compatible API?
 
-Add `openai/gpt-6.1-terra` to your LiteLLM config. Then send a standard `/chat/completions` request to the proxy with `"model": "gpt-6.1-terra"`.
+Add `openai/gpt-6.1-terra` to your Lumina config. Then send a standard `/chat/completions` request to the proxy with `"model": "gpt-6.1-terra"`.
 
 ## Feedback
 
-Questions and feedback go in [GitHub discussion #48443](https://github.com/BerriAI/litellm/discussions/48443).
+Questions and feedback go in [GitHub discussion #48443](https://github.com/Soventra/lumina/discussions/48443).
 
 ## References
 
-- LiteLLM pricing for `gpt-6.1-terra`: [PR #48429](https://github.com/BerriAI/litellm/pull/48429)
+- Lumina pricing for `gpt-6.1-terra`: [PR #48429](https://github.com/Soventra/lumina/pull/48429)

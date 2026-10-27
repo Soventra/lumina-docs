@@ -5,16 +5,16 @@
 | Property | Details |
 |-------|-------|
 | Description | RunwayML provides advanced AI-powered image generation with high-quality results |
-| Provider Route on LiteLLM | `runwayml/` |
+| Provider Route on Lumina | `runwayml/` |
 | Supported Operations | [`/images/generations`](#quick-start) |
 | Link to Provider Doc | [RunwayML API ↗](https://docs.dev.runwayml.com/) |
 
-LiteLLM supports RunwayML's Gen-4 image generation API, allowing you to generate high-quality images from text prompts.
+Lumina supports RunwayML's Gen-4 image generation API, allowing you to generate high-quality images from text prompts.
 
 ## Quick Start
 
 ```python showLineNumbers title="Basic Image Generation"
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ["RUNWAYML_API_KEY"] = "your-api-key"
@@ -57,7 +57,7 @@ os.environ["RUNWAYML_API_KEY"] = "your-api-key"
 ## Async Usage
 
 ```python showLineNumbers title="Async Image Generation"
-from litellm import aimage_generation
+from lumina import aimage_generation
 import os
 import asyncio
 
@@ -75,7 +75,7 @@ async def generate_image():
 asyncio.run(generate_image())
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 Add RunwayML to your proxy configuration:
 
@@ -90,7 +90,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 Generate images through the proxy:
@@ -98,7 +98,7 @@ Generate images through the proxy:
 ```bash showLineNumbers title="Proxy Request"
 curl --location 'http://localhost:4000/v1/images/generations' \
 --header 'Content-Type: application/json' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --data '{
     "model": "runwayml/gen4_image",
     "prompt": "A serene mountain landscape at sunset",
@@ -114,10 +114,10 @@ curl --location 'http://localhost:4000/v1/images/generations' \
 
 ## Cost Tracking
 
-LiteLLM automatically tracks RunwayML image generation costs:
+Lumina automatically tracks RunwayML image generation costs:
 
 ```python showLineNumbers title="Cost Tracking"
-from litellm import image_generation, completion_cost
+from lumina import image_generation, completion_cost
 
 response = image_generation(
     model="runwayml/gen4_image",
@@ -143,40 +143,40 @@ print(f"Image generation cost: ${cost}")
 
 ## How It Works
 
-RunwayML uses an asynchronous task-based API pattern. LiteLLM handles the polling and response transformation automatically.
+RunwayML uses an asynchronous task-based API pattern. Lumina handles the polling and response transformation automatically.
 
 ### Complete Flow Diagram
 
 ```mermaid
 sequenceDiagram
     participant Client
-    box rgb(200, 220, 255) LiteLLM AI Gateway
-        participant LiteLLM
+    box rgb(200, 220, 255) Lumina AI Gateway
+        participant Lumina
     end
     participant RunwayML as RunwayML API
 
-    Client->>LiteLLM: POST /images/generations (OpenAI format)
-    Note over LiteLLM: Transform to RunwayML format
+    Client->>Lumina: POST /images/generations (OpenAI format)
+    Note over Lumina: Transform to RunwayML format
     
-    LiteLLM->>RunwayML: POST v1/text_to_image
-    RunwayML-->>LiteLLM: 200 OK + task ID
+    Lumina->>RunwayML: POST v1/text_to_image
+    RunwayML-->>Lumina: 200 OK + task ID
     
-    Note over LiteLLM: Automatic Polling
+    Note over Lumina: Automatic Polling
     loop Every 2 seconds
-        LiteLLM->>RunwayML: GET v1/tasks/{task_id}
-        RunwayML-->>LiteLLM: Status: RUNNING
+        Lumina->>RunwayML: GET v1/tasks/{task_id}
+        RunwayML-->>Lumina: Status: RUNNING
     end
     
-    LiteLLM->>RunwayML: GET v1/tasks/{task_id}
-    RunwayML-->>LiteLLM: Status: SUCCEEDED + image URL
+    Lumina->>RunwayML: GET v1/tasks/{task_id}
+    RunwayML-->>Lumina: Status: SUCCEEDED + image URL
     
-    Note over LiteLLM: Transform to OpenAI format
-    LiteLLM-->>Client: Image Response (OpenAI format)
+    Note over Lumina: Transform to OpenAI format
+    Lumina-->>Client: Image Response (OpenAI format)
 ```
 
-### What LiteLLM Does For You
+### What Lumina Does For You
 
-When you call `litellm.image_generation()` or `/v1/images/generations`:
+When you call `lumina.image_generation()` or `/v1/images/generations`:
 
 1. **Request Transformation**: Converts OpenAI image generation format → RunwayML format
 2. **Submits Task**: Sends transformed request to RunwayML API

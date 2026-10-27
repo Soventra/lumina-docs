@@ -1,15 +1,15 @@
-# Hosted Cache - api.litellm.ai (removed)
+# Hosted Cache - api.lumina.ai (removed)
 
-The hosted cache backed by api.litellm.ai has been removed from LiteLLM. `"hosted"` is not a valid `Cache(type=...)` value, and passing it leaves the cache without a backend, so the next `completion()` call raises `AttributeError: 'Cache' object has no attribute 'cache'`
+The hosted cache backed by api.lumina.ai has been removed from Lumina. `"hosted"` is not a valid `Cache(type=...)` value, and passing it leaves the cache without a backend, so the next `completion()` call raises `AttributeError: 'Cache' object has no attribute 'cache'`
 
 Use one of the supported backends instead: `local` (the default, in memory), `redis`, `redis-semantic`, `valkey-semantic`, `qdrant-semantic`, `s3`, `gcs`, `azure-blob` or `disk`. See [Caching - In-Memory, Redis, s3, gcs, Redis Semantic Cache, Disk](./all_caches.md) for setup of each one. The examples below use the default in-memory cache
 
 ## Quick Start Usage - Completion
 ```python
-import litellm
-from litellm import completion
-from litellm.caching.caching import Cache
-litellm.cache = Cache() # in-memory cache
+import lumina
+from lumina import completion
+from lumina.caching.caching import Cache
+lumina.cache = Cache() # in-memory cache
 
 # Make completion calls
 response1 = completion(
@@ -31,33 +31,33 @@ response2 = completion(
 
 ```python
 import time
-import litellm
-from litellm import completion, embedding
-from litellm.caching.caching import Cache
-litellm.cache = Cache()
+import lumina
+from lumina import completion, embedding
+from lumina.caching.caching import Cache
+lumina.cache = Cache()
 
 start_time = time.time()
-embedding1 = embedding(model="text-embedding-ada-002", input=["hello from litellm"*5], caching=True)
+embedding1 = embedding(model="text-embedding-ada-002", input=["hello from lumina"*5], caching=True)
 end_time = time.time()
 print(f"Embedding 1 response time: {end_time - start_time} seconds")
 
 start_time = time.time()
-embedding2 = embedding(model="text-embedding-ada-002", input=["hello from litellm"*5], caching=True)
+embedding2 = embedding(model="text-embedding-ada-002", input=["hello from lumina"*5], caching=True)
 end_time = time.time()
 print(f"Embedding 2 response time: {end_time - start_time} seconds")
 ```
 
 ## Caching with Streaming 
-LiteLLM can cache your streamed responses for you
+Lumina can cache your streamed responses for you
 
 ### Usage
 ```python
-import litellm
+import lumina
 import time
-from litellm import completion
-from litellm.caching.caching import Cache
+from lumina import completion
+from lumina.caching.caching import Cache
 
-litellm.cache = Cache()
+lumina.cache = Cache()
 
 # Make completion calls
 response1 = completion(

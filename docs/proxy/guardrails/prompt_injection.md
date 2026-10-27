@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # In-memory Prompt Injection Detection
 
-LiteLLM Supports the following methods for detecting prompt injection attacks
+Lumina Supports the following methods for detecting prompt injection attacks
 
 - [Similarity Checks](#similarity-checking)
 - [LLM API Call to check](#llm-api-checks)
@@ -12,13 +12,13 @@ Both checks run on every unified endpoint: `/v1/chat/completions`, `/v1/messages
 
 ## Similarity Checking
 
-LiteLLM supports similarity checking against a pre-generated list of prompt injection attacks, to identify if a request contains an attack. 
+Lumina supports similarity checking against a pre-generated list of prompt injection attacks, to identify if a request contains an attack. 
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/93a1a865f0012eb22067f16427a7c0e584e2ac62/litellm/proxy/hooks/prompt_injection_detection.py#L4)
+[**See Code**](https://github.com/Soventra/lumina/blob/93a1a865f0012eb22067f16427a7c0e584e2ac62/lumina/proxy/hooks/prompt_injection_detection.py#L4)
 
 1. Enable `detect_prompt_injection` in your config.yaml
 ```yaml
-litellm_settings:
+lumina_settings:
     callbacks: ["detect_prompt_injection"]
 ```
 
@@ -54,7 +54,7 @@ The same request is rejected on `/v1/messages`, `/v1/responses`, `/v1/completion
 ## Settings
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["detect_prompt_injection"]
   prompt_injection_params:
     heuristics_check: true
@@ -81,7 +81,7 @@ Check if user input contains a prompt injection attack, by running it against an
 
 **Step 1. Setup config**
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["detect_prompt_injection"]
   prompt_injection_params:
     heuristics_check: true
@@ -102,7 +102,7 @@ model_list:
 **Step 2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

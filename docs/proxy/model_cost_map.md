@@ -1,6 +1,6 @@
 # Model Cost Map
 
-LiteLLM prices every request from its model cost map, [`model_prices_and_context_window.json`](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). Each entry maps a model to its rates, context limits, and capabilities. The raw JSON is large enough that GitHub will not render it, so browse the same data at [models.litellm.ai](https://models.litellm.ai/), which lists every model with its prices, context window, and supported features and lets you search by model name or provider. The proxy fetches the latest map from GitHub at startup, so new models and price changes arrive without upgrading LiteLLM. To change a price for your own deployment, see [Custom LLM Pricing](./custom_pricing) and [Custom Model Cost Map](./custom_model_cost_map).
+Lumina prices every request from its model cost map, [`model_prices_and_context_window.json`](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json). Each entry maps a model to its rates, context limits, and capabilities. The raw JSON is large enough that GitHub will not render it, so browse the same data at [models.lumina.ai](https://models.lumina.ai/), which lists every model with its prices, context window, and supported features and lets you search by model name or provider. The proxy fetches the latest map from GitHub at startup, so new models and price changes arrive without upgrading Lumina. To change a price for your own deployment, see [Custom LLM Pricing](./custom_pricing) and [Custom Model Cost Map](./custom_model_cost_map).
 
 ## Every price is USD per billable unit
 
@@ -31,7 +31,7 @@ model_list:
 
 ## How a request is priced
 
-After the response comes back, LiteLLM reads the provider's usage block, splits it into the token types that bill differently, and multiplies each count by its rate. Take an entry with `input_cost_per_token: 1e-05`, `cache_read_input_token_cost: 2.5e-07` and `output_cost_per_token: 5e-05`. A request with 112,000 prompt tokens, 100,000 of them cache reads, and 800 output tokens costs:
+After the response comes back, Lumina reads the provider's usage block, splits it into the token types that bill differently, and multiplies each count by its rate. Take an entry with `input_cost_per_token: 1e-05`, `cache_read_input_token_cost: 2.5e-07` and `output_cost_per_token: 5e-05`. A request with 112,000 prompt tokens, 100,000 of them cache reads, and 800 output tokens costs:
 
 ```text
  12,000 uncached input tokens x 1e-05    = $0.12
@@ -42,14 +42,14 @@ After the response comes back, LiteLLM reads the provider's usage block, splits 
 
 The same pattern covers everything else. A prompt over a long-context threshold uses the `_above_..._tokens` rate, a request sent with `service_tier: priority` or `flex` uses the matching suffixed rate, and audio, image, video, and reasoning tokens use their own rate when the entry has one and the text rate when it does not. Entries with a regional uplift, such as a data residency region, multiply the total by the `regional_processing_uplift_multiplier_<region>` stored on the entry.
 
-Some providers return the cost of the request themselves, and LiteLLM uses that number. xAI reports `cost_in_usd_ticks`, where one tick is 1e-10 USD. Since xAI reports one total, LiteLLM splits it between input and output in the ratio its own token math gives.
+Some providers return the cost of the request themselves, and Lumina uses that number. xAI reports `cost_in_usd_ticks`, where one tick is 1e-10 USD. Since xAI reports one total, Lumina splits it between input and output in the ratio its own token math gives.
 
 ## Currency
 
-Spend is always tracked in USD. LiteLLM does no currency conversion at request time. When a vendor publishes prices only in another currency, the cost map entry is converted to USD once at a fixed rate, and that rate is recorded in the entry's `metadata.comment`.
+Spend is always tracked in USD. Lumina does no currency conversion at request time. When a vendor publishes prices only in another currency, the cost map entry is converted to USD once at a fixed rate, and that rate is recorded in the entry's `metadata.comment`.
 
-The result of each request is written to `LiteLLM_SpendLogs.spend` as a USD float and rolled up into key, user, and team spend for budgets. Because it is a float, you may see values such as `0.14500000000000002` in logs. The tail is far below a cent, even summed over billions of requests.
+The result of each request is written to `Lumina_SpendLogs.spend` as a USD float and rolled up into key, user, and team spend for budgets. Because it is a float, you may see values such as `0.14500000000000002` in logs. The tail is far below a cent, even summed over billions of requests.
 
 ## When a request costs $0
 
-A request prices to $0 when its model, or a rate the request used, is missing from the map. The request is still logged with `spend = 0`. When the model has a non-zero rate on its entry but the request still prices to $0, the proxy also counts it in the `litellm_zero_cost_requests_total` Prometheus metric. See [Requests that price to $0](./cost_tracking#requests-that-price-to-0) for how to read the warning and fix the missing rate.
+A request prices to $0 when its model, or a rate the request used, is missing from the map. The request is still logged with `spend = 0`. When the model has a non-zero rate on its entry but the request still prices to $0, the proxy also counts it in the `lumina_zero_cost_requests_total` Prometheus metric. See [Requests that price to $0](./cost_tracking#requests-that-price-to-0) for how to read the warning and fix the missing rate.

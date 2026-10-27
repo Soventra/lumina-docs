@@ -1,6 +1,6 @@
 ---
 title: Upgrade Guide
-description: Upgrade LiteLLM with Helm or Terraform. Run schema migrations and request-log indexing in a separate job before the gateway rollout.
+description: Upgrade Lumina with Helm or Terraform. Run schema migrations and request-log indexing in a separate job before the gateway rollout.
 ---
 
 # Upgrade Guide
@@ -23,13 +23,13 @@ Read the [release notes](/release_notes) for the versions you will cross. Check 
 
 | Deployment | Select the release | Run migrations before rollout |
 |---|---|---|
-| [Helm](./deploy.md#deploy-with-helm) | Pin the chart and image versions. Keep the migration job and application images on the same LiteLLM release. | Keep `migrationJob.enabled: true` and enable the hook for your deployment controller. Wait for the job to complete. |
+| [Helm](./deploy.md#deploy-with-helm) | Pin the chart and image versions. Keep the migration job and application images on the same Lumina release. | Keep `migrationJob.enabled: true` and enable the hook for your deployment controller. Wait for the job to complete. |
 | [Terraform](./deploy.md#deploy-with-terraform-aws-and-gcp) | Bump the module `version`. Component images default to that release; review any image overrides. | Run `terraform init -upgrade`, review `terraform plan`, then apply. The modules run an ECS migration task on AWS or a Cloud Run migration job on GCP before updating the services. |
 
 <details>
 <summary>Helm and Argo CD hook settings</summary>
 
-For `helm upgrade`, use these values. The componentized `litellm` chart defaults to Helm hooks; the older `litellm-helm` chart defaults to Argo CD hooks and needs this change when used with Helm directly.
+For `helm upgrade`, use these values. The componentized `lumina` chart defaults to Helm hooks; the older `lumina-helm` chart defaults to Argo CD hooks and needs this change when used with Helm directly.
 
 ```yaml title="values.yaml"
 migrationJob:
@@ -41,7 +41,7 @@ migrationJob:
       enabled: false
 ```
 
-For Argo CD, enable `argocd` and disable `helm` instead. The PreSync job then runs before the application sync. See the chart values for [`litellm`](https://github.com/BerriAI/litellm/blob/main/helm/litellm/values.yaml) and [`litellm-helm`](https://github.com/BerriAI/litellm/blob/main/helm/litellm-helm/values.yaml).
+For Argo CD, enable `argocd` and disable `helm` instead. The PreSync job then runs before the application sync. See the chart values for [`lumina`](https://github.com/Soventra/lumina/blob/main/helm/lumina/values.yaml) and [`lumina-helm`](https://github.com/Soventra/lumina/blob/main/helm/lumina-helm/values.yaml).
 
 </details>
 
@@ -56,7 +56,7 @@ The migration job runs schema migrations first, then builds any missing request-
 | Work | What affects duration | Effect on the database |
 |---|---|---|
 | Schema changes, such as new tables or nullable columns | Usually short; lock waits can still delay them | Brief locks can delay other queries |
-| Request-log indexes | `LiteLLM_SpendLogs` size, disk speed, memory, and database load | Concurrent index builds allow reads and writes, but consume database resources |
+| Request-log indexes | `Lumina_SpendLogs` size, disk speed, memory, and database load | Concurrent index builds allow reads and writes, but consume database resources |
 | A migration with a plain index build, table rewrite, or data backfill | Rows scanned or changed; inspect the release's migration SQL | Can block writes or other queries; test and plan a maintenance window if needed |
 
 ### Expected duration
@@ -78,19 +78,19 @@ WHERE finished_at IS NOT NULL
 ORDER BY finished_at;
 ```
 
-Compare the full result with the [migration files](https://github.com/BerriAI/litellm/tree/main/litellm-proxy-extras/litellm_proxy_extras/migrations) at your **target release tag**, rather than `main`. Inspect pending SQL for operations on large tables. Request-log indexing is a separate stage, so migration history alone does not confirm that the job is done.
+Compare the full result with the [migration files](https://github.com/Soventra/lumina/tree/main/lumina-proxy-extras/lumina_proxy_extras/migrations) at your **target release tag**, rather than `main`. Inspect pending SQL for operations on large tables. Request-log indexing is a separate stage, so migration history alone does not confirm that the job is done.
 
 </details>
 
 ## Custom deployments
 
-If your deployment does not provide a migration job, run this in a separate container using the **target LiteLLM proxy image**, with `DATABASE_URL` and the required database credentials configured:
+If your deployment does not provide a migration job, run this in a separate container using the **target Lumina proxy image**, with `DATABASE_URL` and the required database credentials configured:
 
 ```bash
-DISABLE_SCHEMA_UPDATE=false litellm --skip_server_startup
+DISABLE_SCHEMA_UPDATE=false lumina --skip_server_startup
 ```
 
-This LiteLLM command runs schema migrations **and request-log indexing**, waits for both to finish, and exits without starting the gateway. Require a successful exit before rolling out gateway containers with `DISABLE_SCHEMA_UPDATE=true`.
+This Lumina command runs schema migrations **and request-log indexing**, waits for both to finish, and exits without starting the gateway. Require a successful exit before rolling out gateway containers with `DISABLE_SCHEMA_UPDATE=true`.
 
 ## When a migration is slow or stuck
 

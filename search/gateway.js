@@ -1,6 +1,6 @@
 const MODEL = 'openai/gpt-6.1-sol';
 const FALLBACKS = ['anthropic/claude-haiku-5-5', 'openai/gpt-6-luna'];
-const BASE_URL = 'https://gateway.litellm-sandbox.ai';
+const BASE_URL = 'https://gateway.lumina-sandbox.ai';
 const {getTracing} = require('./tracing');
 
 function gatewayError(name, message) {

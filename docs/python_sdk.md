@@ -1,34 +1,34 @@
 ---
 id: python_sdk
-title: LiteLLM Python SDK
+title: Lumina Python SDK
 sidebar_label: Overview
-description: The LiteLLM Python SDK gives you one interface to call 100+ LLM providers from Python, with the same input and output format for each provider.
+description: The Lumina Python SDK gives you one interface to call 100+ LLM providers from Python, with the same input and output format for each provider.
 ---
 
 import NavigationCards from '@site/src/components/NavigationCards';
 
-# LiteLLM Python SDK
+# Lumina Python SDK
 
-The LiteLLM Python SDK is a Python library. It gives you one interface to call 100+ LLM providers, such as OpenAI, Anthropic, Vertex AI, and Bedrock, in the OpenAI format.
+The Lumina Python SDK is a Python library. It gives you one interface to call 100+ LLM providers, such as OpenAI, Anthropic, Vertex AI, and Bedrock, in the OpenAI format.
 
 You import the SDK into your application code. You do not operate a server.
 
 ## Install the SDK
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
-You can also use `pip install litellm`.
+You can also use `pip install lumina`.
 
-For a leaner default installation, use [LiteLLM Core](./litellm_core.md) in a fresh environment. It keeps the same `litellm` imports and makes AWS and Python Hugging Face tokenizer dependencies optional. Install one distribution per environment: `litellm` and `litellm-core` cannot coexist
+For a leaner default installation, use [Lumina Core](./lumina_core.md) in a fresh environment. It keeps the same `lumina` imports and makes AWS and Python Hugging Face tokenizer dependencies optional. Install one distribution per environment: `lumina` and `lumina-core` cannot coexist
 
 ## Make a request
 
 Set the API key of your provider. Then call `completion()` with a model name in the format `provider/model`:
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -64,7 +64,7 @@ Each function has an async version with the prefix `a`. For example, the async v
 | `speech()` | Change text into speech audio | [speech()](/docs/text_to_speech) |
 | `rerank()` | Put documents in order of relevance to a query | [rerank()](/docs/rerank) |
 
-For all the endpoints that LiteLLM supports, refer to [Supported Endpoints](/docs/supported_endpoints).
+For all the endpoints that Lumina supports, refer to [Supported Endpoints](/docs/supported_endpoints).
 
 ## Frequent tasks
 
@@ -81,7 +81,7 @@ For all the endpoints that LiteLLM supports, refer to [Supported Endpoints](/doc
 
 ## Threads and concurrency
 
-The SDK is not thread-safe. Settings such as `litellm.api_key`, `litellm.callbacks`, `litellm.cache`, and the logging setup are global to the process, and the SDK does not lock them.
+The SDK is not thread-safe. Settings such as `lumina.api_key`, `lumina.callbacks`, `lumina.cache`, and the logging setup are global to the process, and the SDK does not lock them.
 
 Free-threaded (no-GIL) Python builds are not supported.
 
@@ -91,7 +91,7 @@ To send many requests at the same time, use the async functions, such as `acompl
 
 Use the SDK if you send requests to LLMs from one Python application. Use the [AI Gateway](/docs/simple_proxy) if more than one application sends requests, or if virtual keys, spend tracking, or logs in one location are necessary.
 
-The SDK can also send requests to an AI Gateway. Add the prefix `litellm_proxy/` to the model name. Refer to [LiteLLM Proxy as a provider](/docs/providers/litellm_proxy).
+The SDK can also send requests to an AI Gateway. Add the prefix `lumina_proxy/` to the model name. Refer to [Lumina Proxy as a provider](/docs/providers/lumina_proxy).
 
 ## Next steps
 

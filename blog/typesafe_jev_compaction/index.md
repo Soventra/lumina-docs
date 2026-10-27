@@ -1,17 +1,17 @@
 ---
 slug: typesafe-jev-compaction
-title: "Reduce agent context with TypeSafe Jev and LiteLLM"
+title: "Reduce agent context with TypeSafe Jev and Lumina"
 date: 2026-09-18T10:00:00
 authors:
   - yassin
-description: "Use TypeSafe Jev to remove old tool results from bot conversations and enable compaction for a team in LiteLLM."
+description: "Use TypeSafe Jev to remove old tool results from bot conversations and enable compaction for a team in Lumina."
 tags: [product, agents, guardrails]
 hide_table_of_contents: false
 ---
 
 A bot looks up the weather, then checks a shop's opening hours. The user asks, "What time does the shop close?" The bot still sends the old weather report to the model, even though it no longer helps answer the question.
 
-TypeSafe Jev helps LiteLLM spot tool results that are no longer needed. LiteLLM replaces those results with a short notice before calling the model. This is called compaction, and it can reduce the input tokens used by long conversations.
+TypeSafe Jev helps Lumina spot tool results that are no longer needed. Lumina replaces those results with a short notice before calling the model. This is called compaction, and it can reduce the input tokens used by long conversations.
 
 {/* truncate */}
 
@@ -19,16 +19,16 @@ TypeSafe Jev helps LiteLLM spot tool results that are no longer needed. LiteLLM 
 
 [TypeSafe's Jev](https://docs.typesafe.ai/api) answers questions with a choice, a score, or a yes/no probability. For example, it can choose whether a customer question belongs with billing or support.
 
-You can call Jev directly through LiteLLM's `/typesafe/v1/systemone` endpoint. The [TypeSafe pass-through guide](/docs/pass_through/typesafe) shows the request format, logging, and cost tracking.
+You can call Jev directly through Lumina's `/typesafe/v1/systemone` endpoint. The [TypeSafe pass-through guide](/docs/pass_through/typesafe) shows the request format, logging, and cost tracking.
 
-For compaction, LiteLLM asks Jev a simple question about each older tool result: **does the bot still need this to answer the user's latest question?**
+For compaction, Lumina asks Jev a simple question about each older tool result: **does the bot still need this to answer the user's latest question?**
 
 ## How compaction works
 
 ```mermaid
 sequenceDiagram
     participant A as Bot
-    participant G as LiteLLM
+    participant G as Lumina
     participant J as TypeSafe Jev
     participant M as Model
     A->>G: Chat history, including tool results
@@ -40,19 +40,19 @@ sequenceDiagram
     G-->>A: Answer
 ```
 
-LiteLLM checks each completed tool exchange: a tool call and its results. By default, results with a Jev score below `0.2` are replaced with:
+Lumina checks each completed tool exchange: a tool call and its results. By default, results with a Jev score below `0.2` are replaced with:
 
 ```text
 [Tool result removed by TypeSafe compaction: judged no longer relevant to the current task]
 ```
 
-Results that are kept stay unchanged. LiteLLM also keeps the tool calls and their IDs, so the conversation still has the structure the model expects. System and user messages are unchanged. The last assistant message and any tool exchange it belongs to are protected.
+Results that are kept stay unchanged. Lumina also keeps the tool calls and their IDs, so the conversation still has the structure the model expects. System and user messages are unchanged. The last assistant message and any tool exchange it belongs to are protected.
 
 The guardrail works with Chat Completions, Anthropic Messages, and the Responses API. Jev checks the old tool results; your chosen model writes the answer.
 
-## Enable compaction in LiteLLM
+## Enable compaction in Lumina
 
-Use a LiteLLM proxy with a model already configured and a build that includes the `typesafe` guardrail. Keep your existing authentication setup, including OIDC if you use it.
+Use a Lumina proxy with a model already configured and a build that includes the `typesafe` guardrail. Keep your existing authentication setup, including OIDC if you use it.
 
 Set your TypeSafe API key on the proxy:
 
@@ -73,11 +73,11 @@ guardrails:
         relevance_threshold: 0.2
 ```
 
-`pre_call` means compaction runs before LiteLLM calls your model. The proxy sends TypeSafe the system text, latest user question, and older tool exchanges selected for evaluation. This setup leaves compaction off until you enable it for a request or team.
+`pre_call` means compaction runs before Lumina calls your model. The proxy sends TypeSafe the system text, latest user question, and older tool exchanges selected for evaluation. This setup leaves compaction off until you enable it for a request or team.
 
 ## Try it: weather, then shop hours
 
-This example has two tool results: a weather report and the shop's opening hours. The user only wants to know when the shop closes. Jev can mark the weather report for removal. The shop hours belong to the last assistant exchange, so LiteLLM keeps them.
+This example has two tool results: a weather report and the shop's opening hours. The user only wants to know when the shop closes. Jev can mark the weather report for removal. The shop hours belong to the last assistant exchange, so Lumina keeps them.
 
 Set `LUMINA_PROXY_URL` to your gateway URL and `ACCESS_TOKEN` to a bearer token accepted by your proxy. For OIDC, use your valid OIDC access token. Replace `my-model` below with a model available to your team.
 
@@ -118,13 +118,13 @@ curl -i "$LUMINA_PROXY_URL/v1/chat/completions" \
 
 </details>
 
-Both tool results are longer than the default 200-character minimum. If Jev scores the weather result below `0.2`, LiteLLM replaces it with the removal notice. The shop hours stay in the request, and the model should answer **6 PM**.
+Both tool results are longer than the default 200-character minimum. If Jev scores the weather result below `0.2`, Lumina replaces it with the removal notice. The shop hours stay in the request, and the model should answer **6 PM**.
 
 Jev may decide a result is still useful and keep it. Turning on compaction does not guarantee that every request gets smaller.
 
 ## Check the result
 
-Look for `jev-compaction` in the `x-litellm-applied-guardrails` response header. On a proxy with database logging, open the request in **Logs → Guardrails & Policy Compliance**. When results are removed, the guardrail records:
+Look for `jev-compaction` in the `x-lumina-applied-guardrails` response header. On a proxy with database logging, open the request in **Logs → Guardrails & Policy Compliance**. When results are removed, the guardrail records:
 
 | Field | What it shows |
 | --- | --- |
@@ -137,7 +137,7 @@ Compare the same request with compaction on and off. For the off version, remove
 
 ## Turn it on for a team
 
-On LiteLLM Enterprise, attach `jev-compaction` to a team. If your users authenticate with OIDC, use the LiteLLM team that their tokens map to. See the [OIDC setup guide](/docs/proxy/token_auth#tracking-end-users--internal-users--team--org) for that mapping.
+On Lumina Enterprise, attach `jev-compaction` to a team. If your users authenticate with OIDC, use the Lumina team that their tokens map to. See the [OIDC setup guide](/docs/proxy/token_auth#tracking-end-users--internal-users--team--org) for that mapping.
 
 ```bash
 curl "$LUMINA_PROXY_URL/team/update" \
@@ -149,6 +149,6 @@ curl "$LUMINA_PROXY_URL/team/update" \
   }'
 ```
 
-Start with the default score threshold of `0.2`. A higher threshold can remove more results, so check that answers stay correct before raising it. If Jev is unavailable, LiteLLM's default `fail_open` setting sends the original request to the model without compaction.
+Start with the default score threshold of `0.2`. A higher threshold can remove more results, so check that answers stay correct before raising it. If Jev is unavailable, Lumina's default `fail_open` setting sends the original request to the model without compaction.
 
 See the [TypeSafe compaction guide](/docs/proxy/guardrails/typesafe) for more settings, or the [pass-through guide](/docs/pass_through/typesafe) to call Jev directly.

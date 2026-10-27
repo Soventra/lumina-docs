@@ -1,6 +1,6 @@
 # Automatic JevRank SDK and Router checks
 
-These three live checks use LiteLLM commit `10de80b6452a9945af05fdbea9e0aa0501661c69`: synchronous `rerank`, asynchronous `arerank`, and a Router deployment alias. Each sends a query and two documents through the existing gateway. The model catalog selects the scoring method; the calls contain no strategy parameters or mode override.
+These three live checks use Lumina commit `10de80b6452a9945af05fdbea9e0aa0501661c69`: synchronous `rerank`, asynchronous `arerank`, and a Router deployment alias. Each sends a query and two documents through the existing gateway. The model catalog selects the scoring method; the calls contain no strategy parameters or mode override.
 
 All three checks returned Jev 1.13.0, ranked the relevant document first, and preserved the original document indexes. Each completed two HTTP 200 provider requests and reported 642 input tokens and 44 output tokens. The SDK cost calculation, tokens multiplied by the configured price, and observed gateway cost headers each totalled $0.000026964. Latencies were 0.356 seconds for sync, 0.202 for async, and 0.254 for the Router alias.
 

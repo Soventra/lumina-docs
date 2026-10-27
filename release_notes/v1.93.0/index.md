@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.93.0 - GPT-5.6, Client-Forwarded MCP Credentials & Meta Model API"
+title: "Lumina v1.93.0 - GPT-5.6, Client-Forwarded MCP Credentials & Meta Model API"
 description: "Adds GPT-5.6, Grok-4.5 and the Meta Model API. Keys now get throttled at their spend limit instead of being revoked."
 slug: "v1-93-0"
 date: 2026-07-18T00:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.93.0
+docker.lumina.ai/soventra/lumina:1.93.0
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.93.0
+pip install lumina==1.93.0
 ```
 
 </TabItem>
@@ -46,9 +46,9 @@ pip install litellm==1.93.0
 
 :::danger[Breaking Changes]
 
-**Keys are now throttled instead of revoked when they hit a spend limit.** A key that exceeds its budget is rate-limited rather than losing access outright, so workflows that depended on a hard block at the limit will see requests slowed instead of rejected. See [PR #31300](https://github.com/BerriAI/litellm/pull/31300).
+**Keys are now throttled instead of revoked when they hit a spend limit.** A key that exceeds its budget is rate-limited rather than losing access outright, so workflows that depended on a hard block at the limit will see requests slowed instead of rejected. See [PR #31300](https://github.com/Soventra/lumina/pull/31300).
 
-**OpenTelemetry error detail keys moved under the `litellm.*` namespace.** Error spans now carry litellm error details under `litellm.*` rather than their previous keys, so dashboards and queries referencing the old attribute names will stop matching. See [PR #32591](https://github.com/BerriAI/litellm/pull/32591).
+**OpenTelemetry error detail keys moved under the `lumina.*` namespace.** Error spans now carry lumina error details under `lumina.*` rather than their previous keys, so dashboards and queries referencing the old attribute names will stop matching. See [PR #32591](https://github.com/Soventra/lumina/pull/32591).
 
 :::
 
@@ -64,9 +64,9 @@ pip install litellm==1.93.0
 
 ### New Providers (1 new provider)
 
-| Provider | Supported LiteLLM Endpoints | Description |
+| Provider | Supported Lumina Endpoints | Description |
 | --- | --- | --- |
-| Meta Model API (`meta`) | Chat Completions, `/v1/messages`, Responses | OpenAI-compatible Meta Model API provider serving `muse-spark-1.1` on day-0 - [PR #32701](https://github.com/BerriAI/litellm/pull/32701) |
+| Meta Model API (`meta`) | Chat Completions, `/v1/messages`, Responses | OpenAI-compatible Meta Model API provider serving `muse-spark-1.1` on day-0 - [PR #32701](https://github.com/Soventra/lumina/pull/32701) |
 
 ## New Models / Updated Models
 
@@ -83,229 +83,229 @@ pip install litellm==1.93.0
 | Amazon Bedrock | `jp.anthropic.claude-opus-4-8` | 1M | $5.50 | $27.50 | Reasoning, computer use, vision, PDF input, adaptive thinking |
 | Google Vertex AI | `vertex_ai/chirp_3` (Speech-to-Text) | n/a | $0.00026667 / sec | n/a | Audio transcription |
 
-GPT-5.6 ships priority, flex, batch, and above-272k long-context pricing tiers on both OpenAI and Azure - [PR #32659](https://github.com/BerriAI/litellm/pull/32659), [PR #32678](https://github.com/BerriAI/litellm/pull/32678). Azure `gpt-5.4` / `gpt-5.5` gained data-zone and long-context entries - [PR #32279](https://github.com/BerriAI/litellm/pull/32279), and Bedrock regional inference profiles now resolve to their regional pricing in `get_model_info` - [PR #32389](https://github.com/BerriAI/litellm/pull/32389).
+GPT-5.6 ships priority, flex, batch, and above-272k long-context pricing tiers on both OpenAI and Azure - [PR #32659](https://github.com/Soventra/lumina/pull/32659), [PR #32678](https://github.com/Soventra/lumina/pull/32678). Azure `gpt-5.4` / `gpt-5.5` gained data-zone and long-context entries - [PR #32279](https://github.com/Soventra/lumina/pull/32279), and Bedrock regional inference profiles now resolve to their regional pricing in `get_model_info` - [PR #32389](https://github.com/Soventra/lumina/pull/32389).
 
 #### Features
 
 - **[OpenAI](../../docs/providers/openai)**
-    - Add GPT-5.6 (`sol` / `terra` / `luna`) pricing and metadata - [PR #32659](https://github.com/BerriAI/litellm/pull/32659)
-    - Add `gpt-realtime-2.1` models with regional processing uplift - [PR #32387](https://github.com/BerriAI/litellm/pull/32387)
-    - Forward the `verbosity` param to chat completion providers - [PR #32254](https://github.com/BerriAI/litellm/pull/32254)
+    - Add GPT-5.6 (`sol` / `terra` / `luna`) pricing and metadata - [PR #32659](https://github.com/Soventra/lumina/pull/32659)
+    - Add `gpt-realtime-2.1` models with regional processing uplift - [PR #32387](https://github.com/Soventra/lumina/pull/32387)
+    - Forward the `verbosity` param to chat completion providers - [PR #32254](https://github.com/Soventra/lumina/pull/32254)
 - **[Azure](../../docs/providers/azure)**
-    - Add Azure GPT-5.6 (`sol` / `terra` / `luna`) pricing and metadata - [PR #32678](https://github.com/BerriAI/litellm/pull/32678)
-    - Add Azure data-zone and long-context pricing for `gpt-5.4` / `gpt-5.5` - [PR #32279](https://github.com/BerriAI/litellm/pull/32279)
+    - Add Azure GPT-5.6 (`sol` / `terra` / `luna`) pricing and metadata - [PR #32678](https://github.com/Soventra/lumina/pull/32678)
+    - Add Azure data-zone and long-context pricing for `gpt-5.4` / `gpt-5.5` - [PR #32279](https://github.com/Soventra/lumina/pull/32279)
 - **[xAI](../../docs/providers/xai)**
-    - Add `xai/grok-4.5` pricing and metadata - [PR #32549](https://github.com/BerriAI/litellm/pull/32549)
+    - Add `xai/grok-4.5` pricing and metadata - [PR #32549](https://github.com/Soventra/lumina/pull/32549)
 - **[Meta](../../docs/providers/meta)**
-    - Add the Meta Model API provider and `muse-spark-1.1` on day-0 - [PR #32701](https://github.com/BerriAI/litellm/pull/32701)
+    - Add the Meta Model API provider and `muse-spark-1.1` on day-0 - [PR #32701](https://github.com/Soventra/lumina/pull/32701)
 - **[Amazon Bedrock](../../docs/providers/bedrock)**
-    - Add `jp.anthropic.claude-opus-4-8` to the model cost map - [PR #32840](https://github.com/BerriAI/litellm/pull/32840)
-    - Retain `clear_tool_uses_20250919` context-management edits and emit the `context-management-2025-06-27` beta for Claude Invoke - [PR #32658](https://github.com/BerriAI/litellm/pull/32658)
-    - Flag mapped Claude 4.8+ entries with `supports_mid_conversation_system` - [PR #32882](https://github.com/BerriAI/litellm/pull/32882)
+    - Add `jp.anthropic.claude-opus-4-8` to the model cost map - [PR #32840](https://github.com/Soventra/lumina/pull/32840)
+    - Retain `clear_tool_uses_20250919` context-management edits and emit the `context-management-2025-06-27` beta for Claude Invoke - [PR #32658](https://github.com/Soventra/lumina/pull/32658)
+    - Flag mapped Claude 4.8+ entries with `supports_mid_conversation_system` - [PR #32882](https://github.com/Soventra/lumina/pull/32882)
 - **[Google Vertex AI](../../docs/providers/vertex)**
-    - Add Google Cloud Speech-to-Text Chirp 3 transcription support - [PR #32274](https://github.com/BerriAI/litellm/pull/32274)
+    - Add Google Cloud Speech-to-Text Chirp 3 transcription support - [PR #32274](https://github.com/Soventra/lumina/pull/32274)
 - **[Anthropic](../../docs/providers/anthropic)**
-    - Translate adaptive thinking/effort to pre-4.6 model support and thread the real provider through capability probes - [PR #32867](https://github.com/BerriAI/litellm/pull/32867), [PR #32874](https://github.com/BerriAI/litellm/pull/32874)
-    - Resolve `@default` Vertex AI models to adaptive thinking by stripping the `@version` suffix in lookup candidates - [PR #32833](https://github.com/BerriAI/litellm/pull/32833)
+    - Translate adaptive thinking/effort to pre-4.6 model support and thread the real provider through capability probes - [PR #32867](https://github.com/Soventra/lumina/pull/32867), [PR #32874](https://github.com/Soventra/lumina/pull/32874)
+    - Resolve `@default` Vertex AI models to adaptive thinking by stripping the `@version` suffix in lookup candidates - [PR #32833](https://github.com/Soventra/lumina/pull/32833)
 
 ### Bug Fixes
 
 - **[Amazon Bedrock](../../docs/providers/bedrock)**
-    - Preserve the stream param and decode SSE for Bedrock Mantle streaming - [PR #32141](https://github.com/BerriAI/litellm/pull/32141)
-    - Emit an SSE error event when an invoke Messages stream ends without `message_stop` - [PR #32159](https://github.com/BerriAI/litellm/pull/32159)
-    - Stop stale SigV4 headers clobbering a fresh signature on strip-and-retry re-sign - [PR #32371](https://github.com/BerriAI/litellm/pull/32371)
-    - Honor `cache_control` ttl on message-level cache points - [PR #32538](https://github.com/BerriAI/litellm/pull/32538), [PR #32551](https://github.com/BerriAI/litellm/pull/32551)
-    - Keep mid-conversation system messages in place for Claude Invoke, gated on model support - [PR #32578](https://github.com/BerriAI/litellm/pull/32578), [PR #32831](https://github.com/BerriAI/litellm/pull/32831)
-    - Honor AWS auth params in the realtime handler - [PR #32275](https://github.com/BerriAI/litellm/pull/32275)
-    - Forward AWS credential kwargs into `lumina_params` so the chat -> Responses bridge keeps Web Identity Federation auth - [PR #32956](https://github.com/BerriAI/litellm/pull/32956)
+    - Preserve the stream param and decode SSE for Bedrock Mantle streaming - [PR #32141](https://github.com/Soventra/lumina/pull/32141)
+    - Emit an SSE error event when an invoke Messages stream ends without `message_stop` - [PR #32159](https://github.com/Soventra/lumina/pull/32159)
+    - Stop stale SigV4 headers clobbering a fresh signature on strip-and-retry re-sign - [PR #32371](https://github.com/Soventra/lumina/pull/32371)
+    - Honor `cache_control` ttl on message-level cache points - [PR #32538](https://github.com/Soventra/lumina/pull/32538), [PR #32551](https://github.com/Soventra/lumina/pull/32551)
+    - Keep mid-conversation system messages in place for Claude Invoke, gated on model support - [PR #32578](https://github.com/Soventra/lumina/pull/32578), [PR #32831](https://github.com/Soventra/lumina/pull/32831)
+    - Honor AWS auth params in the realtime handler - [PR #32275](https://github.com/Soventra/lumina/pull/32275)
+    - Forward AWS credential kwargs into `lumina_params` so the chat -> Responses bridge keeps Web Identity Federation auth - [PR #32956](https://github.com/Soventra/lumina/pull/32956)
 - **[Google Vertex AI](../../docs/providers/vertex)**
-    - Build the full request path when a custom `api_base` has no path - [PR #32367](https://github.com/BerriAI/litellm/pull/32367)
-    - Return the `create_vertex_url` result directly for openai-path partner models with a custom `api_base` - [PR #32380](https://github.com/BerriAI/litellm/pull/32380)
-    - Forward realtime health check params - [PR #32550](https://github.com/BerriAI/litellm/pull/32550)
+    - Build the full request path when a custom `api_base` has no path - [PR #32367](https://github.com/Soventra/lumina/pull/32367)
+    - Return the `create_vertex_url` result directly for openai-path partner models with a custom `api_base` - [PR #32380](https://github.com/Soventra/lumina/pull/32380)
+    - Forward realtime health check params - [PR #32550](https://github.com/Soventra/lumina/pull/32550)
 - **[Azure](../../docs/providers/azure)**
-    - Build the responses `input_items` url with the path before the query string - [PR #32270](https://github.com/BerriAI/litellm/pull/32270)
+    - Build the responses `input_items` url with the path before the query string - [PR #32270](https://github.com/Soventra/lumina/pull/32270)
 - **[Anthropic](../../docs/providers/anthropic)**
-    - Drop an incompatible pinned `temperature` when downgrading adaptive thinking for pre-4.6 models on `/v1/messages` - [PR #33244](https://github.com/BerriAI/litellm/pull/33244)
+    - Drop an incompatible pinned `temperature` when downgrading adaptive thinking for pre-4.6 models on `/v1/messages` - [PR #33244](https://github.com/Soventra/lumina/pull/33244)
 - **General**
-    - Forward provider response headers on streaming `/v1/messages` responses - [PR #32160](https://github.com/BerriAI/litellm/pull/32160)
-    - Surface in-body error payloads on OpenAI-compatible streams - [PR #32237](https://github.com/BerriAI/litellm/pull/32237)
-    - Resolve `os.environ/` references universally in DB-sourced models - [PR #32405](https://github.com/BerriAI/litellm/pull/32405)
-    - Stop per-request custom pricing from clobbering shared `model_cost` pricing - [PR #32163](https://github.com/BerriAI/litellm/pull/32163)
+    - Forward provider response headers on streaming `/v1/messages` responses - [PR #32160](https://github.com/Soventra/lumina/pull/32160)
+    - Surface in-body error payloads on OpenAI-compatible streams - [PR #32237](https://github.com/Soventra/lumina/pull/32237)
+    - Resolve `os.environ/` references universally in DB-sourced models - [PR #32405](https://github.com/Soventra/lumina/pull/32405)
+    - Stop per-request custom pricing from clobbering shared `model_cost` pricing - [PR #32163](https://github.com/Soventra/lumina/pull/32163)
 
 ## LLM API Endpoints
 
 #### Features
 
 - **[Responses API](../../docs/response_api)**
-    - Preserve custom-tool round-trips and allowlists for the Codex CLI in the responses bridge - [PR #32258](https://github.com/BerriAI/litellm/pull/32258)
-    - Preserve `reasoning_tokens` through the chat -> responses usage translation - [PR #32837](https://github.com/BerriAI/litellm/pull/32837)
+    - Preserve custom-tool round-trips and allowlists for the Codex CLI in the responses bridge - [PR #32258](https://github.com/Soventra/lumina/pull/32258)
+    - Preserve `reasoning_tokens` through the chat -> responses usage translation - [PR #32837](https://github.com/Soventra/lumina/pull/32837)
 - **[Pass-through](/docs/pass_through/intro)**
-    - Stream non-SSE pass-through responses instead of buffering them in memory - [PR #32386](https://github.com/BerriAI/litellm/pull/32386)
+    - Stream non-SSE pass-through responses instead of buffering them in memory - [PR #32386](https://github.com/Soventra/lumina/pull/32386)
 - **General**
-    - Merge websearch tool params - [PR #32162](https://github.com/BerriAI/litellm/pull/32162)
-    - Stamp `completion_start_time` on the first chunk for `/v1/messages` and `/v1/responses` - [PR #32284](https://github.com/BerriAI/litellm/pull/32284)
+    - Merge websearch tool params - [PR #32162](https://github.com/Soventra/lumina/pull/32162)
+    - Stamp `completion_start_time` on the first chunk for `/v1/messages` and `/v1/responses` - [PR #32284](https://github.com/Soventra/lumina/pull/32284)
 
 #### Bugs
 
 - **[Responses API](../../docs/response_api)**
-    - Make response-id encoding idempotent to prevent double-encoding - [PR #32034](https://github.com/BerriAI/litellm/pull/32034)
-    - Map an upstream 4xx on cancel to a client error instead of a 500, and surface the upstream error status on get - [PR #32271](https://github.com/BerriAI/litellm/pull/32271), [PR #32287](https://github.com/BerriAI/litellm/pull/32287)
-    - Raise `APIError` on in-stream error events and widen `ErrorEventError.param` to accept a dict - [PR #32835](https://github.com/BerriAI/litellm/pull/32835)
-    - Stop scheduling the sync `success_handler` concurrently with `async_success_handler` - [PR #32239](https://github.com/BerriAI/litellm/pull/32239)
-    - Decrypt response ids for `input_items` follow-ups - [PR #32269](https://github.com/BerriAI/litellm/pull/32269)
+    - Make response-id encoding idempotent to prevent double-encoding - [PR #32034](https://github.com/Soventra/lumina/pull/32034)
+    - Map an upstream 4xx on cancel to a client error instead of a 500, and surface the upstream error status on get - [PR #32271](https://github.com/Soventra/lumina/pull/32271), [PR #32287](https://github.com/Soventra/lumina/pull/32287)
+    - Raise `APIError` on in-stream error events and widen `ErrorEventError.param` to accept a dict - [PR #32835](https://github.com/Soventra/lumina/pull/32835)
+    - Stop scheduling the sync `success_handler` concurrently with `async_success_handler` - [PR #32239](https://github.com/Soventra/lumina/pull/32239)
+    - Decrypt response ids for `input_items` follow-ups - [PR #32269](https://github.com/Soventra/lumina/pull/32269)
 - **[Rerank](../../docs/rerank)**
-    - Log `optional_rerank_params` at debug so request content is not written to logs - [PR #32533](https://github.com/BerriAI/litellm/pull/32533)
+    - Log `optional_rerank_params` at debug so request content is not written to logs - [PR #32533](https://github.com/Soventra/lumina/pull/32533)
 - **General**
-    - Stop request params from clobbering merged target query params in pass-through - [PR #32404](https://github.com/BerriAI/litellm/pull/32404)
+    - Stop request params from clobbering merged target query params in pass-through - [PR #32404](https://github.com/Soventra/lumina/pull/32404)
 
 ## Management Endpoints / UI
 
 #### Features
 
 - **UI (shadcn / Base UI migration)**
-    - Switch the shadcn primitives from Radix to Base UI - [PR #32124](https://github.com/BerriAI/litellm/pull/32124)
-    - Add a shared composable DataTable and reskin it onto shadcn table primitives, with a filter drawer, column visibility, and search - [PR #32680](https://github.com/BerriAI/litellm/pull/32680), [PR #32209](https://github.com/BerriAI/litellm/pull/32209), [PR #32856](https://github.com/BerriAI/litellm/pull/32856)
-    - shadcn charts foundation with tremor-compatible wrappers and conversion of the caching, projects, activity, usage, and per-user charts to shadcn/recharts - [PR #32668](https://github.com/BerriAI/litellm/pull/32668), [PR #32721](https://github.com/BerriAI/litellm/pull/32721), [PR #32722](https://github.com/BerriAI/litellm/pull/32722), [PR #32725](https://github.com/BerriAI/litellm/pull/32725), [PR #32726](https://github.com/BerriAI/litellm/pull/32726), [PR #32729](https://github.com/BerriAI/litellm/pull/32729)
-    - Full-height sidebar shell with a content-scoped top bar, a redesigned account menu, and a shared CopyButton - [PR #32793](https://github.com/BerriAI/litellm/pull/32793), [PR #32931](https://github.com/BerriAI/litellm/pull/32931), [PR #32945](https://github.com/BerriAI/litellm/pull/32945)
-    - Typed openapi-fetch foundation (`fetchClient`) with a first typed caller - [PR #29884](https://github.com/BerriAI/litellm/pull/29884)
+    - Switch the shadcn primitives from Radix to Base UI - [PR #32124](https://github.com/Soventra/lumina/pull/32124)
+    - Add a shared composable DataTable and reskin it onto shadcn table primitives, with a filter drawer, column visibility, and search - [PR #32680](https://github.com/Soventra/lumina/pull/32680), [PR #32209](https://github.com/Soventra/lumina/pull/32209), [PR #32856](https://github.com/Soventra/lumina/pull/32856)
+    - shadcn charts foundation with tremor-compatible wrappers and conversion of the caching, projects, activity, usage, and per-user charts to shadcn/recharts - [PR #32668](https://github.com/Soventra/lumina/pull/32668), [PR #32721](https://github.com/Soventra/lumina/pull/32721), [PR #32722](https://github.com/Soventra/lumina/pull/32722), [PR #32725](https://github.com/Soventra/lumina/pull/32725), [PR #32726](https://github.com/Soventra/lumina/pull/32726), [PR #32729](https://github.com/Soventra/lumina/pull/32729)
+    - Full-height sidebar shell with a content-scoped top bar, a redesigned account menu, and a shared CopyButton - [PR #32793](https://github.com/Soventra/lumina/pull/32793), [PR #32931](https://github.com/Soventra/lumina/pull/32931), [PR #32945](https://github.com/Soventra/lumina/pull/32945)
+    - Typed openapi-fetch foundation (`fetchClient`) with a first typed caller - [PR #29884](https://github.com/Soventra/lumina/pull/29884)
 - **Dashboard**
-    - Enterprise license expiry banner on the admin dashboard - [PR #32540](https://github.com/BerriAI/litellm/pull/32540)
-    - Session id filter and duration/start-time sort on request logs and the session sidebar - [PR #32568](https://github.com/BerriAI/litellm/pull/32568), [PR #32432](https://github.com/BerriAI/litellm/pull/32432)
-    - Cost optimization feedback banner on the models page - [PR #32174](https://github.com/BerriAI/litellm/pull/32174)
-    - Expose MCP `max_concurrent_requests` in the server create and edit forms - [PR #32397](https://github.com/BerriAI/litellm/pull/32397)
-    - Root the gateway breadcrumb in the AI Gateway selector - [PR #32886](https://github.com/BerriAI/litellm/pull/32886)
-    - Back the Redis URL and Database Index UI fields end-to-end - [PR #32075](https://github.com/BerriAI/litellm/pull/32075)
+    - Enterprise license expiry banner on the admin dashboard - [PR #32540](https://github.com/Soventra/lumina/pull/32540)
+    - Session id filter and duration/start-time sort on request logs and the session sidebar - [PR #32568](https://github.com/Soventra/lumina/pull/32568), [PR #32432](https://github.com/Soventra/lumina/pull/32432)
+    - Cost optimization feedback banner on the models page - [PR #32174](https://github.com/Soventra/lumina/pull/32174)
+    - Expose MCP `max_concurrent_requests` in the server create and edit forms - [PR #32397](https://github.com/Soventra/lumina/pull/32397)
+    - Root the gateway breadcrumb in the AI Gateway selector - [PR #32886](https://github.com/Soventra/lumina/pull/32886)
+    - Back the Redis URL and Database Index UI fields end-to-end - [PR #32075](https://github.com/Soventra/lumina/pull/32075)
 - **Auth & Management**
-    - RESTful `PATCH /team/{team_id}` with JSON merge patch semantics, reachable by org admins - [PR #32883](https://github.com/BerriAI/litellm/pull/32883)
-    - JWT auth falls back to DB team memberships when the token has no team claims - [PR #31356](https://github.com/BerriAI/litellm/pull/31356)
-    - `lite auth print-token` for Claude Code `apiKeyHelper` support - [PR #32846](https://github.com/BerriAI/litellm/pull/32846)
-    - Add an `expires` filter to `GET /key/list` - [PR #32953](https://github.com/BerriAI/litellm/pull/32953)
-    - Make the Microsoft Graph endpoint configurable for GCC High - [PR #32517](https://github.com/BerriAI/litellm/pull/32517)
+    - RESTful `PATCH /team/{team_id}` with JSON merge patch semantics, reachable by org admins - [PR #32883](https://github.com/Soventra/lumina/pull/32883)
+    - JWT auth falls back to DB team memberships when the token has no team claims - [PR #31356](https://github.com/Soventra/lumina/pull/31356)
+    - `lite auth print-token` for Claude Code `apiKeyHelper` support - [PR #32846](https://github.com/Soventra/lumina/pull/32846)
+    - Add an `expires` filter to `GET /key/list` - [PR #32953](https://github.com/Soventra/lumina/pull/32953)
+    - Make the Microsoft Graph endpoint configurable for GCC High - [PR #32517](https://github.com/Soventra/lumina/pull/32517)
 
 #### Bugs
 
 - **UI**
-    - Scope the key models dropdown options to the key's team - [PR #32382](https://github.com/BerriAI/litellm/pull/32382)
-    - Reflect the persisted "Store Prompts in Spend Logs" toggle on load - [PR #32145](https://github.com/BerriAI/litellm/pull/32145)
-    - Prevent the reasoning block from expanding the chat playground layout - [PR #32485](https://github.com/BerriAI/litellm/pull/32485)
-    - Rename the Virtual Keys "Key Hash" filter label to "Key ID" - [PR #32672](https://github.com/BerriAI/litellm/pull/32672)
-    - Forward refs through UI primitives and fail tests on swallowed refs - [PR #32401](https://github.com/BerriAI/litellm/pull/32401)
-    - Strip a trailing slash from `--base-url` in the lite CLI - [PR #32845](https://github.com/BerriAI/litellm/pull/32845)
+    - Scope the key models dropdown options to the key's team - [PR #32382](https://github.com/Soventra/lumina/pull/32382)
+    - Reflect the persisted "Store Prompts in Spend Logs" toggle on load - [PR #32145](https://github.com/Soventra/lumina/pull/32145)
+    - Prevent the reasoning block from expanding the chat playground layout - [PR #32485](https://github.com/Soventra/lumina/pull/32485)
+    - Rename the Virtual Keys "Key Hash" filter label to "Key ID" - [PR #32672](https://github.com/Soventra/lumina/pull/32672)
+    - Forward refs through UI primitives and fail tests on swallowed refs - [PR #32401](https://github.com/Soventra/lumina/pull/32401)
+    - Strip a trailing slash from `--base-url` in the lite CLI - [PR #32845](https://github.com/Soventra/lumina/pull/32845)
 - **Auth & Management**
-    - Surface OAuth error params in the SSO callback - [PR #32433](https://github.com/BerriAI/litellm/pull/32433)
-    - Resolve team org from `team_id` so org admins can update team budgets - [PR #32560](https://github.com/BerriAI/litellm/pull/32560)
-    - Honor `os.environ/` references for all AWS auth params in DB-sourced models - [PR #32256](https://github.com/BerriAI/litellm/pull/32256)
-    - Hash Bearer-prefixed API keys before writing spend logs - [PR #31799](https://github.com/BerriAI/litellm/pull/31799)
+    - Surface OAuth error params in the SSO callback - [PR #32433](https://github.com/Soventra/lumina/pull/32433)
+    - Resolve team org from `team_id` so org admins can update team budgets - [PR #32560](https://github.com/Soventra/lumina/pull/32560)
+    - Honor `os.environ/` references for all AWS auth params in DB-sourced models - [PR #32256](https://github.com/Soventra/lumina/pull/32256)
+    - Hash Bearer-prefixed API keys before writing spend logs - [PR #31799](https://github.com/Soventra/lumina/pull/31799)
 
 ## AI Integrations
 
 ### Logging
 
 - **[OpenTelemetry](../../docs/observability/opentelemetry_integration)**
-    - Stamp `gen_ai.response.time_to_first_chunk` on streaming LLM spans - [PR #32236](https://github.com/BerriAI/litellm/pull/32236)
-    - Emit the `gen_ai.client.operation.exception` event on failed LLM calls and restore `error.*` span attributes on v2 error spans - [PR #32655](https://github.com/BerriAI/litellm/pull/32655), [PR #32524](https://github.com/BerriAI/litellm/pull/32524)
-    - Move litellm error detail keys under the `litellm.*` namespace - [PR #32591](https://github.com/BerriAI/litellm/pull/32591)
+    - Stamp `gen_ai.response.time_to_first_chunk` on streaming LLM spans - [PR #32236](https://github.com/Soventra/lumina/pull/32236)
+    - Emit the `gen_ai.client.operation.exception` event on failed LLM calls and restore `error.*` span attributes on v2 error spans - [PR #32655](https://github.com/Soventra/lumina/pull/32655), [PR #32524](https://github.com/Soventra/lumina/pull/32524)
+    - Move lumina error detail keys under the `lumina.*` namespace - [PR #32591](https://github.com/Soventra/lumina/pull/32591)
 - **[Prometheus](../../docs/proxy/prometheus)**
-    - Skip budget metric DB/cache lookups when the gauges are a NoOpMetric - [PR #32834](https://github.com/BerriAI/litellm/pull/32834)
+    - Skip budget metric DB/cache lookups when the gauges are a NoOpMetric - [PR #32834](https://github.com/Soventra/lumina/pull/32834)
 - **[DataDog](../../docs/proxy/logging#datadog)**
-    - Split log batches proactively to stay under intake payload limits - [PR #32860](https://github.com/BerriAI/litellm/pull/32860)
+    - Split log batches proactively to stay under intake payload limits - [PR #32860](https://github.com/Soventra/lumina/pull/32860)
 - **General**
-    - Classify `allm_passthrough_route` as async to prevent duplicate success callbacks - [PR #32265](https://github.com/BerriAI/litellm/pull/32265)
-    - Capture `logging_obj` before `post_call_failure_hook` pops it on the streaming ModifyResponseException path - [PR #32665](https://github.com/BerriAI/litellm/pull/32665)
+    - Classify `allm_passthrough_route` as async to prevent duplicate success callbacks - [PR #32265](https://github.com/Soventra/lumina/pull/32265)
+    - Capture `logging_obj` before `post_call_failure_hook` pops it on the streaming ModifyResponseException path - [PR #32665](https://github.com/Soventra/lumina/pull/32665)
 
 ### Guardrails
 
 - **[Model Armor](../../docs/proxy/guardrails/model_armor)**
-    - Scan MCP tool calls in `pre_mcp_call` / `during_mcp_call` modes - [PR #32296](https://github.com/BerriAI/litellm/pull/32296)
-    - Pass reference-only attachments through with `skip_unscannable_attachments` and remove the attachment count cap - [PR #33554](https://github.com/BerriAI/litellm/pull/33554)
+    - Scan MCP tool calls in `pre_mcp_call` / `during_mcp_call` modes - [PR #32296](https://github.com/Soventra/lumina/pull/32296)
+    - Pass reference-only attachments through with `skip_unscannable_attachments` and remove the attachment count cap - [PR #33554](https://github.com/Soventra/lumina/pull/33554)
 - **[Content Filter](/docs/proxy/guardrails/quick_start)**
-    - Add `pre_mcp_call` support to Content Filter - [PR #32936](https://github.com/BerriAI/litellm/pull/32936)
+    - Add `pre_mcp_call` support to Content Filter - [PR #32936](https://github.com/Soventra/lumina/pull/32936)
 - **[CrowdStrike AIDR](/docs/proxy/guardrails/quick_start)**
-    - Send only new messages since the last assistant turn - [PR #31974](https://github.com/BerriAI/litellm/pull/31974)
+    - Send only new messages since the last assistant turn - [PR #31974](https://github.com/Soventra/lumina/pull/31974)
 - **[GraySwan](/docs/proxy/guardrails/quick_start)**
-    - Forward the GraySwan scan id header - [PR #32544](https://github.com/BerriAI/litellm/pull/32544)
+    - Forward the GraySwan scan id header - [PR #32544](https://github.com/Soventra/lumina/pull/32544)
 - **General**
-    - Walk the Responses-API text taxonomy in the shared content helpers - [PR #32542](https://github.com/BerriAI/litellm/pull/32542)
-    - Honor `disable_exception_on_block` by raising `ModifyResponseException` for Bedrock guardrails - [PR #32289](https://github.com/BerriAI/litellm/pull/32289)
-    - Match a multi-mode `guardrail_mode` without a false-COMPLIANT result - [PR #32832](https://github.com/BerriAI/litellm/pull/32832)
-    - Filter the Add-Guardrail mode dropdown per provider - [PR #32712](https://github.com/BerriAI/litellm/pull/32712)
-    - Mask credentials embedded in a `guardrail_response` before persisting it - [PR #32687](https://github.com/BerriAI/litellm/pull/32687)
-    - Log real token/compression stats on the headroom guardrail - [PR #32158](https://github.com/BerriAI/litellm/pull/32158)
+    - Walk the Responses-API text taxonomy in the shared content helpers - [PR #32542](https://github.com/Soventra/lumina/pull/32542)
+    - Honor `disable_exception_on_block` by raising `ModifyResponseException` for Bedrock guardrails - [PR #32289](https://github.com/Soventra/lumina/pull/32289)
+    - Match a multi-mode `guardrail_mode` without a false-COMPLIANT result - [PR #32832](https://github.com/Soventra/lumina/pull/32832)
+    - Filter the Add-Guardrail mode dropdown per provider - [PR #32712](https://github.com/Soventra/lumina/pull/32712)
+    - Mask credentials embedded in a `guardrail_response` before persisting it - [PR #32687](https://github.com/Soventra/lumina/pull/32687)
+    - Log real token/compression stats on the headroom guardrail - [PR #32158](https://github.com/Soventra/lumina/pull/32158)
 
 ### Secret Managers
 
 - **General**
-    - Harden external secret-manager name validation - [PR #32092](https://github.com/BerriAI/litellm/pull/32092)
+    - Harden external secret-manager name validation - [PR #32092](https://github.com/Soventra/lumina/pull/32092)
 
 ## Spend Tracking, Budgets and Rate Limiting
 
 - **Budgets**
-    - Throttle keys after a spend limit instead of revoking access - [PR #31300](https://github.com/BerriAI/litellm/pull/31300)
-    - Resolve team org from `team_id` so org admins can update team budgets - [PR #32560](https://github.com/BerriAI/litellm/pull/32560)
+    - Throttle keys after a spend limit instead of revoking access - [PR #31300](https://github.com/Soventra/lumina/pull/31300)
+    - Resolve team org from `team_id` so org admins can update team budgets - [PR #32560](https://github.com/Soventra/lumina/pull/32560)
 - **Rate Limiting**
-    - Per-tag RPM limiting on a single key - [PR #31502](https://github.com/BerriAI/litellm/pull/31502)
-    - Separate ITPM/OTPM deployment rate limits on the router - [PR #31952](https://github.com/BerriAI/litellm/pull/31952)
-    - Trigger gateway fallbacks on local rate limit errors - [PR #31788](https://github.com/BerriAI/litellm/pull/31788)
-    - Populate `x-ratelimit-*` remaining/limit values in the standard logging object for streaming - [PR #32711](https://github.com/BerriAI/litellm/pull/32711)
+    - Per-tag RPM limiting on a single key - [PR #31502](https://github.com/Soventra/lumina/pull/31502)
+    - Separate ITPM/OTPM deployment rate limits on the router - [PR #31952](https://github.com/Soventra/lumina/pull/31952)
+    - Trigger gateway fallbacks on local rate limit errors - [PR #31788](https://github.com/Soventra/lumina/pull/31788)
+    - Populate `x-ratelimit-*` remaining/limit values in the standard logging object for streaming - [PR #32711](https://github.com/Soventra/lumina/pull/32711)
 - **Cost Tracking**
-    - Enforce budget and cost tracking for Dashscope tiered pricing - [PR #32942](https://github.com/BerriAI/litellm/pull/32942)
-    - Price Anthropic pass-through message batches correctly in the batch cost job - [PR #32307](https://github.com/BerriAI/litellm/pull/32307)
-    - Filter `/global/spend/report` by `team_id` when `group_by=team` - [PR #32170](https://github.com/BerriAI/litellm/pull/32170)
-    - Sum multi-round session cost in the logs UI, and bound the logs-tab pagination count - [PR #32796](https://github.com/BerriAI/litellm/pull/32796), [PR #31825](https://github.com/BerriAI/litellm/pull/31825)
-    - Honor `store_prompts_in_spend_logs` for `guardrail_information` - [PR #32688](https://github.com/BerriAI/litellm/pull/32688)
+    - Enforce budget and cost tracking for Dashscope tiered pricing - [PR #32942](https://github.com/Soventra/lumina/pull/32942)
+    - Price Anthropic pass-through message batches correctly in the batch cost job - [PR #32307](https://github.com/Soventra/lumina/pull/32307)
+    - Filter `/global/spend/report` by `team_id` when `group_by=team` - [PR #32170](https://github.com/Soventra/lumina/pull/32170)
+    - Sum multi-round session cost in the logs UI, and bound the logs-tab pagination count - [PR #32796](https://github.com/Soventra/lumina/pull/32796), [PR #31825](https://github.com/Soventra/lumina/pull/31825)
+    - Honor `store_prompts_in_spend_logs` for `guardrail_information` - [PR #32688](https://github.com/Soventra/lumina/pull/32688)
 
 ## MCP Gateway
 
 - **Client-Forwarded Credentials (`true_passthrough` / `oauth_delegate` / `dcr_bridge`)**
-    - Add the `true_passthrough` and `oauth_delegate` auth modes, with upstream OAuth discovery bound to each server - [PR #31989](https://github.com/BerriAI/litellm/pull/31989), [PR #32414](https://github.com/BerriAI/litellm/pull/32414)
-    - Add the `dcr_bridge` column and plumbing, a sealed-envelope module for client-held credentials, and the discovery facade plus register/token relay with mandatory PKCE S256 - [PR #32745](https://github.com/BerriAI/litellm/pull/32745), [PR #32748](https://github.com/BerriAI/litellm/pull/32748), [PR #32753](https://github.com/BerriAI/litellm/pull/32753), [PR #32747](https://github.com/BerriAI/litellm/pull/32747)
-    - Admit `dcr_bridge` `oauth_delegate` clients via a single envelope bearer, with consumer helpers for key derivation - [PR #32824](https://github.com/BerriAI/litellm/pull/32824), [PR #32794](https://github.com/BerriAI/litellm/pull/32794)
-    - Relay an upstream 401 on client-forwarded pass-through tool calls - [PR #32556](https://github.com/BerriAI/litellm/pull/32556)
+    - Add the `true_passthrough` and `oauth_delegate` auth modes, with upstream OAuth discovery bound to each server - [PR #31989](https://github.com/Soventra/lumina/pull/31989), [PR #32414](https://github.com/Soventra/lumina/pull/32414)
+    - Add the `dcr_bridge` column and plumbing, a sealed-envelope module for client-held credentials, and the discovery facade plus register/token relay with mandatory PKCE S256 - [PR #32745](https://github.com/Soventra/lumina/pull/32745), [PR #32748](https://github.com/Soventra/lumina/pull/32748), [PR #32753](https://github.com/Soventra/lumina/pull/32753), [PR #32747](https://github.com/Soventra/lumina/pull/32747)
+    - Admit `dcr_bridge` `oauth_delegate` clients via a single envelope bearer, with consumer helpers for key derivation - [PR #32824](https://github.com/Soventra/lumina/pull/32824), [PR #32794](https://github.com/Soventra/lumina/pull/32794)
+    - Relay an upstream 401 on client-forwarded pass-through tool calls - [PR #32556](https://github.com/Soventra/lumina/pull/32556)
 - **OAuth 2.0 (On-Behalf-Of)**
-    - `oauth2_token_exchange` auth type via the REST API and dashboard, plus an `entra_obo` token_exchange profile selectable in the UI and API - [PR #31772](https://github.com/BerriAI/litellm/pull/31772), [PR #31983](https://github.com/BerriAI/litellm/pull/31983), [PR #32144](https://github.com/BerriAI/litellm/pull/32144)
-    - Persist `oauth2_flow` explicitly on create, backfill legacy null rows on startup, and read it verbatim from DB rows - [PR #32288](https://github.com/BerriAI/litellm/pull/32288), [PR #32290](https://github.com/BerriAI/litellm/pull/32290), [PR #32292](https://github.com/BerriAI/litellm/pull/32292)
-    - Add an OAuth flow selector on the MCP edit page - [PR #32298](https://github.com/BerriAI/litellm/pull/32298)
-    - Apply the outbound concurrency limit to OBO tool calls - [PR #32071](https://github.com/BerriAI/litellm/pull/32071)
+    - `oauth2_token_exchange` auth type via the REST API and dashboard, plus an `entra_obo` token_exchange profile selectable in the UI and API - [PR #31772](https://github.com/Soventra/lumina/pull/31772), [PR #31983](https://github.com/Soventra/lumina/pull/31983), [PR #32144](https://github.com/Soventra/lumina/pull/32144)
+    - Persist `oauth2_flow` explicitly on create, backfill legacy null rows on startup, and read it verbatim from DB rows - [PR #32288](https://github.com/Soventra/lumina/pull/32288), [PR #32290](https://github.com/Soventra/lumina/pull/32290), [PR #32292](https://github.com/Soventra/lumina/pull/32292)
+    - Add an OAuth flow selector on the MCP edit page - [PR #32298](https://github.com/Soventra/lumina/pull/32298)
+    - Apply the outbound concurrency limit to OBO tool calls - [PR #32071](https://github.com/Soventra/lumina/pull/32071)
 - **Semantic Filter**
-    - Apply the semantic filter to expanded `litellm_proxy` tools and show the filtered-out count - [PR #32285](https://github.com/BerriAI/litellm/pull/32285)
-    - Keep tool names whole in the filter response header - [PR #32282](https://github.com/BerriAI/litellm/pull/32282)
-    - Fail closed and surface semantic-filter context-window errors - [PR #32715](https://github.com/BerriAI/litellm/pull/32715)
+    - Apply the semantic filter to expanded `lumina_proxy` tools and show the filtered-out count - [PR #32285](https://github.com/Soventra/lumina/pull/32285)
+    - Keep tool names whole in the filter response header - [PR #32282](https://github.com/Soventra/lumina/pull/32282)
+    - Fail closed and surface semantic-filter context-window errors - [PR #32715](https://github.com/Soventra/lumina/pull/32715)
 - **Bug Fixes**
-    - Log MCP tool calls returning `isError=true` as failures - [PR #32238](https://github.com/BerriAI/litellm/pull/32238)
-    - Re-register a DCR client when the proxy origin no longer matches its registered `redirect_uri` - [PR #32527](https://github.com/BerriAI/litellm/pull/32527)
-    - Invalidate a browser-authorized upstream token when a mint-relevant field changes - [PR #32652](https://github.com/BerriAI/litellm/pull/32652)
-    - Defer the proxy import so `completion(tools=...)` works without proxy extras - [PR #32339](https://github.com/BerriAI/litellm/pull/32339)
-    - Alias/display-name tool routing, REST filters, and BYOK auth - [PR #32320](https://github.com/BerriAI/litellm/pull/32320)
+    - Log MCP tool calls returning `isError=true` as failures - [PR #32238](https://github.com/Soventra/lumina/pull/32238)
+    - Re-register a DCR client when the proxy origin no longer matches its registered `redirect_uri` - [PR #32527](https://github.com/Soventra/lumina/pull/32527)
+    - Invalidate a browser-authorized upstream token when a mint-relevant field changes - [PR #32652](https://github.com/Soventra/lumina/pull/32652)
+    - Defer the proxy import so `completion(tools=...)` works without proxy extras - [PR #32339](https://github.com/Soventra/lumina/pull/32339)
+    - Alias/display-name tool routing, REST filters, and BYOK auth - [PR #32320](https://github.com/Soventra/lumina/pull/32320)
 
 ## Performance / Loadbalancing / Reliability improvements
 
 - **Routing**
-    - Keyword tier overrides and semantic keyword matching for the complexity auto router - [PR #32859](https://github.com/BerriAI/litellm/pull/32859)
-    - Optional LLM-based classifier for the complexity router, plus custom technical keywords and per-decision routing logs - [PR #32169](https://github.com/BerriAI/litellm/pull/32169), [PR #32262](https://github.com/BerriAI/litellm/pull/32262), [PR #32943](https://github.com/BerriAI/litellm/pull/32943)
+    - Keyword tier overrides and semantic keyword matching for the complexity auto router - [PR #32859](https://github.com/Soventra/lumina/pull/32859)
+    - Optional LLM-based classifier for the complexity router, plus custom technical keywords and per-decision routing logs - [PR #32169](https://github.com/Soventra/lumina/pull/32169), [PR #32262](https://github.com/Soventra/lumina/pull/32262), [PR #32943](https://github.com/Soventra/lumina/pull/32943)
 - **Reliability**
-    - Recover the Prisma DB reconnect loop when the client is disconnected - [PR #32323](https://github.com/BerriAI/litellm/pull/32323)
-    - Configure a coordination Redis independently of the response cache, building the usage cache from `REDIS_*` env - [PR #32661](https://github.com/BerriAI/litellm/pull/32661), [PR #32635](https://github.com/BerriAI/litellm/pull/32635)
-    - Only use `SSLConnection` when ssl is truthy in the connection-pool kwargs - [PR #32825](https://github.com/BerriAI/litellm/pull/32825)
-    - Keep the Prometheus `/metrics` Mount in the gateway route trim - [PR #32317](https://github.com/BerriAI/litellm/pull/32317)
-    - Wire the `general_settings` request allowlist to litellm globals - [PR #32243](https://github.com/BerriAI/litellm/pull/32243)
+    - Recover the Prisma DB reconnect loop when the client is disconnected - [PR #32323](https://github.com/Soventra/lumina/pull/32323)
+    - Configure a coordination Redis independently of the response cache, building the usage cache from `REDIS_*` env - [PR #32661](https://github.com/Soventra/lumina/pull/32661), [PR #32635](https://github.com/Soventra/lumina/pull/32635)
+    - Only use `SSLConnection` when ssl is truthy in the connection-pool kwargs - [PR #32825](https://github.com/Soventra/lumina/pull/32825)
+    - Keep the Prometheus `/metrics` Mount in the gateway route trim - [PR #32317](https://github.com/Soventra/lumina/pull/32317)
+    - Wire the `general_settings` request allowlist to lumina globals - [PR #32243](https://github.com/Soventra/lumina/pull/32243)
 - **Hot paths**
-    - Negative-cache missing user/key lookups on the request hot path - [PR #32368](https://github.com/BerriAI/litellm/pull/32368)
-    - Stop `CacheCodec` dropping null fields on a cache round-trip - [PR #32207](https://github.com/BerriAI/litellm/pull/32207)
+    - Negative-cache missing user/key lookups on the request hot path - [PR #32368](https://github.com/Soventra/lumina/pull/32368)
+    - Stop `CacheCodec` dropping null fields on a cache round-trip - [PR #32207](https://github.com/Soventra/lumina/pull/32207)
 
-    - Source `/v1/models` token limits from the cost map instead of per-model router aggregation, removing wildcard deep copies - [PR #33721](https://github.com/BerriAI/litellm/pull/33721)
-    - Treat malformed configured token limits as absent on `/v1/models` - [PR #33864](https://github.com/BerriAI/litellm/pull/33864)
+    - Source `/v1/models` token limits from the cost map instead of per-model router aggregation, removing wildcard deep copies - [PR #33721](https://github.com/Soventra/lumina/pull/33721)
+    - Treat malformed configured token limits as absent on `/v1/models` - [PR #33864](https://github.com/Soventra/lumina/pull/33864)
 - **Build**
-    - Restore the litellm-proxy-extras source dir in runtime images - [PR #33592](https://github.com/BerriAI/litellm/pull/33592)
-    - Bake the prisma CLI and engines at a fixed path so fresh-database migrations work for any uid offline - [PR #33853](https://github.com/BerriAI/litellm/pull/33853)
-    - Raise the requires-python cap to `<3.15` so Python 3.14 installs current releases - [PR #33438](https://github.com/BerriAI/litellm/pull/33438)
-    - Allow redisvl, pypdf, and openapi-core on Python 3.14 - [PR #33801](https://github.com/BerriAI/litellm/pull/33801)
-    - Raise pyo3 to 0.29 so the native bridge compiles on Python 3.14 - [PR #33798](https://github.com/BerriAI/litellm/pull/33798)
-    - Update ddtrace to the 4.x line - [PR #33484](https://github.com/BerriAI/litellm/pull/33484)
-    - Bump mcp to 1.28.1, pillow to 12.3.0, and pin httplib2/setuptools floors - [PR #33803](https://github.com/BerriAI/litellm/pull/33803), [PR #33093](https://github.com/BerriAI/litellm/pull/33093), [PR #33233](https://github.com/BerriAI/litellm/pull/33233)
+    - Restore the lumina-proxy-extras source dir in runtime images - [PR #33592](https://github.com/Soventra/lumina/pull/33592)
+    - Bake the prisma CLI and engines at a fixed path so fresh-database migrations work for any uid offline - [PR #33853](https://github.com/Soventra/lumina/pull/33853)
+    - Raise the requires-python cap to `<3.15` so Python 3.14 installs current releases - [PR #33438](https://github.com/Soventra/lumina/pull/33438)
+    - Allow redisvl, pypdf, and openapi-core on Python 3.14 - [PR #33801](https://github.com/Soventra/lumina/pull/33801)
+    - Raise pyo3 to 0.29 so the native bridge compiles on Python 3.14 - [PR #33798](https://github.com/Soventra/lumina/pull/33798)
+    - Update ddtrace to the 4.x line - [PR #33484](https://github.com/Soventra/lumina/pull/33484)
+    - Bump mcp to 1.28.1, pillow to 12.3.0, and pin httplib2/setuptools floors - [PR #33803](https://github.com/Soventra/lumina/pull/33803), [PR #33093](https://github.com/Soventra/lumina/pull/33093), [PR #33233](https://github.com/Soventra/lumina/pull/33233)
 
 ## Documentation Updates
 
-- Point OSS contributors at the daily OSS branch - [PR #32830](https://github.com/BerriAI/litellm/pull/32830)
+- Point OSS contributors at the daily OSS branch - [PR #32830](https://github.com/Soventra/lumina/pull/32830)
 
 ### PR roll-up by ownership area
 
@@ -326,9 +326,9 @@ PRs by ownership area (total: 254)
 
 ## New Contributors
 
-- @thibault-linktree made their first contribution in [PR #32034](https://github.com/BerriAI/litellm/pull/32034)
-- @akapur99 made their first contribution in [PR #32829](https://github.com/BerriAI/litellm/pull/32829)
+- @thibault-linktree made their first contribution in [PR #32034](https://github.com/Soventra/lumina/pull/32034)
+- @akapur99 made their first contribution in [PR #32829](https://github.com/Soventra/lumina/pull/32829)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.92.0...v1.93.0
+https://github.com/Soventra/lumina/compare/v1.92.0...v1.93.0

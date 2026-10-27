@@ -1,5 +1,5 @@
 /**
- * Global CSS overrides for LiteLLM docs.
+ * Global CSS overrides for Lumina docs.
  * Infima (Docusaurus CSS framework) variables + custom styling.
  */
 
@@ -9,7 +9,7 @@
 /* Preview: Geist from Google Fonts, same loading path as the Inter import it
    replaces. The PR self-hosts the woff2 files from static/fonts instead. */
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&display=swap');
-/* Used only by the litellm.harness docs block at the end of this file */
+/* Used only by the lumina.harness docs block at the end of this file */
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* =========================================
@@ -2091,7 +2091,7 @@ article a.card:hover {
 }
 
 /* =========================================================================
-   LITELLM.AI GRID ACCENTS
+   LUMINA.AI GRID ACCENTS
    Three small echoes of the website's grid: thin rules on real edges and a
    logo-blue square where they cross.
    ========================================================================= */
@@ -2125,7 +2125,7 @@ article a.card:hover {
   border-left-color: var(--aurora-line-strong);
 }
 
-/* 3. Card grids as the litellm.ai grid: one frame of shared hairlines, flat
+/* 3. Card grids as the lumina.ai grid: one frame of shared hairlines, flat
    cells, and a small logo-blue square at every line crossing. Two grids:
    NavigationCards (Integrations, Learn) and Docusaurus DocCardList
    (generated-index overview pages). */
@@ -2263,7 +2263,7 @@ img[src*='/img/brand/'] {
 }
 
 /* =========================================
-   litellm.harness docs
+   lumina.harness docs
    Scoped to the "Agent Harnesses" sidebar category (.harness-sidebar and
    .harness-group in sidebars.js) and to docs/harness/* pages, which
    Docusaurus marks with html.docs-doc-id-harness/<page>. Nothing here
@@ -2303,7 +2303,7 @@ html[data-theme='dark'][class*='docs-doc-id-harness/'] {
 }
 
 .harness-sidebar > ul.menu__list::before {
-  content: 'litellm.agent()';
+  content: 'lumina.agent()';
   display: block;
   padding: 6px 0 2px 2px;
   font: 500 12.5px/1.4 var(--hd-mono);
@@ -2479,7 +2479,7 @@ html[class*='docs-doc-id-harness/'] .pagination-nav,
 html[class*='docs-doc-id-harness/'] .breadcrumbs {
   font-family: var(--hd-body);
 }
-/* end litellm.harness docs */
+/* end lumina.harness docs */
 
 .tabs-container:has(> ul.lens-framework-tabs) [class*="codeBlockTitle"] {
   padding: 6px 16px;
@@ -2652,9 +2652,9 @@ html[class*='docs-doc-id-harness/'] .breadcrumbs {
   padding-top: 4px;
 }
 
-/* Parts of the LiteLLM Gateway (className "sidebar-rail" in sidebars.js): a
+/* Parts of the Lumina Gateway (className "sidebar-rail" in sidebars.js): a
    thin rail in a faint tint of the primary color ties AI Gateway, MCP Gateway,
-   Agent Gateway and Auto Router to the LiteLLM Gateway item above them. The rail runs through
+   Agent Gateway and Auto Router to the Lumina Gateway item above them. The rail runs through
    the spacing between items, so it reads as one continuous line. */
 .menu > .menu__list > .menu__list-item.sidebar-rail {
   margin-top: 0;

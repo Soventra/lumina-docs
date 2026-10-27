@@ -4,13 +4,13 @@ sidebar_label: OTEL Telemetry
 description: Trace the Auto Router configuration, selected model, routing reason, and recovered classifier failures. Enable OpenTelemetry once on the gateway and inspect the results in Lens or another OTLP backend.
 ---
 
-Auto Router adds `litellm.routing.*` attributes to OpenTelemetry (OTEL) traces so you can identify which configuration ran, why it selected a model, and whether a classifier failed before the request recovered.
+Auto Router adds `lumina.routing.*` attributes to OpenTelemetry (OTEL) traces so you can identify which configuration ran, why it selected a model, and whether a classifier failed before the request recovered.
 
 **If your gateway already exports OTEL traces, there is no per-router telemetry switch to enable.** Upgrade to a build with the instrumentation below. Use OTEL v2 for routing-phase details and retry/fallback events. Applications calling the gateway do not need an additional SDK or a different inference endpoint.
 
 :::info Availability
 
-These attributes require a gateway build containing [LiteLLM #44926](https://github.com/BerriAI/litellm/pull/44926). Setting an OTEL environment variable on an older build does not add the instrumentation. This guide covers inference through the gateway's asynchronous Router path; the dashboard's unsaved **Test Routing** preview is not an equivalent trace test.
+These attributes require a gateway build containing [Lumina #44926](https://github.com/Soventra/lumina/pull/44926). Setting an OTEL environment variable on an older build does not add the instrumentation. This guide covers inference through the gateway's asynchronous Router path; the dashboard's unsaved **Test Routing** preview is not an equivalent trace test.
 
 :::
 
@@ -27,7 +27,7 @@ Your exporter, sampling rules and collector filters still decide which traces re
 
 ## Enable tracing on the gateway
 
-Start with an existing [Auto Router configuration](./setup.md) and an OTLP collector reachable from the gateway. The gateway runtime needs the OpenTelemetry SDK and HTTP exporter; gateway server spans also need `opentelemetry-instrumentation-fastapi`. The LiteLLM `proxy-runtime` extra includes these dependencies.
+Start with an existing [Auto Router configuration](./setup.md) and an OTLP collector reachable from the gateway. The gateway runtime needs the OpenTelemetry SDK and HTTP exporter; gateway server spans also need `opentelemetry-instrumentation-fastapi`. The Lumina `proxy-runtime` extra includes these dependencies.
 
 Set the following in the **gateway process environment before startup**, then restart the gateway:
 
@@ -35,11 +35,11 @@ Set the following in the **gateway process environment before startup**, then re
 export LUMINA_OTEL_V2=true
 export OTEL_EXPORTER=otlp_http
 export OTEL_ENDPOINT="http://otel-collector:4318"
-export OTEL_SERVICE_NAME="litellm-gateway"
+export OTEL_SERVICE_NAME="lumina-gateway"
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=no_content
 ```
 
-Replace the endpoint with your collector's address. For OTLP/HTTP, LiteLLM appends `/v1/traces` to this base URL. Set `OTEL_HEADERS` if your collector requires authentication, for example `Authorization=Bearer <collector-token>`. Avoid also setting the equivalent `OTEL_EXPORTER_OTLP_*` aliases to conflicting values.
+Replace the endpoint with your collector's address. For OTLP/HTTP, Lumina appends `/v1/traces` to this base URL. Set `OTEL_HEADERS` if your collector requires authentication, for example `Authorization=Bearer <collector-token>`. Avoid also setting the equivalent `OTEL_EXPORTER_OTLP_*` aliases to conflicting values.
 
 The complete example below explicitly registers the generic `otel` callback. If it is already configured, keep that entry. OTEL v2 also initializes a generic exporter on the proxy from its environment settings; no new callback is required for each router.
 
@@ -67,7 +67,7 @@ model_list:
           COMPLEX: capable
           REASONING: capable
 
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 general_settings:
@@ -77,7 +77,7 @@ general_settings:
 Supply `OPENAI_API_KEY` and `LUMINA_MASTER_KEY` through your deployment's secret configuration, then start the proxy:
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 No collector yet? Use console export to inspect spans in gateway output:
@@ -94,7 +94,7 @@ These routing attributes and span events do not require `LUMINA_OTEL_INTEGRATION
 
 ### Send traces to Lens
 
-[Enable trace ingestion on the Lens gateway](/docs/proxy/lens) and obtain a LiteLLM key allowed to ingest traces there. To export directly from the source gateway, use the Lens gateway's base URL and ingestion key:
+[Enable trace ingestion on the Lens gateway](/docs/proxy/lens) and obtain a Lumina key allowed to ingest traces there. To export directly from the source gateway, use the Lens gateway's base URL and ingestion key:
 
 ```bash
 export LENS_GATEWAY_URL="https://your-lens-gateway.example"
@@ -108,7 +108,7 @@ Keep `LUMINA_OTEL_V2=true` and restart the source gateway after changing its exp
 
 ## Verify an Auto Router request
 
-Use a LiteLLM virtual key with access to `smart-router` as `LUMINA_API_KEY`:
+Use a Lumina virtual key with access to `smart-router` as `LUMINA_API_KEY`:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
@@ -117,7 +117,7 @@ curl http://localhost:4000/v1/chat/completions \
   -d '{"model":"smart-router","messages":[{"role":"user","content":"What is 2+2?"}]}'
 ```
 
-In your trace backend, find the request under service `litellm-gateway`. In Lens, open **Lens > Traces**, select the request, select **route smart-router**, then open **Attributes**. Look for `litellm.routing.router_config_id=smart-router-config`, `litellm.routing.routed_model`, and `litellm.routing.cause`.
+In your trace backend, find the request under service `lumina-gateway`. In Lens, open **Lens > Traces**, select the request, select **route smart-router**, then open **Attributes**. Look for `lumina.routing.router_config_id=smart-router-config`, `lumina.routing.routed_model`, and `lumina.routing.cause`.
 
 | Trace location | Data you can inspect |
 | --- | --- |
@@ -129,7 +129,7 @@ Internal classifier and embedding calls do not inherit an unfinished outer routi
 
 ## Available telemetry
 
-All attribute names in this table start with **`litellm.routing.`**. Fields are optional and appear only when the selected strategy produces a scalar value. An absent field does not mean zero, false or success.
+All attribute names in this table start with **`lumina.routing.`**. Fields are optional and appear only when the selected strategy produces a scalar value. An absent field does not mean zero, false or success.
 
 | Attribute suffix | Meaning |
 | --- | --- |
@@ -158,12 +158,12 @@ A successful HTTP response can contain a classifier failure. For example, an LLM
 
 ```json
 {
-  "litellm.routing.router_model_name": "smart-router",
-  "litellm.routing.router_config_id": "smart-router-config",
-  "litellm.routing.routed_model": "efficient",
-  "litellm.routing.cause": "heuristic_scorer",
-  "litellm.routing.classifier_failure_reason": "classifier_error",
-  "litellm.routing.classifier_error_type": "InternalServerError"
+  "lumina.routing.router_model_name": "smart-router",
+  "lumina.routing.router_config_id": "smart-router-config",
+  "lumina.routing.routed_model": "efficient",
+  "lumina.routing.cause": "heuristic_scorer",
+  "lumina.routing.classifier_failure_reason": "classifier_error",
+  "lumina.routing.classifier_error_type": "InternalServerError"
 }
 ```
 
@@ -185,7 +185,7 @@ The routing `cause` keeps the actual decision reason, such as `heuristic_scorer`
 
 ### Retry and fallback events
 
-OTEL v2 records **`litellm.routing.retry`** when the Router records retry/fallback bookkeeping for an auto-routed attempt. The event includes `litellm.routing.router_model_name`, `litellm.retry.count` and `error.type`, plus `litellm.deployment.model_group` and `litellm.deployment.id` when known.
+OTEL v2 records **`lumina.routing.retry`** when the Router records retry/fallback bookkeeping for an auto-routed attempt. The event includes `lumina.routing.router_model_name`, `lumina.retry.count` and `error.type`, plus `lumina.deployment.model_group` and `lumina.deployment.id` when known.
 
 The count follows the existing request retry counter. An event can describe an exhausted attempt or a fallback transition; it does not guarantee another outbound retry or equal the exact number of provider calls. Configuration identity remains on the route span.
 
@@ -200,7 +200,7 @@ Telemetry adds attribute processing and larger trace payloads. It does not add c
 | Symptom | Check |
 | --- | --- |
 | No trace arrives | Confirm OTEL is configured on the source gateway, the destination accepts the protocol and credentials, and sampling or collector filters retain the request. A successful completion does not prove export succeeded. |
-| Traces arrive without `litellm.routing.*` | Confirm the gateway includes the instrumentation, the request went through a saved router using the gateway inference API, and you are inspecting the route or model-call span. |
+| Traces arrive without `lumina.routing.*` | Confirm the gateway includes the instrumentation, the request went through a saved router using the gateway inference API, and you are inspecting the route or model-call span. |
 | Model attributes exist, but no routing-phase details | Enable v2 before startup and restart. Check that the backend or preset retains non-LLM spans and that gateway instrumentation dependencies are installed. |
 | Configuration fields exist without a chosen model | The attempt may have failed before producing a routing decision. Inspect that phase and its error. |
 | The final successful span has no routing fields | A plain-model fallback clears the earlier router decision. Inspect the previous route phase. |

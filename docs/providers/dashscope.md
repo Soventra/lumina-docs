@@ -35,14 +35,14 @@ response = completion(
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DASHSCOPE_API_KEY'] = ""
 response = completion(
     model="dashscope/qwen-turbo", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -50,14 +50,14 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['DASHSCOPE_API_KEY'] = ""
 response = completion(
     model="dashscope/qwen-turbo", 
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )

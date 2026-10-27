@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # SAP Generative AI Hub
 
-LiteLLM supports SAP Generative AI Hub's Orchestration Service.
+Lumina supports SAP Generative AI Hub's Orchestration Service.
 
 | Property | Details                                                                                                                                                |
 |-------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Description | SAP's Generative AI Hub provides access to OpenAI, Anthropic, Gemini, Mistral, NVIDIA, Amazon, and SAP LLMs through the AI Core orchestration service. |
-| Provider Route on LiteLLM | `sap/`                                                                                                                                                 |
+| Provider Route on Lumina | `sap/`                                                                                                                                                 |
 | Supported Endpoints | `/chat/completions`, `/embeddings`                                                                                                                                  |
 | API Reference | [SAP AI Core Documentation](https://help.sap.com/docs/sap-ai-core)                                                                                     |
 
@@ -48,10 +48,10 @@ The resource group is typically configured separately in your AI Core deployment
 
 ## Quick Start
 
-### Step 1: Install LiteLLM
+### Step 1: Install Lumina
 
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ### Step 2: Set Your Credentials
@@ -65,7 +65,7 @@ uv add litellm
 > Resolution order is:
 `kwargs` → `service key` → `env (AICORE_*)` → `config` → `VCAP service`
 >
-> **Important behavior:** once LiteLLM finds *any* credential value in a source, it takes **all** credentials from that source exclusively (except `resource_group`, which may still be resolved separately).
+> **Important behavior:** once Lumina finds *any* credential value in a source, it takes **all** credentials from that source exclusively (except `resource_group`, which may still be resolved separately).
 
  <Tabs>
  <TabItem value="service-key" label="Service Key JSON (Recommended)">
@@ -105,11 +105,11 @@ export AICORE_BASE_URL="https://api.ai.<your-region>.aws.ml.hana.ondemand.com/v2
 ### Step 3: Make Your First Request
 
 ```python title="test_sap.py"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="sap/{{openai_large}}",
-    messages=[{"role": "user", "content": "Hello from LiteLLM!"}]
+    messages=[{"role": "user", "content": "Hello from Lumina!"}]
 )
 print(response.choices[0].message.content)
 ```
@@ -132,7 +132,7 @@ Test that everything is working with this diagnostic script:
 
 ```python title="verify_sap_setup.py"
 import os
-import litellm
+import lumina
 
 # Enable debug logging to see what's happening
 import os
@@ -159,13 +159,13 @@ else:
 # Test API connection
 print("\n=== Testing API Connection ===\n")
 try:
-    response = litellm.completion(
+    response = lumina.completion(
         model="sap/{{openai_large}}",
         messages=[{"role": "user", "content": "Say 'Connection successful!' and nothing else."}],
         max_tokens=20
     )
     print(f"✓ API Response: {response.choices[0].message.content}")
-    print("\n Setup complete! You're ready to use SAP Gen AI Hub with LiteLLM.")
+    print("\n Setup complete! You're ready to use SAP Gen AI Hub with Lumina.")
 except Exception as e:
     print(f"✗ API Error: {e}")
     print("\nTroubleshooting tips:")
@@ -192,7 +192,7 @@ python verify_sap_setup.py
 
 ✓ API Response: Connection successful!
 
-Setup complete! You're ready to use SAP Gen AI Hub with LiteLLM.
+Setup complete! You're ready to use SAP Gen AI Hub with Lumina.
 ```
 
 ## Authentication
@@ -218,7 +218,7 @@ Understanding model naming is crucial for using SAP Gen AI Hub correctly. The na
 
 ### Direct SDK Usage
 
-When calling LiteLLM's SDK directly, you **must** include the `sap/` prefix in the model name:
+When calling Lumina's SDK directly, you **must** include the `sap/` prefix in the model name:
 
 ```python
 # Correct - includes sap/ prefix
@@ -239,11 +239,11 @@ AICORE_BASE_URL = "https://api.ai.***.cfapps.sap.hana.ondemand.com/v2"
 </pre>
 
 Other credential configuration options are also available. For more information, see the [SAP AI Core Documentation](https://help.sap.com/doc/generative-ai-hub-sdk/CLOUD/en-US/_reference/README_sphynx.html#configuration).
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Proxy Usage
 
-When using the LiteLLM Proxy, you use the **friendly `model_name`** defined in your configuration. The proxy automatically handles the `sap/` prefix routing.
+When using the Lumina Proxy, you use the **friendly `model_name`** defined in your configuration. The proxy automatically handles the `sap/` prefix routing.
 
 ```yaml
 # In config.yaml, define the mapping
@@ -265,7 +265,7 @@ client.chat.completions.create(
 
 Anthropic models use a double-dash (`--`) prefix convention:
 
-| Provider | Model Example | LiteLLM Format |
+| Provider | Model Example | Lumina Format |
 |----------|---------------|----------------|
 | OpenAI | GPT-4o | `sap/gpt-4o` |
 | Anthropic | Claude 4.5 Sonnet | `sap/anthropic--claude-4.5-sonnet` |
@@ -282,10 +282,10 @@ Anthropic models use a double-dash (`--`) prefix convention:
 
 ## Using the Python SDK
 
-The LiteLLM Python SDK automatically detects your authentication method. Simply set your environment variables and make requests.
+The Lumina Python SDK automatically detects your authentication method. Simply set your environment variables and make requests.
 
 ```python showLineNumbers title="Basic Completion"
-from litellm import completion
+from lumina import completion
 
 # Assumes AICORE_AUTH_URL, AICORE_CLIENT_ID, etc. are set
 response = completion(
@@ -299,7 +299,7 @@ Both authentication methods (individual variables or service key JSON) work auto
 
 ## Using the Proxy Server
 
-The LiteLLM Proxy provides a unified OpenAI-compatible API for your SAP models.
+The Lumina Proxy provides a unified OpenAI-compatible API for your SAP models.
 
 ### Configuration
 
@@ -326,7 +326,7 @@ model_list:
     lumina_params:
       model: sap/text-embedding-3-small
 
-litellm_settings:
+lumina_settings:
   drop_params: true
   set_verbose: false
   request_timeout: 600
@@ -334,7 +334,7 @@ litellm_settings:
   forward_client_headers_to_llm_api: ["anthropic-version"]
 
 general_settings:
-  master_key: "sk-<your-litellm-master-key>" # Enter here your desired master key starting with 'sk-'.
+  master_key: "sk-<your-lumina-master-key>" # Enter here your desired master key starting with 'sk-'.
   
   # UI Admin is not required but helpful including the management of keys for your team(s). If you are using a database, these parameters are required:
   database_url: "Enter you database URL."
@@ -350,7 +350,7 @@ environment_variables:
 ### Starting the Proxy
 
 ```bash showLineNumbers title="Start Proxy"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 The proxy will start on `http://localhost:4000` by default.
@@ -378,7 +378,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 response = client.chat.completions.create(
@@ -389,16 +389,16 @@ print(response.choices[0].message.content)
 ```
 
 </TabItem>
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="LiteLLM SDK"
+```python showLineNumbers title="Lumina SDK"
 import os
-import litellm
+import lumina
 
-os.environ["LUMINA_PROXY_API_KEY"] = "sk-<your-litellm-api-key>"
-litellm.use_litellm_proxy = True
+os.environ["LUMINA_PROXY_API_KEY"] = "sk-<your-lumina-api-key>"
+lumina.use_lumina_proxy = True
 
-response = litellm.completion(
+response = lumina.completion(
     model="claude-sonnet",
     messages=[{"content": "Hello, how are you?", "role": "user"}],
     api_base="http://localhost:4000"
@@ -417,7 +417,7 @@ print(response)
 Stream responses in real-time for better user experience:
 
 ```python showLineNumbers title="Streaming Chat Completion"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="sap/{{openai_large}}",
@@ -437,7 +437,7 @@ for chunk in response:
 Use JSON Schema for structured output with strict validation:
 
 ```python showLineNumbers title="JSON Schema Response"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="sap/{{openai_large}}",
@@ -473,7 +473,7 @@ print(response.choices[0].message.content)
 For flexible JSON output without schema validation:
 
 ```python showLineNumbers title="JSON Object Response"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="sap/{{openai_large}}",
@@ -496,7 +496,7 @@ When using `json_object` type, SAP's orchestration service requires the word "js
 Maintain conversation context across multiple turns:
 
 ```python showLineNumbers title="Multi-turn Conversation"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="sap/{{openai_large}}",
@@ -516,7 +516,7 @@ print(response.choices[0].message.content)
 Generate vector embeddings for semantic search and retrieval:
 
 ```python showLineNumbers title="Create Embeddings"
-from litellm import embedding
+from lumina import embedding
 
 response = embedding(
     model="sap/text-embedding-3-small",
@@ -546,7 +546,7 @@ To use grounding, choose from one of the following options.
 
 Usage example:
 ```python showLineNumbers title="Grounding Example"
-from litellm import completion
+from lumina import completion
 
 grounding_config = {
     'type': 'document_grounding_service',
@@ -586,7 +586,7 @@ For more information about all available grounding configurations, see the [docu
 The translation module allows you to translate LLM text prompts into a chosen target language.
 
 ```python showLineNumbers title="Translation Example"
-from litellm import completion
+from lumina import completion
 
 translation_config = {
     'input':
@@ -615,7 +615,7 @@ For more information about all available translation configurations, see the [do
 The data masking module serves to anonymize or pseudonymize personally identifiable information from the input for selected entities.
 
 ```python showLineNumbers title="Data Masking Example"
-from litellm import completion, embedding
+from lumina import completion, embedding
 masking_config = {
             'providers':
                 [
@@ -661,7 +661,7 @@ The module supports two services:
 * Llama Guard 3
 
 ```python showLineNumbers title="Content Filtering Example"
-from litellm import completion
+from lumina import completion
 
 filtering_config_azure = {
     'input':
@@ -728,7 +728,7 @@ Optional parameters:
 
 
 ```python showLineNumbers title="Fallback Example"
-from litellm import completion
+from lumina import completion
 
 translation_config = {
     'input':

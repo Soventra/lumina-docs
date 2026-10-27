@@ -15,7 +15,7 @@ hide_table_of_contents: false
 **Severity:** High
 **Status:** Resolved
 
-> **Note:** This fix is available starting from LiteLLM `v1.81.14.rc.2` or higher.
+> **Note:** This fix is available starting from Lumina `v1.81.14.rc.2` or higher.
 
 ## Summary
 
@@ -44,7 +44,7 @@ The cached values are a mix of:
 
 ## Root Cause
 
-[PR #21717](https://github.com/BerriAI/litellm/pull/21717) overrode `_remove_key()` in `LLMClientCache` to close async clients on eviction:
+[PR #21717](https://github.com/Soventra/lumina/pull/21717) overrode `_remove_key()` in `LLMClientCache` to close async clients on eviction:
 
 <details>
 <summary>Problematic code added in PR #21717</summary>
@@ -82,7 +82,7 @@ So when the cache evicted an entry, it would call `aclose()` on an httpx client 
 
 ## The Fix
 
-[PR #22247](https://github.com/BerriAI/litellm/pull/22247) removed the `_remove_key` override entirely:
+[PR #22247](https://github.com/Soventra/lumina/pull/22247) removed the `_remove_key` override entirely:
 
 <details>
 <summary>The fix (PR #22247)</summary>
@@ -119,8 +119,8 @@ The other improvements from PR #21717 were kept:
 
 | Action | Status | Code |
 |--------|--------|------|
-| Remove `_remove_key` override that closes shared clients on eviction | ✅ Done | [PR #22247](https://github.com/BerriAI/litellm/pull/22247) |
-| Add e2e test: evicted client still usable (capacity) | ✅ Done | [PR #22313](https://github.com/BerriAI/litellm/pull/22313) |
-| Add e2e test: expired client still usable (TTL) | ✅ Done | [PR #22313](https://github.com/BerriAI/litellm/pull/22313) |
+| Remove `_remove_key` override that closes shared clients on eviction | ✅ Done | [PR #22247](https://github.com/Soventra/lumina/pull/22247) |
+| Add e2e test: evicted client still usable (capacity) | ✅ Done | [PR #22313](https://github.com/Soventra/lumina/pull/22313) |
+| Add e2e test: expired client still usable (TTL) | ✅ Done | [PR #22313](https://github.com/Soventra/lumina/pull/22313) |
 
 The e2e tests go through `get_async_httpx_client()` the same code path the proxy uses in production and assert the client is still functional after eviction. These run in CI on every PR against `main`. If anyone modifies `LLMClientCache` eviction behavior, overrides `_remove_key`, or adds any form of client cleanup on eviction, these tests will fail regardless of the implementation approach.

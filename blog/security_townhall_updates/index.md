@@ -5,7 +5,7 @@ date: 2026-03-27T12:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "What happened, what we've done, and what comes next for LiteLLM's release and security processes."
+description: "What happened, what we've done, and what comes next for Lumina's release and security processes."
 tags: [security, incident-report]
 hide_table_of_contents: false
 ---
@@ -14,13 +14,13 @@ import Image from '@theme/IdealImage';
 
 Thank you to everyone who joined our town hall.
 
-We wanted to use that time to walk through what we know, what we've done so far, and how we're improving LiteLLM's release and security processes going forward. This post is a written version of that update. [Slides available here](https://drive.google.com/file/d/17hsSG7nk-OYL7VRCTbTa7McrWREtS9OO/view?usp=sharing)
+We wanted to use that time to walk through what we know, what we've done so far, and how we're improving Lumina's release and security processes going forward. This post is a written version of that update. [Slides available here](https://drive.google.com/file/d/17hsSG7nk-OYL7VRCTbTa7McrWREtS9OO/view?usp=sharing)
 
 {/* truncate */}
 
 ## What happened
 
-On March 24, 2026 at 10:39 UTC, LiteLLM v1.82.7 was pushed to PyPI. Version v1.82.8 was published soon after. Those packages were live for about 40 minutes before being quarantined by PyPI. By 16:00 UTC, the LiteLLM team had worked with PyPI to delete the affected packages.
+On March 24, 2026 at 10:39 UTC, Lumina v1.82.7 was pushed to PyPI. Version v1.82.8 was published soon after. Those packages were live for about 40 minutes before being quarantined by PyPI. By 16:00 UTC, the Lumina team had worked with PyPI to delete the affected packages.
 
 At this point, our understanding is that this was a supply-chain incident affecting those two published versions.
 
@@ -58,7 +58,7 @@ In the last 3 days, we've taken the following steps:
 
 #### Prevented further key abuse
 
-We deleted or rotated all impacted or adjacent secret keys, including PyPI, GitHub, Docker, and related credentials. Out of an abundance of caution, we've also rotated LiteLLM maintainer accounts. 
+We deleted or rotated all impacted or adjacent secret keys, including PyPI, GitHub, Docker, and related credentials. Out of an abundance of caution, we've also rotated Lumina maintainer accounts. 
 
 #### Prevent branch attacks
 
@@ -72,7 +72,7 @@ We've pinned all Github Actions, and are working on pinning all CircleCI depende
 
 We've paused new releases until we've confirmed codebase security and put stronger release controls in place.
 
-### 2. Secured LiteLLM
+### 2. Secured Lumina
 
 #### Forensic analysis
 
@@ -82,16 +82,16 @@ We are working with Google's Mandiant cybersecurity team to confirm the source o
 
 In parallel, we are working with whitehat hackers at [Veria Labs](https://verialabs.com/) to verify application security and review improvements to our CI/CD process.
 
-We have also confirmed that the last 20 LiteLLM releases contain no indicators of compromise, and that no unauthenticated attacks can be made against LiteLLM Proxy based on our current investigation. [Check Security Blog for release verification.](https://docs.litellm.ai/blog/security-update-march-2026#verified-safe-versions)
+We have also confirmed that the last 20 Lumina releases contain no indicators of compromise, and that no unauthenticated attacks can be made against Lumina Proxy based on our current investigation. [Check Security Blog for release verification.](https://docs.lumina.ai/blog/security-update-march-2026#verified-safe-versions)
 
 #### Created a security working group
 
-We created a new security working group inside LiteLLM focused on:
+We created a new security working group inside Lumina focused on:
 
 - Building threat models
 - Auditing the build process and dependencies
 
-If you're interested in joining the security working group, please file an issue [here](https://github.com/BerriAI/litellm-security-wg).
+If you're interested in joining the security working group, please file an issue [here](https://github.com/Soventra/lumina-security-wg).
 
 ### 3. Improved CI/CD
 
@@ -131,8 +131,8 @@ We plan to move to ephemeral credentials for PyPI (Trusted Publisher) and GHCR (
 
 We have already begun doing this: 
 
-- PyPI Trusted Publisher on GitHub Actions [PR](https://github.com/BerriAI/litellm/pull/24654)
-- GHCR Token-based authentication on GitHub Actions [PR](https://github.com/BerriAI/litellm/pull/24683)
+- PyPI Trusted Publisher on GitHub Actions [PR](https://github.com/Soventra/lumina/pull/24654)
+- GHCR Token-based authentication on GitHub Actions [PR](https://github.com/Soventra/lumina/pull/24683)
 
 ### Release auditing
 
@@ -143,11 +143,11 @@ This will ensure, your releases are safe, even when:
 - Tampered registry artifacts are published
 - Tag mutations are made after the release is published
 
-We believe that [Cosign](https://github.com/sigstore/cosign) is a good fit for this, and have shipped it in [PR #24683](https://github.com/BerriAI/litellm/pull/24683).
+We believe that [Cosign](https://github.com/sigstore/cosign) is a good fit for this, and have shipped it in [PR #24683](https://github.com/Soventra/lumina/pull/24683).
 
 #### How to verify a Docker image with Cosign
 
-Starting from `v1.83.0-nightly`, all LiteLLM Docker images published to GHCR are signed with [cosign](https://docs.sigstore.dev/cosign/overview/). Every release is signed with the same key that was introduced in [commit `0112e53`](https://github.com/BerriAI/litellm/commit/0112e53046018d726492c814b3644b7d376029d0).
+Starting from `v1.83.0-nightly`, all Lumina Docker images published to GHCR are signed with [cosign](https://docs.sigstore.dev/cosign/overview/). Every release is signed with the same key that was introduced in [commit `0112e53`](https://github.com/Soventra/lumina/commit/0112e53046018d726492c814b3644b7d376029d0).
 
 **Verify using the pinned commit hash (recommended):**
 
@@ -155,8 +155,8 @@ A commit hash is cryptographically immutable, so this is the strongest way to en
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-  ghcr.io/berriai/litellm:<release-tag>
+  --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+  ghcr.io/soventra/lumina:<release-tag>
 ```
 
 **Verify using a release tag (convenience):**
@@ -165,8 +165,8 @@ Tags are protected in this repository and resolve to the same key. This option i
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/<release-tag>/cosign.pub \
-  ghcr.io/berriai/litellm:<release-tag>
+  --key https://raw.githubusercontent.com/Soventra/lumina/<release-tag>/cosign.pub \
+  ghcr.io/soventra/lumina:<release-tag>
 ```
 
 Replace `<release-tag>` with the version you are deploying (e.g. `v1.83.0-stable`).
@@ -184,7 +184,7 @@ The following checks were performed on each of these signatures:
 - Move to pinned, verified SHAs for packages and actions used in CI/CD, avoiding `latest` wherever possible. 
 - Add a cooldown period before upgrading to a new version of a package - allows more time to investigate and verify the new version. 
 
-We've added zizmor to help us catch issues such as unpinned dependencies and credential leakage. [commit](https://github.com/BerriAI/litellm/commit/a671275f5c5b0e1fb1adacdf3b6ef779aaa5d56c).
+We've added zizmor to help us catch issues such as unpinned dependencies and credential leakage. [commit](https://github.com/Soventra/lumina/commit/a671275f5c5b0e1fb1adacdf3b6ef779aaa5d56c).
 
 
 ## Frequently Asked Questions
@@ -199,9 +199,9 @@ A: We are committed to balancing security with speed. While we have temporarily 
 
 **Q: Were older packages impacted?**
 
-Our current findings show no indicators of compromise in the last 20 versions of LiteLLM. This was manually verified by our team and independently reviewed by Veria Labs.
+Our current findings show no indicators of compromise in the last 20 versions of Lumina. This was manually verified by our team and independently reviewed by Veria Labs.
 
-We have also published the verified versions for users to use. [Check Security Blog for release verification.](https://docs.litellm.ai/blog/security-update-march-2026#verified-safe-versions)
+We have also published the verified versions for users to use. [Check Security Blog for release verification.](https://docs.lumina.ai/blog/security-update-march-2026#verified-safe-versions)
 
 
 
@@ -211,7 +211,7 @@ If you believe your systems may be affected, contact us immediately:
 
 - **Security:** security@berri.ai
 - **Support:** support@berri.ai
-- **Slack:** Reach out to the LiteLLM team directly [here](https://join.slack.com/t/litellmossslack/shared_invite/zt-3o7nkuyfr-p_kbNJj8taRfXGgQI1~YyA)
+- **Slack:** Reach out to the Lumina team directly [here](https://join.slack.com/t/luminaossslack/shared_invite/zt-3o7nkuyfr-p_kbNJj8taRfXGgQI1~YyA)
 
 ## Hiring 
 
@@ -220,4 +220,4 @@ We are currently hiring for:
 - DevOps Engineer - to keep ci/cd secure and running smoothly
 - Security Engineer - to keep the application secure
 
-If you're interest in joining, please apply [here](https://jobs.ashbyhq.com/litellm)
+If you're interest in joining, please apply [here](https://jobs.ashbyhq.com/lumina)

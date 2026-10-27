@@ -10,15 +10,15 @@ tags: [security]
 hide_table_of_contents: false
 ---
 
-On April 15, 2026, [OX Security](https://www.ox.security/blog/mcp-supply-chain-advisory-rce-vulnerabilities-across-the-ai-ecosystem/) published an advisory covering **command-injection in Anthropic's MCP SDK's stdio transport** (`StdioServerParameters` runs whatever `command` it's handed). This has been fixed on LiteLLM since `v1.83.6-nightly`.
+On April 15, 2026, [OX Security](https://www.ox.security/blog/mcp-supply-chain-advisory-rce-vulnerabilities-across-the-ai-ecosystem/) published an advisory covering **command-injection in Anthropic's MCP SDK's stdio transport** (`StdioServerParameters` runs whatever `command` it's handed). This has been fixed on Lumina since `v1.83.6-nightly`.
 
-The fix landed in [commit `7b7f304`](https://github.com/BerriAI/litellm/commit/7b7f304675) (PR [#25343](https://github.com/BerriAI/litellm/pull/25343)) and has been in every release from `v1.83.6-nightly` onward. `v1.83.7-stable` includes it.
+The fix landed in [commit `7b7f304`](https://github.com/Soventra/lumina/commit/7b7f304675) (PR [#25343](https://github.com/Soventra/lumina/pull/25343)) and has been in every release from `v1.83.6-nightly` onward. `v1.83.7-stable` includes it.
 
 ## TLDR;
 
-- **This was not exploitable by unauthenticated users.** The affected endpoints (MCP server creation and the `/mcp-rest/test/*` preview endpoints) all sit behind LiteLLM's auth. An attacker needed a valid LiteLLM API key, and with the patch the `PROXY_ADMIN` role, before they could reach this code path.
+- **This was not exploitable by unauthenticated users.** The affected endpoints (MCP server creation and the `/mcp-rest/test/*` preview endpoints) all sit behind Lumina's auth. An attacker needed a valid Lumina API key, and with the patch the `PROXY_ADMIN` role, before they could reach this code path.
 - **The fix has been live since `v1.83.6-nightly`.** The first stable release with the fix is **`v1.83.7-stable`**. Full list of patched versions [below](/blog/mcp-stdio-command-injection-april-2026#versions-with-the-fix).
-- **If you find other vulnerabilities, please send them our way.** We run a [bug bounty program](https://github.com/BerriAI/litellm/security) and pay out for P0 (supply chain) and P1 (unauthenticated proxy access) issues. See our [previous security update](https://docs.litellm.ai/blog/security-hardening-april-2026#bug-bounty-program) for the current bounty table.
+- **If you find other vulnerabilities, please send them our way.** We run a [bug bounty program](https://github.com/Soventra/lumina/security) and pay out for P0 (supply chain) and P1 (unauthenticated proxy access) issues. See our [previous security update](https://docs.lumina.ai/blog/security-hardening-april-2026#bug-bounty-program) for the current bounty table.
 
 {/* truncate */}
 
@@ -26,9 +26,9 @@ The fix landed in [commit `7b7f304`](https://github.com/BerriAI/litellm/commit/7
 
 Per OX Security's advisory:
 
-> LiteLLM contains an authenticated remote command execution vulnerability in its MCP server creation functionality. The application allows users to add MCP servers via a JSON configuration specifying arbitrary command and args values. LiteLLM executes these values on the host without validation, enabling attackers to run arbitrary operating system commands.
+> Lumina contains an authenticated remote command execution vulnerability in its MCP server creation functionality. The application allows users to add MCP servers via a JSON configuration specifying arbitrary command and args values. Lumina executes these values on the host without validation, enabling attackers to run arbitrary operating system commands.
 
-Concretely: when adding an MCP server with `transport: stdio`, the `command` field was passed straight through to `StdioServerParameters` and executed as a subprocess on the proxy host. An authenticated user with permission to create MCP servers could run arbitrary commands as the LiteLLM process.
+Concretely: when adding an MCP server with `transport: stdio`, the `command` field was passed straight through to `StdioServerParameters` and executed as a subprocess on the proxy host. An authenticated user with permission to create MCP servers could run arbitrary commands as the Lumina process.
 
 - **CVE:** [CVE-2026-30623](https://www.ox.security/blog/mcp-supply-chain-advisory-rce-vulnerabilities-across-the-ai-ecosystem/)
 - **Severity:** Critical
@@ -40,7 +40,7 @@ Concretely: when adding an MCP server with `transport: stdio`, the `command` fie
 
 ## What the fix does
 
-Commit [`7b7f304`](https://github.com/BerriAI/litellm/commit/7b7f304675) lands four changes:
+Commit [`7b7f304`](https://github.com/Soventra/lumina/commit/7b7f304675) lands four changes:
 
 1. **Command allowlist for stdio transport.** A new constant `MCP_STDIO_ALLOWED_COMMANDS` restricts stdio `command` values to a small set of known MCP launchers:
 
@@ -60,7 +60,7 @@ Commit [`7b7f304`](https://github.com/BerriAI/litellm/commit/7b7f304675) lands f
 
 ## Versions with the fix
 
-The patch is present in every LiteLLM release tagged from `v1.83.6-nightly` onward. Confirmed tags at the time of publishing:
+The patch is present in every Lumina release tagged from `v1.83.6-nightly` onward. Confirmed tags at the time of publishing:
 
 | Version | Type |
 |---------|------|
@@ -71,7 +71,7 @@ The patch is present in every LiteLLM release tagged from `v1.83.6-nightly` onwa
 | `v1.83.9-nightly` | Nightly |
 | `v1.83.10-nightly` | Nightly |
 
-Any LiteLLM release newer than these also includes the fix.
+Any Lumina release newer than these also includes the fix.
 
 ## What you should do
 
@@ -83,4 +83,4 @@ Any LiteLLM release newer than these also includes the fix.
 
 Thanks to the OX Security research team, **Moshe Siman Tov Bustan**, **Mustafa Naamnih**, and **Nir Zadok**, for the disclosure. Their full cross-ecosystem writeup is [here](https://www.ox.security/blog/mcp-supply-chain-advisory-rce-vulnerabilities-across-the-ai-ecosystem/).
 
-If you find a security issue in LiteLLM, please report it through our [bug bounty program](https://github.com/BerriAI/litellm/security).
+If you find a security issue in Lumina, please report it through our [bug bounty program](https://github.com/Soventra/lumina/security).

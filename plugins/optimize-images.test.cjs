@@ -42,7 +42,7 @@ async function createFixtures(directory) {
 }
 
 test('optimizes PNG and JPEG files, caches their bytes, and prunes stale entries', async (t) => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'litellm-optimize-images-'));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'lumina-optimize-images-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
   const originalsDir = path.join(root, 'originals');
   const firstOutDir = path.join(root, 'first');
@@ -79,7 +79,7 @@ test('optimizes PNG and JPEG files, caches their bytes, and prunes stale entries
 });
 
 test('leaves a corrupt PNG untouched and does not cache it', async (t) => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'litellm-optimize-corrupt-'));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'lumina-optimize-corrupt-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
   const outDir = path.join(root, 'out');
   const cacheDir = path.join(root, 'cache');
@@ -95,7 +95,7 @@ test('leaves a corrupt PNG untouched and does not cache it', async (t) => {
 });
 
 test('limits image optimization to two concurrent pipelines', {timeout: 10000}, async (t) => {
-  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'litellm-optimize-concurrency-'));
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'lumina-optimize-concurrency-'));
   t.after(() => fs.rm(root, {recursive: true, force: true}));
   const outDir = path.join(root, 'out');
   const nestedDir = path.join(outDir, 'nested');

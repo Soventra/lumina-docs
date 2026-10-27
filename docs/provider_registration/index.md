@@ -16,21 +16,21 @@ Please see this guide first and look at the existing code in the codebase to und
 
 ### Overview
 
-The way liteLLM works from a provider's perspective is simple.
+The way Lumina works from a provider's perspective is simple.
 
-liteLLM acts as a wrapper, it takes openai requests and routes them to your api. It then adapts your output into a standard output.
+Lumina acts as a wrapper, it takes openai requests and routes them to your api. It then adapts your output into a standard output.
 
-To integrate as a provider, you need to write a module that slots in the api and acts as an adapter between the liteLLM API and your API.
+To integrate as a provider, you need to write a module that slots in the api and acts as an adapter between the Lumina API and your API.
 
 The module you will be writing acts as both a config and a means to adapt requests and responses.
 
-Your objective is to effectively write this module so that it adapts inputs to your api, and adapts outputs to the calling liteLLM code.
+Your objective is to effectively write this module so that it adapts inputs to your api, and adapts outputs to the calling Lumina code.
 
 It includes methods that:
 
 - Validate the request
 - Transform (adapt) the requests into requests sent to your api
-- Transform (adapt) responses from your api into responses given back to the calling liteLLM code
+- Transform (adapt) responses from your api into responses given back to the calling Lumina code
 - \+ a few others
 
 ---
@@ -39,18 +39,18 @@ It includes methods that:
 
 Create a new directory with your provider name
 
-#### `litellm/llms/your_provider_name_here`
+#### `lumina/llms/your_provider_name_here`
 
 Inside of there, you will want to add a file for your chat configuration
 
-#### `litellm/llms/your_provider_name_here/chat/transformation.py`
+#### `lumina/llms/your_provider_name_here/chat/transformation.py`
 
-The `transformation.py` file will contain a configuration class that dictates how your api will slot into the liteLLM api.
+The `transformation.py` file will contain a configuration class that dictates how your api will slot into the Lumina api.
 
 Define your config class extending `BaseConfig`:
 
 ```python
-from litellm.llms.base_llm.chat.transformation import BaseConfig
+from lumina.llms.base_llm.chat.transformation import BaseConfig
 
 class MyProviderChatConfig(BaseConfig):
     def __init__(self):
@@ -63,9 +63,9 @@ We will fill in the abstract methods at a later point.
 
 ### 2. Add Yourself To Various Places In The Code Base
 
-liteLLM is working to enhance this process, but currently, what you need to do is the following:
+Lumina is working to enhance this process, but currently, what you need to do is the following:
 
-#### `litellm/__init__.py`
+#### `lumina/__init__.py`
 
 At the top part of the file, add your key to the list of keys as an option
 
@@ -88,7 +88,7 @@ from .llms.bedrock.chat.converse_transformation import AmazonConverseConfig
 from .llms.openai_like.chat.handler import OpenAILikeChatConfig
 ```
 
-#### `litellm/main.py`
+#### `lumina/main.py`
 
 Add yourself to `main.py` so requests can be routed to your config class
 
@@ -113,9 +113,9 @@ Then much lower in the code
 elif custom_llm_provider == "bytez":
     api_key = (
         api_key
-        or litellm.bytez_key
+        or lumina.bytez_key
         or get_secret_str("BYTEZ_API_KEY")
-        or litellm.api_key
+        or lumina.api_key
     )
 
     response = base_llm_http_handler.completion(
@@ -139,9 +139,9 @@ elif custom_llm_provider == "bytez":
     pass
 ```
 
-NOTE you can rely on liteLLM passing each of the args/kwargs to your config via the .completion() call
+NOTE you can rely on Lumina passing each of the args/kwargs to your config via the .completion() call
 
-#### `litellm/constants.py`
+#### `lumina/constants.py`
 
 Add yourself to the list of `LUMINA_CHAT_PROVIDERS`
 
@@ -159,7 +159,7 @@ LUMINA_CHAT_PROVIDERS = [
 
 Add yourself to the if statement chain of providers here
 
-#### `litellm/litellm_core_utils/get_llm_provider_logic.py`
+#### `lumina/lumina_core_utils/get_llm_provider_logic.py`
 
 ```py
 if model == "*":
@@ -168,11 +168,11 @@ if model == "*":
 elif model.startswith("bytez/"):
     custom_llm_provider = "bytez"
 if not custom_llm_provider:
-    if litellm.suppress_debug_info is False:
+    if lumina.suppress_debug_info is False:
         print()  # noqa
 ```
 
-#### `litellm/litellm_core_utils/streaming_handler.py`
+#### `lumina/lumina_core_utils/streaming_handler.py`
 
 #### If you are doing something custom with streaming, this needs to be updated, e.g.
 
@@ -206,13 +206,13 @@ elif self.custom_llm_provider and self.custom_llm_provider == "bytez":
 
 ### 3. Write a test file to iterate your code
 
-Add a test file somewhere in the project, `tests/test_litellm/llms/my_provider/chat/test.py`
+Add a test file somewhere in the project, `tests/test_lumina/llms/my_provider/chat/test.py`
 
 Write to it the following:
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["MY_PROVIDER_KEY"] = "KEY_GOES_HERE"
 
@@ -253,7 +253,7 @@ If you run with the debugger, after you update `"MY_PROVIDER_API_KEY": "YOUR_API
 
 ### 4. Implement Required Methods
 
-It's wise to follow `completion()` in `litellm/llms/custom_httpx/llm_http_handler.py`
+It's wise to follow `completion()` in `lumina/llms/custom_httpx/llm_http_handler.py`
 
 You will see it calls each of the methods defined in the base class.
 
@@ -305,7 +305,7 @@ def transform_response(*args, **kwargs):
 
 ###### `get_sync_custom_stream_wrapper` / `get_async_custom_stream_wrapper`
 
-If you need to do something these are here for you. See the `litellm/llms/sagemaker/chat/transformation.py` or the `litellm/llms/bytez/chat/transformation.py` implementation to better understand how to use these.
+If you need to do something these are here for you. See the `lumina/llms/sagemaker/chat/transformation.py` or the `lumina/llms/bytez/chat/transformation.py` implementation to better understand how to use these.
 
 Use `CustomStreamWrapper` + `httpx` streaming client to yield content.
 
@@ -313,7 +313,7 @@ Use `CustomStreamWrapper` + `httpx` streaming client to yield content.
 
 ### Tests
 
-Create tests in `tests/test_litellm/llms/my_provider/chat/test.py`. Iterate until you are satisfied with the quality!
+Create tests in `tests/test_lumina/llms/my_provider/chat/test.py`. Iterate until you are satisfied with the quality!
 
 ---
 

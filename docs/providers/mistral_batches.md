@@ -1,6 +1,6 @@
 # Mistral AI Batch API
 
-LiteLLM routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to Mistral's [Files](https://docs.mistral.ai/api/#tag/files) and [Batch](https://docs.mistral.ai/api/#tag/batch) APIs. A Mistral batch job runs one model for every line of the input file, so the model is picked once, on the file upload or the batch request, instead of per line. The job can target `/v1/chat/completions` or `/v1/ocr`, and OCR pages inside a batch are billed at Mistral's batch rate.
+Lumina routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to Mistral's [Files](https://docs.mistral.ai/api/#tag/files) and [Batch](https://docs.mistral.ai/api/#tag/batch) APIs. A Mistral batch job runs one model for every line of the input file, so the model is picked once, on the file upload or the batch request, instead of per line. The job can target `/v1/chat/completions` or `/v1/ocr`, and OCR pages inside a batch are billed at Mistral's batch rate.
 
 | Feature | Supported |
 |---------|-----------|
@@ -29,7 +29,7 @@ Each line is an OpenAI batch request. For OCR the `url` is `/v1/ocr` and the `bo
 {"custom_id": "doc-1", "method": "POST", "url": "/v1/ocr", "body": {"document": {"type": "document_url", "document_url": "https://arxiv.org/pdf/2201.04234"}}}
 ```
 
-Pass `model` with the upload so LiteLLM sends the file with that deployment's credentials and encodes the model into the returned file id. Every later call that carries the id reuses it.
+Pass `model` with the upload so Lumina sends the file with that deployment's credentials and encodes the model into the returned file id. Every later call that carries the id reuses it.
 
 ```bash
 curl http://0.0.0.0:4000/v1/files \
@@ -39,7 +39,7 @@ curl http://0.0.0.0:4000/v1/files \
   -F file="@ocr_batch_input.jsonl"
 ```
 
-Mistral accepts the `batch`, `fine-tune`, and `ocr` purposes. LiteLLM maps `user_data` onto `ocr`, and any other purpose (`assistants`, `vision`, `evals`) is rejected with a 400 because Mistral has no equivalent.
+Mistral accepts the `batch`, `fine-tune`, and `ocr` purposes. Lumina maps `user_data` onto `ocr`, and any other purpose (`assistants`, `vision`, `evals`) is rejected with a 400 because Mistral has no equivalent.
 
 ## 3. Create the batch
 
@@ -77,7 +77,7 @@ Each output line carries the OCR response under `response.body`, including `usag
 
 ## Listing files
 
-A file id that LiteLLM encoded carries its own routing, but a plain list has no id to route on, so name the provider on the request:
+A file id that Lumina encoded carries its own routing, but a plain list has no id to route on, so name the provider on the request:
 
 ```bash
 curl "http://0.0.0.0:4000/v1/files?provider=mistral&purpose=batch" \
@@ -88,7 +88,7 @@ OCR files read back with `purpose=user_data`, and files created by other Mistral
 
 ## Batch OCR cost tracking
 
-When a batch that targets `/v1/ocr` completes, LiteLLM reads `usage_info.pages_processed` and `usage_info.pages_processed_annotation` from every line of the output file and bills each page at the model's batch rate. The rates come from the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json):
+When a batch that targets `/v1/ocr` completes, Lumina reads `usage_info.pages_processed` and `usage_info.pages_processed_annotation` from every line of the output file and bills each page at the model's batch rate. The rates come from the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json):
 
 | Key | Used for |
 |-----|----------|

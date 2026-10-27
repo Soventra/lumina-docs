@@ -6,10 +6,10 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for Claude Opus 5 on the LiteLLM AI Gateway. Use it across Anthropic, Azure, Vertex AI, and Bedrock."
+description: "Day 0 support for Claude Opus 5 on the Lumina AI Gateway. Use it across Anthropic, Azure, Vertex AI, and Bedrock."
 card_title: "Claude Opus 5"
 card_summary: "Much stronger coding agent with self-verification, thinking on by default, $5 / $25 per 1M, 2.5x fast mode at 2x cost."
-image: /img/litellm_claude_opus_5_announcement.png
+image: /img/lumina_claude_opus_5_announcement.png
 tags: [anthropic, claude, opus 5, day 0 support]
 hide_table_of_contents: false
 ---
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Claude Opus 5](/img/litellm_claude_opus_5_announcement.png)
+![Lumina x Claude Opus 5](/img/lumina_claude_opus_5_announcement.png)
 
-LiteLLM now supports [Claude Opus 5](https://www.anthropic.com/news/claude-opus-5) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the LiteLLM AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
+Lumina now supports [Claude Opus 5](https://www.anthropic.com/news/claude-opus-5) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the Lumina AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
 
 {/* truncate */}
 
@@ -36,7 +36,7 @@ Key changes ([details from Anthropic](https://www.anthropic.com/news/claude-opus
 
 ## Before you switch from Opus 4.8
 
-The swap is not free. Priority Tier and web fetch are both gone on Opus 5, so plan that capacity and that tooling separately. Opus 5's cybersecurity classifiers can also decline a request outright with `stop_reason: "refusal"` and a category in `stop_details`, which is worth handling explicitly or routing around with LiteLLM [fallbacks](../../docs/proxy/reliability).
+The swap is not free. Priority Tier and web fetch are both gone on Opus 5, so plan that capacity and that tooling separately. Opus 5's cybersecurity classifiers can also decline a request outright with `stop_reason: "refusal"` and a category in `stop_details`, which is worth handling explicitly or routing around with Lumina [fallbacks](../../docs/proxy/reliability).
 
 Sampling parameters (`temperature`, `top_p`, `top_k`), fixed thinking budgets, and assistant message prefill remain unsupported, same as Opus 4.8. Anthropic's [Opus 5 migration guide](https://platform.claude.com/docs/en/about-claude/models/migration-guide) has the full compatibility checklist.
 
@@ -47,7 +47,7 @@ Opus 5 ships in the **`v1.95.0-dev.3`** image, cutting later today, but most pro
 The exception is `LUMINA_LOCAL_MODEL_COST_MAP=true`, which bakes the cost map into the image and puts it out of the Reload button's reach. Pull `v1.95.0-dev.3` or later for the bundled Opus 5 metadata:
 
 ```bash
-docker pull ghcr.io/berriai/litellm:v1.95.0-dev.3
+docker pull ghcr.io/soventra/lumina:v1.95.0-dev.3
 ```
 
 ## Usage
@@ -74,7 +74,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.95.0-dev.3 \
+  ghcr.io/soventra/lumina:v1.95.0-dev.3 \
   --config /app/config.yaml
 ```
 
@@ -100,7 +100,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.95.0-dev.3 \
+  ghcr.io/soventra/lumina:v1.95.0-dev.3 \
   --config /app/config.yaml
 ```
 
@@ -127,7 +127,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.95.0-dev.3 \
+  ghcr.io/soventra/lumina:v1.95.0-dev.3 \
   --config /app/config.yaml
 ```
 
@@ -147,7 +147,7 @@ model_list:
 ```
 
 :::note
-For cross-region routing, swap the model ID for a regional inference profile (`us.`, `eu.`, `au.`, or `jp.` prefix), e.g. `bedrock/converse/us.anthropic.claude-opus-5`. These carry a 10% regional premium; the `global.` profile stays at base price. LiteLLM tracks the cost of each variant automatically.
+For cross-region routing, swap the model ID for a regional inference profile (`us.`, `eu.`, `au.`, or `jp.` prefix), e.g. `bedrock/converse/us.anthropic.claude-opus-5`. These carry a 10% regional premium; the `global.` profile stays at base price. Lumina tracks the cost of each variant automatically.
 :::
 
 **2. Start the proxy**
@@ -158,7 +158,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.95.0-dev.3 \
+  ghcr.io/soventra/lumina:v1.95.0-dev.3 \
   --config /app/config.yaml
 ```
 
@@ -190,7 +190,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 Fast mode is **only supported on the Anthropic provider** (`anthropic/claude-opus-5`). It is not available on Azure AI, Vertex AI, or Bedrock, and it cannot be combined with the Batch API.
 :::
 
-Opus 5 runs roughly 2.5x faster with `speed: "fast"`, billed at $10 / MTok input and $50 / MTok output (2x the standard rate, down from the 6x premium on Opus 4.6). LiteLLM adds the `fast-mode-2026-02-01` beta header and tracks the premium in cost calculations automatically.
+Opus 5 runs roughly 2.5x faster with `speed: "fast"`, billed at $10 / MTok input and $50 / MTok output (2x the standard rate, down from the 6x premium on Opus 4.6). Lumina adds the `fast-mode-2026-02-01` beta header and tracks the premium in cost calculations automatically.
 
 <Tabs>
 <TabItem value="completions" label="/v1/chat/completions">
@@ -242,4 +242,4 @@ Fast mode on the Responses API is coming soon. The `speed` parameter is not yet 
 
 ## Feedback
 
-Running Opus 5 through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #34517](https://github.com/BerriAI/litellm/discussions/34517).
+Running Opus 5 through Lumina and hitting something unexpected? Share it on [GitHub discussion #34517](https://github.com/Soventra/lumina/discussions/34517).

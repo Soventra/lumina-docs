@@ -7,7 +7,7 @@ Use [XecGuard](https://www.cycraft.com/) (CyCraft) to protect your LLM applicati
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -43,10 +43,10 @@ export XECGUARD_API_BASE="https://api-xecguard.cycraft.ai"   # Optional, this is
 export XECGUARD_BLOCK_ON_ERROR="true"                        # Optional, fail-closed by default
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test request

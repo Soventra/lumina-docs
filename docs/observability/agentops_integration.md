@@ -6,14 +6,14 @@ import TabItem from '@theme/TabItem';
 Observability and DevTool platform for AI agents, at [agentops.ai](https://www.agentops.ai/).
 
 :::info
-We want to learn how we can make the callbacks better! Meet the LiteLLM [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version) or
+We want to learn how we can make the callbacks better! Meet the Lumina [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version) or
 join our [discord](https://discord.gg/wuPM9dRgDw)
 :::
 
 ## Pre-Requisites
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
 ## Quick Start
@@ -22,7 +22,7 @@ uv add litellm
 <TabItem value="python" label="SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["LUMINA_OTEL_V2"] = "true"
@@ -30,11 +30,11 @@ os.environ["AGENTOPS_API_KEY"] = ""
 # LLM API Keys
 os.environ["OPENAI_API_KEY"] = ""
 
-# set agentops as a callback, litellm will send the data to agentops
-litellm.callbacks = ["agentops"]
+# set agentops as a callback, lumina will send the data to agentops
+lumina.callbacks = ["agentops"]
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_large}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -43,7 +43,7 @@ response = litellm.completion(
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -54,7 +54,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["agentops"]
 ```
 
@@ -65,10 +65,10 @@ LUMINA_OTEL_V2=true
 AGENTOPS_API_KEY="your-api-key"
 ```
 
-3. Start LiteLLM Proxy
+3. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it!
@@ -97,7 +97,7 @@ Open the AgentOps dashboard. AgentOps does not add a vendor mapper, so spans arr
 
 The preset sets three resource-level labels on the traces: `service.name` from `AGENTOPS_SERVICE_NAME`, a fixed `telemetry.sdk.name` of `agentops`, and `deployment.environment` from `AGENTOPS_ENVIRONMENT` when you set it. AgentOps routes the trace by the project encoded in the auth token, so the project never appears as a resource attribute.
 
-![LiteLLM trace in AgentOps](/img/observability/otel_v2_agentops.png)
+![Lumina trace in AgentOps](/img/observability/otel_v2_agentops.png)
 
 ## Configuration
 
@@ -121,6 +121,6 @@ This page covers the AgentOps-specific setup. For span attributes, prompt and re
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

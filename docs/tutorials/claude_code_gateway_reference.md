@@ -10,15 +10,15 @@ import Image from '@theme/IdealImage';
 
 Start with [Claude Code SSO setup](./claude_code_gateway.md) to choose and configure a sign-in flow.
 
-Let developers sign in to Claude Code with your SSO provider instead of an API key. LiteLLM serves the same gateway protocol Anthropic's self-hosted [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) speaks: Claude Code's `/login` opens on a **Cloud gateway** screen, the developer signs in through your identity provider in the browser, and every request after that carries a LiteLLM token tied to that developer's user and team, so spend, budgets, and logs are attributed per person with nothing to issue or rotate
+Let developers sign in to Claude Code with your SSO provider instead of an API key. Lumina serves the same gateway protocol Anthropic's self-hosted [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) speaks: Claude Code's `/login` opens on a **Cloud gateway** screen, the developer signs in through your identity provider in the browser, and every request after that carries a Lumina token tied to that developer's user and team, so spend, budgets, and logs are attributed per person with nothing to issue or rotate
 
 <EnterpriseFeature feature="SSO">From v1.76.0, SSO is free for up to 5 users. Beyond that, an enterprise license is required.</EnterpriseFeature>
 
-The flow works with any SSO provider LiteLLM supports (Google, Microsoft Entra ID, Okta, or any OIDC provider through the generic client). It differs from [Claude Code with Okta SSO (JWT Auth)](./claude_code_okta_sso), where a helper script fetches an IdP token and Claude Code sends that token as its API key: here there is no script to distribute, the sign-in is Claude Code's own, and the proxy can push [managed settings](#4-push-managed-settings-from-the-proxy) to every signed-in client. Claude Code v2.1.195 or later is required on developer machines
+The flow works with any SSO provider Lumina supports (Google, Microsoft Entra ID, Okta, or any OIDC provider through the generic client). It differs from [Claude Code with Okta SSO (JWT Auth)](./claude_code_okta_sso), where a helper script fetches an IdP token and Claude Code sends that token as its API key: here there is no script to distribute, the sign-in is Claude Code's own, and the proxy can push [managed settings](#4-push-managed-settings-from-the-proxy) to every signed-in client. Claude Code v2.1.195 or later is required on developer machines
 
 ## How it works
 
-Claude Code reads the gateway URL from a managed settings file, fetches the gateway's OAuth discovery document, and asks the developer once to trust the gateway. It then starts an [OAuth device authorization](https://www.rfc-editor.org/rfc/rfc8628) flow: the terminal shows a short code and opens the browser on LiteLLM's SSO login, the developer signs in with your identity provider and confirms the code, and Claude Code, which has been polling the token endpoint, receives a LiteLLM CLI token and a refresh token. The CLI token is a JWT scoped to the developer's user and team, valid for 24 hours by default, and Claude Code renews it with the refresh token before it expires, so a developer who keeps using Claude Code is not sent back to the browser (see [Session lifetime and sign-out](#session-lifetime-and-sign-out)). Claude Code stores both, fetches managed settings with the CLI token, and sends every inference request to `/claude_code_gateway/v1/messages` with it as the bearer token. Under the hood the gateway reuses the proxy's existing [CLI SSO device flow](../proxy/cli_sso), so anything that works for `lite login` (SSO providers, team membership, model access, budgets) works here
+Claude Code reads the gateway URL from a managed settings file, fetches the gateway's OAuth discovery document, and asks the developer once to trust the gateway. It then starts an [OAuth device authorization](https://www.rfc-editor.org/rfc/rfc8628) flow: the terminal shows a short code and opens the browser on Lumina's SSO login, the developer signs in with your identity provider and confirms the code, and Claude Code, which has been polling the token endpoint, receives a Lumina CLI token and a refresh token. The CLI token is a JWT scoped to the developer's user and team, valid for 24 hours by default, and Claude Code renews it with the refresh token before it expires, so a developer who keeps using Claude Code is not sent back to the browser (see [Session lifetime and sign-out](#session-lifetime-and-sign-out)). Claude Code stores both, fetches managed settings with the CLI token, and sends every inference request to `/claude_code_gateway/v1/messages` with it as the bearer token. Under the hood the gateway reuses the proxy's existing [CLI SSO device flow](../proxy/cli_sso), so anything that works for `lite login` (SSO providers, team membership, model access, budgets) works here
 
 ## 1. Turn the gateway on
 
@@ -46,8 +46,8 @@ The browser leg is the proxy's SSO login, so configure your SSO provider the way
 ```bash
 export GOOGLE_CLIENT_ID="<client id>"
 export GOOGLE_CLIENT_SECRET="<client secret>"
-export PROXY_BASE_URL="https://litellm.internal.example.com"
-litellm --config config.yaml
+export PROXY_BASE_URL="https://lumina.internal.example.com"
+lumina --config config.yaml
 ```
 
 `PROXY_BASE_URL` is the origin developers reach. The gateway builds the discovery document, the token endpoint, and the browser verification URL from it, so behind a load balancer or TLS terminator it must name the public-facing origin, not the pod. Claude Code only signs in to a gateway whose hostname resolves to private addresses (RFC 1918, link-local, CGNAT `100.64.0.0/10`, IPv6 ULA `fc00::/7`, or loopback), because a trusted gateway can push settings that run commands on developer machines. Put the proxy on an internal hostname behind TLS; the CLI pins the TLS certificate per hostname on first connect. Plain `http://` on loopback, as in the screenshots below, is accepted for local testing
@@ -84,7 +84,7 @@ curl -X POST http://localhost:4000/claude_code_gateway/oauth/device_authorizatio
 {
   "device_code": "cli-tyQu2vOB-r2ynASXPqyOKDd0g_cr6NOm.mAVkxaITywoFfMB-_x87HqgyZ886Hz6luXiZw2qssVo",
   "user_code": "XPCA-X2K2",
-  "verification_uri": "http://localhost:4000/sso/key/generate?source=litellm-cli&key=cli-tyQu2vOB-r2ynASXPqyOKDd0g_cr6NOm",
+  "verification_uri": "http://localhost:4000/sso/key/generate?source=lumina-cli&key=cli-tyQu2vOB-r2ynASXPqyOKDd0g_cr6NOm",
   "expires_in": 600,
   "interval": 5
 }
@@ -106,7 +106,7 @@ Once the developer has approved the code in the browser (the next section shows 
 
 ```json
 {
-  "access_token": "litellm_login_<redacted>",
+  "access_token": "lumina_login_<redacted>",
   "token_type": "Bearer",
   "expires_in": 86400,
   "refresh_token": "llm_srefresh_e<redacted>",
@@ -147,11 +147,11 @@ Claude Code opens `/login` on the gateway screen only when the gateway URL comes
 ```json
 {
   "forceLoginMethod": "gateway",
-  "forceLoginGatewayUrl": "https://litellm.internal.example.com/claude_code_gateway"
+  "forceLoginGatewayUrl": "https://lumina.internal.example.com/claude_code_gateway"
 }
 ```
 
-The URL is the `issuer` from the discovery document, with the `/claude_code_gateway` path. If developer machines route HTTPS through a corporate proxy, add the LiteLLM host to `NO_PROXY` so the CLI connects to it directly, and if your internal network is numbered from public IPv4 space you own, list those blocks in the `gatewayInternalNetworks` managed setting (Claude Code v2.1.268 or later); both are covered in Anthropic's [gateway prerequisites](https://code.claude.com/docs/en/claude-apps-gateway#prerequisites)
+The URL is the `issuer` from the discovery document, with the `/claude_code_gateway` path. If developer machines route HTTPS through a corporate proxy, add the Lumina host to `NO_PROXY` so the CLI connects to it directly, and if your internal network is numbered from public IPv4 space you own, list those blocks in the `gatewayInternalNetworks` managed setting (Claude Code v2.1.268 or later); both are covered in Anthropic's [gateway prerequisites](https://code.claude.com/docs/en/claude-apps-gateway#prerequisites)
 
 With the file in place, run `claude` (or `/login` in a running session). The gateway screen shows the URL from managed settings
 
@@ -183,11 +183,11 @@ From here Claude Code continues with its usual first-run prompts (security notes
 
 Claude Code stores the session token together with the refresh token. Five minutes before the session token expires (24 hours by default), it posts the refresh token to the token endpoint and stores the new session token and refresh token it gets back, so a developer who keeps using Claude Code is not sent back to the browser. Each refresh token is single-use and lives 14 days, and every renewal issues a new one, so a session ends after 14 days without a renewal, and Claude Code asks for `/login` once the session token it holds expires. Two Claude Code terminals on one machine share the stored credential but renew on their own, so the second one to renew presents the refresh token the first already rotated, is refused (one or more `400`s on `/claude_code_gateway/oauth/token` in the proxy's access log) and carries on with the credential the first terminal saved
 
-Every renewal re-reads the developer's user record and team membership in LiteLLM. Deactivating or deleting the user in LiteLLM, or removing them from the team the session was issued for, refuses the next renewal with `400 invalid_grant`, and Claude Code asks for `/login` once the current session token expires, within `LUMINA_CLI_JWT_EXPIRATION_HOURS`. A deleted user's requests to `/claude_code_gateway/v1/messages` answer `401` right away, before that session token expires. Deprovisioning a developer at the identity provider alone does not end a session in progress, because renewal checks LiteLLM's own user and team state and not the identity provider, so that session keeps renewing until 14 days pass without a renewal. Deactivate the user in LiteLLM as well to end it sooner
+Every renewal re-reads the developer's user record and team membership in Lumina. Deactivating or deleting the user in Lumina, or removing them from the team the session was issued for, refuses the next renewal with `400 invalid_grant`, and Claude Code asks for `/login` once the current session token expires, within `LUMINA_CLI_JWT_EXPIRATION_HOURS`. A deleted user's requests to `/claude_code_gateway/v1/messages` answer `401` right away, before that session token expires. Deprovisioning a developer at the identity provider alone does not end a session in progress, because renewal checks Lumina's own user and team state and not the identity provider, so that session keeps renewing until 14 days pass without a renewal. Deactivate the user in Lumina as well to end it sooner
 
 `/logout` posts the session token and the refresh token to `POST /claude_code_gateway/oauth/revoke`, the `revocation_endpoint` from the discovery document, then removes the stored credential. Revoking the refresh token ends that sign-in, since every refresh token rotated from it, whoever holds one, is refused from then on. The session token itself is self-contained and is not revoked; it stays valid until it expires
 
-Renewal and revocation need LiteLLM v1.106.0 or later (first in `v1.106.0-rc.1`). Earlier releases issue no refresh token and answer every refresh with `401`, so Claude Code asks for `/login` again at every expiry, and during a rolling upgrade a renewal served by a replica still on the previous release does the same for that developer once
+Renewal and revocation need Lumina v1.106.0 or later (first in `v1.106.0-rc.1`). Earlier releases issue no refresh token and answer every refresh with `401`, so Claude Code asks for `/login` again at every expiry, and during a rolling upgrade a renewal served by a replica still on the previous release does the same for that developer once
 
 ## 4. Push managed settings from the proxy
 
@@ -204,10 +204,10 @@ general_settings:
       OTEL_METRICS_EXPORTER: otlp
       OTEL_LOGS_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
-      OTEL_EXPORTER_OTLP_ENDPOINT: https://litellm.internal.example.com/claude_code_gateway
+      OTEL_EXPORTER_OTLP_ENDPOINT: https://lumina.internal.example.com/claude_code_gateway
 ```
 
-The endpoint is `GET /claude_code_gateway/managed/settings`, authenticated with the CLI token (any LiteLLM key works for checking it). The response wraps your block in the `{uuid, checksum, settings}` envelope Claude Code expects, where both ids are the SHA-256 of the canonical JSON, and the same value is returned as an `ETag`. Claude Code sends it back as `If-None-Match` on the hourly refresh and gets `304 Not Modified` until the block changes. When `claude_code_gateway_managed_settings` is unset, the endpoint answers `404`, which the CLI reads as "no managed policy"
+The endpoint is `GET /claude_code_gateway/managed/settings`, authenticated with the CLI token (any Lumina key works for checking it). The response wraps your block in the `{uuid, checksum, settings}` envelope Claude Code expects, where both ids are the SHA-256 of the canonical JSON, and the same value is returned as an `ETag`. Claude Code sends it back as `If-None-Match` on the hourly refresh and gets `304 Not Modified` until the block changes. When `claude_code_gateway_managed_settings` is unset, the endpoint answers `404`, which the CLI reads as "no managed policy"
 
 ```bash
 curl -s http://localhost:4000/claude_code_gateway/managed/settings \
@@ -225,7 +225,7 @@ curl -s http://localhost:4000/claude_code_gateway/managed/settings \
       "OTEL_METRICS_EXPORTER": "otlp",
       "OTEL_LOGS_EXPORTER": "otlp",
       "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
-      "OTEL_EXPORTER_OTLP_ENDPOINT": "https://litellm.internal.example.com/claude_code_gateway"
+      "OTEL_EXPORTER_OTLP_ENDPOINT": "https://lumina.internal.example.com/claude_code_gateway"
     }
   }
 }
@@ -241,16 +241,16 @@ In sessions signed in through `/login`, Claude Code sends its OpenTelemetry expo
 
 ## Deployment topologies
 
-**Claude Code to LiteLLM.** The setup on this page: developers sign in through LiteLLM, LiteLLM holds the provider credentials, and the proxy's [model access](../proxy/virtual_keys), [budgets](../proxy/users), [rate limits](../proxy/users), and [logging](../proxy/logging) apply per user and team. This is the topology to pick when LiteLLM is already your gateway for other clients
+**Claude Code to Lumina.** The setup on this page: developers sign in through Lumina, Lumina holds the provider credentials, and the proxy's [model access](../proxy/virtual_keys), [budgets](../proxy/users), [rate limits](../proxy/users), and [logging](../proxy/logging) apply per user and team. This is the topology to pick when Lumina is already your gateway for other clients
 
-**Claude Code to LiteLLM behind a load balancer.** The same thing with several replicas: `PROXY_BASE_URL` names the balancer's origin so the discovery document and the browser URL point developers at an address they reach, TLS terminates at the balancer on a private hostname, and Redis is configured so the device flow completes on any replica. Sticky sessions are not needed
+**Claude Code to Lumina behind a load balancer.** The same thing with several replicas: `PROXY_BASE_URL` names the balancer's origin so the discovery document and the browser URL point developers at an address they reach, TLS terminates at the balancer on a private hostname, and Redis is configured so the device flow completes on any replica. Sticky sessions are not needed
 
-**Claude Code to the Claude apps gateway to LiteLLM.** Anthropic offers no hosted gateway; the [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) is software you run yourself. If you already run it (for its IdP-group policies, or because Claude Desktop connects through it), it can front LiteLLM as an `anthropic` upstream whose `base_url` is the proxy and whose `api_key` is a LiteLLM virtual key. Set `forward_user_identity: true` on that upstream and the Claude apps gateway adds `x-litellm-end-user-id` (the developer's email) to every request it forwards; LiteLLM reads that header as the [customer id](../proxy/customers) without any extra configuration, so spend is tracked per developer even though the proxy sees one key. A `429` from LiteLLM on such a request is returned to the developer as-is instead of failing over to another upstream (Claude apps gateway v2.1.267 or later), so per-customer budgets and rate limits hold. In this topology the sign-in and managed settings are the Claude apps gateway's, and `enable_claude_code_gateway` stays off on LiteLLM
+**Claude Code to the Claude apps gateway to Lumina.** Anthropic offers no hosted gateway; the [Claude apps gateway](https://code.claude.com/docs/en/claude-apps-gateway) is software you run yourself. If you already run it (for its IdP-group policies, or because Claude Desktop connects through it), it can front Lumina as an `anthropic` upstream whose `base_url` is the proxy and whose `api_key` is a Lumina virtual key. Set `forward_user_identity: true` on that upstream and the Claude apps gateway adds `x-lumina-end-user-id` (the developer's email) to every request it forwards; Lumina reads that header as the [customer id](../proxy/customers) without any extra configuration, so spend is tracked per developer even though the proxy sees one key. A `429` from Lumina on such a request is returned to the developer as-is instead of failing over to another upstream (Claude apps gateway v2.1.267 or later), so per-customer budgets and rate limits hold. In this topology the sign-in and managed settings are the Claude apps gateway's, and `enable_claude_code_gateway` stays off on Lumina
 
 ```yaml
 upstreams:
   - provider: anthropic
-    base_url: https://litellm.internal.example.com
+    base_url: https://lumina.internal.example.com
     auth:
       api_key: ${LUMINA_VIRTUAL_KEY}
     forward_user_identity: true
@@ -260,7 +260,7 @@ upstreams:
 
 Revocation covers the refresh token only. The session token is self-contained, so after `/logout` the session token a developer held keeps working until it expires, within `LUMINA_CLI_JWT_EXPIRATION_HOURS`
 
-A replayed refresh token is refused on its own and ends nothing else, so a copy of a refresh token that renews before the real one keeps its chain alive. The real Claude Code drops its refresh token on that refusal, which leaves `/logout` nothing to revoke, so deactivating or deleting the user in LiteLLM, or removing them from the team, is what ends that chain
+A replayed refresh token is refused on its own and ends nothing else, so a copy of a refresh token that renews before the real one keeps its chain alive. The real Claude Code drops its refresh token on that refusal, which leaves `/logout` nothing to revoke, so deactivating or deleting the user in Lumina, or removing them from the team, is what ends that chain
 
 The refresh token is signed with the MCP gateway's session signing keys, derived from `master_key` unless `general_settings.mcp_session_token_signing` is set. On a proxy where that block cannot be loaded, sign-in still succeeds but returns no refresh token and the proxy logs the fault, so the developer is back to signing in at every expiry until it is fixed
 
@@ -270,11 +270,11 @@ Two endpoints of the protocol are not served: `GET /claude_code_gateway/v1/model
 
 `enable_claude_code_gateway`, `claude_code_gateway_managed_settings`, and `allow_cli_sso_verification_uri_complete` are read from `general_settings` in `config.yaml` only; they cannot be set from the Admin UI or the database
 
-Claude Code disables server-side WebSearch on gateway sessions and uses the 5-minute prompt cache TTL rather than the 1-hour one, because it cannot see which upstream a gateway routes to. Both are Claude Code behaviors for any gateway, LiteLLM included
+Claude Code disables server-side WebSearch on gateway sessions and uses the 5-minute prompt cache TTL rather than the 1-hour one, because it cannot see which upstream a gateway routes to. Both are Claude Code behaviors for any gateway, Lumina included
 
 ## Related docs
 
 - [CLI SSO Authentication](../proxy/cli_sso): the device flow the gateway reuses, token lifetime, the PKCE sign-in whose refresh token family and revocation this gateway reuses, and the native client contract
 - [SSO for Admin UI](../proxy/admin_ui_sso): configuring Google, Microsoft, Okta, or generic OIDC on the proxy
 - [Claude Code with Okta SSO (JWT Auth)](./claude_code_okta_sso): the `apiKeyHelper` alternative, where Claude Code sends the IdP token itself
-- [Claude Code Quickstart](./claude_responses_api): basic Claude Code with LiteLLM setup using an API key
+- [Claude Code Quickstart](./claude_responses_api): basic Claude Code with Lumina setup using an API key

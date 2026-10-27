@@ -13,7 +13,7 @@ One router for complexity, semantic, and adaptive routing. Classify each request
 
 :::info[Availability]
 
-Auto routing is in **beta**, so config keys and defaults can still change between releases. Ships in **v1.94.x**. The earliest dev release cuts **Tuesday, 2026-07-14**. Suggestions and feedback: [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Auto routing is in **beta**, so config keys and defaults can still change between releases. Ships in **v1.94.x**. The earliest dev release cuts **Tuesday, 2026-07-14**. Suggestions and feedback: [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -68,7 +68,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 To get started, tell your agent:
 
 ```
-run curl -fsSL https://docs.litellm.ai/skills/auto-router and follow the instructions
+run curl -fsSL https://docs.lumina.ai/skills/auto-router and follow the instructions
 ```
 
 It reads the models your proxy already serves, asks how you want the router named and which model should serve each tier, and calls out the defaults it is assuming before it writes anything.
@@ -173,7 +173,7 @@ Every knob v2 exposes. All fields on `complexity_router_config` are optional exc
 
 ## Image requests and text-only tiers
 
-An image request is a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. LiteLLM does not send one to a deployment that is declared text-only. A deployment is text-only when `model_info.supports_vision` is `false`, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `lumina_params.base_model`, then the deployment model name. A deployment with no declaration and no catalog entry is treated as image-capable, so a custom text-only deployment needs an explicit `model_info.supports_vision: false` before it is skipped. LiteLLM never probes a provider during routing.
+An image request is a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. Lumina does not send one to a deployment that is declared text-only. A deployment is text-only when `model_info.supports_vision` is `false`, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `lumina_params.base_model`, then the deployment model name. A deployment with no declaration and no catalog entry is treated as image-capable, so a custom text-only deployment needs an explicit `model_info.supports_vision: false` before it is skipped. Lumina never probes a provider during routing.
 
 ```yaml
 model_list:
@@ -218,7 +218,7 @@ classifier_llm_config:
 
 ### JEV classifier
 
-This reference retains the field names supported by released builds. A build containing [backend #43626](https://github.com/BerriAI/litellm/pull/43626) also accepts `classifier_type: oss_classifier` with `opensource_classifier_config.provider: jev`; the settings below apply inside `opensource_classifier_config`. The existing names remain accepted. See the [OSS classifier guide](/docs/auto_router/decision_classifiers) for migration and the Jev, Nimble, Laya and Databricks provider configurations. With `provider: databricks`, `model` is `ai_decide` or a bare serving endpoint name, and `api_key` and `api_base` read `DATABRICKS_API_KEY` (or `DATABRICKS_TOKEN`) and `DATABRICKS_API_BASE` when omitted.
+This reference retains the field names supported by released builds. A build containing [backend #43626](https://github.com/Soventra/lumina/pull/43626) also accepts `classifier_type: oss_classifier` with `opensource_classifier_config.provider: jev`; the settings below apply inside `opensource_classifier_config`. The existing names remain accepted. See the [OSS classifier guide](/docs/auto_router/decision_classifiers) for migration and the Jev, Nimble, Laya and Databricks provider configurations. With `provider: databricks`, `model` is `ai_decide` or a bare serving endpoint name, and `api_key` and `api_base` read `DATABRICKS_API_KEY` (or `DATABRICKS_TOKEN`) and `DATABRICKS_API_BASE` when omitted.
 
 Set `classifier_type: jev` with `jev_classifier_config` to use [TypeSafe System One](/docs/pass_through/typesafe). It sends one `questions.tier` Choice question to `POST /v1/systemone`, with the classification input in `state` and tier descriptions in `criteria`. The returned choice selects the existing tier pool. See [setup and dashboard instructions](/docs/auto_router/setup#jev-classifier-typesafe-ai)
 
@@ -249,7 +249,7 @@ classifier_context_include_assistant_turns: false
 
 JEV shares the classifier context builder with the LLM classifier. `classifier_context_window_size` defaults to three prior user turns. `classifier_context_budget_chars` defaults to 8,000 characters of prior-turn text, taking the newest turns first. `classifier_context_per_turn_chars` is an optional positive cap with no default cap. `classifier_context_include_assistant_turns: true` includes assistant text and makes the window count both roles
 
-Prior turns are sent to the configured TypeSafe endpoint by default, even if another provider serves the completion. Assistant turns are excluded unless enabled. Existing JEV routers gain this history behavior when upgrading to the [context integration](https://github.com/BerriAI/litellm/pull/41886). Set `classifier_context_window_size: 0` before upgrading to keep prior conversation out of JEV requests
+Prior turns are sent to the configured TypeSafe endpoint by default, even if another provider serves the completion. Assistant turns are excluded unless enabled. Existing JEV routers gain this history behavior when upgrading to the [context integration](https://github.com/Soventra/lumina/pull/41886). Set `classifier_context_window_size: 0` before upgrading to keep prior conversation out of JEV requests
 
 These bounds cover prior-turn text. The current ask and extracted system text are outside that budget, as is the numbering around quoted turns. Recognized Claude Code requests omit their harness system text. A window size of `0` disables prior-turn context, and a character budget below `120` suppresses that block. Increasing context changes what is sent to TypeSafe and can change classification cost and tier choices
 
@@ -300,7 +300,7 @@ match_threshold: 0.5
 
 :::info
 
-Custom classifier plugins ship in **v1.99.x** ([PR #37249](https://github.com/BerriAI/litellm/pull/37249)). Config file only: like `plugins`, `classifier_plugin` cannot be set through the model-management API or the UI, because a live object does not travel over HTTP.
+Custom classifier plugins ship in **v1.99.x** ([PR #37249](https://github.com/Soventra/lumina/pull/37249)). Config file only: like `plugins`, `classifier_plugin` cannot be set through the model-management API or the UI, because a live object does not travel over HTTP.
 
 :::
 
@@ -319,7 +319,7 @@ Custom classifier plugins ship in **v1.99.x** ([PR #37249](https://github.com/Be
 ```
 
 ```python title="classifiers.py"
-from litellm.types.router import RoutingContext
+from lumina.types.router import RoutingContext
 
 
 class TierByTeam:
@@ -363,7 +363,7 @@ The deprecated [semantic auto router](./auto_routing_semantic.md) has a much thi
 
 :::info
 
-Context-window support ships in **v1.96.x** ([PR #35185](https://github.com/BerriAI/litellm/pull/35185)); assistant turns in the window arrived in the same release ([PR #35471](https://github.com/BerriAI/litellm/pull/35471)). On earlier versions the classifier saw only the current message, and these keys are silently ignored.
+Context-window support ships in **v1.96.x** ([PR #35185](https://github.com/Soventra/lumina/pull/35185)); assistant turns in the window arrived in the same release ([PR #35471](https://github.com/Soventra/lumina/pull/35471)). On earlier versions the classifier saw only the current message, and these keys are silently ignored.
 
 :::
 
@@ -521,7 +521,7 @@ ComplexityRouter: routing decision cause=session_affinity_pin,                  
 
 ## Reading the picked model from the response
 
-By default the response body `model` field stays the alias you called (`smart-router`), matching the OpenAI convention that a client gets back the model name it asked for, and the tier that actually answered is reachable only through the [`x-litellm-model-id` response header](./response_headers.md#litellm-specific-headers). Clients that cannot read response headers, including framework wrappers and streaming consumers that only see body chunks, need the value in the body.
+By default the response body `model` field stays the alias you called (`smart-router`), matching the OpenAI convention that a client gets back the model name it asked for, and the tier that actually answered is reachable only through the [`x-lumina-model-id` response header](./response_headers.md#lumina-specific-headers). Clients that cannot read response headers, including framework wrappers and streaming consumers that only see body chunks, need the value in the body.
 
 Set `return_raw_model_name` on the router to put it there. The proxy then skips the restamp and leaves the resolved model in `model`, on the non-streaming response and on every streaming chunk:
 
@@ -562,7 +562,7 @@ Two things change once the flag is on. Callers stop getting back the alias they 
 
 :::info[No dedicated body field]
 
-The v1.99 release candidates briefly carried a separate `router_model_name` body field for this ([PR #37725](https://github.com/BerriAI/litellm/pull/37725)), added with LangChain callers in mind. It never reached them: `@langchain/openai` builds `additional_kwargs` and `response_metadata` from fixed key allowlists and drops unknown fields at both the top level of a chunk and inside `delta`, so no proxy-side placement of a namespaced key could work. The field was removed before the stable release in favor of `return_raw_model_name`, which lands in the `model` field that LangChain does propagate.
+The v1.99 release candidates briefly carried a separate `router_model_name` body field for this ([PR #37725](https://github.com/Soventra/lumina/pull/37725)), added with LangChain callers in mind. It never reached them: `@langchain/openai` builds `additional_kwargs` and `response_metadata` from fixed key allowlists and drops unknown fields at both the top level of a chunk and inside `delta`, so no proxy-side placement of a namespaced key could work. The field was removed before the stable release in favor of `return_raw_model_name`, which lands in the `model` field that LangChain does propagate.
 
 :::
 
@@ -604,13 +604,13 @@ For example, a baseline-identical request costing $0.10 has $0.10 baseline cost,
 ### Where it shows up
 
 - **Usage**, normalized from each provider's own shape: `cache_read_input_tokens` and `cache_creation_input_tokens` on the Anthropic surface, `prompt_tokens_details.cached_tokens` on the OpenAI-compatible surface, plus DeepSeek's `prompt_cache_hit_tokens`
-- **Daily rollups**: `cache_read_input_tokens` and `cache_creation_input_tokens` columns alongside `autorouter_savings_spend`, on `LiteLLM_DailyUserSpend`, `LiteLLM_DailyTeamSpend`, `LiteLLM_DailyTagSpend`, `LiteLLM_DailyOrganizationSpend`, `LiteLLM_DailyEndUserSpend` and `LiteLLM_DailyAgentSpend`
+- **Daily rollups**: `cache_read_input_tokens` and `cache_creation_input_tokens` columns alongside `autorouter_savings_spend`, on `Lumina_DailyUserSpend`, `Lumina_DailyTeamSpend`, `Lumina_DailyTagSpend`, `Lumina_DailyOrganizationSpend`, `Lumina_DailyEndUserSpend` and `Lumina_DailyAgentSpend`
 - **API**: `GET /user/daily/activity` returns them under `metrics`, with a `total_autorouter_savings_spend` in the response metadata
 - **UI**: the **Cost Optimization** page reads that endpoint, where the number is labeled "Auto-router savings". Its Auto-Router Benchmarks tab folds each turn's `classifier_cost` into that turn's spend, so the savings percentage there is net savings measured against the full baseline cost
 
 :::note
 
-`LiteLLM_SpendLogs` has no cache-token or savings columns, so the split is not queryable there; the daily rollup above is. The usage carrying that split does ride in the row's `metadata` under `usage_object`, which is what the daily savings writer reads back to rebuild `Usage`. Its `cache_hit` and `cache_key` columns are unrelated, describing LiteLLM's own response cache rather than provider-side prompt caching. Routing itself persists as `routing_decision` in metadata: `routed_model`, `cause` and `conversation_continuing` always, `tier` when a tier was determined, `classifier_cost` when the LLM classifier ran, and the derived baseline alongside the deployment it resolved to. The net figure is stamped on that metadata as `autorouter_savings`. The versioned `autorouter_savings_estimate` records comparison identity, provenance, status, reason and both comparison costs. Readers use the recorded estimate and its coverage
+`Lumina_SpendLogs` has no cache-token or savings columns, so the split is not queryable there; the daily rollup above is. The usage carrying that split does ride in the row's `metadata` under `usage_object`, which is what the daily savings writer reads back to rebuild `Usage`. Its `cache_hit` and `cache_key` columns are unrelated, describing Lumina's own response cache rather than provider-side prompt caching. Routing itself persists as `routing_decision` in metadata: `routed_model`, `cause` and `conversation_continuing` always, `tier` when a tier was determined, `classifier_cost` when the LLM classifier ran, and the derived baseline alongside the deployment it resolved to. The net figure is stamped on that metadata as `autorouter_savings`. The versioned `autorouter_savings_estimate` records comparison identity, provenance, status, reason and both comparison costs. Readers use the recorded estimate and its coverage
 
 :::
 
@@ -668,7 +668,7 @@ Declare it in `model_info` on the router entry:
     max_output_tokens: 64000
 ```
 
-Both values then appear on `/v1/models`, `/model/info`, and `/model_group/info`, which is what clients and the LiteLLM UI read. They are advisory. Nothing gates, escalates, or rejects a request against the window declared on the router entry, so pick a number that describes the router honestly to callers; the smallest window a request might land on is the conservative choice, and the largest is the optimistic one.
+Both values then appear on `/v1/models`, `/model/info`, and `/model_group/info`, which is what clients and the Lumina UI read. They are advisory. Nothing gates, escalates, or rejects a request against the window declared on the router entry, so pick a number that describes the router honestly to callers; the smallest window a request might land on is the conservative choice, and the largest is the optimistic one.
 
 Where a `model_name` fronts both a router marker and ordinary deployments, `/model_group/info` reports the largest `max_input_tokens` in that group rather than the smallest, since model-group metadata aggregates by maximum across deployments.
 
@@ -764,7 +764,7 @@ Effort levels are per-model capabilities, so check the model supports the rung y
 ## Python SDK
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -799,7 +799,7 @@ response = await router.acompletion(
 
 ## UI
 
-Models + Endpoints > Add Model > Auto Router tab. Enter a router name, then click **Configure automatically** to have LiteLLM check the models your proxy already serves, select the best available models for all four complexity tiers, and fill in the form for you. Review the generated tiers before saving. You can also use the **Template** dropdown to pick one of the bundled templates to prefill all four tiers, or **Custom Configuration** to fill them in yourself. A template whose models this proxy does not serve is greyed out with the missing names, so anything selectable is applicable. Everything else lives under **Detailed Configuration**, collapsed by default with a one-line summary of the tiers it currently holds; expand it to set the tier model groups, tier display names, Semantic Keyword Matching, LLM Classifier, escalation keywords, or Adaptive.
+Models + Endpoints > Add Model > Auto Router tab. Enter a router name, then click **Configure automatically** to have Lumina check the models your proxy already serves, select the best available models for all four complexity tiers, and fill in the form for you. Review the generated tiers before saving. You can also use the **Template** dropdown to pick one of the bundled templates to prefill all four tiers, or **Custom Configuration** to fill them in yourself. A template whose models this proxy does not serve is greyed out with the missing names, so anything selectable is applicable. Everything else lives under **Detailed Configuration**, collapsed by default with a one-line summary of the tiers it currently holds; expand it to set the tier model groups, tier display names, Semantic Keyword Matching, LLM Classifier, escalation keywords, or Adaptive.
 
 **Test Routing** sends the input through the form's classifier without creating a router or calling the selected completion model. LLM and JEV classifier calls and semantic embedding calls can incur spend. **Test Connection** probes the configured model dependencies and, for JEV, separately checks that classification succeeded. See [JEV Test Routing and accounting](#test-routing-and-accounting)
 
@@ -818,7 +818,7 @@ Two things decide whether a router shows up in a Claude client, and only one of 
 1. **Gateway model discovery only picks up a `model_name` containing `claude` or `anthropic`.** That's the whole filter Claude Code applies when it populates the `/model` picker from `/v1/models`; a name like `smart-router` just doesn't get auto-discovered. It still works fine if you point `ANTHROPIC_MODEL` or `ANTHROPIC_CUSTOM_MODEL_OPTION` at it directly, which skips discovery and its filter entirely.
 2. **On Claude for Teams or Enterprise, the name has to be on the organization's `availableModels` allowlist.** Anything missing from the allowlist is greyed out in the Claude Desktop picker and replaced at CLI startup with `restricted by your organization's settings`, regardless of whether the name looks Anthropic.
 
-The allowlist check runs client-side, so a router excluded by it leaves nothing in the LiteLLM logs to explain itself. See [Auto Router with Claude Code and Claude Desktop](../tutorials/claude_code_autorouter.md).
+The allowlist check runs client-side, so a router excluded by it leaves nothing in the Lumina logs to explain itself. See [Auto Router with Claude Code and Claude Desktop](../tutorials/claude_code_autorouter.md).
 
 ## See also
 

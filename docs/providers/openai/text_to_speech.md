@@ -16,12 +16,12 @@ import TabItem from '@theme/TabItem';
 | Guardrails | ✅ | Applies to input text |
 | Supported Models | tts-1, tts-1-hd, gpt-4o-mini-tts | |
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 ### Quick Start 
 
 ```python
 from pathlib import Path
-from litellm import speech
+from lumina import speech
 import os 
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -38,7 +38,7 @@ response.stream_to_file(speech_file_path)
 ### Async Usage 
 
 ```python
-from litellm import aspeech
+from lumina import aspeech
 from pathlib import Path
 import os, asyncio
 
@@ -64,9 +64,9 @@ async def test_async_speech():
 asyncio.run(test_async_speech())
 ```
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-LiteLLM provides an openai-compatible `/audio/speech` endpoint for Text-to-speech calls.
+Lumina provides an openai-compatible `/audio/speech` endpoint for Text-to-speech calls.
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
@@ -90,7 +90,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -104,7 +104,7 @@ litellm --config /path/to/config.yaml
 | gpt-4o-mini-tts | speech(model="gpt-4o-mini-tts", voice="alloy", input="Hello, world!") |
 
 
-## Enterprise LiteLLM Proxy - Set Max Request File Size
+## Enterprise Lumina Proxy - Set Max Request File Size
 
 Use this when you want to limit the file size for requests sent to `audio/transcriptions`
 
@@ -122,7 +122,7 @@ Make a test Request with a valid file
 ```shell
 curl --location 'http://localhost:4000/v1/audio/transcriptions' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
---form 'file=@"/Users/ishaanjaffer/Github/litellm/tests/gettysburg.wav"' \
+--form 'file=@"/Users/ishaanjaffer/Github/lumina/tests/gettysburg.wav"' \
 --form 'model="whisper"'
 ```
 

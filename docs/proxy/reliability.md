@@ -1,6 +1,6 @@
 ---
 title: "Fallbacks (Provider Failover)"
-description: "Set up automatic provider failover in LiteLLM. If a model or provider fails after num_retries, fallback to another model group for high availability and reliability."
+description: "Set up automatic provider failover in Lumina. If a model or provider fails after num_retries, fallback to another model group for high availability and reliability."
 keywords:
   [
     fallbacks,
@@ -23,7 +23,7 @@ import TabItem from '@theme/TabItem';
 
 # Fallbacks (Provider Failover)
 
-Fallbacks are how LiteLLM does automatic **failover**. If a call fails after num_retries, LiteLLM falls back to another model group, so a failing model or provider automatically fails over to a healthy backup. If you are looking for "provider failover" or "model failover", this is the page. 
+Fallbacks are how Lumina does automatic **failover**. If a call fails after num_retries, Lumina falls back to another model group, so a failing model or provider automatically fails over to a healthy backup. If you are looking for "provider failover" or "model failover", this is the page. 
 
 - Quick Start [load balancing](./load_balancing.md)
 - Quick Start [client side fallbacks](./client_side_fallbacks.md)
@@ -45,7 +45,7 @@ fallbacks=[{"{{openai_small}}": ["{{openai_large}}"]}]
 <TabItem value="sdk" label="SDK">
 
 ```python keep-model-ids
-from litellm import Router 
+from lumina import Router 
 router = Router(
   model_list=[
     {
@@ -103,13 +103,13 @@ router_settings:
 ### 2. Start Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Test Fallbacks
 
 :::warning[Deprecated for Proxy requests]
-Starting in LiteLLM Proxy v1.85.0, `mock_testing_fallbacks`, `mock_testing_context_fallbacks`, and `mock_testing_content_policy_fallbacks` are stripped from incoming Proxy requests and have no effect. These flags remain supported only for direct `litellm.Router` calls in tests.
+Starting in Lumina Proxy v1.85.0, `mock_testing_fallbacks`, `mock_testing_context_fallbacks`, and `mock_testing_content_policy_fallbacks` are stripped from incoming Proxy requests and have no effect. These flags remain supported only for direct `lumina.Router` calls in tests.
 :::
 
 For direct `Router` tests, pass `mock_testing_fallbacks=True` to trigger fallbacks.
@@ -120,7 +120,7 @@ For direct `Router` tests, pass `mock_testing_fallbacks=True` to trigger fallbac
 
 ```python
 
-from litellm import Router
+from lumina import Router
 
 model_list = [{...}, {...}] # defined in Step 1.
 
@@ -151,9 +151,9 @@ Fallbacks are done in-order - ["gpt-4o-mini", "gpt-4o", "gpt-4.1"], will do 'gpt
 You can also set [`default_fallbacks`](#default-fallbacks), in case a specific model group is misconfigured / bad.
 
 There are 3 types of fallbacks: 
-- `content_policy_fallbacks`: For litellm.ContentPolicyViolationError - LiteLLM maps content policy violation errors across providers [**See Code**](https://github.com/BerriAI/litellm/blob/89a43c872a1e3084519fb9de159bf52f5447c6c4/litellm/utils.py#L8495C27-L8495C54)
-- `context_window_fallbacks`: For litellm.ContextWindowExceededErrors - LiteLLM maps context window error messages across providers [**See Code**](https://github.com/BerriAI/litellm/blob/89a43c872a1e3084519fb9de159bf52f5447c6c4/litellm/utils.py#L8469)
-- `fallbacks`: For all remaining errors - e.g. litellm.RateLimitError
+- `content_policy_fallbacks`: For lumina.ContentPolicyViolationError - Lumina maps content policy violation errors across providers [**See Code**](https://github.com/Soventra/lumina/blob/89a43c872a1e3084519fb9de159bf52f5447c6c4/lumina/utils.py#L8495C27-L8495C54)
+- `context_window_fallbacks`: For lumina.ContextWindowExceededErrors - Lumina maps context window error messages across providers [**See Code**](https://github.com/Soventra/lumina/blob/89a43c872a1e3084519fb9de159bf52f5447c6c4/lumina/utils.py#L8469)
+- `fallbacks`: For all remaining errors - e.g. lumina.RateLimitError
 
 A fallback to a deployment on another provider, or on another API key, cannot decrypt the encrypted reasoning the failed deployment produced on earlier turns (the Responses API reasoning items a client replays with `include: ["reasoning.encrypted_content"]`, or the thinking blocks of a `/v1/messages` conversation). The fallback drops what the target cannot decrypt and keeps each Responses reasoning item's readable summary (a thinking block is dropped whole), so the fallback target reasons fresh on that turn and answers instead of failing with `invalid_encrypted_content`. This happens on every fallback: the three types above, an [order-based fallback](./load_balancing.md#how-order-based-fallback-works) between the deployments of one model group, and the fallback of a stream that broke mid-stream. There is no per-deployment switch for it. For an ordered group of two providers also turn on [`encrypted_content_affinity`](../response_api.md#when-the-originating-deployment-cannot-serve-the-turn): it marks each reasoning item with the deployment that produced it, so a turn dispatched straight to `order: 2` while `order: 1` is cooled down (no fallback, so no strip) drops the reasoning too, and the turn after a fallback keeps the reasoning of the deployment that answers it instead of paying one failed call first
 
@@ -173,7 +173,7 @@ content_policy_fallbacks=[{"{{anthropic}}": ["my-fallback-model"]}]
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 router = Router(
   model_list=[
@@ -217,7 +217,7 @@ router_settings:
 Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -237,7 +237,7 @@ context_window_fallbacks=[{"{{anthropic}}": ["my-fallback-model"]}]
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router 
+from lumina import Router 
 
 router = Router(
   model_list=[
@@ -281,7 +281,7 @@ router_settings:
 Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -295,7 +295,7 @@ litellm --config /path/to/config.yaml
 To set fallbacks, just do: 
 
 ```
-litellm_settings:
+lumina_settings:
   fallbacks: [{"zephyr-beta": ["{{openai_small}}"]}] 
 ```
 
@@ -325,9 +325,9 @@ model_list:
         model: {{openai_large}}
         api_key: <my-openai-key>
 
-litellm_settings:
+lumina_settings:
   num_retries: 3 # retry call 3 times on each model_name (e.g. zephyr-beta)
-  request_timeout: 10 # raise Timeout error if call takes longer than 10s. Sets litellm.request_timeout 
+  request_timeout: 10 # raise Timeout error if call takes longer than 10s. Sets lumina.request_timeout 
   fallbacks: [{"zephyr-beta": ["{{openai_small}}"]}] # fallback to {{openai_small}} if call fails num_retries 
   allowed_fails: 3 # cooldown model if it fails > 1 call in a minute. 
   cooldown_time: 30 # how long to cooldown model if fails/min > allowed_fails
@@ -335,7 +335,7 @@ litellm_settings:
 
 ### Fallback to Specific Model ID
 
-If all models in a group are in cooldown (e.g. rate limited), LiteLLM will fallback to the model with the specific model ID.
+If all models in a group are in cooldown (e.g. rate limited), Lumina will fallback to the model with the specific model ID.
 
 This skips any cooldown check for the fallback model.
 
@@ -363,7 +363,7 @@ model_list:
 2. Set fallbacks in config
 
 ```yaml
-litellm_settings:
+lumina_settings:
   fallbacks: [{"{{openai_large}}": ["my-specific-model-id"]}]
 ```
 
@@ -384,10 +384,10 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 }'
 ```
 
-Validate it works, by checking the response header `x-litellm-model-id`
+Validate it works, by checking the response header `x-lumina-model-id`
 
 ```bash
-x-litellm-model-id: my-specific-model-id
+x-lumina-model-id: my-specific-model-id
 ```
 
 ### Test Fallbacks! 
@@ -410,7 +410,7 @@ Enable pre-call checks and send a test request that exceeds the primary model's 
 
 ### Track Fallbacks in Spend Logs
 
-Every spend log row records whether the request was served by the model group the client asked for, or by a fallback. The proxy writes two keys into the `metadata` column of `LiteLLM_SpendLogs`:
+Every spend log row records whether the request was served by the model group the client asked for, or by a fallback. The proxy writes two keys into the `metadata` column of `Lumina_SpendLogs`:
 
 | Key | Type | Description |
 |-----|------|-------------|
@@ -423,7 +423,7 @@ For example, a request to `{{openai_small}}` that fails over to `claude-fable-5`
 SELECT model_group,
        metadata->>'attempted_fallbacks' AS attempted_fallbacks,
        metadata->>'original_model_group' AS original_model_group
-FROM "LiteLLM_SpendLogs";
+FROM "Lumina_SpendLogs";
 ```
 
 Both keys are set by the proxy and overwrite any client-supplied values of the same name. Rows written before this feature read `null` for both keys.
@@ -432,7 +432,7 @@ Both keys are set by the proxy and overwrite any client-supplied values of the s
 
 **Before call is made** check if a call is within model context window with  **`enable_pre_call_checks: true`**.
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/c9e6b05cfb20dfb17272218e2555d6b496c47f6f/litellm/router.py#L2163)
+[**See Code**](https://github.com/Soventra/lumina/blob/c9e6b05cfb20dfb17272218e2555d6b496c47f6f/lumina/router.py#L2163)
 
 :::important
 **`enable_pre_call_checks` is required** for context-window enforcement. Without it, requests are sent to the provider regardless of input token count. Set `enable_pre_call_checks: true` in `router_settings` in your config.
@@ -460,11 +460,11 @@ model_list:
       max_input_tokens: 10  # Override: reject prompts > 10 tokens
 ```
 
-If a request exceeds the limit, LiteLLM raises `ContextWindowExceededError` with details like `Model={{openai_large}}, Max Input Tokens=10, Got=306`.
+If a request exceeds the limit, Lumina raises `ContextWindowExceededError` with details like `Model={{openai_large}}, Max Input Tokens=10, Got=306`.
 
 **1. Setup config**
 
-For azure deployments, set the base model. Pick the base model from [this list](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json), all the azure models start with azure/.
+For azure deployments, set the base model. Pick the base model from [this list](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json), all the azure models start with azure/.
 
 
 <Tabs>
@@ -497,7 +497,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -513,7 +513,7 @@ client = openai.OpenAI(
 
 text = "What is the meaning of 42?" * 25000
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages = [
@@ -557,14 +557,14 @@ model_list:
       model: claude-opus-4-6
       api_key: os.environ/ANTHROPIC_API_KEY
 
-litellm_settings:
+lumina_settings:
   context_window_fallbacks: [{"gpt-3.5-turbo-small": ["gpt-3.5-turbo-large", "claude-opus"]}]
 ```
 
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -580,7 +580,7 @@ client = openai.OpenAI(
 
 text = "What is the meaning of 42?" * 25000
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="gpt-3.5-turbo-small",
     messages = [
@@ -614,7 +614,7 @@ model_list:
         model: {{anthropic_large}}
         api_key: os.environ/ANTHROPIC_API_KEY
 
-litellm_settings:
+lumina_settings:
   content_policy_fallbacks: [{"gpt-3.5-turbo-small": ["claude-opus"]}]
 ```
 
@@ -639,7 +639,7 @@ model_list:
         model: {{anthropic_large}}
         api_key: os.environ/ANTHROPIC_API_KEY
 
-litellm_settings:
+lumina_settings:
   default_fallbacks: ["claude-opus"]
 ```
 
@@ -653,7 +653,7 @@ A model-specific fallbacks (e.g. `{"gpt-3.5-turbo-small": ["claude-opus"]}`) ove
 
 Set 'region_name' of deployment. 
 
-**Note:** LiteLLM can automatically infer region_name for Vertex AI, Bedrock, and IBM WatsonxAI based on your litellm params. For Azure, set `litellm.enable_preview = True`.
+**Note:** Lumina can automatically infer region_name for Vertex AI, Bedrock, and IBM WatsonxAI based on your lumina params. For Azure, set `lumina.enable_preview = True`.
 
 **1. Set Config**
 
@@ -685,7 +685,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -699,7 +699,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.with_raw_response.create(
     model="{{openai_small}}",
     messages = [{"role": "user", "content": "Who was Alexander?"}]
@@ -707,14 +707,14 @@ response = client.chat.completions.with_raw_response.create(
 
 print(response)
 
-print(response.headers.get('x-litellm-model-api-base'))
+print(response.headers.get('x-lumina-model-api-base'))
 ```
 
 ### Vision Capability Filtering (Image Requests)
 
-**Before call is made** LiteLLM removes deployments declared text-only from the candidates for a request that carries an image, meaning a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. This runs on by default under every routing strategy and does not need `enable_pre_call_checks: true`.
+**Before call is made** Lumina removes deployments declared text-only from the candidates for a request that carries an image, meaning a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. This runs on by default under every routing strategy and does not need `enable_pre_call_checks: true`.
 
-A deployment is text-only when `model_info.supports_vision: false` is set, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `lumina_params.base_model`, then the model name. A deployment with no declaration and no catalog entry stays eligible, so declare `supports_vision: false` on custom text-only deployments. When every deployment in the group is text-only nothing is removed and the provider's own error is returned, which keeps the earlier behavior for groups that only ever served text. The `x-litellm-model-id` response header names the deployment that served, or failed, the request.
+A deployment is text-only when `model_info.supports_vision: false` is set, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `lumina_params.base_model`, then the model name. A deployment with no declaration and no catalog entry stays eligible, so declare `supports_vision: false` on custom text-only deployments. When every deployment in the group is text-only nothing is removed and the provider's own error is returned, which keeps the earlier behavior for groups that only ever served text. The `x-lumina-model-id` response header names the deployment that served, or failed, the request.
 
 **1. Set Config**
 
@@ -756,7 +756,7 @@ curl -i http://0.0.0.0:4000/v1/chat/completions \
   }'
 ```
 
-The `x-litellm-model-id` header names the `openai/gpt-5.6` deployment every time, while a plain text request can still land on any of the three.
+The `x-lumina-model-id` header names the `openai/gpt-5.6` deployment every time, while a plain text request can still land on any of the three.
 
 ### Setting Fallbacks for Wildcard Models
 
@@ -775,13 +775,13 @@ model_list:
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
 
-litellm_settings:
+lumina_settings:
   fallbacks: [{"{{openai_large}}": ["azure/{{openai_large}}"]}]
 ```
 
 2. Start Proxy
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it while the primary deployment is unavailable.
@@ -809,7 +809,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 
 #### Provider-prefixed fallback keys for bare model names
 
-A request for a bare model name such as `{{anthropic}}`, the form Claude Code sends, is served by the `anthropic/*` deployment, and the fallback lookup matches it against a key written the way that wildcard is, `anthropic/{{anthropic}}`. LiteLLM infers the provider the same way routing does and only tries this when some fallback key ends in `/<model name>`, so an alias that resolves to no provider still falls through to `*`. Precedence is the exact key first, then the sibling key (the `<provider>/<model>` spelling of a bare name, or the bare spelling of a prefixed name), then `*`, and the same lookup serves `fallbacks`, `context_window_fallbacks`, and `content_policy_fallbacks`. A matched chain is terminal: once the `anthropic/{{anthropic}}` chain is chosen, `*` is not tried after its targets fail, so list the `*` targets at the end of that chain when they should run too. Added in [PR #43062](https://github.com/BerriAI/litellm/pull/43062), coming to the next release candidate
+A request for a bare model name such as `{{anthropic}}`, the form Claude Code sends, is served by the `anthropic/*` deployment, and the fallback lookup matches it against a key written the way that wildcard is, `anthropic/{{anthropic}}`. Lumina infers the provider the same way routing does and only tries this when some fallback key ends in `/<model name>`, so an alias that resolves to no provider still falls through to `*`. Precedence is the exact key first, then the sibling key (the `<provider>/<model>` spelling of a bare name, or the bare spelling of a prefixed name), then `*`, and the same lookup serves `fallbacks`, `context_window_fallbacks`, and `content_policy_fallbacks`. A matched chain is terminal: once the `anthropic/{{anthropic}}` chain is chosen, `*` is not tried after its targets fail, so list the `*` targets at the end of that chain when they should run too. Added in [PR #43062](https://github.com/Soventra/lumina/pull/43062), coming to the next release candidate
 
 ```yaml
 model_list:
@@ -826,7 +826,7 @@ model_list:
       model: "openai/{{openai_small}}"
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   fallbacks:
     - {"anthropic/{{anthropic}}": ["openai/{{openai_large}}", "{{openai_small}}"]}
     - {"*": ["{{openai_small}}"]}
@@ -859,7 +859,7 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-A key created with `"models": ["openai-only"]` can call `gpt-5.6` but not `{{anthropic}}`. A failing `gpt-5.6` request from that key returns the OpenAI error instead of a `{{anthropic}}` completion, and the response carries no `x-litellm-attempted-fallbacks` header. A key created with `"models": ["openai-only", "{{anthropic}}"]` still falls back.
+A key created with `"models": ["openai-only"]` can call `gpt-5.6` but not `{{anthropic}}`. A failing `gpt-5.6` request from that key returns the OpenAI error instead of a `{{anthropic}}` completion, and the response carries no `x-lumina-attempted-fallbacks` header. A key created with `"models": ["openai-only", "{{anthropic}}"]` still falls back.
 
 Requests that carry no virtual key, such as the proxy's own health checks, are never restricted. If the access lookup itself fails, the fallback is skipped rather than allowed.
 
@@ -906,7 +906,7 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-A user whose spend has passed their `max_budget` can still call `free-model` and pay nothing. Once `free-model` fails, that user gets the `free-model` error instead of a billed `{{anthropic}}` completion, and the response carries no `x-litellm-attempted-fallbacks` header. A user still under budget keeps falling back to `{{anthropic}}` as before.
+A user whose spend has passed their `max_budget` can still call `free-model` and pay nothing. Once `free-model` fails, that user gets the `free-model` error instead of a billed `{{anthropic}}` completion, and the response carries no `x-lumina-attempted-fallbacks` header. A user still under budget keeps falling back to `{{anthropic}}` as before.
 
 To turn this off and let fallbacks run whatever the caller's budget, set `enforce_fallback_budget: false`:
 

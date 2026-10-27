@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 # Allowlisting MCP Client Applications
 
-Use an allowlist to restrict MCP gateway access to approved client applications, such as Claude Code, Cursor, or an internal CLI. LiteLLM checks the client identity after authentication and returns HTTP 403 when it is not allowed.
+Use an allowlist to restrict MCP gateway access to approved client applications, such as Claude Code, Cursor, or an internal CLI. Lumina checks the client identity after authentication and returns HTTP 403 when it is not allowed.
 
 The allowlist applies across the gateway. Existing [MCP server permissions](./mcp_control.md) still apply to allowed clients.
 
@@ -24,7 +24,7 @@ For example, add the claim setting to your JWT configuration and restart the pro
 ```yaml title="config.yaml"
 general_settings:
   enable_jwt_auth: true
-  litellm_jwtauth:
+  lumina_jwtauth:
     mcp_client_id_jwt_field: azp
 ```
 

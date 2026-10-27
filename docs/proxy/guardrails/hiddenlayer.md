@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # HiddenLayer Guardrails
 
-LiteLLM ships with a native integration for [HiddenLayer](https://hiddenlayer.com/). The proxy sends every request/response to HiddenLayer’s `/detection/v1/interactions` endpoint so you can block or redact unsafe content before it reaches your users.
+Lumina ships with a native integration for [HiddenLayer](https://hiddenlayer.com/). The proxy sends every request/response to HiddenLayer’s `/detection/v1/interactions` endpoint so you can block or redact unsafe content before it reaches your users.
 
 ## Quick Start
 
@@ -14,7 +14,7 @@ LiteLLM ships with a native integration for [HiddenLayer](https://hiddenlayer.co
 
 1. Sign in to the HiddenLayer console and create (or select) a project with policies enabled.
 2. Generate a **Client ID** and **Client Secret** for the project.
-3. Export them as environment variables in your LiteLLM deployment:
+3. Export them as environment variables in your Lumina deployment:
 
 ```shell
 export HIDDENLAYER_CLIENT_ID="hl_client_id"
@@ -35,7 +35,7 @@ export HIDDENLAYER_API_BASE="https://hiddenlayer.your-domain.com"
 
 ### 2. Add the hiddenlayer guardrail to `config.yaml`
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -57,17 +57,17 @@ guardrails:
 
 - `pre_call` Run **before** the LLM call on **input**.
 - `post_call` Run **after** the LLM call on **input & output**.
-- `during_call` Run **during** the LLM call on **input**. LiteLLM sends the request to the model and HiddenLayer in parallel. The response waits for the guardrail result before returning.
+- `during_call` Run **during** the LLM call on **input**. Lumina sends the request to the model and HiddenLayer in parallel. The response waits for the guardrail result before returning.
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test a request
 
-You can tag requests with `hl-project-id` (maps to the HiddenLayer project) and `hl-requester-id` (auditing metadata). LiteLLM forwards both headers to your detector.
+You can tag requests with `hl-project-id` (maps to the HiddenLayer project) and `hl-requester-id` (auditing metadata). Lumina forwards both headers to your detector.
 
 <Tabs>
 <TabItem label="Blocked request" value="not-allowed">
@@ -164,7 +164,7 @@ guardrails:
 
 ### Required parameters
 
-- **`guardrail`**: Must be set to `hiddenlayer` so LiteLLM loads the HiddenLayer hook.
+- **`guardrail`**: Must be set to `hiddenlayer` so Lumina loads the HiddenLayer hook.
 
 ### Optional parameters
 

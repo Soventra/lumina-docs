@@ -7,7 +7,7 @@ Forward authentication credentials (Bearer tokens, API keys, etc.) from clients 
 
 ## Overview
 
-When LiteLLM proxies a request to a backend A2A agent, the agent may require its own authentication headers. There are three ways to supply them:
+When Lumina proxies a request to a backend A2A agent, the agent may require its own authentication headers. There are three ways to supply them:
 
 | Method | Who configures | How it works |
 |---|---|---|
@@ -26,7 +26,7 @@ Admin-configured headers that are always sent to the backend agent. Use this for
 <Tabs>
 <TabItem value="ui" label="UI">
 
-1. Go to **Agents** in the LiteLLM dashboard.
+1. Go to **Agents** in the Lumina dashboard.
 2. Create or edit an agent.
 3. Open the **Authentication Headers** panel.
 4. Under **Static Headers**, click **Add Static Header** and fill in the header name and value.
@@ -43,7 +43,7 @@ curl -X POST http://localhost:4000/v1/agents \
     "agent_card_params": { ... },
     "static_headers": {
       "Authorization": "Bearer internal-server-token",
-      "X-Internal-Service": "litellm-proxy"
+      "X-Internal-Service": "lumina-proxy"
     }
   }'
 ```
@@ -82,12 +82,12 @@ The backend agent receives `Authorization: Bearer internal-server-token` without
 
 ## Method 2: Forward Client Headers
 
-Admin specifies a list of header **names**. When the client sends a request that includes those headers, LiteLLM extracts their values and forwards them to the backend agent. The client controls the values; the admin controls which headers are eligible to be forwarded.
+Admin specifies a list of header **names**. When the client sends a request that includes those headers, Lumina extracts their values and forwards them to the backend agent. The client controls the values; the admin controls which headers are eligible to be forwarded.
 
 <Tabs>
 <TabItem value="ui" label="UI">
 
-1. Go to **Agents** in the LiteLLM dashboard.
+1. Go to **Agents** in the Lumina dashboard.
 2. Create or edit an agent.
 3. Open the **Authentication Headers** panel.
 4. Under **Forward Client Headers**, type header names and press **Enter** (e.g. `x-api-key`, `Authorization`).
@@ -135,7 +135,7 @@ Clients can forward headers to a specific agent without any admin pre-configurat
 x-a2a-{agent_name_or_id}-{header_name}: value
 ```
 
-LiteLLM parses these headers automatically and routes them to the matching agent only.
+Lumina parses these headers automatically and routes them to the matching agent only.
 
 **Examples:**
 
@@ -179,7 +179,7 @@ Example:
 
 This ensures admin-controlled credentials cannot be overridden by client requests.
 
-When LiteLLM mints the backend credential itself (a `databricks_oauth` block or Microsoft Entra fields on the agent), that minted `Authorization` wins over both sources, and a client header of the same name in any casing (`authorization`, `Authorization`) is dropped so the backend receives one `Authorization` line
+When Lumina mints the backend credential itself (a `databricks_oauth` block or Microsoft Entra fields on the agent), that minted `Authorization` wins over both sources, and a client header of the same name in any casing (`authorization`, `Authorization`) is dropped so the backend receives one `Authorization` line
 
 ---
 
@@ -214,8 +214,8 @@ The backend agent receives:
 X-Internal-Token: secret123          ← static header (always)
 x-user-id: user-42                   ← forwarded (in extra_headers)
 x-request-id: req-abc                ← convention-based (x-a2a-my-agent-*)
-X-LiteLLM-Trace-Id: <uuid>           ← LiteLLM internal
-X-LiteLLM-Agent-Id: <agent-id>       ← LiteLLM internal
+X-Lumina-Trace-Id: <uuid>           ← Lumina internal
+X-Lumina-Agent-Id: <agent-id>       ← Lumina internal
 ```
 
 ---

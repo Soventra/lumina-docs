@@ -1,14 +1,14 @@
 # Claude Code - Granular Cost Tracking
 
-Track Claude Code usage by customer or tags using LiteLLM proxy. This enables granular cost attribution for billing, budgeting, and analytics.
+Track Claude Code usage by customer or tags using Lumina proxy. This enables granular cost attribution for billing, budgeting, and analytics.
 
 ## How It Works
 
-Claude Code supports custom headers via `ANTHROPIC_CUSTOM_HEADERS`. LiteLLM automatically tracks requests with specific headers for cost attribution.
+Claude Code supports custom headers via `ANTHROPIC_CUSTOM_HEADERS`. Lumina automatically tracks requests with specific headers for cost attribution.
 
 ## Why Set a Customer Header
 
-Without one, Claude Code still reaches customer tracking on its own. It sends a per-session JSON blob in `metadata.user_id`, which LiteLLM reads as a customer ID, so every session shows up as a separate customer and picks up its own copy of any default customer budget you have configured. Setting `x-litellm-customer-id` overrides that, since headers are checked before any request body field. If you would rather have that traffic carry no customer at all, see [Restricting Which IDs Become Customers](../proxy/customers.md#restricting-which-ids-become-customers).
+Without one, Claude Code still reaches customer tracking on its own. It sends a per-session JSON blob in `metadata.user_id`, which Lumina reads as a customer ID, so every session shows up as a separate customer and picks up its own copy of any default customer budget you have configured. Setting `x-lumina-customer-id` overrides that, since headers are checked before any request body field. If you would rather have that traffic carry no customer at all, see [Restricting Which IDs Become Customers](../proxy/customers.md#restricting-which-ids-become-customers).
 
 ## Tracking Options
 
@@ -16,15 +16,15 @@ Choose how you want to attribute costs:
 
 | Track By | Header | Use Case |
 |----------|--------|----------|
-| Customer | `x-litellm-customer-id` | Bill customers, per-user budgets |
-| Tags | `x-litellm-tags` | Project tracking, cost centers, environments |
+| Customer | `x-lumina-customer-id` | Bill customers, per-user budgets |
+| Tags | `x-lumina-tags` | Project tracking, cost centers, environments |
 
 ## Environment Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `ANTHROPIC_BASE_URL` | LiteLLM proxy URL | `http://localhost:4000` |
-| `ANTHROPIC_API_KEY` | LiteLLM API key | `sk-<your-api-key>` |
+| `ANTHROPIC_BASE_URL` | Lumina proxy URL | `http://localhost:4000` |
+| `ANTHROPIC_API_KEY` | Lumina API key | `sk-<your-api-key>` |
 | `ANTHROPIC_CUSTOM_HEADERS` | Custom headers (`header-name: value` format) | See examples below |
 
 ## Option 1: Track by Customer
@@ -34,7 +34,7 @@ Use this to attribute costs to specific customers or end-users.
 ```bash
 export ANTHROPIC_BASE_URL=http://localhost:4000
 export ANTHROPIC_API_KEY=sk-<your-api-key>
-export ANTHROPIC_CUSTOM_HEADERS="x-litellm-customer-id: claude-ishaan-local"
+export ANTHROPIC_CUSTOM_HEADERS="x-lumina-customer-id: claude-ishaan-local"
 ```
 
 ## Option 2: Track by Tags
@@ -44,7 +44,7 @@ Use this to attribute costs to projects, cost centers, or environments. Pass com
 ```bash
 export ANTHROPIC_BASE_URL=http://localhost:4000
 export ANTHROPIC_API_KEY=sk-<your-api-key>
-export ANTHROPIC_CUSTOM_HEADERS="x-litellm-tags: project:acme,env:prod,team:backend"
+export ANTHROPIC_CUSTOM_HEADERS="x-lumina-tags: project:acme,env:prod,team:backend"
 ```
 
 
@@ -55,7 +55,7 @@ export ANTHROPIC_CUSTOM_HEADERS="x-litellm-tags: project:acme,env:prod,team:back
 ```bash
 export ANTHROPIC_BASE_URL=http://localhost:4000
 export ANTHROPIC_API_KEY=sk-<your-api-key>
-export ANTHROPIC_CUSTOM_HEADERS="x-litellm-customer-id: claude-ishaan-local"
+export ANTHROPIC_CUSTOM_HEADERS="x-lumina-customer-id: claude-ishaan-local"
 ```
 
 ### 2. Use Claude Code
@@ -72,9 +72,9 @@ All requests will now be tracked under the customer ID `claude-ishaan-local`.
 
 ![](https://colony-recorder.s3.amazonaws.com/files/2026-01-16/0c30309e-7117-4999-a3df-d22a2d5629c1/ascreenshot_d76a48c53b9a4fad8f6727baf4aa6a9c_text_export.jpeg)
 
-### 3. View Usage in LiteLLM UI
+### 3. View Usage in Lumina UI
 
-Navigate to the **Logs** tab in the LiteLLM UI.
+Navigate to the **Logs** tab in the Lumina UI.
 
 ![](https://colony-recorder.s3.amazonaws.com/files/2026-01-16/ff774392-69f5-483e-83e2-fb749c94ee90/ascreenshot_d264fc04c9ee47edb047f61b6eb8c4d7_text_export.jpeg)
 
@@ -90,9 +90,9 @@ Filter by customer ID to see all requests for that customer.
 
 | Header | Description |
 |--------|-------------|
-| `x-litellm-customer-id` | Track by customer/end-user ID |
-| `x-litellm-end-user-id` | Alternative customer ID header |
-| `x-litellm-tags` | Comma-separated tags for cost attribution |
+| `x-lumina-customer-id` | Track by customer/end-user ID |
+| `x-lumina-end-user-id` | Alternative customer ID header |
+| `x-lumina-tags` | Comma-separated tags for cost attribution |
 
 ## Related
 

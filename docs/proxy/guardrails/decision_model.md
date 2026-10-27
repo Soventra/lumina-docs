@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Ask a decision model such as TypeSafe Jev yes/no questions you write about every request or response, and block or log when a question's probability reaches its threshold. |
-| Provider | LiteLLM native. Any model that serves [`/v1/decisions`](../../decisions.md) can be the decision model: TypeSafe Jev, Perplexity, OpenAI, Microsoft Foundry, Databricks and the other providers listed there. |
+| Provider | Lumina native. Any model that serves [`/v1/decisions`](../../decisions.md) can be the decision model: TypeSafe Jev, Perplexity, OpenAI, Microsoft Foundry, Databricks and the other providers listed there. |
 | Supported Actions | `block` (HTTP 400 naming the questions that fired), `log` (records the probability and lets the call through) |
 | Supported Modes | `pre_call`, `during_call`, `post_call` |
 | Endpoints | `/v1/chat/completions`, `/v1/messages`, `/v1/responses` |
@@ -58,14 +58,14 @@ guardrails:
           action: log
 ```
 
-`decision_model` is a model name from your `model_list` or a provider-qualified model such as `typesafe/jev-latest`, in which case LiteLLM reads that provider's credentials from the environment. Set `default_on: true` to screen every request, or leave it off and attach the guardrail per key or per request.
+`decision_model` is a model name from your `model_list` or a provider-qualified model such as `typesafe/jev-latest`, in which case Lumina reads that provider's credentials from the environment. Set `default_on: true` to screen every request, or leave it off and attach the guardrail per key or per request.
 
 The 0.7 default threshold is the block line of the strict policy in TypeSafe's [guardrails cookbook](https://docs.typesafe.ai/cookbooks/llm_guardrails). Lower thresholds catch more but can block normal traffic: a benign "ignore the previous schedule I sent" scored up to 0.67 on prompt injection with `jev-latest`.
 
-### 2. Start the LiteLLM gateway
+### 2. Start the Lumina gateway
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Send a request

@@ -1,6 +1,6 @@
 # Usage 
 
-LiteLLM returns the OpenAI compatible usage object across all providers.
+Lumina returns the OpenAI compatible usage object across all providers.
 
 ```bash
 "usage": {
@@ -13,7 +13,7 @@ LiteLLM returns the OpenAI compatible usage object across all providers.
 ## Quick Start 
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 ## set ENV variables
@@ -26,7 +26,7 @@ response = completion(
 
 print(response.usage)
 ```
-> **Note:** LiteLLM supports endpoint bridging. If a model does not natively support a requested endpoint, LiteLLM will automatically route the call to the correct supported endpoint (such as bridging `/chat/completions` to `/responses` or vice versa) based on the model's `mode`set in `model_prices_and_context_window`.
+> **Note:** Lumina supports endpoint bridging. If a model does not natively support a requested endpoint, Lumina will automatically route the call to the correct supported endpoint (such as bridging `/chat/completions` to `/responses` or vice versa) based on the model's `mode`set in `model_prices_and_context_window`.
 
 ## Streaming Usage
 
@@ -34,7 +34,7 @@ if `stream_options={"include_usage": True}` is set, an additional chunk will be 
 
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 completion = completion(
   model="{{openai_large}}",
@@ -56,7 +56,7 @@ for chunk in completion:
 
 ### Proxy: Always Include Streaming Usage
 
-When using the LiteLLM Proxy, you can configure it to automatically include usage information in all streaming responses, even if the client doesn't send `stream_options={"include_usage": True}`.
+When using the Lumina Proxy, you can configure it to automatically include usage information in all streaming responses, even if the client doesn't send `stream_options={"include_usage": True}`.
 
 #### Configuration
 
@@ -69,7 +69,7 @@ general_settings:
 
 Alternatively, configure it through the UI:
 
-1. Navigate to the LiteLLM Proxy UI
+1. Navigate to the Lumina Proxy UI
 2. Go to `Settings` >  `Router Settings` > `General`
 3. Find the `always_include_stream_usage` setting
 4. Toggle it to `true`

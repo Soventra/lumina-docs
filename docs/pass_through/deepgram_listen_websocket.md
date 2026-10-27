@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Deepgram Realtime (`/listen`) WebSocket Passthrough
 
-Stream live audio to Deepgram's realtime speech-to-text API (`wss://api.deepgram.com/v1/listen`) through the LiteLLM proxy. The proxy authenticates the caller with a LiteLLM virtual key, injects the Deepgram credential server-side, relays audio and transcript frames unchanged in both directions, and logs the session's audio duration as spend when the socket closes
+Stream live audio to Deepgram's realtime speech-to-text API (`wss://api.deepgram.com/v1/listen`) through the Lumina proxy. The proxy authenticates the caller with a Lumina virtual key, injects the Deepgram credential server-side, relays audio and transcript frames unchanged in both directions, and logs the session's audio duration as spend when the socket closes
 
 | Feature | Supported | Notes |
 |-------|-------|-------|
@@ -26,7 +26,7 @@ Set the Deepgram credential in one of two places. The proxy checks the configure
 ```bash
 export DEEPGRAM_API_KEY="your-deepgram-key"
 export LUMINA_MASTER_KEY="${LUMINA_MASTER_KEY:-sk-$(openssl rand -hex 16)}"
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 </TabItem>
@@ -53,7 +53,7 @@ general_settings:
 
 ## Authentication
 
-The WebSocket handshake accepts the same LiteLLM key mechanisms as the other WebSocket routes: an `Authorization: Bearer <litellm-key>` header, an `api-key: <litellm-key>` header, or the `Sec-WebSocket-Protocol: openai-insecure-api-key.<litellm-key>` subprotocol for browsers that cannot set headers. The handshake is rejected when the key is invalid, and the socket is closed with code `1011` when no Deepgram credential is configured on the proxy
+The WebSocket handshake accepts the same Lumina key mechanisms as the other WebSocket routes: an `Authorization: Bearer <lumina-key>` header, an `api-key: <lumina-key>` header, or the `Sec-WebSocket-Protocol: openai-insecure-api-key.<lumina-key>` subprotocol for browsers that cannot set headers. The handshake is rejected when the key is invalid, and the socket is closed with code `1011` when no Deepgram credential is configured on the proxy
 
 ## Query parameters
 
@@ -137,7 +137,7 @@ Deepgram to client: every frame is relayed byte for byte in the order received, 
 
 ## Cost tracking
 
-When the socket closes, the proxy reads the last `Metadata` frame's `duration` (seconds of audio Deepgram processed) and multiplies it by the `input_cost_per_second` of the `deepgram/streaming/<model>` entry (`deepgram/streaming/<model>-multilingual` when `language=multi`) in [`model_prices_and_context_window.json`](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). The pre-recorded `deepgram/<model>` entry is never used as a substitute. If Deepgram never sends `Metadata` (for example the client dropped the connection), the proxy falls back to the furthest `start + duration` seen across `Results` frames. Deepgram bills every channel it processes, so a stereo session with `multichannel=true&channels=2` costs twice its wall-clock duration. The proxy multiplies the duration by the channel count from `Metadata.channels`, falling back to the widest `channel_index` seen in `Results` frames and then to the `channels` query parameter, and defaulting to one. The spend is written to SpendLogs with `call_type: pass_through_endpoint`, attributed to the calling key, team, and user like any other route
+When the socket closes, the proxy reads the last `Metadata` frame's `duration` (seconds of audio Deepgram processed) and multiplies it by the `input_cost_per_second` of the `deepgram/streaming/<model>` entry (`deepgram/streaming/<model>-multilingual` when `language=multi`) in [`model_prices_and_context_window.json`](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json). The pre-recorded `deepgram/<model>` entry is never used as a substitute. If Deepgram never sends `Metadata` (for example the client dropped the connection), the proxy falls back to the furthest `start + duration` seen across `Results` frames. Deepgram bills every channel it processes, so a stereo session with `multichannel=true&channels=2` costs twice its wall-clock duration. The proxy multiplies the duration by the channel count from `Metadata.channels`, falling back to the widest `channel_index` seen in `Results` frames and then to the `channels` query parameter, and defaulting to one. The spend is written to SpendLogs with `call_type: pass_through_endpoint`, attributed to the calling key, team, and user like any other route
 
 ```bash
 curl -s "http://localhost:4000/spend/logs?api_key=$LUMINA_API_KEY" -H "Authorization: Bearer $LUMINA_MASTER_KEY"

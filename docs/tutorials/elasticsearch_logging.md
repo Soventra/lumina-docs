@@ -2,7 +2,7 @@ import Image from '@theme/IdealImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Elasticsearch Logging with LiteLLM
+# Elasticsearch Logging with Lumina
 
 Send your LLM requests, responses, costs, and performance data to Elasticsearch for analytics and monitoring using OpenTelemetry.
 
@@ -75,10 +75,10 @@ docker run -p 4317:4317 -p 4318:4318 \
 uv add opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp
 ```
 
-### 4. Configure LiteLLM
+### 4. Configure Lumina
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 Create a `config.yaml` file:
 
@@ -89,7 +89,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 general_settings:
@@ -100,10 +100,10 @@ Set environment variables and start the proxy:
 ```bash
 export OTEL_EXPORTER="otlp_http"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4318"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
-LiteLLM exports OTLP over HTTP when only an endpoint is set, so the endpoint must be the collector's HTTP port 4318. To use the gRPC port 4317 instead, set `OTEL_EXPORTER="otlp_grpc"` and `OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"`
+Lumina exports OTLP over HTTP when only an endpoint is set, so the endpoint must be the collector's HTTP port 4318. To use the gRPC port 4317 instead, set `OTEL_EXPORTER="otlp_grpc"` and `OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"`
 
 </TabItem>
 <TabItem value="python-sdk" label="Python SDK">
@@ -111,7 +111,7 @@ LiteLLM exports OTLP over HTTP when only an endpoint is set, so the endpoint mus
 Configure OpenTelemetry in your Python code:
 
 ```python
-import litellm
+import lumina
 import os
 
 # Configure OpenTelemetry
@@ -119,10 +119,10 @@ os.environ["OTEL_EXPORTER"] = "otlp_http"
 os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "http://localhost:4318"
 
 # Enable OTEL logging
-litellm.callbacks = ["otel"]
+lumina.callbacks = ["otel"]
 
 # Make your LLM calls
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Hello, world!"}]
 )
@@ -144,7 +144,7 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
-    "messages": [{"role": "user", "content": "Hello from LiteLLM!"}]
+    "messages": [{"role": "user", "content": "Hello from Lumina!"}]
   }'
 ```
 
@@ -152,11 +152,11 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
 <TabItem value="python-test" label="Test Python SDK">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
-    messages=[{"role": "user", "content": "Hello from LiteLLM!"}],
+    messages=[{"role": "user", "content": "Hello from Lumina!"}],
     user="test-user"
 )
 print("Response:", response.choices[0].message.content)
@@ -182,7 +182,7 @@ Start Kibana to visualize your LLM telemetry data:
 docker run -d --name kibana --link elasticsearch:elasticsearch -p 5601:5601 docker.elastic.co/kibana/kibana:8.18.2
 ```
 
-Open Kibana at http://localhost:5601 and create an index pattern for your LiteLLM traces:
+Open Kibana at http://localhost:5601 and create an index pattern for your Lumina traces:
 
 <Image img={require('../../img/elasticsearch_demo.png')} />
 
@@ -224,8 +224,8 @@ services:
     depends_on:
       - elasticsearch
       
-  litellm:
-    image: docker.litellm.ai/berriai/litellm:latest
+  lumina:
+    image: docker.lumina.ai/soventra/lumina:latest
     ports:
       - "4000:4000"
     environment:
@@ -247,7 +247,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 general_settings:

@@ -5,7 +5,7 @@
 | Property | Details |
 |-------|-------|
 | Description | Nadir is an intelligent LLM router. A single virtual model, `auto`, is classified by complexity server-side and routed to the cheapest model that clears the quality bar. |
-| Provider Route on LiteLLM | `nadir/` |
+| Provider Route on Lumina | `nadir/` |
 | Link to Provider Doc | [Nadir Documentation ↗](https://getnadir.com/docs) |
 | Base URL | `https://api.getnadir.com/v1` |
 | Supported Operations | `/chat/completions` |
@@ -26,14 +26,14 @@ os.environ["NADIR_API_KEY"] = ""  # your Nadir API key
 os.environ["NADIR_API_BASE"] = ""  # defaults to https://api.getnadir.com/v1
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Nadir Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["NADIR_API_KEY"] = "your-api-key"
 
@@ -48,8 +48,8 @@ print(response)
 
 ```python showLineNumbers title="Nadir Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["NADIR_API_KEY"] = "your-api-key"
 
@@ -62,9 +62,9 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add the following to your LiteLLM Proxy configuration file:
+Add the following to your Lumina Proxy configuration file:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -74,10 +74,10 @@ model_list:
       api_key: os.environ/NADIR_API_KEY
 ```
 
-Start your LiteLLM Proxy server:
+Start your Lumina Proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 ```
 
 ```bash showLineNumbers title="Nadir via Proxy - cURL"
@@ -102,30 +102,30 @@ underlying model per request.
 ## Cost tracking
 
 The `model` field on the response reports the model Nadir actually routed to.
-Nadir returns the cost it computed for a non-streaming call, and LiteLLM records
+Nadir returns the cost it computed for a non-streaming call, and Lumina records
 that as the response cost, so the SDK's `response_cost`, the proxy's
-`x-litellm-response-cost` header, and the spend logs all carry Nadir's number:
+`x-lumina-response-cost` header, and the spend logs all carry Nadir's number:
 
 ```python
 print(f"Request cost: ${response._hidden_params['response_cost']}")
 ```
 
-Streaming responses carry no cost from Nadir. LiteLLM prices them from the
-routed model's own entry in the LiteLLM model cost map, for example
+Streaming responses carry no cost from Nadir. Lumina prices them from the
+routed model's own entry in the Lumina model cost map, for example
 `openrouter/anthropic/claude-haiku-4.5`, so a routed model with no cost map
 entry logs a streamed call at $0.
 
 ## Supported OpenAI Parameters
 
 Nadir validates requests against its own schema and drops anything outside it,
-so LiteLLM advertises only the parameters the endpoint honors:
+so Lumina advertises only the parameters the endpoint honors:
 
 `frequency_penalty`, `max_tokens`, `presence_penalty`, `response_format`,
 `stream`, `temperature`, `top_p`
 
-`extra_headers` and `max_retries` are handled by the LiteLLM transport rather
+`extra_headers` and `max_retries` are handled by the Lumina transport rather
 than sent in the request body. Passing any other parameter raises
-`litellm.UnsupportedParamsError` unless `drop_params=True` is set.
+`lumina.UnsupportedParamsError` unless `drop_params=True` is set.
 
 :::info
 

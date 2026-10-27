@@ -3,13 +3,13 @@ import TabItem from '@theme/TabItem';
 
 # CloudZero
 
-LiteLLM provides an integration with CloudZero's AnyCost API, allowing you to export your LLM usage data to CloudZero for cost tracking analysis.
+Lumina provides an integration with CloudZero's AnyCost API, allowing you to export your LLM usage data to CloudZero for cost tracking analysis.
 
 ## Overview
 
 | Property | Details |
 |----------|---------|
-| Description | Export LiteLLM usage data to CloudZero AnyCost API for cost tracking and analysis |
+| Description | Export Lumina usage data to CloudZero AnyCost API for cost tracking and analysis |
 | callback name | `cloudzero`|
 | Supported Operations | • Automatic hourly data export<br/>• Manual data export<br/>• Dry run testing<br/>• Cost and token usage tracking |
 | Data Format | CloudZero Billing Format (CBF) with proper resource tagging |
@@ -27,7 +27,7 @@ LiteLLM provides an integration with CloudZero's AnyCost API, allowing you to ex
 ## Setup
 
 ### End to End Video Walkthrough
-This video walks through the entire process of setting up LiteLLM with CloudZero integration and viewing LiteLLM exported usage data in CloudZero.
+This video walks through the entire process of setting up Lumina with CloudZero integration and viewing Lumina exported usage data in CloudZero.
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/59b57593183f4cc3b1c05a2dd3277f92" frameBorder="0" allowFullScreen></iframe>
 
@@ -43,7 +43,7 @@ export CLOUDZERO_TIMEZONE="UTC"  # Optional, defaults to UTC
 
 ### Step 2: Enable CloudZero Integration
 
-Add the CloudZero callback to your LiteLLM configuration YAML file:
+Add the CloudZero callback to your Lumina configuration YAML file:
 
 
 ```yaml
@@ -53,16 +53,16 @@ model_list:
       model: openai/{{openai_large}}
       api_key: sk-xxxxxxx
 
-litellm_settings:
+lumina_settings:
   callbacks: ["cloudzero"]  # Enable CloudZero integration
 ```
 
-### Step 3: Start LiteLLM Proxy
+### Step 3: Start Lumina Proxy
 
-Start your LiteLLM proxy with the configuration:
+Start your Lumina proxy with the configuration:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ## Setup on UI
@@ -169,12 +169,12 @@ curl -X POST "http://localhost:4000/cloudzero/export" \
 ### Automatic Export Schedule
 
 - **Frequency**: Every 60 minutes (configurable via `CLOUDZERO_EXPORT_INTERVAL_MINUTES`)
-- **Data Processing**: LiteLLM automatically processes and exports usage data hourly
-- **CloudZero Processing**: CloudZero typically takes 10-15 minutes to process data from LiteLLM
+- **Data Processing**: Lumina automatically processes and exports usage data hourly
+- **CloudZero Processing**: CloudZero typically takes 10-15 minutes to process data from Lumina
 
 ### Data Format
 
-LiteLLM exports data in CloudZero Billing Format (CBF) with the following structure:
+Lumina exports data in CloudZero Billing Format (CBF) with the following structure:
 
 ```json
 {
@@ -182,8 +182,8 @@ LiteLLM exports data in CloudZero Billing Format (CBF) with the following struct
   "cost/cost": 0.0008,
   "usage/amount": 150,
   "usage/units": "tokens",
-  "resource/id": "czrn:litellm:openai:cross-region:team-123:llm-usage:gpt-5.6-terra",
-  "resource/service": "litellm",
+  "resource/id": "czrn:lumina:openai:cross-region:team-123:llm-usage:gpt-5.6-terra",
+  "resource/service": "lumina",
   "resource/account": "team-123",
   "resource/region": "cross-region",
   "resource/usage_family": "llm-usage",
@@ -196,7 +196,7 @@ LiteLLM exports data in CloudZero Billing Format (CBF) with the following struct
 
 ### Resource Tagging
 
-LiteLLM automatically creates resource tags for cost attribution:
+Lumina automatically creates resource tags for cost attribution:
 
 - **Provider Tags**: `openai`, `anthropic`, `azure`, etc.
 - **Model Tags**: Specific model names like `{{openai_large}}`, `{{anthropic}}`
@@ -246,7 +246,7 @@ curl -X POST "http://localhost:4000/cloudzero/export" \
 
 3. **No Data in CloudZero**
    - CloudZero can take 10-15 minutes to process data
-   - Check that your LiteLLM proxy is generating usage data
+   - Check that your Lumina proxy is generating usage data
    - Use the dry-run endpoint to verify data is being formatted correctly
 
 ## Related Links

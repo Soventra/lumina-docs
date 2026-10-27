@@ -1,12 +1,12 @@
 ---
 slug: gemini_3_5_flash
-title: "DAY 0 Support: Gemini 3.5 Flash on LiteLLM"
+title: "DAY 0 Support: Gemini 3.5 Flash on Lumina"
 date: 2026-05-19T10:00:00
 authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "Guide to using Gemini 3.5 Flash on LiteLLM Proxy and SDK with day 0 support."
+description: "Guide to using Gemini 3.5 Flash on Lumina Proxy and SDK with day 0 support."
 card_title: "Gemini 3.5 Flash"
 card_summary: "Gemini Flash with thinking levels, strict function-call IDs and thought signatures, cost tracking on any version."
 tags: [gemini, day 0 support, llms]
@@ -19,10 +19,10 @@ import TabItem from '@theme/TabItem';
 
 # Gemini 3.5 Flash Day 0 Support 
 
-LiteLLM now supports `gemini-3.5-flash` with full day 0 support!
+Lumina now supports `gemini-3.5-flash` with full day 0 support!
 
 :::note
-If you only want cost tracking, you need no change in your current LiteLLM version. But if you want support for new features introduced with this release, namely thinking levels, strict function-call IDs, and thought signatures, use `v1.87.0-dev.1` or above.
+If you only want cost tracking, you need no change in your current Lumina version. But if you want support for new features introduced with this release, namely thinking levels, strict function-call IDs, and thought signatures, use `v1.87.0-dev.1` or above.
 :::
 
 {/* truncate */}
@@ -32,19 +32,19 @@ If you only want cost tracking, you need no change in your current LiteLLM versi
 <Tabs>
 <TabItem value="docker" label="Docker">
 
-``` showLineNumbers title="docker run litellm"
+``` showLineNumbers title="docker run lumina"
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-ghcr.io/berriai/litellm:v1.87.0-dev.1
+ghcr.io/soventra/lumina:v1.87.0-dev.1
 ```
 
 </TabItem>
 
 <TabItem value="pip" label="Pip">
 
-``` showLineNumbers title="pip install litellm"
-pip install litellm==1.87.0.dev1
+``` showLineNumbers title="pip install lumina"
+pip install lumina==1.87.0.dev1
 ```
 
 </TabItem>
@@ -54,12 +54,12 @@ pip install litellm==1.87.0.dev1
 
 ### 1. Minimal thinking level
 
-Gemini 3.5 Flash supports the new "Minimal" level. LiteLLM maps OpenAI `reasoning_effort` to Gemini's `thinkingLevel`, so use `reasoning_effort="minimal"`.
+Gemini 3.5 Flash supports the new "Minimal" level. Lumina maps OpenAI `reasoning_effort` to Gemini's `thinkingLevel`, so use `reasoning_effort="minimal"`.
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/gemini-3.5-flash",
@@ -77,7 +77,7 @@ print(response.choices[0].message.content)
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gemini-3.5-flash",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -94,7 +94,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 ### 2. Strict function calling
 
-Gemini 3.5+ requires every `functionResponse` to include the same `id` as the originating `functionCall`, plus the matching function name. LiteLLM round-trips this through standard OpenAI fields: `tool_calls[].id` on the assistant message, and the same value as `tool_call_id` on the tool result.
+Gemini 3.5+ requires every `functionResponse` to include the same `id` as the originating `functionCall`, plus the matching function name. Lumina round-trips this through standard OpenAI fields: `tool_calls[].id` on the assistant message, and the same value as `tool_call_id` on the tool result.
 
 **How the tool-call loop works**
 
@@ -105,7 +105,7 @@ Send the user message and your tool definitions. The model responds with `tool_c
 ```bash
 curl -sS http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gemini-3.5-flash",
     "messages": [
@@ -143,7 +143,7 @@ echo "$TOOL_CALL_ID"
 
 **Step 2 : Run your tool, then send the result with the same `tool_call_id`**
 
-Run `get_weather` locally, then call the proxy again with the full message history. Set **`tool_call_id`** to the exact **`id`** from Step 1; LiteLLM uses it as the Gemini `functionResponse.id`.
+Run `get_weather` locally, then call the proxy again with the full message history. Set **`tool_call_id`** to the exact **`id`** from Step 1; Lumina uses it as the Gemini `functionResponse.id`.
 
 ```bash
 # Result from your local get_weather("Tokyo") call
@@ -151,7 +151,7 @@ WEATHER_RESULT='{"temp_c": 18, "condition": "clear"}'
 
 curl -sS http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d "$(jq -n \
     --arg id "$TOOL_CALL_ID" \
     --arg content "$WEATHER_RESULT" \
@@ -189,13 +189,13 @@ The **`id`** on the assistant `tool_calls` entry and the **`tool_call_id`** on t
 
 **Step 3 : Model produces the final answer**
 
-LiteLLM sends the matching `id` and `name` on the Gemini `functionResponse` part. The model then returns a normal assistant message with the weather summary.
+Lumina sends the matching `id` and `name` on the Gemini `functionResponse` part. The model then returns a normal assistant message with the weather summary.
 
 ### 3. Sampling parameters (`temperature`, `top_p`, `top_k`)
 
 Google has advised moving away from `temperature`, `top_p`, and `top_k` for Gemini 3.5+ and steering sampling behavior through **system instructions** instead. These parameters still work today, but may be removed in a future API release.
 
-LiteLLM follows the same guidance: when you pass `temperature`, `top_p`, or `top_k` on Gemini 3+ models, you will see a deprecation warning in the logs recommending system-instruction-based sampling instead.
+Lumina follows the same guidance: when you pass `temperature`, `top_p`, or `top_k` on Gemini 3+ models, you will see a deprecation warning in the logs recommending system-instruction-based sampling instead.
 
 ## Quick Start
 
@@ -203,7 +203,7 @@ LiteLLM follows the same guidance: when you pass `temperature`, `top_p`, or `top
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/gemini-3.5-flash",
@@ -237,7 +237,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make requests**
@@ -245,7 +245,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gemini-3.5-flash",
     "messages": [{"role": "user", "content": "Hello!"}]
@@ -257,7 +257,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 ## Supported Endpoints
 
-LiteLLM provides **full end-to-end support** for Gemini 3.5 Flash on:
+Lumina provides **full end-to-end support** for Gemini 3.5 Flash on:
 
 - ✅ `/v1/chat/completions` - OpenAI-compatible chat completions endpoint
 - ✅ `/v1/responses` - OpenAI Responses API endpoint (streaming and non-streaming)

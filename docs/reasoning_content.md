@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 :::info
 
-Requires LiteLLM v1.63.0+
+Requires Lumina v1.63.0+
 
 :::
 
@@ -27,9 +27,9 @@ Supported Providers:
 - Mistral AI (Magistral models) (`mistral/`)
 - Groq (`groq/`)
 
-LiteLLM will standardize the `reasoning_content` in the response and `thinking_blocks` in the assistant message.
+Lumina will standardize the `reasoning_content` in the response and `thinking_blocks` in the assistant message.
 
-```python nolint title="Example response from litellm"
+```python nolint title="Example response from lumina"
 "message": {
     ...
     "reasoning_content": "The capital of France is Paris.",
@@ -49,7 +49,7 @@ LiteLLM will standardize the `reasoning_content` in the response and `thinking_b
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["ANTHROPIC_API_KEY"] = ""
@@ -142,32 +142,32 @@ When using Anthropic models with `thinking` enabled and tool calling, you **must
 3. When these clients reconstruct the assistant message for the next turn, the thinking blocks are lost
 4. Anthropic rejects the request because the assistant message doesn't start with a thinking block
 
-:::tip[LiteLLM supports thinking_blocks]
-LiteLLM's `completion()` API **does support** sending `thinking_blocks` in assistant messages. If you're using LiteLLM directly (not through an OpenAI-compatible client), you can preserve and resend `thinking_blocks` and everything will work correctly.
+:::tip[Lumina supports thinking_blocks]
+Lumina's `completion()` API **does support** sending `thinking_blocks` in assistant messages. If you're using Lumina directly (not through an OpenAI-compatible client), you can preserve and resend `thinking_blocks` and everything will work correctly.
 :::
 
 **Solutions:**
 
-1. **Use LiteLLM's built-in workaround** (recommended): Set `litellm.modify_params = True` and LiteLLM will automatically handle this incompatibility by dropping the `thinking` param when `thinking_blocks` are missing (see below)
+1. **Use Lumina's built-in workaround** (recommended): Set `lumina.modify_params = True` and Lumina will automatically handle this incompatibility by dropping the `thinking` param when `thinking_blocks` are missing (see below)
 2. **For client developers**: Explicitly handle and resend the `thinking_blocks` field (see example below)
 3. **Disable extended thinking** when using tools with OpenAI-compatible clients that don't support `thinking_blocks`
 4. **Use Anthropic's native API** directly instead of OpenAI-compatible endpoints
 
-### LiteLLM Built-in Workaround
+### Lumina Built-in Workaround
 
-LiteLLM can automatically handle this incompatibility when `modify_params=True` is set. If the client sends a request with `thinking` enabled but the assistant message with `tool_calls` is missing `thinking_blocks`, LiteLLM will automatically drop the `thinking` param for that turn to avoid the error.
+Lumina can automatically handle this incompatibility when `modify_params=True` is set. If the client sends a request with `thinking` enabled but the assistant message with `tool_calls` is missing `thinking_blocks`, Lumina will automatically drop the `thinking` param for that turn to avoid the error.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-import litellm
+import lumina
 
 # Enable automatic parameter modification
-litellm.modify_params = True
+lumina.modify_params = True
 
 # Now this will work even if thinking_blocks are missing from the assistant message
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     thinking={"type": "enabled", "budget_tokens": 1024},
     tools=[...],
@@ -176,7 +176,7 @@ response = litellm.completion(
         {
             "role": "assistant",
             "tool_calls": [{"id": "call_123", "type": "function", "function": {"name": "get_weather", "arguments": '{"city": "Madrid"}'}}]
-            # Note: thinking_blocks is missing here - LiteLLM will handle it
+            # Note: thinking_blocks is missing here - Lumina will handle it
         },
         {"role": "tool", "tool_call_id": "call_123", "content": "22°C sunny"}
     ]
@@ -187,7 +187,7 @@ response = litellm.completion(
 <TabItem value="proxy" label="PROXY">
 
 ```yaml showLineNumbers title="config.yaml"
-litellm_settings:
+lumina_settings:
   modify_params: true  # Enable automatic parameter modification
 
 model_list:
@@ -203,7 +203,7 @@ model_list:
 </Tabs>
 
 :::info
-When `modify_params=True` and LiteLLM drops the `thinking` param, the model will **not** use extended thinking for that specific turn. The conversation will continue normally, but without reasoning for that response.
+When `modify_params=True` and Lumina drops the `thinking` param, the model will **not** use extended thinking for that specific turn. The conversation will continue normally, but without reasoning for that response.
 :::
 
 **Correct way to include `thinking_blocks`:**
@@ -224,8 +224,8 @@ assistant_message = {
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-litellm._turn_on_debug()
-litellm.modify_params = True
+lumina._turn_on_debug()
+lumina.modify_params = True
 model = "anthropic/{{anthropic}}" # works across Anthropic, Bedrock, Vertex AI
 # Step 1: send the conversation and available functions to the model
 messages = [
@@ -257,7 +257,7 @@ tools = [
         },
     }
 ]
-response = litellm.completion(
+response = lumina.completion(
     model=model,
     messages=messages,
     tools=tools,
@@ -306,7 +306,7 @@ if tool_calls:
             }
         )  # extend conversation with function response
     print(f"messages: {messages}")
-    second_response = litellm.completion(
+    second_response = lumina.completion(
         model=model,
         messages=messages,
         seed=22,
@@ -337,7 +337,7 @@ model_list:
 2. Run proxy
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -442,14 +442,14 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Switching between Anthropic + Deepseek models 
 
-Set `drop_params=True` to drop the 'thinking' blocks when swapping from Anthropic to Deepseek models. Suggest improvements to this approach [here](https://github.com/BerriAI/litellm/discussions/8927).
+Set `drop_params=True` to drop the 'thinking' blocks when swapping from Anthropic to Deepseek models. Suggest improvements to this approach [here](https://github.com/Soventra/lumina/discussions/8927).
 
 ```python showLineNumbers
-litellm.drop_params = True # EITHER GLOBALLY or per request
+lumina.drop_params = True # EITHER GLOBALLY or per request
 
 # or per request
 ## Anthropic
-response = litellm.completion(
+response = lumina.completion(
   model="anthropic/{{anthropic}}",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   reasoning_effort="low",
@@ -457,7 +457,7 @@ response = litellm.completion(
 )
 
 ## Deepseek
-response = litellm.completion(
+response = lumina.completion(
   model="deepseek/deepseek-chat",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   reasoning_effort="low",
@@ -486,7 +486,7 @@ You can also pass the `thinking` parameter to Anthropic models.
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-response = litellm.completion(
+response = lumina.completion(
   model="anthropic/{{anthropic}}",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   thinking={"type": "enabled", "budget_tokens": 1024},
@@ -512,13 +512,13 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Reasoning on the Responses API
 
-`/v1/responses` accepts the OpenAI `reasoning` object, and LiteLLM translates it into whatever the target model expects. Claude models take it on every route LiteLLM serves them on (`anthropic/`, `bedrock/`, `vertex_ai/`, `azure_ai/`), so the same request shape controls reasoning depth no matter which provider is behind the model.
+`/v1/responses` accepts the OpenAI `reasoning` object, and Lumina translates it into whatever the target model expects. Claude models take it on every route Lumina serves them on (`anthropic/`, `bedrock/`, `vertex_ai/`, `azure_ai/`), so the same request shape controls reasoning depth no matter which provider is behind the model.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-response = litellm.responses(
+response = lumina.responses(
   model="vertex_ai/{{anthropic_large}}",
   input="How many prime numbers are less than 30?",
   reasoning={"effort": "low"},
@@ -542,11 +542,11 @@ curl http://0.0.0.0:4000/v1/responses \
 </TabItem>
 </Tabs>
 
-Anthropic changed how thinking is configured in Claude 4.6, so the translation depends on which model you are calling. LiteLLM decides from the model's `supports_adaptive_thinking` capability rather than the model name, so your own code never has to branch on it.
+Anthropic changed how thinking is configured in Claude 4.6, so the translation depends on which model you are calling. Lumina decides from the model's `supports_adaptive_thinking` capability rather than the model name, so your own code never has to branch on it.
 
 Claude 4.6 and newer (Sonnet 4.6, Opus 4.7, Opus 4.8) use adaptive thinking, and the effort level is forwarded alongside it:
 
-```json title="what LiteLLM sends for reasoning.effort = low"
+```json title="what Lumina sends for reasoning.effort = low"
 {"thinking": {"type": "adaptive"}, "output_config": {"effort": "low"}}
 ```
 
@@ -563,7 +563,7 @@ Claude 4.6 and newer (Sonnet 4.6, Opus 4.7, Opus 4.8) use adaptive thinking, and
 
 Each budget is overridable through the matching `DEFAULT_REASONING_EFFORT_*_THINKING_BUDGET` environment variable, and `{"effort": "none"}` turns thinking off entirely on both shapes.
 
-If you would rather set Anthropic's native parameters yourself, send `thinking` and `output_config` in the request body and LiteLLM forwards them untouched.
+If you would rather set Anthropic's native parameters yourself, send `thinking` and `output_config` in the request body and Lumina forwards them untouched.
 
 ```bash showLineNumbers
 curl http://0.0.0.0:4000/v1/responses \
@@ -579,34 +579,34 @@ curl http://0.0.0.0:4000/v1/responses \
 
 :::info
 
-Claude 4.6+ reject the legacy shape with `400 "thinking.type.enabled" is not supported for this model. Use "thinking.type.adaptive" and "output_config.effort" to control thinking behavior.` LiteLLM only emits the adaptive shape for models its model map knows support it, so hitting this error usually means the model is newer than your LiteLLM install. Opus 4.8 routed through Bedrock, Vertex AI, or Azure AI needs v1.89.0+ ([PR #29702](https://github.com/BerriAI/litellm/pull/29702))
+Claude 4.6+ reject the legacy shape with `400 "thinking.type.enabled" is not supported for this model. Use "thinking.type.adaptive" and "output_config.effort" to control thinking behavior.` Lumina only emits the adaptive shape for models its model map knows support it, so hitting this error usually means the model is newer than your Lumina install. Opus 4.8 routed through Bedrock, Vertex AI, or Azure AI needs v1.89.0+ ([PR #29702](https://github.com/Soventra/lumina/pull/29702))
 
 :::
 
 ## Checking if a model supports reasoning
 
 <Tabs>
-<TabItem label="LiteLLM Python SDK" value="Python">
+<TabItem label="Lumina Python SDK" value="Python">
 
-Use `litellm.supports_reasoning(model="")` -> returns `True` if model supports reasoning and `False` if not.
+Use `lumina.supports_reasoning(model="")` -> returns `True` if model supports reasoning and `False` if not.
 
-```python showLineNumbers title="litellm.supports_reasoning() usage"
-import litellm 
+```python showLineNumbers title="lumina.supports_reasoning() usage"
+import lumina 
 
 # Example models that support reasoning
-assert litellm.supports_reasoning(model="anthropic/{{anthropic}}") == True
-assert litellm.supports_reasoning(model="deepseek/deepseek-chat") == True 
+assert lumina.supports_reasoning(model="anthropic/{{anthropic}}") == True
+assert lumina.supports_reasoning(model="deepseek/deepseek-chat") == True 
 
 # Example models that do not support reasoning
-assert litellm.supports_reasoning(model="openai/gpt-4.1") == False 
+assert lumina.supports_reasoning(model="openai/gpt-4.1") == False 
 ```
 </TabItem>
 
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
-1. Define models that support reasoning in your `config.yaml`. You can optionally add `supports_reasoning: True` to the `model_info` if LiteLLM does not automatically detect it for your custom model.
+1. Define models that support reasoning in your `config.yaml`. You can optionally add `supports_reasoning: True` to the `model_info` if Lumina does not automatically detect it for your custom model.
 
-```yaml showLineNumbers title="litellm proxy config.yaml"
+```yaml showLineNumbers title="lumina proxy config.yaml"
 model_list:
   - model_name: claude-3-sonnet-reasoning
     lumina_params:
@@ -628,8 +628,8 @@ model_list:
 
 2. Run the proxy server:
 
-```bash showLineNumbers title="litellm --config config.yaml"
-litellm --config config.yaml
+```bash showLineNumbers title="lumina --config config.yaml"
+lumina --config config.yaml
 ```
 
 3. Call `/model_group/info` to check if your model supports `reasoning`
@@ -672,7 +672,7 @@ Expected Response
 
 :::tip[gpt-5.4: reasoning_effort + function tools]
 
-When `gpt-5.4+` requests to `litellm.completion()` include both `reasoning_effort` and `tools`, LiteLLM **automatically routes** the request through the Responses API bridge. This works for both **OpenAI** (`openai/gpt-5.4`) and **Azure** (`azure/gpt-5.4`) providers, with no extra configuration needed.
+When `gpt-5.4+` requests to `lumina.completion()` include both `reasoning_effort` and `tools`, Lumina **automatically routes** the request through the Responses API bridge. This works for both **OpenAI** (`openai/gpt-5.4`) and **Azure** (`azure/gpt-5.4`) providers, with no extra configuration needed.
 
 You can also route explicitly via `openai/responses/gpt-5.4` or `azure/responses/gpt-5.4`. See [Responses API Bridge](/docs/providers/openai#openai-chat-completion-to-responses-api-bridge) for details.
 
@@ -680,7 +680,7 @@ You can also route explicitly via `openai/responses/gpt-5.4` or `azure/responses
 
 **SDK:**
 ```python
-litellm.completion(model="azure/responses/my-reasoning-model")  # ...
+lumina.completion(model="azure/responses/my-reasoning-model")  # ...
 ```
 
 **Proxy config:**
@@ -732,9 +732,9 @@ The strength order, from weakest to strongest, is `minimal`, `low`, `medium`, `h
 | `none` | `none` | `none` |
 | `default` | no reasoning effort | no reasoning effort |
 
-`none` and any level name outside the strength order are sent unchanged, so a caller who turned reasoning off is never rounded up. With `drop_params: true`, a level the deployment does not declare is dropped instead, the same way LiteLLM drops other values a provider does not support. `default` sends no reasoning effort at all.
+`none` and any level name outside the strength order are sent unchanged, so a caller who turned reasoning off is never rounded up. With `drop_params: true`, a level the deployment does not declare is dropped instead, the same way Lumina drops other values a provider does not support. `default` sends no reasoning effort at all.
 
-To round down on every deployment, set `reasoning_effort_rounding: down` under `litellm_settings`. A deployment's own `model_info.reasoning_effort_rounding` wins over the global setting. The value ignores case and surrounding spaces. A value other than `up` or `down` is ignored with a warning in the proxy logs, and the next setting applies, so the proxy checks the deployment first, then `litellm_settings`, then falls back to `up`.
+To round down on every deployment, set `reasoning_effort_rounding: down` under `lumina_settings`. A deployment's own `model_info.reasoning_effort_rounding` wins over the global setting. The value ignores case and surrounding spaces. A value other than `up` or `down` is ignored with a warning in the proxy logs, and the next setting applies, so the proxy checks the deployment first, then `lumina_settings`, then falls back to `up`.
 
 A non-empty `reasoning_effort_levels` also lets a provider that does not otherwise accept `reasoning_effort` take it, which today means `azure_ai`. An empty list does not. On OpenAI and Azure GPT-5 deployments, a declared level such as `xhigh` or `none` is sent even when the model map does not list it for that model.
 
@@ -746,7 +746,7 @@ Each change logs one INFO line in this shape.
 reasoning_effort medium sent as high (rounding up) to deployment <deployment id>, model group my-model-azure-ai, model azure_ai/my-model
 ```
 
-The proxy shows INFO lines only when `LUMINA_LOG=INFO` is set. With `json_logs: true` under `litellm_settings`, the line also carries `reasoning_effort_deployment_id`, `reasoning_effort_model_group`, `reasoning_effort_deployment_model`, `reasoning_effort_requested`, `reasoning_effort_sent`, and `reasoning_effort_rounding` as JSON keys, so you can filter or chart them.
+The proxy shows INFO lines only when `LUMINA_LOG=INFO` is set. With `json_logs: true` under `lumina_settings`, the line also carries `reasoning_effort_deployment_id`, `reasoning_effort_model_group`, `reasoning_effort_deployment_model`, `reasoning_effort_requested`, `reasoning_effort_sent`, and `reasoning_effort_rounding` as JSON keys, so you can filter or chart them.
 
 ## OpenAI Responses API - Auto-Summary Control
 
@@ -760,12 +760,12 @@ You can enable automatic `summary="detailed"` in two ways:
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
 # Enable auto-summary globally
-litellm.reasoning_auto_summary = True
+lumina.reasoning_auto_summary = True
 
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     reasoning_effort="low",  # Will automatically add summary="detailed"
@@ -789,7 +789,7 @@ LUMINA_REASONING_AUTO_SUMMARY=true
 <TabItem value="proxy" label="Proxy Config">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   reasoning_auto_summary: true  # Enable auto-summary for all requests
 
 model_list:
@@ -825,7 +825,7 @@ model_list:
 For fine-grained control, pass `reasoning_effort` as a dictionary:
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     reasoning_effort={"effort": "low", "summary": "detailed"},  # Explicit control
@@ -837,9 +837,9 @@ response = litellm.completion(
 When using the Anthropic `/v1/messages` adapter to route non-Claude models (e.g., `openai/{{openai_large}}`), the `thinking.summary` value is preserved and forwarded to the downstream provider. For example:
 
 ```python
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="openai/{{openai_large}}",
     messages=[{"role": "user", "content": "Hello"}],
     max_tokens=8096,
@@ -858,12 +858,12 @@ To **enable** this default injection, use the `reasoning_auto_summary` flag:
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
 # Enable default summary="detailed" injection
-litellm.reasoning_auto_summary = True
+lumina.reasoning_auto_summary = True
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="openai/{{openai_large}}",
     messages=[{"role": "user", "content": "Hello"}],
     max_tokens=8096,
@@ -885,7 +885,7 @@ export LUMINA_REASONING_AUTO_SUMMARY=true
 <TabItem value="proxy" label="Proxy Config">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   reasoning_auto_summary: true
 ```
 

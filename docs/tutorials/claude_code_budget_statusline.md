@@ -2,19 +2,19 @@ import Image from '@theme/IdealImage';
 
 # Claude Code - Budget Status Line
 
-Show a user's remaining LiteLLM budget in the Claude Code status line. The status line calls [`/user/info`](../proxy/virtual_keys.md#spend-tracking) with the user's virtual key and displays the difference between `user_info.max_budget` and `user_info.spend`.
+Show a user's remaining Lumina budget in the Claude Code status line. The status line calls [`/user/info`](../proxy/virtual_keys.md#spend-tracking) with the user's virtual key and displays the difference between `user_info.max_budget` and `user_info.spend`.
 
 If the user does not have a `max_budget`, the script prints nothing.
 
 ## Prerequisites
 
-- Claude Code is configured to use LiteLLM
+- Claude Code is configured to use Lumina
 - The Claude Code virtual key belongs to a user with a [`max_budget`](../proxy/users.md#internal-user)
 - `curl` and `jq` are installed
 
 Use a user virtual key rather than the proxy master key. Calling `/user/info` without a `user_id` returns the user associated with the authenticated key.
 
-## 1. Set LiteLLM environment variables
+## 1. Set Lumina environment variables
 
 Set the proxy root URL and the same virtual key that Claude Code uses:
 
@@ -27,7 +27,7 @@ export LUMINA_API_KEY="$ANTHROPIC_AUTH_TOKEN"
 
 ## 2. Create the status line script
 
-Save this script as `~/.claude/litellm-budget-statusline.sh`:
+Save this script as `~/.claude/lumina-budget-statusline.sh`:
 
 ```bash
 #!/bin/bash
@@ -60,14 +60,14 @@ SPEND=$(printf '%s' "$BUDGET" | cut -f2)
 awk -v max="$MAX_BUDGET" -v spend="$SPEND" 'BEGIN {
   remaining = max - spend
   if (remaining < 0) remaining = 0
-  printf "LiteLLM budget: $%.2f remaining of $%.2f\n", remaining, max
+  printf "Lumina budget: $%.2f remaining of $%.2f\n", remaining, max
 }'
 ```
 
 Make the script executable:
 
 ```bash
-chmod +x ~/.claude/litellm-budget-statusline.sh
+chmod +x ~/.claude/lumina-budget-statusline.sh
 ```
 
 The two-second timeout prevents a slow or unavailable proxy from delaying Claude Code. API errors and users without a configured budget leave the status line empty.
@@ -80,7 +80,7 @@ Add the script to `~/.claude/settings.json`:
 {
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/litellm-budget-statusline.sh"
+    "command": "~/.claude/lumina-budget-statusline.sh"
   }
 }
 ```
@@ -92,7 +92,7 @@ Claude Code refreshes the status line after each assistant response. For more cu
 For a user with a `$100` maximum budget and `$24.35` in tracked spend, the status line displays:
 
 ```text
-LiteLLM budget: $75.65 remaining of $100.00
+Lumina budget: $75.65 remaining of $100.00
 ```
 
 The remaining budget appears beneath the Claude Code prompt:

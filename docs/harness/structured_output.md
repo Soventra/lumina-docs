@@ -14,13 +14,13 @@ class Review(BaseModel):
     verdict: Literal["approve", "request_changes"]
     issues: list[str]
 
-r = litellm.agent(
+r = lumina.agent(
     Harness.CLAUDE_CODE,
     "Review the staged diff.",
     output=Review,
     permissions="read-only",
     sandbox=box,
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
 )
 r.output.verdict  # "request_changes"
 ```
@@ -31,6 +31,6 @@ r.output.verdict  # "request_changes"
 | `CODEX` | Codex's native `--output-schema` |
 | `OPENCODE` | instruction to answer with one JSON object matching the schema, then validated |
 | `DEEPAGENTS` | `create_deep_agent(response_format=Review)` |
-| `TOOL_LOOP` | `litellm.acompletion(response_format=Review)` |
+| `TOOL_LOOP` | `lumina.acompletion(response_format=Review)` |
 
 If validation fails, the call raises `OutputInvalid`. The exception carries `.raw` with the model's text and `.result` with the rest of the turn, so the work isn't lost.

@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.89.2 - Cost Tracking & Model-List Fixes"
+title: "Lumina v1.89.2 - Cost Tracking & Model-List Fixes"
 description: "Fixes cost tracking for non-string service_tier values and /v1/models listing for team and BYOK setups. Adds an opt-in healthy_only filter."
 slug: "v1-89-2"
 date: 2026-06-17T19:22:38
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -21,7 +21,7 @@ hide_table_of_contents: false
 
 :::info[Update: no performance regression found]
 
-An earlier version of this note flagged a potential throughput regression. We investigated and could not confirm or reproduce any regression in the released version. The one report we received came from a deployment running custom code on top of what we shipped, and our testing points to those changes, not LiteLLM, as the likely cause.
+An earlier version of this note flagged a potential throughput regression. We investigated and could not confirm or reproduce any regression in the released version. The one report we received came from a deployment running custom code on top of what we shipped, and our testing points to those changes, not Lumina, as the likely cause.
 
 Correctness and error rates were never affected. If you're on this version, there's nothing you need to do.
 
@@ -41,14 +41,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.89.2
+docker.lumina.ai/soventra/lumina:1.89.2
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.89.2
+pip install lumina==1.89.2
 ```
 
 </TabItem>
@@ -58,14 +58,14 @@ pip install litellm==1.89.2
 
 ### What's Changed
 
-- fix(cost): stop a non-string `service_tier` from silently dropping cost tracking - [PR #30690](https://github.com/BerriAI/litellm/pull/30690)
-- fix(anthropic): price and surface the response `service_tier` in cost tracking - [PR #30558](https://github.com/BerriAI/litellm/pull/30558)
-- fix(proxy): list the public team model name in `/v1/models` - [PR #30588](https://github.com/BerriAI/litellm/pull/30588)
-- feat(proxy): add an opt-in `healthy_only` filter to `GET /v1/models` - [PR #30130](https://github.com/BerriAI/litellm/pull/30130)
-- fix(proxy): resolve list-files credentials from team BYOK deployments - [PR #30495](https://github.com/BerriAI/litellm/pull/30495)
-- fix(proxy): allow internal roles to access vector store CRUD routes - [PR #30503](https://github.com/BerriAI/litellm/pull/30503)
-- fix(otel): record the full error message on the standard exception event in OTEL v2 - [PR #30380](https://github.com/BerriAI/litellm/pull/30380)
+- fix(cost): stop a non-string `service_tier` from silently dropping cost tracking - [PR #30690](https://github.com/Soventra/lumina/pull/30690)
+- fix(anthropic): price and surface the response `service_tier` in cost tracking - [PR #30558](https://github.com/Soventra/lumina/pull/30558)
+- fix(proxy): list the public team model name in `/v1/models` - [PR #30588](https://github.com/Soventra/lumina/pull/30588)
+- feat(proxy): add an opt-in `healthy_only` filter to `GET /v1/models` - [PR #30130](https://github.com/Soventra/lumina/pull/30130)
+- fix(proxy): resolve list-files credentials from team BYOK deployments - [PR #30495](https://github.com/Soventra/lumina/pull/30495)
+- fix(proxy): allow internal roles to access vector store CRUD routes - [PR #30503](https://github.com/Soventra/lumina/pull/30503)
+- fix(otel): record the full error message on the standard exception event in OTEL v2 - [PR #30380](https://github.com/Soventra/lumina/pull/30380)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.89.1...v1.89.2
+https://github.com/Soventra/lumina/compare/v1.89.1...v1.89.2

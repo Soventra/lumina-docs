@@ -11,11 +11,11 @@
 
 Both modes are billed at $0.60 per 1k searches.
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="APISerpent Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["APISERPENT_API_KEY"] = "your-api-key"
 
@@ -33,7 +33,7 @@ for result in response.results:
 ### Deep search
 
 ```python showLineNumbers title="APISerpent Deep Search"
-from litellm import search
+from lumina import search
 
 response = search(
     query="open source vector databases comparison",
@@ -43,7 +43,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -64,7 +64,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -86,7 +86,7 @@ curl http://0.0.0.0:4000/v1/search/apiserpent-search \
 APISerpent supports the standard Perplexity unified spec parameters:
 
 ```python showLineNumbers title="APISerpent Search with unified parameters"
-from litellm import search
+from lumina import search
 
 response = search(
     query="machine learning research",
@@ -110,7 +110,7 @@ Pass any APISerpent-specific parameter as a keyword argument:
 
 ```python showLineNumbers title="APISerpent Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["APISERPENT_API_KEY"] = "your-api-key"
 
@@ -143,4 +143,4 @@ response = search(
 
 ## Response Notes
 
-APISerpent's full-format response nests results under `results.organic`. The LiteLLM adapter maps each organic result's `title`, `url`, and `snippet` into the unified [`SearchResponse`](/docs/search#response-format) shape.
+APISerpent's full-format response nests results under `results.organic`. The Lumina adapter maps each organic result's `title`, `url`, and `snippet` into the unified [`SearchResponse`](/docs/search#response-format) shape.

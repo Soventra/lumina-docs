@@ -1,27 +1,27 @@
 import Image from '@theme/IdealImage';
 
 
-# LiteLLM Proxy - 1K RPS Load test on locust 
+# Lumina Proxy - 1K RPS Load test on locust 
 
-Tutorial on how to get to 1K+ RPS with LiteLLM Proxy on locust
+Tutorial on how to get to 1K+ RPS with Lumina Proxy on locust
 
 
 ## Pre-Testing Checklist
-- [ ] Ensure you're using the **latest `-stable` version** of litellm
-    - [Github releases](https://github.com/BerriAI/litellm/releases)
-    - [litellm docker containers](https://github.com/BerriAI/litellm/pkgs/container/litellm)
+- [ ] Ensure you're using the **latest `-stable` version** of lumina
+    - [Github releases](https://github.com/Soventra/lumina/releases)
+    - [lumina docker containers](https://github.com/Soventra/lumina/pkgs/container/lumina)
 - [ ] Ensure you're following **ALL** [best practices for production](./proxy/prod.md)
 - [ ] Locust - Ensure you're Locust instance can create 1K+ requests per second
     - You can use our **[maintained locust instance here](https://locust-load-tester-production.up.railway.app/)**
     - If you're self hosting locust
         - [here's the spec used for our locust machine](#machine-specifications-for-running-locust)
         - [here  is the locustfile.py used for our tests](#locust-file-used-for-testing)
-- [ ] Use this [**machine specification for running litellm proxy**](#machine-specifications-for-running-litellm-proxy)
-- [ ] **Enterprise LiteLLM** - Use `prometheus` as a callback in your `proxy_config.yaml` to get metrics on your load test
-    Set `litellm_settings.callbacks` to monitor success/failures/all types of errors
+- [ ] Use this [**machine specification for running lumina proxy**](#machine-specifications-for-running-lumina-proxy)
+- [ ] **Enterprise Lumina** - Use `prometheus` as a callback in your `proxy_config.yaml` to get metrics on your load test
+    Set `lumina_settings.callbacks` to monitor success/failures/all types of errors
     ```yaml
-    litellm_settings:
-        callbacks: ["prometheus"] # Enterprise LiteLLM Only - use prometheus to get metrics on your load test
+    lumina_settings:
+        callbacks: ["prometheus"] # Enterprise Lumina Only - use prometheus to get metrics on your load test
     ```
 
 **Use this config for testing:**
@@ -54,8 +54,8 @@ model_list:
 
 ### Run Test
 
-1. Add `fake-openai-endpoint` to your proxy config.yaml and start your litellm proxy
-litellm provides a hosted `fake-openai-endpoint` you can load test against
+1. Add `fake-openai-endpoint` to your proxy config.yaml and start your lumina proxy
+lumina provides a hosted `fake-openai-endpoint` you can load test against
 
 ```yaml
 model_list:
@@ -65,13 +65,13 @@ model_list:
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
-litellm_settings:
-  callbacks: ["prometheus"] # Enterprise LiteLLM Only - use prometheus to get metrics on your load test
+lumina_settings:
+  callbacks: ["prometheus"] # Enterprise Lumina Only - use prometheus to get metrics on your load test
 ```
 
 2. `uv add locust`
 
-3. Create a file called `locustfile.py` on your local machine. Copy the contents from the litellm load test located [here](https://github.com/BerriAI/litellm/blob/main/.github/workflows/locustfile.py)
+3. Create a file called `locustfile.py` on your local machine. Copy the contents from the lumina load test located [here](https://github.com/Soventra/lumina/blob/main/.github/workflows/locustfile.py)
 
 4. Start locust
   Run `locust` in the same directory as your `locustfile.py` from step 2
@@ -84,7 +84,7 @@ litellm_settings:
 
   Head to the locust UI on http://0.0.0.0:8089
 
-  Set **Users=1000, Ramp Up Users=1000**, Host=Base URL of your LiteLLM Proxy
+  Set **Users=1000, Ramp Up Users=1000**, Host=Base URL of your Lumina Proxy
 
 6. Expected results 
 
@@ -133,13 +133,13 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: /etc/secrets/adroit_crow.json
 
-litellm_settings:
-  callbacks: ["prometheus"] # Enterprise LiteLLM Only - use prometheus to get metrics on your load test
+lumina_settings:
+  callbacks: ["prometheus"] # Enterprise Lumina Only - use prometheus to get metrics on your load test
 ```
 
 2. `uv add locust`
 
-3. Create a file called `locustfile.py` on your local machine. Copy the contents from the litellm load test located [here](https://github.com/BerriAI/litellm/blob/main/.github/workflows/locustfile.py)
+3. Create a file called `locustfile.py` on your local machine. Copy the contents from the lumina load test located [here](https://github.com/Soventra/lumina/blob/main/.github/workflows/locustfile.py)
 
 4. Start locust
   Run `locust` in the same directory as your `locustfile.py` from step 2
@@ -169,8 +169,8 @@ Use the following [prometheus metrics to debug your load tests / failures](./pro
 
 | Metric Name          | Description                          |
 |----------------------|--------------------------------------|
-| `litellm_deployment_failure_responses`              | Total number of failed LLM API calls for a specific LLM deployment. Labels: `"requested_model", "litellm_model_name", "model_id", "api_base", "api_provider", "hashed_api_key", "api_key_alias", "team", "team_alias", "exception_status", "exception_class"` |
-| `litellm_deployment_cooled_down`             | Number of times a deployment has been cooled down by LiteLLM load balancing logic. Labels: `"litellm_model_name", "model_id", "api_base", "api_provider", "exception_status"` |
+| `lumina_deployment_failure_responses`              | Total number of failed LLM API calls for a specific LLM deployment. Labels: `"requested_model", "lumina_model_name", "model_id", "api_base", "api_provider", "hashed_api_key", "api_key_alias", "team", "team_alias", "exception_status", "exception_class"` |
+| `lumina_deployment_cooled_down`             | Number of times a deployment has been cooled down by Lumina load balancing logic. Labels: `"lumina_model_name", "model_id", "api_base", "api_provider", "exception_status"` |
 
 
 
@@ -183,9 +183,9 @@ Use the following [prometheus metrics to debug your load tests / failures](./pro
 | `Memory` on Load Testing Machine | 450 MB |
 | `Replicas` of Load Testing Machine | 1 |
 
-## Machine Specifications for Running LiteLLM Proxy
+## Machine Specifications for Running Lumina Proxy
 
-**Number of Replicas of LiteLLM Proxy=4** for getting 1K+ RPS
+**Number of Replicas of Lumina Proxy=4** for getting 1K+ RPS
 
 | Service | Spec | CPUs | Memory | Architecture | Version|
 | --- | --- | --- | --- | --- | --- | 
@@ -203,7 +203,7 @@ class MyUser(HttpUser):
     wait_time = between(0.5, 1)  # Random wait time between requests
 
     @task(100)
-    def litellm_completion(self):
+    def lumina_completion(self):
         # no cache hits with this
         payload = {
             "model": "fake-openai-endpoint",
@@ -219,6 +219,6 @@ class MyUser(HttpUser):
 
 
     def on_start(self):
-        self.api_key = os.getenv('API_KEY', 'sk-<your-litellm-api-key>')
+        self.api_key = os.getenv('API_KEY', 'sk-<your-lumina-api-key>')
         self.client.headers.update({'Authorization': f'Bearer {self.api_key}'})
 ```

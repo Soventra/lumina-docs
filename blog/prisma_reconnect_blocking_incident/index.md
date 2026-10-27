@@ -13,11 +13,11 @@ hide_table_of_contents: false
 **Severity:** High; surfaced as full proxy outages in Kubernetes
 **Status:** Resolved
 
-> **Note:** This fix is available starting from the release that contains [PR #26225](https://github.com/BerriAI/litellm/pull/26225) (merged April 29, 2026).
+> **Note:** This fix is available starting from the release that contains [PR #26225](https://github.com/Soventra/lumina/pull/26225) (merged April 29, 2026).
 
 ## Summary
 
-When the upstream Postgres database became unreachable, the LiteLLM proxy's Prisma reconnect path called `await self.db.disconnect()`. Under prisma-client-py that call invokes a **synchronous** `subprocess.Popen.wait()` on the Rust query-engine subprocess. Because `wait()` does not yield, the asyncio event loop froze for as long as the engine took to shut down, typically 30–120 seconds in production when the engine was stuck on TCP close operations against the unresponsive database.
+When the upstream Postgres database became unreachable, the Lumina proxy's Prisma reconnect path called `await self.db.disconnect()`. Under prisma-client-py that call invokes a **synchronous** `subprocess.Popen.wait()` on the Rust query-engine subprocess. Because `wait()` does not yield, the asyncio event loop froze for as long as the engine took to shut down, typically 30–120 seconds in production when the engine was stuck on TCP close operations against the unresponsive database.
 
 While the loop was frozen, **no coroutines ran**, including `/health/liveliness`. Kubernetes liveness probes timed out and the kubelet SIGKILLed the pod. From the operator's point of view the proxy looked dead even though the underlying issue was a *transient* DB outage that the reconnect logic was supposed to ride through.
 
@@ -29,7 +29,7 @@ While the loop was frozen, **no coroutines ran**, including `/health/liveliness`
 
 ## Background
 
-LiteLLM's proxy keeps a single long-lived Prisma client to talk to its Postgres metadata store (keys, teams, spend logs). When that connection drops it has to reconnect, otherwise every authenticated request fails. The reconnect path lives in `litellm/proxy/db/prisma_client.py`'s `recreate_prisma_client()` (and a now-removed "direct reconnect" branch in `litellm/proxy/utils.py`).
+Lumina's proxy keeps a single long-lived Prisma client to talk to its Postgres metadata store (keys, teams, spend logs). When that connection drops it has to reconnect, otherwise every authenticated request fails. The reconnect path lives in `lumina/proxy/db/prisma_client.py`'s `recreate_prisma_client()` (and a now-removed "direct reconnect" branch in `lumina/proxy/utils.py`).
 
 The intended flow was:
 
@@ -75,7 +75,7 @@ As a result every Prisma reconnect during a DB outage froze the entire proxy, an
 
 ## The Fix
 
-[PR #26225](https://github.com/BerriAI/litellm/pull/26225) replaces `disconnect()` in both reconnect paths with a direct, non-blocking kill of the engine subprocess. The new flow is:
+[PR #26225](https://github.com/Soventra/lumina/pull/26225) replaces `disconnect()` in both reconnect paths with a direct, non-blocking kill of the engine subprocess. The new flow is:
 
 1. Look up the engine PID via `_get_engine_pid()` (hardened to only return real integers, so unit-test mocks do not crash callers).
 2. Send `SIGTERM` to the subprocess directly.
@@ -84,7 +84,7 @@ As a result every Prisma reconnect during a DB outage froze the entire proxy, an
 5. Construct a fresh `Prisma()` client and `await new_client.connect()`.
 6. Swap the proxy's reference to the new client.
 
-Both reconnect call sites, `recreate_prisma_client` and the formerly-separate "direct reconnect" branch in `litellm/proxy/utils.py`, now go through `recreate_prisma_client`. The two engine-alive and engine-dead paths converge on the same kill-then-recreate flow, which removes a class of "what if the engine died between checks" bugs.
+Both reconnect call sites, `recreate_prisma_client` and the formerly-separate "direct reconnect" branch in `lumina/proxy/utils.py`, now go through `recreate_prisma_client`. The two engine-alive and engine-dead paths converge on the same kill-then-recreate flow, which removes a class of "what if the engine died between checks" bugs.
 
 The relevant change (simplified):
 
@@ -121,7 +121,7 @@ Reproduced end-to-end against a local proxy + Postgres in Docker, using `docker 
 
 After the simulated DB outage ends, `/health/readiness` returns `db: "connected"` and live row reads from `/key/list` succeed, so reconnect works end-to-end.
 
-40 unit tests across `tests/test_litellm/proxy/db/test_prisma_self_heal.py` and `tests/litellm/proxy/test_prisma_engine_watchdog.py` were updated to reflect the new code path. One previously-passing test, `test_lightweight_reconnect_skips_kill_on_successful_disconnect`, encoded the old "preserve the engine on successful disconnect" invariant that was itself part of the bug (prisma-client-py's `aclose()` kills the engine regardless) and was removed.
+40 unit tests across `tests/test_lumina/proxy/db/test_prisma_self_heal.py` and `tests/lumina/proxy/test_prisma_engine_watchdog.py` were updated to reflect the new code path. One previously-passing test, `test_lightweight_reconnect_skips_kill_on_successful_disconnect`, encoded the old "preserve the engine on successful disconnect" invariant that was itself part of the bug (prisma-client-py's `aclose()` kills the engine regardless) and was removed.
 
 ---
 
@@ -136,15 +136,15 @@ After the simulated DB outage ends, `/health/readiness` returns `db: "connected"
 
 ## Operator guidance
 
-If you saw any of the following symptoms on LiteLLM versions before this fix, the bug above is the most likely cause:
+If you saw any of the following symptoms on Lumina versions before this fix, the bug above is the most likely cause:
 
 - Kubernetes pods restarting repeatedly during transient Postgres incidents (RDS failovers, network partitions, brief CPU starvation on the DB).
 - `/health/liveliness` returning 200 most of the time but timing out for tens of seconds during DB issues.
-- Pods recovering on their own (re-roll, re-mount) instead of via in-proxy reconnect, and `litellm` logs showing nothing between "reconnect started" and the next pod startup.
+- Pods recovering on their own (re-roll, re-mount) instead of via in-proxy reconnect, and `lumina` logs showing nothing between "reconnect started" and the next pod startup.
 
 To remediate:
 
-1. Upgrade to a LiteLLM release that contains [PR #26225](https://github.com/BerriAI/litellm/pull/26225).
+1. Upgrade to a Lumina release that contains [PR #26225](https://github.com/Soventra/lumina/pull/26225).
 2. Verify the fix is active: `recreate_prisma_client` should not call `self.db.disconnect()`; it should signal the engine subprocess directly.
 3. If you cannot upgrade immediately, increasing your liveness probe timeout to a value greater than your worst-case `engine.wait()` duration (e.g. 180s) will reduce pod kills but will leave the underlying event-loop freeze in place. This is a stopgap, not a fix.
 
@@ -152,7 +152,7 @@ To remediate:
 
 ## References
 
-- [LIT-2613: FLock Prisma Connection Issue Fix](https://linear.app/litellm-ai/issue/LIT-2613/flock-prisma-connection-issue-fix)
-- [LIT-2614: Prisma Connection Issue RCA](https://linear.app/litellm-ai/issue/LIT-2614/prisma-connection-issue-rca) (this writeup)
-- [PR #26225: Proxy: reconnect Prisma DB without blocking the event loop](https://github.com/BerriAI/litellm/pull/26225)
-- Code: `litellm/proxy/db/prisma_client.py` (`recreate_prisma_client`, `_kill_engine_process`)
+- [LIT-2613: FLock Prisma Connection Issue Fix](https://linear.app/lumina-ai/issue/LIT-2613/flock-prisma-connection-issue-fix)
+- [LIT-2614: Prisma Connection Issue RCA](https://linear.app/lumina-ai/issue/LIT-2614/prisma-connection-issue-rca) (this writeup)
+- [PR #26225: Proxy: reconnect Prisma DB without blocking the event loop](https://github.com/Soventra/lumina/pull/26225)
+- Code: `lumina/proxy/db/prisma_client.py` (`recreate_prisma_client`, `_kill_engine_process`)

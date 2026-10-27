@@ -1,6 +1,6 @@
 ---
 title: Redis and Valkey Cache
-description: Credentials, namespaces, ACL users, cluster and sentinel topologies, and TLS for the LiteLLM proxy's Redis cache.
+description: Credentials, namespaces, ACL users, cluster and sentinel topologies, and TLS for the Lumina proxy's Redis cache.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # Redis and Valkey Cache
 
-Redis is LiteLLM's default cache and the only one shared across workers and replicas. Valkey, AWS
+Redis is Lumina's default cache and the only one shared across workers and replicas. Valkey, AWS
 ElastiCache and GCP Memorystore all speak the Redis protocol, so everything on this page applies to
 them too.
 
@@ -23,9 +23,9 @@ model_list:
     lumina_params:
       model: text-embedding-ada-002
 
-litellm_settings:
+lumina_settings:
   set_verbose: True
-  cache: True # set cache responses to True, litellm defaults to using a redis cache
+  cache: True # set cache responses to True, lumina defaults to using a redis cache
 ```
 
 Set either `REDIS_URL` or the `REDIS_HOST` in your os environment, to enable caching.
@@ -66,12 +66,12 @@ The variable name is `REDIS_` plus the upper-cased kwarg name, so the pool size 
 **Note**: For non-string Redis parameters (like integers, booleans, or complex objects), avoid using `REDIS_*` environment variables as they may fail during Redis client initialization. Instead, use `cache_kwargs` in your router configuration for such parameters.
 :::
 
-[**See how it's read from the environment**](https://github.com/BerriAI/litellm/blob/4d7ff1b33b9991dcf38d821266290631d9bcd2dd/litellm/_redis.py#L40)
+[**See how it's read from the environment**](https://github.com/Soventra/lumina/blob/4d7ff1b33b9991dcf38d821266290631d9bcd2dd/lumina/_redis.py#L40)
 
 Then run the proxy:
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ## Namespace
@@ -79,17 +79,17 @@ $ litellm --config /path/to/config.yaml
 If you want to create some folder for your keys, you can set a namespace, like this:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params: # set cache params for redis
     type: redis
-    namespace: "litellm.caching.caching"
+    namespace: "lumina.caching.caching"
 ```
 
 and keys will be stored like:
 
 ```
-litellm.caching.caching:<hash>
+lumina.caching.caching:<hash>
 ```
 
 ## Restricted ACL users (Redis 7+ / Valkey)
@@ -97,19 +97,19 @@ litellm.caching.caching:<hash>
 If your security policy requires the proxy to connect as a least-privilege user instead of `default`, set a namespace (as above) and grant that user the namespace's key pattern and channel pattern plus the commands it needs:
 
 ```bash
-ACL SETUSER litellm-proxy on '>your-password' '~litellm:*' '&litellm:*' +@all
+ACL SETUSER lumina-proxy on '>your-password' '~lumina:*' '&lumina:*' +@all
 ```
 
-replacing `litellm` with your namespace. With a namespace set, every key the proxy writes lives under `<namespace>:`, so `~<namespace>:*` covers all of them. Without a namespace the proxy's keys have assorted names, so there is no practical key pattern to scope an ACL to
+replacing `lumina` with your namespace. With a namespace set, every key the proxy writes lives under `<namespace>:`, so `~<namespace>:*` covers all of them. Without a namespace the proxy's keys have assorted names, so there is no practical key pattern to scope an ACL to
 
-The channel grant matters too: Redis 7+ and Valkey create ACL users with `resetchannels`, which denies all pub/sub channels. The proxy subscribes to channels for config sync and auth cache invalidation, and without `&<namespace>:*` (or `&litellm_proxy.*` when no namespace is set) your logs will repeat `No permissions to access a channel; reconnecting in 5s` every few seconds and config changes will only propagate on the periodic reload
+The channel grant matters too: Redis 7+ and Valkey create ACL users with `resetchannels`, which denies all pub/sub channels. The proxy subscribes to channels for config sync and auth cache invalidation, and without `&<namespace>:*` (or `&lumina_proxy.*` when no namespace is set) your logs will repeat `No permissions to access a channel; reconnecting in 5s` every few seconds and config changes will only propagate on the periodic reload
 
 Two more things to know when scoping ACLs:
 
 - The `general_settings.coordination_redis` block (for pointing coordination at a different Redis than your response cache) also accepts `namespace`, so its user can be scoped the same way
 - When coordination Redis is configured through `REDIS_HOST` / `REDIS_PORT` environment variables alone (no `cache_params` redis block), it cannot carry a namespace, so its keys are unprefixed and the connecting user needs an unscoped key grant
 
-If you see `No permissions to access a key` in the proxy logs and spend tracking repeatedly logs `Restoring N transaction sets to in-memory queues`, the connecting user's ACL is missing one of the grants above. On proxy versions without [the namespace delimiter fix](https://github.com/BerriAI/litellm/pull/38403), internal keys whose literal names begin with the namespace string (for example `litellm_spend_update_buffer` under namespace `litellm`) were written outside the namespace and denied even with the grants in place; upgrade if the denied keys in your Redis `ACL LOG` show up unprefixed
+If you see `No permissions to access a key` in the proxy logs and spend tracking repeatedly logs `Restoring N transaction sets to in-memory queues`, the connecting user's ACL is missing one of the grants above. On proxy versions without [the namespace delimiter fix](https://github.com/Soventra/lumina/pull/38403), internal keys whose literal names begin with the namespace string (for example `lumina_spend_update_buffer` under namespace `lumina`) were written outside the namespace and denied even with the grants in place; upgrade if the denied keys in your Redis `ACL LOG` show up unprefixed
 
 ## Redis Cluster
 
@@ -125,7 +125,7 @@ model_list:
     lumina_params:
       model: "*"
 
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: redis
@@ -184,7 +184,7 @@ model_list:
     lumina_params:
       model: "*"
 
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: "redis"
@@ -229,7 +229,7 @@ print("REDIS_SENTINEL_NODES", os.environ["REDIS_SENTINEL_NODES"])
 ## TTL
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params: # set cache params for redis
     type: redis
@@ -240,7 +240,7 @@ litellm_settings:
 
 ## SSL
 
-just set `REDIS_SSL="True"` in your .env, and LiteLLM will pick this up.
+just set `REDIS_SSL="True"` in your .env, and Lumina will pick this up.
 
 ```env
 REDIS_SSL="True"
@@ -267,7 +267,7 @@ instead of a password, so no Redis password ever exists in your config or secret
 You can set the `max_connections` parameter in your `cache_params` for Redis. This is passed directly to the Redis client and controls the maximum number of simultaneous connections in the pool. If you see errors like `No connection available`, try increasing this value:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: redis
@@ -294,10 +294,10 @@ With response caching disabled and no `coordination_redis` block, the coordinati
 
 ## Redis socket_timeout
 
-The proxy cache client waits at most `socket_timeout` seconds for each Redis command before it raises a timeout. The default is **5.0 s**, set by `RedisCache.__init__` in `litellm/caching/redis_cache.py`. Set it with `cache_params.socket_timeout`; the value is passed to the Redis client as is and applies to every topology (standalone, `REDIS_URL`, cluster and Sentinel):
+The proxy cache client waits at most `socket_timeout` seconds for each Redis command before it raises a timeout. The default is **5.0 s**, set by `RedisCache.__init__` in `lumina/caching/redis_cache.py`. Set it with `cache_params.socket_timeout`; the value is passed to the Redis client as is and applies to every topology (standalone, `REDIS_URL`, cluster and Sentinel):
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: redis
@@ -320,24 +320,24 @@ router_settings:
     socket_timeout: 10.0
 ```
 
-The `REDIS_SOCKET_TIMEOUT` environment variable (default `5`) does not change the cache client's timeout. LiteLLM applies it as the fallback for every Redis client it builds without an explicit `socket_timeout`, whether standalone, `REDIS_URL`, cluster or Sentinel, sync or async. The proxy cache client always passes its own `socket_timeout` (the 5.0 s default or your `cache_params` value), and a caller kwarg outranks the `REDIS_*` environment mapping, so with `REDIS_SOCKET_TIMEOUT` set the cache client still runs at 5.0 s. The same applies to the coordination and router clients, which are built the same way. The one exception is `socket_timeout: null` in `cache_params`, which drops the kwarg so the client falls back to `REDIS_SOCKET_TIMEOUT`. A `null` never turns the timeout off on any topology, so to effectively remove the limit set `socket_timeout` to a large number.
+The `REDIS_SOCKET_TIMEOUT` environment variable (default `5`) does not change the cache client's timeout. Lumina applies it as the fallback for every Redis client it builds without an explicit `socket_timeout`, whether standalone, `REDIS_URL`, cluster or Sentinel, sync or async. The proxy cache client always passes its own `socket_timeout` (the 5.0 s default or your `cache_params` value), and a caller kwarg outranks the `REDIS_*` environment mapping, so with `REDIS_SOCKET_TIMEOUT` set the cache client still runs at 5.0 s. The same applies to the coordination and router clients, which are built the same way. The one exception is `socket_timeout: null` in `cache_params`, which drops the kwarg so the client falls back to `REDIS_SOCKET_TIMEOUT`. A `null` never turns the timeout off on any topology, so to effectively remove the limit set `socket_timeout` to a large number.
 
 ## Virtual Key Authentication Cache (Redis)
 
 When the proxy verifies a **virtual key** (customer API key), results are cached so the database is not queried on every request. By default that cache lives **only in each worker process**, so after a deploy, new pods or extra Uvicorn workers each warm their own cache and can trigger more DB reads until warmed.
 
-Set `litellm_settings.enable_redis_auth_cache: true` to mirror virtual-key auth data into **the same Redis instance** configured under `litellm_settings.cache` / `cache_params`. Workers and replicas then share cached auth entries across the cluster.
+Set `lumina_settings.enable_redis_auth_cache: true` to mirror virtual-key auth data into **the same Redis instance** configured under `lumina_settings.cache` / `cache_params`. Workers and replicas then share cached auth entries across the cluster.
 
 **Requirements**
 
-- `litellm_settings.cache` must be **`true`** (Redis for the proxy is initialized during cache setup). See [All settings](./config_settings).
+- `lumina_settings.cache` must be **`true`** (Redis for the proxy is initialized during cache setup). See [All settings](./config_settings).
 - `cache_params.type` must be **`redis`** (or Redis Cluster, per your cache config); the auth cache attaches to that Redis client. See [supported `cache_params`](./caching_settings.md#supported-cache_params-on-proxy-configyaml).
 - Optionally set **`general_settings.user_api_key_cache_ttl`** (seconds): TTL applies to both the in-memory and Redis tiers when Redis auth caching is enabled, so stale keys expire consistently.
 
 Example:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: true
   enable_redis_auth_cache: true
   cache_params:

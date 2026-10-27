@@ -1,6 +1,6 @@
 # Budget Reset Times and Timezones
 
-LiteLLM supports predictable budget reset times that align with natural calendar boundaries.
+Lumina supports predictable budget reset times that align with natural calendar boundaries.
 
 ## How Budget Resets Work
 
@@ -19,7 +19,7 @@ Sub-day durations (for example `1h`, `30m`, `10s`) roll forward by their interva
 Specify the timezone for all budget resets in your configuration file:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   max_budget: 100 # (float) sets max budget as $100 USD
   budget_duration: 30d # (number)(s/m/h/d)
   timezone: "US/Eastern" # Any valid timezone string
@@ -38,7 +38,7 @@ This ensures that all budget resets happen at midnight in your specified timezon
 By default day, week, and month budgets reset at midnight. Set `budget_reset_time` to pick the wall-clock time (in the configured `timezone`) that resets should land on instead, for example to align budget rollover with the start of your business day or an upstream provider's billing boundary:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   max_budget: 100 # (float) sets max budget as $100 USD
   budget_duration: 1d # (number)(s/m/h/d)
   timezone: "US/Eastern" # Any valid timezone string

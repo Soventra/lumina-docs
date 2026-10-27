@@ -1,8 +1,8 @@
 # Provisioning identities and issuing keys
 
-A question that comes up with SSO deployments is whether a user provisioned through your identity provider (via SCIM) automatically ends up with a virtual key and a credential on their laptop, ready to call the gateway. LiteLLM has all the pieces for this, but they are separate features you compose rather than one turnkey flow. This page is the step-by-step guide that takes you from nothing to a working setup where a SCIM-provisioned user authenticates from their device and gets their own virtual key, with a checkpoint after each step so you can see where you are.
+A question that comes up with SSO deployments is whether a user provisioned through your identity provider (via SCIM) automatically ends up with a virtual key and a credential on their laptop, ready to call the gateway. Lumina has all the pieces for this, but they are separate features you compose rather than one turnkey flow. This page is the step-by-step guide that takes you from nothing to a working setup where a SCIM-provisioned user authenticates from their device and gets their own virtual key, with a checkpoint after each step so you can see where you are.
 
-If you only need the reference for one feature, its dedicated page goes deeper: [SCIM provisioning](../tutorials/scim_litellm.md), [OIDC JWT auth](./token_auth.md), [JWT to virtual key mapping](./jwt_key_mapping.md), and [CLI authentication](./cli_sso.md).
+If you only need the reference for one feature, its dedicated page goes deeper: [SCIM provisioning](../tutorials/scim_lumina.md), [OIDC JWT auth](./token_auth.md), [JWT to virtual key mapping](./jwt_key_mapping.md), and [CLI authentication](./cli_sso.md).
 
 ---
 
@@ -12,7 +12,7 @@ Four layers combine into the end-to-end flow, and each is a distinct feature tha
 
 | Layer | Feature | What it produces | Enterprise? |
 |---|---|---|---|
-| Identity provisioning | SCIM | `LiteLLM_UserTable` rows and teams, synced from your IdP | Yes |
+| Identity provisioning | SCIM | `Lumina_UserTable` rows and teams, synced from your IdP | Yes |
 | Request authentication | JWT auth | A verified caller identity per request, from an IdP token | Yes |
 | Authorization + spend | Virtual keys | Model access, budgets, rate limits, spend tracking | No |
 | On-device credential + agent launch | CLI login and wrappers (`lite login`, `lite claude` / `lite codex`) | A stored session token, and coding agents launched with the proxy env vars set for you | No |
@@ -24,9 +24,9 @@ The target flow, once configured:
 ```mermaid
 sequenceDiagram
     participant IdP as Identity Provider
-    participant SCIM as LiteLLM SCIM
+    participant SCIM as Lumina SCIM
     participant Device as User's Device
-    participant Proxy as LiteLLM Gateway
+    participant Proxy as Lumina Gateway
     participant DB as DB
 
     IdP->>SCIM: Provision Alice (POST /scim/v2/Users)
@@ -43,7 +43,7 @@ sequenceDiagram
 
 ## Prerequisites
 
-You need a LiteLLM proxy backed by a database (both SCIM and `auto_register` write to it), an enterprise license (SCIM and JWT auth are both enterprise features), your proxy `master_key`, and an identity provider that supports OIDC for the JWTs and SCIM 2.0 for provisioning (Okta, Entra ID, OneLogin, Keycloak, Auth0, Google Workspace).
+You need a Lumina proxy backed by a database (both SCIM and `auto_register` write to it), an enterprise license (SCIM and JWT auth are both enterprise features), your proxy `master_key`, and an identity provider that supports OIDC for the JWTs and SCIM 2.0 for provisioning (Okta, Entra ID, OneLogin, Keycloak, Auth0, Google Workspace).
 
 ---
 
@@ -53,7 +53,7 @@ Point the gateway at your IdP's signing keys and tell it which claims carry the 
 
 ```bash
 export JWT_PUBLIC_KEY_URL="https://your-idp.example.com/.well-known/openid-configuration"
-export JWT_AUDIENCE="litellm-proxy"     # optional but recommended
+export JWT_AUDIENCE="lumina-proxy"     # optional but recommended
 export JWT_ISSUER="https://your-idp.example.com"  # optional but recommended
 ```
 
@@ -61,7 +61,7 @@ export JWT_ISSUER="https://your-idp.example.com"  # optional but recommended
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"        # stable per-user id from your IdP
     user_email_jwt_field: "email"
     team_ids_jwt_field: "groups"    # claim carrying the user's group/team ids
@@ -73,7 +73,7 @@ general_settings:
 
 ## Step 2. Provision users and teams with SCIM
 
-Create the SCIM token the IdP will use, then connect provisioning. In the Admin UI, go to Settings > Admin Settings > SCIM and create a SCIM token; this is an ordinary virtual key whose routes are locked to `/scim/*`. Copy the tenant URL (`https://<your-proxy>/scim/v2`) and the token. In your IdP's provisioning configuration for the LiteLLM app, paste that URL and token, then assign the users and groups you want synced. Full walkthrough with screenshots on the [SCIM page](../tutorials/scim_litellm.md).
+Create the SCIM token the IdP will use, then connect provisioning. In the Admin UI, go to Settings > Admin Settings > SCIM and create a SCIM token; this is an ordinary virtual key whose routes are locked to `/scim/*`. Copy the tenant URL (`https://<your-proxy>/scim/v2`) and the token. In your IdP's provisioning configuration for the Lumina app, paste that URL and token, then assign the users and groups you want synced. Full walkthrough with screenshots on the [SCIM page](../tutorials/scim_lumina.md).
 
 **Checkpoint.** After assignment, confirm the users and teams landed:
 
@@ -88,13 +88,13 @@ You should see the provisioned users, and the assigned groups should appear as t
 
 ## Step 3. Turn on virtual key auto-registration
 
-Add two settings to `litellm_jwtauth`: the claim that identifies each client, and the behavior when a client has no key yet.
+Add two settings to `lumina_jwtauth`: the claim that identifies each client, and the behavior when a client has no key yet.
 
 ```yaml title="config.yaml"
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: "sub"
     user_email_jwt_field: "email"
     team_ids_jwt_field: "groups"
@@ -115,20 +115,20 @@ A developer's tool needs the proxy as its base URL and a credential as its beare
 **Recommended: launch the agent with the `lite` CLI.** The CLI ships wrapper commands, `lite claude`, `lite codex`, and `lite opencode`, that log the developer in over SSO if they have no credential yet, verify the key against the proxy, set the environment variables the agent reads, then hand off. The developer exports nothing.
 
 ```bash
-export LUMINA_PROXY_URL=https://your-litellm-proxy:4000
+export LUMINA_PROXY_URL=https://your-lumina-proxy:4000
 lite claude          # or: lite codex / lite opencode
 ```
 
 On first run this triggers `lite login` (browser SSO), stores a short-lived session token in the developer's OS keychain, then starts the agent. The wrapper sets the right variables per agent: Claude Code gets `ANTHROPIC_BASE_URL` (the proxy root) and `ANTHROPIC_AUTH_TOKEN`, and it clears any stray `ANTHROPIC_API_KEY` so the proxy token wins; Codex and OpenCode get `OPENAI_BASE_URL` (proxy plus `/v1`) and `OPENAI_API_KEY`, with Codex additionally pointed at a custom provider since it ignores `OPENAI_BASE_URL`. Forward the agent's own flags through the wrapper, for example `lite claude --model my-proxy-model`, and whatever model it requests must exist on the proxy. This path uses the session token from `lite login`, tied to the SSO'd (and SCIM-provisioned) user, so it does not go through the Step 3 `auto_register` path; the login flow issues the credential and spend still tracks against that user. To use a long-lived virtual key instead of the SSO session token, pass `--api-key` or set `LUMINA_PROXY_API_KEY`. See [CLI authentication](./cli_sso.md) for deployment prerequisites.
 
-**Clients that already carry an IdP JWT.** Services, or agents already wired to your IdP, send the IdP-minted JWT straight to the proxy as the bearer token; LiteLLM never stores it. This is the path that triggers Step 3's `auto_register`, minting a per-user virtual key on the first request. For an Anthropic-style client, point it at the proxy root and pass the JWT as the auth token:
+**Clients that already carry an IdP JWT.** Services, or agents already wired to your IdP, send the IdP-minted JWT straight to the proxy as the bearer token; Lumina never stores it. This is the path that triggers Step 3's `auto_register`, minting a per-user virtual key on the first request. For an Anthropic-style client, point it at the proxy root and pass the JWT as the auth token:
 
 ```bash
-export ANTHROPIC_BASE_URL="https://your-litellm-proxy:4000"
+export ANTHROPIC_BASE_URL="https://your-lumina-proxy:4000"
 export ANTHROPIC_AUTH_TOKEN="<user-sso-jwt-token>"
 ```
 
-Two clarifications that trip people up. The credential from `lite login` lives in the OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `litellm-cli`, and `~/.litellm/token.json` keeps only non-secret metadata: the gateway URL, the user's id, email, and role, the auth header name, and the sign-in timestamp. Reaching the keychain needs the `keyring` package, which comes with the `cli` extra, so install the CLI as `litellm[cli]`. Where no keychain is available, on a headless Linux box for instance, or where you set `LUMINA_CLI_DISABLE_KEYRING` to turn keychain storage off, the credential falls back into that same `0600` file and `lite login` says which of the two it used. There is still no git-style credential-helper integration. And the session token the CLI stores is a LiteLLM-issued token scoped to the gateway, not the raw IdP JWT and not a persisted virtual key that appears in the Keys UI
+Two clarifications that trip people up. The credential from `lite login` lives in the OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `lumina-cli`, and `~/.lumina/token.json` keeps only non-secret metadata: the gateway URL, the user's id, email, and role, the auth header name, and the sign-in timestamp. Reaching the keychain needs the `keyring` package, which comes with the `cli` extra, so install the CLI as `lumina[cli]`. Where no keychain is available, on a headless Linux box for instance, or where you set `LUMINA_CLI_DISABLE_KEYRING` to turn keychain storage off, the credential falls back into that same `0600` file and `lite login` says which of the two it used. There is still no git-style credential-helper integration. And the session token the CLI stores is a Lumina-issued token scoped to the gateway, not the raw IdP JWT and not a persisted virtual key that appears in the Keys UI
 
 ---
 
@@ -139,7 +139,7 @@ This verifies the `auto_register` path from Step 4's second option, where the cl
 ```bash
 JWT_TOKEN="eyJhbG..."   # a valid IdP token for the SCIM-provisioned user
 
-curl -X POST 'https://your-litellm-proxy:4000/v1/chat/completions' \
+curl -X POST 'https://your-lumina-proxy:4000/v1/chat/completions' \
   -H "Authorization: Bearer $JWT_TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"model": "{{anthropic}}", "messages": [{"role": "user", "content": "Hello"}]}'
@@ -149,7 +149,7 @@ That first request mints the user's virtual key and the claim-to-key mapping. Co
 
 ```bash
 # The mapping now exists, keyed on the claim value (the user's email here)
-curl 'https://your-litellm-proxy:4000/jwt/key/mapping/list?page=1&size=50' \
+curl 'https://your-lumina-proxy:4000/jwt/key/mapping/list?page=1&size=50' \
   -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
@@ -159,13 +159,13 @@ In the Admin UI, the auto-registered key appears under the user with `auto_regis
 
 ## Making the key bind to the right user
 
-To associate an auto-registered key with the correct SCIM-provisioned user, configure a consistent identity value across SCIM and JWT claims. LiteLLM stores SCIM `userName` as `user_id` and `emails[0].value` as `user_email`. The `externalId` attribute is stored as `sso_user_id` for `PUT` and `PATCH` requests, but not during the initial `POST`; therefore, `sso_user_id` may remain empty until the user is updated. See the [attribute mapping table](../tutorials/scim_litellm.md#user-attribute-mapping).
+To associate an auto-registered key with the correct SCIM-provisioned user, configure a consistent identity value across SCIM and JWT claims. Lumina stores SCIM `userName` as `user_id` and `emails[0].value` as `user_email`. The `externalId` attribute is stored as `sso_user_id` for `PUT` and `PATCH` requests, but not during the initial `POST`; therefore, `sso_user_id` may remain empty until the user is updated. See the [attribute mapping table](../tutorials/scim_lumina.md#user-attribute-mapping).
 
-Configure `user_id_jwt_field` to reference the JWT claim that contains the same value provided as the SCIM `userName`. LiteLLM can also match an existing user by email when `emails[0].value` matches the JWT claim configured by `user_email_jwt_field`. Set `virtual_key_claim_field` to a globally unique value, such as an email address or stable subject identifier, to prevent multiple users from sharing the same key mapping.
+Configure `user_id_jwt_field` to reference the JWT claim that contains the same value provided as the SCIM `userName`. Lumina can also match an existing user by email when `emails[0].value` matches the JWT claim configured by `user_email_jwt_field`. Set `virtual_key_claim_field` to a globally unique value, such as an email address or stable subject identifier, to prevent multiple users from sharing the same key mapping.
 
 ---
 
-## What LiteLLM does and does not do
+## What Lumina does and does not do
 
 | Behavior | Supported? |
 |---|---|
@@ -175,16 +175,16 @@ Configure `user_id_jwt_field` to reference the JWT claim that contains the same 
 | JWT auth authenticates requests with IdP tokens | Yes |
 | JWT auth auto-registers a per-client virtual key | Yes, with `virtual_key_claim_field` + `auto_register` |
 | SCIM provisioning event directly triggers key creation | No (the first request does, lazily) |
-| `lite login` stores a gateway credential on the device | Yes (OS keychain, or `~/.litellm/token.json` at `0600` when there is none) |
+| `lite login` stores a gateway credential on the device | Yes (OS keychain, or `~/.lumina/token.json` at `0600` when there is none) |
 | `lite claude` / `lite codex` / `lite opencode` set the agent's env vars for you | Yes (base URL and bearer token wired per agent) |
-| Credential stored in an OS keychain | Yes (service `litellm-cli`; no git-style credential-helper integration) |
-| Device-stored credential is the raw IdP JWT | No (it is a LiteLLM-issued session token) |
+| Credential stored in an OS keychain | Yes (service `lumina-cli`; no git-style credential-helper integration) |
+| Device-stored credential is the raw IdP JWT | No (it is a Lumina-issued session token) |
 
 ---
 
 ## Related
 
-- [SCIM with LiteLLM](../tutorials/scim_litellm.md): provisioning users and teams from your IdP
+- [SCIM with Lumina](../tutorials/scim_lumina.md): provisioning users and teams from your IdP
 - [OIDC JWT auth](./token_auth.md): base JWT auth setup
 - [JWT to virtual key mapping](./jwt_key_mapping.md): per-client keys, manual mappings, and `auto_register`
 - [CLI authentication](./cli_sso.md): the `lite login` device flow

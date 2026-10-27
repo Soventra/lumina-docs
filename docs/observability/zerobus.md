@@ -4,17 +4,17 @@ import ZerobusArchitecture from '@site/src/components/ZerobusArchitecture';
 
 # Databricks Zerobus
 
-Send LiteLLM Gateway request logs to a Unity Catalog Delta table with Databricks Zerobus Ingest. Query model usage, latency, cost, and request metadata in Databricks, alongside your existing enterprise data.
+Send Lumina Gateway request logs to a Unity Catalog Delta table with Databricks Zerobus Ingest. Query model usage, latency, cost, and request metadata in Databricks, alongside your existing enterprise data.
 
-This quickstart connects an existing LiteLLM Gateway deployment to Databricks. Create a destination table, configure service principal authentication, enable the integration, and verify a request made with a LiteLLM virtual key. You can configure the integration through your deployment's YAML configuration or the LiteLLM Admin UI.
+This quickstart connects an existing Lumina Gateway deployment to Databricks. Create a destination table, configure service principal authentication, enable the integration, and verify a request made with a Lumina virtual key. You can configure the integration through your deployment's YAML configuration or the Lumina Admin UI.
 
 <ZerobusArchitecture />
 
-LiteLLM buffers logs and sends JSON batches to the Zerobus REST API using OAuth client credentials. The default flush interval is 10 seconds, with an earlier flush when the queue reaches 100 rows.
+Lumina buffers logs and sends JSON batches to the Zerobus REST API using OAuth client credentials. The default flush interval is 10 seconds, with an earlier flush when the queue reaches 100 rows.
 
 ## Before you begin
 
-You need an existing LiteLLM Gateway deployment, its HTTPS URL, and administrator access to configure logging. The gateway must already have a working model, and you need a LiteLLM virtual key authorized to call that model. Your gateway's cloud environment must allow outbound HTTPS connections to the Databricks workspace and Zerobus endpoints.
+You need an existing Lumina Gateway deployment, its HTTPS URL, and administrator access to configure logging. The gateway must already have a working model, and you need a Lumina virtual key authorized to call that model. Your gateway's cloud environment must allow outbound HTTPS connections to the Databricks workspace and Zerobus endpoints.
 
 You also need a Databricks workspace with Unity Catalog in a [supported Zerobus region](https://docs.databricks.com/aws/en/resources/feature-region-support#ingestion-availability), a catalog and schema for a managed Delta table, and access to a SQL warehouse or notebook compute. A Databricks administrator must be able to create a service principal and grant access to the destination.
 
@@ -22,20 +22,20 @@ Your Databricks user also needs `USE CATALOG`, `USE SCHEMA`, and `SELECT` to run
 
 To configure the integration through the Admin UI, your deployment must have PostgreSQL connected and `general_settings.store_model_in_db: true` enabled. Sign in using your organization's configured authentication method with proxy administrator access.
 
-The examples use `my_catalog.my_schema.litellm_traces`. Replace `my_catalog` and `my_schema` with your existing catalog and schema everywhere they appear. Screenshots show an example workspace using a Databricks-hosted model. Zerobus logging works with other supported model providers as well. Use your own workspace URL, ID, region, and service principal credentials.
+The examples use `my_catalog.my_schema.lumina_traces`. Replace `my_catalog` and `my_schema` with your existing catalog and schema everywhere they appear. Screenshots show an example workspace using a Databricks-hosted model. Zerobus logging works with other supported model providers as well. Use your own workspace URL, ID, region, and service principal credentials.
 
 ## 1. Prepare gateway access
 
-Get your gateway's HTTPS base URL and a [virtual key](https://docs.litellm.ai/docs/proxy/virtual_keys) from your platform administrator. If you manage keys, open **Virtual Keys → + Create New Key** in your deployed Admin UI, select the appropriate team and allowed model, and create a key with the budget and expiration required by your organization.
+Get your gateway's HTTPS base URL and a [virtual key](https://docs.lumina.ai/docs/proxy/virtual_keys) from your platform administrator. If you manage keys, open **Virtual Keys → + Create New Key** in your deployed Admin UI, select the appropriate team and allowed model, and create a key with the budget and expiration required by your organization.
 
 In the environment where you will send the verification request, set your deployment URL and virtual key:
 
 ```bash
-export LUMINA_BASE_URL="https://litellm.example.com"
-export LUMINA_API_KEY="<your-litellm-virtual-key>"
+export LUMINA_BASE_URL="https://lumina.example.com"
+export LUMINA_API_KEY="<your-lumina-virtual-key>"
 ```
 
-Replace the example domain with your deployed gateway URL, without a trailing slash or `/v1` suffix. Note an existing model alias that this key can access; you will use it in step 6. The virtual key authenticates requests to LiteLLM. The Databricks service principal created below authenticates log delivery from the gateway to Databricks.
+Replace the example domain with your deployed gateway URL, without a trailing slash or `/v1` suffix. Note an existing model alias that this key can access; you will use it in step 6. The virtual key authenticates requests to Lumina. The Databricks service principal created below authenticates log delivery from the gateway to Databricks.
 
 ## 2. Identify your Databricks endpoints
 
@@ -52,31 +52,31 @@ Open the destination Databricks workspace. Copy the base URL from the address ba
 
 ## 3. Create the destination table
 
-Generate the table definition using the same LiteLLM version as your deployed gateway. Run this command in the gateway's container or in an administration environment with the matching package version. Alternatively, use the full table definition below:
+Generate the table definition using the same Lumina version as your deployed gateway. Run this command in the gateway's container or in an administration environment with the matching package version. Alternatively, use the full table definition below:
 
 ```bash
 python - <<'PY'
-from litellm.integrations.zerobus.row import create_table_sql
+from lumina.integrations.zerobus.row import create_table_sql
 
-print(create_table_sql("my_catalog.my_schema.litellm_traces"))
+print(create_table_sql("my_catalog.my_schema.lumina_traces"))
 PY
 ```
 
 In Databricks, open **SQL Editor**, select a SQL warehouse, paste the generated statement, and run it to create a managed Delta table. You can also run it in a SQL notebook cell. Open **Catalog**, navigate to your table, and confirm that its columns match the generated definition.
 
-![The LiteLLM traces table and column definitions in Databricks Catalog Explorer](/img/zerobus/databricks-table.png)
+![The Lumina traces table and column definitions in Databricks Catalog Explorer](/img/zerobus/databricks-table.png)
 
-*Create a dedicated Delta table with the schema generated by LiteLLM.*
+*Create a dedicated Delta table with the schema generated by Lumina.*
 
 <details>
 <summary>Full table definition</summary>
 
 ```sql
-CREATE TABLE my_catalog.my_schema.litellm_traces (
+CREATE TABLE my_catalog.my_schema.lumina_traces (
   id STRING,
   trace_id STRING,
   session_id STRING,
-  litellm_call_id STRING,
+  lumina_call_id STRING,
   call_type STRING,
   status STRING,
   model STRING,
@@ -123,7 +123,7 @@ If the table already exists, compare its schema with the generated DDL before co
 
 ## 4. Create the service principal and grant access
 
-In the Databricks workspace, open **Settings → Identity and access**. Next to **Service principals**, select **Manage**, then **Add service principal → Add new**. Give it a descriptive name, such as `litellm-zerobus`. See [Databricks service principal setup](https://docs.databricks.com/aws/en/ingestion/zerobus-ingest#create-a-service-principal-and-grant-permissions).
+In the Databricks workspace, open **Settings → Identity and access**. Next to **Service principals**, select **Manage**, then **Add service principal → Add new**. Give it a descriptive name, such as `lumina-zerobus`. See [Databricks service principal setup](https://docs.databricks.com/aws/en/ingestion/zerobus-ingest#create-a-service-principal-and-grant-permissions).
 
 Open the service principal's **Secrets** tab and select **Generate secret**. Choose a lifetime and copy the client ID and secret to your secret store. The client ID is the principal's application ID; the secret is displayed only once. This integration requests the `all-apis` OAuth scope and restricts its ingestion token to the catalog, schema, and table below. See [Databricks OAuth secrets](https://docs.databricks.com/aws/en/dev-tools/auth/oauth-m2m#step-1-create-an-oauth-secret).
 
@@ -136,11 +136,11 @@ TO `<service-principal-application-id>`;
 GRANT USE SCHEMA ON SCHEMA my_catalog.my_schema
 TO `<service-principal-application-id>`;
 
-GRANT SELECT, MODIFY ON TABLE my_catalog.my_schema.litellm_traces
+GRANT SELECT, MODIFY ON TABLE my_catalog.my_schema.lumina_traces
 TO `<service-principal-application-id>`;
 ```
 
-Grant these privileges directly to the service principal. Group membership and a broad `ALL PRIVILEGES` grant do not replace the explicit grants used when LiteLLM requests the Zerobus token.
+Grant these privileges directly to the service principal. Group membership and a broad `ALL PRIVILEGES` grant do not replace the explicit grants used when Lumina requests the Zerobus token.
 
 In **Catalog**, open the destination table's **Permissions** tab and confirm the principal has `SELECT` and `MODIFY`. Also verify `USE CATALOG` on the catalog and `USE SCHEMA` on the schema.
 
@@ -148,7 +148,7 @@ In **Catalog**, open the destination table's **Permissions** tab and confirm the
 
 *The ingestion principal needs explicit access to the catalog, schema, and table.*
 
-## 5. Connect the LiteLLM Gateway
+## 5. Connect the Lumina Gateway
 
 Choose one configuration method. YAML enables logging for both successful and failed model calls. The Admin UI adds a success callback and logs successful calls; use YAML if you also need failed-call records.
 
@@ -162,22 +162,22 @@ Add the following environment variables to your gateway deployment through your 
 | `ZEROBUS_SERVER_ENDPOINT` | `https://<workspace-id>.zerobus.<region>.cloud.databricks.com` |
 | `ZEROBUS_CLIENT_ID` | The service principal's application ID |
 | `ZEROBUS_CLIENT_SECRET` | The service principal's OAuth secret, injected from your secret manager |
-| `ZEROBUS_TABLE_NAME` | `my_catalog.my_schema.litellm_traces` |
+| `ZEROBUS_TABLE_NAME` | `my_catalog.my_schema.lumina_traces` |
 
-Merge the following into the configuration used by your deployment. If `litellm_settings.callbacks` already contains entries, append `zerobus` to that list and preserve your existing callbacks and other configuration:
+Merge the following into the configuration used by your deployment. If `lumina_settings.callbacks` already contains entries, append `zerobus` to that list and preserve your existing callbacks and other configuration:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["zerobus"]
 ```
 
 Apply the configuration and secret changes using your deployment's normal rollout process, and confirm that the gateway replicas become healthy.
 
-LiteLLM reads the connection values from each gateway process's environment. Setting these variables only in the terminal used to send requests does not configure the deployed gateway. Missing required values fail callback initialization. Authentication and table access are checked when the first batch is sent, so continue through the verification steps after the rollout succeeds.
+Lumina reads the connection values from each gateway process's environment. Setting these variables only in the terminal used to send requests does not configure the deployed gateway. Missing required values fail callback initialization. Authentication and table access are checked when the first batch is sent, so continue through the verification steps after the rollout succeeds.
 
 ### Option B: Configure in the Admin UI
 
-Open your deployed Admin UI, for example `https://litellm.example.com/ui`, and sign in through your organization's configured authentication method. Your deployment must have PostgreSQL connected and `general_settings.store_model_in_db: true` enabled so that it can load the configuration saved through the UI. See the [Admin UI guide](https://docs.litellm.ai/docs/proxy/ui) for administrator access and SSO setup.
+Open your deployed Admin UI, for example `https://lumina.example.com/ui`, and sign in through your organization's configured authentication method. Your deployment must have PostgreSQL connected and `general_settings.store_model_in_db: true` enabled so that it can load the configuration saved through the UI. See the [Admin UI guide](https://docs.lumina.ai/docs/proxy/ui) for administrator access and SSO setup.
 
 Open **Settings → Logging & Alerts**, select **Add Callback**, and choose **Databricks Zerobus**. Fill in the following fields:
 
@@ -187,17 +187,17 @@ Open **Settings → Logging & Alerts**, select **Add Callback**, and choose **Da
 | **Zerobus Endpoint** | The Zerobus URL for the same workspace, including `https://` |
 | **Service Principal Client ID** | The service principal's application ID |
 | **Service Principal Client Secret** | The OAuth secret generated in step 4 |
-| **Table** | `my_catalog.my_schema.litellm_traces` |
+| **Table** | `my_catalog.my_schema.lumina_traces` |
 
-![The Databricks Zerobus configuration form in the LiteLLM Admin UI](/img/zerobus/litellm-configure.png)
+![The Databricks Zerobus configuration form in the Lumina Admin UI](/img/zerobus/lumina-configure.png)
 
 *Enter all five connection values. The OAuth secret is masked in the form.*
 
 Select **Add Callback**. Confirm that **Databricks Zerobus** appears in the logging callbacks list. Saving the callback configures the integration; the request and SQL query below verify delivery.
 
-![Databricks Zerobus listed as a configured logging callback in LiteLLM](/img/zerobus/litellm-active.png)
+![Databricks Zerobus listed as a configured logging callback in Lumina](/img/zerobus/lumina-active.png)
 
-## 6. Send a request through LiteLLM
+## 6. Send a request through Lumina
 
 From a client that can reach your deployed gateway, send a chat completion using the base URL and virtual key from step 1. Choose Python, JavaScript, or cURL below, and replace `your-model-alias` with an existing model alias authorized for that key. Each example sends the same request and prints its response ID.
 
@@ -308,7 +308,7 @@ Save the printed response ID. The `user` value makes this request easy to find i
 
 If your gateway has a database, open **Logs** in the Admin UI and select the request to inspect its status, token counts, and cost. Database request logs and Zerobus delivery are separate; verify the destination table in the next step.
 
-![The successful completion in LiteLLM, showing request identity, token usage, and cost](/img/zerobus/litellm-request.png)
+![The successful completion in Lumina, showing request identity, token usage, and cost](/img/zerobus/lumina-request.png)
 
 *The example request used 22 prompt tokens and 10 completion tokens. Your model and usage can differ.*
 
@@ -329,22 +329,22 @@ SELECT
   total_tokens,
   response_cost,
   start_time
-FROM my_catalog.my_schema.litellm_traces
+FROM my_catalog.my_schema.lumina_traces
 WHERE id = '<response-id-from-step-6>'
 ORDER BY start_time DESC;
 ```
 
 The result should include your response ID, `status = 'success'`, `end_user = 'zerobus-quickstart'`, and usage for the model call. Cost depends on the model's configured pricing. If no row appears, rerun the query after another flush interval and check the gateway logs using the troubleshooting table below.
 
-![Databricks SQL Editor returning the verified LiteLLM response ID with success status, token counts, and cost.](/img/zerobus/databricks-verification.png)
+![Databricks SQL Editor returning the verified Lumina response ID with success status, token counts, and cost.](/img/zerobus/databricks-verification.png)
 
-*The query returns one successful row with the same token counts shown in LiteLLM.*
+*The query returns one successful row with the same token counts shown in Lumina.*
 
 To locate all quickstart requests:
 
 ```sql
 SELECT id, status, model, end_user, total_tokens, response_cost, start_time
-FROM my_catalog.my_schema.litellm_traces
+FROM my_catalog.my_schema.lumina_traces
 WHERE end_user = 'zerobus-quickstart'
 ORDER BY start_time DESC
 LIMIT 20;
@@ -352,10 +352,10 @@ LIMIT 20;
 
 ## Configuration reference
 
-The `zerobus` callback accepts optional settings under `litellm_settings.zerobus_params`. Connection parameters take precedence over their corresponding environment variables and support `os.environ/VARIABLE_NAME` references.
+The `zerobus` callback accepts optional settings under `lumina_settings.zerobus_params`. Connection parameters take precedence over their corresponding environment variables and support `os.environ/VARIABLE_NAME` references.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["zerobus"]
   zerobus_params:
     workspace_url: os.environ/ZEROBUS_WORKSPACE_URL
@@ -396,7 +396,7 @@ SELECT
   COUNT(*) AS requests,
   SUM(total_tokens) AS tokens,
   SUM(response_cost) AS spend_usd
-FROM my_catalog.my_schema.litellm_traces
+FROM my_catalog.my_schema.lumina_traces
 WHERE start_time >= current_timestamp() - INTERVAL 1 DAY
   AND status = 'success'
 GROUP BY team_alias, model
@@ -409,7 +409,7 @@ The integration sends logs asynchronously and keeps its queue in process memory.
 
 Retries can produce duplicate rows when a request was accepted but its response was lost. Process termination, permanent rejection, or queue overflow can lose logs. The queue is capped at 50,000 rows per logger, so this callback does not provide a durable delivery guarantee. Zerobus logging errors are handled separately from the model response. Monitor gateway logging failures and deduplicate by your request identifiers when building reports that require unique events.
 
-LiteLLM acquires OAuth tokens automatically and refreshes them before expiry. When rotating a credential stored in the gateway process environment, update the deployed secret and restart the affected processes. When using the Admin UI, update the callback's connection settings.
+Lumina acquires OAuth tokens automatically and refreshes them before expiry. When rotating a credential stored in the gateway process environment, update the deployed secret and restart the affected processes. When using the Admin UI, update the callback's connection settings.
 
 ## Troubleshooting
 
@@ -421,11 +421,11 @@ Inspect your deployed gateway's container or service logs for `zerobus:` message
 | `token request returned 401: invalid_authorization_details` | Reapply the explicit grants from step 4 directly to the application ID. Confirm the table is in the workspace used to mint the token. |
 | OAuth authentication fails | Check the client ID, secret value and expiry, workspace access, and the secret's ability to request the `all-apis` scope. |
 | `insert returned 400` with an empty body | Check that the endpoint's numeric workspace ID and region belong to `ZEROBUS_WORKSPACE_URL`. An incorrect endpoint can cause this response. |
-| `Record decoder/encoder error` | Compare the destination columns and types with `create_table_sql(...)` from the running LiteLLM version, including the nested `VARIANT` fields. |
+| `Record decoder/encoder error` | Compare the destination columns and types with `create_table_sql(...)` from the running Lumina version, including the nested `VARIANT` fields. |
 | SQL Editor reports `INSUFFICIENT_PERMISSIONS` | The signed-in reader needs `USE CATALOG`, `USE SCHEMA`, and `SELECT`. Ingestion can succeed even when a different browser user cannot query the table. |
 | Request succeeds but no row appears | Allow a flush interval plus ingestion time, rerun the query, and inspect the deployed gateway's token and insert errors. Confirm every replica has the integration configuration and the queried table matches `ZEROBUS_TABLE_NAME`. |
-| Test request returns `401` or `403` | Check that the virtual key belongs to this LiteLLM deployment, is valid, and is authorized for the requested model alias. |
-| Successes appear but failures do not | The Admin UI registers a success callback. Use `litellm_settings.callbacks: ["zerobus"]` for success and failure events. Failures rejected before model-call logging may not produce a row. |
+| Test request returns `401` or `403` | Check that the virtual key belongs to this Lumina deployment, is valid, and is authorized for the requested model alias. |
+| Successes appear but failures do not | The Admin UI registers a success callback. Use `lumina_settings.callbacks: ["zerobus"]` for success and failure events. Failures rejected before model-call logging may not produce a row. |
 | Repeated retries or queue overflow | Check network reachability and Databricks responses. Resolve the destination error before the in-memory queue reaches its limit. |
 
-See the [LiteLLM logging guide](https://docs.litellm.ai/docs/proxy/logging) for other callbacks and [Databricks Zerobus Ingest](https://docs.databricks.com/aws/en/ingestion/zerobus-ingest) for service configuration.
+See the [Lumina logging guide](https://docs.lumina.ai/docs/proxy/logging) for other callbacks and [Databricks Zerobus Ingest](https://docs.databricks.com/aws/en/ingestion/zerobus-ingest) for service configuration.

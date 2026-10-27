@@ -6,14 +6,14 @@ import TabItem from '@theme/TabItem';
 | Property                  | Details                                                                                                    |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Description               | Infinity is a high-throughput, low-latency REST API for serving text-embeddings, reranking models and clip |
-| Provider Route on LiteLLM | `infinity/`                                                                                                |
+| Provider Route on Lumina | `infinity/`                                                                                                |
 | Supported Operations      | `/rerank`, `/embeddings`                                                                                   |
 | Link to Provider Doc      | [Infinity ↗](https://github.com/michaelfeil/infinity)                                                      |
 
-## **Usage - LiteLLM Python SDK**
+## **Usage - Lumina Python SDK**
 
 ```python
-from litellm import rerank, embedding
+from lumina import rerank, embedding
 import os
 
 os.environ["INFINITY_API_BASE"] = "http://localhost:8080"
@@ -25,13 +25,13 @@ response = rerank(
 )
 ```
 
-## **Usage - LiteLLM Proxy**
+## **Usage - Lumina Proxy**
 
-LiteLLM provides an cohere api compatible `/rerank` endpoint for Rerank calls.
+Lumina provides an cohere api compatible `/rerank` endpoint for Rerank calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -42,10 +42,10 @@ model_list:
       api_key: os.environ/INFINITY_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -126,7 +126,7 @@ Any unmapped params will be passed to the provider as-is.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["INFINITY_API_BASE"] = "http://localhost:8080"
@@ -154,10 +154,10 @@ model_list:
       raw_scores: True # EITHER SET PROVIDER-SPECIFIC PARAMS HERE OR IN REQUEST BODY
 ```
 
-2. Start litellm
+2. Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -187,11 +187,11 @@ curl http://0.0.0.0:4000/rerank \
 
 ## Embeddings
 
-LiteLLM provides an OpenAI api compatible `/embeddings` endpoint for embedding calls.
+Lumina provides an OpenAI api compatible `/embeddings` endpoint for embedding calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -231,11 +231,11 @@ curl http://0.0.0.0:4000/embeddings \
 `INFINITY_API_BASE` is only read by rerank, so embedding calls need `api_base` passed explicitly
 
 ```python
-from litellm import embedding
+from lumina import embedding
 
 response = embedding(
     model="infinity/bge-small",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
     api_base="http://localhost:8080",
 )
 

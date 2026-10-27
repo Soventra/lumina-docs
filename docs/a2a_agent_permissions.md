@@ -4,11 +4,11 @@ import Image from '@theme/IdealImage';
 
 # Agent Permission Management
 
-Control which A2A agents can be accessed by specific keys or teams in LiteLLM.
+Control which A2A agents can be accessed by specific keys or teams in Lumina.
 
 ## Overview
 
-Agent Permission Management lets you restrict which agents a LiteLLM Virtual Key or Team can access. This is useful for:
+Agent Permission Management lets you restrict which agents a Lumina Virtual Key or Team can access. This is useful for:
 
 - **Multi-tenant environments**: Give different teams access to different agents
 - **Security**: Prevent keys from invoking agents they shouldn't have access to
@@ -214,7 +214,7 @@ Granting individual agents to every key or team gets unwieldy as the agent catal
 
 ### 1. Tag the agent with one or more groups
 
-In the LiteLLM dashboard:
+In the Lumina dashboard:
 
 1. Go to **Agents**.
 2. Create or edit an agent.
@@ -245,9 +245,9 @@ When a key has **both** a direct `agents` list and `agent_access_groups`, the un
 
 ```mermaid
 flowchart TD
-    A[Request to invoke agent] --> B{LiteLLM Virtual Key has agent restrictions?}
-    B -->|Yes| C{LiteLLM Team has agent restrictions?}
-    B -->|No| D{LiteLLM Team has agent restrictions?}
+    A[Request to invoke agent] --> B{Lumina Virtual Key has agent restrictions?}
+    B -->|Yes| C{Lumina Team has agent restrictions?}
+    B -->|No| D{Lumina Team has agent restrictions?}
 
     C -->|Yes| E[Use intersection of key + team permissions]
     C -->|No| F[Use key permissions only]

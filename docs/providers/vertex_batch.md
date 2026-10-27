@@ -5,9 +5,9 @@ import TabItem from '@theme/TabItem';
 
 ## Setup
 
-Configure the Vertex model in your config.yaml. `gcs_bucket_name` is the GCS bucket batch prediction files are stored in, a required param for vertexai to store files. The older `bucket_name` litellm param is still supported and is treated the same as `gcs_bucket_name`. If both are set on the same deployment, `gcs_bucket_name` wins
+Configure the Vertex model in your config.yaml. `gcs_bucket_name` is the GCS bucket batch prediction files are stored in, a required param for vertexai to store files. The older `bucket_name` lumina param is still supported and is treated the same as `gcs_bucket_name`. If both are set on the same deployment, `gcs_bucket_name` wins
 
-```yaml showLineNumbers title="litellm-config.yaml"
+```yaml showLineNumbers title="lumina-config.yaml"
 model_list:
   - model_name: vertex-batch
     lumina_params:
@@ -20,7 +20,7 @@ model_list:
       mode: batch
 ```
 
-When `gcs_bucket_name` (or `bucket_name`) and `vertex_credentials` are not set on the model's `lumina_params`, LiteLLM falls back to these env vars. `GCS_BATCH_BUCKET_NAME` exists because the [`gcs_bucket` logging callback](../observability/gcs_bucket_integration) already uses `GCS_BUCKET_NAME` as the bucket it writes LLM request logs to, so setting `GCS_BUCKET_NAME` to your batch bucket would also send request logs there. `GCS_BATCH_BUCKET_NAME` is checked first for batch files and, when it is unset, `GCS_BUCKET_NAME` is used
+When `gcs_bucket_name` (or `bucket_name`) and `vertex_credentials` are not set on the model's `lumina_params`, Lumina falls back to these env vars. `GCS_BATCH_BUCKET_NAME` exists because the [`gcs_bucket` logging callback](../observability/gcs_bucket_integration) already uses `GCS_BUCKET_NAME` as the bucket it writes LLM request logs to, so setting `GCS_BUCKET_NAME` to your batch bucket would also send request logs there. `GCS_BATCH_BUCKET_NAME` is checked first for batch files and, when it is unset, `GCS_BUCKET_NAME` is used
 
 ```bash
 # GCS Bucket settings, used to store batch prediction files in
@@ -40,7 +40,7 @@ Follow this complete workflow: create JSONL file → upload file → create batc
 
 #### 1. Create a JSONL file of batch requests
 
-LiteLLM expects the file to follow the **[OpenAI batches files format](https://platform.openai.com/docs/guides/batch)**.
+Lumina expects the file to follow the **[OpenAI batches files format](https://platform.openai.com/docs/guides/batch)**.
 
 Each `body` in the file should be an **OpenAI API request**.
 
@@ -61,8 +61,8 @@ Upload your JSONL file. For `vertex_ai`, the file will be stored in the deployme
 from openai import OpenAI
 
 oai_client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",               # litellm proxy API key
-    base_url="http://localhost:4000" # litellm proxy base url
+    api_key="sk-<your-lumina-api-key>",               # lumina proxy API key
+    base_url="http://localhost:4000" # lumina proxy base url
 )
 
 file_obj = oai_client.files.create(
@@ -93,10 +93,10 @@ curl --request POST \
 
 ```json
 {
-    "id": "gs://my-batch-bucket/litellm-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
+    "id": "gs://my-batch-bucket/lumina-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
     "bytes": 416,
     "created_at": 1758303684,
-    "filename": "litellm-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
+    "filename": "lumina-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
     "object": "file",
     "purpose": "batch",
     "status": "uploaded",
@@ -117,7 +117,7 @@ batch_input_file_id = file_obj.id # from step 2
 create_batch_response = oai_client.batches.create(
     completion_window="24h",
     endpoint="/v1/chat/completions",
-    input_file_id=batch_input_file_id, # e.g. "gs://my-batch-bucket/litellm-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd"
+    input_file_id=batch_input_file_id, # e.g. "gs://my-batch-bucket/lumina-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd"
     extra_headers={"custom-llm-provider": "vertex_ai"}
 )
 
@@ -133,7 +133,7 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --header 'custom-llm-provider: vertex_ai' \
   --data '{         
-    "input_file_id": "gs://my-batch-bucket/litellm-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
+    "input_file_id": "gs://my-batch-bucket/lumina-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
     "endpoint": "/v1/chat/completions",
     "completion_window": "24h"
 }'
@@ -150,7 +150,7 @@ curl --request POST \
     "completion_window": "24hrs",
     "created_at": 1758328011,
     "endpoint": "",
-    "input_file_id": "gs://my-batch-bucket/litellm-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
+    "input_file_id": "gs://my-batch-bucket/lumina-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
     "object": "batch",
     "status": "validating",
     "cancelled_at": null,
@@ -208,7 +208,7 @@ curl --request GET \
     "completion_window": "24hrs",
     "created_at": 1758328011,
     "endpoint": "",
-    "input_file_id": "gs://my-batch-bucket/litellm-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
+    "input_file_id": "gs://my-batch-bucket/lumina-vertex-files/publishers/google/models/{{gemini_flash}}/abc123-def4-5678-9012-34567890abcd",
     "object": "batch",
     "status": "completed",
     "cancelled_at": null,
@@ -222,7 +222,7 @@ curl --request GET \
     "finalizing_at": null,
     "in_progress_at": null,
     "metadata": null,
-    "output_file_id": "gs://my-batch-bucket/litellm-vertex-files/publishers/google/models/{{gemini_flash}}/prediction-model-2025-09-19T21:26:51.569037Z/predictions.jsonl",
+    "output_file_id": "gs://my-batch-bucket/lumina-vertex-files/publishers/google/models/{{gemini_flash}}/prediction-model-2025-09-19T21:26:51.569037Z/predictions.jsonl",
     "request_counts": null,
     "usage": null
 }
@@ -235,7 +235,7 @@ Once the batch is completed, retrieve the results using the `output_file_id` fro
 **Important:** The `output_file_id` must be URL encoded when used in the request path.
 
 :::warning Proxy admin key required for raw `gs://` ids
-Starting in v1.108.0, `GET /files/{file_id}/content` only serves a raw `gs://` output id to a proxy admin key (the master key or a key with the `proxy_admin` role). Any other key gets a `403` telling it to use the LiteLLM managed file id. To read batch results with a non-admin key, upload the file with `target_model_names` set (see [managed batches](../proxy/managed_batches)) so the proxy hands back a managed `file-...` id, and pass that id to every later call instead of the `gs://` path
+Starting in v1.108.0, `GET /files/{file_id}/content` only serves a raw `gs://` output id to a proxy admin key (the master key or a key with the `proxy_admin` role). Any other key gets a `403` telling it to use the Lumina managed file id. To read batch results with a non-admin key, upload the file with `target_model_names` set (see [managed batches](../proxy/managed_batches)) so the proxy hands back a managed `file-...` id, and pass that id to every later call instead of the `gs://` path
 :::
 
 <Tabs>
@@ -269,7 +269,7 @@ for line in file_content.text.strip().split('\n'):
 ```bash showLineNumbers title="Get File Content"
 # Note: The file ID must be URL encoded
 curl --request GET \
-  --url 'http://localhost:4000/files/gs%253A%252F%252Fmy-batch-bucket%252Flitellm-vertex-files%252Fpublishers%252Fgoogle%252Fmodels%252Fgemini-2.5-flash-lite%252Fprediction-model-2025-09-19T21%253A26%253A51.569037Z%252Fpredictions.jsonl/content?provider=vertex_ai' \
+  --url 'http://localhost:4000/files/gs%253A%252F%252Fmy-batch-bucket%252Flumina-vertex-files%252Fpublishers%252Fgoogle%252Fmodels%252Fgemini-2.5-flash-lite%252Fprediction-model-2025-09-19T21%253A26%253A51.569037Z%252Fpredictions.jsonl/content?provider=vertex_ai' \
   --header "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
@@ -288,7 +288,7 @@ The response contains JSONL format with one result per line:
 
 ### Native Vertex JSONL passthrough
 
-By default LiteLLM translates each OpenAI-format line into a Vertex `GenerateContent` request when you upload the file, and converts the batch output back into OpenAI chat completion shape when you download it. Set `passthrough=true` on the upload to skip both: the file is stored in your GCS bucket byte for byte, and the batch output comes back in Vertex's native format, `groundingMetadata` included. Use it for Vertex features the translation does not cover, such as `googleSearch` grounding with `excludeDomains`, without handing your callers GCP credentials. Cost tracking is unchanged: LiteLLM reads `usageMetadata` from each native output row and bills it the way an online Gemini call is billed.
+By default Lumina translates each OpenAI-format line into a Vertex `GenerateContent` request when you upload the file, and converts the batch output back into OpenAI chat completion shape when you download it. Set `passthrough=true` on the upload to skip both: the file is stored in your GCS bucket byte for byte, and the batch output comes back in Vertex's native format, `groundingMetadata` included. Use it for Vertex features the translation does not cover, such as `googleSearch` grounding with `excludeDomains`, without handing your callers GCP credentials. Cost tracking is unchanged: Lumina reads `usageMetadata` from each native output row and bills it the way an online Gemini call is billed.
 
 #### 1. Create a native JSONL file
 
@@ -301,7 +301,7 @@ Each line is a Vertex batch prediction request, a JSON object with a `request` k
 
 #### 2. Upload it with `passthrough=true`
 
-Native rows carry no model, so name the Vertex deployment that will run the batch: `target_model_names` (managed files, needs a database) or the `model` query parameter (no database). LiteLLM stores the object under `litellm-vertex-files/passthrough/` in that model's path, and the batch output lands beside it, which is how the download step knows to return it untouched.
+Native rows carry no model, so name the Vertex deployment that will run the batch: `target_model_names` (managed files, needs a database) or the `model` query parameter (no database). Lumina stores the object under `lumina-vertex-files/passthrough/` in that model's path, and the batch output lands beside it, which is how the download step knows to return it untouched.
 
 ```yaml title="config.yaml"
 model_list:
@@ -340,12 +340,12 @@ curl --request POST \
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python showLineNumbers title="upload_native_file_sdk.py"
-import litellm
+import lumina
 
-file_obj = litellm.create_file(
+file_obj = lumina.create_file(
     file=open("native_batch_requests.jsonl", "rb"),
     purpose="batch",
     custom_llm_provider="vertex_ai",
@@ -365,4 +365,4 @@ Create the batch, poll it, and download the output exactly as in steps 3 to 5 ab
 - Every line must be a JSON object with a `request` key. OpenAI-format lines are rejected with a 400 naming the line, and nothing is uploaded.
 - Batch guardrails only understand OpenAI-format rows, so a passthrough upload is refused with a 400 when the key, team, or request has pre-call guardrails configured.
 
-Passthrough is per upload. The SDK-wide `litellm.disable_vertex_batch_output_transformation` flag still applies to every Vertex batch output but never touches the input side; `passthrough` covers both for the one file you set it on.
+Passthrough is per upload. The SDK-wide `lumina.disable_vertex_batch_output_transformation` flag still applies to every Vertex batch output but never touches the input side; `passthrough` covers both for the one file you set it on.

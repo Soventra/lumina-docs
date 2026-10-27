@@ -6,7 +6,7 @@ authors:
   - tin
 image: ./hero.png
 description: "On a 21 task subset of Terminal-Bench 2.0, an auto router matched Claude Opus-5 solve rate at 27% lower cost. Adding the last 3 user messages as classifier context raised relative quality 14% but cost 44% more; adding assistant replies made both worse."
-keywords: [auto router, complexity router, terminal bench, llm benchmarks, llm cost savings, model routing, litellm auto routing, agent benchmarks]
+keywords: [auto router, complexity router, terminal bench, llm benchmarks, llm cost savings, model routing, lumina auto routing, agent benchmarks]
 tags: [routing, complexity-router, cost, benchmarks, engineering]
 hide_table_of_contents: false
 ---
@@ -19,13 +19,13 @@ hide_table_of_contents: false
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -107,12 +107,12 @@ model_list:
       complexity_router_default_model: claude-sonnet-5
 ```
 
-Every response carries `x-litellm-model-name` and `x-litellm-response-cost`, and per router cost and usage land in the Auto-Router Benchmarks tab. Full reference on the [Auto Routing docs page](/docs/proxy/auto_routing).
+Every response carries `x-lumina-model-name` and `x-lumina-response-cost`, and per router cost and usage land in the Auto-Router Benchmarks tab. Full reference on the [Auto Routing docs page](/docs/proxy/auto_routing).
 
 ## Try it
 
 :::info
 
-Point an agent at an auto router and compare it against your current single model on your own workload. Share numbers or questions in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner).
+Point an agent at an auto router and compare it against your current single model on your own workload. Share numbers or questions in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168). To work on this with us directly, [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner).
 
 :::

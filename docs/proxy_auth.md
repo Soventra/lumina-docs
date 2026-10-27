@@ -3,11 +3,11 @@ import TabItem from '@theme/TabItem';
 
 # SDK Proxy Authentication (OAuth2/JWT Auto-Refresh)
 
-Automatically obtain and refresh OAuth2/JWT tokens when using the LiteLLM Python SDK with a LiteLLM Proxy that requires JWT authentication.
+Automatically obtain and refresh OAuth2/JWT tokens when using the Lumina Python SDK with a Lumina Proxy that requires JWT authentication.
 
 ## Overview
 
-When your LiteLLM Proxy is protected by an OAuth2/OIDC provider (Azure AD, Keycloak, Okta, Auth0, etc.), your SDK clients need valid JWT tokens for every request. Instead of manually managing token lifecycle, `litellm.proxy_auth` handles this automatically:
+When your Lumina Proxy is protected by an OAuth2/OIDC provider (Azure AD, Keycloak, Okta, Auth0, etc.), your SDK clients need valid JWT tokens for every request. Instead of manually managing token lifecycle, `lumina.proxy_auth` handles this automatically:
 
 - Obtains tokens from your identity provider
 - Caches tokens to avoid unnecessary requests
@@ -24,18 +24,18 @@ When your LiteLLM Proxy is protected by an OAuth2/OIDC provider (Azure AD, Keycl
 Uses the [DefaultAzureCredential](https://learn.microsoft.com/en-us/python/api/azure-identity/azure.identity.defaultazurecredential) chain (environment variables, managed identity, Azure CLI, etc.):
 
 ```python
-import litellm
-from litellm.proxy_auth import AzureADCredential, ProxyAuthHandler
+import lumina
+from lumina.proxy_auth import AzureADCredential, ProxyAuthHandler
 
 # One-time setup
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=AzureADCredential(),  # uses DefaultAzureCredential
-    scope="api://my-litellm-proxy/.default"
+    scope="api://my-lumina-proxy/.default"
 )
-litellm.api_base = "https://my-proxy.example.com"
+lumina.api_base = "https://my-proxy.example.com"
 
 # All requests now include Authorization headers automatically
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Hello!"}]
 )
@@ -47,9 +47,9 @@ response = litellm.completion(
 Use a specific Azure AD app registration:
 
 ```python
-import litellm
+import lumina
 from azure.identity import ClientSecretCredential
-from litellm.proxy_auth import AzureADCredential, ProxyAuthHandler
+from lumina.proxy_auth import AzureADCredential, ProxyAuthHandler
 
 azure_cred = ClientSecretCredential(
     tenant_id="your-tenant-id",
@@ -57,13 +57,13 @@ azure_cred = ClientSecretCredential(
     client_secret="your-client-secret"
 )
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=AzureADCredential(credential=azure_cred),
-    scope="api://my-litellm-proxy/.default"
+    scope="api://my-lumina-proxy/.default"
 )
-litellm.api_base = "https://my-proxy.example.com"
+lumina.api_base = "https://my-proxy.example.com"
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Hello!"}]
 )
@@ -79,20 +79,20 @@ response = litellm.completion(
 Works with any OAuth2 provider that supports the `client_credentials` grant type:
 
 ```python
-import litellm
-from litellm.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
+import lumina
+from lumina.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=GenericOAuth2Credential(
         client_id="your-client-id",
         client_secret="your-client-secret",
         token_url="https://your-idp.example.com/oauth2/token"
     ),
-    scope="litellm_proxy_api"
+    scope="lumina_proxy_api"
 )
-litellm.api_base = "https://my-proxy.example.com"
+lumina.api_base = "https://my-proxy.example.com"
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Hello!"}]
 )
@@ -104,8 +104,8 @@ Implement the `TokenCredential` protocol to use any authentication mechanism:
 
 ```python
 import time
-import litellm
-from litellm.proxy_auth import AccessToken, ProxyAuthHandler
+import lumina
+from lumina.proxy_auth import AccessToken, ProxyAuthHandler
 
 class MyCustomCredential:
     """Any class with a get_token(scope) -> AccessToken method works."""
@@ -118,7 +118,7 @@ class MyCustomCredential:
             expires_on=int(time.time()) + 3600
         )
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=MyCustomCredential(),
     scope="my-scope"
 )
@@ -130,14 +130,14 @@ Auth headers are automatically injected for:
 
 | Endpoint | Function |
 |----------|----------|
-| Chat Completions | `litellm.completion()` / `litellm.acompletion()` |
-| Embeddings | `litellm.embedding()` / `litellm.aembedding()` |
+| Chat Completions | `lumina.completion()` / `lumina.acompletion()` |
+| Embeddings | `lumina.embedding()` / `lumina.aembedding()` |
 
 ## How It Works
 
 ```
 ┌──────────┐     ┌──────────────────┐     ┌──────────────┐     ┌──────────────┐
-│  Your    │     │  ProxyAuthHandler │     │   Identity   │     │  LiteLLM     │
+│  Your    │     │  ProxyAuthHandler │     │   Identity   │     │  Lumina     │
 │  Code    │──── │  (token cache)   │──── │   Provider   │     │  Proxy       │
 │          │     │                  │ ────│  (Azure AD,  │     │              │
 │          │     │                  │     │   Okta, etc) │     │              │
@@ -148,7 +148,7 @@ Auth headers are automatically injected for:
 └──────────┘              │                                    └──────────────┘
 ```
 
-1. You set `litellm.proxy_auth` once at startup
+1. You set `lumina.proxy_auth` once at startup
 2. On each SDK call (`completion()`, `embedding()`), the handler checks its cached token
 3. If the token is missing or expires within 60 seconds, it requests a new one from your identity provider
 4. The `Authorization: Bearer <token>` header is injected into the request
@@ -161,7 +161,7 @@ Auth headers are automatically injected for:
 The main handler that manages the token lifecycle.
 
 ```python
-from litellm.proxy_auth import ProxyAuthHandler
+from lumina.proxy_auth import ProxyAuthHandler
 
 handler = ProxyAuthHandler(
     credential="<TokenCredential>",  # required - credential provider
@@ -186,7 +186,7 @@ handler = ProxyAuthHandler(
 Wraps any `azure-identity` credential with lazy initialization.
 
 ```python
-from litellm.proxy_auth import AzureADCredential
+from lumina.proxy_auth import AzureADCredential
 
 # Uses DefaultAzureCredential (recommended)
 cred = AzureADCredential()
@@ -205,7 +205,7 @@ cred = AzureADCredential(credential=ManagedIdentityCredential())
 Standard OAuth2 client credentials flow for any provider.
 
 ```python
-from litellm.proxy_auth import GenericOAuth2Credential
+from lumina.proxy_auth import GenericOAuth2Credential
 
 cred = GenericOAuth2Credential(
     client_id="your-client-id",
@@ -225,7 +225,7 @@ cred = GenericOAuth2Credential(
 Dataclass representing an OAuth2 access token.
 
 ```python
-from litellm.proxy_auth import AccessToken
+from lumina.proxy_auth import AccessToken
 
 token = AccessToken(
     token="eyJhbG...",     # JWT string
@@ -238,7 +238,7 @@ token = AccessToken(
 Any class implementing this protocol can be used as a credential provider:
 
 ```python
-from litellm.proxy_auth import AccessToken
+from lumina.proxy_auth import AccessToken
 
 class MyCredential:
     def get_token(self, scope: str) -> AccessToken:
@@ -250,11 +250,11 @@ class MyCredential:
 ### Keycloak
 
 ```python
-from litellm.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
+from lumina.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=GenericOAuth2Credential(
-        client_id="litellm-client",
+        client_id="lumina-client",
         client_secret="your-keycloak-client-secret",
         token_url="https://keycloak.example.com/realms/your-realm/protocol/openid-connect/token"
     ),
@@ -265,24 +265,24 @@ litellm.proxy_auth = ProxyAuthHandler(
 ### Okta
 
 ```python
-from litellm.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
+from lumina.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=GenericOAuth2Credential(
         client_id="your-okta-client-id",
         client_secret="your-okta-client-secret",
         token_url="https://your-org.okta.com/oauth2/default/v1/token"
     ),
-    scope="litellm_api"
+    scope="lumina_api"
 )
 ```
 
 ### Auth0
 
 ```python
-from litellm.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
+from lumina.proxy_auth import GenericOAuth2Credential, ProxyAuthHandler
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=GenericOAuth2Credential(
         client_id="your-auth0-client-id",
         client_secret="your-auth0-client-secret",
@@ -296,37 +296,37 @@ litellm.proxy_auth = ProxyAuthHandler(
 
 ```python
 from azure.identity import ManagedIdentityCredential
-from litellm.proxy_auth import AzureADCredential, ProxyAuthHandler
+from lumina.proxy_auth import AzureADCredential, ProxyAuthHandler
 
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=AzureADCredential(
         credential=ManagedIdentityCredential()
     ),
-    scope="api://my-litellm-proxy/.default"
+    scope="api://my-lumina-proxy/.default"
 )
 ```
 
-## Combining with `use_litellm_proxy`
+## Combining with `use_lumina_proxy`
 
-You can use `proxy_auth` together with [`use_litellm_proxy`](./providers/litellm_proxy#send-all-sdk-requests-to-litellm-proxy) to route all SDK requests through an authenticated proxy:
+You can use `proxy_auth` together with [`use_lumina_proxy`](./providers/lumina_proxy#send-all-sdk-requests-to-lumina-proxy) to route all SDK requests through an authenticated proxy:
 
 ```python
 import os
-import litellm
-from litellm.proxy_auth import AzureADCredential, ProxyAuthHandler
+import lumina
+from lumina.proxy_auth import AzureADCredential, ProxyAuthHandler
 
 # Route all requests through the proxy
 os.environ["LUMINA_PROXY_API_BASE"] = "https://my-proxy.example.com"
-litellm.use_litellm_proxy = True
+lumina.use_lumina_proxy = True
 
 # Authenticate with OAuth2/JWT
-litellm.proxy_auth = ProxyAuthHandler(
+lumina.proxy_auth = ProxyAuthHandler(
     credential=AzureADCredential(),
-    scope="api://my-litellm-proxy/.default"
+    scope="api://my-lumina-proxy/.default"
 )
 
 # This request goes through the proxy with automatic JWT auth
-response = litellm.completion(
+response = lumina.completion(
     model="vertex_ai/{{gemini_flash}}",
     messages=[{"role": "user", "content": "Hello!"}]
 )

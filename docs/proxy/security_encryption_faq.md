@@ -1,10 +1,10 @@
-# LiteLLM Self-Hosted Security & Encryption FAQ
+# Lumina Self-Hosted Security & Encryption FAQ
 
 ## Data in Transit Encryption
 
 ### Does the product encrypt data in transit?
 
-**Yes**, LiteLLM encrypts data in transit using TLS/SSL.
+**Yes**, Lumina encrypts data in transit using TLS/SSL.
 
 ### Available in both OSS and Enterprise?
 
@@ -17,7 +17,7 @@
 **Configuration:**
 ```bash
 # CLI
-litellm --ssl_keyfile_path /path/to/key.pem --ssl_certfile_path /path/to/cert.pem
+lumina --ssl_keyfile_path /path/to/key.pem --ssl_certfile_path /path/to/cert.pem
 
 # Environment Variables
 export SSL_KEYFILE_PATH="/path/to/key.pem"
@@ -35,7 +35,7 @@ export SSL_CERTFILE_PATH="/path/to/cert.pem"
 - Uses HTTPX and aiohttp libraries with SSL/TLS enabled
 - Uses certifi CA bundle by default for SSL verification
 
-**Code Reference:** `litellm/llms/custom_httpx/http_handler.py` (lines 43-105)
+**Code Reference:** `lumina/llms/custom_httpx/http_handler.py` (lines 43-105)
 
 ### Are TCP sessions to the LLM providers shared?
 
@@ -47,7 +47,7 @@ export SSL_CERTFILE_PATH="/path/to/cert.pem"
 - Sessions are maintained across requests to the same provider
 - Reduces overhead of TLS handshakes
 
-**Code Reference:** `litellm/llms/custom_httpx/http_handler.py` (lines 704-712)
+**Code Reference:** `lumina/llms/custom_httpx/http_handler.py` (lines 704-712)
 
 ### Or does the product negotiate a new TLS session with the same LLM provider for every sequential call?
 
@@ -70,7 +70,7 @@ Uses Python's default SSL context which supports both TLS 1.2 and TLS 1.3. The s
 
 **Method 1: CLI Arguments**
 ```bash
-litellm --ssl_certfile_path /path/to/certificate.pem
+lumina --ssl_certfile_path /path/to/certificate.pem
 ```
 
 **Method 2: Environment Variable**
@@ -82,7 +82,7 @@ export SSL_CERTFILE_PATH="/path/to/certificate.pem"
 
 **Method 1: CLI Arguments**
 ```bash
-litellm --ssl_keyfile_path /path/to/private_key.pem
+lumina --ssl_keyfile_path /path/to/private_key.pem
 ```
 
 **Method 2: Environment Variable**
@@ -99,7 +99,7 @@ Use standard SSL certificate setup with intermediate certificates bundled in the
 
 **Method 1: Config YAML**
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_verify: "/path/to/ca_bundle.pem"
 ```
 
@@ -110,7 +110,7 @@ export SSL_CERT_FILE="/path/to/ca_bundle.pem"
 
 **Method 3: Client Certificate Authentication**
 ```yaml
-litellm_settings:
+lumina_settings:
   ssl_certificate: "/path/to/client_certificate.pem"
 ```
 
@@ -126,7 +126,7 @@ export SSL_CERTIFICATE="/path/to/client_certificate.pem"
 - `docs/my-website/docs/guides/security_settings.md` - SSL/TLS configuration guide
 
 **Additional References:**
-- `litellm/proxy/proxy_cli.py` (lines 455-467) - CLI options
+- `lumina/proxy/proxy_cli.py` (lines 455-467) - CLI options
 - `docs/my-website/docs/completion/http_handler_config.md` - Custom HTTP handler configuration
 
 ---
@@ -140,14 +140,14 @@ export SSL_CERTIFICATE="/path/to/client_certificate.pem"
 ### What data is stored in encrypted form?
 
 #### Encrypted Data:
-1. **LLM API Keys** - Model credentials in `LiteLLM_ProxyModelTable.lumina_params`
-2. **Provider Credentials** - Stored in `LiteLLM_CredentialsTable.credential_values`
-3. **Configuration Secrets** - Sensitive config values in `LiteLLM_Config` table
+1. **LLM API Keys** - Model credentials in `Lumina_ProxyModelTable.lumina_params`
+2. **Provider Credentials** - Stored in `Lumina_CredentialsTable.credential_values`
+3. **Configuration Secrets** - Sensitive config values in `Lumina_Config` table
 4. **Virtual Keys** - When using secret managers (optional feature)
 
 #### NOT Encrypted:
-1. **Spend Logs** - Request/response data in `LiteLLM_SpendLogs`
-2. **Audit Logs** - Change history in `LiteLLM_AuditLog`
+1. **Spend Logs** - Request/response data in `Lumina_SpendLogs`
+2. **Audit Logs** - Change history in `Lumina_AuditLog`
 3. **User/Team/Organization Data** - Metadata and configuration
 4. **Cached Prompts and Completions** - Cache data is stored in plaintext
 
@@ -158,9 +158,9 @@ export SSL_CERTIFICATE="/path/to/client_certificate.pem"
 Cache backends (Redis, S3, local disk) store data as plaintext JSON.
 
 **Code References:**
-- `litellm/caching/redis_cache.py`
-- `litellm/caching/s3_cache.py`
-- `litellm/caching/caching.py`
+- `lumina/caching/redis_cache.py`
+- `lumina/caching/s3_cache.py`
+- `lumina/caching/caching.py`
 
 ### Configuration data?
 
@@ -168,8 +168,8 @@ Cache backends (Redis, S3, local disk) store data as plaintext JSON.
 
 #### What IS Encrypted:
 - LLM API keys and credentials in model configurations
-- Sensitive values in `LiteLLM_Config` table
-- Credential values in `LiteLLM_CredentialsTable`
+- Sensitive values in `Lumina_Config` table
+- Credential values in `Lumina_CredentialsTable`
 
 #### What is NOT Encrypted:
 - Model names and aliases
@@ -177,16 +177,16 @@ Cache backends (Redis, S3, local disk) store data as plaintext JSON.
 - User/team/organization metadata
 - Non-sensitive configuration parameters
 
-**Code Reference:** `litellm/proxy/management_endpoints/model_management_endpoints.py` (lines 275-308)
+**Code Reference:** `lumina/proxy/management_endpoints/model_management_endpoints.py` (lines 275-308)
 
 ### Log data?
 
 **No**, log data is **NOT encrypted**.
 
 Log data stored in database tables is in plaintext:
-- `LiteLLM_SpendLogs` - Contains request/response data, tokens, spend
-- `LiteLLM_ErrorLogs` - Error information
-- `LiteLLM_AuditLog` - Audit trail of changes
+- `Lumina_SpendLogs` - Contains request/response data, tokens, spend
+- `Lumina_ErrorLogs` - Error information
+- `Lumina_AuditLog` - Audit trail of changes
 
 **Note:** You can disable logging to avoid storing sensitive data:
 
@@ -205,9 +205,9 @@ general_settings:
 **Yes**, encrypted data is stored in PostgreSQL database.
 
 **Key Tables with Encrypted Data:**
-- `LiteLLM_ProxyModelTable` - Model configurations with encrypted API keys
-- `LiteLLM_CredentialsTable` - Credential values
-- `LiteLLM_Config` - Configuration secrets
+- `Lumina_ProxyModelTable` - Model configurations with encrypted API keys
+- `Lumina_CredentialsTable` - Credential values
+- `Lumina_Config` - Configuration secrets
 
 **Schema Reference:** `schema.prisma`
 
@@ -233,7 +233,7 @@ general_settings:
 
 **Algorithm:** NaCl SecretBox (XSalsa20-Poly1305 AEAD)
 
-**NOT AES-256** - LiteLLM uses NaCl (Networking and Cryptography Library) which provides:
+**NOT AES-256** - Lumina uses NaCl (Networking and Cryptography Library) which provides:
 - XSalsa20 stream cipher
 - Poly1305 MAC for authentication
 - Equivalent security to AES-256
@@ -243,7 +243,7 @@ general_settings:
 2. Hashes with SHA-256 to derive 256-bit encryption key
 3. Uses NaCl SecretBox for authenticated encryption
 
-**Code Reference:** `litellm/proxy/common_utils/encrypt_decrypt_utils.py` (lines 69-112)
+**Code Reference:** `lumina/proxy/common_utils/encrypt_decrypt_utils.py` (lines 69-112)
 
 **Implementation:**
 ```python
@@ -337,18 +337,18 @@ export DATABASE_URL="postgresql://user:password@host:port/dbname"
 #   disable_spend_logs: True
 #   disable_error_logs: True
 
-# 5. Start LiteLLM Proxy
-litellm --config config.yaml
+# 5. Start Lumina Proxy
+lumina --config config.yaml
 ```
 
 ---
 
 ## Additional Resources
 
-- **LiteLLM Documentation:** https://docs.litellm.ai/
-- **Security Settings Guide:** https://docs.litellm.ai/docs/guides/security_settings
-- **Production Deployment:** https://docs.litellm.ai/docs/proxy/prod
-- **Secret Management:** https://docs.litellm.ai/docs/secret
+- **Lumina Documentation:** https://docs.lumina.ai/
+- **Security Settings Guide:** https://docs.lumina.ai/docs/guides/security_settings
+- **Production Deployment:** https://docs.lumina.ai/docs/proxy/prod
+- **Secret Management:** https://docs.lumina.ai/docs/secret
 
 For security inquiries: support@berri.ai
 

@@ -88,17 +88,17 @@ Most of these were on Bedrock and the routing layer.
 
 ## Performance: pass-through memory
 
-Pass-through APIs had high memory consumption. Large non-JSON pass-through downloads (batch-result files, binary and octet-stream downloads) were buffered whole in memory before being sent on. We changed this to stream the response chunk by chunk, so memory stays flat regardless of file size ([#32386](https://github.com/BerriAI/litellm/pull/32386)). This covers the provider pass-through routes (`/vertex_ai/*`, `/bedrock/*`, `/openai/*`, `/anthropic/*`, and others) and custom pass-through endpoints.
+Pass-through APIs had high memory consumption. Large non-JSON pass-through downloads (batch-result files, binary and octet-stream downloads) were buffered whole in memory before being sent on. We changed this to stream the response chunk by chunk, so memory stays flat regardless of file size ([#32386](https://github.com/Soventra/lumina/pull/32386)). This covers the provider pass-through routes (`/vertex_ai/*`, `/bedrock/*`, `/openai/*`, `/anthropic/*`, and others) and custom pass-through endpoints.
 
 ```mermaid
 flowchart TB
   subgraph B["Before: buffer the whole file"]
     direction LR
-    U1[Upstream] -->|entire body| L1["LiteLLM<br/>holds full file in RAM<br/>(memory grows with size)"]
+    U1[Upstream] -->|entire body| L1["Lumina<br/>holds full file in RAM<br/>(memory grows with size)"]
   end
   subgraph A["After: stream it through"]
     direction LR
-    U2[Upstream] -->|chunk| L2["LiteLLM<br/>forwards chunk by chunk<br/>(flat memory)"] -->|chunk| C2[Client]
+    U2[Upstream] -->|chunk| L2["Lumina<br/>forwards chunk by chunk<br/>(flat memory)"] -->|chunk| C2[Client]
   end
   L1 ~~~ U2
   classDef bad fill:#fdecec,stroke:#dc2626,color:#7f1d1d;
@@ -144,73 +144,73 @@ PRs from this window.
 
 Credential resolver:
 
-- [#32815](https://github.com/BerriAI/litellm/pull/32815) credential class merge (the single typed resolver)
-- [#32652](https://github.com/BerriAI/litellm/pull/32652) stale token invalidation
-- [#32715](https://github.com/BerriAI/litellm/pull/32715) semantic filter fail-closed
+- [#32815](https://github.com/Soventra/lumina/pull/32815) credential class merge (the single typed resolver)
+- [#32652](https://github.com/Soventra/lumina/pull/32652) stale token invalidation
+- [#32715](https://github.com/Soventra/lumina/pull/32715) semantic filter fail-closed
 
 Pass-through and delegate credential modes:
 
-- [#31989](https://github.com/BerriAI/litellm/pull/31989) passthrough / delegate modes
-- [#32414](https://github.com/BerriAI/litellm/pull/32414) passthrough UI enum
-- [#32556](https://github.com/BerriAI/litellm/pull/32556) passthrough call relay
-- [#32752](https://github.com/BerriAI/litellm/pull/32752) configured client for passthrough
-- [#32735](https://github.com/BerriAI/litellm/pull/32735) no DCR persist for passthrough
-- [#32507](https://github.com/BerriAI/litellm/pull/32507) token exchange secret pairing
+- [#31989](https://github.com/Soventra/lumina/pull/31989) passthrough / delegate modes
+- [#32414](https://github.com/Soventra/lumina/pull/32414) passthrough UI enum
+- [#32556](https://github.com/Soventra/lumina/pull/32556) passthrough call relay
+- [#32752](https://github.com/Soventra/lumina/pull/32752) configured client for passthrough
+- [#32735](https://github.com/Soventra/lumina/pull/32735) no DCR persist for passthrough
+- [#32507](https://github.com/Soventra/lumina/pull/32507) token exchange secret pairing
 
 DCR bridge (LIT-4337):
 
-- [#32745](https://github.com/BerriAI/litellm/pull/32745) plumbing
-- [#32747](https://github.com/BerriAI/litellm/pull/32747) authorize relay
-- [#32753](https://github.com/BerriAI/litellm/pull/32753) facade
-- [#32804](https://github.com/BerriAI/litellm/pull/32804) UI
-- [#32527](https://github.com/BerriAI/litellm/pull/32527) DCR redirect_uri
+- [#32745](https://github.com/Soventra/lumina/pull/32745) plumbing
+- [#32747](https://github.com/Soventra/lumina/pull/32747) authorize relay
+- [#32753](https://github.com/Soventra/lumina/pull/32753) facade
+- [#32804](https://github.com/Soventra/lumina/pull/32804) UI
+- [#32527](https://github.com/Soventra/lumina/pull/32527) DCR redirect_uri
 
 Sealed envelope and delegate admission (LIT-4338):
 
-- [#32748](https://github.com/BerriAI/litellm/pull/32748) envelope module
-- [#32794](https://github.com/BerriAI/litellm/pull/32794) envelope edge consumer
-- [#32824](https://github.com/BerriAI/litellm/pull/32824) delegate admission
+- [#32748](https://github.com/Soventra/lumina/pull/32748) envelope module
+- [#32794](https://github.com/Soventra/lumina/pull/32794) envelope edge consumer
+- [#32824](https://github.com/Soventra/lumina/pull/32824) delegate admission
 
 **AI Eng (LLM providers)**
 
 Bedrock:
 
-- [#32882](https://github.com/BerriAI/litellm/pull/32882) flag Claude 4.8+ entries with supports_mid_conversation_system
-- [#32831](https://github.com/BerriAI/litellm/pull/32831) gate in-place system role messages for Claude Invoke
-- [#32578](https://github.com/BerriAI/litellm/pull/32578) keep mid-conversation system messages for Claude Invoke
-- [#32658](https://github.com/BerriAI/litellm/pull/32658) retain clear_tool_uses context-management edits and emit the beta header
-- [#32551](https://github.com/BerriAI/litellm/pull/32551) honor cache_control ttl on message-level cachePoint blocks
-- [#32538](https://github.com/BerriAI/litellm/pull/32538) preserve cache_control ttl on message-level cache points
-- [#32840](https://github.com/BerriAI/litellm/pull/32840) add jp.anthropic.claude-opus-4-8 to the model cost map
-- [#32389](https://github.com/BerriAI/litellm/pull/32389) resolve regional inference profiles to regional pricing
+- [#32882](https://github.com/Soventra/lumina/pull/32882) flag Claude 4.8+ entries with supports_mid_conversation_system
+- [#32831](https://github.com/Soventra/lumina/pull/32831) gate in-place system role messages for Claude Invoke
+- [#32578](https://github.com/Soventra/lumina/pull/32578) keep mid-conversation system messages for Claude Invoke
+- [#32658](https://github.com/Soventra/lumina/pull/32658) retain clear_tool_uses context-management edits and emit the beta header
+- [#32551](https://github.com/Soventra/lumina/pull/32551) honor cache_control ttl on message-level cachePoint blocks
+- [#32538](https://github.com/Soventra/lumina/pull/32538) preserve cache_control ttl on message-level cache points
+- [#32840](https://github.com/Soventra/lumina/pull/32840) add jp.anthropic.claude-opus-4-8 to the model cost map
+- [#32389](https://github.com/Soventra/lumina/pull/32389) resolve regional inference profiles to regional pricing
 
 Anthropic:
 
-- [#32874](https://github.com/BerriAI/litellm/pull/32874) thread the real provider through capability probes (was pinned to anthropic)
-- [#32867](https://github.com/BerriAI/litellm/pull/32867) translate adaptive thinking/effort for pre-4.6 models
-- [#32833](https://github.com/BerriAI/litellm/pull/32833) strip @version suffix in model lookup
+- [#32874](https://github.com/Soventra/lumina/pull/32874) thread the real provider through capability probes (was pinned to anthropic)
+- [#32867](https://github.com/Soventra/lumina/pull/32867) translate adaptive thinking/effort for pre-4.6 models
+- [#32833](https://github.com/Soventra/lumina/pull/32833) strip @version suffix in model lookup
 
 Routing and fallbacks:
 
-- [#32859](https://github.com/BerriAI/litellm/pull/32859) complexity router keyword tiers (max aggregation, blank-keyword hardening)
-- [#32943](https://github.com/BerriAI/litellm/pull/32943) complexity router logging and auth propagation, index built once
-- [#32873](https://github.com/BerriAI/litellm/pull/32873) fallback rules routing split (bare-Claude coverage, cost-map precedence, legacy schema)
+- [#32859](https://github.com/Soventra/lumina/pull/32859) complexity router keyword tiers (max aggregation, blank-keyword hardening)
+- [#32943](https://github.com/Soventra/lumina/pull/32943) complexity router logging and auth propagation, index built once
+- [#32873](https://github.com/Soventra/lumina/pull/32873) fallback rules routing split (bare-Claude coverage, cost-map precedence, legacy schema)
 
 Responses API:
 
-- [#32835](https://github.com/BerriAI/litellm/pull/32835) raise APIError on in-stream error events
-- [#32837](https://github.com/BerriAI/litellm/pull/32837) preserve reasoning_tokens through chat to responses
-- [#32034](https://github.com/BerriAI/litellm/pull/32034) idempotent response-id encoding (prevents MCP gateway double-encoding)
+- [#32835](https://github.com/Soventra/lumina/pull/32835) raise APIError on in-stream error events
+- [#32837](https://github.com/Soventra/lumina/pull/32837) preserve reasoning_tokens through chat to responses
+- [#32034](https://github.com/Soventra/lumina/pull/32034) idempotent response-id encoding (prevents MCP gateway double-encoding)
 
 Cost, Vertex, Rerank:
 
-- [#32387](https://github.com/BerriAI/litellm/pull/32387) add gpt-realtime-2.1 models with regional uplift
+- [#32387](https://github.com/Soventra/lumina/pull/32387) add gpt-realtime-2.1 models with regional uplift
 - coerce string tiered-pricing costs and share the tier helper
-- [#32550](https://github.com/BerriAI/litellm/pull/32550) forward realtime health check params (Vertex)
-- [#32533](https://github.com/BerriAI/litellm/pull/32533) log rerank params at debug to stop leaking request content
+- [#32550](https://github.com/Soventra/lumina/pull/32550) forward realtime health check params (Vertex)
+- [#32533](https://github.com/Soventra/lumina/pull/32533) log rerank params at debug to stop leaking request content
 
 **Performance**
 
-- [#32386](https://github.com/BerriAI/litellm/pull/32386) stream non-SSE pass-through responses instead of buffering in memory
-- [#32404](https://github.com/BerriAI/litellm/pull/32404) stop request params from clobbering merged target query params
-- [#32834](https://github.com/BerriAI/litellm/pull/32834) Prometheus skips budget-metric DB lookups when gauges are no-ops
+- [#32386](https://github.com/Soventra/lumina/pull/32386) stream non-SSE pass-through responses instead of buffering in memory
+- [#32404](https://github.com/Soventra/lumina/pull/32404) stop request params from clobbering merged target query params
+- [#32834](https://github.com/Soventra/lumina/pull/32834) Prometheus skips budget-metric DB lookups when gauges are no-ops

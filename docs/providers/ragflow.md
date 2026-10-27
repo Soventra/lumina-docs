@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # RAGFlow
 
-Litellm supports Ragflow's chat completions APIs
+Lumina supports Ragflow's chat completions APIs
 
 ## Supported Features
 
@@ -43,7 +43,7 @@ The model name format embeds the endpoint type and ID:
 ## Sample Usage - Chat Endpoint
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['RAGFLOW_API_KEY'] = "your-ragflow-api-key"
@@ -59,7 +59,7 @@ print(response)
 ## Sample Usage - Agent Endpoint
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['RAGFLOW_API_KEY'] = "your-ragflow-api-key"
@@ -77,7 +77,7 @@ print(response)
 You can also pass `api_key` and `api_base` directly as parameters:
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="ragflow/chat/my-chat-id/{{openai_small}}",
@@ -91,7 +91,7 @@ print(response)
 ## Sample Usage - Streaming
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['RAGFLOW_API_KEY'] = "your-ragflow-api-key"
@@ -131,14 +131,14 @@ Where:
 
 ## Configuration Sources
 
-LiteLLM supports multiple ways to provide credentials, checked in this order:
+Lumina supports multiple ways to provide credentials, checked in this order:
 
 1. **Function parameters**: `api_key="..."`, `api_base="..."`
 2. **lumina_params**: `lumina_params={"api_key": "...", "api_base": "..."}`
 3. **Environment variables**: `RAGFLOW_API_KEY`, `RAGFLOW_API_BASE`
-4. **Global litellm settings**: `litellm.api_key`, `litellm.api_base`
+4. **Global lumina settings**: `lumina.api_key`, `lumina.api_base`
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -170,7 +170,7 @@ model_list:
 <TabItem value="cli" label="CLI">
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # Server running on http://0.0.0.0:4000
 ```
@@ -202,7 +202,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM proxy key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina proxy key
     base_url="http://0.0.0.0:4000"
 )
 
@@ -220,7 +220,7 @@ print(response)
 
 ## API Base URL Handling
 
-The `api_base` parameter can be provided with or without `/v1` suffix. LiteLLM will automatically handle it:
+The `api_base` parameter can be provided with or without `/v1` suffix. Lumina will automatically handle it:
 
 - `http://localhost:9380` → `http://localhost:9380/api/v1/chats_openai/{chat_id}/chat/completions`
 - `http://localhost:9380/v1` → `http://localhost:9380/api/v1/chats_openai/{chat_id}/chat/completions`

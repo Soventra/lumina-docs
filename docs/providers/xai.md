@@ -7,7 +7,7 @@ https://docs.x.ai/docs
 
 :::tip
 
-**We support ALL xAI models, just set `model=xai/<any-model-on-xai>` as a prefix when sending litellm requests**
+**We support ALL xAI models, just set `model=xai/<any-model-on-xai>` as a prefix when sending lumina requests**
 
 :::
 
@@ -21,7 +21,7 @@ https://docs.x.ai/docs
 
 **Example:**
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="xai/grok-4.5",
@@ -48,8 +48,8 @@ os.environ['XAI_API_KEY']
 
 ## Sample Usage
 
-```python showLineNumbers title="LiteLLM python sdk usage - Non-streaming"
-from litellm import completion
+```python showLineNumbers title="Lumina python sdk usage - Non-streaming"
+from lumina import completion
 import os
 
 os.environ['XAI_API_KEY'] = ""
@@ -75,8 +75,8 @@ print(response)
 
 ## Sample Usage - Streaming
 
-```python showLineNumbers title="LiteLLM python sdk usage - Streaming"
-from litellm import completion
+```python showLineNumbers title="Lumina python sdk usage - Streaming"
+from lumina import completion
 import os
 
 os.environ['XAI_API_KEY'] = ""
@@ -105,9 +105,9 @@ for chunk in response:
 
 ## Sample Usage - Vision
 
-```python showLineNumbers title="LiteLLM python sdk usage - Vision"
+```python showLineNumbers title="Lumina python sdk usage - Vision"
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["XAI_API_KEY"] = "your-api-key"
 
@@ -134,9 +134,9 @@ response = completion(
 )
 ```
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
-Here's how to call a XAI model with the LiteLLM Proxy Server
+Here's how to call a XAI model with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -152,10 +152,10 @@ Here's how to call a XAI model with the LiteLLM Proxy Server
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -164,8 +164,8 @@ Here's how to call a XAI model with the LiteLLM Proxy Server
   ```python showLineNumbers
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -205,15 +205,15 @@ Here's how to call a XAI model with the LiteLLM Proxy Server
 
 ## Reasoning Usage
 
-LiteLLM supports reasoning usage for xAI models.
+Lumina supports reasoning usage for xAI models.
 
 <Tabs>
 
-<TabItem value="python" label="LiteLLM Python SDK">
+<TabItem value="python" label="Lumina Python SDK">
 
 ```python showLineNumbers title="reasoning with xai/grok-4.5"
-import litellm
-response = litellm.completion(
+import lumina
+response = lumina.completion(
     model="xai/grok-4.5",
     messages=[{"role": "user", "content": "What is 101*3?"}],
     reasoning_effort="low",  # low | medium | high
@@ -233,13 +233,13 @@ print(response.usage.completion_tokens_details.reasoning_tokens)
 ```
 </TabItem>
 
-<TabItem value="curl" label="LiteLLM Proxy - OpenAI SDK Usage">
+<TabItem value="curl" label="Lumina Proxy - OpenAI SDK Usage">
 
 ```python showLineNumbers title="reasoning with xai/grok-4.5"
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-    base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+    api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+    base_url="http://0.0.0.0:4000" # lumina-proxy-base url
 )
 
 response = client.chat.completions.create(

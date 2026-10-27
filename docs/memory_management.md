@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # /memory
 
-CRUD endpoints for storing and retrieving user/team-scoped memory entries on the LiteLLM proxy. Use these to persist conversation context, agent memory, team playbooks, or any key-value data scoped to users and teams.
+CRUD endpoints for storing and retrieving user/team-scoped memory entries on the Lumina proxy. Use these to persist conversation context, agent memory, team playbooks, or any key-value data scoped to users and teams.
 
 ## Overview
 
@@ -20,12 +20,12 @@ CRUD endpoints for storing and retrieving user/team-scoped memory entries on the
 | Pagination | ✅ | Page-based with configurable page size |
 | Key prefix filtering | ✅ | Redis-style namespace scanning |
 | Audit trail | ✅ | `created_by`, `updated_by` with timestamps |
-| Supported LiteLLM Versions | `v1.83.10+` | |
+| Supported Lumina Versions | `v1.83.10+` | |
 
 ## Prerequisites
 
-- LiteLLM Proxy running with a **PostgreSQL** database connected
-- Database migrations applied (the `LiteLLM_MemoryTable` is created automatically)
+- Lumina Proxy running with a **PostgreSQL** database connected
+- Database migrations applied (the `Lumina_MemoryTable` is created automatically)
 - Valid API key for authentication
 
 No additional `config.yaml` entries required. Endpoints are available automatically once the proxy starts with a connected database.
@@ -56,7 +56,7 @@ import httpx
 
 client = httpx.Client(
     base_url="http://localhost:4000",
-    headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+    headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
 )
 
 response = client.post("/v1/memory", json={
@@ -247,7 +247,7 @@ Create a new memory entry.
 | `user_id` | string | ❌ | Scope to a user. Defaults to caller's `user_id`. Admin-only override. |
 | `team_id` | string | ❌ | Scope to a team. Defaults to caller's `team_id`. Admin-only override. |
 
-**Response:** `201`, returns the created `LiteLLM_MemoryRow`.
+**Response:** `201`, returns the created `Lumina_MemoryRow`.
 
 ---
 
@@ -278,7 +278,7 @@ Get a single memory entry by key.
 |-----------|------|-------------|
 | `key` | string | The memory key to retrieve. |
 
-**Response:** `200`, returns the `LiteLLM_MemoryRow`.
+**Response:** `200`, returns the `Lumina_MemoryRow`.
 
 ---
 
@@ -301,7 +301,7 @@ Upsert a memory entry. Creates the entry if the key doesn't exist; updates it if
 | `user_id` | string | ❌ | Only used on create. Admin-only override. |
 | `team_id` | string | ❌ | Only used on create. Admin-only override. |
 
-**Response:** `200`, returns the created/updated `LiteLLM_MemoryRow`.
+**Response:** `200`, returns the created/updated `Lumina_MemoryRow`.
 
 ---
 

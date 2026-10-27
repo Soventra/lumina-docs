@@ -110,7 +110,7 @@ function itemScore(item, tokens) {
 }
 
 // ── Cards ─────────────────────────────────────────────────────────────────
-// Same anatomy as the litellm.ai/blog cards: a 1200:630 cover, a mono
+// Same anatomy as the lumina.ai/blog cards: a 1200:630 cover, a mono
 // "TAG · DATE" line, the title and a three-line excerpt.
 
 // The grid shows this many posts after the featured one, then "Load more"
@@ -217,7 +217,7 @@ export default function BlogListPage(props) {
               <SubscribeForm />
               <p className={styles.subscribeNote}>
                 <span>Get new posts in your inbox, or follow the <a href="/blog/rss.xml">RSS feed</a>.</span>
-                <a href="https://jobs.ashbyhq.com/litellm" target="_blank" rel="noopener noreferrer" className={styles.hiring}>
+                <a href="https://jobs.ashbyhq.com/lumina" target="_blank" rel="noopener noreferrer" className={styles.hiring}>
                   We're hiring
                 </a>
               </p>

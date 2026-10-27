@@ -13,11 +13,11 @@ Example passing images to a model
 
 <Tabs>
 
-<TabItem label="LiteLLMPython SDK" value="Python">
+<TabItem label="LuminaPython SDK" value="Python">
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 
@@ -46,7 +46,7 @@ response = completion(
 ```
 
 </TabItem>
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
 1. Define vision models on config.yaml
 
@@ -69,7 +69,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it using the OpenAI Python SDK
@@ -80,7 +80,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # your litellm proxy api key
+    api_key="sk-<your-lumina-api-key>", # your lumina proxy api key
 )
 
 response = client.chat.completions.create(
@@ -117,20 +117,20 @@ response = client.chat.completions.create(
 ## Checking if a model supports `vision`
 
 <Tabs>
-<TabItem label="LiteLLM Python SDK" value="Python">
+<TabItem label="Lumina Python SDK" value="Python">
 
-Use `litellm.supports_vision(model="")` -> returns `True` if model supports `vision` and `False` if not
+Use `lumina.supports_vision(model="")` -> returns `True` if model supports `vision` and `False` if not
 
 ```python keep-model-ids
-assert litellm.supports_vision(model="openai/gpt-5.6-terra") == True
-assert litellm.supports_vision(model="vertex_ai/gemini-3.1-pro-preview") == True
-assert litellm.supports_vision(model="openai/gpt-3.5-turbo") == False
-assert litellm.supports_vision(model="xai/grok-2-vision-latest") == True
-assert litellm.supports_vision(model="xai/grok-2-latest") == False
+assert lumina.supports_vision(model="openai/gpt-5.6-terra") == True
+assert lumina.supports_vision(model="vertex_ai/gemini-3.1-pro-preview") == True
+assert lumina.supports_vision(model="openai/gpt-3.5-turbo") == False
+assert lumina.supports_vision(model="xai/grok-2-vision-latest") == True
+assert lumina.supports_vision(model="xai/grok-2-latest") == False
 ```
 </TabItem>
 
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
 
 1. Define vision models on config.yaml
@@ -153,7 +153,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Call `/model_group/info` to check if your model supports `vision`
@@ -198,7 +198,7 @@ Expected Response
 
 ## Explicitly specify image type 
 
-If you have images without a mime-type, or if litellm is incorrectly inferring the mime type of your image (e.g. calling `gs://` url's with vertex ai), you can set this explicitly via the `format` param. 
+If you have images without a mime-type, or if lumina is incorrectly inferring the mime type of your image (e.g. calling `gs://` url's with vertex ai), you can set this explicitly via the `format` param. 
 
 ```json
 "image_url": {
@@ -207,7 +207,7 @@ If you have images without a mime-type, or if litellm is incorrectly inferring t
 }
 ```
 
-LiteLLM will use this for any API endpoint, which supports specifying mime-type (e.g. anthropic/bedrock/vertex ai). 
+Lumina will use this for any API endpoint, which supports specifying mime-type (e.g. anthropic/bedrock/vertex ai). 
 
 For others (e.g. openai), it will be ignored. 
 
@@ -216,7 +216,7 @@ For others (e.g. openai), it will be ignored.
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -269,7 +269,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it using the OpenAI Python SDK
@@ -280,7 +280,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # your litellm proxy api key
+    api_key="sk-<your-lumina-api-key>", # your lumina proxy api key
 )
 
 response = client.chat.completions.create(

@@ -1,6 +1,6 @@
 # /realtime - WebRTC Support
 
-Connect to the Realtime API via WebRTC from browser/mobile clients. LiteLLM handles auth; audio streams directly to OpenAI/Azure.
+Connect to the Realtime API via WebRTC from browser/mobile clients. Lumina handles auth; audio streams directly to OpenAI/Azure.
 
 **Providers:** OpenAI · Azure
 
@@ -11,10 +11,10 @@ Connect to the Realtime API via WebRTC from browser/mobile clients. LiteLLM hand
 
 ## How it works
 
-LiteLLM issues tokens and relays SDP; audio never passes through the proxy.
+Lumina issues tokens and relays SDP; audio never passes through the proxy.
 
 ```
-Browser                  LiteLLM Proxy              OpenAI/Azure
+Browser                  Lumina Proxy              OpenAI/Azure
   |                           |                          |
   |-- POST client_secrets --->|-- POST sessions -------->|
   |<-- encrypted_token -------|<-- ek_... ---------------|
@@ -38,19 +38,19 @@ model_list:
 **Azure:** `model: azure/gpt-4o-realtime-preview`, `api_key`, `api_base`.
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ## Client Usage
 
-1. **Token** — `POST /v1/realtime/client_secrets` with LiteLLM key and `{ model }`.
+1. **Token** — `POST /v1/realtime/client_secrets` with Lumina key and `{ model }`.
 2. **WebRTC** — Create `RTCPeerConnection`, add mic, data channel `oai-events`, send SDP offer to `POST /v1/realtime/calls` with `Authorization: Bearer <token>`, `Content-Type: application/sdp`.
 3. **Events** — Use data channel for `session.update` and other events.
 
 ```javascript
 const r = await fetch("http://proxy:4000/v1/realtime/client_secrets", {
   method: "POST",
-  headers: { "Authorization": "Bearer sk-litellm-key", "Content-Type": "application/json" },
+  headers: { "Authorization": "Bearer sk-lumina-key", "Content-Type": "application/json" },
   body: JSON.stringify({ model: "gpt-4o-realtime" }),
 });
 const token = (await r.json()).client_secret.value;

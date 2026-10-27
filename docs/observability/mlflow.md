@@ -6,7 +6,7 @@ import Image from '@theme/IdealImage';
 
 **MLflow** is an end-to-end open source MLOps platform for [experiment tracking](https://www.mlflow.org/docs/latest/tracking.html), [model management](https://www.mlflow.org/docs/latest/models.html), [evaluation](https://www.mlflow.org/docs/latest/llms/llm-evaluate/index.html), [observability (tracing)](https://www.mlflow.org/docs/latest/llms/tracing/index.html), and [deployment](https://www.mlflow.org/docs/latest/deployment/index.html). MLflow helps teams develop and refine LLM applications together.
 
-MLflow’s integration with LiteLLM supports advanced observability compatible with OpenTelemetry.
+MLflow’s integration with Lumina supports advanced observability compatible with OpenTelemetry.
 
 
 <Image img={require('../../img/mlflow_tracing.png')} />
@@ -17,31 +17,31 @@ MLflow’s integration with LiteLLM supports advanced observability compatible w
 Install MLflow:
 
 ```shell
-uv add "litellm[mlflow]"
+uv add "lumina[mlflow]"
 ```
 
-To enable MLflow auto tracing for LiteLLM:
+To enable MLflow auto tracing for Lumina:
 
 ```python
 import mlflow
 
-mlflow.litellm.autolog()
+mlflow.lumina.autolog()
 
-# Alternative, you can set the callback manually in LiteLLM
-# litellm.callbacks = ["mlflow"]
+# Alternative, you can set the callback manually in Lumina
+# lumina.callbacks = ["mlflow"]
 ```
 
 Since MLflow is open-source and free, **no sign-up or API key is needed to log traces!**
 
 ```python
-import litellm
+import lumina
 import os
 
 # Set your LLM provider's API key
 os.environ["OPENAI_API_KEY"] = ""
 
-# Call LiteLLM as usual
-response = litellm.completion(
+# Call Lumina as usual
+response = lumina.completion(
     model="{{openai_small}}",
     messages=[
       {"role": "user", "content": "Hi - i'm openai"}
@@ -57,13 +57,13 @@ mlflow ui
 
 ## Tracing Tool Calls
 
-MLflow integration with LiteLLM support tracking tool calls in addition to the messages.
+MLflow integration with Lumina support tracking tool calls in addition to the messages.
 
 ```python
 import mlflow
 
-# Enable MLflow auto-tracing for LiteLLM
-mlflow.litellm.autolog()
+# Enable MLflow auto-tracing for Lumina
+mlflow.lumina.autolog()
 
 # Define the tool function.
 def get_weather(location: str) -> str:
@@ -92,8 +92,8 @@ get_weather_tool = {
     },
 }
 
-# Call LiteLLM as usual
-response = litellm.completion(
+# Call Lumina as usual
+response = lumina.completion(
     model="{{openai_small}}",
     messages=[
       {"role": "user", "content": "What's the weather like in Paris today?"}
@@ -107,9 +107,9 @@ response = litellm.completion(
 
 ## Evaluation
 
-MLflow LiteLLM integration allow you to run qualitative assessment against LLM to evaluate or/and monitor your GenAI application.
+MLflow Lumina integration allow you to run qualitative assessment against LLM to evaluate or/and monitor your GenAI application.
 
-Visit [Evaluate LLMs Tutorial](../tutorials/eval_suites.md) for the complete guidance on how to run evaluation suite with LiteLLM and MLflow.
+Visit [Evaluate LLMs Tutorial](../tutorials/eval_suites.md) for the complete guidance on how to run evaluation suite with Lumina and MLflow.
 
 
 ## Exporting Traces to OpenTelemetry collectors
@@ -125,17 +125,17 @@ os.environ["OTEL_SERVICE_NAME"] = "<your-service-name>"
 
 See [MLflow documentation](https://mlflow.org/docs/latest/llms/tracing/index.html#using-opentelemetry-collector-for-exporting-traces) for more details.
 
-## Combine LiteLLM Trace with Your Application Trace
+## Combine Lumina Trace with Your Application Trace
 
-LiteLLM is often part of larger LLM applications, such as agentic models. MLflow Tracing allows you to instrument custom Python code, which can then be combined with LiteLLM traces.
+Lumina is often part of larger LLM applications, such as agentic models. MLflow Tracing allows you to instrument custom Python code, which can then be combined with Lumina traces.
 
 ```python
-import litellm
+import lumina
 import mlflow
 from mlflow.entities import SpanType
 
-# Enable MLflow auto-tracing for LiteLLM
-mlflow.litellm.autolog()
+# Enable MLflow auto-tracing for Lumina
+mlflow.lumina.autolog()
 
 
 class CustomAgent:
@@ -145,7 +145,7 @@ class CustomAgent:
         # do something
 
         while i < self.max_turns:
-            response = litellm.completion(
+            response = lumina.completion(
                 model="{{openai_small}}",
                 messages=messages,
             )
@@ -158,13 +158,13 @@ class CustomAgent:
         ...
 ```
 
-This approach generates a unified trace, combining your custom Python code with LiteLLM calls.
+This approach generates a unified trace, combining your custom Python code with Lumina calls.
 
-## LiteLLM Proxy Server 
+## Lumina Proxy Server 
 
 ### Dependencies
 
-For using `mlflow` on LiteLLM Proxy Server, you need to install the `mlflow` package on your docker container.
+For using `mlflow` on Lumina Proxy Server, you need to install the `mlflow` package on your docker container.
 
 ```shell
 uv add "mlflow>=3.1.4"
@@ -172,7 +172,7 @@ uv add "mlflow>=3.1.4"
 
 ### Configuration
 
-Configure MLflow in your LiteLLM proxy configuration file:
+Configure MLflow in your Lumina proxy configuration file:
 
 ```yaml
 model_list:
@@ -180,7 +180,7 @@ model_list:
     lumina_params:
       model: openai/*
 
-litellm_settings:
+lumina_settings:
   success_callback: ["mlflow"]
   failure_callback: ["mlflow"]
 ```
@@ -219,7 +219,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
         "content": "what llm are you"
         }
     ],
-    "litellm_metadata": {
+    "lumina_metadata": {
         "tags": ["jobID:214590dsff09fds", "taskName:run_page_classification"]
     }
 }'
@@ -231,10 +231,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```python
 from openai import OpenAI
 
-# Initialize the OpenAI client pointing to your LiteLLM proxy
+# Initialize the OpenAI client pointing to your Lumina proxy
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM proxy API key
-    base_url="http://0.0.0.0:4000"  # Your LiteLLM proxy URL
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina proxy API key
+    base_url="http://0.0.0.0:4000"  # Your Lumina proxy URL
 )
 
 # Make a request with tags in metadata
@@ -247,7 +247,7 @@ response = client.chat.completions.create(
         }
     ],
     extra_body={
-        "litellm_metadata": {
+        "lumina_metadata": {
             "tags": ["jobID:214590dsff09fds", "taskName:run_page_classification"]
         }
     }

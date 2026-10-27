@@ -1,10 +1,10 @@
 # Shared Health Check State Across Pods
 
-This feature enables coordination of health checks across multiple LiteLLM proxy pods to avoid duplicate health checks and reduce costs.
+This feature enables coordination of health checks across multiple Lumina proxy pods to avoid duplicate health checks and reduce costs.
 
 ## Overview
 
-When running multiple LiteLLM proxy pods (e.g., in Kubernetes), each pod typically runs its own independent health checks on every model. This can result in:
+When running multiple Lumina proxy pods (e.g., in Kubernetes), each pod typically runs its own independent health checks on every model. This can result in:
 
 - **Duplicate health checks** across pods
 - **Increased costs** for expensive models (e.g., Gemini 3.1 Pro)
@@ -55,7 +55,7 @@ general_settings:
   health_check_interval: 300  # 5 minutes
 
 # Redis configuration (required for shared health check)
-litellm_settings:
+lumina_settings:
   cache: true
   cache_params:
     type: redis
@@ -241,7 +241,7 @@ general_settings:
   # Health check details
   health_check_details: true
 
-litellm_settings:
+lumina_settings:
   # Redis configuration
   cache: true
   cache_params:
@@ -259,14 +259,14 @@ litellm_settings:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: litellm-proxy
+  name: lumina-proxy
 spec:
   replicas: 3  # Multiple pods for coordination
   template:
     spec:
       containers:
-      - name: litellm-proxy
-        image: docker.litellm.ai/berriai/litellm:latest
+      - name: lumina-proxy
+        image: docker.lumina.ai/soventra/lumina:latest
         args: ["--config", "/app/proxy_config.yaml"]  # config sets use_shared_health_check: true
         env:
         - name: REDIS_HOST

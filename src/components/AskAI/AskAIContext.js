@@ -9,7 +9,7 @@ import {readConversation, saveConversation} from '../../../search/conversation-s
 // IndexedDB holds the conversation; sessionStorage only identifies this tab's chat.
 
 export const commonQuestions = [
-  'How do I set up the LiteLLM proxy?',
+  'How do I set up the Lumina proxy?',
   'How do I route requests across multiple models?',
   'How do I enable response caching?',
   'How do I track spend per team or API key?',

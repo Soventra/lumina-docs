@@ -1,6 +1,6 @@
 # Grafana Pyroscope CPU profiling
 
-LiteLLM proxy can send continuous CPU profiles to [Grafana Pyroscope](https://grafana.com/docs/pyroscope/latest/) when enabled via environment variables. This is optional and off by default.
+Lumina proxy can send continuous CPU profiles to [Grafana Pyroscope](https://grafana.com/docs/pyroscope/latest/) when enabled via environment variables. This is optional and off by default.
 
 ## Quick start
 
@@ -13,7 +13,7 @@ LiteLLM proxy can send continuous CPU profiles to [Grafana Pyroscope](https://gr
    Or install the proxy extra:
 
    ```bash
-   uv add "litellm[proxy]"
+   uv add "lumina[proxy]"
    ```
 
 2. **Set environment variables** before starting the proxy:
@@ -31,9 +31,9 @@ LiteLLM proxy can send continuous CPU profiles to [Grafana Pyroscope](https://gr
 
    ```bash
    export LUMINA_ENABLE_PYROSCOPE=true
-   export PYROSCOPE_APP_NAME=litellm-proxy
+   export PYROSCOPE_APP_NAME=lumina-proxy
    export PYROSCOPE_SERVER_ADDRESS=http://localhost:4040
-   litellm --config config.yaml
+   lumina --config config.yaml
    ```
 
    For Grafana Cloud Pyroscope, use the Profiles endpoint as `PYROSCOPE_SERVER_ADDRESS`
@@ -41,11 +41,11 @@ LiteLLM proxy can send continuous CPU profiles to [Grafana Pyroscope](https://gr
 
    ```bash
    export LUMINA_ENABLE_PYROSCOPE=true
-   export PYROSCOPE_APP_NAME=litellm-proxy
+   export PYROSCOPE_APP_NAME=lumina-proxy
    export PYROSCOPE_SERVER_ADDRESS=https://profiles-prod-<region>.grafana.net
    export PYROSCOPE_GRAFANA_USER=<grafana-cloud-pyroscope-user>
    export PYROSCOPE_GRAFANA_API_TOKEN=<grafana-cloud-api-or-access-policy-token>
-   litellm --config config.yaml
+   lumina --config config.yaml
    ```
 
 4. **View profiles** in the Pyroscope (or Grafana) UI and select your `PYROSCOPE_APP_NAME`.

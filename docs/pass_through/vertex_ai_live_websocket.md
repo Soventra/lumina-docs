@@ -1,11 +1,11 @@
 # Vertex AI Live API WebSocket Passthrough
 
-LiteLLM now supports WebSocket passthrough for the Vertex AI Live API, enabling real-time bidirectional communication with Gemini models.
+Lumina now supports WebSocket passthrough for the Vertex AI Live API, enabling real-time bidirectional communication with Gemini models.
 
 ## Overview
 
 The Vertex AI Live API WebSocket passthrough allows you to:
-- Connect to Vertex AI Live API through LiteLLM proxy
+- Connect to Vertex AI Live API through Lumina proxy
 - Use existing Vertex AI authentication methods
 - Pass through all WebSocket messages bidirectionally
 - Support text, audio, video, and multimodal interactions
@@ -38,7 +38,7 @@ default_vertex_config:
   vertex_credentials: "os.environ/GOOGLE_APPLICATION_CREDENTIALS"
 ```
 
-`default_vertex_config` is a top-level key, not a child of `litellm_settings`.
+`default_vertex_config` is a top-level key, not a child of `lumina_settings`.
 
 ## Usage
 
@@ -75,7 +75,7 @@ The WebSocket passthrough automatically tracks costs for all usage types based o
 
 ### Cost Calculation
 
-Costs are calculated using the same methods as other Vertex AI models in LiteLLM:
+Costs are calculated using the same methods as other Vertex AI models in Lumina:
 - Uses `cost_per_character` for Gemini models
 - Uses `cost_per_token` for partner models (Claude, Llama, etc.)
 - Includes audio, video, and image costs when applicable
@@ -83,7 +83,7 @@ Costs are calculated using the same methods as other Vertex AI models in LiteLLM
 ### Cost Logging
 
 Costs are automatically logged to:
-- LiteLLM proxy logs
+- Lumina proxy logs
 - Database (if configured)
 - Spend tracking system
 - Admin dashboard
@@ -251,7 +251,7 @@ Vertex AI auth failed: set a use_in_pass_through vertex model, default_vertex_co
 
 ## Authentication
 
-The WebSocket passthrough uses the same authentication as other LiteLLM endpoints:
+The WebSocket passthrough uses the same authentication as other Lumina endpoints:
 
 1. **API Key**: Pass `Authorization: Bearer your-api-key` header
 2. **Vertex AI Credentials**: Set environment variables or config file
@@ -268,7 +268,7 @@ The WebSocket passthrough uses the same authentication as other LiteLLM endpoint
 
 1. **Authentication Error**: Ensure Vertex AI credentials are properly configured
 2. **Project Not Found**: Verify the project ID exists and has Vertex AI enabled
-3. **Connection Refused**: Check that the LiteLLM proxy server is running
+3. **Connection Refused**: Check that the Lumina proxy server is running
 
 ### Debug Mode
 
@@ -281,5 +281,5 @@ export LUMINA_LOG=DEBUG
 ## Related Documentation
 
 - [Vertex AI Live API Reference](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)
-- [LiteLLM Proxy Configuration](/docs/proxy/configs)
+- [Lumina Proxy Configuration](/docs/proxy/configs)
 - [Vertex AI Passthrough Endpoints](./vertex_ai.md)

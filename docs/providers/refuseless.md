@@ -1,18 +1,18 @@
 # Refuseless
 
-Use [Refuseless](https://refuseless.com) through LiteLLM with the `refuseless/` model prefix. LiteLLM reads `REFUSELESS_API_KEY` and sends requests to `https://api.refuseless.com/v1`.
+Use [Refuseless](https://refuseless.com) through Lumina with the `refuseless/` model prefix. Lumina reads `REFUSELESS_API_KEY` and sends requests to `https://api.refuseless.com/v1`.
 
 ## Get started
 
-Create an API key in your [Refuseless account](https://refuseless.com) and set `REFUSELESS_API_KEY` in your environment or secret manager. Install `litellm` for the Python SDK, or `litellm[proxy]` for the gateway.
+Create an API key in your [Refuseless account](https://refuseless.com) and set `REFUSELESS_API_KEY` in your environment or secret manager. Install `lumina` for the Python SDK, or `lumina[proxy]` for the gateway.
 
 ```bash
 export REFUSELESS_API_KEY="YOUR_REFUSELESS_API_KEY"
-pip install litellm
+pip install lumina
 ```
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="refuseless/glm-5.3-abliterated",
@@ -26,7 +26,7 @@ A successful request returns an assistant reply and token usage. You do not need
 
 ## Models and pricing
 
-Prices below are USD per million tokens, checked against the [published pricing](https://refuseless.com/pricing) and live model catalog on October 26, 2026. Context is the combined input and output budget, so the full output limit is available only when the prompt fits in the remaining context. Prefix each model ID with `refuseless/` in LiteLLM.
+Prices below are USD per million tokens, checked against the [published pricing](https://refuseless.com/pricing) and live model catalog on October 26, 2026. Context is the combined input and output budget, so the full output limit is available only when the prompt fits in the remaining context. Prefix each model ID with `refuseless/` in Lumina.
 
 | Model ID | Context | Max output | Input | Cached input | Output |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -38,11 +38,11 @@ Prices below are USD per million tokens, checked against the [published pricing]
 
 The first three models use abliterated weights. The other two use unmodified weights.
 
-Refuseless also lists `deepseek-v4.1-flash-free`, but live inference returned `404 model_not_found` at verification. LiteLLM excludes it from its model catalog and the supported-model table above until inference works. Choose one of the five verified models instead.
+Refuseless also lists `deepseek-v4.1-flash-free`, but live inference returned `404 model_not_found` at verification. Lumina excludes it from its model catalog and the supported-model table above until inference works. Choose one of the five verified models instead.
 
 ## Gateway setup
 
-Install the proxy with `pip install 'litellm[proxy]'`. Set `REFUSELESS_API_KEY` on the gateway process, and set `LUMINA_MASTER_KEY` to a strong key for gateway clients. The provider key authenticates upstream requests. The gateway key authenticates your client to LiteLLM.
+Install the proxy with `pip install 'lumina[proxy]'`. Set `REFUSELESS_API_KEY` on the gateway process, and set `LUMINA_MASTER_KEY` to a strong key for gateway clients. The provider key authenticates upstream requests. The gateway key authenticates your client to Lumina.
 
 Add this deployment to your existing configuration, or save it as `config.yaml` for a new gateway.
 
@@ -58,7 +58,7 @@ general_settings:
 ```
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 In a second terminal with `LUMINA_MASTER_KEY` set, send a request.
@@ -81,7 +81,7 @@ Expect HTTP 200 with an assistant message in `choices[0].message.content` and co
 Set `stream=True` and request usage in the final chunk.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 stream = completion(
     model="refuseless/glm-5.3-abliterated",
@@ -97,20 +97,20 @@ for chunk in stream:
         print(chunk.usage)
 ```
 
-LiteLLM uses `usage.prompt_tokens_details.cached_tokens` to charge reused input at the cached-input rate. Uncached input uses the standard input rate. A repeated prompt does not guarantee a cache hit.
+Lumina uses `usage.prompt_tokens_details.cached_tokens` to charge reused input at the cached-input rate. Uncached input uses the standard input rate. A repeated prompt does not guarantee a cache hit.
 
 ## Tools, structured output, and reasoning
 
-Chat Completions supports `tools`, `tool_choice`, and `response_format`. Use [LiteLLM function calling](../completion/function_call.md) for tool-result continuations and [structured outputs](../completion/json_mode.md) for JSON Schema examples.
+Chat Completions supports `tools`, `tool_choice`, and `response_format`. Use [Lumina function calling](../completion/function_call.md) for tool-result continuations and [structured outputs](../completion/json_mode.md) for JSON Schema examples.
 
-Use `reasoning_effort="low"`, `"high"`, or `"max"`. The live catalog publishes supported effort levels per model and defaults to `low`. Refuseless also advertises `off` for its paid DeepSeek variants. Do not assume OpenAI effort names such as `medium` and `xhigh` are accepted by the provider. LiteLLM uses the declared effort levels to resolve supported requests. Reasoning text, when returned, is available as `message.reasoning_content`. See [Refuseless reasoning](https://docs.refuseless.com/guides/reasoning).
+Use `reasoning_effort="low"`, `"high"`, or `"max"`. The live catalog publishes supported effort levels per model and defaults to `low`. Refuseless also advertises `off` for its paid DeepSeek variants. Do not assume OpenAI effort names such as `medium` and `xhigh` are accepted by the provider. Lumina uses the declared effort levels to resolve supported requests. Reasoning text, when returned, is available as `message.reasoning_content`. See [Refuseless reasoning](https://docs.refuseless.com/guides/reasoning).
 
 ## Responses API
 
-LiteLLM routes `responses()` to the provider's native `/v1/responses` endpoint. Send conversation history in `input`. These APIs are stateless, so do not rely on `previous_response_id` for stored history.
+Lumina routes `responses()` to the provider's native `/v1/responses` endpoint. Send conversation history in `input`. These APIs are stateless, so do not rely on `previous_response_id` for stored history.
 
 ```python
-from litellm import responses
+from lumina import responses
 
 response = responses(
     model="refuseless/glm-5.3-abliterated",

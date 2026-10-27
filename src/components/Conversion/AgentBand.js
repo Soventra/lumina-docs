@@ -16,7 +16,7 @@ export default function AgentBand({source = 'docs-home'}) {
           Agent resources
         </Link>{' '}
         and{' '}
-        <Link to="https://docs.litellm.ai/llms.txt" onClick={() => track('docs_agent_band', {target: 'llms_txt', source})}>
+        <Link to="https://docs.lumina.ai/llms.txt" onClick={() => track('docs_agent_band', {target: 'llms_txt', source})}>
           llms.txt
         </Link>
         .

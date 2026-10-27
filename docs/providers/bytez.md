@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Bytez
 
-LiteLLM supports all chat models on [Bytez](https://www.bytez.com)!
+Lumina supports all chat models on [Bytez](https://www.bytez.com)!
 
 That also means multi-modal models are supported
 
@@ -24,7 +24,7 @@ os.environ["BYTEZ_API_KEY"] = "YOUR_BYTEZ_KEY_GOES_HERE"
 ### Example Call
 
 ```py
-from litellm import completion
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["BYTEZ_API_KEY"] = "YOUR_BYTEZ_KEY_GOES_HERE"
@@ -51,10 +51,10 @@ model_list:
 2. Start the proxy
 
 ```bash
-$ BYTEZ_API_KEY=YOUR_BYTEZ_API_KEY_HERE litellm --config /path/to/config.yaml --debug
+$ BYTEZ_API_KEY=YOUR_BYTEZ_API_KEY_HERE lumina --config /path/to/config.yaml --debug
 ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -63,8 +63,8 @@ $ BYTEZ_API_KEY=YOUR_BYTEZ_API_KEY_HERE litellm --config /path/to/config.yaml --
 ```py
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-    base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+    api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+    base_url="http://0.0.0.0:4000" # lumina-proxy-base url
 )
 
 response = client.chat.completions.create(
@@ -123,11 +123,11 @@ If you wish to use custom formatting, please let us know via either [help@bytez.
 
 ## Passing additional params - max_tokens, temperature
 
-See all litellm.completion supported params [here](https://docs.litellm.ai/docs/completion/input)
+See all lumina.completion supported params [here](https://docs.lumina.ai/docs/completion/input)
 
 ```py
-# !uv add litellm
-from litellm import completion
+# !uv add lumina
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["BYTEZ_API_KEY"] = "YOUR_BYTEZ_KEY_HERE"
@@ -160,8 +160,8 @@ Any kwarg supported by huggingface we also support! (Provided the model supports
 Example `repetition_penalty`
 
 ```py
-# !uv add litellm
-from litellm import completion
+# !uv add lumina
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["BYTEZ_API_KEY"] = "YOUR_BYTEZ_KEY_HERE"

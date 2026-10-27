@@ -1,27 +1,27 @@
 ---
-title: "LiteLLM v1.83.7-stable - Per-User MCP OAuth, Team Spend Logs RBAC"
+title: "Lumina v1.83.7-stable - Per-User MCP OAuth, Team Spend Logs RBAC"
 description: "Adds per-user MCP OAuth tokens and team spend logs RBAC. Reduces default Prometheus latency buckets from 35 to 18, which changes dashboard queries."
 slug: "v1-83-7-stable"
 date: 2026-04-18T00:00:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Ryan Crabbe
-    title: Full Stack Engineer, LiteLLM
+    title: Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/ryan-crabbe-0b9687214
     image_url: https://github.com/ryan-crabbe.png
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
   - name: Shivam Rawat
-    title: Forward Deployed Engineer, LiteLLM
+    title: Forward Deployed Engineer, Lumina
     url: https://linkedin.com/in/shivam-rawat-482937318
     image_url: https://github.com/shivamrawat1.png
 hide_table_of_contents: false
@@ -39,14 +39,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:main-v1.83.7-stable
+docker.lumina.ai/soventra/lumina:main-v1.83.7-stable
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.83.7
+pip install lumina==1.83.7
 ```
 
 </TabItem>
@@ -54,7 +54,7 @@ pip install litellm==1.83.7
 
 :::warning
 
-**Breaking change: Prometheus latency histogram buckets reduced.** The default `LATENCY_BUCKETS` set has been reduced from 35 to 18 boundaries to lower Prometheus cardinality. Dashboards and PromQL queries that reference specific `le=` bucket values may stop matching. Review your alerts/dashboards before upgrading and use the `LATENCY_BUCKETS` env override to restore the previous boundaries if needed. See [PR #25527](https://github.com/BerriAI/litellm/pull/25527).
+**Breaking change: Prometheus latency histogram buckets reduced.** The default `LATENCY_BUCKETS` set has been reduced from 35 to 18 boundaries to lower Prometheus cardinality. Dashboards and PromQL queries that reference specific `le=` bucket values may stop matching. Review your alerts/dashboards before upgrading and use the `LATENCY_BUCKETS` env override to restore the previous boundaries if needed. See [PR #25527](https://github.com/Soventra/lumina/pull/25527).
 
 :::
 
@@ -92,134 +92,134 @@ pip install litellm==1.83.7
 #### Features
 
 - **[AWS Bedrock](../../docs/providers/bedrock)**
-    - AWS GovCloud mode support (`us-gov` prefix routing) - [PR #25254](https://github.com/BerriAI/litellm/pull/25254)
+    - AWS GovCloud mode support (`us-gov` prefix routing) - [PR #25254](https://github.com/Soventra/lumina/pull/25254)
     - Update GovCloud Claude Sonnet 4.5 pricing, raise `max_tokens` to 8192, and add prompt-caching costs
-    - Skip dummy `user` continue message when assistant prefix prefill is set - [PR #25419](https://github.com/BerriAI/litellm/pull/25419)
-    - Avoid double-counting cache tokens in Anthropic Messages streaming usage - [PR #25517](https://github.com/BerriAI/litellm/pull/25517)
+    - Skip dummy `user` continue message when assistant prefix prefill is set - [PR #25419](https://github.com/Soventra/lumina/pull/25419)
+    - Avoid double-counting cache tokens in Anthropic Messages streaming usage - [PR #25517](https://github.com/Soventra/lumina/pull/25517)
 - **[Anthropic](../../docs/providers/anthropic)**
-    - Support `advisor_20260301` tool type - [PR #25525](https://github.com/BerriAI/litellm/pull/25525)
+    - Support `advisor_20260301` tool type - [PR #25525](https://github.com/Soventra/lumina/pull/25525)
 - **[Triton](../../docs/providers/triton-inference-server)**
-    - Embedding usage estimation for self-hosted Triton responses - [PR #25345](https://github.com/BerriAI/litellm/pull/25345)
+    - Embedding usage estimation for self-hosted Triton responses - [PR #25345](https://github.com/Soventra/lumina/pull/25345)
 - **[Baseten](../../docs/providers/baseten)**
-    - Add pricing entries for 11 new Baseten-hosted models - [PR #25358](https://github.com/BerriAI/litellm/pull/25358)
+    - Add pricing entries for 11 new Baseten-hosted models - [PR #25358](https://github.com/Soventra/lumina/pull/25358)
 - **[Google Gemini / Vertex AI](../../docs/providers/gemini)**
     - Mark applicable Gemini 2.5/3 models with `supports_service_tier`
 
 ### Bug Fixes
 
 - **[AWS Bedrock](../../docs/providers/bedrock)**
-    - Pass-through fix for Bedrock JSON body and multipart uploads - [PR #25464](https://github.com/BerriAI/litellm/pull/25464)
+    - Pass-through fix for Bedrock JSON body and multipart uploads - [PR #25464](https://github.com/Soventra/lumina/pull/25464)
 - **[OpenAI](../../docs/providers/openai)**
-    - Mock headers in `test_completion_fine_tuned_model` to stabilize tests - [PR #25444](https://github.com/BerriAI/litellm/pull/25444)
+    - Mock headers in `test_completion_fine_tuned_model` to stabilize tests - [PR #25444](https://github.com/Soventra/lumina/pull/25444)
 
 ## LLM API Endpoints
 
 #### Features
 
 - **[Responses API](../../docs/response_api)**
-    - Containers: Azure routing, managed container IDs, and delete-response parsing - [PR #25287](https://github.com/BerriAI/litellm/pull/25287)
-    - WebSocket: append `?model=` to backend WebSocket URL so model selection routes correctly - [PR #25437](https://github.com/BerriAI/litellm/pull/25437)
+    - Containers: Azure routing, managed container IDs, and delete-response parsing - [PR #25287](https://github.com/Soventra/lumina/pull/25287)
+    - WebSocket: append `?model=` to backend WebSocket URL so model selection routes correctly - [PR #25437](https://github.com/Soventra/lumina/pull/25437)
 - **[OpenAI / Files API](../../docs/providers/openai)**
-    - Add file content streaming support for OpenAI and related utilities - [PR #25450](https://github.com/BerriAI/litellm/pull/25450)
+    - Add file content streaming support for OpenAI and related utilities - [PR #25450](https://github.com/Soventra/lumina/pull/25450)
 - **[A2A](../../docs/mcp)**
-    - Default 60-second timeout when creating an A2A client - [PR #25514](https://github.com/BerriAI/litellm/pull/25514)
+    - Default 60-second timeout when creating an A2A client - [PR #25514](https://github.com/Soventra/lumina/pull/25514)
 
 #### Bugs
 
 - **[Responses API](../../docs/response_api)**
-    - Map refusal `stop_reason` to `incomplete` status in streaming - [PR #25498](https://github.com/BerriAI/litellm/pull/25498)
-    - Fix duplicate keyword argument error in Responses WebSocket path - [PR #25513](https://github.com/BerriAI/litellm/pull/25513)
+    - Map refusal `stop_reason` to `incomplete` status in streaming - [PR #25498](https://github.com/Soventra/lumina/pull/25498)
+    - Fix duplicate keyword argument error in Responses WebSocket path - [PR #25513](https://github.com/Soventra/lumina/pull/25513)
 - **Router**
-    - Pass `custom_llm_provider` to `get_llm_provider` for unprefixed model names - [PR #25334](https://github.com/BerriAI/litellm/pull/25334)
-    - Fix tag-based routing when `encrypted_content_affinity` is enabled - [PR #25347](https://github.com/BerriAI/litellm/pull/25347)
+    - Pass `custom_llm_provider` to `get_llm_provider` for unprefixed model names - [PR #25334](https://github.com/Soventra/lumina/pull/25334)
+    - Fix tag-based routing when `encrypted_content_affinity` is enabled - [PR #25347](https://github.com/Soventra/lumina/pull/25347)
 - **General**
-    - Ensure spend/cost logging runs when `stream=True` for web-search interception - [PR #25424](https://github.com/BerriAI/litellm/pull/25424)
+    - Ensure spend/cost logging runs when `stream=True` for web-search interception - [PR #25424](https://github.com/Soventra/lumina/pull/25424)
 
 ## Management Endpoints / UI
 
 #### Features
 
 - **Teams + Organizations**
-    - New `POST /team/permissions_bulk_update` endpoint for bulk permission updates across teams - [PR #25239](https://github.com/BerriAI/litellm/pull/25239)
-    - Team member permission `/spend/logs` to view team-wide spend logs (UI + RBAC) - [PR #25458](https://github.com/BerriAI/litellm/pull/25458)
-    - Align org and team endpoint permission checks - [PR #25554](https://github.com/BerriAI/litellm/pull/25554)
+    - New `POST /team/permissions_bulk_update` endpoint for bulk permission updates across teams - [PR #25239](https://github.com/Soventra/lumina/pull/25239)
+    - Team member permission `/spend/logs` to view team-wide spend logs (UI + RBAC) - [PR #25458](https://github.com/Soventra/lumina/pull/25458)
+    - Align org and team endpoint permission checks - [PR #25554](https://github.com/Soventra/lumina/pull/25554)
 - **Virtual Keys**
-    - Align `/v2/key/info` response handling with v1 - [PR #25313](https://github.com/BerriAI/litellm/pull/25313)
+    - Align `/v2/key/info` response handling with v1 - [PR #25313](https://github.com/Soventra/lumina/pull/25313)
 - **Authentication / Routing**
-    - Allow JWT to override OAuth2 routing without requiring global OAuth2 enablement - [PR #25252](https://github.com/BerriAI/litellm/pull/25252)
-    - Consolidate route auth for UI and API tokens - [PR #25473](https://github.com/BerriAI/litellm/pull/25473)
-    - Use parameterized query for `combined_view` token lookup - [PR #25467](https://github.com/BerriAI/litellm/pull/25467)
+    - Allow JWT to override OAuth2 routing without requiring global OAuth2 enablement - [PR #25252](https://github.com/Soventra/lumina/pull/25252)
+    - Consolidate route auth for UI and API tokens - [PR #25473](https://github.com/Soventra/lumina/pull/25473)
+    - Use parameterized query for `combined_view` token lookup - [PR #25467](https://github.com/Soventra/lumina/pull/25467)
 - **Provider Credentials**
-    - Per-team / per-project credential overrides via `model_config` metadata - [PR #24438](https://github.com/BerriAI/litellm/pull/24438)
+    - Per-team / per-project credential overrides via `model_config` metadata - [PR #24438](https://github.com/Soventra/lumina/pull/24438)
 - **UI**
-    - Improve browser storage handling and Dockerfile consistency - [PR #25384](https://github.com/BerriAI/litellm/pull/25384)
-    - Align v1 guardrail and agent list responses with v2 field handling - [PR #25478](https://github.com/BerriAI/litellm/pull/25478)
-    - Flush Tremor Tooltip timers in `user_edit_view` tests - [PR #25480](https://github.com/BerriAI/litellm/pull/25480)
+    - Improve browser storage handling and Dockerfile consistency - [PR #25384](https://github.com/Soventra/lumina/pull/25384)
+    - Align v1 guardrail and agent list responses with v2 field handling - [PR #25478](https://github.com/Soventra/lumina/pull/25478)
+    - Flush Tremor Tooltip timers in `user_edit_view` tests - [PR #25480](https://github.com/Soventra/lumina/pull/25480)
 
 #### Bugs
 
-- Improve input validation on management endpoints - [PR #25445](https://github.com/BerriAI/litellm/pull/25445)
-- Harden file path resolution in skill archive extraction - [PR #25475](https://github.com/BerriAI/litellm/pull/25475)
+- Improve input validation on management endpoints - [PR #25445](https://github.com/Soventra/lumina/pull/25445)
+- Harden file path resolution in skill archive extraction - [PR #25475](https://github.com/Soventra/lumina/pull/25475)
 
 ## AI Integrations
 
 ### Logging
 
 - **[Ramp](../../docs/proxy/logging)**
-    - Add Ramp as a built-in success callback - [PR #23769](https://github.com/BerriAI/litellm/pull/23769)
+    - Add Ramp as a built-in success callback - [PR #23769](https://github.com/Soventra/lumina/pull/23769)
 - **[Langfuse](../../docs/proxy/logging#langfuse)**
-    - Preserve proxy key-auth metadata on `/v1/messages` Langfuse traces - [PR #25448](https://github.com/BerriAI/litellm/pull/25448)
+    - Preserve proxy key-auth metadata on `/v1/messages` Langfuse traces - [PR #25448](https://github.com/Soventra/lumina/pull/25448)
 - **[Prometheus](/docs/proxy/prometheus)**
-    - Reduce default `LATENCY_BUCKETS` from 35 → 18 boundaries (see breaking-change note above) - [PR #25527](https://github.com/BerriAI/litellm/pull/25527)
+    - Reduce default `LATENCY_BUCKETS` from 35 → 18 boundaries (see breaking-change note above) - [PR #25527](https://github.com/Soventra/lumina/pull/25527)
 - **General**
-    - S3 logging: retry with exponential backoff for transient 503/500 errors - [PR #25530](https://github.com/BerriAI/litellm/pull/25530)
+    - S3 logging: retry with exponential backoff for transient 503/500 errors - [PR #25530](https://github.com/Soventra/lumina/pull/25530)
 
 ### Guardrails
 
-- Optional skip system message in unified guardrail inputs - [PR #25481](https://github.com/BerriAI/litellm/pull/25481)
-- Inline IAM: apply guardrail support - [PR #25241](https://github.com/BerriAI/litellm/pull/25241)
-- Preserve `dict` `HTTPException.detail` and Bedrock context in guardrail errors - [PR #25558](https://github.com/BerriAI/litellm/pull/25558)
+- Optional skip system message in unified guardrail inputs - [PR #25481](https://github.com/Soventra/lumina/pull/25481)
+- Inline IAM: apply guardrail support - [PR #25241](https://github.com/Soventra/lumina/pull/25241)
+- Preserve `dict` `HTTPException.detail` and Bedrock context in guardrail errors - [PR #25558](https://github.com/Soventra/lumina/pull/25558)
 
 ## Spend Tracking, Budgets and Rate Limiting
 
-- Session-TZ-independent date filtering for spend / error log queries - [PR #25542](https://github.com/BerriAI/litellm/pull/25542)
-- Batch-limit stale managed-object cleanup to prevent 300K+ row updates - [PR #25258](https://github.com/BerriAI/litellm/pull/25258)
+- Session-TZ-independent date filtering for spend / error log queries - [PR #25542](https://github.com/Soventra/lumina/pull/25542)
+- Batch-limit stale managed-object cleanup to prevent 300K+ row updates - [PR #25258](https://github.com/Soventra/lumina/pull/25258)
 
 ## MCP Gateway
 
-- **Per-user OAuth token storage for interactive MCP flows** - [PR #25441](https://github.com/BerriAI/litellm/pull/25441)
-- Block arbitrary command execution via MCP `stdio` transport - [PR #25343](https://github.com/BerriAI/litellm/pull/25343)
-- Restore PKCE-triggering 401 when no stored per-user token exists - [commit e0d5c28](https://github.com/BerriAI/litellm/commit/e0d5c28db02b3219dbd944666a55f49732197922)
-- Document missing MCP per-user token environment variables in `config_settings` - [PR #25471](https://github.com/BerriAI/litellm/pull/25471)
+- **Per-user OAuth token storage for interactive MCP flows** - [PR #25441](https://github.com/Soventra/lumina/pull/25441)
+- Block arbitrary command execution via MCP `stdio` transport - [PR #25343](https://github.com/Soventra/lumina/pull/25343)
+- Restore PKCE-triggering 401 when no stored per-user token exists - [commit e0d5c28](https://github.com/Soventra/lumina/commit/e0d5c28db02b3219dbd944666a55f49732197922)
+- Document missing MCP per-user token environment variables in `config_settings` - [PR #25471](https://github.com/Soventra/lumina/pull/25471)
 
 ## Performance / Loadbalancing / Reliability improvements
 
-- Reduce Prometheus latency histogram cardinality (default buckets 35 → 18) - [PR #25527](https://github.com/BerriAI/litellm/pull/25527)
-- S3 retry with exponential backoff for transient errors - [PR #25530](https://github.com/BerriAI/litellm/pull/25530)
+- Reduce Prometheus latency histogram cardinality (default buckets 35 → 18) - [PR #25527](https://github.com/Soventra/lumina/pull/25527)
+- S3 retry with exponential backoff for transient errors - [PR #25530](https://github.com/Soventra/lumina/pull/25530)
 
 ## Documentation Updates
 
-- Add Docker Image Security Guide covering cosign verification and deployment best practices - [PR #25439](https://github.com/BerriAI/litellm/pull/25439)
-- Document April townhall announcements - [PR #25537](https://github.com/BerriAI/litellm/pull/25537)
-- Document missing MCP per-user token env vars - [PR #25471](https://github.com/BerriAI/litellm/pull/25471)
-- Add "Screenshots / Proof of Fix" section to PR template - [PR #25564](https://github.com/BerriAI/litellm/pull/25564)
+- Add Docker Image Security Guide covering cosign verification and deployment best practices - [PR #25439](https://github.com/Soventra/lumina/pull/25439)
+- Document April townhall announcements - [PR #25537](https://github.com/Soventra/lumina/pull/25537)
+- Document missing MCP per-user token env vars - [PR #25471](https://github.com/Soventra/lumina/pull/25471)
+- Add "Screenshots / Proof of Fix" section to PR template - [PR #25564](https://github.com/Soventra/lumina/pull/25564)
 
 ## Infrastructure / Security Notes
 
-- Pin cosign.pub verification to initial commit hash - [PR #25273](https://github.com/BerriAI/litellm/pull/25273)
-- Fix node-gyp symlink path after npm upgrade in Dockerfile - [PR #25048](https://github.com/BerriAI/litellm/pull/25048)
-- `Dockerfile.non_root`: handle missing `.npmrc` gracefully - [PR #25307](https://github.com/BerriAI/litellm/pull/25307)
-- Add Playwright E2E tests with local PostgreSQL - [PR #25126](https://github.com/BerriAI/litellm/pull/25126)
-- UI E2E tests for proxy admin team and key management - [PR #25365](https://github.com/BerriAI/litellm/pull/25365)
-- Migrate Redis caching tests from GHA to CircleCI - [PR #25354](https://github.com/BerriAI/litellm/pull/25354)
-- Update `check_responses_cost` tests for `_expire_stale_rows` - [PR #25299](https://github.com/BerriAI/litellm/pull/25299)
-- Raise global vitest timeout and remove per-test overrides - [PR #25468](https://github.com/BerriAI/litellm/pull/25468)
-- Version bumps and UI rebuilds: [PR #25316](https://github.com/BerriAI/litellm/pull/25316), [PR #25528](https://github.com/BerriAI/litellm/pull/25528), [PR #25578](https://github.com/BerriAI/litellm/pull/25578), [PR #25571](https://github.com/BerriAI/litellm/pull/25571), [PR #25573](https://github.com/BerriAI/litellm/pull/25573), [PR #25577](https://github.com/BerriAI/litellm/pull/25577)
+- Pin cosign.pub verification to initial commit hash - [PR #25273](https://github.com/Soventra/lumina/pull/25273)
+- Fix node-gyp symlink path after npm upgrade in Dockerfile - [PR #25048](https://github.com/Soventra/lumina/pull/25048)
+- `Dockerfile.non_root`: handle missing `.npmrc` gracefully - [PR #25307](https://github.com/Soventra/lumina/pull/25307)
+- Add Playwright E2E tests with local PostgreSQL - [PR #25126](https://github.com/Soventra/lumina/pull/25126)
+- UI E2E tests for proxy admin team and key management - [PR #25365](https://github.com/Soventra/lumina/pull/25365)
+- Migrate Redis caching tests from GHA to CircleCI - [PR #25354](https://github.com/Soventra/lumina/pull/25354)
+- Update `check_responses_cost` tests for `_expire_stale_rows` - [PR #25299](https://github.com/Soventra/lumina/pull/25299)
+- Raise global vitest timeout and remove per-test overrides - [PR #25468](https://github.com/Soventra/lumina/pull/25468)
+- Version bumps and UI rebuilds: [PR #25316](https://github.com/Soventra/lumina/pull/25316), [PR #25528](https://github.com/Soventra/lumina/pull/25528), [PR #25578](https://github.com/Soventra/lumina/pull/25578), [PR #25571](https://github.com/Soventra/lumina/pull/25571), [PR #25573](https://github.com/Soventra/lumina/pull/25573), [PR #25577](https://github.com/Soventra/lumina/pull/25577)
 
 ## New Contributors
 
-* @kedarthakkar made their first contribution in https://github.com/BerriAI/litellm/pull/23769
-* @csoni-cweave made their first contribution in https://github.com/BerriAI/litellm/pull/25441
-* @jimmychen-p72 made their first contribution in https://github.com/BerriAI/litellm/pull/25530
+* @kedarthakkar made their first contribution in https://github.com/Soventra/lumina/pull/23769
+* @csoni-cweave made their first contribution in https://github.com/Soventra/lumina/pull/25441
+* @jimmychen-p72 made their first contribution in https://github.com/Soventra/lumina/pull/25530
 
-**Full Changelog**: https://github.com/BerriAI/litellm/compare/v1.83.3-stable...v1.83.7-stable
+**Full Changelog**: https://github.com/Soventra/lumina/compare/v1.83.3-stable...v1.83.7-stable

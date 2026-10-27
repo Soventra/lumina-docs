@@ -2,9 +2,9 @@ import Image from '@theme/IdealImage';
 
 # Azure PTU Flat Cost Attribution
 
-Azure provisioned throughput is billed by the hour for reserved capacity, not per token. A team with its own PTU deployment pays that hourly rate whether it sends one request or a million, so LiteLLM's per-token cost tracking reports nothing that matches the invoice. PTU flat cost attribution fixes the mismatch: you tell LiteLLM how much capacity a deployment reserves and what it costs per hour, and a daily job attributes that cost to the owning team.
+Azure provisioned throughput is billed by the hour for reserved capacity, not per token. A team with its own PTU deployment pays that hourly rate whether it sends one request or a million, so Lumina's per-token cost tracking reports nothing that matches the invoice. PTU flat cost attribution fixes the mismatch: you tell Lumina how much capacity a deployment reserves and what it costs per hour, and a daily job attributes that cost to the owning team.
 
-A PTU deployment is billed by its reserved capacity alone. LiteLLM stores zero per-token pricing on it, so the traffic the capacity serves is never charged on top of the flat cost.
+A PTU deployment is billed by its reserved capacity alone. Lumina stores zero per-token pricing on it, so the traffic the capacity serves is never charged on top of the flat cost.
 
 One deployment can also be split across several teams in PTUs. Each team's share becomes a per-minute ceiling the proxy enforces, the flat cost is attributed by share, and usage reports the PTU-hours each team consumed next to its tokens. See [Share a deployment across teams](#share-a-deployment-across-teams)
 
@@ -22,7 +22,7 @@ With the variable unset the daily job is not scheduled, the model endpoints reje
 
 ## Configure a deployment
 
-PTU configuration lives on the deployment's `model_info`. In the Admin UI, open Models + Endpoints, pick the deployment, and edit its settings. The PTU inputs sit directly under the per-token costs, which LiteLLM holds at zero for you:
+PTU configuration lives on the deployment's `model_info`. In the Admin UI, open Models + Endpoints, pick the deployment, and edit its settings. The PTU inputs sit directly under the per-token costs, which Lumina holds at zero for you:
 
 <Image img={require('../../img/ptu_configure_model.png')} />
 
@@ -147,7 +147,7 @@ A team named in `ptu_shares` cannot be deleted while it holds the share. `POST /
 
 ### Each share is a per-minute ceiling
 
-Azure sizes a provisioned deployment in normalized tokens per minute: uncached input tokens in full, cached input at the model's cached ratio (a tenth for the GPT-6 family, nothing for the rest), and output tokens weighted by the model's output-to-input ratio, divided by the model's input TPM per PTU. LiteLLM ships that table, read from [Azure's provisioned throughput sizing page](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/provisioned-throughput-sizing#deployment-parameters-and-throughput-values-by-model), and turns each share into a per-minute ceiling in the same units:
+Azure sizes a provisioned deployment in normalized tokens per minute: uncached input tokens in full, cached input at the model's cached ratio (a tenth for the GPT-6 family, nothing for the rest), and output tokens weighted by the model's output-to-input ratio, divided by the model's input TPM per PTU. Lumina ships that table, read from [Azure's provisioned throughput sizing page](https://learn.microsoft.com/en-us/azure/foundry/openai/how-to/provisioned-throughput-sizing#deployment-parameters-and-throughput-values-by-model), and turns each share into a per-minute ceiling in the same units:
 
 ```
 team ceiling per minute = share x input TPM per PTU for the model
@@ -181,7 +181,7 @@ A job runs at 00:15 UTC and writes one row per team and model for the previous d
 flat cost = ptu_count x cost_per_ptu_per_hour x hours active that day
 ```
 
-A deployment split with `ptu_shares` writes one row per team instead, each carrying that team's share in place of `ptu_count`: 30 and 20 of the 50 PTUs at $1 per PTU-hour are $720 and $480 for a full day, and the deployment's $1,200 lands on nobody else. Active hours are the overlap between the day and the reservation window, so a reservation starting at noon accrues 12 hours on its first day and 24 thereafter. The rows are written into `LiteLLM_DailyTeamSpend` under the reserved key `__ptu_flat_cost__`, which keeps flat cost separate from the per-request spend recorded against real API keys.
+A deployment split with `ptu_shares` writes one row per team instead, each carrying that team's share in place of `ptu_count`: 30 and 20 of the 50 PTUs at $1 per PTU-hour are $720 and $480 for a full day, and the deployment's $1,200 lands on nobody else. Active hours are the overlap between the day and the reservation window, so a reservation starting at noon accrues 12 hours on its first day and 24 thereafter. The rows are written into `Lumina_DailyTeamSpend` under the reserved key `__ptu_flat_cost__`, which keeps flat cost separate from the per-request spend recorded against real API keys.
 
 A reservation that starts before the job first sees it is filled in as well: the catch-up pass prices each elapsed day back to `ptu_effective_from`, up to 91 days. A deployment configured today with a backdated start therefore accrues its whole window on the first run. A day the job has already priced keeps its rows when shares later move between teams, so the team taking over a share is billed only for days priced after the move, never for days the previous holder already paid for. A day whose write fails is written for none of its teams, and the next catch-up pass prices it for all of them. The job splits a day by the shares as they stand when it runs, so shares moved during a day bill that whole day by the new split.
 
@@ -189,7 +189,7 @@ Flat cost does not count against team or key budgets. Reserved capacity is alrea
 
 ## Spillover requests
 
-When a PTU deployment is full, Azure can send the overflow to a pay-as-you-go deployment you configure as its spillover target, and bills those requests per token. LiteLLM does the same: a response with `x-ms-is-spilled-over: true` is priced at the served model's standard rates, while requests the PTU serves stay at zero. The hourly flat cost is unchanged either way
+When a PTU deployment is full, Azure can send the overflow to a pay-as-you-go deployment you configure as its spillover target, and bills those requests per token. Lumina does the same: a response with `x-ms-is-spilled-over: true` is priced at the served model's standard rates, while requests the PTU serves stay at zero. The hourly flat cost is unchanged either way
 
 Spilled requests are tagged in the spend log metadata, so you can tell them apart on the Logs page:
 
@@ -219,7 +219,7 @@ The Usage page in the Admin UI shows the same figures under Team Usage, charting
 
 ## Rates you must not set
 
-LiteLLM refuses a per-token, per-second, or cache rate on a PTU deployment, and names the field it rejected. Sending `0`, an all-zero table, or no value at all is accepted:
+Lumina refuses a per-token, per-second, or cache rate on a PTU deployment, and names the field it rejected. Sending `0`, an all-zero table, or no value at all is accepted:
 
 ```
 A PTU deployment bills by reserved capacity, so input_cost_per_token cannot be charged on top

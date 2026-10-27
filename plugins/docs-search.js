@@ -8,7 +8,7 @@ const {extractStructure} = require('../search/page-structure');
 const {extractOpenAPI} = require('../search/openapi');
 
 function extractSections(html, url, metadata = {}) {
-  url = new URL(url, 'https://docs.litellm.ai').pathname;
+  url = new URL(url, 'https://docs.lumina.ai').pathname;
   const $ = cheerio.load(html);
   if (($('meta[name="robots"]').attr('content') || '').includes('noindex') || $('meta[http-equiv="refresh"]').length) return [];
   const type = metadata.type || contentType(url);
@@ -55,9 +55,9 @@ function extractSections(html, url, metadata = {}) {
     // Navigation questions need the destination, not just the anchor's visible text.
     node.find('a[href]').each((_, element) => {
       try {
-        const target = new URL($(element).attr('href'), `https://docs.litellm.ai${url}`);
+        const target = new URL($(element).attr('href'), `https://docs.lumina.ai${url}`);
         const destination = target.pathname + target.hash, title = $(element).text().trim();
-        if (target.origin === 'https://docs.litellm.ai' && !target.username && !target.password && isContentUrl(destination) && title) {
+        if (target.origin === 'https://docs.lumina.ai' && !target.username && !target.password && isContentUrl(destination) && title) {
           links.set(destination, {url: destination, title});
         }
       } catch { /* Ignore malformed links rather than exposing unvalidated destinations. */ }
@@ -125,7 +125,7 @@ async function buildSearchIndex({outDir, outputDir = outDir, pages, routesBuildM
 module.exports = function docsSearch() {
   let pages = new Map();
   return {
-    name: 'litellm-docs-search',
+    name: 'lumina-docs-search',
     allContentLoaded({allContent}) { pages = collectPages(allContent); },
     async postBuild(options) {
       await buildSearchIndex({...options, pages});

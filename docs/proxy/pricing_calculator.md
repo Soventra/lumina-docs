@@ -12,11 +12,11 @@ Use the Pricing Calculator to:
 
 ## Using the Pricing Calculator
 
-This walkthrough shows how to estimate LLM costs using the Pricing Calculator in the LiteLLM UI.
+This walkthrough shows how to estimate LLM costs using the Pricing Calculator in the Lumina UI.
 
 ### Step 1: Navigate to Settings
 
-From the LiteLLM dashboard, click on **Settings** in the left sidebar.
+From the Lumina dashboard, click on **Settings** in the left sidebar.
 
 ![Click Settings](https://colony-recorder.s3.amazonaws.com/files/2026-01-05/183c437e-bda9-48b4-ab8f-95f023ba1146/ascreenshot_a1013487f545484194a9a4929eef4c49_text_export.jpeg)
 
@@ -38,7 +38,7 @@ Click the **Model** dropdown to select the model you want to estimate costs for.
 
 ![Click Model field](https://colony-recorder.s3.amazonaws.com/files/2026-01-05/a6c236ce-3154-42a8-9701-120e3f7a017b/ascreenshot_635c61b832594e809f8ab79b5b3f32e1_text_export.jpeg)
 
-Choose a model from the list. The models shown are the ones configured on your LiteLLM proxy.
+Choose a model from the list. The models shown are the ones configured on your Lumina proxy.
 
 ![Select model](https://colony-recorder.s3.amazonaws.com/files/2026-01-05/96c4ebc4-1b88-4dea-b3b2-ea32fde36d9e/ascreenshot_7c2920f05a984ebbb530a8a85e669537_text_export.jpeg)
 

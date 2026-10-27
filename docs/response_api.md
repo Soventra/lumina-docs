@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 # /responses
 
 
-LiteLLM provides an endpoint in the spec of [OpenAI's `/responses` API](https://platform.openai.com/docs/api-reference/responses)
+Lumina provides an endpoint in the spec of [OpenAI's `/responses` API](https://platform.openai.com/docs/api-reference/responses)
 
 Requests to /chat/completions may be bridged here automatically when the provider lacks support for that endpoint. The model’s default `mode` determines how bridging works.(see `model_prices_and_context_window`) 
 
@@ -22,22 +22,22 @@ The reverse also happens: a deployment whose provider has no Responses API confi
 | Loadbalancing | ✅ | Works between supported models |
 | Guardrails | ✅ | Applies to input and output text (non-streaming only) |
 | Supported operations | Create a response, Get a response, Delete a response | |
-| Supported LiteLLM Versions | 1.63.8+ | |
-| Supported LLM providers | **All LiteLLM supported providers** | `openai`, `anthropic`, `bedrock`, `vertex_ai`, `gemini`, `azure`, `azure_ai` etc. |
+| Supported Lumina Versions | 1.63.8+ | |
+| Supported LLM providers | **All Lumina supported providers** | `openai`, `anthropic`, `bedrock`, `vertex_ai`, `gemini`, `azure`, `azure_ai` etc. |
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 <Tabs>
 <TabItem value="openai" label="OpenAI">
 
 #### Non-streaming
 ```python showLineNumbers title="OpenAI Non-streaming Response"
-import litellm
+import lumina
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -80,10 +80,10 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="OpenAI Streaming Response"
-import litellm
+import lumina
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True
@@ -95,11 +95,11 @@ for event in response:
 
 #### Image Generation with Streaming
 ```python showLineNumbers title="OpenAI Streaming Image Generation"
-import litellm
+import lumina
 import base64
 
 # Streaming image generation with partial images
-stream = litellm.responses(
+stream = lumina.responses(
     model="{{openai_large}}",  # Use an actual image generation model
     input="Generate a gorgeous image of a river made of white owl feathers",
     stream=True,
@@ -122,11 +122,11 @@ Image generation is supported for models that generate images. Generated images 
 
 **Gemini (Google AI Studio):**
 ```python showLineNumbers title="Gemini Image Generation"
-import litellm
+import lumina
 import base64
 
 # Gemini image generation models don't require tools parameter
-response = litellm.responses(
+response = lumina.responses(
     model="gemini/gemini-2.5-flash-image",
     input="Generate a cute cat playing with yarn"
 )
@@ -146,11 +146,11 @@ print(f"Image saved: generated_{response.output[0].id}.png")
 
 **OpenAI:**
 ```python showLineNumbers title="OpenAI Image Generation"
-import litellm
+import lumina
 import base64
 
 # OpenAI models require tools parameter for image generation
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Generate a futuristic city at sunset",
     tools=[{"type": "image_generation"}]
@@ -197,10 +197,10 @@ When image generation is successful, the response contains:
 
 #### GET a Response
 ```python showLineNumbers title="Get Response by ID"
-import litellm
+import lumina
 
 # First, create a response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -210,24 +210,24 @@ response = litellm.responses(
 response_id = response.id
 
 # Retrieve the response by ID
-retrieved_response = litellm.get_responses(
+retrieved_response = lumina.get_responses(
     response_id=response_id
 )
 
 print(retrieved_response)
 
 # For async usage
-# retrieved_response = await litellm.aget_responses(response_id=response_id)
+# retrieved_response = await lumina.aget_responses(response_id=response_id)
 ```
 
 #### CANCEL a Response
 You can cancel an in-progress response (if supported by the provider):
 
 ```python showLineNumbers title="Cancel Response by ID"
-import litellm
+import lumina
 
 # First, create a response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -237,14 +237,14 @@ response = litellm.responses(
 response_id = response.id
 
 # Cancel the response by ID
-cancel_response = litellm.cancel_responses(
+cancel_response = lumina.cancel_responses(
     response_id=response_id
 )
 
 print(cancel_response)
 
 # For async usage
-# cancel_response = await litellm.acancel_responses(response_id=response_id)
+# cancel_response = await lumina.acancel_responses(response_id=response_id)
 ```
 
 
@@ -259,10 +259,10 @@ This will attempt to cancel the in-progress response with the given ID.
 
 #### DELETE a Response
 ```python showLineNumbers title="Delete Response by ID"
-import litellm
+import lumina
 
 # First, create a response
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -272,14 +272,14 @@ response = litellm.responses(
 response_id = response.id
 
 # Delete the response by ID
-delete_response = litellm.delete_responses(
+delete_response = lumina.delete_responses(
     response_id=response_id
 )
 
 print(delete_response)
 
 # For async usage
-# delete_response = await litellm.adelete_responses(response_id=response_id)
+# delete_response = await lumina.adelete_responses(response_id=response_id)
 ```
 
 </TabItem>
@@ -288,14 +288,14 @@ print(delete_response)
 
 #### Non-streaming
 ```python showLineNumbers title="Anthropic Non-streaming Response"
-import litellm
+import lumina
 import os
 
 # Set API key
 os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-api-key"
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="anthropic/{{anthropic}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -306,14 +306,14 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="Anthropic Streaming Response"
-import litellm
+import lumina
 import os
 
 # Set API key
 os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-api-key"
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="anthropic/{{anthropic}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True
@@ -329,7 +329,7 @@ for event in response:
 
 #### Non-streaming
 ```python showLineNumbers title="Vertex AI Non-streaming Response"
-import litellm
+import lumina
 import os
 
 # Set credentials - Vertex AI uses application default credentials
@@ -338,7 +338,7 @@ os.environ["VERTEXAI_PROJECT"] = "your-gcp-project-id"
 os.environ["VERTEXAI_LOCATION"] = "us-central1"
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="vertex_ai/{{gemini_pro}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -349,7 +349,7 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="Vertex AI Streaming Response"
-import litellm
+import lumina
 import os
 
 # Set credentials - Vertex AI uses application default credentials
@@ -358,7 +358,7 @@ os.environ["VERTEXAI_PROJECT"] = "your-gcp-project-id"
 os.environ["VERTEXAI_LOCATION"] = "us-central1"
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="vertex_ai/{{gemini_pro}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True
@@ -374,7 +374,7 @@ for event in response:
 
 #### Non-streaming
 ```python showLineNumbers title="AWS Bedrock Non-streaming Response"
-import litellm
+import lumina
 import os
 
 # Set AWS credentials
@@ -383,7 +383,7 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = "your-secret-access-key"
 os.environ["AWS_REGION_NAME"] = "us-west-2"  # or your AWS region
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="bedrock/us.anthropic.{{anthropic}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -394,7 +394,7 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="AWS Bedrock Streaming Response"
-import litellm
+import lumina
 import os
 
 # Set AWS credentials
@@ -403,7 +403,7 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = "your-secret-access-key"
 os.environ["AWS_REGION_NAME"] = "us-west-2"  # or your AWS region
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="bedrock/us.anthropic.{{anthropic}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True
@@ -419,14 +419,14 @@ for event in response:
 
 #### Non-streaming
 ```python showLineNumbers title="Google AI Studio Non-streaming Response"
-import litellm
+import lumina
 import os
 
 # Set API key for Google AI Studio
 os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="gemini/{{gemini_flash}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -437,14 +437,14 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="Google AI Studio Streaming Response"
-import litellm
+import lumina
 import os
 
 # Set API key for Google AI Studio
 os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="gemini/{{gemini_flash}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True
@@ -457,12 +457,12 @@ for event in response:
 </TabItem>
 </Tabs>
 
-### LiteLLM Proxy with OpenAI SDK
+### Lumina Proxy with OpenAI SDK
 
-First, set up and start your LiteLLM proxy server.
+First, set up and start your Lumina proxy server.
 
-```bash title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -470,7 +470,7 @@ litellm --config /path/to/config.yaml
 <Tabs>
 <TabItem value="openai" label="OpenAI">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: openai/{{openai_large}}
@@ -524,7 +524,7 @@ for event in response:
 from openai import OpenAI
 import base64
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000")
 
 stream = client.responses.create(
     model="{{openai_large}}",
@@ -599,7 +599,7 @@ print(delete_response)
 
 <TabItem value="anthropic" label="Anthropic">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="Anthropic Proxy Configuration"
 model_list:
   - model_name: anthropic/{{anthropic}}
@@ -652,7 +652,7 @@ for event in response:
 
 <TabItem value="vertex" label="Vertex AI">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="Vertex AI Proxy Configuration"
 model_list:
   - model_name: vertex_ai/{{gemini_pro}}
@@ -706,7 +706,7 @@ for event in response:
 
 <TabItem value="bedrock" label="AWS Bedrock">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="AWS Bedrock Proxy Configuration"
 model_list:
   - model_name: bedrock/us.anthropic.{{anthropic}}
@@ -761,7 +761,7 @@ for event in response:
 
 <TabItem value="gemini" label="Google AI Studio">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="Google AI Studio Proxy Configuration"
 model_list:
   - model_name: gemini/{{gemini_flash}}
@@ -815,11 +815,11 @@ for event in response:
 
 ## WebSocket Mode
 
-The Responses API supports **WebSocket mode** for lower-latency, persistent connections ideal for agentic workflows. WebSocket mode works with **all LiteLLM providers**, not just those with native WebSocket support.
+The Responses API supports **WebSocket mode** for lower-latency, persistent connections ideal for agentic workflows. WebSocket mode works with **all Lumina providers**, not just those with native WebSocket support.
 
 ### Architecture
 
-LiteLLM provides two WebSocket modes:
+Lumina provides two WebSocket modes:
 
 1. **Native WebSocket**: Direct `wss://` connection to providers that support it (OpenAI, Azure)
 2. **Managed WebSocket**: HTTP streaming over WebSocket for all other providers (Anthropic, Gemini, Bedrock, etc.)
@@ -835,10 +835,10 @@ The system automatically selects the appropriate mode based on provider capabili
 import json
 from websocket import create_connection  # uv add websocket-client
 
-# Connect to LiteLLM proxy WebSocket endpoint
+# Connect to Lumina proxy WebSocket endpoint
 ws = create_connection(
     "ws://localhost:4000/v1/responses?model={{gemini_flash}}",
-    header=["Authorization: Bearer sk-<your-litellm-api-key>"]
+    header=["Authorization: Bearer sk-<your-lumina-api-key>"]
 )
 
 try:
@@ -902,7 +902,7 @@ const ws = new WebSocket(
     'ws://localhost:4000/v1/responses?model={{gemini_flash}}',
     {
         headers: {
-            'Authorization': 'Bearer sk-<your-litellm-api-key>'
+            'Authorization': 'Bearer sk-<your-lumina-api-key>'
         }
     }
 );
@@ -1035,7 +1035,7 @@ ws.send(json.dumps({
 
 No special configuration needed. WebSocket mode is automatically available on the `/v1/responses` endpoint when accessed via WebSocket protocol (`ws://` or `wss://`).
 
-For LiteLLM Proxy, ensure your models are configured normally:
+For Lumina Proxy, ensure your models are configured normally:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -1065,7 +1065,7 @@ general_settings:
 
 ## Response ID Security
 
-By default, LiteLLM Proxy prevents users from accessing other users' response IDs.
+By default, Lumina Proxy prevents users from accessing other users' response IDs.
 
 This is done by encrypting the response ID with the user ID, enabling users to only access their own response IDs.
 
@@ -1113,7 +1113,7 @@ IDs the proxy did issue stay owner-checked either way, and proxy admin keys are 
 
 ## Background Mode
 
-LiteLLM passes OpenAI's `background: true` parameter through to the provider. The provider returns immediately with a response in `queued` or `in_progress` status, and you fetch the result later with `GET /v1/responses/{response_id}`:
+Lumina passes OpenAI's `background: true` parameter through to the provider. The provider returns immediately with a response in `queued` or `in_progress` status, and you fetch the result later with `GET /v1/responses/{response_id}`:
 
 ```bash showLineNumbers title="Create a background response"
 curl http://localhost:4000/v1/responses \
@@ -1143,19 +1143,19 @@ Responses still pending after `MANAGED_OBJECT_STALENESS_CUTOFF_DAYS` (default `7
 
 | Provider | Supported Parameters |
 |----------|---------------------|
-| `openai` | [All Responses API parameters are supported](https://github.com/BerriAI/litellm/blob/7c3df984da8e4dff9201e4c5353fdc7a2b441831/litellm/llms/openai/responses/transformation.py#L23) |
-| `azure` | [All Responses API parameters are supported](https://github.com/BerriAI/litellm/blob/7c3df984da8e4dff9201e4c5353fdc7a2b441831/litellm/llms/openai/responses/transformation.py#L23) |
-| `azure_ai` on `.services.ai.azure.com` and `.openai.azure.com` hosts | [All Responses API parameters are supported](https://github.com/BerriAI/litellm/blob/913ef6ed49250f28680a1a50850183b5d80f6bbb/litellm/llms/azure_ai/responses/transformation.py#L25) |
-| `azure_ai` on other hosts | [See supported parameters here](https://github.com/BerriAI/litellm/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/litellm/responses/litellm_completion_transformation/transformation.py#L57) |
-| `anthropic` | [See supported parameters here](https://github.com/BerriAI/litellm/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/litellm/responses/litellm_completion_transformation/transformation.py#L57) |
-| `bedrock` | [See supported parameters here](https://github.com/BerriAI/litellm/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/litellm/responses/litellm_completion_transformation/transformation.py#L57) |
-| `gemini` | [See supported parameters here](https://github.com/BerriAI/litellm/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/litellm/responses/litellm_completion_transformation/transformation.py#L57) |
-| `vertex_ai` | [See supported parameters here](https://github.com/BerriAI/litellm/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/litellm/responses/litellm_completion_transformation/transformation.py#L57) |
-| All other llm api providers | [See supported parameters here](https://github.com/BerriAI/litellm/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/litellm/responses/litellm_completion_transformation/transformation.py#L57) |
+| `openai` | [All Responses API parameters are supported](https://github.com/Soventra/lumina/blob/7c3df984da8e4dff9201e4c5353fdc7a2b441831/lumina/llms/openai/responses/transformation.py#L23) |
+| `azure` | [All Responses API parameters are supported](https://github.com/Soventra/lumina/blob/7c3df984da8e4dff9201e4c5353fdc7a2b441831/lumina/llms/openai/responses/transformation.py#L23) |
+| `azure_ai` on `.services.ai.azure.com` and `.openai.azure.com` hosts | [All Responses API parameters are supported](https://github.com/Soventra/lumina/blob/913ef6ed49250f28680a1a50850183b5d80f6bbb/lumina/llms/azure_ai/responses/transformation.py#L25) |
+| `azure_ai` on other hosts | [See supported parameters here](https://github.com/Soventra/lumina/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/lumina/responses/lumina_completion_transformation/transformation.py#L57) |
+| `anthropic` | [See supported parameters here](https://github.com/Soventra/lumina/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/lumina/responses/lumina_completion_transformation/transformation.py#L57) |
+| `bedrock` | [See supported parameters here](https://github.com/Soventra/lumina/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/lumina/responses/lumina_completion_transformation/transformation.py#L57) |
+| `gemini` | [See supported parameters here](https://github.com/Soventra/lumina/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/lumina/responses/lumina_completion_transformation/transformation.py#L57) |
+| `vertex_ai` | [See supported parameters here](https://github.com/Soventra/lumina/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/lumina/responses/lumina_completion_transformation/transformation.py#L57) |
+| All other llm api providers | [See supported parameters here](https://github.com/Soventra/lumina/blob/f39d9178868662746f159d5ef642c7f34f9bfe5f/lumina/responses/lumina_completion_transformation/transformation.py#L57) |
 
 ## Load Balancing with Session Continuity.
 
-When using the Responses API with multiple deployments of the same model (e.g., multiple Azure OpenAI endpoints), LiteLLM provides session continuity. This ensures that follow-up requests using a `previous_response_id` are routed to the same deployment that generated the original response.
+When using the Responses API with multiple deployments of the same model (e.g., multiple Azure OpenAI endpoints), Lumina provides session continuity. This ensures that follow-up requests using a `previous_response_id` are routed to the same deployment that generated the original response.
 
 
 #### Example Usage
@@ -1164,10 +1164,10 @@ When using the Responses API with multiple deployments of the same model (e.g., 
 <TabItem value="python-sdk" label="Python SDK">
 
 ```python showLineNumbers title="Python SDK with Session Continuity"
-import litellm
+import lumina
 
 # Set up router with multiple deployments of the same model
-router = litellm.Router(
+router = lumina.Router(
     model_list=[
         {
             "model_name": "azure-gpt4-turbo",
@@ -1221,20 +1221,20 @@ follow_up = await router.aresponses(
 
 #### 1. Setup session continuity on proxy config.yaml
 
-To enable session continuity for Responses API in your LiteLLM proxy, set `optional_pre_call_checks` in your proxy config.yaml.
+To enable session continuity for Responses API in your Lumina proxy, set `optional_pre_call_checks` in your proxy config.yaml.
 
 - `responses_api_deployment_check`: high priority routing when `previous_response_id` is provided
-- `encrypted_content_affinity`: **[Recommended]** content-aware routing for encrypted items (e.g., `rs_...` reasoning items) (**requires LiteLLM >= 1.82.3**)
+- `encrypted_content_affinity`: **[Recommended]** content-aware routing for encrypted items (e.g., `rs_...` reasoning items) (**requires Lumina >= 1.82.3**)
 - `session_affinity`: sticky sessions based on session id (takes priority over `deployment_affinity`)
 - `deployment_affinity`: sticky sessions based on user key (applies even without `previous_response_id`)
 
 :::tip[Recommended: Use `encrypted_content_affinity`]
-For Responses API with load balancing across deployments with **different API keys**, use `encrypted_content_affinity` instead of `deployment_affinity`. It only pins requests that contain encrypted content, avoiding quota reduction while preventing `invalid_encrypted_content` errors. (Requires LiteLLM >= 1.82.3.)
+For Responses API with load balancing across deployments with **different API keys**, use `encrypted_content_affinity` instead of `deployment_affinity`. It only pins requests that contain encrypted content, avoiding quota reduction while preventing `invalid_encrypted_content` errors. (Requires Lumina >= 1.82.3.)
 :::
 
 Notes:
 - User-key affinity is keyed on `metadata.user_api_key_hash` (the API key hash). The OpenAI `user` request parameter is an end-user identifier and is intentionally not used for deployment affinity.
-- Session-ID affinity is keyed on `metadata.session_id`. For proxy requests, this can be passed via the `x-litellm-session-id` or `x-litellm-trace-id` HTTP header (they are interchangeable for call chaining). For Python SDK requests, you can pass it via `litellm_metadata={"session_id": "value"}` in request args.
+- Session-ID affinity is keyed on `metadata.session_id`. For proxy requests, this can be passed via the `x-lumina-session-id` or `x-lumina-trace-id` HTTP header (they are interchangeable for call chaining). For Python SDK requests, you can pass it via `lumina_metadata={"session_id": "value"}` in request args.
 - `user_api_key_hash` is already SHA-256, and is used as-is (no double hashing).
 - Affinity is scoped by a stable model identifier (the model-map key, e.g. `model_map_information.model_map_key`) so model aliases map to the same stickiness bucket.
 - The mapping TTL is controlled by `deployment_affinity_ttl_seconds` (configured on Router init / proxy startup).
@@ -1263,7 +1263,7 @@ router_settings:
   deployment_affinity_ttl_seconds: 3600
 ```
 
-#### 2. Use the OpenAI Python SDK to make requests to LiteLLM Proxy
+#### 2. Use the OpenAI Python SDK to make requests to Lumina Proxy
 
 ```python showLineNumbers title="OpenAI Client with Proxy Server"
 from openai import OpenAI
@@ -1327,7 +1327,7 @@ The `encrypted_content_affinity` pre-call check routes follow-up requests contai
 ### How It Works
 
 1. **Encoding Phase** (on response):
-   - For each output item that contains `encrypted_content`, LiteLLM rewrites the item ID to embed the originating `model_id`: `rs_xyz` → `encitem_{base64("litellm:model_id:{model_id};item_id:rs_xyz")}`
+   - For each output item that contains `encrypted_content`, Lumina rewrites the item ID to embed the originating `model_id`: `rs_xyz` → `encitem_{base64("lumina:model_id:{model_id};item_id:rs_xyz")}`
    - The original item ID is restored before forwarding the request to the upstream provider
 
 2. **Routing Phase** (before request):
@@ -1337,7 +1337,7 @@ The `encrypted_content_affinity` pre-call check routes follow-up requests contai
 
 ### When the originating deployment cannot serve the turn
 
-The pin holds only while the originating deployment is in the healthy pool of the routed model group. When it is not, because it is cooled down after errors, it was removed from the config, or the follow-up was routed to a different model group (an auto-router tier change, or a client switching `model` between turns), LiteLLM first looks for a peer, a deployment whose resolved `api_base` and `api_key` are identical to the origin's, and pins to that instead. Deployments in different regions or with different keys never count as peers, whatever the provider would accept, so a multi-region group has none. An origin that was removed from the config, or an id that matches no deployment, has no credentials left to match and skips the peer search
+The pin holds only while the originating deployment is in the healthy pool of the routed model group. When it is not, because it is cooled down after errors, it was removed from the config, or the follow-up was routed to a different model group (an auto-router tier change, or a client switching `model` between turns), Lumina first looks for a peer, a deployment whose resolved `api_base` and `api_key` are identical to the origin's, and pins to that instead. Deployments in different regions or with different keys never count as peers, whatever the provider would accept, so a multi-region group has none. An origin that was removed from the config, or an id that matches no deployment, has no credentials left to match and skips the peer search
 
 Without a peer the turn is served in degraded form rather than failed. On the Responses API each reasoning item keeps its summary text and loses only its encrypted payload and id (an item with no readable text is dropped whole), and on a `/v1/messages` follow-up the thinking block is dropped whole. The rest of the conversation is untouched, the request goes to the healthy deployments through the normal routing strategy, and the model reasons fresh on that turn. The reasoning items it returns carry the id of the deployment that served it, so later turns pin there. Every degraded turn logs one router warning, so watch for it when reasoning continuity across turns matters to you:
 
@@ -1359,7 +1359,7 @@ The check can be turned on and off on a running proxy through `POST /config/upda
 <TabItem value="sdk" label="Python SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -1430,7 +1430,7 @@ router_settings:
 
 **Start proxy:**
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 </TabItem>
@@ -1456,7 +1456,7 @@ Groups not listed fall back to the global `optional_pre_call_checks` settings.
 <TabItem value="python-sdk" label="Python SDK">
 
 ```python
-router = litellm.Router(
+router = lumina.Router(
     model_list=[
         {
             "model_name": "{{openai_large}}",
@@ -1527,20 +1527,20 @@ router_settings:
 
 ## Calling non-Responses API endpoints (`/responses` to `/chat/completions` Bridge)
 
-LiteLLM allows you to call non-Responses API models via a bridge to LiteLLM's `/chat/completions` endpoint. This is useful for calling Anthropic, Gemini and even non-Responses API OpenAI models.
+Lumina allows you to call non-Responses API models via a bridge to Lumina's `/chat/completions` endpoint. This is useful for calling Anthropic, Gemini and even non-Responses API OpenAI models.
 
 
 #### Python SDK Usage
 
 ```python showLineNumbers title="SDK Usage"
-import litellm
+import lumina
 import os
 
 # Set API key
 os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-api-key"
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="anthropic/{{anthropic}}",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100
@@ -1549,7 +1549,7 @@ response = litellm.responses(
 print(response)
 ```
 
-#### LiteLLM Proxy Usage
+#### Lumina Proxy Usage
 
 **Setup Config:**
 
@@ -1563,8 +1563,8 @@ model_list:
 
 **Start Proxy:**
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -1589,19 +1589,19 @@ curl http://localhost:4000/v1/responses \
 
 ### Opt-in bridge for `openai/` models with custom `api_base`
 
-If you're using an **OpenAI-compatible third-party provider** (e.g. llama.cpp, vLLM, LM Studio) via `openai/` prefix with a custom `api_base`, LiteLLM will normally forward `/responses` requests directly to that endpoint. If the provider only supports `/chat/completions`, the request will fail.
+If you're using an **OpenAI-compatible third-party provider** (e.g. llama.cpp, vLLM, LM Studio) via `openai/` prefix with a custom `api_base`, Lumina will normally forward `/responses` requests directly to that endpoint. If the provider only supports `/chat/completions`, the request will fail.
 
 Use either of these to force the `/responses` → `/chat/completions` bridge:
 
-1. **`use_chat_completions_api: true`** — makes it explicit that LiteLLM will call the provider’s chat-completions API.
+1. **`use_chat_completions_api: true`** — makes it explicit that Lumina will call the provider’s chat-completions API.
 2. **`openai/chat_completions/<model_name>`** — same pattern as `responses/` on chat completions: the model id encodes the routing choice.
 
 #### Python SDK Usage
 
 ```python showLineNumbers title="Force bridge for custom openai/ endpoint (flag)"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/my-custom-model",
     input="Hello!",
     api_base="http://localhost:8080",
@@ -1615,9 +1615,9 @@ print(response)
 Or encode it in the model id:
 
 ```python showLineNumbers title="Force bridge via openai/chat_completions/ model prefix"
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/chat_completions/my-custom-model",
     input="Hello!",
     api_base="http://localhost:8080",
@@ -1627,7 +1627,7 @@ response = litellm.responses(
 print(response)
 ```
 
-#### LiteLLM Proxy Usage
+#### Lumina Proxy Usage
 
 **Setup Config:**
 
@@ -1645,8 +1645,8 @@ Alternatively set `model: openai/chat_completions/my-custom-model` instead of th
 
 **Start Proxy:**
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -1671,17 +1671,17 @@ For long-running conversations, you can enable **server-side compaction** so tha
 
 Supported on the OpenAI Responses API when using the `openai` or `azure` provider. Pass `context_management` with a compaction entry and `compact_threshold` (token count; minimum 1000). When the context crosses the threshold, the server compacts in-stream and continues. Chain turns with `previous_response_id` or by appending output items to your next input array. See [OpenAI Compaction guide](https://developers.openai.com/api/docs/guides/compaction) for details.
 
-> **Note:** You can use openai `context_management` format with Anthropic models via LiteLLM via responses API. LiteLLM will automatically translate this format for Anthropic and handle context management for you.
+> **Note:** You can use openai `context_management` format with Anthropic models via Lumina via responses API. Lumina will automatically translate this format for Anthropic and handle context management for you.
 
 For explicit control over when compaction runs, use the standalone compact endpoint (`POST /v1/responses/compact`) instead.
 
 ### Python SDK
 
-```python showLineNumbers title="Server-side compaction with LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Server-side compaction with Lumina Python SDK"
+import lumina
 
 # Non-streaming: enable compaction when context exceeds 200k tokens
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="Your conversation input...",
     context_management=[{"type": "compaction", "compact_threshold": 200000}],
@@ -1690,7 +1690,7 @@ response = litellm.responses(
 print(response)
 
 # Streaming: same context_management, compaction runs in-stream if threshold is crossed
-stream = litellm.responses(
+stream = lumina.responses(
     model="openai/{{openai_large}}",
     input="Your conversation input...",
     context_management=[{"type": "compaction", "compact_threshold": 200000}],
@@ -1700,17 +1700,17 @@ for event in stream:
     print(event)
 ```
 
-### LiteLLM Proxy (AI Gateway)
+### Lumina Proxy (AI Gateway)
 
 Use the OpenAI SDK with your proxy as `base_url`, or call the proxy with curl. The proxy forwards `context_management` to the provider.
 
 **OpenAI Python SDK (proxy as base_url):**
 
-```python showLineNumbers title="Server-side compaction via LiteLLM Proxy"
+```python showLineNumbers title="Server-side compaction via Lumina Proxy"
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="http://localhost:4000",  # LiteLLM Proxy (AI Gateway)
+    base_url="http://localhost:4000",  # Lumina Proxy (AI Gateway)
     api_key="your-proxy-api-key",
 )
 
@@ -1725,7 +1725,7 @@ print(response)
 
 **curl (proxy):**
 
-```bash title="Server-side compaction via curl to LiteLLM Proxy"
+```bash title="Server-side compaction via curl to Lumina Proxy"
 curl -X POST "http://localhost:4000/v1/responses" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-proxy-api-key" \
@@ -1745,10 +1745,10 @@ Supported when using the `openai` or `azure` provider with a model that supports
 
 ### Python SDK
 
-```python showLineNumbers title="Shell tool with LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Shell tool with Lumina Python SDK"
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/{{openai_large}}",
     input="List files in /mnt/data and run python --version.",
     tools=[{"type": "shell", "environment": {"type": "container_auto"}}],
@@ -1757,13 +1757,13 @@ response = litellm.responses(
 )
 ```
 
-### LiteLLM Proxy (AI Gateway)
+### Lumina Proxy (AI Gateway)
 
 Use the OpenAI SDK with your proxy as `base_url`, or call the proxy with curl. The proxy forwards `tools` (including `type: "shell"`) to the provider.
 
 **OpenAI Python SDK (proxy as base_url):**
 
-```python showLineNumbers title="Shell tool via LiteLLM Proxy"
+```python showLineNumbers title="Shell tool via Lumina Proxy"
 from openai import OpenAI
 
 client = OpenAI(
@@ -1782,7 +1782,7 @@ response = client.responses.create(
 
 **curl:**
 
-```bash title="Shell tool via curl to LiteLLM Proxy"
+```bash title="Shell tool via curl to Lumina Proxy"
 curl -X POST "http://localhost:4000/v1/responses" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer your-proxy-api-key" \
@@ -1803,20 +1803,20 @@ For full `file_search` usage (native + emulated fallback), SDK/Proxy examples, a
 
 ## Session Management
 
-LiteLLM Proxy supports session management for all supported models. This allows you to store and fetch conversation history (state) in LiteLLM Proxy. 
+Lumina Proxy supports session management for all supported models. This allows you to store and fetch conversation history (state) in Lumina Proxy. 
 
 #### Usage
 
 1. Enable storing request / response content in the database
 
-Set `store_prompts_in_spend_logs: true` under `general_settings` and `cold_storage_custom_logger: s3_v2` under `litellm_settings` in your proxy config.yaml. When this is enabled, LiteLLM will store the request and response content in the s3 bucket you specify.
+Set `store_prompts_in_spend_logs: true` under `general_settings` and `cold_storage_custom_logger: s3_v2` under `lumina_settings` in your proxy config.yaml. When this is enabled, Lumina will store the request and response content in the s3 bucket you specify.
 
 ```yaml showLineNumbers title="config.yaml with Session Continuity"
-litellm_settings:
+lumina_settings:
   callbacks: ["s3_v2"]
   cold_storage_custom_logger: s3_v2
-  s3_callback_params: # learn more https://docs.litellm.ai/docs/proxy/logging#s3-buckets
-    s3_bucket_name: litellm-logs   # AWS Bucket Name for S3
+  s3_callback_params: # learn more https://docs.lumina.ai/docs/proxy/logging#s3-buckets
+    s3_bucket_name: lumina-logs   # AWS Bucket Name for S3
     s3_region_name: us-west-2      
 
 general_settings:
@@ -1846,10 +1846,10 @@ curl http://localhost:4000/v1/responses \
 ```python
 from openai import OpenAI
 
-# Initialize the client with your LiteLLM proxy URL
+# Initialize the client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Make initial request to start a new conversation
@@ -1905,10 +1905,10 @@ curl http://localhost:4000/v1/responses \
 ```python
 from openai import OpenAI
 
-# Initialize the client with your LiteLLM proxy URL
+# Initialize the client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Make follow-up request in the same conversation session
@@ -1963,10 +1963,10 @@ curl http://localhost:4000/v1/responses \
 ```python
 from openai import OpenAI
 
-# Initialize the client with your LiteLLM proxy URL
+# Initialize the client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Make a new request without previous context

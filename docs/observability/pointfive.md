@@ -1,6 +1,6 @@
 # PointFive
 
-LiteLLM can ship proxy request logs to [PointFive](https://www.pointfive.co) for AI cost and usage analysis. Logs are buffered and uploaded through a presigned URL that the PointFive API issues per batch, so the proxy holds no cloud credentials of its own and runs unchanged wherever it is hosted.
+Lumina can ship proxy request logs to [PointFive](https://www.pointfive.co) for AI cost and usage analysis. Logs are buffered and uploaded through a presigned URL that the PointFive API issues per batch, so the proxy holds no cloud credentials of its own and runs unchanged wherever it is hosted.
 
 ## Overview
 
@@ -14,7 +14,7 @@ LiteLLM can ship proxy request logs to [PointFive](https://www.pointfive.co) for
 
 ## Prerequisites
 
-You need a PointFive account and an API key. Add the LiteLLM integration in the PointFive app; it issues the key that this callback uses to request upload URLs.
+You need a PointFive account and an API key. Add the Lumina integration in the PointFive app; it issues the key that this callback uses to request upload URLs.
 
 ## Setup
 
@@ -34,25 +34,25 @@ model_list:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["pointfive"]
 ```
 
 ```bash
 export POINTFIVE_API_KEY="<your-api-key>"
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### Setup on the UI
 
-You can enable the callback from the admin UI instead of `config.yaml`. Open `Settings`, then `Logging & Alerts`, add `PointFive`, and paste your API key. Leave the URL field blank to use the default endpoint. `Test` asks PointFive whether it accepts that key and reports the reason when it does not; it is available to proxy admins only. See the [admin UI docs](https://docs.litellm.ai/docs/proxy/ui) for how to reach these screens.
+You can enable the callback from the admin UI instead of `config.yaml`. Open `Settings`, then `Logging & Alerts`, add `PointFive`, and paste your API key. Leave the URL field blank to use the default endpoint. `Test` asks PointFive whether it accepts that key and reports the reason when it does not; it is available to proxy admins only. See the [admin UI docs](https://docs.lumina.ai/docs/proxy/ui) for how to reach these screens.
 
 ## Tuning the batching
 
 All settings are optional and can be given under `pointfive_params`. Secrets can be referenced with `os.environ/`.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["pointfive"]
   pointfive_params:
     api_key: os.environ/POINTFIVE_API_KEY
@@ -79,7 +79,7 @@ The defaults trade freshness for fewer, larger uploads, since every flush become
 Set `turn_off_message_logging` to leave prompts and responses out of what gets uploaded, on failed requests as well as successful ones. Metadata such as model, token counts, latency, and spend is still sent.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["pointfive"]
   pointfive_params:
     turn_off_message_logging: true
@@ -89,7 +89,7 @@ litellm_settings:
 
 Each flush serializes the queued records to NDJSON, splits them into objects no larger than `max_batch_bytes`, gzips each object off the event loop, and asks the PointFive API for an upload URL sized to exactly those bytes before PUTting them. Every retry requests a fresh URL, so an expired or already-consumed URL is never reused, and PointFive picks the object key, so the proxy never chooses where its data lands.
 
-The upload URL comes from the PointFive API, so it is checked like any other externally supplied destination before the proxy connects: hosts that resolve to private, loopback, or link-local addresses are refused, and a redirect is never followed. The check honors `user_url_validation` and `user_url_allowed_hosts` from `litellm_settings` (see [config settings](../proxy/config_settings.md)).
+The upload URL comes from the PointFive API, so it is checked like any other externally supplied destination before the proxy connects: hosts that resolve to private, loopback, or link-local addresses are refused, and a redirect is never followed. The check honors `user_url_validation` and `user_url_allowed_hosts` from `lumina_settings` (see [config settings](../proxy/config_settings.md)).
 
 Delivery is at-least-once. A failure that is worth retrying keeps the batch queued for the next flush, which can re-send an object that already landed; a rejection the server would refuse again drops that object rather than blocking every record queued behind it. When a flush finds nothing queued, the callback reports that it is still alive, so an idle proxy is distinguishable from one that has stopped shipping.
 
@@ -117,4 +117,4 @@ curl -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
 ## Related links
 
 - [PointFive](https://www.pointfive.co)
-- [Proxy logging guide](https://docs.litellm.ai/docs/proxy/logging)
+- [Proxy logging guide](https://docs.lumina.ai/docs/proxy/logging)

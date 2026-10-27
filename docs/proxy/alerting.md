@@ -63,7 +63,7 @@ general_settings:
 
 Start proxy 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 
@@ -87,7 +87,7 @@ general_settings:
   alerting: ["slack"]
   alert_types: ["spend_reports"] 
 
-litellm_settings:
+lumina_settings:
   redact_messages_in_exceptions: True
 ```
 
@@ -103,7 +103,7 @@ Set the `soft_budget` to 0.001
 curl -X 'POST' \
   'http://localhost:4000/key/generate' \
   -H 'accept: application/json' \
-  -H 'x-goog-api-key: sk-<your-litellm-api-key>' \
+  -H 'x-goog-api-key: sk-<your-lumina-api-key>' \
   -H 'Content-Type: application/json' \
   -d '{
   "key_alias": "prod-app1",
@@ -148,7 +148,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_large}}",
     messages = [], 
@@ -229,7 +229,7 @@ general_settings:
     "outage_alerts": "example-slack-webhook-url",
   }
 
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]
 ```
 </TabItem>
@@ -263,7 +263,7 @@ general_settings:
     "outage_alerts": ["os.environ/SLACK_WEBHOOK_URL_19", "os.environ/SLACK_WEBHOOK_URL_20"],
   }
 
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]
 ```
 
@@ -288,7 +288,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 
 ### MS Teams Webhooks
 
-LiteLLM sends alerts to Microsoft Teams natively through the `ms_teams` alerting destination, available from v1.100.0. Each alert is posted as an Adaptive Card, which both Teams Workflows webhooks and legacy incoming webhook connectors accept
+Lumina sends alerts to Microsoft Teams natively through the `ms_teams` alerting destination, available from v1.100.0. Each alert is posted as an Adaptive Card, which both Teams Workflows webhooks and legacy incoming webhook connectors accept
 
 ##### Quick Start
 
@@ -300,7 +300,7 @@ LiteLLM sends alerts to Microsoft Teams natively through the `ms_teams` alerting
 MS_TEAMS_WEBHOOK_URL="https://<your-tenant>.webhook.office.com/webhookb2/<...>/IncomingWebhook/<...>"
 ```
 
-3. Add `ms_teams` to `alerting` in your litellm config. It can sit alongside other destinations such as `slack` or `email`
+3. Add `ms_teams` to `alerting` in your lumina config. It can sit alongside other destinations such as `slack` or `email`
 
 ```yaml
 model_list: 
@@ -351,7 +351,7 @@ Discord provides a slack compatible webhook url that you can use for alerting
 "https://discord.com/api/webhooks/1240030362193760286/cTLWt5ATn1gKmcy_982rl5xmYHsrM1IWJdmCL1AyOmU9JdQXazrp8L1_PYgUtgxj8x4f/slack"
 ```
 
-3. Add it to your litellm config 
+3. Add it to your lumina config 
 
 ```yaml
 model_list: 
@@ -392,7 +392,7 @@ general_settings:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -455,7 +455,7 @@ curl -X GET --location 'http://0.0.0.0:4000/health/services?service=webhook' \
 
 ### Digest Mode (Reducing Alert Noise)
 
-By default, LiteLLM sends a separate Slack message for **every** alert event. For high-frequency alert types like `llm_requests_hanging` or `llm_too_slow`, this can produce hundreds of duplicate messages per day.
+By default, Lumina sends a separate Slack message for **every** alert event. For high-frequency alert types like `llm_requests_hanging` or `llm_too_slow`, this can produce hundreds of duplicate messages per day.
 
 **Digest mode** aggregates duplicate alerts within a configurable time window and emits a single summary message with the total count and time range.
 
@@ -546,7 +546,7 @@ LLM-related Alerts
 | `llm_too_slow` | Notifications for LLM responses slower than the set threshold | ✅ |
 | `llm_requests_hanging` | Alerts for LLM requests that are not completing | ✅ |
 | `cooldown_deployment` | Alerts when a deployment is put into cooldown | ✅ |
-| `new_model_added` | Notifications when a new model is added to litellm proxy through /model/new| ✅ |
+| `new_model_added` | Notifications when a new model is added to lumina proxy through /model/new| ✅ |
 | `outage_alerts` | Alerts when a specific LLM deployment is facing an outage | ✅ |
 | `region_outage_alerts` | Alerts when a specific LLM region is facing an outage. Example us-east-1 | ✅ |
 

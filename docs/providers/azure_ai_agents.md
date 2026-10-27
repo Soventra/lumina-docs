@@ -8,7 +8,7 @@ Call Azure AI Foundry Agents in the OpenAI Request/Response format.
 | Property | Details |
 |----------|---------|
 | Description | Azure AI Foundry Agents provides hosted agent runtimes that can execute agentic workflows with foundation models, tools, and code interpreters. |
-| Provider Route on LiteLLM | `azure_ai/agents/{AGENT_ID}` |
+| Provider Route on Lumina | `azure_ai/agents/{AGENT_ID}` |
 | Provider Doc | [Azure AI Foundry Agents ↗](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/quickstart) |
 
 ## Authentication
@@ -25,7 +25,7 @@ export AZURE_CLIENT_ID="your-client-id"
 export AZURE_CLIENT_SECRET="your-client-secret"
 ```
 
-LiteLLM will automatically obtain an Azure AD token using these credentials.
+Lumina will automatically obtain an Azure AD token using these credentials.
 
 ### Option 2: Azure AD Token (Manual)
 
@@ -53,13 +53,13 @@ Or add via **Azure AI Foundry Portal** → Your Project → **Project users** �
 
 ## Quick Start
 
-### Model Format to LiteLLM
+### Model Format to Lumina
 
-To call an Azure AI Foundry Agent through LiteLLM, use the following model format.
+To call an Azure AI Foundry Agent through Lumina, use the following model format.
 
-Here the `model=azure_ai/agents/` tells LiteLLM to call the Azure AI Foundry Agent Service API.
+Here the `model=azure_ai/agents/` tells Lumina to call the Azure AI Foundry Agent Service API.
 
-```shell showLineNumbers title="Model Format to LiteLLM"
+```shell showLineNumbers title="Model Format to Lumina"
 azure_ai/agents/{AGENT_ID}
 ```
 
@@ -68,14 +68,14 @@ azure_ai/agents/{AGENT_ID}
 
 You can find the Agent ID in your Azure AI Foundry portal under Agents.
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Basic Agent Completion"
-import litellm
+import lumina
 
 # Make a completion request to your Azure AI Foundry Agent
 # Uses AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET env vars for auth
-response = litellm.completion(
+response = lumina.completion(
     model="azure_ai/agents/asst_abc123",
     messages=[
         {
@@ -91,10 +91,10 @@ print(f"Usage: {response.usage}")
 ```
 
 ```python showLineNumbers title="Streaming Agent Responses"
-import litellm
+import lumina
 
 # Stream responses from your Azure AI Foundry Agent
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="azure_ai/agents/asst_abc123",
     messages=[
         {
@@ -111,14 +111,14 @@ async for chunk in response:
         print(chunk.choices[0].delta.content, end="")
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your model in config.yaml
 
 <Tabs>
 <TabItem value="config-yaml" label="config.yaml">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration"
+```yaml showLineNumbers title="Lumina Proxy Configuration"
 model_list:
   - model_name: azure-agent-1
     lumina_params:
@@ -140,10 +140,10 @@ model_list:
 </TabItem>
 </Tabs>
 
-#### 2. Start the LiteLLM Proxy
+#### 2. Start the Lumina Proxy
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 ```
 
 #### 3. Make requests to your Azure AI Foundry Agents
@@ -186,13 +186,13 @@ curl http://localhost:4000/v1/chat/completions \
 
 <TabItem value="openai-sdk" label="OpenAI Python SDK">
 
-```python showLineNumbers title="Using OpenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Using OpenAI SDK with Lumina Proxy"
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Make a completion request to your Azure AI Foundry Agent
@@ -214,7 +214,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000", 
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Stream Agent responses
@@ -253,13 +253,13 @@ export AZURE_CLIENT_SECRET="your-client-secret"
 
 ## Conversation Continuity (Thread Management)
 
-Azure AI Foundry Agents use threads to maintain conversation context. LiteLLM automatically manages threads for you, but you can also pass an existing thread ID to continue a conversation.
+Azure AI Foundry Agents use threads to maintain conversation context. Lumina automatically manages threads for you, but you can also pass an existing thread ID to continue a conversation.
 
 ```python showLineNumbers title="Continuing a Conversation"
-import litellm
+import lumina
 
 # First message creates a new thread
-response1 = await litellm.acompletion(
+response1 = await lumina.acompletion(
     model="azure_ai/agents/asst_abc123",
     messages=[{"role": "user", "content": "My name is Alice"}],
     api_base="https://your-resource.services.ai.azure.com/api/projects/your-project",
@@ -269,7 +269,7 @@ response1 = await litellm.acompletion(
 thread_id = response1._hidden_params.get("thread_id")
 
 # Continue the conversation using the same thread
-response2 = await litellm.acompletion(
+response2 = await lumina.acompletion(
     model="azure_ai/agents/asst_abc123",
     messages=[{"role": "user", "content": "What's my name?"}],
     api_base="https://your-resource.services.ai.azure.com/api/projects/your-project",
@@ -287,9 +287,9 @@ Azure AI Foundry Agents support additional parameters that can be passed to cust
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers title="Using Agent-specific parameters"
-from litellm import completion
+from lumina import completion
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure_ai/agents/asst_abc123",
     messages=[
         {
@@ -306,7 +306,7 @@ response = litellm.completion(
 </TabItem>
 <TabItem value="proxy" label="Proxy">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration with Parameters"
+```yaml showLineNumbers title="Lumina Proxy Configuration with Parameters"
 model_list:
   - model_name: azure-agent-analyst
     lumina_params:
@@ -328,9 +328,9 @@ model_list:
 | `thread_id` | string | Optional thread ID to continue an existing conversation |
 | `instructions` | string | Optional instructions to override the agent's default instructions for this run |
 
-## LiteLLM A2A Gateway
+## Lumina A2A Gateway
 
-You can also connect to Azure AI Foundry Agents through LiteLLM's A2A (Agent-to-Agent) Gateway UI. This provides a visual way to register and test agents without writing code.
+You can also connect to Azure AI Foundry Agents through Lumina's A2A (Agent-to-Agent) Gateway UI. This provides a visual way to register and test agents without writing code.
 
 ### 1. Navigate to Agents
 
@@ -368,7 +368,7 @@ Get the Agent ID from your Azure AI Foundry portal:
 
 ![Copy Agent ID](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-14/bf17dfec-a627-41c6-9121-3935e86d3700/ascreenshot.jpeg?tl_px=0,0&br_px=2618,1463&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=504,241)
 
-3. Paste the Agent ID in LiteLLM - this tells LiteLLM which agent to invoke on Azure Foundry
+3. Paste the Agent ID in Lumina - this tells Lumina which agent to invoke on Azure Foundry
 
 ![Paste Agent ID](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-14/45230c28-54f6-441c-9a20-4ef8b74076e2/ascreenshot.jpeg?tl_px=0,97&br_px=2617,1560&force_format=jpeg&q=100&width=1120.0)
 
@@ -382,7 +382,7 @@ Get your API base URL from Azure AI Foundry:
 
 ![Get API Base](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-14/60e2c735-4480-44b7-ab12-d69f4200b12c/ascreenshot.jpeg?tl_px=0,40&br_px=2618,1503&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=278,277)
 
-4. Paste the URL in LiteLLM
+4. Paste the URL in Lumina
 
 ![Paste API Base](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-14/e9c6f48e-7602-449a-9261-0df4a0a66876/ascreenshot.jpeg?tl_px=267,456&br_px=2468,1687&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=524,277)
 
@@ -428,7 +428,7 @@ The agent responds with its capabilities. You can now interact with your Azure A
 
 ## Foundry agents over A2A
 
-Agents created in the current Microsoft Foundry portal do not speak the Assistants API, so `azure_ai/agents/<name>` answers `Invalid 'assistant_id'` for them. They expose an A2A endpoint instead, and LiteLLM registers them as plain A2A agents that authenticate with Microsoft Entra ID
+Agents created in the current Microsoft Foundry portal do not speak the Assistants API, so `azure_ai/agents/<name>` answers `Invalid 'assistant_id'` for them. They expose an A2A endpoint instead, and Lumina registers them as plain A2A agents that authenticate with Microsoft Entra ID
 
 The endpoint is `https://<account>.services.ai.azure.com/api/projects/<project>/agents/<agent>/endpoint/protocols/a2a`. Foundry serves its agent card at `agentCard/v1.0` under it rather than at the well-known paths, and accepts only an Entra bearer for the `https://ai.azure.com/.default` scope, so the entry sets `agent_card_path` and the service principal fields:
 
@@ -450,7 +450,7 @@ agents:
 
 `tenant_id`, `client_id` and `client_secret` are the names the `azure_ai` provider uses. A bearer you minted yourself goes in `azure_ad_token` (an `oidc/` federated token there needs `tenant_id` + `client_id` next to it), a user login in `client_id` + `azure_username` + `azure_password`, and `azure_scope` overrides the scope. Only the credentials on the agent are used; the process-wide `AZURE_*` variables are never read for an A2A agent. Without `agent_card_path`, discovery still reaches `agentCard/v1.0` after the two well-known paths fail, at the cost of two extra round trips on every call
 
-Foundry answers `message/send` with a submitted task unless the request asks for a blocking send, and it has no `message/stream`. The `capabilities.streaming: false` line makes LiteLLM run a streaming chat completion as one blocking send and replay the answer as a single chunk
+Foundry answers `message/send` with a submitted task unless the request asks for a blocking send, and it has no `message/stream`. The `capabilities.streaming: false` line makes Lumina run a streaming chat completion as one blocking send and replay the answer as a single chunk
 
 Call the agent over A2A with a blocking send:
 
@@ -474,7 +474,7 @@ curl http://localhost:4000/a2a/foundry-agent \
   }'
 ```
 
-Or through chat completions, where LiteLLM asks for the blocking send itself:
+Or through chat completions, where Lumina asks for the blocking send itself:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \

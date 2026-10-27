@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Migrating to OpenTelemetry v2
 
-OpenTelemetry v2 is a rewrite of LiteLLM's tracing. The HTTP server span is owned by the standard FastAPI instrumentation rather than by LiteLLM, the span model is typed, and vendor attribute vocabularies compose through a mapper chain. This guide covers what changes when you move from the [v1 OpenTelemetry integration](./opentelemetry_integration) to [v2](./opentelemetry_v2), and how to migrate without breaking your existing dashboards.
+OpenTelemetry v2 is a rewrite of Lumina's tracing. The HTTP server span is owned by the standard FastAPI instrumentation rather than by Lumina, the span model is typed, and vendor attribute vocabularies compose through a mapper chain. This guide covers what changes when you move from the [v1 OpenTelemetry integration](./opentelemetry_integration) to [v2](./opentelemetry_v2), and how to migrate without breaking your existing dashboards.
 
 ## Turn it on
 
@@ -25,11 +25,11 @@ The v1 logger creates the root span itself and names it `Received Proxy Server R
 
 ### The guardrail span moves
 
-In v1 a guardrail span is a child of the `litellm_request` span. In v2 it is a sibling of the LLM-call span, directly under the request root, because a pre-call guardrail runs before the LLM call exists. A query that finds guardrail spans by walking down from the inference span should repoint to the request root.
+In v1 a guardrail span is a child of the `lumina_request` span. In v2 it is a sibling of the LLM-call span, directly under the request root, because a pre-call guardrail runs before the LLM call exists. A query that finds guardrail spans by walking down from the inference span should repoint to the request root.
 
 ### The inference span name and kind
 
-v1 names the inference span `litellm_request` by default, and `{operation} {model}` only when you opt into the experimental semantic conventions. v2 always names it `{operation} {model}`, for example `chat {{openai_large}}`, with span kind `CLIENT`.
+v1 names the inference span `lumina_request` by default, and `{operation} {model}` only when you opt into the experimental semantic conventions. v2 always names it `{operation} {model}`, for example `chat {{openai_large}}`, with span kind `CLIENT`.
 
 ### Vendor selection
 
@@ -37,7 +37,7 @@ v1 picks a vendor attribute flavor from the callback name through a branch in it
 
 ### Identity stamping
 
-v1 stamps team and key identity onto each span with explicit per-span code. v2 promotes a small allowlist of identity values into OpenTelemetry Baggage once, and a span processor copies them onto every span. This is usually invisible to dashboards, since the resulting keys (`litellm.team.id`, `litellm.api_key.hash`, and so on) are the same idea; the difference is that the set is now an explicit, configurable allowlist. See [Identity baggage](/docs/observability/opentelemetry_v2).
+v1 stamps team and key identity onto each span with explicit per-span code. v2 promotes a small allowlist of identity values into OpenTelemetry Baggage once, and a span processor copies them onto every span. This is usually invisible to dashboards, since the resulting keys (`lumina.team.id`, `lumina.api_key.hash`, and so on) are the same idea; the difference is that the set is now an explicit, configurable allowlist. See [Identity baggage](/docs/observability/opentelemetry_v2).
 
 ### Success status
 
@@ -45,7 +45,7 @@ v1 sets a successful span's status to `OK`. v2 leaves it `UNSET`, the semantic-c
 
 ### More than one collector
 
-v1 has no list of collectors. Exporting to a second one from LiteLLM itself takes a Python handler per collector with `skip_set_global=True` on the extra ones, and only the first handler receives the proxy's root, auth and database spans, so the other collectors get LLM spans whose parent never arrives. v2 reads the collectors from `callback_settings.otel.exporters` in config.yaml and sends each one the complete trace; see [Send to more than one collector](./opentelemetry_v2#send-to-more-than-one-collector). When you switch, put every collector in that list, the first handler's included even if it came from `OTEL_ENDPOINT`, because the list replaces `OTEL_ENDPOINT` for traces. Then add `otel` to `litellm_settings.callbacks`, which the list needs before it is read, and drop the Python handlers. v1 ignores the list, so it does nothing until `LUMINA_OTEL_V2` is on.
+v1 has no list of collectors. Exporting to a second one from Lumina itself takes a Python handler per collector with `skip_set_global=True` on the extra ones, and only the first handler receives the proxy's root, auth and database spans, so the other collectors get LLM spans whose parent never arrives. v2 reads the collectors from `callback_settings.otel.exporters` in config.yaml and sends each one the complete trace; see [Send to more than one collector](./opentelemetry_v2#send-to-more-than-one-collector). When you switch, put every collector in that list, the first handler's included even if it came from `OTEL_ENDPOINT`, because the list replaces `OTEL_ENDPOINT` for traces. Then add `otel` to `lumina_settings.callbacks`, which the list needs before it is read, and drop the Python handlers. v1 ignores the list, so it does nothing until `LUMINA_OTEL_V2` is on.
 
 ## Keep the old attribute names during the cutover
 
@@ -62,4 +62,4 @@ v2 ships with a legacy-compatibility mapper on by default (`LUMINA_OTEL_LEGACY_C
 
 ## Rolling back
 
-Set `LUMINA_OTEL_V2=false` (or unset it) and restart. LiteLLM falls back to the v1 logger using the same `OTEL_*` variables and callback you already had configured, so a rollback needs no other change.
+Set `LUMINA_OTEL_V2=false` (or unset it) and restart. Lumina falls back to the v1 logger using the same `OTEL_*` variables and callback you already had configured, so a rollback needs no other change.

@@ -59,7 +59,7 @@ The running process does not adopt the new key on its own, so finish with the st
 
 Update the master key everywhere the old value lived: the `LUMINA_MASTER_KEY` environment variable and your secret manager, and `general_settings.master_key` in your config if you set it there. If both are present, `general_settings.master_key` takes precedence over the environment variable, so make sure it holds the new value.
 
-Restart every proxy instance so they load the new key. Then verify: log into the Admin UI with the new master key, and make a request to a DB-stored model with a LiteLLM key (the new master key or a virtual key) and confirm it succeeds.
+Restart every proxy instance so they load the new key. Then verify: log into the Admin UI with the new master key, and make a request to a DB-stored model with a Lumina key (the new master key or a virtual key) and confirm it succeeds.
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
@@ -80,7 +80,7 @@ If the UI loads and your stored models and credentials resolve, the rotation is 
 
 ## Proxy refuses to start with a known unsafe master key {#proxy-refuses-to-start}
 
-The proxy exits at boot with a non-zero status and prints how to fix it when the master key it resolved is not set, is empty or only whitespace, or matches a publicly known unsafe value. With no master key the proxy runs without authentication and accepts every request. The known unsafe value was widely advertised in LiteLLM's own docs and tutorials, so anyone who can reach the proxy can guess it.
+The proxy exits at boot with a non-zero status and prints how to fix it when the master key it resolved is not set, is empty or only whitespace, or matches a publicly known unsafe value. With no master key the proxy runs without authentication and accepts every request. The known unsafe value was widely advertised in Lumina's own docs and tutorials, so anyone who can reach the proxy can guess it.
 
 What to do next depends on whether the old key encrypted anything in your database. The proxy works that out for you. When a database is configured and `LUMINA_SALT_KEY` is not set, it connects during the refusal and counts the stored values that decrypt under the unsafe key, and the steps it prints depend on the result.
 
@@ -162,7 +162,7 @@ Do not add `LUMINA_SALT_KEY` during these steps. With a salt key set the proxy e
 
 The migration works for any previous master key, not only the unsafe ones, so it is also an offline alternative to `POST /key/regenerate` with `new_master_key`: set the new `LUMINA_MASTER_KEY`, set `LUMINA_MIGRATE_FROM_MASTER_KEY` to the old one, and restart. It is idempotent, and it is safe when several workers or replicas boot at once, because each row is updated only if it still holds the value that was read. It reads and writes through the primary database even when a read replica is configured. Tables or columns that do not exist on an older schema are skipped, so it works both before and after a schema upgrade. Virtual keys keep working because they are stored hashed, not encrypted. With no database connected, the proxy logs that nothing was migrated.
 
-It re-encrypts more than the regenerate call does: models stored in the database (`lumina_params`), credentials, `LiteLLM_Config` values (environment variables, CloudZero and Vantage settings and so on), SSO settings, cache settings, config overrides, MCP server credentials, static headers and environment variables, MCP OAuth client credentials, per-user MCP credentials and environment variables, SSO identity assertions, and the encrypted callback variables in team, key, and user metadata, including the deleted-team and deleted-key tables.
+It re-encrypts more than the regenerate call does: models stored in the database (`lumina_params`), credentials, `Lumina_Config` values (environment variables, CloudZero and Vantage settings and so on), SSO settings, cache settings, config overrides, MCP server credentials, static headers and environment variables, MCP OAuth client credentials, per-user MCP credentials and environment variables, SSO identity assertions, and the encrypted callback variables in team, key, and user metadata, including the deleted-team and deleted-key tables.
 
 ### Where to set the new key
 

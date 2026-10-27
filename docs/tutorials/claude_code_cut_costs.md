@@ -2,13 +2,13 @@
 
 Claude Code is one of the heaviest consumers of input tokens in a modern engineering org. Long tool loops, large file reads, and MCP catalogs with hundreds of tools push every request toward the top of the context window, and the bill scales with it.
 
-If Claude Code already points at a LiteLLM proxy (via `ANTHROPIC_BASE_URL`), there are five levers the platform admin can pull to bring that cost down. None of them require a client-side change.
+If Claude Code already points at a Lumina proxy (via `ANTHROPIC_BASE_URL`), there are five levers the platform admin can pull to bring that cost down. None of them require a client-side change.
 
 ## 1. Budget windows + budget fallbacks
 
 Two knobs on the virtual key.
 
-**Budget windows** cap how much the key can spend inside a rolling time period. Set `max_budget` (dollars) and `budget_duration` ("24h", "7d", "30d", etc). LiteLLM resets the counter automatically at the end of every window. You can stack windows too, e.g. $10/day AND $100/month, so one bad afternoon can't burn the whole month:
+**Budget windows** cap how much the key can spend inside a rolling time period. Set `max_budget` (dollars) and `budget_duration` ("24h", "7d", "30d", etc). Lumina resets the counter automatically at the end of every window. You can stack windows too, e.g. $10/day AND $100/month, so one bad afternoon can't burn the whole month:
 
 ```bash
 curl 'http://0.0.0.0:4000/key/generate' \
@@ -47,7 +47,7 @@ Learn more: [Budget Windows](../proxy/users#set-multiple-budget-windows-on-a-key
 
 ## 2. Automatic Prompt Caching
 
-Claude's prompt cache reads a cache hit for roughly 10% of the price of a fresh input token, but only if the request marks the right message with `cache_control`. LiteLLM injects that marker for you: point `cache_control_injection_points` at the system message (or the second-to-last user turn), and every Claude Code call through the proxy carries the checkpoint without any client-side edit.
+Claude's prompt cache reads a cache hit for roughly 10% of the price of a fresh input token, but only if the request marks the right message with `cache_control`. Lumina injects that marker for you: point `cache_control_injection_points` at the system message (or the second-to-last user turn), and every Claude Code call through the proxy carries the checkpoint without any client-side edit.
 
 ```yaml title="config.yaml"
 model_list:
@@ -80,7 +80,7 @@ router_settings:
   optional_pre_call_checks: ["prompt_caching"]
 ```
 
-Turning on 'prompt_caching' as a pre call check, means if you run multiple deployments of the same Claude model, LiteLLM will intelligently route to the model deployment which was initially used for the request.
+Turning on 'prompt_caching' as a pre call check, means if you run multiple deployments of the same Claude model, Lumina will intelligently route to the model deployment which was initially used for the request.
 
 Learn more: [Auto-Inject Prompt Caching Checkpoints](./prompt_caching) and [Claude Code - Prompt Cache Routing](./claude_code_prompt_cache_routing).
 
@@ -88,7 +88,7 @@ Learn more: [Auto-Inject Prompt Caching Checkpoints](./prompt_caching) and [Clau
 
 Prompt cache trims the static prefix; Headroom trims the dynamic middle. Tool outputs, file reads, database dumps, and RAG payloads get rewritten into a compressed form before they reach the model, and if the model actually needs the original bytes, a `retrieve_headroom` tool call fetches them on demand. Reported savings run 60-95% on the compressible portion of Claude Code traffic.
 
-Headroom runs as a sidecar container next to LiteLLM. Register it as a `pre_call` guardrail and either flip `default_on: true` or attach it to per-developer virtual keys.
+Headroom runs as a sidecar container next to Lumina. Register it as a `pre_call` guardrail and either flip `default_on: true` or attach it to per-developer virtual keys.
 
 ```yaml title="config.yaml"
 guardrails:
@@ -108,7 +108,7 @@ Learn more: [Headroom guardrail setup guide](../proxy/headroom).
 
 A Claude Code session that connects to five or six MCP servers can easily surface a few hundred tools, and every one of those tool schemas ships on every `tools/list` call. That is pure input-token overhead on a workload where the model uses two or three tools per turn.
 
-Turn on `mcp_tool_search_enabled` on the virtual key, and LiteLLM replaces the full catalog with two virtual tools, `mcp_tool_search` and `mcp_tool_call`. The model searches by keyword, gets the ranked matches back, and calls the one it wants. The token cost of tool listing collapses from hundreds of schemas to two.
+Turn on `mcp_tool_search_enabled` on the virtual key, and Lumina replaces the full catalog with two virtual tools, `mcp_tool_search` and `mcp_tool_call`. The model searches by keyword, gets the ranked matches back, and calls the one it wants. The token cost of tool listing collapses from hundreds of schemas to two.
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
@@ -128,7 +128,7 @@ Learn more: [MCP Tool Search](../mcp_tool_search).
 
 ## 5. Auto routing
 
-Send every request to the smallest model that can handle it, so cheap requests never touch the expensive model. LiteLLM ships three flavors: Semantic (embedding match), Complexity (rule-based, zero external call), and Adaptive (learns from live traffic, beta).
+Send every request to the smallest model that can handle it, so cheap requests never touch the expensive model. Lumina ships three flavors: Semantic (embedding match), Complexity (rule-based, zero external call), and Adaptive (learns from live traffic, beta).
 
 Complexity router is the fastest to set up. Point Claude Code at `smart-router` and it classifies each request into a tier:
 
@@ -174,4 +174,4 @@ The five features compose. Budget-based fallbacks bound the total spend regardle
 
 ## Help us make this better
 
-We're actively investing in cost optimization across the whole stack. If you've got ideas, on auto routing, better cache heuristics, smarter budget policies, anything, join the discussion at [litellm#32172](https://github.com/BerriAI/litellm/discussions/32172).
+We're actively investing in cost optimization across the whole stack. If you've got ideas, on auto routing, better cache heuristics, smarter budget policies, anything, join the discussion at [lumina#32172](https://github.com/Soventra/lumina/discussions/32172).

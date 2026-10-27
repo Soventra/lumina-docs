@@ -6,10 +6,10 @@ authors:
   - misbah
   - mateo
   - kerry
-description: "Day 0 support for Claude Sonnet 5.5 on the LiteLLM AI Gateway. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure."
+description: "Day 0 support for Claude Sonnet 5.5 on the Lumina AI Gateway. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure."
 card_title: "Claude Sonnet 5.5"
 card_summary: "Same $2 / $10 price as Sonnet 5, 30%+ faster, 70.6% on Terminal-Bench 4.0 (Sonnet 5: 10.3%), 1M context."
-image: /img/litellm_claude_sonnet_5_5_announcement.png
+image: /img/lumina_claude_sonnet_5_5_announcement.png
 tags: [anthropic, claude, sonnet 5.5, day 0 support]
 hide_table_of_contents: false
 ---
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Claude Sonnet 5.5](/img/litellm_claude_sonnet_5_5_announcement.png)
+![Lumina x Claude Sonnet 5.5](/img/lumina_claude_sonnet_5_5_announcement.png)
 
-LiteLLM now supports [Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet-5-5) on Day 0. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure through the LiteLLM AI Gateway, with spend, rate limits, and logging in one place.
+Lumina now supports [Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet-5-5) on Day 0. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure through the Lumina AI Gateway, with spend, rate limits, and logging in one place.
 
 {/* truncate */}
 
@@ -32,7 +32,7 @@ LiteLLM now supports [Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet
 
 ## Enabling Sonnet 5.5
 
-Pricing landed in [PR #43586](https://github.com/BerriAI/litellm/pull/43586). No upgrade needed: open **Price Data** under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map`), on `v1.76.0` and above.
+Pricing landed in [PR #43586](https://github.com/Soventra/lumina/pull/43586). No upgrade needed: open **Price Data** under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map`), on `v1.76.0` and above.
 
 ## Usage
 
@@ -56,7 +56,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.103.0 \
+  ghcr.io/soventra/lumina:v1.103.0 \
   --config /app/config.yaml
 ```
 
@@ -76,7 +76,7 @@ model_list:
 ```
 
 :::note
-For cross-region routing, use a regional inference profile such as `bedrock/converse/us.anthropic.claude-sonnet-5-5`. Regional profiles carry a 10% premium and `global.` stays at base price; LiteLLM tracks each variant.
+For cross-region routing, use a regional inference profile such as `bedrock/converse/us.anthropic.claude-sonnet-5-5`. Regional profiles carry a 10% premium and `global.` stays at base price; Lumina tracks each variant.
 :::
 
 **2. Start the proxy**
@@ -87,7 +87,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.103.0 \
+  ghcr.io/soventra/lumina:v1.103.0 \
   --config /app/config.yaml
 ```
 
@@ -114,7 +114,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.103.0 \
+  ghcr.io/soventra/lumina:v1.103.0 \
   --config /app/config.yaml
 ```
 
@@ -140,7 +140,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.103.0 \
+  ghcr.io/soventra/lumina:v1.103.0 \
   --config /app/config.yaml
 ```
 
@@ -172,4 +172,4 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## Feedback
 
-Running Claude Sonnet 5.5 through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #43590](https://github.com/BerriAI/litellm/discussions/43590).
+Running Claude Sonnet 5.5 through Lumina and hitting something unexpected? Share it on [GitHub discussion #43590](https://github.com/Soventra/lumina/discussions/43590).

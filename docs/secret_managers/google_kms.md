@@ -23,12 +23,12 @@ general_settings:
 Step 3: Start + test proxy
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 And in another terminal
 ```
-$ litellm --test 
+$ lumina --test 
 ```
 
 [Quick Test Proxy](../proxy/user_keys)

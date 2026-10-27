@@ -18,7 +18,7 @@ This package is used to create lexicographically sortable identifiers for tracki
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section:
 
@@ -49,10 +49,10 @@ guardrails:
 - `post_call` - Run **after** LLM call to validate **model output**. Blocks responses containing harmful content, policy violations, or sensitive information
 
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request 

@@ -1,6 +1,6 @@
 # Docker Image Security Guide
 
-LiteLLM signs every Docker image published to GHCR with [cosign](https://docs.sigstore.dev/quickstart/quickstart-cosign/) starting from **v1.83.0**. This page covers how to verify signatures, enforce verification in CI/CD, and follow recommended deployment patterns.
+Lumina signs every Docker image published to GHCR with [cosign](https://docs.sigstore.dev/quickstart/quickstart-cosign/) starting from **v1.83.0**. This page covers how to verify signatures, enforce verification in CI/CD, and follow recommended deployment patterns.
 
 ## Signed images
 
@@ -8,19 +8,19 @@ All image variants published to `ghcr.io/berriai/` are signed with the same cosi
 
 | Image | Description |
 |---|---|
-| `ghcr.io/berriai/litellm` | Core proxy, including the Prisma toolchain for Postgres |
-| `ghcr.io/berriai/litellm-non_root` | Non-root variant |
-| `ghcr.io/berriai/litellm-spend_logs` | Spend-logs sidecar |
-| `ghcr.io/berriai/litellm-database` | Legacy alias of `litellm`, kept for existing deployments |
+| `ghcr.io/soventra/lumina` | Core proxy, including the Prisma toolchain for Postgres |
+| `ghcr.io/soventra/lumina-non_root` | Non-root variant |
+| `ghcr.io/soventra/lumina-spend_logs` | Spend-logs sidecar |
+| `ghcr.io/soventra/lumina-database` | Legacy alias of `lumina`, kept for existing deployments |
 
-:::note[`litellm-database` is a legacy alias]
-`ghcr.io/berriai/litellm-database` used to be the image to pick when the proxy needed Postgres, because it bundled the Prisma toolchain that the core image lacked. `ghcr.io/berriai/litellm` now ships the same toolchain, entrypoint and migrations, so there is no longer a reason to choose between them. `litellm-database` is still published and signed with the same key, so deployments that pin it keep working and verify with the same commands. Use `ghcr.io/berriai/litellm` for new deployments; the examples on this page use it throughout.
+:::note[`lumina-database` is a legacy alias]
+`ghcr.io/soventra/lumina-database` used to be the image to pick when the proxy needed Postgres, because it bundled the Prisma toolchain that the core image lacked. `ghcr.io/soventra/lumina` now ships the same toolchain, entrypoint and migrations, so there is no longer a reason to choose between them. `lumina-database` is still published and signed with the same key, so deployments that pin it keep working and verify with the same commands. Use `ghcr.io/soventra/lumina` for new deployments; the examples on this page use it throughout.
 :::
 
-The signing key was introduced in [commit `0112e53`](https://github.com/BerriAI/litellm/commit/0112e53046018d726492c814b3644b7d376029d0) and the public key is checked into the repository at [`cosign.pub`](https://github.com/BerriAI/litellm/blob/main/cosign.pub).
+The signing key was introduced in [commit `0112e53`](https://github.com/Soventra/lumina/commit/0112e53046018d726492c814b3644b7d376029d0) and the public key is checked into the repository at [`cosign.pub`](https://github.com/Soventra/lumina/blob/main/cosign.pub).
 
 :::info[Enterprise images]
-Enterprise images (`litellm-ee`) follow the same signing process. Contact [support@berri.ai](mailto:support@berri.ai) to confirm coverage for your specific enterprise image tag.
+Enterprise images (`lumina-ee`) follow the same signing process. Contact [support@berri.ai](mailto:support@berri.ai) to confirm coverage for your specific enterprise image tag.
 :::
 
 ## Verify image signatures
@@ -33,17 +33,17 @@ A commit hash is cryptographically immutable, making this the strongest verifica
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-  ghcr.io/berriai/litellm:v1.89.4
+  --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+  ghcr.io/soventra/lumina:v1.89.4
 ```
 
 Replace the image reference with any signed variant:
 
 ```bash
-# litellm-non_root
+# lumina-non_root
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-  ghcr.io/berriai/litellm-non_root:v1.89.4
+  --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+  ghcr.io/soventra/lumina-non_root:v1.89.4
 ```
 
 ### Verify with a release tag (convenience)
@@ -52,8 +52,8 @@ Tags are protected in this repository and resolve to the same key:
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/v1.89.4/cosign.pub \
-  ghcr.io/berriai/litellm:v1.89.4
+  --key https://raw.githubusercontent.com/Soventra/lumina/v1.89.4/cosign.pub \
+  ghcr.io/soventra/lumina:v1.89.4
 ```
 
 ### Expected output
@@ -78,16 +78,16 @@ helm install policy-controller sigstore/policy-controller \
   -n cosign-system --create-namespace
 ```
 
-2. Create a `ClusterImagePolicy` with the LiteLLM public key:
+2. Create a `ClusterImagePolicy` with the Lumina public key:
 
 ```yaml
 apiVersion: policy.sigstore.dev/v1beta1
 kind: ClusterImagePolicy
 metadata:
-  name: litellm-signed-images
+  name: lumina-signed-images
 spec:
   images:
-    - glob: "ghcr.io/berriai/litellm*"
+    - glob: "ghcr.io/soventra/lumina*"
   authorities:
     - key:
         data: |
@@ -100,23 +100,23 @@ spec:
 3. Label the namespace to enable enforcement:
 
 ```bash
-kubectl label namespace litellm policy.sigstore.dev/include=true
+kubectl label namespace lumina policy.sigstore.dev/include=true
 ```
 
-Any pod in that namespace using an unsigned `ghcr.io/berriai/litellm*` image will be rejected at admission.
+Any pod in that namespace using an unsigned `ghcr.io/soventra/lumina*` image will be rejected at admission.
 
 ### GCP: Binary Authorization
 
 [Binary Authorization](https://cloud.google.com/binary-authorization/docs) can enforce cosign signatures on Cloud Run and GKE.
 
-1. Create a cosign-based attestor using the LiteLLM public key:
+1. Create a cosign-based attestor using the Lumina public key:
 
 ```bash
 # Import the public key into a Cloud KMS keyring or use a PGP/PKIX attestor.
 # See: https://cloud.google.com/binary-authorization/docs/creating-attestors-console
 ```
 
-2. Configure a Binary Authorization policy that requires the attestor for `ghcr.io/berriai/litellm*` images.
+2. Configure a Binary Authorization policy that requires the attestor for `ghcr.io/soventra/lumina*` images.
 
 3. Enable the policy on your Cloud Run service or GKE cluster.
 
@@ -134,11 +134,11 @@ AWS does not natively verify cosign signatures at deploy time. Common approaches
 Add a verification step before any deployment job:
 
 ```yaml
-- name: Verify LiteLLM image signature
+- name: Verify Lumina image signature
   run: |
     cosign verify \
-      --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-      ghcr.io/berriai/litellm:${{ env.LUMINA_VERSION }}
+      --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+      ghcr.io/soventra/lumina:${{ env.LUMINA_VERSION }}
 ```
 
 ## Recommended deployment patterns
@@ -148,22 +148,22 @@ Add a verification step before any deployment job:
 Digest pinning guarantees the exact image content regardless of tag mutations:
 
 ```yaml
-image: ghcr.io/berriai/litellm@sha256:<digest>
+image: ghcr.io/soventra/lumina@sha256:<digest>
 ```
 
 Get the digest after pulling:
 
 ```bash
 docker inspect --format='{{index .RepoDigests 0}}' \
-  ghcr.io/berriai/litellm:v1.89.4
+  ghcr.io/soventra/lumina:v1.89.4
 ```
 
 Cosign verification works with digests too:
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-  ghcr.io/berriai/litellm@sha256:<digest>
+  --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+  ghcr.io/soventra/lumina@sha256:<digest>
 ```
 
 ### Use stable release tags
@@ -172,7 +172,7 @@ If digest pinning is too rigid for your workflow, use plain semver / PEP 440 rel
 
 :::warning[`main-stable` and `main-latest` are deprecated]
 
-LiteLLM has moved to PEP 440 / semver versioning, so stable releases are now published as plain `vX.Y.Z` tags (e.g. `v1.86.2`) instead of the older `vX.Y.Z-stable` form. The rolling `main-stable` tag is still being updated for backwards compatibility but is deprecated; pin to a specific `vX.Y.Z` tag (or a digest) instead. The rolling `main-latest` tag is deprecated and is no longer being updated; use `latest` instead.
+Lumina has moved to PEP 440 / semver versioning, so stable releases are now published as plain `vX.Y.Z` tags (e.g. `v1.86.2`) instead of the older `vX.Y.Z-stable` form. The rolling `main-stable` tag is still being updated for backwards compatibility but is deprecated; pin to a specific `vX.Y.Z` tag (or a digest) instead. The rolling `main-latest` tag is deprecated and is no longer being updated; use `latest` instead.
 :::
 
 Avoid `latest` in production. This rolling tag points to the most recent build and can change between deployments.
@@ -187,7 +187,7 @@ Avoid `latest` in production. This rolling tag points to the most recent build a
 
 ## Further reading
 
-- [CI/CD v2 announcement](https://docs.litellm.ai/blog/ci-cd-v2-improvements) — background on LiteLLM's signing infrastructure
+- [CI/CD v2 announcement](https://docs.lumina.ai/blog/ci-cd-v2-improvements) — background on Lumina's signing infrastructure
 - [Docker deployment guide](./deploy.md) — full Docker, Helm, and Terraform setup
 - [cosign documentation](https://docs.sigstore.dev/quickstart/quickstart-cosign/) — cosign usage and key management
 - [Sigstore Policy Controller](https://docs.sigstore.dev/policy-controller/overview/) — Kubernetes admission control

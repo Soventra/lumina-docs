@@ -5,7 +5,7 @@
     "strategy": "pointwise",
     "candidateCount": 20,
     "codeRevision": "5aa0a8304cd5bfa095bbd07e77f6f8c367084595",
-    "source": "Saved LiteLLM benchmark responses and official SciFact relevance judgments",
+    "source": "Saved Lumina benchmark responses and official SciFact relevance judgments",
     "selection": "Three selected examples showing improvement, an unchanged first relevant rank, and regression. These examples do not summarize all 300 queries.",
     "execution": "Recorded results; interacting with this demo makes no provider calls.",
     "sourceResponses": "/benchmarks/jevrank/measured-responses.jsonl.gz"

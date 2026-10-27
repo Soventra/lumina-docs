@@ -1,14 +1,14 @@
-# Gradio Chatbot + LiteLLM Tutorial
-Simple tutorial for integrating LiteLLM completion calls with streaming Gradio chatbot demos
+# Gradio Chatbot + Lumina Tutorial
+Simple tutorial for integrating Lumina completion calls with streaming Gradio chatbot demos
 
 ### Install & Import Dependencies
 ```bash
-uv add gradio litellm
+uv add gradio lumina
 ```
 
 ```python
 import gradio
-import litellm
+import lumina
 ```
 
 ### Define Inference Function
@@ -18,18 +18,18 @@ def inference(message, history):
     try:
         flattened_history = [item for sublist in history for item in sublist]
         full_message = " ".join(flattened_history + [message])
-        messages_litellm = [{"role": "user", "content": full_message}] # litellm message format
+        messages_lumina = [{"role": "user", "content": full_message}] # lumina message format
         partial_message = ""
-        for chunk in litellm.completion(model="huggingface/meta-llama/Llama-2-7b-chat-hf",
+        for chunk in lumina.completion(model="huggingface/meta-llama/Llama-2-7b-chat-hf",
                                         api_base="x.x.x.x:xxxx",
-                                        messages=messages_litellm,
+                                        messages=messages_lumina,
                                         max_new_tokens=512,
                                         temperature=.7,
                                         top_k=100,
                                         top_p=.9,
                                         repetition_penalty=1.18,
                                         stream=True):
-            partial_message += chunk['choices'][0]['delta']['content'] # extract text from streamed litellm chunks
+            partial_message += chunk['choices'][0]['delta']['content'] # extract text from streamed lumina chunks
             yield partial_message
     except Exception as e:
         print("Exception encountered:", str(e))

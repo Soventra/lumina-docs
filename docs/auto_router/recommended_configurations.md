@@ -22,7 +22,7 @@ Recommended ladders, matching the dashboard's Auto Router templates. Every tier 
 - **Lite** when cost beats provider consistency and traffic is agentic. Mixed providers, LLM classifier with the `agentic` rubric.
 - **1M Context** for long prompts. Luna, Terra, Sol, then Opus 5 at high effort, with the heuristic v2 classifier.
 - **Same model, more effort** for the top rung. Costs more output tokens, not a higher per-token rate. Pattern: [effort ladders](/docs/proxy/auto_routing#effort-ladders).
-- All ladders leave `session_affinity` off (the default; see [prompt caching](/docs/auto_router/prompt_caching)) and set `escalation_keywords: ["LITELLM ESCALATE"]`, which bumps a request one tier when the exact phrase appears. Matching is case-sensitive.
+- All ladders leave `session_affinity` off (the default; see [prompt caching](/docs/auto_router/prompt_caching)) and set `escalation_keywords: ["LUMINA ESCALATE"]`, which bumps a request one tier when the exact phrase appears. Matching is case-sensitive.
 
 ## Anthropic Family
 
@@ -58,7 +58,7 @@ model_list:
           COMPLEX:   claude-opus-5
           REASONING: claude-opus-5-high
         classifier_type: heuristic
-        escalation_keywords: ["LITELLM ESCALATE"]
+        escalation_keywords: ["LUMINA ESCALATE"]
         session_affinity: false
       complexity_router_default_model: claude-sonnet-5
 ```
@@ -99,7 +99,7 @@ model_list:
           COMPLEX:   gpt-5.6-sol
           REASONING: gpt-5.6-sol-xhigh
         classifier_type: heuristic
-        escalation_keywords: ["LITELLM ESCALATE"]
+        escalation_keywords: ["LUMINA ESCALATE"]
         session_affinity: false
       complexity_router_default_model: {{openai_large}}
 ```
@@ -137,7 +137,7 @@ model_list:
           COMPLEX:   gemini-3.7-flash
           REASONING: gemini-3.1-pro-preview
         classifier_type: heuristic
-        escalation_keywords: ["LITELLM ESCALATE"]
+        escalation_keywords: ["LUMINA ESCALATE"]
         session_affinity: false
       complexity_router_default_model: gemini-3.1-flash-lite
 ```
@@ -182,7 +182,7 @@ model_list:
           timeout_ms: 3000
           classification_rubric: agentic
         classifier_context_window_size: 0
-        escalation_keywords: ["LITELLM ESCALATE"]
+        escalation_keywords: ["LUMINA ESCALATE"]
         session_affinity: false
       complexity_router_default_model: muse-spark-1.2-xhigh
 ```
@@ -223,7 +223,7 @@ model_list:
           COMPLEX:   gpt-5.6-sol
           REASONING: claude-opus-5-high
         classifier_type: heuristic_v2
-        escalation_keywords: ["LITELLM ESCALATE"]
+        escalation_keywords: ["LUMINA ESCALATE"]
         session_affinity: false
       complexity_router_default_model: {{openai_large}}
 ```

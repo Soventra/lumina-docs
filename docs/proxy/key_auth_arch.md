@@ -17,7 +17,7 @@ The empty list and the literal `*` both mean "all models on the proxy" when eval
 
 ## Sentinels
 
-These strings are reserved as enum values in `litellm.proxy._types.SpecialModelNames`. They short-circuit normal matching.
+These strings are reserved as enum values in `lumina.proxy._types.SpecialModelNames`. They short-circuit normal matching.
 
 | Sentinel | Where it belongs | Effect |
 |---|---|---|
@@ -41,7 +41,7 @@ Access groups exist so that adding a model to a group grants every attached key 
 
 ## What the master key skips
 
-The master key is compared as plaintext in memory, is not stored in `LiteLLM_VerificationToken`, has no `models` list, and bypasses every check above. Treat it as an operator credential; a leak grants every model on the proxy regardless of team, access group, or sentinel configuration. See [Master Key Rotations](./master_key_rotations.md).
+The master key is compared as plaintext in memory, is not stored in `Lumina_VerificationToken`, has no `models` list, and bypasses every check above. Treat it as an operator credential; a leak grants every model on the proxy regardless of team, access group, or sentinel configuration. See [Master Key Rotations](./master_key_rotations.md).
 
 ## Related
 

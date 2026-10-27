@@ -2,11 +2,11 @@
 
 <EnterpriseFeature />
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
 1. Install Proxy dependencies 
 ```bash
-uv tool install 'litellm[proxy]' 'litellm[extra_proxy]'
+uv tool install 'lumina[proxy]' 'lumina[extra_proxy]'
 ```
 
 2. Save Azure details in your environment
@@ -32,8 +32,8 @@ general_settings:
 
 You can now test this by starting your proxy: 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
-[Quick Test Proxy](/docs/proxy/quick_start#using-litellm-proxy---curl-request-openai-package-langchain)
+[Quick Test Proxy](/docs/proxy/quick_start#using-lumina-proxy---curl-request-openai-package-langchain)
 

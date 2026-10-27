@@ -6,8 +6,8 @@ import Image from '@theme/IdealImage';
 
 | Property | Details |
 |----------|---------|
-| Description | Enable guardrail execution on LiteLLM pass-through endpoints with opt-in activation and automatic inheritance from org/team/key levels |
-| Supported Guardrails | All LiteLLM guardrails (Bedrock, Aporia, Lakera, etc.) |
+| Description | Enable guardrail execution on Lumina pass-through endpoints with opt-in activation and automatic inheritance from org/team/key levels |
+| Supported Guardrails | All Lumina guardrails (Bedrock, Aporia, Lakera, etc.) |
 | Default Behavior | Guardrails are **disabled** on pass-through endpoints unless explicitly enabled |
 
 ## Quick Start
@@ -25,7 +25,7 @@ Go to **Models + Endpoints** → Click **+ Add Pass-Through Endpoint**
 Scroll to the **Guardrails** section and select which guardrails to enforce.
 
 :::tip[Default Behavior]
-By default, you don't need to specify fields - LiteLLM will JSON dump the entire request/response payload and send it to the guardrail.
+By default, you don't need to specify fields - Lumina will JSON dump the entire request/response payload and send it to the guardrail.
 :::
 
 #### 2. Target Specific Fields (Optional)
@@ -70,7 +70,7 @@ general_settings:
 #### 2. Start proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 #### 3. Test request
@@ -122,7 +122,7 @@ If the `guardrails` block is omitted or empty in your pass-through endpoint conf
 ```mermaid
 sequenceDiagram
     participant Client
-    box rgb(200, 220, 255) LiteLLM Proxy
+    box rgb(200, 220, 255) Lumina Proxy
         participant PassThrough as Pass-through Endpoint
         participant Guardrails
     end

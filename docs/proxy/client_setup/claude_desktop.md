@@ -4,9 +4,9 @@ title: Claude Desktop & Cowork with virtual keys
 
 import Image from '@theme/IdealImage';
 
-# Connect Claude Desktop & Cowork to LiteLLM with a virtual key
+# Connect Claude Desktop & Cowork to Lumina with a virtual key
 
-Claude Desktop and Cowork use the same gateway settings. This guide configures them with a LiteLLM virtual key; the connection also applies to Code sessions and to Chat when enabled. See [Claude's third-party deployment overview](https://claude.com/docs/third-party/claude-desktop/overview) and [official gateway configuration guide](https://claude.com/docs/third-party/claude-desktop/gateway#configure-the-app) for the shared client settings. For identity-provider sign-in, use [Desktop & Cowork SSO](../../tutorials/claude_desktop_cowork.md).
+Claude Desktop and Cowork use the same gateway settings. This guide configures them with a Lumina virtual key; the connection also applies to Code sessions and to Chat when enabled. See [Claude's third-party deployment overview](https://claude.com/docs/third-party/claude-desktop/overview) and [official gateway configuration guide](https://claude.com/docs/third-party/claude-desktop/gateway#configure-the-app) for the shared client settings. For identity-provider sign-in, use [Desktop & Cowork SSO](../../tutorials/claude_desktop_cowork.md).
 
 ## Virtual-key walkthrough
 
@@ -25,9 +25,9 @@ Claude Desktop and Cowork use the same gateway settings. This guide configures t
 | Inference provider | **Gateway** |
 | Credential kind | **Static API key** |
 | Gateway base URL | `<LUMINA_PROXY_BASE_URL>` (e.g. `http://localhost:4000`) |
-| Gateway API key | Your LiteLLM [virtual key](../virtual_keys.md), auth scheme **Bearer** |
+| Gateway API key | Your Lumina [virtual key](../virtual_keys.md), auth scheme **Bearer** |
 | MCP endpoint | `<LUMINA_PROXY_BASE_URL>/mcp`, or `<LUMINA_PROXY_BASE_URL>/<server_name>/mcp` for one server |
-| MCP auth header | `x-litellm-api-key: Bearer <virtual key>` |
+| MCP auth header | `x-lumina-api-key: Bearer <virtual key>` |
 
 ## LLM setup
 
@@ -47,7 +47,7 @@ Open the Claude menu, click **Developer**, then **Configure Third-Party Inferenc
 
 ### 3. Enter your gateway URL and virtual key
 
-In the **Connection** section set **Inference provider** to **Gateway** and **Credential kind** to **Static API key**, put your LiteLLM proxy URL in **Gateway base URL** and your virtual key in **Gateway API key**, and leave **Gateway auth scheme** at **bearer** (LiteLLM also accepts `x-api-key`). Click **Apply Changes** (called **Apply locally** in older versions).
+In the **Connection** section set **Inference provider** to **Gateway** and **Credential kind** to **Static API key**, put your Lumina proxy URL in **Gateway base URL** and your virtual key in **Gateway API key**, and leave **Gateway auth scheme** at **bearer** (Lumina also accepts `x-api-key`). Click **Apply Changes** (called **Apply locally** in older versions).
 
 <Image img={require('../../../img/client_setup/claude_desktop_04_gateway_url_and_key.jpeg')} />
 
@@ -73,17 +73,17 @@ The MCP screenshots below use Claude Desktop 2.2553.13 on Linux and a local demo
 
 ### 1. Add the gateway connector
 
-Open **Configure Third-Party Inference** and find **Connectors**. Add a server named `litellm`, select **Streamable HTTP**, and enter `http://localhost:4000/mcp` as the URL. Replace the base URL with your gateway address. This endpoint exposes the servers your key can access.
+Open **Configure Third-Party Inference** and find **Connectors**. Add a server named `lumina`, select **Streamable HTTP**, and enter `http://localhost:4000/mcp` as the URL. Replace the base URL with your gateway address. This endpoint exposes the servers your key can access.
 
-Set the header `x-litellm-api-key` to `Bearer <your virtual key>`. Grant the key access to that MCP server as described in [the overview](./overview.md#the-values-you-will-reuse-everywhere). In the exported configuration, this is an entry in `managedMcpServers`:
+Set the header `x-lumina-api-key` to `Bearer <your virtual key>`. Grant the key access to that MCP server as described in [the overview](./overview.md#the-values-you-will-reuse-everywhere). In the exported configuration, this is an entry in `managedMcpServers`:
 
 ```json
 [
   {
-    "name": "litellm",
+    "name": "lumina",
     "transport": "http",
     "url": "http://localhost:4000/mcp",
-    "headers": {"x-litellm-api-key": "Bearer sk-<your-virtual-key>"}
+    "headers": {"x-lumina-api-key": "Bearer sk-<your-virtual-key>"}
   }
 ]
 ```
@@ -92,7 +92,7 @@ Set the header `x-litellm-api-key` to `Bearer <your virtual key>`. Grant the key
 
 Click **Sign in & test** (called **Test this connection** in some versions). Claude runs MCP initialization and tool discovery with the URL and credentials you entered, then displays the discovered tools or a connection error. Check that the tools belong to the intended server before saving the configuration.
 
-<Image img={require('../../../img/client_setup/claude_desktop_02_mcp_connector_connected_tools.png')} alt="Claude connector settings showing the LiteLLM MCP URL, a demonstration key, and three discovered tools" />
+<Image img={require('../../../img/client_setup/claude_desktop_02_mcp_connector_connected_tools.png')} alt="Claude connector settings showing the Lumina MCP URL, a demonstration key, and three discovered tools" />
 
 Use your own virtual key in this field. Claude may flag a static authentication header as credential-like. For rotating credentials, see Claude's [MCP headers helper guide](https://claude.com/docs/third-party/claude-desktop/extensions#short-lived-credentials-with-a-headers-helper).
 
@@ -100,11 +100,11 @@ Use your own virtual key in this field. Claude may flag a static authentication 
 
 Apply the configuration and restart Claude Desktop. Start a Cowork task that uses a read-only tool from the connector, approve it if prompted, and check that the tool returns a result. Tools use the `<server>-<tool>` naming convention.
 
-<Image img={require('../../../img/client_setup/claude_cowork_04_mcp_tool_result.png')} alt="Claude Cowork displaying a read-only DeepWiki tool result through the LiteLLM connector" />
+<Image img={require('../../../img/client_setup/claude_cowork_04_mcp_tool_result.png')} alt="Claude Cowork displaying a read-only DeepWiki tool result through the Lumina connector" />
 
 To select one server, use `/<server_name>/mcp` instead. The [MCP configuration reference](../../mcp_config_reference.md) covers endpoint selection, server filtering, and authentication.
 
-Claude Desktop's built-in connectors (`github`, `microsoft365`, `websearch`) run inside the app against those vendors' APIs and never pass through LiteLLM; only `url` entries do. For servers that need the user's own upstream login, set `"oauth": true` on the per-server URL and let LiteLLM run the flow; see [MCP OAuth passthrough](../../mcp_oauth_passthrough.md). Claude's [MCP configuration guide](https://claude.com/docs/third-party/claude-desktop/extensions) covers `headersHelper`, OAuth, and per-tool policies.
+Claude Desktop's built-in connectors (`github`, `microsoft365`, `websearch`) run inside the app against those vendors' APIs and never pass through Lumina; only `url` entries do. For servers that need the user's own upstream login, set `"oauth": true` on the per-server URL and let Lumina run the flow; see [MCP OAuth passthrough](../../mcp_oauth_passthrough.md). Claude's [MCP configuration guide](https://claude.com/docs/third-party/claude-desktop/extensions) covers `headersHelper`, OAuth, and per-tool policies.
 
 ## Next steps
 

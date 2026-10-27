@@ -1,7 +1,7 @@
 ---
 title: OpenAI Fast & Ultrafast mode
 sidebar_label: Fast & Ultrafast mode
-description: Set up OpenAI Fast and Ultrafast modes through the LiteLLM Admin UI or config.yaml, call them through the Responses API, and expose them in Codex.
+description: Set up OpenAI Fast and Ultrafast modes through the Lumina Admin UI or config.yaml, call them through the Responses API, and expose them in Codex.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -19,9 +19,9 @@ The walkthrough creates `gpt-6-astra-ultrafast` for Astra Ultrafast, with a Fast
 
 OpenAI renamed Priority processing to [Fast mode](https://developers.openai.com/api/docs/guides/fast-mode). Both `service_tier: "priority"` and `service_tier: "fast"` select it. This guide uses `priority`, which also keeps Codex's `/fast` command.
 
-The following models were verified with completed Responses API calls through LiteLLM on October 6, 2026. Each returned a Fast processing tier:
+The following models were verified with completed Responses API calls through Lumina on October 6, 2026. Each returned a Fast processing tier:
 
-| OpenAI model ID | LiteLLM upstream model | Returned `service_tier` |
+| OpenAI model ID | Lumina upstream model | Returned `service_tier` |
 | --- | --- | --- |
 | `gpt-6-astra` | `openai/gpt-6-astra` | `fast` |
 | `gpt-6.1-sol` | `openai/gpt-6.1-sol` | `fast` |
@@ -35,23 +35,23 @@ These are the current models tested for this guide, not an exhaustive list. See 
 
 ### Ultrafast mode
 
-Use **GPT-6 Astra** (`openai/gpt-6-astra`) or **GPT-6.1 Sol** (`openai/gpt-6.1-sol`) with `service_tier: "ultrafast"`. OpenAI's [Ultrafast guide](https://developers.openai.com/api/docs/guides/ultrafast-mode) lists both models as of October 10, 2026, and LiteLLM's cost map carries `*_ultrafast` rates for both. A completed Responses API call through LiteLLM on Astra returned `service_tier: "ultrafast"` in testing. The Ultrafast setup in this guide uses Astra; for Sol, swap in `openai/gpt-6.1-sol` and a public name such as `gpt-6.1-sol-ultrafast`.
+Use **GPT-6 Astra** (`openai/gpt-6-astra`) or **GPT-6.1 Sol** (`openai/gpt-6.1-sol`) with `service_tier: "ultrafast"`. OpenAI's [Ultrafast guide](https://developers.openai.com/api/docs/guides/ultrafast-mode) lists both models as of October 10, 2026, and Lumina's cost map carries `*_ultrafast` rates for both. A completed Responses API call through Lumina on Astra returned `service_tier: "ultrafast"` in testing. The Ultrafast setup in this guide uses Astra; for Sol, swap in `openai/gpt-6.1-sol` and a public name such as `gpt-6.1-sol-ultrafast`.
 
 OpenAI makes Ultrafast available to all API users with low initial rate limits. Use the Responses API over HTTP or WebSocket. Ultrafast supports US data residency and global processing only; EU and other non-US regional processing endpoints are not supported. See OpenAI's [Ultrafast guide](https://developers.openai.com/api/docs/guides/ultrafast-mode) for current availability and limits.
 
-Your OpenAI account must support the selected tier for the model. Adding a tier to LiteLLM's catalog does not enable it at OpenAI, and Fast mode support does not imply Ultrafast support.
+Your OpenAI account must support the selected tier for the model. Adding a tier to Lumina's catalog does not enable it at OpenAI, and Fast mode support does not imply Ultrafast support.
 
 ## Before you start
 
-Use a recent LiteLLM release with Responses API support, an OpenAI API credential with access to the selected model and available credits, and permission to add models to your gateway. The UI walkthrough below was captured on LiteLLM v1.105.0. For a new gateway, follow the [Admin UI quickstart](../../proxy/docker_quick_start.md) first.
+Use a recent Lumina release with Responses API support, an OpenAI API credential with access to the selected model and available credits, and permission to add models to your gateway. The UI walkthrough below was captured on Lumina v1.105.0. For a new gateway, follow the [Admin UI quickstart](../../proxy/docker_quick_start.md) first.
 
-Both modes cost more than Standard. Check OpenAI's [Fast pricing](https://developers.openai.com/api/docs/pricing?latest-pricing=fast) and [Ultrafast pricing](https://developers.openai.com/api/docs/pricing?latest-pricing=ultrafast). For LiteLLM spend tracking, confirm that your model's cost-map entry has the applicable `*_priority` rates for Fast or `*_ultrafast` rates for Ultrafast, including input, output, caching, and long-context rates. If pricing is missing or differs from your agreement, configure [custom pricing](../../proxy/custom_pricing.md) before relying on spend totals or budgets.
+Both modes cost more than Standard. Check OpenAI's [Fast pricing](https://developers.openai.com/api/docs/pricing?latest-pricing=fast) and [Ultrafast pricing](https://developers.openai.com/api/docs/pricing?latest-pricing=ultrafast). For Lumina spend tracking, confirm that your model's cost-map entry has the applicable `*_priority` rates for Fast or `*_ultrafast` rates for Ultrafast, including input, output, caching, and long-context rates. If pricing is missing or differs from your agreement, configure [custom pricing](../../proxy/custom_pricing.md) before relying on spend totals or budgets.
 
 ## Set up in the Admin UI
 
 ### 1. Select the model and credentials
 
-Open **Models + Endpoints**, then **Add Model**. Choose **OpenAI** as the provider and `gpt-6-astra` under **LiteLLM Model Name(s)**. In **Model Mappings**, set **Public Model Name** to `gpt-6-astra-ultrafast`.
+Open **Models + Endpoints**, then **Add Model**. Choose **OpenAI** as the provider and `gpt-6-astra` under **Lumina Model Name(s)**. In **Model Mappings**, set **Public Model Name** to `gpt-6-astra-ultrafast`.
 
 For Fast mode, select a model from the Fast table above, such as `gpt-6.1-sol`, and use a public name such as `gpt-6.1-sol-fast`. The model-selection screenshot shows Astra; the Fast settings are shown separately below.
 
@@ -65,12 +65,12 @@ Leave **Mode** blank for now. In v1.105.0, that dropdown does not include Respon
 
 Expand **Advanced Settings** and choose the settings for your mode:
 
-`service_tier` (singular) in **LiteLLM Params** selects the processing mode. `service_tiers` (plural) in **Model Info** is an optional list of modes advertised to clients such as Codex.
+`service_tier` (singular) in **Lumina Params** selects the processing mode. `service_tiers` (plural) in **Model Info** is an optional list of modes advertised to clients such as Codex.
 
 <Tabs groupId="openai-service-tier">
 <TabItem value="ultrafast" label="Ultrafast (Astra)">
 
-Enter this JSON in **LiteLLM Params**:
+Enter this JSON in **Lumina Params**:
 
 ```json
 {
@@ -92,7 +92,7 @@ Enter this JSON in **Model Info**:
 </TabItem>
 <TabItem value="fast" label="Fast">
 
-Enter this JSON in **LiteLLM Params**:
+Enter this JSON in **Lumina Params**:
 
 ```json
 {
@@ -159,9 +159,9 @@ model_list:
 </TabItem>
 </Tabs>
 
-Set `OPENAI_API_KEY` in the gateway's environment and restart with the updated configuration. For a local proxy installation, start it with `litellm --config config.yaml`; see [proxy configuration](../../proxy/configs.md) for deployment options.
+Set `OPENAI_API_KEY` in the gateway's environment and restart with the updated configuration. For a local proxy installation, start it with `lumina --config config.yaml`; see [proxy configuration](../../proxy/configs.md) for deployment options.
 
-The `openai/` prefix selects the upstream provider. Clients call the selected deployment's public `model_name`, such as `gpt-6-astra-ultrafast`. Keep the provider key on the gateway; clients authenticate with their LiteLLM virtual keys.
+The `openai/` prefix selects the upstream provider. Clients call the selected deployment's public `model_name`, such as `gpt-6-astra-ultrafast`. Keep the provider key on the gateway; clients authenticate with their Lumina virtual keys.
 
 ## Send a request through the gateway
 
@@ -171,7 +171,7 @@ Set `LUMINA_BASE_URL` to your gateway URL without a trailing `/v1`, and `LUMINA_
 
 ```bash
 export LUMINA_BASE_URL="http://localhost:4000"
-export LUMINA_API_KEY="<your-litellm-virtual-key>"
+export LUMINA_API_KEY="<your-lumina-virtual-key>"
 ```
 
 <Tabs>
@@ -217,14 +217,14 @@ print(response.service_tier)
 
 Both examples explicitly request a tier. If the client omits `service_tier`, the deployment default above supplies it. An explicit tier in the request overrides that default. To choose Fast or Ultrafast only for selected calls, leave `service_tier` out of the deployment and send it on those calls.
 
-## Use the LiteLLM Python SDK directly
+## Use the Lumina Python SDK directly
 
-Without a gateway, set `OPENAI_API_KEY` in your application's environment and call the upstream model with `litellm.responses()`:
+Without a gateway, set `OPENAI_API_KEY` in your application's environment and call the upstream model with `lumina.responses()`:
 
 ```python
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="openai/gpt-6-astra",
     service_tier="ultrafast",
     input="Say hello in one sentence.",
@@ -247,11 +247,11 @@ Check the completed response's `service_tier` field to confirm the tier that ser
 
 | Symptom | What to check |
 | --- | --- |
-| `insufficient_quota` or `credit_balance_exhausted` | Check the OpenAI account's credits and billing. A LiteLLM virtual-key budget does not fund the upstream account. |
+| `insufficient_quota` or `credit_balance_exhausted` | Check the OpenAI account's credits and billing. A Lumina virtual-key budget does not fund the upstream account. |
 | `Invalid service_tier argument`, or the provider rejects the model or tier | Check the [supported models](#supported-models-and-availability), account access, regional endpoint, and requested tier. Ultrafast is limited to GPT-6 Astra and GPT-6.1 Sol. Model access alone does not guarantee access to every tier. |
-| Fast or Ultrafast requests appear to cost the same as Standard | Confirm the model's `*_priority` or `*_ultrafast` pricing fields, or configure custom pricing. Provider access and LiteLLM cost tracking are separate. |
+| Fast or Ultrafast requests appear to cost the same as Standard | Confirm the model's `*_priority` or `*_ultrafast` pricing fields, or configure custom pricing. Provider access and Lumina cost tracking are separate. |
 | The request uses a different tier | Inspect the client's `service_tier`; it overrides the deployment default. Confirm the selected alias routes to the intended deployment. |
 | A Fast request returns `service_tier: "default"` | OpenAI can downgrade requests when traffic ramps too quickly. Check the provider's ramp limits; HTTP 200 alone does not prove Fast processing. |
 | Codex does not show `/fast` or `/ultrafast` | Check both catalog settings and the model's `service_tiers`. If several deployments share an alias, configure the list on each. See the Codex guide for catalog caching and version requirements. |
 
-The examples use HTTP Responses requests. For repeated agent tool calls, OpenAI recommends a persistent WebSocket connection to reduce connection overhead; see [LiteLLM's Responses WebSocket guide](../../response_api.md#websocket-mode).
+The examples use HTTP Responses requests. For repeated agent tool calls, OpenAI recommends a persistent WebSocket connection to reduce connection overhead; see [Lumina's Responses WebSocket guide](../../response_api.md#websocket-mode).

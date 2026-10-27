@@ -1,5 +1,5 @@
 preflight: claude CLI present (2.1.211 (Claude Code))
-preflight: proxy reachable at http://internal-k8s-litellm-litellm-e7f4afb143-1355079179.us-east-1.elb.amazonaws.com/health/liveliness (200)
+preflight: proxy reachable at http://internal-k8s-lumina-lumina-e7f4afb143-1355079179.us-east-1.elb.amazonaws.com/health/liveliness (200)
 ============================= test session starts ==============================
 platform linux -- Python 3.13.14, pytest-9.0.3, pluggy-1.6.0 -- /app/.venv/bin/python
 rootdir: /app/e2e
@@ -307,7 +307,7 @@ Multiple connection attempts failed. All failures were:
 ____ TestChatCompletionsThroughput.test_sustains_throughput_slo_under_load _____
 
 self = <test_chat_completions_throughput_e2e.TestChatCompletionsThroughput object at 0x7f081de9ad50>
-client = LoadClient(proxy=ProxyClient(transport=SplitTransport(data=HttpTransport(base_url='http://internal-k8s-litellm-litellm...='sk-640fc15fce76484546d43452c51f97a3242b06861f74ef85', request_timeout=60.0)), poll_timeout=120.0, poll_interval=5.0))
+client = LoadClient(proxy=ProxyClient(transport=SplitTransport(data=HttpTransport(base_url='http://internal-k8s-lumina-lumina...='sk-640fc15fce76484546d43452c51f97a3242b06861f74ef85', request_timeout=60.0)), poll_timeout=120.0, poll_interval=5.0))
 load_key = 'sk-nTphwEj24d1m5_-7iHLbag'
 
     @pytest.mark.covers("reliability.perf.throughput.under_slo")
@@ -350,8 +350,8 @@ load/test_chat_completions_throughput_e2e.py:34: AssertionError
 llm_translation/realtime/test_realtime_pipecat_e2e.py::test_pipecat_tool_smoke[openai]
 llm_translation/realtime/test_realtime_pipecat_e2e.py::test_pipecat_tool_smoke[azure]
 llm_translation/realtime/test_realtime_pipecat_e2e.py::test_pipecat_tool_smoke[gemini]
-  /app/e2e/llm_translation/realtime/test_realtime_pipecat_e2e.py:101: DeprecationWarning: The `model` parameter is deprecated. Use `settings=LiteLLMRealtimeLLMService.Settings(model=...)` instead. If both are provided, `settings` takes precedence.
-    llm = LiteLLMRealtimeLLMService(
+  /app/e2e/llm_translation/realtime/test_realtime_pipecat_e2e.py:101: DeprecationWarning: The `model` parameter is deprecated. Use `settings=LuminaRealtimeLLMService.Settings(model=...)` instead. If both are provided, `settings` takes precedence.
+    llm = LuminaRealtimeLLMService(
 
 llm_translation/realtime/test_realtime_pipecat_e2e.py::test_pipecat_tool_smoke[openai]
 llm_translation/realtime/test_realtime_pipecat_e2e.py::test_pipecat_tool_smoke[azure]

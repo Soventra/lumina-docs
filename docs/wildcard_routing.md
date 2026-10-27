@@ -18,7 +18,7 @@ Use this if you want to **proxy all models from a specific provider without defi
 
 ```python
 import os
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -70,10 +70,10 @@ model_list:
 </TabItem>
 </Tabs>
 
-## [PROXY-Only] Step 2 - Run litellm proxy 
+## [PROXY-Only] Step 2 - Run lumina proxy 
 
 ```shell
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 ## Step 3 - Test it 
@@ -82,7 +82,7 @@ $ litellm --config /path/to/config.yaml
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(model_list=...)
 
@@ -170,6 +170,6 @@ curl -X POST 'http://0.0.0.0:4000/model/new' \
   }'
 ```
 
-The `x-litellm-model-id` response header names the deployment that served a request, so a call with one of the team's keys returns the team deployment's id and a call with any other key returns the proxy-wide deployment's id.
+The `x-lumina-model-id` response header names the deployment that served a request, so a call with one of the team's keys returns the team deployment's id and a call with any other key returns the proxy-wide deployment's id.
 
 ## [[PROXY-Only] Control Wildcard Model Access](/docs/proxy/model_access#advanced-model-access-groups)

@@ -1,23 +1,23 @@
 ---
 slug: lite-harness-sdk
-title: "LiteLLM Labs: Announcing Lite-Harness SDK — Unified API for Claude Code, Codex, and Pi AI"
+title: "Lumina Labs: Announcing Lite-Harness SDK — Unified API for Claude Code, Codex, and Pi AI"
 date: 2026-06-02T09:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "One SDK. Swap between Claude Code, Codex, and Pi AI by changing a string. Pairs with the LiteLLM AI Gateway for keys, budgets, logs, and fallbacks."
-tags: [litellm-labs, product, agents, sdk, ai-gateway]
+description: "One SDK. Swap between Claude Code, Codex, and Pi AI by changing a string. Pairs with the Lumina AI Gateway for keys, budgets, logs, and fallbacks."
+tags: [lumina-labs, product, agents, sdk, ai-gateway]
 hide_table_of_contents: true
 ---
 
 
-Harnesses are the next frontier of vendor lock-in. LiteLLM was built to swap across model providers easily. However, as the models get saturated, the next area for competition becomes the harnesses and managed agents. To make it easy to go across vendors at the harness layer, we're launching the Lite-Harness SDK. This is a simple TypeScript+Python SDK which allows developers to change harnesses, like they change models. 
+Harnesses are the next frontier of vendor lock-in. Lumina was built to swap across model providers easily. However, as the models get saturated, the next area for competition becomes the harnesses and managed agents. To make it easy to go across vendors at the harness layer, we're launching the Lite-Harness SDK. This is a simple TypeScript+Python SDK which allows developers to change harnesses, like they change models. 
 
 {/* truncate */}
 
 It exposes harnesses in a unified Claude Agents SDK spec. This means that if you wrote your app with the Claude Agents SDK, and want to try another harness (Pi AI, Hermes, Codex, OpenCode), you can do so without rewriting your code. 
 
-Today, it supports 3 harnesses - Claude Code, Codex, and Pi AI. Please file an issue [here](https://github.com/LiteLLM-Labs/lite-harness/issues), if you want us to add another harness. 
+Today, it supports 3 harnesses - Claude Code, Codex, and Pi AI. Please file an issue [here](https://github.com/Lumina-Labs/lite-harness/issues), if you want us to add another harness. 
 
 Here's how it works: 
 
@@ -67,15 +67,15 @@ async for message in query(
     print(message)
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
-Lite-Harness supports proxy'ing harnesses via LiteLLM AI Gateway. This enables easy model swapping, cost controls and logging.
+Lite-Harness supports proxy'ing harnesses via Lumina AI Gateway. This enables easy model swapping, cost controls and logging.
 
 Point Lite-Harness at your gateway by setting two environment variables:
 
 ```bash
-export LUMINA_API_BASE=https://litellm.your-company.com/v1
-export LUMINA_API_KEY=sk-litellm-...
+export LUMINA_API_BASE=https://lumina.your-company.com/v1
+export LUMINA_API_KEY=sk-lumina-...
 ```
 
 Then call as usual; every underlying model request routes through the gateway:
@@ -104,7 +104,7 @@ async for message in query(
 
 ### Frequently Asked Questions
 
-### Do I have to use the LiteLLM AI Gateway?
+### Do I have to use the Lumina AI Gateway?
 
 No. `lite-harness` works standalone; point it at provider APIs with native keys. AI Gateway integration is opt-in for teams that want central key management, budgets, fallbacks, and a single audit log across every model call.
 
@@ -116,12 +116,12 @@ Yes, that's the point. Each harness keeps its native loop, tool-calling semantic
 
 `lite-harness` is an early, experimental project. This is in public beta. Please join our [discord](https://discord.gg/Nkxw3rm3EE), to help design it to your preference. 
 
-### Is this available in LiteLLM OSS?
+### Is this available in Lumina OSS?
 
-Yes. `lite-harness` is MIT-licensed at [github.com/LiteLLM-Labs/lite-harness](https://github.com/LiteLLM-Labs/lite-harness). [LiteLLM Enterprise](https://litellm.ai/enterprise) adds SSO/SCIM, air-gapped deployment, 24/7 SLA, and advanced guardrails on top of the AI Gateway it pairs with.
+Yes. `lite-harness` is MIT-licensed at [github.com/Lumina-Labs/lite-harness](https://github.com/Lumina-Labs/lite-harness). [Lumina Enterprise](https://lumina.ai/enterprise) adds SSO/SCIM, air-gapped deployment, 24/7 SLA, and advanced guardrails on top of the AI Gateway it pairs with.
 
 ## Recommended Reading
 
-- [LiteLLM AI Gateway: full feature overview](https://docs.litellm.ai/docs/simple_proxy)
-- [LiteLLM Managed Agents Platform: Alpha](https://docs.litellm.ai/blog/agent-platform-alpha)
-- [Load balancing and routing across 100+ LLM providers](https://docs.litellm.ai/docs/routing)
+- [Lumina AI Gateway: full feature overview](https://docs.lumina.ai/docs/simple_proxy)
+- [Lumina Managed Agents Platform: Alpha](https://docs.lumina.ai/blog/agent-platform-alpha)
+- [Load balancing and routing across 100+ LLM providers](https://docs.lumina.ai/docs/routing)

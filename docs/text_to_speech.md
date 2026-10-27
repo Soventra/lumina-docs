@@ -16,12 +16,12 @@ import TabItem from '@theme/TabItem';
 | Guardrails | ✅ | Applies to input text (non-streaming only) |
 | Supported Providers | OpenAI, Azure OpenAI, Vertex AI, AWS Polly, ElevenLabs , MiniMax, Mistral |
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 ### Quick Start 
 
 ```python
 from pathlib import Path
-from litellm import speech
+from lumina import speech
 import os 
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
@@ -38,7 +38,7 @@ response.stream_to_file(speech_file_path)
 ### Async Usage 
 
 ```python
-from litellm import aspeech
+from lumina import aspeech
 from pathlib import Path
 import os, asyncio
 
@@ -64,9 +64,9 @@ async def test_async_speech():
 asyncio.run(test_async_speech())
 ```
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-LiteLLM provides an openai-compatible `/audio/speech` endpoint for Text-to-speech calls.
+Lumina provides an openai-compatible `/audio/speech` endpoint for Text-to-speech calls.
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
@@ -90,7 +90,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -110,21 +110,21 @@ litellm --config /path/to/config.yaml
 
 ## `/audio/speech` to `/chat/completions` Bridge
 
-LiteLLM allows you to use `/chat/completions` models to generate speech through the `/audio/speech` endpoint. This is useful for models like Gemini's TTS-enabled models that are only accessible via `/chat/completions`.
+Lumina allows you to use `/chat/completions` models to generate speech through the `/audio/speech` endpoint. This is useful for models like Gemini's TTS-enabled models that are only accessible via `/chat/completions`.
 
 ### Gemini Text-to-Speech
 
 #### Python SDK Usage
 
 ```python showLineNumbers title="Gemini Text-to-Speech SDK Usage"
-import litellm
+import lumina
 import os
 
 # Set your Gemini API key
 os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
 def test_audio_speech_gemini():
-    result = litellm.speech(
+    result = lumina.speech(
         model="gemini/gemini-2.5-flash-preview-tts",
         input="the quick brown fox jumped over the lazy dogs",
         api_key=os.getenv("GEMINI_API_KEY"),
@@ -142,7 +142,7 @@ test_audio_speech_gemini()
 #### Async Usage
 
 ```python showLineNumbers title="Gemini Text-to-Speech Async Usage"
-import litellm
+import lumina
 import asyncio
 import os
 from pathlib import Path
@@ -151,7 +151,7 @@ os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
 async def test_async_gemini_speech():
     speech_file_path = Path(__file__).parent / "gemini_speech.mp3"
-    response = await litellm.aspeech(
+    response = await lumina.aspeech(
         model="gemini/gemini-2.5-flash-preview-tts",
         input="the quick brown fox jumped over the lazy dogs",
         api_key=os.getenv("GEMINI_API_KEY"),
@@ -162,7 +162,7 @@ async def test_async_gemini_speech():
 asyncio.run(test_async_gemini_speech())
 ```
 
-#### LiteLLM Proxy Usage
+#### Lumina Proxy Usage
 
 **Setup Config:**
 
@@ -176,8 +176,8 @@ model_list:
 
 **Start Proxy:**
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -203,7 +203,7 @@ From v1.107.0, OpenAI voice names such as `alloy` map to a Gemini prebuilt voice
 #### Python SDK Usage
 
 ```python showLineNumbers title="Vertex AI Text-to-Speech SDK Usage"
-import litellm
+import lumina
 import os
 from pathlib import Path
 
@@ -211,7 +211,7 @@ from pathlib import Path
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/service-account.json"
 
 def test_audio_speech_vertex():
-    result = litellm.speech(
+    result = lumina.speech(
         model="vertex_ai/gemini-2.5-flash-preview-tts",
         input="the quick brown fox jumped over the lazy dogs",
     )
@@ -224,7 +224,7 @@ def test_audio_speech_vertex():
 test_audio_speech_vertex()
 ```
 
-#### LiteLLM Proxy Usage
+#### Lumina Proxy Usage
 
 **Setup Config:**
 
@@ -257,7 +257,7 @@ AWS Polly provides neural and standard text-to-speech engines with support for m
 
 See the [AWS Polly provider documentation](../docs/providers/aws_polly) for detailed usage examples.
 
-## Enterprise LiteLLM Proxy - Set Max Request File Size
+## Enterprise Lumina Proxy - Set Max Request File Size
 
 Use this when you want to limit the file size for requests sent to `audio/transcriptions`
 
@@ -275,7 +275,7 @@ Make a test Request with a valid file
 ```shell
 curl --location 'http://localhost:4000/v1/audio/transcriptions' \
 --header "Authorization: Bearer $LUMINA_API_KEY" \
---form 'file=@"/Users/ishaanjaffer/Github/litellm/tests/gettysburg.wav"' \
+--form 'file=@"/Users/ishaanjaffer/Github/lumina/tests/gettysburg.wav"' \
 --form 'model="whisper"'
 ```
 

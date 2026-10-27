@@ -10,12 +10,12 @@ Pass-through endpoints for Vertex AI - call provider-specific endpoint, in nativ
 |-------|-------|-------|
 | Cost Tracking | ✅ | supports all models on `/generateContent` endpoint |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | |
 
 ## Supported Endpoints
 
-LiteLLM supports 3 vertex ai passthrough routes:
+Lumina supports 3 vertex ai passthrough routes:
 
 1. `/vertex_ai` → routes to `https://{vertex_location}-aiplatform.googleapis.com/`
 2. `/vertex_ai/discovery` → routes to [`https://discoveryengine.googleapis.com`](https://discoveryengine.googleapis.com/) - [See Search Datastores Guide](./vertex_ai_search_datastores.md)
@@ -25,7 +25,7 @@ LiteLLM supports 3 vertex ai passthrough routes:
 
 Just replace `https://REGION-aiplatform.googleapis.com` with `LUMINA_PROXY_BASE_URL/vertex_ai`
 
-LiteLLM supports 3 flows for calling Vertex AI endpoints via pass-through:
+Lumina supports 3 flows for calling Vertex AI endpoints via pass-through:
 
 1. **Specific Credentials**: Admin sets passthrough credentials for a specific project/region.
 
@@ -119,7 +119,7 @@ curl \
 ```bash
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/${MODEL_ID}:generateContent \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{
     "contents":[{
       "role": "user", 
@@ -144,7 +144,7 @@ const model = vertexAI.getGenerativeModel({
     model: '{{gemini_pro}}'
 }, {
     customHeaders: {
-        "x-litellm-api-key": "sk-<your-litellm-api-key>" // Your litellm Virtual Key
+        "x-lumina-api-key": "sk-<your-lumina-api-key>" // Your lumina Virtual Key
     }
 });
 
@@ -173,10 +173,10 @@ generateContent();
 
 ## Vertex AI Live API WebSocket
 
-LiteLLM can now proxy the Vertex AI Live API to help you experiment with streaming audio/text from Gemini Live models without exposing Google credentials to clients.
+Lumina can now proxy the Vertex AI Live API to help you experiment with streaming audio/text from Gemini Live models without exposing Google credentials to clients.
 
 - Configure default Vertex credentials via `default_vertex_config` or environment variables (see examples above).
-- Connect to `wss://<PROXY_URL>/vertex_ai/live`. LiteLLM will exchange your saved credentials for a short-lived access token and forward messages bidirectionally.
+- Connect to `wss://<PROXY_URL>/vertex_ai/live`. Lumina will exchange your saved credentials for a short-lived access token and forward messages bidirectionally.
 - Optional query params `vertex_project`, `vertex_location`, and `model` let you override defaults for multi-project setups or global-only models.
 
 ```python title="client.py"
@@ -188,7 +188,7 @@ from websockets.asyncio.client import connect
 
 async def main() -> None:
     headers = {
-        "x-litellm-api-key": "Bearer sk-your-litellm-key",
+        "x-lumina-api-key": "Bearer sk-your-lumina-key",
         "Content-Type": "application/json",
     }
     async with connect(
@@ -227,10 +227,10 @@ export DEFAULT_VERTEXAI_LOCATION="" # "us-central1"
 export DEFAULT_GOOGLE_APPLICATION_CREDENTIALS="" # "/Users/Downloads/adroit-crow-413218-a956eef1a2a8.json"
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -265,7 +265,7 @@ curl http://localhost:4000/vertex-ai/v1/projects/${PROJECT_ID}/locations/us-cent
 
 #### Authentication to Vertex AI
 
-LiteLLM Proxy Server supports two methods of authentication to Vertex AI:
+Lumina Proxy Server supports two methods of authentication to Vertex AI:
 
 1. Pass Vertex Credentials client side to proxy server
 
@@ -281,7 +281,7 @@ LiteLLM Proxy Server supports two methods of authentication to Vertex AI:
 ```shell
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/{{gemini_flash}}:generateContent \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{"contents":[{"role": "user", "parts":[{"text": "hi"}]}]}'
 ```
 
@@ -293,7 +293,7 @@ curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-cent
 ```shell
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/textembedding-gecko@001:predict \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{"instances":[{"content": "gm"}]}'
 ```
 
@@ -303,7 +303,7 @@ curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-cent
 ```shell
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/imagen-3.0-generate-001:predict \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{"instances":[{"prompt": "make an otter"}], "parameters": {"sampleCount": 1}}'
 ```
 
@@ -313,7 +313,7 @@ curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-cent
 ```shell
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/{{gemini_flash}}:countTokens \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{"contents":[{"role": "user", "parts":[{"text": "hi"}]}]}'
 ```
 ### Tuning API 
@@ -324,7 +324,7 @@ Create Fine Tuning Job
 ```shell
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/{{gemini_flash}}:tuningJobs \
       -H "Content-Type: application/json" \
-      -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+      -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
       -d '{
   "baseModel": "{{gemini_flash}}",
   "supervisedTuningSpec" : {
@@ -355,7 +355,7 @@ export DEFAULT_GOOGLE_APPLICATION_CREDENTIALS="" # "/Users/Downloads/adroit-crow
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -364,7 +364,7 @@ litellm
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
--H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+-H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```
@@ -384,7 +384,7 @@ Expected Response
 ```bash
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/{{gemini_pro}}:generateContent \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -d '{
     "contents":[{
       "role": "user", 
@@ -395,7 +395,7 @@ curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-cent
 
 ### Send `tags` in request headers
 
-Use this if you wants `tags` to be tracked in the LiteLLM DB and on logging callbacks
+Use this if you wants `tags` to be tracked in the Lumina DB and on logging callbacks
 
 Pass `tags` in request headers as a comma separated list. In the example below the following tags will be tracked 
 
@@ -409,7 +409,7 @@ tags: ["vertex-js-sdk", "pass-through-endpoint"]
 ```bash
 curl http://localhost:4000/vertex_ai/v1/projects/${PROJECT_ID}/locations/us-central1/publishers/google/models/{{gemini_pro}}:generateContent \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
+  -H "x-lumina-api-key: Bearer $LUMINA_API_KEY" \
   -H "tags: vertex-js-sdk,pass-through-endpoint" \
   -d '{
     "contents":[{
@@ -435,7 +435,7 @@ const model = vertexAI.getGenerativeModel({
     model: '{{gemini_pro}}'
 }, {
     customHeaders: {
-        "x-litellm-api-key": "sk-<your-litellm-api-key>", // Your litellm Virtual Key
+        "x-lumina-api-key": "sk-<your-lumina-api-key>", // Your lumina Virtual Key
         "tags": "vertex-js-sdk,pass-through-endpoint"
     }
 });

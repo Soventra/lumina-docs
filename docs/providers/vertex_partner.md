@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 ## Supported Partner Providers
 
-| Provider | LiteLLM Route | Vertex Documentation |
+| Provider | Lumina Route | Vertex Documentation |
 |----------|---------------|---------------|
 | Anthropic (Claude) | `vertex_ai/claude-*` | [Vertex AI - Anthropic Models](https://cloud.google.com/vertex-ai/generative-ai/docs/partner-models/use-claude) |
 | DeepSeek | `vertex_ai/deepseek-ai/{MODEL}` | [Vertex AI - DeepSeek Models](https://cloud.google.com/vertex-ai/generative-ai/docs/maas/deepseek) |
@@ -36,7 +36,7 @@ import TabItem from '@theme/TabItem';
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -77,7 +77,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -111,7 +111,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 resp = completion(
     model="vertex_ai/{{anthropic}}",
@@ -138,7 +138,7 @@ resp = completion(
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -146,7 +146,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -223,7 +223,7 @@ ModelResponse(
 
 #### Usage
 
-**LiteLLM Supports all Vertex AI DeepSeek Models.** Ensure you use the `vertex_ai/deepseek-ai/` prefix for all Vertex AI DeepSeek models.
+**Lumina Supports all Vertex AI DeepSeek Models.** Ensure you use the `vertex_ai/deepseek-ai/` prefix for all Vertex AI DeepSeek models.
 
 | Model Name       | Usage                        |
 |------------------|------------------------------|
@@ -236,7 +236,7 @@ ModelResponse(
 | Provider Route | `vertex_ai/zai-org/{MODEL}` |
 | Vertex Documentation | [Vertex AI - GLM Models](https://cloud.google.com/vertex-ai/generative-ai/docs/maas/zaiorg/glm-47) |
 
-**LiteLLM Supports all Vertex AI GLM Models.** Ensure you use the `vertex_ai/zai-org/` prefix for all Vertex AI GLM models.
+**Lumina Supports all Vertex AI GLM Models.** Ensure you use the `vertex_ai/zai-org/` prefix for all Vertex AI GLM models.
 
 | Model Name | Usage |
 |------------|-------|
@@ -248,7 +248,7 @@ ModelResponse(
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -278,7 +278,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -322,7 +322,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -362,7 +362,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -389,9 +389,9 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## VertexAI Mistral API
 
-[**Supported OpenAI Params**](https://github.com/BerriAI/litellm/blob/e0f3cd580cb85066f7d36241a03c30aa50a8a31d/litellm/llms/openai.py#L137)
+[**Supported OpenAI Params**](https://github.com/Soventra/lumina/blob/e0f3cd580cb85066f7d36241a03c30aa50a8a31d/lumina/llms/openai.py#L137)
 
-**LiteLLM Supports all Vertex AI Mistral Models.** Ensure you use the `vertex_ai/mistral-` prefix for all Vertex AI Mistral models.
+**Lumina Supports all Vertex AI Mistral Models.** Ensure you use the `vertex_ai/mistral-` prefix for all Vertex AI Mistral models.
 
 Overview
 
@@ -416,7 +416,7 @@ Overview
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -456,7 +456,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -492,7 +492,7 @@ Note: You can also call Codestral via `/chat/completion`.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import text_completion
+from lumina import text_completion
 import os
 
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -541,7 +541,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -582,7 +582,7 @@ curl -X POST 'http://0.0.0.0:4000/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -622,7 +622,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -655,7 +655,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 | Provider Route | `vertex_ai/qwen/{MODEL}` |
 | Vertex Documentation | [Vertex AI - Qwen Models](https://cloud.google.com/vertex-ai/generative-ai/docs/maas/qwen) |
 
-**LiteLLM Supports all Vertex AI Qwen Models.** Ensure you use the `vertex_ai/qwen/` prefix for all Vertex AI Qwen models.
+**Lumina Supports all Vertex AI Qwen Models.** Ensure you use the `vertex_ai/qwen/` prefix for all Vertex AI Qwen models.
 
 | Model Name       | Usage                        |
 |------------------|------------------------------|
@@ -668,7 +668,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -708,7 +708,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -741,7 +741,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 | Provider Route | `vertex_ai/openai/{MODEL}` |
 | Vertex Documentation | [Vertex AI - GPT-OSS Models](https://console.cloud.google.com/vertex-ai/publishers/openai/model-garden/) |
 
-**LiteLLM Supports all Vertex AI GPT-OSS Models.** Ensure you use the `vertex_ai/openai/` prefix for all Vertex AI GPT-OSS models.
+**Lumina Supports all Vertex AI GPT-OSS Models.** Ensure you use the `vertex_ai/openai/` prefix for all Vertex AI GPT-OSS models.
 
 | Model Name       | Usage                        |
 |------------------|------------------------------|
@@ -753,7 +753,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -788,7 +788,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -821,7 +821,7 @@ GPT-OSS models support the `reasoning_effort` parameter for enhanced reasoning c
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/openai/gpt-oss-20b-maas",
@@ -850,7 +850,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -858,7 +858,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gpt-oss",
     "messages": [{"role": "user", "content": "Solve this complex problem step by step"}],
@@ -891,7 +891,7 @@ xAI Grok models available in **Vertex AI Model Garden** use the same OpenAI-comp
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
@@ -925,7 +925,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```

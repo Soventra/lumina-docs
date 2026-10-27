@@ -1,7 +1,7 @@
 ---
 title: Moyai
 sidebar_label: Moyai
-description: Run open source coding agents in your cloud, choose models through LiteLLM, and track each teammate's costs. See Moyai in action and set up your first task.
+description: Run open source coding agents in your cloud, choose models through Lumina, and track each teammate's costs. See Moyai in action and set up your first task.
 hide_title: true
 hide_table_of_contents: true
 ---
@@ -14,13 +14,13 @@ import Heading from '@theme/Heading';
 
 <MoyaiHero />
 
-Moyai is an open source coding agent you run in your cloud. Delegate a bug fix or repository change from Slack or the browser, then review the pull request. Connect your LiteLLM gateway to choose models and track what each task costs.
+Moyai is an open source coding agent you run in your cloud. Delegate a bug fix or repository change from Slack or the browser, then review the pull request. Connect your Lumina gateway to choose models and track what each task costs.
 
 <section className={styles.why} aria-labelledby="why-moyai">
   <Heading as="h2" id="why-moyai">Why Moyai</Heading>
   <BenefitGrid />
   <GuideCards />
-  <p className={styles.setupRequirements}>Start with a Modal account and a LiteLLM gateway. The setup guide verifies a cloud task before you connect a repository.</p>
+  <p className={styles.setupRequirements}>Start with a Modal account and a Lumina gateway. The setup guide verifies a cloud task before you connect a repository.</p>
 </section>
 
 ## Give Moyai a task from your browser {#start-in-the-browser}
@@ -44,7 +44,7 @@ See a team ask Moyai to investigate a bug, run regression tests, and return a pu
 
 ## See what each teammate spends {#see-agent-spend}
 
-Use Moyai's spend dashboard to find the users, sessions, and models behind your model bill. Moyai records LiteLLM's reported charge for each tracked request, so you can trace a total back to the same cost data.
+Use Moyai's spend dashboard to find the users, sessions, and models behind your model bill. Moyai records Lumina's reported charge for each tracked request, so you can trace a total back to the same cost data.
 
 <figure className={styles.spendFigure}>
   <Image
@@ -52,10 +52,10 @@ Use Moyai's spend dashboard to find the users, sessions, and models behind your 
     alt="Moyai's LLM spend by user table showing each teammate's recorded cost, session count, model requests, and share of team spend."
     style={{width: '100%', display: 'block'}}
   />
-  <figcaption>Moyai's spend dashboard with sample data. Names and figures illustrate the interface; they are not LiteLLM's production usage or evidence for the savings estimate above.</figcaption>
+  <figcaption>Moyai's spend dashboard with sample data. Names and figures illustrate the interface; they are not Lumina's production usage or evidence for the savings estimate above.</figcaption>
 </figure>
 
-[Check a request against LiteLLM](./moyai/setup.md#track-spend). The [cost accounting guide](./moyai/architecture.md#cost-accounting) explains coverage and missing receipts. Cloud hosting and storage costs remain separate from these model charges.
+[Check a request against Lumina](./moyai/setup.md#track-spend). The [cost accounting guide](./moyai/architecture.md#cost-accounting) explains coverage and missing receipts. Cloud hosting and storage costs remain separate from these model charges.
 
 ## Start with a bug your team already knows {#put-moyai-to-work}
 
@@ -71,7 +71,7 @@ Review the diff and test output, then check the session's model cost in Moyai. U
 <details>
 <summary>What do I need to get started?</summary>
 
-A Modal account, a cloud-reachable LiteLLM gateway, and a virtual key for your chosen model. The [setup guide](./moyai/setup.md) walks through installation and a cloud task. Opening GitHub PRs also requires an organization-owned GitHub App; verify the first task before connecting a repository.
+A Modal account, a cloud-reachable Lumina gateway, and a virtual key for your chosen model. The [setup guide](./moyai/setup.md) walks through installation and a cloud task. Opening GitHub PRs also requires an organization-owned GitHub App; verify the first task before connecting a repository.
 
 </details>
 <details>
@@ -89,7 +89,7 @@ You manage the service, including deployments, updates, credentials, and backups
 <details>
 <summary>Can I choose what the agent can access?</summary>
 
-Select the apps and repositories in **Connections**. Enabled app tools can write under their connection policy without a per-use approval prompt. You review and merge GitHub PRs. Model requests go through your LiteLLM gateway to the provider you select, so account for that provider when deciding what code to share.
+Select the apps and repositories in **Connections**. Enabled app tools can write under their connection policy without a per-use approval prompt. You review and merge GitHub PRs. Model requests go through your Lumina gateway to the provider you select, so account for that provider when deciding what code to share.
 
 </details>
 </div>
@@ -99,7 +99,7 @@ Select the apps and repositories in **Connections**. Enabled app tools can write
 <details>
 <summary>Looking for the previous gateway instructions?</summary>
 
-<span id="how-moyai-uses-litellm" />
+<span id="how-moyai-uses-lumina" />
 <span id="step-1-add-the-models" />
 <span id="step-2-create-a-virtual-key-for-moyai" />
 <span id="step-3-set-the-gateway-in-moyai" />
@@ -108,6 +108,6 @@ Select the apps and repositories in **Connections**. Enabled app tools can write
 <span id="troubleshooting" />
 <span id="more-information" />
 
-The [gateway configuration](./moyai/setup.md#configure-litellm), [connection check](./moyai/setup.md#check-the-model-connection), [spend tracking](./moyai/setup.md#track-spend), and [troubleshooting](./moyai/setup.md#troubleshooting) now live in the setup guide.
+The [gateway configuration](./moyai/setup.md#configure-lumina), [connection check](./moyai/setup.md#check-the-model-connection), [spend tracking](./moyai/setup.md#track-spend), and [troubleshooting](./moyai/setup.md#troubleshooting) now live in the setup guide.
 
 </details>

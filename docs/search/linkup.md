@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://linkup.so](https://linkup.so)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Linkup Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["LINKUP_API_KEY"] = "..."
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -59,7 +59,7 @@ curl http://0.0.0.0:4000/v1/search/linkup-search \
 
 ```python showLineNumbers title="Linkup Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["LINKUP_API_KEY"] = "..."
 
@@ -130,9 +130,9 @@ response = search(
 
 ## Cost
 
-LiteLLM prices each Linkup search from the [model cost map](/docs/proxy/model_cost_map). A search sent with `depth: "deep"` is billed at the `linkup/search-deep` entry, and a `standard` search, or one without `depth`, is billed at `linkup/search`. This applies to the SDK, every `/search` route on the proxy, and web searches the proxy runs for [web search interception](/docs/integrations/websearch_interception).
+Lumina prices each Linkup search from the [model cost map](/docs/proxy/model_cost_map). A search sent with `depth: "deep"` is billed at the `linkup/search-deep` entry, and a `standard` search, or one without `depth`, is billed at `linkup/search`. This applies to the SDK, every `/search` route on the proxy, and web searches the proxy runs for [web search interception](/docs/integrations/websearch_interception).
 
-To bill your own rate for both depths, set `input_cost_per_query` on the search tool, as described in [Custom Per-Query Pricing](/docs/search#custom-per-query-pricing). A price you register for `linkup/search` with `litellm.register_model` keeps applying to deep searches until you also register `linkup/search-deep`.
+To bill your own rate for both depths, set `input_cost_per_query` on the search tool, as described in [Custom Per-Query Pricing](/docs/search#custom-per-query-pricing). A price you register for `linkup/search` with `lumina.register_model` keeps applying to deep searches until you also register `linkup/search-deep`.
 
 ## Response Format
 
@@ -151,7 +151,7 @@ Linkup returns results in the following format:
 }
 ```
 
-LiteLLM transforms this to the standard `SearchResponse` format:
+Lumina transforms this to the standard `SearchResponse` format:
 - `results[].name` → `SearchResult.title`
 - `results[].url` → `SearchResult.url`
 - `results[].content` → `SearchResult.snippet`

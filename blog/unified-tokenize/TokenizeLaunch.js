@@ -9,7 +9,7 @@ import TokenIdExplainer from "./TokenIdExplainer";
 import RustBenchmark from "./RustBenchmark";
 import styles from "./launch.module.css";
 
-const implementation = "https://github.com/BerriAI/litellm/pull/48079";
+const implementation = "https://github.com/Soventra/lumina/pull/48079";
 
 const providers = {
   vllm: {
@@ -18,13 +18,13 @@ const providers = {
     key: 'api_key=os.environ.get("HOSTED_VLLM_API_KEY"),',
     config: `model_list:
   - model_name: ${providerExamples.vllm.modelName}
-    litellm_params:
+    lumina_params:
       model: ${providerExamples.vllm.target}
       api_base: os.environ/HOSTED_VLLM_API_BASE
       api_key: os.environ/HOSTED_VLLM_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY`,
+  master_key: os.environ/LUMINA_MASTER_KEY`,
   },
   watsonx: {
     name: "Watsonx",
@@ -32,20 +32,20 @@ general_settings:
     key: 'api_key=os.environ["WATSONX_APIKEY"],',
     config: `model_list:
   - model_name: ${providerExamples.watsonx.modelName}
-    litellm_params:
+    lumina_params:
       model: ${providerExamples.watsonx.target}
       api_base: os.environ/WATSONX_API_BASE
       api_key: os.environ/WATSONX_APIKEY
       project_id: os.environ/WATSONX_PROJECT_ID
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY`,
+  master_key: os.environ/LUMINA_MASTER_KEY`,
   },
 };
 
 const curlExample = (provider) => `curl http://localhost:4000/tokenize \\
   --fail-with-body \\
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \\
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "model": "${providerExamples[provider].modelName}",
@@ -65,9 +65,9 @@ function sdkExample(provider, asynchronous) {
       : []),
   ];
   return `${asynchronous ? "import asyncio\n" : ""}import os
-import litellm
+import lumina
 
-${asynchronous ? "async def main():\n" : ""}${indent}result = ${asynchronous ? "await litellm.atokenize" : "litellm.tokenize"}(
+${asynchronous ? "async def main():\n" : ""}${indent}result = ${asynchronous ? "await lumina.atokenize" : "lumina.tokenize"}(
 ${params.map((param) => `${indent}    ${param}`).join("\n")}
 ${indent})
 ${indent}print(result.model_dump())${asynchronous ? "\n\nasyncio.run(main())" : ""}`;
@@ -94,7 +94,7 @@ function ChooseApi() {
       <ul className={styles.apiChoices}>
         <li>
           <strong>Check prompt size.</strong> Use{" "}
-          <Link to="https://docs.litellm.ai/api-reference/#/llm%20utils/token_counter_utils_token_counter_post">
+          <Link to="https://docs.lumina.ai/api-reference/#/llm%20utils/token_counter_utils_token_counter_post">
             <code>/utils/token_counter</code>
           </Link>{" "}
           to check context limits or estimate input cost.
@@ -200,7 +200,7 @@ function Setup({ provider, onProviderChange }) {
                   </CodeWindow>
                   <p className={styles.caption}>
                     Start with{" "}
-                    <code>litellm --config config.yaml --port 4000</code>.
+                    <code>lumina --config config.yaml --port 4000</code>.
                     Change the provider configuration and restart to use the
                     same alias with another provider.
                   </p>
@@ -251,12 +251,12 @@ export default function TokenizeLaunch() {
       <header className={styles.hero}>
         <div className={styles.heroInner}>
           <div className={styles.heroTop}>
-            <Link to="/blog" aria-label="Back to the LiteLLM blog">
+            <Link to="/blog" aria-label="Back to the Lumina blog">
               <img
-                src="/img/brand/litellm-logo-white.png"
+                src="/img/brand/lumina-logo-white.png"
                 width="136"
                 height="27"
-                alt="LiteLLM"
+                alt="Lumina"
               />
             </Link>
             <span>OCTOBER 2026</span>

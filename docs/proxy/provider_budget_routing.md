@@ -6,7 +6,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Budget Routing
-LiteLLM Supports setting the following budgets:
+Lumina Supports setting the following budgets:
 - Provider budget - $100/day for OpenAI, $100/day for Azure.
 - Model budget - $100/day for gpt-5.6-terra  https://api-base-1, $100/day for gpt-5.6-luna https://api-base-2
 - Tag budget - $10/day for tag=`product:chat-bot`, $100/day for tag=`product:chat-bot-2`
@@ -44,7 +44,7 @@ router_settings:
       budget_limit: 100
       time_period: 12d
   
-  # OPTIONAL: Set Redis Host, Port, and Password if using multiple instance of LiteLLM
+  # OPTIONAL: Set Redis Host, Port, and Password if using multiple instance of Lumina
   redis_host: os.environ/REDIS_HOST
   redis_port: os.environ/REDIS_PORT
   redis_password: os.environ/REDIS_PASSWORD
@@ -133,7 +133,7 @@ Expected response on failure
 
 4. **Requirements**:
    - Redis required for tracking spend across instances
-   - Provider names must be litellm provider names. See [Supported Providers](https://docs.litellm.ai/docs/providers)
+   - Provider names must be lumina provider names. See [Supported Providers](https://docs.lumina.ai/docs/providers)
 
 ### Monitoring Provider Remaining Budget
 
@@ -184,12 +184,12 @@ Example Response
 
 #### Prometheus Metric
 
-LiteLLM will emit the following metric on Prometheus to track the remaining budget for each provider
+Lumina will emit the following metric on Prometheus to track the remaining budget for each provider
 
 This metric indicates the remaining budget for a provider in dollars (USD)
 
 ```
-litellm_provider_remaining_budget_metric{api_provider="openai"} 10
+lumina_provider_remaining_budget_metric{api_provider="openai"} 10
 ```
 
 
@@ -292,7 +292,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   tag_budget_config:
     product:chat-bot: # (Tag)
       max_budget: 0.000000000001 # (USD)
@@ -362,7 +362,7 @@ Expected response on failure
 
 ## Multi-instance setup
 
-If you are using a multi-instance setup, you will need to set the Redis host, port, and password in the `proxy_config.yaml` file. Redis is used to sync the spend across LiteLLM instances.
+If you are using a multi-instance setup, you will need to set the Redis host, port, and password in the `proxy_config.yaml` file. Redis is used to sync the spend across Lumina instances.
 
 ```yaml
 model_list:
@@ -377,7 +377,7 @@ router_settings:
       budget_limit: 0.000000000001 # float of $ value budget for time period
       time_period: 1d # can be 1d, 2d, 30d, 1mo, 2mo
   
-  # Add this: Set Redis Host, Port, and Password if using multiple instance of LiteLLM
+  # Add this: Set Redis Host, Port, and Password if using multiple instance of Lumina
   redis_host: os.environ/REDIS_HOST
   redis_port: os.environ/REDIS_PORT
   redis_password: os.environ/REDIS_PASSWORD
@@ -389,7 +389,7 @@ general_settings:
 ## Spec for provider_budget_config
 
 The `provider_budget_config` is a dictionary where:
-- **Key**: Provider name (string) - Must be a valid [LiteLLM provider name](https://docs.litellm.ai/docs/providers)
+- **Key**: Provider name (string) - Must be a valid [Lumina provider name](https://docs.lumina.ai/docs/providers)
 - **Value**: Budget configuration object with the following parameters:
   - `budget_limit`: Float value representing the budget in USD
   - `time_period`: Duration string in one of the following formats:

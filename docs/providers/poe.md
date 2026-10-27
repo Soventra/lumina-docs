@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | Poe is Quora's AI platform that provides access to more than 100 models across text, image, video, and voice modalities through a developer-friendly API. |
-| Provider Route on LiteLLM | `poe/` |
+| Provider Route on Lumina | `poe/` |
 | Link to Provider Doc | [Poe Website ↗](https://poe.com) |
 | Base URL | `https://api.poe.com/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/poe#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](/docs/providers/poe#usage---lumina-python-sdk) |
 
 <br />
 
@@ -29,14 +29,14 @@ os.environ["POE_API_KEY"] = ""  # your Poe API key
 
 Get your Poe API key from the [Poe platform](https://poe.com).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Poe Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["POE_API_KEY"] = ""  # your Poe API key
 
@@ -55,8 +55,8 @@ print(response)
 
 ```python showLineNumbers title="Poe Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["POE_API_KEY"] = ""  # your Poe API key
 
@@ -73,7 +73,7 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -121,7 +121,7 @@ Poe provides access to models across multiple providers:
 
 ## Platform Benefits
 
-Using Poe through LiteLLM offers several advantages:
+Using Poe through Lumina offers several advantages:
 - **Unified Access**: Single API for many different models
 - **Quora Integration**: Access to large user base and content ecosystem
 - **Content Sharing**: Capabilities to share model outputs with followers

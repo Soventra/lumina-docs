@@ -1,6 +1,6 @@
 # JevRank measured SciFact run
 
-The local LiteLLM SDK completed 300 BEIR SciFact test queries and saved 6,000 document decisions. Every returned model version was `jev-1.13.0`. The measured nDCG@10 was 0.767626, compared with 0.686300 for the same BM25 candidates. Median rerank latency was 0.500629 seconds; p95 was 1.151318 seconds at eight concurrent document calls per query.
+The local Lumina SDK completed 300 BEIR SciFact test queries and saved 6,000 document decisions. Every returned model version was `jev-1.13.0`. The measured nDCG@10 was 0.767626, compared with 0.686300 for the same BM25 candidates. Median rerank latency was 0.500629 seconds; p95 was 1.151318 seconds at eight concurrent document calls per query.
 
 The estimated cost was $0.172618278 for 300 queries, or $0.57539426 per 1,000 queries. This uses 4,109,959 returned input tokens at $0.042 per million, with no output-token charge. These are configured gateway rates, not an invoice. `independent-audit.json` records a separate recomputation from the raw probabilities and dataset labels.
 
@@ -21,9 +21,9 @@ uv pip sync --python .venv/bin/python requirements.lock.txt
 
 The runner downloads the official BEIR archive and verifies its published checksum. It uses BM25s 0.3.13, Lucene BM25 with k1=1.5 and b=0.75, English stop words and Snowball stemming, full title plus abstract, and stable corpus-ID order for ties. It saves exactly 20 candidates per query. It does not tune retrieval to match a reference score.
 
-This runner reproduces the historical benchmark and retains the adapter arguments from that revision. Current usage examples in the [JevRank article](https://docs.litellm.ai/blog/jevrank) use the normal rerank interface.
+This runner reproduces the historical benchmark and retains the adapter arguments from that revision. Current usage examples in the [JevRank article](https://docs.lumina.ai/blog/jevrank) use the normal rerank interface.
 
-Use the LiteLLM implementation at commit `5aa0a8304cd5bfa095bbd07e77f6f8c367084595` from PR #47782. From that checkout's installed environment:
+Use the Lumina implementation at commit `5aa0a8304cd5bfa095bbd07e77f6f8c367084595` from PR #47782. From that checkout's installed environment:
 
 ```sh
 uv run --no-sync python /path/to/scifact_benchmark.py run \

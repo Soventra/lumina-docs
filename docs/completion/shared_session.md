@@ -2,7 +2,7 @@
 
 ## Overview
 
-LiteLLM now supports sharing `aiohttp.ClientSession` instances across multiple API calls to avoid creating unnecessary new sessions. This improves performance and resource use.
+Lumina now supports sharing `aiohttp.ClientSession` instances across multiple API calls to avoid creating unnecessary new sessions. This improves performance and resource use.
 
 ## Usage
 
@@ -11,7 +11,7 @@ LiteLLM now supports sharing `aiohttp.ClientSession` instances across multiple A
 ```python
 import asyncio
 from aiohttp import ClientSession
-from litellm import acompletion
+from lumina import acompletion
 
 async def main():
     # Create a shared session
@@ -38,7 +38,7 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from litellm import acompletion
+from lumina import acompletion
 
 async def main():
     # Each call creates a new session
@@ -69,7 +69,7 @@ Enable debug logging to see session reuse in action:
 
 ```python
 import os
-import litellm
+import lumina
 
 # Enable debug logging
 os.environ['LUMINA_LOG'] = 'DEBUG'
@@ -86,7 +86,7 @@ os.environ['LUMINA_LOG'] = 'DEBUG'
 ```python
 from fastapi import FastAPI
 import aiohttp
-import litellm
+import lumina
 
 app = FastAPI()
 
@@ -94,7 +94,7 @@ app = FastAPI()
 async def chat(messages: list[dict]):
     # Create session per request
     async with aiohttp.ClientSession() as session:
-        return await litellm.acompletion(
+        return await lumina.acompletion(
             model="{{openai_large}}",
             messages=messages,
             shared_session=session
@@ -106,7 +106,7 @@ async def chat(messages: list[dict]):
 ```python
 import asyncio
 from aiohttp import ClientSession
-from litellm import acompletion
+from lumina import acompletion
 
 async def process_batch(messages_list):
     async with ClientSession() as shared_session:
@@ -128,7 +128,7 @@ async def process_batch(messages_list):
 
 ```python
 import aiohttp
-import litellm
+import lumina
 
 # Create optimized session
 async with aiohttp.ClientSession(
@@ -136,7 +136,7 @@ async with aiohttp.ClientSession(
     connector=aiohttp.TCPConnector(limit=300, limit_per_host=75)
 ) as shared_session:
     
-    response = await litellm.acompletion(
+    response = await lumina.acompletion(
         model="{{openai_large}}",
         messages=[{"role": "user", "content": "Hello"}],
         shared_session=shared_session
@@ -145,12 +145,12 @@ async with aiohttp.ClientSession(
 
 ## Implementation Details
 
-The `shared_session` parameter is threaded through the entire LiteLLM call chain:
+The `shared_session` parameter is threaded through the entire Lumina call chain:
 
 1. **`acompletion()`** - Accepts `shared_session` parameter
 2. **`BaseLLMHTTPHandler`** - Passes session to HTTP client creation
 3. **`AsyncHTTPHandler`** - Uses existing session if provided
-4. **`LiteLLMAiohttpTransport`** - Reuses the session for HTTP requests
+4. **`LuminaAiohttpTransport`** - Reuses the session for HTTP requests
 
 ## Backward Compatibility
 
@@ -165,7 +165,7 @@ Test the shared session functionality:
 ```python
 import asyncio
 from aiohttp import ClientSession
-from litellm import acompletion
+from lumina import acompletion
 
 async def test_shared_session():
     async with ClientSession() as session:
@@ -191,12 +191,12 @@ asyncio.run(test_shared_session())
 
 The shared session functionality was added to these files:
 
-- `litellm/main.py` - Added `shared_session` parameter to `acompletion()` and `completion()`
-- `litellm/llms/custom_httpx/http_handler.py` - Core session reuse logic
-- `litellm/llms/custom_httpx/llm_http_handler.py` - HTTP handler integration
-- `litellm/llms/openai/openai.py` - OpenAI provider integration
-- `litellm/llms/openai/common_utils.py` - OpenAI client creation
-- `litellm/llms/azure/chat/o_series_handler.py` - Azure O Series handler
+- `lumina/main.py` - Added `shared_session` parameter to `acompletion()` and `completion()`
+- `lumina/llms/custom_httpx/http_handler.py` - Core session reuse logic
+- `lumina/llms/custom_httpx/llm_http_handler.py` - HTTP handler integration
+- `lumina/llms/openai/openai.py` - OpenAI provider integration
+- `lumina/llms/openai/common_utils.py` - OpenAI client creation
+- `lumina/llms/azure/chat/o_series_handler.py` - Azure O Series handler
 
 ## Troubleshooting
 

@@ -28,7 +28,7 @@ export default function ReleaseFeed() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'LiteLLM Changelog',
+    name: 'Lumina Changelog',
     itemListOrder: 'https://schema.org/ItemListOrderDescending',
     itemListElement: entries.map((e, i) => ({
       '@type': 'ListItem',
@@ -46,7 +46,7 @@ export default function ReleaseFeed() {
   return (
     <div className={styles.feed}>
       <Head>
-        <link rel="alternate" type="application/rss+xml" title="LiteLLM Changelog" href={`${site}/release_notes/rss.xml`} />
+        <link rel="alternate" type="application/rss+xml" title="Lumina Changelog" href={`${site}/release_notes/rss.xml`} />
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       </Head>
       {entries.map((e) => {

@@ -1,11 +1,11 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Claude Agent SDK with LiteLLM
+# Claude Agent SDK with Lumina
 
-Use Anthropic's Claude Agent SDK with any LLM provider through LiteLLM Proxy.
+Use Anthropic's Claude Agent SDK with any LLM provider through Lumina Proxy.
 
-The Claude Agent SDK provides a high-level interface for building AI agents. By pointing it to LiteLLM, you can use the same agent code with OpenAI, Bedrock, Azure, Vertex AI, or any other provider.
+The Claude Agent SDK provides a high-level interface for building AI agents. By pointing it to Lumina, you can use the same agent code with OpenAI, Bedrock, Azure, Vertex AI, or any other provider.
 
 ## Quick Start
 
@@ -15,7 +15,7 @@ The Claude Agent SDK provides a high-level interface for building AI agents. By 
 uv add claude-agent-sdk
 ```
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 ```yaml title="config.yaml" showLineNumbers
 model_list:
@@ -36,23 +36,23 @@ model_list:
 ```
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
-### 3. Point Agent SDK to LiteLLM
+### 3. Point Agent SDK to Lumina
 
 | Environment Variable | Value | Description |
 |---------------------|-------|-------------|
-| `ANTHROPIC_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
-| `ANTHROPIC_API_KEY` | `sk-<your-api-key>` | Your LiteLLM API key (not Anthropic key) |
+| `ANTHROPIC_BASE_URL` | `http://localhost:4000` | Lumina proxy URL |
+| `ANTHROPIC_API_KEY` | `sk-<your-api-key>` | Your Lumina API key (not Anthropic key) |
 
 ```python title="agent.py" showLineNumbers
 import os
 from claude_agent_sdk import ClaudeSDKClient, ClaudeAgentOptions
 
-# Point to LiteLLM proxy (not Anthropic)
+# Point to Lumina proxy (not Anthropic)
 os.environ["ANTHROPIC_BASE_URL"] = "http://localhost:4000"
-os.environ["ANTHROPIC_API_KEY"] = "sk-<your-api-key>"  # Your LiteLLM key
+os.environ["ANTHROPIC_API_KEY"] = "sk-<your-api-key>"  # Your Lumina key
 
 # Configure agent with any model from your config
 options = ClaudeAgentOptions(
@@ -62,7 +62,7 @@ options = ClaudeAgentOptions(
 )
 
 async with ClaudeSDKClient(options=options) as client:
-    await client.query("What is LiteLLM?")
+    await client.query("What is Lumina?")
     
     async for msg in client.receive_response():
         if hasattr(msg, 'content'):
@@ -73,7 +73,7 @@ async with ClaudeSDKClient(options=options) as client:
 
 
 
-## Why Use LiteLLM with Agent SDK?
+## Why Use Lumina with Agent SDK?
 
 | Feature | Benefit |
 |---------|---------|
@@ -85,15 +85,15 @@ async with ClaudeSDKClient(options=options) as client:
 
 ## Complete Example
 
-See our [cookbook example](https://github.com/BerriAI/litellm/tree/main/cookbook/anthropic_agent_sdk) for a complete interactive CLI agent that:
+See our [cookbook example](https://github.com/Soventra/lumina/tree/main/cookbook/anthropic_agent_sdk) for a complete interactive CLI agent that:
 - Streams responses in real-time
 - Switches between models dynamically
 - Fetches available models from the proxy
 
 ```bash
 # Clone and run the example
-git clone https://github.com/BerriAI/litellm.git
-cd litellm/cookbook/anthropic_agent_sdk
+git clone https://github.com/Soventra/lumina.git
+cd lumina/cookbook/anthropic_agent_sdk
 uv add -r requirements.txt
 python main.py
 ```
@@ -101,5 +101,5 @@ python main.py
 ## Related Resources
 
 - [Claude Agent SDK Documentation](https://github.com/anthropics/anthropic-agent-sdk)
-- [LiteLLM Proxy Quick Start](../proxy/quick_start)
-- [Complete Cookbook Example](https://github.com/BerriAI/litellm/tree/main/cookbook/anthropic_agent_sdk)
+- [Lumina Proxy Quick Start](../proxy/quick_start)
+- [Complete Cookbook Example](https://github.com/Soventra/lumina/tree/main/cookbook/anthropic_agent_sdk)

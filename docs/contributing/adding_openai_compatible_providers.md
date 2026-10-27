@@ -4,9 +4,9 @@ For simple OpenAI-compatible providers (like Hyperbolic, Nscale, etc.), you can 
 
 ## Quick Start
 
-1. Edit `litellm/llms/openai_like/providers.json`
+1. Edit `lumina/llms/openai_like/providers.json`
 2. Add your provider configuration
-3. Test with: `litellm.completion(model="your_provider/model-name", ...)`
+3. Test with: `lumina.completion(model="your_provider/model-name", ...)`
 
 ## Basic Configuration
 
@@ -94,12 +94,12 @@ If your provider also supports the OpenAI Responses API (`/v1/responses`), add `
 }
 ```
 
-This enables `litellm.responses()` with zero additional code:
+This enables `lumina.responses()` with zero additional code:
 
 ```python
-import litellm
+import lumina
 
-response = litellm.responses(
+response = lumina.responses(
     model="your_provider/model-name",
     input="Hello, what can you do?",
 )
@@ -113,20 +113,20 @@ The provider inherits all request/response handling from OpenAI's Responses API,
 ## Usage
 
 ```python
-import litellm
+import lumina
 import os
 
 # Set your API key
 os.environ["YOUR_PROVIDER_API_KEY"] = "your-key-here"
 
 # Chat completions
-response = litellm.completion(
+response = lumina.completion(
     model="your_provider/model-name",
     messages=[{"role": "user", "content": "Hello"}],
 )
 
 # Responses API (if supported_endpoints includes "/v1/responses")
-response = litellm.responses(
+response = lumina.responses(
     model="your_provider/model-name",
     input="Hello",
 )
@@ -141,9 +141,9 @@ Use a Python config class if you need:
 - Provider-specific streaming logic
 - Advanced tool calling modifications
 
-For chat completions, create a config class in `litellm/llms/your_provider/chat/transformation.py` that inherits from `OpenAIGPTConfig` or `OpenAILikeChatConfig`.
+For chat completions, create a config class in `lumina/llms/your_provider/chat/transformation.py` that inherits from `OpenAIGPTConfig` or `OpenAILikeChatConfig`.
 
-For responses API with small overrides, inherit from `OpenAIResponsesAPIConfig` and override only what's needed. See `litellm/llms/perplexity/responses/transformation.py` for a minimal example (~40 lines vs 400+).
+For responses API with small overrides, inherit from `OpenAIResponsesAPIConfig` and override only what's needed. See `lumina/llms/perplexity/responses/transformation.py` for a minimal example (~40 lines vs 400+).
 
 ## Testing
 
@@ -152,10 +152,10 @@ Test your provider:
 ```bash
 # Quick test
 python -c "
-import litellm
+import lumina
 import os
 os.environ['PROVIDER_API_KEY'] = 'your-key'
-response = litellm.completion(
+response = lumina.completion(
     model='provider/model-name',
     messages=[{'role': 'user', 'content': 'test'}]
 )
@@ -165,4 +165,4 @@ print(response.choices[0].message.content)
 
 ## Reference
 
-See existing providers in `litellm/llms/openai_like/providers.json` for examples.
+See existing providers in `lumina/llms/openai_like/providers.json` for examples.

@@ -156,7 +156,7 @@ Route traffic away from unhealthy deployments before users hit errors. Backgroun
 
 ## What problem does this solve?
 
-By default, LiteLLM routes traffic to all deployments and only stops sending to a broken one after it has already failed a user request. The cooldown system is reactive.
+By default, Lumina routes traffic to all deployments and only stops sending to a broken one after it has already failed a user request. The cooldown system is reactive.
 
 Health check driven routing makes this **proactive**: a background loop pings every deployment on a configurable interval. If a deployment fails its health check, it gets removed from the routing pool immediately, before a user request lands on it.
 

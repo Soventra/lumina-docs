@@ -6,7 +6,7 @@ Pass-through endpoints for the [Cursor Cloud Agents API](https://docs.cursor.com
 |---------|-----------|-------|
 | Cost Tracking | ✅ | Logged as $0.00 (subscription-based, no per-request pricing) |
 | Logging | ✅ | All requests logged with operation classification |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ❌ | Cursor API does not use streaming |
 
 Just replace `https://api.cursor.com` with `LUMINA_PROXY_BASE_URL/cursor`
@@ -38,7 +38,7 @@ The proxy needs your Cursor API key to authenticate to the Cursor Cloud Agents A
 
 ```bash
 curl -X POST http://0.0.0.0:4000/cursor/v0/agents \
-  -H "Authorization: Bearer <your-litellm-key>" \
+  -H "Authorization: Bearer <your-lumina-key>" \
   -H "Content-Type: application/json" \
   -d '{
     "prompt": {
@@ -87,34 +87,34 @@ Anything after `http://0.0.0.0:4000/cursor` is treated as a provider-specific ro
 | **Original Endpoint** | **Replace With** |
 |---|---|
 | `https://api.cursor.com` | `http://0.0.0.0:4000/cursor` (LUMINA_PROXY_BASE_URL) |
-| `-u YOUR_API_KEY:` (Basic Auth) | `-H "Authorization: Bearer <your-litellm-key>"` (LiteLLM Virtual Key) |
+| `-u YOUR_API_KEY:` (Basic Auth) | `-H "Authorization: Bearer <your-lumina-key>"` (Lumina Virtual Key) |
 
 ### List Available Models
 
 ```bash
 curl http://0.0.0.0:4000/cursor/v0/models \
-  -H "Authorization: Bearer <your-litellm-key>"
+  -H "Authorization: Bearer <your-lumina-key>"
 ```
 
 ### Check Agent Status
 
 ```bash
 curl http://0.0.0.0:4000/cursor/v0/agents/bc_abc123 \
-  -H "Authorization: Bearer <your-litellm-key>"
+  -H "Authorization: Bearer <your-lumina-key>"
 ```
 
 ### List All Agents
 
 ```bash
 curl http://0.0.0.0:4000/cursor/v0/agents \
-  -H "Authorization: Bearer <your-litellm-key>"
+  -H "Authorization: Bearer <your-lumina-key>"
 ```
 
 ### Add Follow-up to Agent
 
 ```bash
 curl -X POST http://0.0.0.0:4000/cursor/v0/agents/bc_abc123/followup \
-  -H "Authorization: Bearer <your-litellm-key>" \
+  -H "Authorization: Bearer <your-lumina-key>" \
   -H "Content-Type: application/json" \
   -d '{
     "prompt": {
@@ -127,21 +127,21 @@ curl -X POST http://0.0.0.0:4000/cursor/v0/agents/bc_abc123/followup \
 
 ```bash
 curl -X POST http://0.0.0.0:4000/cursor/v0/agents/bc_abc123/stop \
-  -H "Authorization: Bearer <your-litellm-key>"
+  -H "Authorization: Bearer <your-lumina-key>"
 ```
 
 ### Delete an Agent
 
 ```bash
 curl -X DELETE http://0.0.0.0:4000/cursor/v0/agents/bc_abc123 \
-  -H "Authorization: Bearer <your-litellm-key>"
+  -H "Authorization: Bearer <your-lumina-key>"
 ```
 
 ### Get API Key Info
 
 ```bash
 curl http://0.0.0.0:4000/cursor/v0/me \
-  -H "Authorization: Bearer <your-litellm-key>"
+  -H "Authorization: Bearer <your-lumina-key>"
 ```
 
 ## Related

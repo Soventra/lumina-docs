@@ -7,11 +7,11 @@ import TabItem from '@theme/TabItem';
 Javelin provides AI safety and content moderation services with support for prompt injection detection, trust & safety violations, and language detection.
 
 ## Quick Start
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -28,7 +28,7 @@ guardrails:
       guard_name: "promptinjectiondetection"
       api_version: "v1"
       metadata:
-        request_source: "litellm-proxy"
+        request_source: "lumina-proxy"
       application: "my-app"
   - guardrail_name: "javelin-trust-safety"
     lumina_params:
@@ -52,10 +52,10 @@ guardrails:
 
 Javelin only supports `pre_call`, which runs **before** the LLM call, on **input**. `post_call` and `during_call` are not supported for this guardrail.
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request 
@@ -346,8 +346,8 @@ When a guardrail detects a violation:
 
 **How it works:**
 - Javelin guardrails check the last message for violations
-- If a violation is detected (`request_reject: true`), LiteLLM raises an `HTTPException` with status code 500 and returns the reject prompt under `error.provider_specific_fields`
-- If Javelin does not return a `reject_prompt`, LiteLLM falls back to `"Request blocked by Javelin guardrails due to <guardrail_name> violation."`, where `<guardrail_name>` is the top-level `guardrail_name` from your LiteLLM config (for example `javelin-prompt-injection`), not the Javelin guard name
+- If a violation is detected (`request_reject: true`), Lumina raises an `HTTPException` with status code 500 and returns the reject prompt under `error.provider_specific_fields`
+- If Javelin does not return a `reject_prompt`, Lumina falls back to `"Request blocked by Javelin guardrails due to <guardrail_name> violation."`, where `<guardrail_name>` is the top-level `guardrail_name` from your Lumina config (for example `javelin-prompt-injection`), not the Javelin guard name
 
 **Reject Prompts:**
 Can be configured from javelin portal.

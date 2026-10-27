@@ -20,7 +20,7 @@ Tags are labels you can attach to your LLM requests to track and limit spending 
 - **Customer Attribution**: Track spend per customer or client (e.g., "customer-acme", "customer-techcorp")
 - **Feature Monitoring**: Monitor costs for specific features (e.g., "feature-chat", "feature-summarization")
 
-Tags can be set on each request (in `metadata` or via `x-litellm-tags`), attached to a virtual key so every request using that key inherits the tag and its budget limits automatically, or [mapped from the request's `baggage` header](#map-baggage-values-to-tags).
+Tags can be set on each request (in `metadata` or via `x-lumina-tags`), attached to a virtual key so every request using that key inherits the tag and its budget limits automatically, or [mapped from the request's `baggage` header](#map-baggage-values-to-tags).
 
 ## Setting Tag Budgets
 
@@ -74,7 +74,7 @@ curl -X POST 'http://0.0.0.0:4000/tag/new' \
 }  
 ```
 
-#### LiteLLM Admin UI
+#### Lumina Admin UI
 
 Navigate to the **Tag Management** page and click **Create New Tag**. Fill in the tag details and set your budget:
 
@@ -127,7 +127,7 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
         }'
 ```
 
-#### LiteLLM Admin UI
+#### Lumina Admin UI
 
 Navigate to **Virtual Keys** → **Create Key** (or edit an existing key) and select the tag(s) in the **Tags** field.
 
@@ -138,7 +138,7 @@ Navigate to **Virtual Keys** → **Create Key** (or edit an existing key) and se
 
 ### 3. Use the tag in your requests (optional)
 
-If you did not attach tags to the API key, add tags to each request in the `metadata` field (or via the `x-litellm-tags` header, see [Request Tags](request_tags.md)):
+If you did not attach tags to the API key, add tags to each request in the `metadata` field (or via the `x-lumina-tags` header, see [Request Tags](request_tags.md)):
 
 <Tabs>
 
@@ -148,7 +148,7 @@ If you did not attach tags to the API key, add tags to each request in the `meta
 import openai
 
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM proxy key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina proxy key
     base_url="http://0.0.0.0:4000"
 )
 
@@ -307,11 +307,11 @@ Baggage is decoded the way OpenTelemetry decodes it. Percent-encoded values are 
 
 You can also edit the rules in the Admin UI. Open **Router Settings** in the Settings section, then the **General** tab, and use the `request_tag_mappings` row. Rules from `config.yaml` show there read-only.
 
-This setting needs the `opentelemetry-api` package. The Docker image includes it, and a pip install of `litellm[proxy]` needs `pip install opentelemetry-api` as well.
+This setting needs the `opentelemetry-api` package. The Docker image includes it, and a pip install of `lumina[proxy]` needs `pip install opentelemetry-api` as well.
 
 ## Setting Tag Rate Limits
 
-Set `rpm_limit` and `tpm_limit` on a tag to cap requests and tokens per minute for that tag. The limit applies to the tag itself, so usage is shared across every key and team that sends the tag, whether the tag arrives in request `metadata.tags`, the `x-litellm-tags` header, or a key's attached tags. This is separate from the per key `tag_rpm_limit` map in key metadata, which meters each key's requests under a tag independently.
+Set `rpm_limit` and `tpm_limit` on a tag to cap requests and tokens per minute for that tag. The limit applies to the tag itself, so usage is shared across every key and team that sends the tag, whether the tag arrives in request `metadata.tags`, the `x-lumina-tags` header, or a key's attached tags. This is separate from the per key `tag_rpm_limit` map in key metadata, which meters each key's requests under a tag independently.
 
 Rate limits on tags are enforced by the v3 parallel request limiter. Once a tag crosses its limit, any request carrying it is rejected with HTTP 429 and a message like `Rate limit exceeded for tag: engineering. Limit type: requests. Current limit: 100`. `rpm_limit` counts each request at admission, and `tpm_limit` is charged with the request's actual token usage after the call completes, so a request can be admitted and the next one rejected once usage lands.
 

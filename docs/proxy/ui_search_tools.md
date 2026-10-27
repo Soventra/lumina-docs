@@ -1,6 +1,6 @@
 # Search tools (Admin UI)
 
-Control which teams and virtual keys may call each configured web search integration (`/v1/search`) and see team/key level usage visibility within LiteLLM's spend dashboard.
+Control which teams and virtual keys may call each configured web search integration (`/v1/search`) and see team/key level usage visibility within Lumina's spend dashboard.
 
 
 ![](/img/ui-search-tools/step-01-go-to-search-tools-tab.png)

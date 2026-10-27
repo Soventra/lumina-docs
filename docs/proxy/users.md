@@ -22,7 +22,7 @@ Requirements:
 
 :::warning[Budgets require a database]
 
-Every budget on this page is enforced against spend read from the database, so none of them cap anything on a [DB-less deployment](./docker_quick_start.md#running-without-a-database). `litellm_settings.max_budget` fails open there rather than erroring: the proxy's global spend is only loaded when a database client exists, and with no total to compare against, the global budget check is skipped and requests keep being served past the limit. A warning is logged once at startup when a budget is set with no database connected, but nothing blocks at request time. Key, team, and user budgets are unavailable for the same reason, since virtual keys cannot be resolved without a database (`No connected db.`). Run with a database if a budget is part of how you bound spend
+Every budget on this page is enforced against spend read from the database, so none of them cap anything on a [DB-less deployment](./docker_quick_start.md#running-without-a-database). `lumina_settings.max_budget` fails open there rather than erroring: the proxy's global spend is only loaded when a database client exists, and with no total to compare against, the global budget check is skipped and requests keep being served past the limit. A warning is logged once at startup when a budget is set with no database connected, but nothing blocks at request time. Key, team, and user budgets are unavailable for the same reason, since virtual keys cannot be resolved without a database (`No connected db.`). Run with a database if a budget is part of how you bound spend
 
 :::
 
@@ -39,8 +39,8 @@ Apply a budget across all calls on the proxy
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 
-litellm_settings:
-  # other litellm settings
+lumina_settings:
+  # other lumina settings
   max_budget: 0 # (float) sets max budget as $0 USD
   budget_duration: 30d # (str) frequency of reset - You can set duration as seconds ("30s"), minutes ("30m"), hours ("30h"), days ("30d").
 ```
@@ -48,7 +48,7 @@ litellm_settings:
 **Step 2. Start proxy**
 
 ```bash
-litellm /path/to/config.yaml
+lumina /path/to/config.yaml
 ```
 
 **Step 3. Send test call**
@@ -90,7 +90,7 @@ curl --location 'http://localhost:4000/team/new' \
 }' 
 ```
 
-[**See Swagger**](https://docs.litellm.ai/api-reference/#/team%20management/new_team_team_new_post)
+[**See Swagger**](https://docs.lumina.ai/api-reference/#/team%20management/new_team_team_new_post)
 
 **Sample Response**
 
@@ -292,7 +292,7 @@ To apply a budget to a user within a team, use team member budgets.
 
 :::
 
-LiteLLM exposes a `/user/new` endpoint to create budgets for this.
+Lumina exposes a `/user/new` endpoint to create budgets for this.
 
 You can:
 - Add budgets to users [**Jump**](#add-budgets-to-users)
@@ -308,7 +308,7 @@ curl --location 'http://localhost:4000/user/new' \
 --data-raw '{"models": ["azure-models"], "max_budget": 0, "user_id": "krrish3@berri.ai"}' 
 ```
 
-[**See Swagger**](https://docs.litellm.ai/api-reference/#/Internal%20User%20management/new_user_user_new_post)
+[**See Swagger**](https://docs.lumina.ai/api-reference/#/Internal%20User%20management/new_user_user_new_post)
 
 **Sample Response**
 
@@ -358,7 +358,7 @@ You can:
 - Add budget durations, to reset spend [**Jump**](#add-budget-duration-to-keys)
 
 **Expected Behaviour**
-- Costs Per key get auto-populated in `LiteLLM_VerificationToken` Table
+- Costs Per key get auto-populated in `Lumina_VerificationToken` Table
 - After the key crosses it's `max_budget`, requests fail
 - If duration set, spend is reset at the end of the duration
 
@@ -431,7 +431,7 @@ A single `budget_duration` window can't prevent a bad day from burning your enti
 
 :::info
 
-See [User Budget docs](https://docs.litellm.ai/docs/proxy/users) for more on how budgets work across keys, teams, and users.
+See [User Budget docs](https://docs.lumina.ai/docs/proxy/users) for more on how budgets work across keys, teams, and users.
 
 :::
 
@@ -503,15 +503,15 @@ curl 'http://0.0.0.0:4000/key/generate' \
 
 To add a per-model budget to a new key, go to **Virtual Keys → Create Key → Optional Settings → Per-Model Budgets**. To update an existing key, open the key's edit page and use the same section.
 
-![Per-Model Budgets on the key form](https://raw.githubusercontent.com/yassin-berriai/litellm-pr-media/main/lit-5894/key-per-model-budget-empty.png)
+![Per-Model Budgets on the key form](https://raw.githubusercontent.com/yassin-soventra/lumina-pr-media/main/lit-5894/key-per-model-budget-empty.png)
 
 Select **+ Add Model Budget**, choose a model, set the spending limit, and select the budget period. Each model has its own tracking and reset schedule. For example, a daily limit on one model does not affect a monthly limit on another. Limits can be less than $0.01.
 
-![A per-model budget filled in](https://raw.githubusercontent.com/yassin-berriai/litellm-pr-media/main/lit-5894/key-per-model-budget-filled.png)
+![A per-model budget filled in](https://raw.githubusercontent.com/yassin-soventra/lumina-pr-media/main/lit-5894/key-per-model-budget-filled.png)
 
-#### How LiteLLM matches model names
+#### How Lumina matches model names
 
-LiteLLM matches a budget against the model name in the request and its provider-prefixed form. For example, a budget for `claude-opus-4-8` applies to requests that use any of these names:
+Lumina matches a budget against the model name in the request and its provider-prefixed form. For example, a budget for `claude-opus-4-8` applies to requests that use any of these names:
 
 - `claude-opus-4-8`
 - `anthropic/claude-opus-4-8`
@@ -522,7 +522,7 @@ Set the budget using the name configured in `model_list`. If you route the same 
 
 #### View current usage
 
-`/key/info` returns `model_max_budget_usage` together with `model_max_budget`. For each budgeted model, it reports the amount spent during the current budget period. LiteLLM uses the same usage value to enforce the budget, so the reported usage is consistent with enforcement.
+`/key/info` returns `model_max_budget_usage` together with `model_max_budget`. For each budgeted model, it reports the amount spent during the current budget period. Lumina uses the same usage value to enforce the budget, so the reported usage is consistent with enforcement.
 
 ```bash
 curl -X GET 'http://0.0.0.0:4000/key/info?key=sk-...' \
@@ -570,7 +570,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 </TabItem>
 <TabItem label="Rejected call" value="not-allowed">
 
-Send the same request again. LiteLLM rejects it after the key exceeds its `{{openai_large}}` budget.
+Send the same request again. Lumina rejects it after the key exceeds its `{{openai_large}}` budget.
 
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -593,7 +593,7 @@ Expected response:
 ```json
 {
     "error": {
-        "message": "LiteLLM Virtual Key: 9769f3f6768a199f76cc29xxxx, key_alias: None, exceeded budget for model={{openai_large}}",
+        "message": "Lumina Virtual Key: 9769f3f6768a199f76cc29xxxx, key_alias: None, exceeded budget for model={{openai_large}}",
         "type": "budget_exceeded",
         "param": null,
         "code": "400"
@@ -604,7 +604,7 @@ Expected response:
 </TabItem>
 </Tabs>
 
-By default, LiteLLM returns a `budget_exceeded` error when a per-model budget is exceeded. To route the request to another model instead, see [Budget Fallbacks](./budget_fallbacks).
+By default, Lumina returns a `budget_exceeded` error when a per-model budget is exceeded. To route the request to another model instead, see [Budget Fallbacks](./budget_fallbacks).
 
 ### Internal User (Model Specific)
 
@@ -624,12 +624,12 @@ curl 'http://0.0.0.0:4000/user/new' \
 }'
 ```
 
-Use `1mo` for a calendar-month budget that resets on the first day of each month. After the user exceeds the limit, LiteLLM rejects requests made with any of the user's keys:
+Use `1mo` for a calendar-month budget that resets on the first day of each month. After the user exceeds the limit, Lumina rejects requests made with any of the user's keys:
 
 ```json
 {
     "error": {
-        "message": "LiteLLM User: engineer-1, exceeded budget for model={{anthropic_large}}",
+        "message": "Lumina User: engineer-1, exceeded budget for model={{anthropic_large}}",
         "type": "budget_exceeded",
         "param": null,
         "code": "429"
@@ -643,14 +643,14 @@ Use `1mo` for a calendar-month budget that resets on the first day of each month
 
 Go to **Internal Users**, select the user, and then open **Details → Edit → Per-Model Budgets**. For each existing budget, the dashboard shows the amount spent during the current period.
 
-![Per-Model Budgets on an internal user](https://raw.githubusercontent.com/yassin-berriai/litellm-pr-media/main/lit-5894/user-per-model-budget.png)
+![Per-Model Budgets on an internal user](https://raw.githubusercontent.com/yassin-soventra/lumina-pr-media/main/lit-5894/user-per-model-budget.png)
 
-User-level and key-level budgets are tracked independently. If a key has its own per-model budget, each request counts toward both the key budget and the owner's user budget. LiteLLM rejects the request when either limit is exceeded.
+User-level and key-level budgets are tracked independently. If a key has its own per-model budget, each request counts toward both the key budget and the owner's user budget. Lumina rejects the request when either limit is exceeded.
 
 
 ### Agents
 
-Set budgets and rate limits on agents registered with LiteLLM's [Agent Gateway](../a2a.md). You can control:
+Set budgets and rate limits on agents registered with Lumina's [Agent Gateway](../a2a.md). You can control:
 - **Per-agent rate limits**: `tpm_limit` and `rpm_limit` on the agent itself
 - **Per-session rate limits**: `session_tpm_limit` and `session_rpm_limit` applied per session
 - **Per-session iteration cap**: `max_iterations` in agent `lumina_params`
@@ -703,7 +703,7 @@ curl -X POST 'http://localhost:4000/v1/agents' \
 </TabItem>
 <TabItem value="session-budgets" label="Session Budgets">
 
-Set `max_iterations` and `max_budget_per_session` in agent `lumina_params` to cap individual sessions. Requires `require_trace_id_on_calls_by_agent` so LiteLLM can track calls per session.
+Set `max_iterations` and `max_budget_per_session` in agent `lumina_params` to cap individual sessions. Requires `require_trace_id_on_calls_by_agent` so Lumina can track calls per session.
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/agents' \
@@ -773,11 +773,11 @@ curl --location 'http://0.0.0.0:4000/budget/new' \
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 
-litellm_settings:
+lumina_settings:
   max_end_user_budget_id: "default-customer-budget" # applied to any 'user' without their own budget
 ```
 
-This budget applies to every customer that has no budget of their own, including customers that don't exist in the database yet. LiteLLM caches the budget object for 60 seconds, so edits to it take up to a minute to apply. The float setting `max_end_user_budget` is no longer enforced; if you have it in your config, replace it with `max_end_user_budget_id` as shown above.
+This budget applies to every customer that has no budget of their own, including customers that don't exist in the database yet. Lumina caches the budget object for 60 seconds, so edits to it take up to a minute to apply. The float setting `max_end_user_budget` is no longer enforced; if you have it in your config, replace it with `max_end_user_budget_id` as shown above.
 
 3. Make a /chat/completions call, pass 'user' - First call Works 
 ```shell
@@ -902,12 +902,12 @@ Budget reservation is enabled by default. It helps enforce budgets during concur
 
 ### How it works
 
-1. LiteLLM estimates the request's maximum cost from the request body and the model's pricing.
+1. Lumina estimates the request's maximum cost from the request body and the model's pricing.
 2. It temporarily reserves that amount against the applicable budget.
-3. If the reservation would exceed the budget, LiteLLM rejects the request before sending it to the provider.
-4. After the response is priced, LiteLLM replaces the reservation with the actual cost.
+3. If the reservation would exceed the budget, Lumina rejects the request before sending it to the provider.
+4. After the response is priced, Lumina replaces the reservation with the actual cost.
 
-When `max_tokens` or `max_completion_tokens` is present, LiteLLM uses that value in the estimate. Otherwise, it uses the model's configured limits. For routes without token pricing, such as some image and audio routes, LiteLLM cannot reserve a cost and instead enforces the budget using recorded spend.
+When `max_tokens` or `max_completion_tokens` is present, Lumina uses that value in the estimate. Otherwise, it uses the model's configured limits. For routes without token pricing, such as some image and audio routes, Lumina cannot reserve a cost and instead enforces the budget using recorded spend.
 
 ### Disable budget reservation
 
@@ -924,13 +924,13 @@ Disabling reservation can allow concurrent requests to exceed a configured budge
 
 :::
 
-Requests are still rejected when the budget is already exhausted. LiteLLM also logs a warning for each request while reservation is disabled.
+Requests are still rejected when the budget is already exhausted. Lumina also logs a warning for each request while reservation is disabled.
 
 If a budget must remain a hard ceiling when Redis is unavailable or contains stale data, keep reservation enabled and also configure [`fail_closed_budget_enforcement`](#hard-budget-enforcement-fail-closed).
 
 ### Batch requests
 
-Budget reservation cannot estimate the full cost of a batch job. A `POST /batches` request contains an `input_file_id` rather than the prompts in the file, so LiteLLM cannot price the complete workload at submission. The submission reservation is released after the submission response, and LiteLLM records the final cost when the batch completes.
+Budget reservation cannot estimate the full cost of a batch job. A `POST /batches` request contains an `input_file_id` rather than the prompts in the file, so Lumina cannot price the complete workload at submission. The submission reservation is released after the submission response, and Lumina records the final cost when the batch completes.
 
 Use [batch rate limiting](../batches#how-rate-limiting-for-batches-api-works) to control batch throughput, and monitor completed batch costs for budget reporting.
 
@@ -979,7 +979,7 @@ This setting applies globally to all TPM rate limit checks (keys, users, teams, 
 
 ### Estimated Output Tokens (requests without `max_tokens`)
 
-TPM limits are enforced by reserving tokens before the call and reconciling against real usage after it. When a request omits `max_tokens` / `max_completion_tokens`, LiteLLM has to guess how many output tokens to reserve, and the built-in guess is a single static estimate shared by every key, team and model.
+TPM limits are enforced by reserving tokens before the call and reconciling against real usage after it. When a request omits `max_tokens` / `max_completion_tokens`, Lumina has to guess how many output tokens to reserve, and the built-in guess is a single static estimate shared by every key, team and model.
 
 That guess is wrong in both directions. If your model really emits more than the estimate, concurrent requests are all admitted against an under-reservation and the window overruns the limit once they finish. If it emits far less, the over-reservation blocks requests the budget could have served.
 
@@ -1051,7 +1051,7 @@ curl --location 'http://0.0.0.0:4000/team/new' \
 --data '{"team_id": "my-prod-team", "max_parallel_requests": 10, "tpm_limit": 20, "rpm_limit": 4}' 
 ```
 
-[**See Swagger**](https://docs.litellm.ai/api-reference/#/team%20management/new_team_team_new_post)
+[**See Swagger**](https://docs.lumina.ai/api-reference/#/team%20management/new_team_team_new_post)
 
 **Expected Response**
 
@@ -1117,7 +1117,7 @@ curl --location 'http://0.0.0.0:4000/team/update' \
 
 #### Per-model rate limits and fallbacks
 
-By default, when a request goes over a key or team `model_rpm_limit` / `model_tpm_limit` and `router_settings.fallbacks` has an entry for that model, LiteLLM retries the request on the fallback model. The per-model limit does not apply to the fallback model, so the client gets a 200 from the fallback.
+By default, when a request goes over a key or team `model_rpm_limit` / `model_tpm_limit` and `router_settings.fallbacks` has an entry for that model, Lumina retries the request on the fallback model. The per-model limit does not apply to the fallback model, so the client gets a 200 from the fallback.
 
 To make per-model key, team, organization and project limits a hard cap that returns 429, set:
 
@@ -1128,9 +1128,9 @@ general_settings:
 
 Other local rate limits (for example a key's overall `rpm_limit`) keep their existing fallback behavior
 
-**Verify:** Make a `/chat/completions` request and check response headers `x-litellm-key-remaining-requests-{model}` and `x-litellm-key-remaining-tokens-{model}` for the model-specific limits.
+**Verify:** Make a `/chat/completions` request and check response headers `x-lumina-key-remaining-requests-{model}` and `x-lumina-key-remaining-tokens-{model}` for the model-specific limits.
 
-[**See Swagger**](https://docs.litellm.ai/api-reference/#/team%20management/new_team_team_new_post)
+[**See Swagger**](https://docs.lumina.ai/api-reference/#/team%20management/new_team_team_new_post)
 
 </TabItem>
 <TabItem value="per-user" label="Per Internal User">
@@ -1145,7 +1145,7 @@ curl --location 'http://0.0.0.0:4000/user/new' \
 --data '{"user_id": "krrish@berri.ai", "max_parallel_requests": 10, "tpm_limit": 20, "rpm_limit": 4}' 
 ```
 
-[**See Swagger**](https://docs.litellm.ai/api-reference/#/Internal%20User%20management/new_user_user_new_post)
+[**See Swagger**](https://docs.lumina.ai/api-reference/#/Internal%20User%20management/new_user_user_new_post)
 
 **Expected Response**
 
@@ -1186,7 +1186,7 @@ curl --location 'http://0.0.0.0:4000/key/generate' \
 
 Set `model_rpm_limit` and `model_tpm_limit` to set rate limits per model per api key
 
-Here `{{openai_large}}` is the `model_name` set on the [litellm config.yaml](configs.md)
+Here `{{openai_large}}` is the `model_name` set on the [lumina config.yaml](configs.md)
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/generate' \
@@ -1206,7 +1206,7 @@ curl --location 'http://0.0.0.0:4000/key/generate' \
 
 **Verify Model Rate Limits set correctly for this key**
 
-**Make /chat/completions request check if `x-litellm-key-remaining-requests-gpt-5.6-terra` returned**
+**Make /chat/completions request check if `x-lumina-key-remaining-requests-gpt-5.6-terra` returned**
 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
@@ -1224,8 +1224,8 @@ curl -i http://localhost:4000/v1/chat/completions \
 **Expected headers**
 
 ```shell
-x-litellm-key-remaining-requests-gpt-5.6-terra: 1
-x-litellm-key-remaining-tokens-gpt-5.6-terra: 179
+x-lumina-key-remaining-requests-gpt-5.6-terra: 1
+x-lumina-key-remaining-tokens-gpt-5.6-terra: 179
 ```
 
 These headers indicate:
@@ -1273,7 +1273,7 @@ Use this to set rate limits for `user` passed to `/chat/completions`, without ne
 
 Set a `tpm_limit` on the budget (You can also pass `rpm_limit` if needed)
 
-Both are optional; a budget with neither set applies no LiteLLM TPM or RPM limit to its customers, and only provider rate limits apply
+Both are optional; a budget with neither set applies no Lumina TPM or RPM limit to its customers, and only provider rate limits apply
 
 ```shell
 curl --location 'http://0.0.0.0:4000/budget/new' \
@@ -1331,7 +1331,7 @@ Use this to set a default budget for users who you give keys to.
 
 This will apply when a user has [`user_role="internal_user"`](./self_serve.md#available-roles) (set this via `/user/new` or `/user/update`). 
 
-This will NOT apply if a key has a team_id (team budgets will apply then). [Tell us how we can improve this!](https://github.com/BerriAI/litellm/issues)
+This will NOT apply if a key has a team_id (team budgets will apply then). [Tell us how we can improve this!](https://github.com/Soventra/lumina/issues)
 
 1. Define max budget in your config.yaml
 
@@ -1342,7 +1342,7 @@ model_list:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   max_internal_user_budget: 0 # amount in USD
   internal_user_budget_duration: "1mo" # reset every month
 ```

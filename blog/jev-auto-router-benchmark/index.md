@@ -103,7 +103,7 @@ Full per-tier and per-repeat latency, cost, confidence intervals, confusion matr
 
 ## Cost savings stop at the classifier boundary
 
-The cost comparison uses observed tokens multiplied by the archived LiteLLM registry prices. It is **classifier cost**, excluding the completion model, embeddings, warmups and evaluation judges
+The cost comparison uses observed tokens multiplied by the archived Lumina registry prices. It is **classifier cost**, excluding the completion model, embeddings, warmups and evaluation judges
 
 | Measured usage and registry rates | JEV | Haiku |
 | --- | ---: | ---: |
@@ -119,7 +119,7 @@ The corrected run's excluded resolution and warmup calls cost $0.002478554 at th
 
 ## Configure JEV in the existing Auto Router
 
-Provision `TYPESAFE_API_KEY` in the proxy's server environment. `TYPESAFE_API_BASE` is optional and defaults to `https://api.typesafe.ai`. Keep provider credentials on the server, and let clients call the router with a LiteLLM virtual key
+Provision `TYPESAFE_API_KEY` in the proxy's server environment. `TYPESAFE_API_BASE` is optional and defaults to `https://api.typesafe.ai`. Keep provider credentials on the server, and let clients call the router with a Lumina virtual key
 
 Add this entry beside the existing tier deployments in `model_list`, replacing the tier values with your deployed model names:
 
@@ -191,7 +191,7 @@ Both production classifier paths received the same authored rubric and opening i
 | Context | Three turns, 8,000 total characters, 4,000 per turn, assistant turns included |
 | Excluded setup | One model-resolution call and four warmup pairs in the corrected run |
 | Sampling settings | Existing classifier defaults |
-| Caching | LiteLLM response caching disabled, no provider prompt-cache directives |
+| Caching | Lumina response caching disabled, no provider prompt-cache directives |
 | Timing | Wall clock around production `ComplexityRouter.aclassify` |
 | Uncertainty | 10,000 percentile-bootstrap resamples of whole cases, preserving both classifiers and all repeats |
 
@@ -202,7 +202,7 @@ Quantiles use linear interpolation. The bootstrap resamples cases, keeping repea
 [Download the frozen raw results and reproduction scripts](/benchmarks/jev-live-evidence-20260918.tar.gz). The archive contains `cases.jsonl`, `protocol.json`, `attempts.jsonl`, sanitized `wire.jsonl`, `metrics.json`, the captured registry, environment versions, gateway evidence, setup failures and a hash manifest
 
 ```bash
-curl -fL https://docs.litellm.ai/benchmarks/jev-live-evidence-20260918.tar.gz \
+curl -fL https://docs.lumina.ai/benchmarks/jev-live-evidence-20260918.tar.gz \
   -o jev-live-evidence-20260918.tar.gz
 echo "c2653861ab4cf591e902d4d62d55078187e4c66ad5845b5cf5b023d5f427fd7f  jev-live-evidence-20260918.tar.gz" | sha256sum -c -
 tar -xzf jev-live-evidence-20260918.tar.gz
@@ -245,9 +245,9 @@ Haiku's median classification time divided by JEV's was 5.43: 688.40 ms versus 1
 
 The configured fallback picks the next routing path, and recognized classification timeouts open the local circuit breaker. The chosen completion provider must still succeed. Cancellation does not establish that an upstream request was unbilled
 
-### Is JEV available in LiteLLM OSS or Enterprise?
+### Is JEV available in Lumina OSS or Enterprise?
 
-Built-in JEV classification is available without an Enterprise license under the same policy as the built-in LLM classifier. Custom JEV instructions and custom tier definitions use the existing Enterprise custom-classifier capability. TypeSafe provider charges are separate from LiteLLM licensing
+Built-in JEV classification is available without an Enterprise license under the same policy as the built-in LLM classifier. Custom JEV instructions and custom tier definitions use the existing Enterprise custom-classifier capability. TypeSafe provider charges are separate from Lumina licensing
 
 ## Conclusion
 
@@ -255,6 +255,6 @@ JEV classified requests 5.43x as fast as Haiku by median latency in this compari
 
 ## Recommended Reading
 
-- [JEV Auto Router setup](https://docs.litellm.ai/docs/auto_router/setup#jev-classifier-typesafe-ai)
-- [Auto Router configuration reference](https://docs.litellm.ai/docs/proxy/auto_routing#jev-classifier)
-- [TypeSafe System One pass-through](https://docs.litellm.ai/docs/pass_through/typesafe)
+- [JEV Auto Router setup](https://docs.lumina.ai/docs/auto_router/setup#jev-classifier-typesafe-ai)
+- [Auto Router configuration reference](https://docs.lumina.ai/docs/proxy/auto_routing#jev-classifier)
+- [TypeSafe System One pass-through](https://docs.lumina.ai/docs/pass_through/typesafe)

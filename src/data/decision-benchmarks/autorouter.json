@@ -1,7 +1,7 @@
 {
   "id": "autorouter",
   "title": "Picking the right model tier for a prompt",
-  "description": "80 prompts with authored tiers (20 each SIMPLE, MEDIUM, COMPLEX, REASONING). Every model got the same choice question through LiteLLM /v1/decisions.",
+  "description": "80 prompts with authored tiers (20 each SIMPLE, MEDIUM, COMPLEX, REASONING). Every model got the same choice question through Lumina /v1/decisions.",
   "date": "2026-10",
   "total": 80,
   "costUnit": "calls",
@@ -11,7 +11,7 @@
     "errorB": "under-routes (cheaper tier)"
   },
   "topTier": 6,
-  "footnote": "Oct 2026. 80 cases, so the top six are within noise (95% CI about ±5 points). Cost from x-litellm-response-cost; Databricks cost is not tracked yet.",
+  "footnote": "Oct 2026. 80 cases, so the top six are within noise (95% CI about ±5 points). Cost from x-lumina-response-cost; Databricks cost is not tracked yet.",
   "groups": [
     {
       "label": "Hosted APIs",

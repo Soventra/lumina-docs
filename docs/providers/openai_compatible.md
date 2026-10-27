@@ -18,21 +18,21 @@ OpenAI-compatible endpoint, such as [`hosted_vllm`](/docs/providers/vllm) or [`l
 
 To call models hosted behind an openai proxy, make 2 changes:
 
-1. For `/chat/completions`: Put `openai/` in front of your model name, so litellm knows you're trying to call an openai `/chat/completions` endpoint. 
+1. For `/chat/completions`: Put `openai/` in front of your model name, so lumina knows you're trying to call an openai `/chat/completions` endpoint. 
 
-1. For `/completions`: Put `text-completion-openai/` in front of your model name, so litellm knows you're trying to call an openai `/completions` endpoint. [NOT REQUIRED for `openai/` endpoints called via `/v1/completions` route].
+1. For `/completions`: Put `text-completion-openai/` in front of your model name, so lumina knows you're trying to call an openai `/completions` endpoint. [NOT REQUIRED for `openai/` endpoints called via `/v1/completions` route].
 
-1. **Do NOT** add anything additional to the base url e.g. `/v1/embedding`. LiteLLM uses the openai-client to make these calls, and that automatically adds the relevant endpoints. 
+1. **Do NOT** add anything additional to the base url e.g. `/v1/embedding`. Lumina uses the openai-client to make these calls, and that automatically adds the relevant endpoints. 
 
 
 ## Usage - completion
 ```python
-import litellm
+import lumina
 import os
 
-response = litellm.completion(
-    model="openai/mistral",               # add `openai/` prefix to model so litellm knows to route to OpenAI
-    api_key="sk-<your-litellm-api-key>",                  # api key to your openai compatible endpoint
+response = lumina.completion(
+    model="openai/mistral",               # add `openai/` prefix to model so lumina knows to route to OpenAI
+    api_key="sk-<your-lumina-api-key>",                  # api key to your openai compatible endpoint
     api_base="http://0.0.0.0:4000",     # set API Base of your Custom OpenAI Endpoint
     messages=[
                 {
@@ -47,23 +47,23 @@ print(response)
 ## Usage - embedding
 
 ```python
-import litellm
+import lumina
 import os
 
-response = litellm.embedding(
-    model="openai/GPT-J",               # add `openai/` prefix to model so litellm knows to route to OpenAI
-    api_key="sk-<your-litellm-api-key>",                  # api key to your openai compatible endpoint
+response = lumina.embedding(
+    model="openai/GPT-J",               # add `openai/` prefix to model so lumina knows to route to OpenAI
+    api_key="sk-<your-lumina-api-key>",                  # api key to your openai compatible endpoint
     api_base="http://0.0.0.0:4000",     # set API Base of your Custom OpenAI Endpoint
-    input=["good morning from litellm"]
+    input=["good morning from lumina"]
 )
 print(response)
 ```
 
 
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
-Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
+Here's how to call an OpenAI-Compatible Endpoint with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -87,10 +87,10 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -99,8 +99,8 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(

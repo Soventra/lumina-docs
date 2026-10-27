@@ -1,6 +1,6 @@
 /* =========================================================================
    LOGO SHAPE
-   Corner radii and surfaces taken from the LiteLLM monogram: a square whose
+   Corner radii and surfaces taken from the Lumina monogram: a square whose
    corners are 10% of its side, one flat fill, no shadow. Small things use the
    logo's ratio directly; large panels stop at 12px, where the corner still
    reads as the logo rather than a phone app. Loaded after custom.css; delete

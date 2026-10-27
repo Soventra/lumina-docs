@@ -303,7 +303,7 @@ L 1077.12 554.148
 " style="fill: none; stroke: #d9e0ed; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_16">
-    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #0117be" x="133.349343" y="519.735323" transform="rotate(-0 133.349343 519.735323)">BM25 · LiteLLM run · 0.686</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #0117be" x="133.349343" y="519.735323" transform="rotate(-0 133.349343 519.735323)">BM25 · Lumina run · 0.686</text>
    </g>
    <g id="text_17">
     <text style="font-size: 9.5px; font-family: 'DejaVu Sans'; fill: #66738a" transform="translate(154.977975 481.133352)">Reference points provide context;</text>
@@ -474,7 +474,7 @@ Q 718.330396 394.13924 688.719441 341.046694
 " style="fill: none; stroke: #0117be; stroke-width: 1.2; stroke-linecap: round"/>
    </g>
    <g id="text_27">
-    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #0117be" x="651.287809" y="459.714845" transform="rotate(-0 651.287809 459.714845)">TypeSafe Jev 1.13 · LiteLLM run</text>
+    <text style="font-weight: 700; font-size: 11.5px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #0117be" x="651.287809" y="459.714845" transform="rotate(-0 651.287809 459.714845)">TypeSafe Jev 1.13 · Lumina run</text>
    </g>
   </g>
   <g id="line2d_41">
@@ -492,10 +492,10 @@ L 1088.64 616.896
    <text style="font-weight: 700; font-size: 31px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #132039" x="63.36" y="148.295156" transform="rotate(-0 63.36 148.295156)">Measured run. Wider context.</text>
   </g>
   <g id="text_31">
-   <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #66738a" x="63.36" y="188.297812" transform="rotate(-0 63.36 188.297812)">Jev 1.13 in LiteLLM, alongside reference results.</text>
+   <text style="font-size: 14px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #66738a" x="63.36" y="188.297812" transform="rotate(-0 63.36 188.297812)">Jev 1.13 in Lumina, alongside reference results.</text>
   </g>
   <g id="text_32">
-   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #66738a" x="1088.64" y="215.46" transform="rotate(-0 1088.64 215.46)">Blue: LiteLLM run  ·  Gray: reference  ·  MC: multiple choice  ·  PD: per-document</text>
+   <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: end; fill: #66738a" x="1088.64" y="215.46" transform="rotate(-0 1088.64 215.46)">Blue: Lumina run  ·  Gray: reference  ·  MC: multiple choice  ·  PD: per-document</text>
   </g>
   <g id="text_33">
    <text style="font-weight: 700; font-size: 10.2px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #132039" x="63.36" y="642.034406" transform="rotate(-0 63.36 642.034406)">SciFact · 300 queries · BM25 top 20 · October 2026</text>

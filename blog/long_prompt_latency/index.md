@@ -15,9 +15,9 @@ import PromptLatencyHero from './PromptLatencyHero';
 
 export const Hero = PromptLatencyHero;
 
-![LiteLLM's median time to first byte drops from 553 ms to 35 ms in a local 440k-token, single-deployment benchmark, a 94% reduction](./cover.gif)
+![Lumina's median time to first byte drops from 553 ms to 35 ms in a local 440k-token, single-deployment benchmark, a 94% reduction](./cover.gif)
 
-LiteLLM was counting every token in a long conversation to answer a yes-or-no routing question.
+Lumina was counting every token in a long conversation to answer a yes-or-no routing question.
 
 Removing that unnecessary work took median time to first byte from **553 ms to 35 ms** in our local 440k-token benchmark: **94% lower**.
 
@@ -25,7 +25,7 @@ Removing that unnecessary work took median time to first byte from **553 ms to 3
 
 ## Counting 440,000 tokens to check for 1,024
 
-LiteLLM's optional `prompt_caching` routing check helps keep requests on deployments that can reuse their cached prompt. To check whether a prompt met a deployment's minimum size, often 1,024 tokens, it counted the entire conversation.
+Lumina's optional `prompt_caching` routing check helps keep requests on deployments that can reuse their cached prompt. To check whether a prompt met a deployment's minimum size, often 1,024 tokens, it counted the entire conversation.
 
 For a coding session with hundreds of turns and tool results, that could mean hundreds of milliseconds of Python work before the model call.
 
@@ -39,6 +39,6 @@ The benchmark used the Python request path, a 439,945-token conversation with 33
 
 <BenchmarkResults />
 
-Each result is the median of three requests after one warmup, on the same local machine. `/v1/responses` already bypassed this check and stayed roughly flat. Requests without the optional check are unaffected. [Full benchmark samples and setup](https://github.com/BerriAI/litellm/pull/44221).
+Each result is the median of three requests after one warmup, on the same local machine. `/v1/responses` already bypassed this check and stayed roughly flat. Requests without the optional check are unaffected. [Full benchmark samples and setup](https://github.com/Soventra/lumina/pull/44221).
 
-See the changes: [prompt-cache routing optimization](https://github.com/BerriAI/litellm/pull/44221).
+See the changes: [prompt-cache routing optimization](https://github.com/Soventra/lumina/pull/44221).

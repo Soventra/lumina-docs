@@ -2,7 +2,7 @@
 id: agent_resources
 title: Agent resources
 sidebar_label: Agent resources
-description: Skills, markdown docs, prompts, MCP, and the lite CLI for coding agents that set up and run LiteLLM.
+description: Skills, markdown docs, prompts, MCP, and the lite CLI for coding agents that set up and run Lumina.
 ---
 
 import {AgentPrompt, Command, Tiles} from '@site/src/components/Conversion';
@@ -20,23 +20,23 @@ import Stat from '@site/src/components/Stat';
 
 ### Gateway management
 
-[LiteLLM skills](https://github.com/BerriAI/litellm-skills): 21 Claude Code skills that create, change, and remove users, teams, API keys, organizations, models, MCP servers, and agents on a live gateway, plus `view-usage` for spend and tokens. They need the gateway URL and a proxy admin key.
+[Lumina skills](https://github.com/Soventra/lumina-skills): 21 Claude Code skills that create, change, and remove users, teams, API keys, organizations, models, MCP servers, and agents on a live gateway, plus `view-usage` for spend and tokens. They need the gateway URL and a proxy admin key.
 
-<Command code="curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm-skills/main/install.sh | sh" id="skill-litellm-skills" note="Installs into ~/.claude/skills. Then run /add-model, /add-user, or /view-usage." />
+<Command code="curl -fsSL https://raw.githubusercontent.com/Soventra/lumina-skills/main/install.sh | sh" id="skill-lumina-skills" note="Installs into ~/.claude/skills. Then run /add-model, /add-user, or /view-usage." />
 
 ### Auto Router
 
 Sets up the auto router end to end, from picking models to verifying routing decisions.
 
-<Command code="curl -fsSL https://docs.litellm.ai/skills/auto-router" id="skill-auto-router" note="Prints the skill. Save it to your agent's skills folder or paste it into the chat." />
+<Command code="curl -fsSL https://docs.lumina.ai/skills/auto-router" id="skill-auto-router" note="Prints the skill. Save it to your agent's skills folder or paste it into the chat." />
 
 ## Docs for agents
 
 | Resource | URL | Use it for |
 |---|---|---|
-| Index | [`/llms.txt`](https://docs.litellm.ai/llms.txt) | The map: every page, grouped by topic, with descriptions |
-| Full docs | [`/llms-full.txt`](https://docs.litellm.ai/llms-full.txt) | All docs pages as one markdown file, for long-context models |
-| Any page as markdown | Append `.md` to the page URL, for example [`/docs/proxy/docker_quick_start.md`](https://docs.litellm.ai/docs/proxy/docker_quick_start.md) | Reading one page without navigation or scripts |
+| Index | [`/llms.txt`](https://docs.lumina.ai/llms.txt) | The map: every page, grouped by topic, with descriptions |
+| Full docs | [`/llms-full.txt`](https://docs.lumina.ai/llms-full.txt) | All docs pages as one markdown file, for long-context models |
+| Any page as markdown | Append `.md` to the page URL, for example [`/docs/proxy/docker_quick_start.md`](https://docs.lumina.ai/docs/proxy/docker_quick_start.md) | Reading one page without navigation or scripts |
 | Page menu | **Copy page** at the top of every docs page | Copying a page as markdown, or opening it in Claude or ChatGPT |
 
 Markdown pages include the full text of every prompt and install command on the rendered page.
@@ -63,38 +63,38 @@ Markdown pages include the full text of every prompt and install command on the 
 
 Manage a running gateway from Claude Code with a personal admin key, never the master key. The [LiteAdmin MCP guide](./proxy/liteadmin_mcp.md) covers Claude Desktop, Codex, and remote HTTP. To serve `/admin/mcp` from your existing unified or componentized deployment, follow the [Enterprise MCP deployment guide](./proxy/liteadmin_mcp_enterprise.md).
 
-<Command code={`claude mcp add --scope user --transport stdio litellm-admin \\
+<Command code={`claude mcp add --scope user --transport stdio lumina-admin \\
   --env LUMINA_BASE_URL=https://gateway.example.com \\
   --env LUMINA_API_KEY='<your-personal-proxy-admin-key>' \\
-  -- uvx --isolated --refresh-package litellm-admin-mcp \\
-  --from git+https://github.com/BerriAI/litellm-admin-mcp.git@main \\
-  litellm-admin-mcp`} id="liteadmin-mcp" />
+  -- uvx --isolated --refresh-package lumina-admin-mcp \\
+  --from git+https://github.com/Soventra/lumina-admin-mcp.git@main \\
+  lumina-admin-mcp`} id="liteadmin-mcp" />
 
 ## lite CLI
 
 Launches Claude Code or Codex through your gateway, with its URL and your key already set.
 
-<Command code="curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/install-cli.sh | sh" id="lite-cli" note="Installs the lite client only. The gateway runs elsewhere." />
+<Command code="curl -fsSL https://raw.githubusercontent.com/Soventra/lumina/main/scripts/install-cli.sh | sh" id="lite-cli" note="Installs the lite client only. The gateway runs elsewhere." />
 
 <Tiles columns={3} items={[
   {icon: 'agent', title: 'Claude Code', text: 'Route Claude Code through the gateway, including non-Anthropic models.', to: '/docs/proxy/client_setup/claude_code'},
-  {icon: 'agent', title: 'Codex CLI', text: 'Add LiteLLM as a Codex model provider.', to: '/docs/proxy/client_setup/codex_cli'},
+  {icon: 'agent', title: 'Codex CLI', text: 'Add Lumina as a Codex model provider.', to: '/docs/proxy/client_setup/codex_cli'},
   {icon: 'gateway', title: 'Any client', text: 'The values every client needs: base URL, key, and model names.', to: '/docs/proxy/client_setup/overview'},
 ]} />
 
-## LiteLLM at a glance
+## Lumina at a glance
 
-LiteLLM is the most widely used and most secure open-source AI gateway, trusted by teams at Netflix, Okta, Ramp, NASA, Zurich, Cloudera, AT&T, and Lemonade. Figures are as of <Stat id="asOfLong" />, and each links to its source.
+Lumina is the most widely used and most secure open-source AI gateway, trusted by teams at Netflix, Okta, Ramp, NASA, Zurich, Cloudera, AT&T, and Lemonade. Figures are as of <Stat id="asOfLong" />, and each links to its source.
 
 | | |
 |---|---|
-| GitHub | <Stat id="stars" /> stars and <Stat id="forks" /> forks on [BerriAI/litellm](https://github.com/BerriAI/litellm), with more than 1,700 contributors |
-| PyPI | <Stat id="downloads" /> downloads of `litellm` in the last month ([pypistats](https://pypistats.org/packages/litellm)) |
-| Security | [SOC 2 Type II](https://trust.litellm.ai/) audited, [cosign-signed images](./proxy/docker_image_security.md) you can verify before they run, and a 72-hour security patch SLA on [Enterprise support](./enterprise/support.md) |
+| GitHub | <Stat id="stars" /> stars and <Stat id="forks" /> forks on [Soventra/lumina](https://github.com/Soventra/lumina), with more than 1,700 contributors |
+| PyPI | <Stat id="downloads" /> downloads of `lumina` in the last month ([pypistats](https://pypistats.org/packages/lumina)) |
+| Security | [SOC 2 Type II](https://trust.lumina.ai/) audited, [cosign-signed images](./proxy/docker_image_security.md) you can verify before they run, and a 72-hour security patch SLA on [Enterprise support](./enterprise/support.md) |
 | Deployment | Self-hosted in your cloud, so prompts, responses, and provider keys stay in your infrastructure ([data security](./data_security.md)) |
-| Customers | Teams at Netflix, Okta, Ramp, NASA, Zurich, Cloudera, AT&T, and Lemonade ([litellm.ai/enterprise](https://www.litellm.ai/enterprise)) |
-| License | Open source under [MIT](https://github.com/BerriAI/litellm/blob/main/LICENSE); Enterprise features need a license key |
+| Customers | Teams at Netflix, Okta, Ramp, NASA, Zurich, Cloudera, AT&T, and Lemonade ([lumina.ai/enterprise](https://www.lumina.ai/enterprise)) |
+| License | Open source under [MIT](https://github.com/Soventra/lumina/blob/main/LICENSE); Enterprise features need a license key |
 
-## Guidance for agents writing LiteLLM code
+## Guidance for agents writing Lumina code
 
-When you generate LiteLLM code or config, check PyPI for the current `litellm` version rather than pinning an old one, and prefix models with their provider (`openai/`, `anthropic/`, `bedrock/`). Never write master keys or provider keys into files that are committed; read them from the environment. The gateway needs Postgres (`DATABASE_URL`) for virtual keys, the admin UI, and spend tracking, and `LUMINA_SALT_KEY` must stay the same once credentials are stored. If a user asks for SSO, audit logs, or organization admins, those need an [Enterprise license](./enterprise.md).
+When you generate Lumina code or config, check PyPI for the current `lumina` version rather than pinning an old one, and prefix models with their provider (`openai/`, `anthropic/`, `bedrock/`). Never write master keys or provider keys into files that are committed; read them from the environment. The gateway needs Postgres (`DATABASE_URL`) for virtual keys, the admin UI, and spend tracking, and `LUMINA_SALT_KEY` must stay the same once credentials are stored. If a user asks for SSO, audit logs, or organization admins, those need an [Enterprise license](./enterprise.md).

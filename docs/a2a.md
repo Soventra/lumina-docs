@@ -1,13 +1,13 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Image from '@theme/IdealImage';
-import LiteLLMFlow from '@site/src/components/LiteLLMFlow';
+import LuminaFlow from '@site/src/components/LuminaFlow';
 
 # Agent Gateway (A2A Protocol) - Overview
 
-Add A2A Agents on LiteLLM AI Gateway, Invoke agents in A2A Protocol, track request/response logs in LiteLLM Logs. Manage which Teams, Keys can access which Agents onboarded.
+Add A2A Agents on Lumina AI Gateway, Invoke agents in A2A Protocol, track request/response logs in Lumina Logs. Manage which Teams, Keys can access which Agents onboarded.
 
-<LiteLLMFlow copyCommand={false} agentPrompt={false} highlight="A2A agents" />
+<LuminaFlow copyCommand={false} agentPrompt={false} highlight="A2A agents" />
 
 | Feature | Supported | 
 |---------|-----------|
@@ -20,7 +20,7 @@ Add A2A Agents on LiteLLM AI Gateway, Invoke agents in A2A Protocol, track reque
 
 :::tip
 
-LiteLLM follows the [A2A (Agent-to-Agent) Protocol](https://github.com/google/A2A) for invoking agents.
+Lumina follows the [A2A (Agent-to-Agent) Protocol](https://github.com/google/A2A) for invoking agents.
 
 :::
 
@@ -28,12 +28,12 @@ LiteLLM follows the [A2A (Agent-to-Agent) Protocol](https://github.com/google/A2
 
 ### Add A2A Agents
 
-You can add A2A-compatible agents through the LiteLLM Admin UI.
+You can add A2A-compatible agents through the Lumina Admin UI.
 
 1. Navigate to **Agentic** > **Agents**
 2. Click **Add New Agent**
 3. In the **Configure** step, enter the agent name (e.g., `ij-local`) and the URL of your A2A agent
-4. Choose a **Protocol Version** (`1.0` or `0.3`) - the wire format LiteLLM serves to clients for this agent
+4. Choose a **Protocol Version** (`1.0` or `0.3`) - the wire format Lumina serves to clients for this agent
 5. Continue through the remaining steps and save the agent
 
 <Image 
@@ -81,17 +81,17 @@ The `agents` key is read correctly starting in the next release (after `v1.95.0`
 
 ### Add Azure AI Foundry Agents
 
-Follow [this guide, to add your azure ai foundry agent to LiteLLM Agent Gateway](./providers/azure_ai_agents#litellm-a2a-gateway)
+Follow [this guide, to add your azure ai foundry agent to Lumina Agent Gateway](./providers/azure_ai_agents#lumina-a2a-gateway)
 
 Agents created in the current Foundry portal expose an A2A endpoint instead of the Assistants API; register those under `agents:` with Entra credentials as shown in [Foundry agents over A2A](./providers/azure_ai_agents#foundry-agents-over-a2a)
 
 ### Add Vertex AI Agent Engine
 
-Follow [this guide, to add your Vertex AI Agent Engine to LiteLLM Agent Gateway](./providers/vertex_ai_agent_engine)
+Follow [this guide, to add your Vertex AI Agent Engine to Lumina Agent Gateway](./providers/vertex_ai_agent_engine)
 
 ### Add Bedrock AgentCore Agents
 
-Follow [this guide, to add your bedrock agentcore agent to LiteLLM Agent Gateway](./providers/bedrock_agentcore#litellm-a2a-gateway)
+Follow [this guide, to add your bedrock agentcore agent to Lumina Agent Gateway](./providers/bedrock_agentcore#lumina-a2a-gateway)
 
 ### Add LangGraph Agents
 
@@ -99,12 +99,12 @@ Follow [this guide to register a LangGraph agent and configure its agent card](/
 
 ### Add Pydantic AI Agents
 
-Follow [this guide, to add your pydantic ai agent to LiteLLM Agent Gateway](./providers/pydantic_ai_agent#litellm-a2a-gateway)
+Follow [this guide, to add your pydantic ai agent to Lumina Agent Gateway](./providers/pydantic_ai_agent#lumina-a2a-gateway)
 
 
 ## Protocol versioning
 
-LiteLLM proxy routes A2A agents using **a2a-sdk 1.x** and can serve either **A2A 0.3** or **1.0** wire format to clients per agent. Upstream agents may speak either version; LiteLLM normalizes `message/send`, `message/stream`, and extended-card responses to the version you pin.
+Lumina proxy routes A2A agents using **a2a-sdk 1.x** and can serve either **A2A 0.3** or **1.0** wire format to clients per agent. Upstream agents may speak either version; Lumina normalizes `message/send`, `message/stream`, and extended-card responses to the version you pin.
 
 | Version | Wire shape | Example send result |
 |---------|------------|---------------------|
@@ -113,13 +113,13 @@ LiteLLM proxy routes A2A agents using **a2a-sdk 1.x** and can serve either **A2A
 
 ### Pinning a version
 
-Set `agent_card_params.protocolVersion` to `"0.3"` or `"1.0"` when registering an agent (UI dropdown or API). LiteLLM serves that version on the proxied agent card and converts upstream responses to match.
+Set `agent_card_params.protocolVersion` to `"0.3"` or `"1.0"` when registering an agent (UI dropdown or API). Lumina serves that version on the proxied agent card and converts upstream responses to match.
 
 Only `"0.3"` and `"1.0"` are accepted; other values return HTTP 400 at registration.
 
 ### When `protocolVersion` is not pinned
 
-If an agent has no pinned version, LiteLLM infers the served version from the client request:
+If an agent has no pinned version, Lumina infers the served version from the client request:
 
 | Client signal | Served version |
 |---------------|----------------|
@@ -133,11 +133,11 @@ The proxied agent card defaults to `1.0` when unset, but legacy `message/send` c
 
 :::
 
-Task methods (`tasks/get`, `tasks/list`, …) are forwarded to the upstream agent unchanged. Version conversion applies to LiteLLM-integrated messaging paths only.
+Task methods (`tasks/get`, `tasks/list`, …) are forwarded to the upstream agent unchanged. Version conversion applies to Lumina-integrated messaging paths only.
 
 ### Dependency
 
-LiteLLM proxy A2A routes require **a2a-sdk >= 1.1.0** (included in the `proxy` / `proxy-dev` dependency groups). If you call agents from your own code, install the matching SDK version:
+Lumina proxy A2A routes require **a2a-sdk >= 1.1.0** (included in the `proxy` / `proxy-dev` dependency groups). If you call agents from your own code, install the matching SDK version:
 
 ```bash
 pip install "a2a-sdk>=1.1.0,<2.0"
@@ -151,7 +151,7 @@ See the [Invoking A2A Agents](./a2a_invoking_agents) guide to learn how to call 
 
 ## Tracking Agent Logs
 
-After invoking an agent, you can view the request logs in the LiteLLM **Logs** tab.
+After invoking an agent, you can view the request logs in the Lumina **Logs** tab.
 
 The logs show:
 - **Request/Response content** sent to and received from the agent (open a row, then switch the **Request & Response** section to **JSON**; requires `store_prompts_in_spend_logs: true`)
@@ -166,45 +166,45 @@ The logs show:
 />
 
 
-## Forwarding LiteLLM Context Headers
+## Forwarding Lumina Context Headers
 
-When LiteLLM invokes your A2A agent, it sends special headers that enable:
+When Lumina invokes your A2A agent, it sends special headers that enable:
 - **Trace Grouping**: All LLM calls from the same agent execution appear under one trace
 - **Agent Spend Tracking**: Costs are attributed to the specific agent
 
 | Header | Purpose |
 |--------|---------|
-| `X-LiteLLM-Trace-Id` | Links all LLM calls to the same execution flow |
-| `X-LiteLLM-Agent-Id` | Attributes spend to the correct agent |
+| `X-Lumina-Trace-Id` | Links all LLM calls to the same execution flow |
+| `X-Lumina-Agent-Id` | Attributes spend to the correct agent |
 
 
-To enable these features, your A2A server must **forward these headers** to any LLM calls it makes back to LiteLLM.
+To enable these features, your A2A server must **forward these headers** to any LLM calls it makes back to Lumina.
 
 ### Implementation Steps
 
 **Step 1: Extract headers from incoming A2A request**
 ```python
-def get_litellm_headers(request) -> dict:
-    """Extract X-LiteLLM-* headers from incoming A2A request."""
+def get_lumina_headers(request) -> dict:
+    """Extract X-Lumina-* headers from incoming A2A request."""
     all_headers = request.call_context.state.get('headers', {})
     return {
         k: v for k, v in all_headers.items() 
-        if k.lower().startswith('x-litellm-')
+        if k.lower().startswith('x-lumina-')
     }
 ```
 
 **Step 2: Forward headers to your LLM calls**
-Pass the extracted headers when making calls back to LiteLLM:
+Pass the extracted headers when making calls back to Lumina:
 <Tabs>
 <TabItem value="openai" label="OpenAI SDK" default>
 
 ```python
 from openai import OpenAI
 
-headers = get_litellm_headers(request)
+headers = get_lumina_headers(request)
 
 client = OpenAI(
-    api_key="sk-your-litellm-key",
+    api_key="sk-your-lumina-key",
     base_url="http://localhost:4000",
     default_headers=headers,  # Forward headers
 )
@@ -221,24 +221,24 @@ response = client.chat.completions.create(
 ```python
 from langchain_openai import ChatOpenAI
 
-headers = get_litellm_headers(request)
+headers = get_lumina_headers(request)
 
 llm = ChatOpenAI(
     model="{{openai_large}}",
-    openai_api_key="sk-your-litellm-key",
+    openai_api_key="sk-your-lumina-key",
     base_url="http://localhost:4000",
     default_headers=headers,  # Forward headers
 )
 ```
 </TabItem>
-<TabItem value="litellm" label="LiteLLM SDK">
+<TabItem value="lumina" label="Lumina SDK">
 
 ```python
-import litellm
+import lumina
 
-headers = get_litellm_headers(request)
+headers = get_lumina_headers(request)
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Hello"}],
     api_base="http://localhost:4000",
@@ -251,8 +251,8 @@ response = litellm.completion(
 ```python
 import httpx
 
-headers = get_litellm_headers(request)
-headers["Authorization"] = "Bearer sk-your-litellm-key"
+headers = get_lumina_headers(request)
+headers["Authorization"] = "Bearer sk-your-lumina-key"
 
 response = httpx.post(
     "http://localhost:4000/v1/chat/completions",
@@ -305,7 +305,7 @@ Send any of these in the `method` field of `POST /a2a/{agent_id}`:
 
 | Method | Description |
 |--------|-------------|
-| `message/send` | Send a message; returns a `task` or `message` (LiteLLM-integrated path) |
+| `message/send` | Send a message; returns a `task` or `message` (Lumina-integrated path) |
 | `message/stream` | Streaming variant (NDJSON/SSE) |
 | `tasks/get` | Get task status by `params.id` |
 | `tasks/list` | List tasks (optional `params.contextId`) |
@@ -318,27 +318,27 @@ Send any of these in the `method` field of `POST /a2a/{agent_id}`:
 | `agent/getAuthenticatedExtendedCard` | Extended agent card |
 
 
-**Routing:** `message/send` and `message/stream` go through LiteLLM's A2A client (logging, guardrails, spend). All other methods are forwarded to the upstream URL in `agent_card_params.url`. Task APIs require that URL; completion-bridge-only agents support messaging methods only.
+**Routing:** `message/send` and `message/stream` go through Lumina's A2A client (logging, guardrails, spend). All other methods are forwarded to the upstream URL in `agent_card_params.url`. Task APIs require that URL; completion-bridge-only agents support messaging methods only.
 
 See [Supported A2A methods](./a2a_agent_card#supported-a2a-methods) for examples, aliases, and limitations.
 
 ### Authentication
 
-Include your LiteLLM Virtual Key in either of two headers. `x-litellm-api-key` is preferred when the inbound `Authorization` header may carry a token destined for the backend agent (e.g. when using the [convention-based passthrough](./a2a_agent_headers#method-3-convention-based-forwarding) to forward the caller's identity).
+Include your Lumina Virtual Key in either of two headers. `x-lumina-api-key` is preferred when the inbound `Authorization` header may carry a token destined for the backend agent (e.g. when using the [convention-based passthrough](./a2a_agent_headers#method-3-convention-based-forwarding) to forward the caller's identity).
 
 ```
-Authorization: Bearer sk-your-litellm-key
+Authorization: Bearer sk-your-lumina-key
 # or
-x-litellm-api-key: Bearer sk-your-litellm-key
+x-lumina-api-key: Bearer sk-your-lumina-key
 ```
 
 #### Per-agent permission check
 
-After the virtual key is authenticated, LiteLLM checks whether the calling key (and its team) is allowed to invoke the requested agent. If not, the response is HTTP 403. See [Agent Permission Management](./a2a_agent_permissions) for the full intersection model and access groups.
+After the virtual key is authenticated, Lumina checks whether the calling key (and its team) is allowed to invoke the requested agent. If not, the response is HTTP 403. See [Agent Permission Management](./a2a_agent_permissions) for the full intersection model and access groups.
 
 #### Trace ID enforcement (optional, per-agent)
 
-An agent can require every inbound request to carry a trace ID for cross-system audit threading. Set `require_trace_id_on_calls_to_agent: true` in the agent's `lumina_params`. When set, requests missing `x-litellm-trace-id` (or `x-litellm-session-id`) are rejected with HTTP 400.
+An agent can require every inbound request to carry a trace ID for cross-system audit threading. Set `require_trace_id_on_calls_to_agent: true` in the agent's `lumina_params`. When set, requests missing `x-lumina-trace-id` (or `x-lumina-session-id`) are rejected with HTTP 400.
 
 ```bash title="Register an agent that requires inbound trace IDs" showLineNumbers
 curl -X POST http://localhost:4000/v1/agents \
@@ -357,16 +357,16 @@ Enforcing a trace ID on **outbound** calls made by a key owned by an agent is co
 
 #### Sub-agent identity propagation
 
-When the backend agent itself calls LiteLLM (for chat completions or to invoke a sub-agent), LiteLLM forwards two headers to maintain trace continuity:
+When the backend agent itself calls Lumina (for chat completions or to invoke a sub-agent), Lumina forwards two headers to maintain trace continuity:
 
-- `X-LiteLLM-Trace-Id` — links all calls in the chain to a single trace
-- `X-LiteLLM-Agent-Id` — attributes spend to the originating agent
+- `X-Lumina-Trace-Id` — links all calls in the chain to a single trace
+- `X-Lumina-Agent-Id` — attributes spend to the originating agent
 
 The caller's **virtual key** and **end-user ID** are not automatically forwarded. If the downstream agent needs the user's identity, propagate it explicitly via [`extra_headers` or the `x-a2a-{agent_name_or_id}-{header}` convention](./a2a_agent_headers).
 
 ### Request Format
 
-LiteLLM follows the [A2A JSON-RPC 2.0 specification](https://github.com/google/A2A). The message body shape depends on the agent's pinned `protocolVersion` (or the client signals above when unpinned).
+Lumina follows the [A2A JSON-RPC 2.0 specification](https://github.com/google/A2A). The message body shape depends on the agent's pinned `protocolVersion` (or the client signals above when unpinned).
 
 <Tabs>
 <TabItem value="v03" label="0.3 wire format" default>
@@ -478,7 +478,7 @@ model_list:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   agent_search_embedding_model: text-embedding-3-small
 ```
 

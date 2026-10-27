@@ -16,12 +16,12 @@ export function Hero() {
   return (
     <picture>
       <source media="(prefers-reduced-motion: reduce)" srcSet={typeof cover === 'string' ? cover : cover.src.src} />
-      <img src={require('./cover.gif').default} width="1200" height="630" alt="Laya and Nimble self-hosted classifiers: LiteLLM Auto Router sends classification to either model inside your infrastructure, then routes the request to the selected completion model." />
+      <img src={require('./cover.gif').default} width="1200" height="630" alt="Laya and Nimble self-hosted classifiers: Lumina Auto Router sends classification to either model inside your infrastructure, then routes the request to the selected completion model." />
     </picture>
   );
 }
 
-LiteLLM Auto Router now supports **Laya** and **Bespoke Nimble** as self-hosted classifiers. Run either model on your infrastructure to choose which completion model handles each request. Your application keeps calling the same router endpoint.
+Lumina Auto Router now supports **Laya** and **Bespoke Nimble** as self-hosted classifiers. Run either model on your infrastructure to choose which completion model handles each request. Your application keeps calling the same router endpoint.
 
 {/* truncate */}
 
@@ -40,15 +40,15 @@ You operate and pay for the classifier service. Measure latency, routing quality
 
 ## How it works
 
-1. Your application sends a request to the LiteLLM Auto Router.
+1. Your application sends a request to the Lumina Auto Router.
 2. Your self-hosted classifier chooses a complexity tier, such as `SIMPLE` or `COMPLEX`.
-3. LiteLLM calls a completion model assigned to that tier to generate the answer.
+3. Lumina calls a completion model assigned to that tier to generate the answer.
 
 The completion model still receives the request. You choose separately whether that model runs locally or through a hosted provider.
 
 ## Get started
 
-Connect your classifier endpoint to LiteLLM:
+Connect your classifier endpoint to Lumina:
 
 - **[Connect Laya](/docs/auto_router/decision_classifiers#laya-self-hosted-http-server):** set your server's base URL, credentials, and classifier model.
 - **[Connect Nimble](/docs/auto_router/decision_classifiers#nimble-self-hosted-system-one-server):** connect your System One endpoint and select the model it serves.

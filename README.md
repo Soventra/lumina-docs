@@ -1,6 +1,6 @@
-# litellm-docs
+# lumina-docs
 
-Source for [docs.litellm.ai](https://docs.litellm.ai); the documentation site for [LiteLLM](https://github.com/BerriAI/litellm).
+Source for [docs.lumina.ai](https://docs.lumina.ai); the documentation site for [Lumina](https://github.com/Soventra/lumina).
 
 Built with [Docusaurus 3](https://docusaurus.io/).
 
@@ -31,4 +31,4 @@ Deploys are handled automatically by Vercel on push to `main`.
 
 Edits are welcome via pull request. For substantive content changes, please open an issue first to discuss.
 
-The main LiteLLM repository is at <https://github.com/BerriAI/litellm>.
+The main Lumina repository is at <https://github.com/Soventra/lumina>.

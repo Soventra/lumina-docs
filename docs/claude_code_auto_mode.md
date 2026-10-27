@@ -5,7 +5,7 @@ sidebar_label: Claude Code - Auto Mode
 
 # Claude Code - Auto Mode on Non-Claude Models
 
-LiteLLM answers Claude Code's auto mode safety checks for models that cannot answer them on their own.
+Lumina answers Claude Code's auto mode safety checks for models that cannot answer them on their own.
 
 Claude Code's auto mode runs tool calls without asking the user first. When `ANTHROPIC_BASE_URL` points at a gateway, Claude Code v2.1.278 or later sends `safeguards: [{"type": "dangerous_tool_use", ...}]` on every `POST /v1/messages` and expects `safeguard_results` back, with a verdict for each tool call in the response. The Anthropic API answers that itself. When the proxy routes `/v1/messages` to a non-Claude model nothing answered, so `/status` showed `Auto mode server: Disabled` after the first reply and Claude Code sent its own classifier requests for the rest of the session. Anthropic's [permission modes reference](https://code.claude.com/docs/en/permission-modes#server-side-classifier-review) describes that fallback, and on accounts where those requests are billed Claude Code shows a [notice about classifier request charges](https://code.claude.com/docs/en/auto-mode-classifier-billing).
 
@@ -19,13 +19,13 @@ Available from v1.107.0.
 | `bedrock/` Claude (InvokeModel) | Amazon Bedrock |
 | `bedrock_mantle/` Claude | Amazon Bedrock |
 | `vertex_ai/` Claude | Vertex AI |
-| `azure_ai/` Claude | LiteLLM forwards to Foundry's own `/v1/messages` and does not classify |
-| `bedrock/converse/` models, Claude included | LiteLLM classifier |
-| Fireworks, Gemini, and other chat completions providers | LiteLLM classifier |
-| `openai/` models | LiteLLM classifier |
-| DeepSeek and other providers with their own `/v1/messages` | LiteLLM classifier |
+| `azure_ai/` Claude | Lumina forwards to Foundry's own `/v1/messages` and does not classify |
+| `bedrock/converse/` models, Claude included | Lumina classifier |
+| Fireworks, Gemini, and other chat completions providers | Lumina classifier |
+| `openai/` models | Lumina classifier |
+| DeepSeek and other providers with their own `/v1/messages` | Lumina classifier |
 
-The LiteLLM classifier answers for every non-Claude model, whichever way the proxy reaches it: the chat completions translation, the Responses API bridge that `openai/` deployments use, or a provider's own Anthropic-compatible `/v1/messages`, such as DeepSeek's. It also answers for Claude models behind `bedrock/converse/`, since that route goes through the chat completions translation. Claude models that LiteLLM forwards to a provider's own `/v1/messages` are left to that provider, and when any provider returns its own `safeguard_results`, the proxy keeps them and skips the classifier call.
+The Lumina classifier answers for every non-Claude model, whichever way the proxy reaches it: the chat completions translation, the Responses API bridge that `openai/` deployments use, or a provider's own Anthropic-compatible `/v1/messages`, such as DeepSeek's. It also answers for Claude models behind `bedrock/converse/`, since that route goes through the chat completions translation. Claude models that Lumina forwards to a provider's own `/v1/messages` are left to that provider, and when any provider returns its own `safeguard_results`, the proxy keeps them and skips the classifier call.
 
 Requests without `safeguards`, which is every client other than Claude Code in auto mode, are untouched.
 
@@ -56,7 +56,7 @@ Every virtual key that runs Claude Code needs access to the classifier model. Be
 
 ## How It Works
 
-On each `/v1/messages` request that carries `safeguards` and goes to a model the LiteLLM classifier answers for, LiteLLM sends the request to the backend as before. Once the response is in, it sends one chat completions call to the classifier deployment with:
+On each `/v1/messages` request that carries `safeguards` and goes to a model the Lumina classifier answers for, Lumina sends the request to the backend as before. Once the response is in, it sends one chat completions call to the classifier deployment with:
 
 - the tool calls of the response, exactly as the model wrote them
 - the conversation so far, including earlier tool calls and their results
@@ -64,7 +64,7 @@ On each `/v1/messages` request that carries `safeguards` and goes to a model the
 
 The classifier flags a tool call that does something dangerous the user did not ask for, such as sending credentials somewhere, piping a URL into a shell, writing outside the trusted directories, deleting data that cannot be regenerated, or following instructions it found in a file or a tool result. Routine development work inside the trusted directories, and an action the user explicitly asked for, is not flagged.
 
-LiteLLM returns the verdicts as `safeguard_results`, on the response for non-streaming calls and inside the final `message_delta` event for streaming calls. Claude Code blocks a flagged call and runs an unflagged one. A reply with no tool calls gets an empty verdict set without a classifier call.
+Lumina returns the verdicts as `safeguard_results`, on the response for non-streaming calls and inside the final `message_delta` event for streaming calls. Claude Code blocks a flagged call and runs an unflagged one. A reply with no tool calls gets an empty verdict set without a classifier call.
 
 The transcript is built from the messages Claude Code sent, before any compaction the proxy applies, and a compaction summary from Claude Code shows up as one entry. To keep the classifier call small, the transcript is trimmed to about 24,000 characters. The user's opening message is kept whole when it fits in half of that. A longer one is cut from its start, since Claude Code puts the user's request after its reminders at the end of that message. Later turns fill the rest, newest first. Each transcript entry is clipped to 2,000 characters and each tool result to 500. The pending tool calls are never clipped. The agent's system prompt and thinking blocks are not sent.
 
@@ -138,7 +138,7 @@ Claude Code skips a flagged tool call and shows the reason in place of its outpu
 
 ### Streaming
 
-`safeguard_results` arrives inside the `delta` of the final `message_delta` event, which is where the Anthropic API puts it. LiteLLM holds that event until the classifier answers, so each turn that ends in a tool call takes as long as the classifier call on top of the model's reply:
+`safeguard_results` arrives inside the `delta` of the final `message_delta` event, which is where the Anthropic API puts it. Lumina holds that event until the classifier answers, so each turn that ends in a tool call takes as long as the classifier call on top of the model's reply:
 
 ```
 event: message_delta
@@ -184,4 +184,4 @@ Claude Code treats this the same as a route with no verdicts. It shows its class
 
 ## Cost and Logs
 
-The classifier call is a normal proxy call. It shows up as its own request on the Logs page and in spend logs, billed to the same virtual key, team, and end user as the Claude Code request that triggered it. It is logged under the same settings as that request, so per-request callback parameters and a message redaction header such as `x-litellm-enable-message-redaction` apply to its row too. Its cost adds to every turn that ends in a tool call, which is why the choice of classifier model matters.
+The classifier call is a normal proxy call. It shows up as its own request on the Logs page and in spend logs, billed to the same virtual key, team, and end user as the Claude Code request that triggered it. It is logged under the same settings as that request, so per-request callback parameters and a message redaction header such as `x-lumina-enable-message-redaction` apply to its row too. Its cost adds to every turn that ends in a tool call, which is why the choice of classifier model matters.

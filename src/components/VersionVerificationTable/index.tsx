@@ -65,7 +65,7 @@ export default function VersionVerificationTable({ entries }: Props) {
               <td>
                 <a
                   className={styles.commitLink}
-                  href={`https://github.com/BerriAI/litellm/commit/${entry.gitCommit}`}
+                  href={`https://github.com/Soventra/lumina/commit/${entry.gitCommit}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -2,13 +2,13 @@
 
 Apply percentage-based discounts to specific providers. This is useful for negotiated enterprise pricing with providers.
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
 **Step 1: Add discount config to config.yaml**
 
 ```yaml
 # Apply 5% discount to all Vertex AI and Gemini costs
-litellm_settings:
+lumina_settings:
   cost_discount_config:
     vertex_ai: 0.05  # 5% discount
     gemini: 0.05     # 5% discount
@@ -19,7 +19,7 @@ litellm_settings:
 **Step 2: Start proxy**
 
 ```bash
-litellm /path/to/config.yaml
+lumina /path/to/config.yaml
 ```
 
 The discount will be automatically applied to all cost calculations for the configured providers.
@@ -32,13 +32,13 @@ The discount will be automatically applied to all cost calculations for the conf
 - Discounts only apply to the configured providers
 - Original cost, discount amount, and final cost are tracked in cost breakdown logs
 - Discount information is returned in response headers:
-  - `x-litellm-response-cost` - Final cost after discount
-  - `x-litellm-response-cost-original` - Cost before discount
-  - `x-litellm-response-cost-discount-amount` - Discount amount in USD
+  - `x-lumina-response-cost` - Final cost after discount
+  - `x-lumina-response-cost-original` - Cost before discount
+  - `x-lumina-response-cost-discount-amount` - Discount amount in USD
 
 ## Supported Providers
 
-You can apply discounts to all LiteLLM supported providers. Common examples:
+You can apply discounts to all Lumina supported providers. Common examples:
 
 - `vertex_ai` - Google Vertex AI
 - `gemini` - Google Gemini
@@ -49,5 +49,5 @@ You can apply discounts to all LiteLLM supported providers. Common examples:
 - `cohere` - Cohere
 - `openrouter` - OpenRouter
 
-See the full list of providers in the [LlmProviders](https://github.com/BerriAI/litellm/blob/main/litellm/types/utils.py) enum.
+See the full list of providers in the [LlmProviders](https://github.com/Soventra/lumina/blob/main/lumina/types/utils.py) enum.
 

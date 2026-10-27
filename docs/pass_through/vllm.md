@@ -6,7 +6,7 @@ Pass-through endpoints for VLLM - call provider-specific endpoint, in native for
 |-------|-------|-------|
 | Cost Tracking | ❌ | Not supported |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | |
 
 Just replace `https://my-vllm-server.com` with `LUMINA_PROXY_BASE_URL/vllm`
@@ -25,11 +25,11 @@ Supports **ALL** VLLM Endpoints (including streaming).
 
 Let's call the VLLM [`/score` endpoint](https://vllm.readthedocs.io/en/latest/api_reference/api_reference.html)
 
-1. Add a VLLM hosted model to your LiteLLM Proxy 
+1. Add a VLLM hosted model to your Lumina Proxy 
 
 :::info
 
-Works with LiteLLM v1.72.0+. 
+Works with Lumina v1.72.0+. 
 
 :::
 
@@ -41,10 +41,10 @@ model_list:
       api_base: https://my-vllm-server.com
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -81,7 +81,7 @@ Key Changes:
 
 ### **Example 1: Metrics endpoint**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl -L -X GET 'http://0.0.0.0:4000/vllm/metrics' \
@@ -99,7 +99,7 @@ curl -L -X GET 'https://my-vllm-server.com/metrics' \
 
 ### **Example 2: Chat API**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/vllm/chat/completions' \
@@ -159,7 +159,7 @@ export VLLM_API_BASE=""
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```

@@ -9,16 +9,16 @@
 
 :::tip
 
-LiteLLM follows the [Anthropic Skills API](https://docs.anthropic.com/en/docs/build-with-claude/skills) for creating, managing, and using reusable AI capabilities.
+Lumina follows the [Anthropic Skills API](https://docs.anthropic.com/en/docs/build-with-claude/skills) for creating, managing, and using reusable AI capabilities.
 
 :::
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 
 ### Quick Start - Create a Skill
 
 ```python showLineNumbers title="create_skill.py"
-from litellm import create_skill
+from lumina import create_skill
 import zipfile
 import os
 
@@ -56,7 +56,7 @@ print(f"Skill created: {response.id}")
 ### List Skills
 
 ```python showLineNumbers title="list_skills.py"
-from litellm import list_skills
+from lumina import list_skills
 
 response = list_skills(
     custom_llm_provider="anthropic",
@@ -71,7 +71,7 @@ for skill in response.data:
 ### Get Skill Details
 
 ```python showLineNumbers title="get_skill.py"
-from litellm import get_skill
+from lumina import get_skill
 
 skill = get_skill(
     skill_id="skill_01...",
@@ -86,7 +86,7 @@ print(f"Description: {skill.description}")
 ### Delete a Skill
 
 ```python showLineNumbers title="delete_skill.py"
-from litellm import delete_skill
+from lumina import delete_skill
 
 response = delete_skill(
     skill_id="skill_01...",
@@ -100,7 +100,7 @@ print(f"Deleted: {response.id}")
 ### Async Usage
 
 ```python showLineNumbers title="async_skills.py"
-from litellm import acreate_skill, alist_skills, aget_skill, adelete_skill
+from lumina import acreate_skill, alist_skills, aget_skill, adelete_skill
 import asyncio
 
 async def manage_skills():
@@ -136,9 +136,9 @@ async def manage_skills():
 asyncio.run(manage_skills())
 ```
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-LiteLLM provides Anthropic-compatible `/skills` endpoints for managing skills.
+Lumina provides Anthropic-compatible `/skills` endpoints for managing skills.
 
 ### Authentication
 
@@ -156,7 +156,7 @@ Set the `ANTHROPIC_API_KEY` environment variable. Requests without a `model` par
 ```bash
 # Request will use ANTHROPIC_API_KEY from environment
 curl "http://0.0.0.0:4000/v1/skills?beta=true" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -173,10 +173,10 @@ model_list:
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -194,7 +194,7 @@ You can upload either a ZIP file or directly upload the SKILL.md file:
 ```bash showLineNumbers title="create_skill_zip.sh"
 curl "http://0.0.0.0:4000/v1/skills?beta=true" \
   -X POST \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02" \
   -F "display_title=My Skill" \
@@ -206,7 +206,7 @@ curl "http://0.0.0.0:4000/v1/skills?beta=true" \
 ```bash showLineNumbers title="create_skill_md.sh"
 curl "http://0.0.0.0:4000/v1/skills?beta=true" \
   -X POST \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02" \
   -F "display_title=My Skill" \
@@ -217,7 +217,7 @@ curl "http://0.0.0.0:4000/v1/skills?beta=true" \
 
 ```bash showLineNumbers title="list_skills.sh"
 curl "http://0.0.0.0:4000/v1/skills?beta=true" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -226,7 +226,7 @@ curl "http://0.0.0.0:4000/v1/skills?beta=true" \
 
 ```bash showLineNumbers title="get_skill.sh"
 curl "http://0.0.0.0:4000/v1/skills/skill_01abc?beta=true" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -236,7 +236,7 @@ curl "http://0.0.0.0:4000/v1/skills/skill_01abc?beta=true" \
 ```bash showLineNumbers title="delete_skill.sh"
 curl "http://0.0.0.0:4000/v1/skills/skill_01abc?beta=true" \
   -X DELETE \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -266,7 +266,7 @@ Then route to specific accounts using the `model` parameter:
 # Route to Team A - using ZIP file
 curl "http://0.0.0.0:4000/v1/skills?beta=true" \
   -X POST \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02" \
   -F "model=claude-team-a" \
@@ -276,7 +276,7 @@ curl "http://0.0.0.0:4000/v1/skills?beta=true" \
 # Route to Team B - using direct SKILL.md upload
 curl "http://0.0.0.0:4000/v1/skills?beta=true" \
   -X POST \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02" \
   -F "model=claude-team-b" \
@@ -289,13 +289,13 @@ curl "http://0.0.0.0:4000/v1/skills?beta=true" \
 ```bash showLineNumbers title="list_with_routing.sh"
 # List Team A skills
 curl "http://0.0.0.0:4000/v1/skills?beta=true&model=claude-team-a" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 
 # List Team B skills
 curl "http://0.0.0.0:4000/v1/skills?beta=true&model=claude-team-b" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -305,13 +305,13 @@ curl "http://0.0.0.0:4000/v1/skills?beta=true&model=claude-team-b" \
 ```bash showLineNumbers title="get_with_routing.sh"
 # Get skill from Team A
 curl "http://0.0.0.0:4000/v1/skills/skill_01abc?beta=true&model=claude-team-a" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 
 # Get skill from Team B
 curl "http://0.0.0.0:4000/v1/skills/skill_01xyz?beta=true&model=claude-team-b" \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -322,14 +322,14 @@ curl "http://0.0.0.0:4000/v1/skills/skill_01xyz?beta=true&model=claude-team-b" \
 # Delete skill from Team A
 curl "http://0.0.0.0:4000/v1/skills/skill_01abc?beta=true&model=claude-team-a" \
   -X DELETE \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 
 # Delete skill from Team B
 curl "http://0.0.0.0:4000/v1/skills/skill_01xyz?beta=true&model=claude-team-b" \
   -X DELETE \
-  -H "X-Api-Key: sk-<your-litellm-api-key>" \
+  -H "X-Api-Key: sk-<your-lumina-api-key>" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: skills-2025-10-02"
 ```
@@ -443,9 +443,9 @@ This tells the API that `SKILL.md` belongs to the `test-skill` directory.
 ```
 
 
-## **Semantic Search over LiteLLM-Hosted Skills**
+## **Semantic Search over Lumina-Hosted Skills**
 
-`custom_llm_provider=litellm_proxy` skills (stored in the proxy's own database rather than proxied to Anthropic) support ranking by semantic similarity, so a caller can describe what they need instead of paging through the whole registry.
+`custom_llm_provider=lumina_proxy` skills (stored in the proxy's own database rather than proxied to Anthropic) support ranking by semantic similarity, so a caller can describe what they need instead of paging through the whole registry.
 
 :::info[Related Documentation]
 - [MCP Tool Search](./mcp_tool_search.md#how-it-works) for the `skill_search` MCP virtual tool
@@ -453,7 +453,7 @@ This tells the API that `SKILL.md` belongs to the `test-skill` directory.
 
 ### Enable it
 
-Set an embedding model in `litellm_settings`:
+Set an embedding model in `lumina_settings`:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -462,7 +462,7 @@ model_list:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   skill_search_embedding_model: text-embedding-3-small
 ```
 
@@ -471,7 +471,7 @@ litellm_settings:
 Pass `query` (and optionally `top_k`, default 5) to `GET /v1/skills`:
 
 ```bash showLineNumbers title="search_skills.sh"
-curl "http://0.0.0.0:4000/v1/skills?custom_llm_provider=litellm_proxy&query=summarize+a+pdf&top_k=5" \
+curl "http://0.0.0.0:4000/v1/skills?custom_llm_provider=lumina_proxy&query=summarize+a+pdf&top_k=5" \
   -H "Authorization: Bearer $LUMINA_KEY"
 ```
 
@@ -481,7 +481,7 @@ Each result carries a `search_score` (cosine similarity to the query) and, unlik
 {
   "data": [
     {
-      "id": "litellm_skill_...",
+      "id": "lumina_skill_...",
       "display_title": "Document Summarizer",
       "description": "Reads a PDF and produces a short summary",
       "search_score": 0.71,
@@ -492,7 +492,7 @@ Each result carries a `search_score` (cosine similarity to the query) and, unlik
 }
 ```
 
-`query` is only supported for `custom_llm_provider=litellm_proxy`; passing it with any other provider returns a `400 skill_search_unsupported_provider`. If `skill_search_embedding_model` isn't set, the same request returns `400 skill_search_not_configured` naming the setting to add.
+`query` is only supported for `custom_llm_provider=lumina_proxy`; passing it with any other provider returns a `400 skill_search_unsupported_provider`. If `skill_search_embedding_model` isn't set, the same request returns `400 skill_search_not_configured` naming the setting to add.
 
 ### Authorization
 
@@ -503,5 +503,5 @@ Search only ranks the skills the calling key can already access: the same visibi
 | Provider | Link to Usage |
 |----------|---------------|
 | Anthropic | [Usage](#quick-start---create-a-skill) |
-| LiteLLM (self-hosted) | [Semantic Search](#semantic-search-over-litellm-hosted-skills) |
+| Lumina (self-hosted) | [Semantic Search](#semantic-search-over-lumina-hosted-skills) |
 

@@ -8,7 +8,7 @@ Call Vertex AI Agent Engine (Reasoning Engines) in the OpenAI Request/Response f
 | Property | Details |
 |----------|---------|
 | Description | Vertex AI Agent Engine provides hosted agent runtimes that can execute agentic workflows with foundation models, tools, and custom logic. |
-| Provider Route on LiteLLM | `vertex_ai/agent_engine/{RESOURCE_NAME}` |
+| Provider Route on Lumina | `vertex_ai/agent_engine/{RESOURCE_NAME}` |
 | Supported Endpoints | `/chat/completions`, `/v1/messages`, `/v1/responses`, `/v1/a2a/message/send` |
 | Provider Doc | [Vertex AI Agent Engine ↗](https://cloud.google.com/vertex-ai/generative-ai/docs/reasoning-engine/overview) |
 
@@ -23,12 +23,12 @@ vertex_ai/agent_engine/{RESOURCE_NAME}
 **Example:**
 - `vertex_ai/agent_engine/projects/1060139831167/locations/us-central1/reasoningEngines/8263861224643493888`
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Basic Agent Completion"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="vertex_ai/agent_engine/projects/1060139831167/locations/us-central1/reasoningEngines/8263861224643493888",
     messages=[
         {"role": "user", "content": "Explain machine learning in simple terms"}
@@ -39,9 +39,9 @@ print(response.choices[0].message.content)
 ```
 
 ```python showLineNumbers title="Streaming Agent Responses"
-import litellm
+import lumina
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="vertex_ai/agent_engine/projects/1060139831167/locations/us-central1/reasoningEngines/8263861224643493888",
     messages=[
         {"role": "user", "content": "What are the key principles of software architecture?"}
@@ -54,14 +54,14 @@ async for chunk in response:
         print(chunk.choices[0].delta.content, end="")
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your model in config.yaml
 
 <Tabs>
 <TabItem value="config-yaml" label="config.yaml">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration"
+```yaml showLineNumbers title="Lumina Proxy Configuration"
 model_list:
   - model_name: vertex-agent-1
     lumina_params:
@@ -73,10 +73,10 @@ model_list:
 </TabItem>
 </Tabs>
 
-#### 2. Start the LiteLLM Proxy
+#### 2. Start the Lumina Proxy
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 ```
 
 #### 3. Make requests to your Vertex AI Agent Engine
@@ -100,12 +100,12 @@ curl http://localhost:4000/v1/chat/completions \
 
 <TabItem value="openai-sdk" label="OpenAI Python SDK">
 
-```python showLineNumbers title="Using OpenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Using OpenAI SDK with Lumina Proxy"
 from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 response = client.chat.completions.create(
@@ -121,9 +121,9 @@ print(response.choices[0].message.content)
 </TabItem>
 </Tabs>
 
-## LiteLLM A2A Gateway
+## Lumina A2A Gateway
 
-You can also connect to Vertex AI Agent Engine through LiteLLM's A2A (Agent-to-Agent) Gateway UI. This provides a visual way to register and test agents without writing code.
+You can also connect to Vertex AI Agent Engine through Lumina's A2A (Agent-to-Agent) Gateway UI. This provides a visual way to register and test agents without writing code.
 
 ### 1. Navigate to Agents
 

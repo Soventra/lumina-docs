@@ -13,15 +13,15 @@ This is available on both `/v1/chat/completions` and `/v1/messages` (Anthropic f
 
 ## Architecture
 
-Headroom runs as a sidecar service alongside LiteLLM. Client traffic continues to hit the LiteLLM gateway as usual; LiteLLM calls Headroom in-process during the `pre_call` step to rewrite the messages, then forwards the compressed payload to the upstream LLM. The client and the upstream LLM provider do not talk to Headroom directly.
+Headroom runs as a sidecar service alongside Lumina. Client traffic continues to hit the Lumina gateway as usual; Lumina calls Headroom in-process during the `pre_call` step to rewrite the messages, then forwards the compressed payload to the upstream LLM. The client and the upstream LLM provider do not talk to Headroom directly.
 
-![Client to LiteLLM to LLM, with Headroom attached to LiteLLM as a sidecar](/img/headroom_architecture.png)
+![Client to Lumina to LLM, with Headroom attached to Lumina as a sidecar](/img/headroom_architecture.png)
 
 ## Requirements
 
-LiteLLM v1.92.x or later, and a reachable Headroom proxy. See [Deploy Headroom](#deploy-headroom) below for a one-file Dockerfile.
+Lumina v1.92.x or later, and a reachable Headroom proxy. See [Deploy Headroom](#deploy-headroom) below for a one-file Dockerfile.
 
-For testing ahead of the stable cut, use the [v1.92.0-dev.1](https://github.com/BerriAI/litellm/releases/tag/v1.92.0-dev.1) dev release.
+For testing ahead of the stable cut, use the [v1.92.0-dev.1](https://github.com/Soventra/lumina/releases/tag/v1.92.0-dev.1) dev release.
 
 ## Quick Start
 
@@ -48,10 +48,10 @@ Only `pre_call` is meaningful; the guardrail is a no-op on responses.
 
 Add `default_on: true` if you want every request through the proxy to be compressed. Leave it off if you want compression to be opt-in (recommended when rolling out to a subset of users or workloads).
 
-### 2. Start the LiteLLM gateway
+### 2. Start the Lumina gateway
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Send a request
@@ -85,7 +85,7 @@ curl -i http://0.0.0.0:4000/v1/messages \
     "messages": [
       {"role": "user", "content": "Summarize the prior conversation..."}
     ],
-    "litellm_metadata": {"guardrails": ["headroom-compression"]}
+    "lumina_metadata": {"guardrails": ["headroom-compression"]}
   }'
 ```
 
@@ -134,7 +134,7 @@ curl -i http://0.0.0.0:4000/v1/chat/completions \
 </TabItem>
 <TabItem label="Anthropic format" value="anthropic-perreq">
 
-`/v1/messages` does not have a top-level `guardrails` field, so opt in via `litellm_metadata`:
+`/v1/messages` does not have a top-level `guardrails` field, so opt in via `lumina_metadata`:
 
 ```shell
 curl -i http://0.0.0.0:4000/v1/messages \
@@ -144,20 +144,20 @@ curl -i http://0.0.0.0:4000/v1/messages \
     "model": "{{anthropic}}",
     "max_tokens": 1024,
     "messages": [...],
-    "litellm_metadata": {"guardrails": ["headroom-compression"]}
+    "lumina_metadata": {"guardrails": ["headroom-compression"]}
   }'
 ```
 
 </TabItem>
 </Tabs>
 
-The response includes an `x-litellm-applied-guardrails: headroom-compression` header so the caller can confirm compression actually ran.
+The response includes an `x-lumina-applied-guardrails: headroom-compression` header so the caller can confirm compression actually ran.
 
 ### `x-headroom-bypass` only ever switches compression off
 
-LiteLLM decides whether `headroom-compression` runs on a given request before the guardrail's own code ever sees a header: that decision comes from `default_on` in `config.yaml`, whether the guardrail is attached to the caller's key or team, or the per-request `guardrails` / `litellm_metadata.guardrails` opt-in shown above. Only after that decision comes back "run it" does the guardrail check `x-headroom-bypass`, and the only value it treats as a bypass is the literal string `true`, matched case-insensitively. Any other value, including `false`, an empty header, or no header at all, has no effect and leaves the guardrail running as already scheduled.
+Lumina decides whether `headroom-compression` runs on a given request before the guardrail's own code ever sees a header: that decision comes from `default_on` in `config.yaml`, whether the guardrail is attached to the caller's key or team, or the per-request `guardrails` / `lumina_metadata.guardrails` opt-in shown above. Only after that decision comes back "run it" does the guardrail check `x-headroom-bypass`, and the only value it treats as a bypass is the literal string `true`, matched case-insensitively. Any other value, including `false`, an empty header, or no header at all, has no effect and leaves the guardrail running as already scheduled.
 
-Concretely: with `default_on: false` and no `headroom-compression` attached to the caller's key, sending `x-headroom-bypass: false` does not turn compression on for that request, and there is no per-request header that does. Skipping compression per request works (`x-headroom-bypass: true`, as in the Claude Code section above); enabling it per request without admin involvement requires the `guardrails` / `litellm_metadata.guardrails` field, not a header.
+Concretely: with `default_on: false` and no `headroom-compression` attached to the caller's key, sending `x-headroom-bypass: false` does not turn compression on for that request, and there is no per-request header that does. Skipping compression per request works (`x-headroom-bypass: true`, as in the Claude Code section above); enabling it per request without admin involvement requires the `guardrails` / `lumina_metadata.guardrails` field, not a header.
 
 ## Compression behind an auto router
 
@@ -188,13 +188,13 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 **Developer: point Claude Code at the proxy.** No code change is needed; Claude Code reads `ANTHROPIC_BASE_URL` and `ANTHROPIC_AUTH_TOKEN` from the environment.
 
 ```shell
-export ANTHROPIC_BASE_URL="https://your-litellm-proxy.example.com"
+export ANTHROPIC_BASE_URL="https://your-lumina-proxy.example.com"
 export ANTHROPIC_AUTH_TOKEN="sk-the-key-the-admin-issued"
 
 claude
 ```
 
-From here, every `/v1/messages` request Claude Code makes is compressed by Headroom before being dispatched to Anthropic. The developer sees no behavioral change other than lower token usage on their spend log. To verify compression ran, the admin can inspect `guardrail_information` on the corresponding spend log row, or check the response headers for `x-litellm-applied-guardrails: headroom-compression`.
+From here, every `/v1/messages` request Claude Code makes is compressed by Headroom before being dispatched to Anthropic. The developer sees no behavioral change other than lower token usage on their spend log. To verify compression ran, the admin can inspect `guardrail_information` on the corresponding spend log row, or check the response headers for `x-lumina-applied-guardrails: headroom-compression`.
 
 If a developer wants to skip compression for one request (for example, to compare an uncompressed baseline), they can set the `x-headroom-bypass: true` header on that call.
 
@@ -203,7 +203,7 @@ If a developer wants to skip compression for one request (for example, to compar
 
 In the Admin UI, open any request in **Logs**, scroll to the **Guardrails & Policy Compliance** panel, and you will see `headroom-compression` listed under **Request Lifecycle** as a `pre-call` step with its latency, plus an entry under **Evaluation Details**. 
 
-![Headroom guardrail in the LiteLLM Logs UI](/img/headroom_logs.png)
+![Headroom guardrail in the Lumina Logs UI](/img/headroom_logs.png)
 
 ## Deploy Headroom
 
@@ -226,7 +226,7 @@ CMD ["headroom", "proxy", "--host", "0.0.0.0", "--port", "8787"]
 
 ### Why `requests_compressed` can be 0
 
-Headroom protects two message types by default, set on the Headroom container itself, not in LiteLLM's `config.yaml`:
+Headroom protects two message types by default, set on the Headroom container itself, not in Lumina's `config.yaml`:
 
 - `user`/`system` messages, unless `ENV HEADROOM_COMPRESS_USER_MESSAGES=1` is set. Most Claude Code traffic is `user` role, so a default deployment compresses none of it.
 - Messages with an Anthropic `cache_control` marker, always. Compressing them would break prompt-cache byte matching. No override exists.

@@ -13,7 +13,7 @@
 <text x="430" y="56" font-size="11" fill="#0117be" font-weight="500" letter-spacing="1.2">TARGET</text>
 <g filter="url(#sh)"><rect x="48" y="76" width="312" height="150" rx="16" fill="#fff" stroke="#e2e8f0"/></g>
 <rect x="66" y="129.0" width="44" height="44" rx="12" fill="#f1f5f9"/><g fill="none" stroke="#111827" stroke-width="2" stroke-linejoin="round"><path d="M78 138.0h14l6 6v20h-20z"/><path d="M92 138.0v6h6"/></g>
-<text x="124" y="126.0" font-size="15.5" fill="#272B37" font-weight="500">LiteLLM_Lens.data</text>
+<text x="124" y="126.0" font-size="15.5" fill="#272B37" font-weight="500">Lumina_Lens.data</text>
 <text x="124" y="147.0" font-size="12.5" fill="#64748b">one JSONB row per lens</text>
 <text x="124" y="166.0" font-size="12.5" fill="#64748b">jobs, leases, findings,</text>
 <text x="124" y="185.0" font-size="12.5" fill="#64748b">reservations, executions</text>
@@ -22,7 +22,7 @@
 <text x="64" y="295" font-size="12" fill="#64748b">the whole 33 KB document is rewritten</text>
 <g filter="url(#sh)"><rect x="430" y="76" width="216" height="76" rx="16" fill="#fff" stroke="#e2e8f0"/></g>
 <rect x="448" y="92.0" width="44" height="44" rx="12" fill="#f1f5f9"/><g fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"><rect x="458" y="103.0" width="24" height="22" rx="3"/><path d="M458 110.0h24M458 117.0h24"/></g>
-<text x="506" y="109.0" font-size="15.5" fill="#272B37" font-weight="500">LiteLLM_Lens</text>
+<text x="506" y="109.0" font-size="15.5" fill="#272B37" font-weight="500">Lumina_Lens</text>
 <text x="506" y="130.0" font-size="12.5" fill="#64748b">settings, due_at</text>
 <g filter="url(#sh)"><rect x="666" y="76" width="216" height="76" rx="16" fill="#F8F9FF" stroke="#0117be" stroke-width="1.6"/></g>
 <rect x="684" y="92.0" width="44" height="44" rx="12" fill="#fff" stroke="#aeb9ef"/><g fill="none" stroke="#111827" stroke-width="2" stroke-linecap="round"><circle cx="706" cy="114.0" r="11"/><path d="M706 108.0v6l4 3"/></g>

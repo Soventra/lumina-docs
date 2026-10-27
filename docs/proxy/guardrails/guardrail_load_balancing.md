@@ -9,7 +9,7 @@ Load balance guardrail requests across multiple guardrail deployments. This is u
 
 ```mermaid
 flowchart LR
-    subgraph LiteLLM Gateway
+    subgraph Lumina Gateway
         Router[Router]
         G1[Guardrail Instance A]
         G2[Guardrail Instance B]
@@ -26,7 +26,7 @@ flowchart LR
     G3 --> AWSN[AWS Account N]
 ```
 
-When you define multiple guardrails with the **same `guardrail_name`**, LiteLLM automatically load balances requests across them using the router's load balancing strategy.
+When you define multiple guardrails with the **same `guardrail_name`**, Lumina automatically load balances requests across them using the router's load balancing strategy.
 
 ## Why Use Guardrail Load Balancing?
 
@@ -134,10 +134,10 @@ guardrails:
 </TabItem>
 </Tabs>
 
-### 2. Start LiteLLM Gateway
+### 2. Start Lumina Gateway
 
 ```bash showLineNumbers title="Start proxy"
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Make Requests
@@ -188,7 +188,7 @@ AWS Bedrock Guardrails have rate limits per account. Here's how to set up load b
 
 ```mermaid
 flowchart TB
-    subgraph LiteLLM["LiteLLM Gateway"]
+    subgraph Lumina["Lumina Gateway"]
         LB[Load Balancer]
     end
     
@@ -204,7 +204,7 @@ flowchart TB
         BG3[Bedrock Guardrail]
     end
     
-    Client[Client] --> LiteLLM
+    Client[Client] --> Lumina
     LB --> BG1
     LB --> BG2
     LB --> BG3
@@ -277,9 +277,9 @@ Check proxy logs to verify requests are distributed across different AWS account
 Create two custom guardrail classes for load balancing:
 
 ```python showLineNumbers title="custom_guardrail.py"
-from litellm.integrations.custom_guardrail import CustomGuardrail
-from litellm.proxy._types import UserAPIKeyAuth
-from litellm.caching.caching import DualCache
+from lumina.integrations.custom_guardrail import CustomGuardrail
+from lumina.proxy._types import UserAPIKeyAuth
+from lumina.caching.caching import DualCache
 
 
 class PIIFilterA(CustomGuardrail):
@@ -330,7 +330,7 @@ guardrails:
 Enable detailed debug logging to verify load balancing is working:
 
 ```bash showLineNumbers title="Start with debug logging"
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 You should see logs indicating which guardrail instance is selected:

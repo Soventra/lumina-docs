@@ -4,13 +4,13 @@ import TabItem from '@theme/TabItem';
 
 # OpenCode Quickstart
 
-This tutorial shows how to connect OpenCode to your existing LiteLLM instance and switch between models.
+This tutorial shows how to connect OpenCode to your existing Lumina instance and switch between models.
 
 To use your OpenCode Go subscription as the upstream service, see [OpenCode Go](../providers/opencode_go.md).
 
 :::info 
 
-This integration allows you to use any LiteLLM supported model through OpenCode with centralized authentication, usage tracking, and cost controls.
+This integration allows you to use any Lumina supported model through OpenCode with centralized authentication, usage tracking, and cost controls.
 
 :::
 
@@ -22,8 +22,8 @@ This integration allows you to use any LiteLLM supported model through OpenCode 
 
 ## Prerequisites
 
-- LiteLLM already configured and running (e.g., http://localhost:4000)
-- LiteLLM API key
+- Lumina already configured and running (e.g., http://localhost:4000)
+- Lumina API key
 
 ## Installation
 
@@ -61,7 +61,7 @@ Verify installation:
 opencode --version
 ```
 
-### Step 2: Configure LiteLLM Provider
+### Step 2: Configure Lumina Provider
 
 Create your OpenCode configuration file. You can place this in different locations depending on your needs:
 
@@ -76,9 +76,9 @@ Create `~/.config/opencode/opencode.json` (global config):
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "litellm": {
+    "lumina": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM",
+      "name": "Lumina",
       "options": {
         "baseURL": "http://localhost:4000/v1"
       },
@@ -99,12 +99,12 @@ Create `~/.config/opencode/opencode.json` (global config):
 ```
 
 :::tip
-The keys in the "models" object (e.g., "gpt-5.6-terra", "claude-sonnet-5") should match the `model_name` values from your LiteLLM configuration. The "name" field provides a friendly display name that will appear as an alias in OpenCode.
+The keys in the "models" object (e.g., "gpt-5.6-terra", "claude-sonnet-5") should match the `model_name` values from your Lumina configuration. The "name" field provides a friendly display name that will appear as an alias in OpenCode.
 
 If a model accepts images, it also needs a `modalities` entry; see [Enabling image and vision input](#enabling-image-and-vision-input).
 :::
 
-### Step 3: Connect to LiteLLM Provider
+### Step 3: Connect to Lumina Provider
 
 Launch OpenCode:
 
@@ -119,8 +119,8 @@ Add your API key:
 ```
 
 Then:
-- **Enter provider name**: `LiteLLM` (must match the "name" field in your config)
-- **Enter your LiteLLM API key**: Your LiteLLM master key or virtual key
+- **Enter provider name**: `Lumina` (must match the "name" field in your config)
+- **Enter your Lumina API key**: Your Lumina master key or virtual key
 
 ### Step 4: Switch Between Models
 
@@ -130,7 +130,7 @@ In OpenCode, run:
 /models
 ```
 
-Select any model from your LiteLLM configuration. OpenCode will route all requests through your LiteLLM instance.
+Select any model from your Lumina configuration. OpenCode will route all requests through your Lumina instance.
 
 ## Advanced Configuration
 
@@ -142,9 +142,9 @@ You can customize model parameters like context limits:
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "litellm": {
+    "lumina": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM",
+      "name": "Lumina",
       "options": {
         "baseURL": "http://localhost:4000/v1"
       },
@@ -176,7 +176,7 @@ model-listing schema has no field for modalities, so there is nothing for it to 
 custom `@ai-sdk/openai-compatible` provider therefore fall back to text-only input.
 
 The effect is client-side and silent: OpenCode checks the model's declared input modalities, sees no
-`image`, and **strips image attachments out of the request before it is sent**. LiteLLM never
+`image`, and **strips image attachments out of the request before it is sent**. Lumina never
 receives the image, and the model replies as though you had pasted nothing.
 
 Declare `modalities` on every vision-capable model in your OpenCode config:
@@ -185,9 +185,9 @@ Declare `modalities` on every vision-capable model in your OpenCode config:
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "litellm": {
+    "lumina": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM",
+      "name": "Lumina",
       "options": {
         "baseURL": "http://localhost:4000/v1"
       },
@@ -213,8 +213,8 @@ Leave `modalities` off text-only models such as `deepseek-chat`; declaring `imag
 that cannot accept it moves the failure from the client to the provider.
 
 :::warning
-Setting `supports_vision: true` under `model_info` in your LiteLLM `config.yaml` does **not** fix
-this. That flag drives LiteLLM's own routing and cost logic and is not exposed on `/v1/models`, and
+Setting `supports_vision: true` under `model_info` in your Lumina `config.yaml` does **not** fix
+this. That flag drives Lumina's own routing and cost logic and is not exposed on `/v1/models`, and
 OpenCode would not read it if it were. `modalities` in the OpenCode config is the only place this
 can be declared.
 :::
@@ -240,18 +240,18 @@ text-only, an image-bearing request will fail once the router lands on that tier
 
 ### Multi-Provider Setup
 
-You can configure multiple LiteLLM instances or mix with other providers:
+You can configure multiple Lumina instances or mix with other providers:
 
 <Tabs>
-<TabItem value="multi-litellm" label="Multiple LiteLLM Instances">
+<TabItem value="multi-lumina" label="Multiple Lumina Instances">
 
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "litellm-prod": {
+    "lumina-prod": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM Production",
+      "name": "Lumina Production",
       "options": {
         "baseURL": "https://your-prod-instance.com/v1"
       },
@@ -261,9 +261,9 @@ You can configure multiple LiteLLM instances or mix with other providers:
         }
       }
     },
-    "litellm-dev": {
+    "lumina-dev": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM Development",
+      "name": "Lumina Development",
       "options": {
         "baseURL": "http://localhost:4000/v1"
       },
@@ -284,18 +284,18 @@ You can configure multiple LiteLLM instances or mix with other providers:
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "litellm": {
+    "lumina": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM",
+      "name": "Lumina",
       "options": {
         "baseURL": "http://localhost:4000/v1"
       },
       "models": {
         "{{openai_large}}": {
-          "name": "GPT-5.6 Terra via LiteLLM"
+          "name": "GPT-5.6 Terra via Lumina"
         },
         "{{anthropic}}": {
-          "name": "Claude Sonnet 5 via LiteLLM"
+          "name": "Claude Sonnet 5 via Lumina"
         }
       }
     },
@@ -315,9 +315,9 @@ You can configure multiple LiteLLM instances or mix with other providers:
 </TabItem>
 </Tabs>
 
-## Example LiteLLM Configuration
+## Example Lumina Configuration
 
-Here's an example LiteLLM `config.yaml` that works well with OpenCode:
+Here's an example Lumina `config.yaml` that works well with OpenCode:
 
 ```yaml
 model_list:
@@ -361,19 +361,19 @@ model_list:
 ## Troubleshooting
 
 **OpenCode not connecting:**
-- Verify your LiteLLM proxy is running: `curl http://localhost:4000/health`
-- Check that the `baseURL` in your OpenCode config matches your LiteLLM instance
+- Verify your Lumina proxy is running: `curl http://localhost:4000/health`
+- Check that the `baseURL` in your OpenCode config matches your Lumina instance
 - Ensure the provider name in `/connect` matches exactly with your config
 
 **Authentication errors:**
-- Verify your LiteLLM API key is correct
-- Check that your LiteLLM instance has authentication properly configured
+- Verify your Lumina API key is correct
+- Check that your Lumina instance has authentication properly configured
 - Ensure your API key has access to the models you're trying to use
 
 **Model not found:**
-- Ensure the model names in OpenCode config match your LiteLLM `model_name` values
-- Check LiteLLM logs for detailed error messages
-- Verify the models are properly configured in your LiteLLM instance
+- Ensure the model names in OpenCode config match your Lumina `model_name` values
+- Check Lumina logs for detailed error messages
+- Verify the models are properly configured in your Lumina instance
 
 **Configuration not loading:**
 - Check the config file path and permissions
@@ -382,7 +382,7 @@ model_list:
 
 **Images and screenshots are ignored:**
 - OpenCode defaults custom OpenAI-compatible provider models to text-only input and strips image
-  attachments before sending, so the request reaching LiteLLM contains no image. Declare
+  attachments before sending, so the request reaching Lumina contains no image. Declare
   `modalities` on the model in your OpenCode config:
   ```json
   "{{anthropic}}": {
@@ -390,7 +390,7 @@ model_list:
     "modalities": { "input": ["text", "image"], "output": ["text"] }
   }
   ```
-- `model_info: supports_vision: true` in your LiteLLM `config.yaml` has no effect here. See
+- `model_info: supports_vision: true` in your Lumina `config.yaml` has no effect here. See
   [Enabling image and vision input](#enabling-image-and-vision-input).
 
 **`Unknown parameter: 'reasoningSummary'` error:**
@@ -407,4 +407,4 @@ model_list:
 
 - Add more models to the config as needed - they'll appear in `/models`
 - Use project-specific configs for different codebases with different model requirements
-- Monitor your LiteLLM proxy logs to see OpenCode requests in real-time
+- Monitor your Lumina proxy logs to see OpenCode requests in real-time

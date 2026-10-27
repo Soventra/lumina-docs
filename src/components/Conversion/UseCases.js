@@ -130,7 +130,7 @@ export default function UseCases({source = 'docs-home'}) {
   return (
     <section className={styles.wrap} aria-labelledby="use-cases-title">
       <h2 id="use-cases-title" className={styles.title}>
-        Why developers love LiteLLM
+        Why developers love Lumina
       </h2>
       <div className={clsx(styles.list, styles.listOpen)}>
         <Row u={sdk} source={source} />

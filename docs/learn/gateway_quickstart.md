@@ -1,7 +1,7 @@
 ---
 title: Gateway Quickstart
 sidebar_label: Gateway Quickstart
-description: Start LiteLLM Gateway, add models and keys, then connect applications and SDKs to one shared endpoint.
+description: Start Lumina Gateway, add models and keys, then connect applications and SDKs to one shared endpoint.
 ---
 
 import NavigationCards from '@site/src/components/NavigationCards';
@@ -20,7 +20,7 @@ To run the gateway from your own `config.yaml` instead, do the steps below.
 ## 1. Install The Gateway
 
 ```bash
-uv tool install 'litellm[proxy]'
+uv tool install 'lumina[proxy]'
 ```
 
 ## 2. Set One Provider Key
@@ -40,13 +40,13 @@ model_list:
 
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
-  database_url: postgresql://llmproxy:dbpassword9090@db:5432/litellm
+  database_url: postgresql://llmproxy:dbpassword9090@db:5432/lumina
 ```
 
 ## 4. Start The Gateway
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 You should see the proxy start on `http://0.0.0.0:4000`.
@@ -60,7 +60,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
-      {"role": "user", "content": "Hello from LiteLLM Gateway"}
+      {"role": "user", "content": "Hello from Lumina Gateway"}
     ]
   }'
 ```
@@ -134,7 +134,7 @@ columns={3}
 items={[
   {
     title: "Make LLM Requests",
-    description: "Point LiteLLM or OpenAI-compatible clients to the gateway.",
+    description: "Point Lumina or OpenAI-compatible clients to the gateway.",
     to: "/docs/proxy/user_keys",
   },
   {

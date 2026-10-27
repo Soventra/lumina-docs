@@ -1,10 +1,10 @@
 # Custom HTTP Handler
 
-Configure custom aiohttp sessions for better performance and control in LiteLLM completions.
+Configure custom aiohttp sessions for better performance and control in Lumina completions.
 
 ## Overview
 
-You can inject custom `aiohttp.ClientSession` instances into LiteLLM for:
+You can inject custom `aiohttp.ClientSession` instances into Lumina for:
 - Custom connection pooling and timeouts
 - Corporate proxy and SSL configurations  
 - Performance optimization
@@ -13,17 +13,17 @@ You can inject custom `aiohttp.ClientSession` instances into LiteLLM for:
 :::info Scope
 `BaseLLMAIOHTTPHandler` is only used by the `aiohttp_openai/` provider (chat completions) and by Topaz image variations. Requests to other providers, including plain `openai/`, go through the httpx based clients and are not affected by this handler.
 
-The instance that `litellm.completion` calls lives in the `litellm.main` module, so the replacement must be assigned to `litellm.main.base_llm_aiohttp_handler`. Setting `litellm.base_llm_aiohttp_handler` creates a new attribute on the `litellm` package that nothing reads, and the custom session is silently ignored. `litellm.images.main` binds its own reference to the handler at import time, so the Topaz image variation path is not changed by this assignment.
+The instance that `lumina.completion` calls lives in the `lumina.main` module, so the replacement must be assigned to `lumina.main.base_llm_aiohttp_handler`. Setting `lumina.base_llm_aiohttp_handler` creates a new attribute on the `lumina` package that nothing reads, and the custom session is silently ignored. `lumina.images.main` binds its own reference to the handler at import time, so the Topaz image variation path is not changed by this assignment.
 :::
 
 ## Basic Usage
 
 ### Default (No Changes Required)
 ```python
-import litellm
+import lumina
 
 # Works exactly as before
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="{{openai_small}}",
     messages=[{"role": "user", "content": "Hello!"}]
 )
@@ -32,9 +32,9 @@ response = await litellm.acompletion(
 ### Custom Session
 ```python
 import aiohttp
-import litellm
-import litellm.main
-from litellm.llms.custom_httpx.aiohttp_handler import BaseLLMAIOHTTPHandler
+import lumina
+import lumina.main
+from lumina.llms.custom_httpx.aiohttp_handler import BaseLLMAIOHTTPHandler
 
 # Create optimized session
 session = aiohttp.ClientSession(
@@ -42,11 +42,11 @@ session = aiohttp.ClientSession(
     connector=aiohttp.TCPConnector(limit=300, limit_per_host=75)
 )
 
-# Replace the handler that litellm.completion uses
-litellm.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(client_session=session)
+# Replace the handler that lumina.completion uses
+lumina.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(client_session=session)
 
 # aiohttp_openai/ completions now use your session
-response = await litellm.acompletion(model="aiohttp_openai/{{openai_small}}", messages=[...])
+response = await lumina.acompletion(model="aiohttp_openai/{{openai_small}}", messages=[...])
 ```
 
 ## Common Patterns
@@ -56,9 +56,9 @@ response = await litellm.acompletion(model="aiohttp_openai/{{openai_small}}", me
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 import aiohttp
-import litellm
-import litellm.main
-from litellm.llms.custom_httpx.aiohttp_handler import BaseLLMAIOHTTPHandler
+import lumina
+import lumina.main
+from lumina.llms.custom_httpx.aiohttp_handler import BaseLLMAIOHTTPHandler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -67,7 +67,7 @@ async def lifespan(app: FastAPI):
         timeout=aiohttp.ClientTimeout(total=180),
         connector=aiohttp.TCPConnector(limit=300)
     )
-    litellm.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(
+    lumina.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(
         client_session=session
     )
     yield
@@ -78,7 +78,7 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/chat")
 async def chat(messages: list[dict]):
-    return await litellm.acompletion(model="aiohttp_openai/{{openai_small}}", messages=messages)
+    return await lumina.acompletion(model="aiohttp_openai/{{openai_small}}", messages=messages)
 ```
 
 ### Corporate Proxy
@@ -95,7 +95,7 @@ session = aiohttp.ClientSession(
     trust_env=True  # Use environment proxy settings
 )
 
-litellm.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(client_session=session)
+lumina.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(client_session=session)
 ```
 
 ### High Performance
@@ -112,7 +112,7 @@ session = aiohttp.ClientSession(
     )
 )
 
-litellm.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(client_session=session)
+lumina.main.base_llm_aiohttp_handler = BaseLLMAIOHTTPHandler(client_session=session)
 ```
 
 ## Constructor Options

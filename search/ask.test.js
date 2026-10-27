@@ -12,8 +12,8 @@ const {MODEL, FALLBACKS} = require('./gateway');
 const {readConfig, isContentUrl} = require('./runtime');
 
 const docs = [
-  {id: 'lens', title: 'LiteLLM Lens', heading: 'Prerequisites', url: '/docs/proxy/lens', text: 'Install PostgreSQL and ClickHouse before starting Lens.'},
-  {id: 'lens-start', title: 'LiteLLM Lens', heading: 'Start', url: '/docs/proxy/lens#start', text: 'Start Lens and send agent traces to it.'},
+  {id: 'lens', title: 'Lumina Lens', heading: 'Prerequisites', url: '/docs/proxy/lens', text: 'Install PostgreSQL and ClickHouse before starting Lens.'},
+  {id: 'lens-start', title: 'Lumina Lens', heading: 'Start', url: '/docs/proxy/lens#start', text: 'Start Lens and send agent traces to it.'},
 ];
 const index = createIndex(docs), documents = new Map(docs.map(doc => [doc.id, doc]));
 const config = {publicAIEnabled: true, origin: 'https://docs.example.com', baseUrl: 'https://gateway.example.com/v1', apiKey: 'test-secret-never-in-prompts'};
@@ -116,7 +116,7 @@ test('agent can read prerequisites and sign-in sections from both guides in a co
     assert.equal(context.length, corpus.length);
     for (const doc of corpus) assert.ok(context.some(passage => passage.url === doc.url && passage.text === doc.text));
   });
-  assert.equal((await ask(upstream.fetch, {question: 'litellm with codex/claude subscription??',
+  assert.equal((await ask(upstream.fetch, {question: 'lumina with codex/claude subscription??',
     index: createIndex(corpus), documents: new Map(corpus.map(doc => [doc.id, doc]))})).status, 200);
 });
 test('gateway rejects redirects, non-HTTPS configuration, tools, and secret echoes', async () => {

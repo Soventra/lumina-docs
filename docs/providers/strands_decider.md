@@ -1,17 +1,17 @@
 # Strands Decider
 
-[Strands Decider](https://huggingface.co/StrandsAgents/strands-decider-2B-hobson-v19) is a small decision model that you run on your own server. It does not generate text. It answers typed questions about an input, such as a yes or no question, a pick from a fixed list of options, or a level on a scale, and gives every answer a calibrated probability. LiteLLM serves it on the [decision routes](../decisions.md), `/v1/decisions` for the OpenAI Decisions format and `/v1/systemone` for the System One format.
+[Strands Decider](https://huggingface.co/StrandsAgents/strands-decider-2B-hobson-v19) is a small decision model that you run on your own server. It does not generate text. It answers typed questions about an input, such as a yes or no question, a pick from a fixed list of options, or a level on a scale, and gives every answer a calibrated probability. Lumina serves it on the [decision routes](../decisions.md), `/v1/decisions` for the OpenAI Decisions format and `/v1/systemone` for the System One format.
 
 | Property | Details |
 |----------|---------|
-| Provider route on LiteLLM | `strands_decider/` |
+| Provider route on Lumina | `strands_decider/` |
 | Model | `strands_decider/strands-decider-2B-hobson-v19` |
-| LiteLLM endpoints | `/v1/decisions`, `/v1/systemone` |
+| Lumina endpoints | `/v1/decisions`, `/v1/systemone` |
 | Question types | `predicate` or `noul`, `choice`, `score` |
 | Image input | No |
-| Price in LiteLLM | $0 per token |
+| Price in Lumina | $0 per token |
 
-Available in `v1.104.2` and later on the `1.104.x` line and in `v1.105.0-rc.3` and later. `v1.106.0-dev.1` has no `/v1/systemone` route and takes the System One format at `/v1/decisions`, so on that build send the [/v1/systemone](#v1systemone) request body to `/v1/decisions`, and call `litellm.decisions` with `state` instead of `input`.
+Available in `v1.104.2` and later on the `1.104.x` line and in `v1.105.0-rc.3` and later. `v1.106.0-dev.1` has no `/v1/systemone` route and takes the System One format at `/v1/decisions`, so on that build send the [/v1/systemone](#v1systemone) request body to `/v1/decisions`, and call `lumina.decisions` with `state` instead of `input`.
 
 ## Serve the model
 
@@ -26,7 +26,7 @@ Without `--device`, the server picks CUDA, then MPS, then CPU. Pass `--device cu
 
 The `strands-decider-2B-hobson-v21` checkpoint works the same way. Serve it instead and set `model` to `strands_decider/strands-decider-2B-hobson-v21` in the examples below.
 
-The server binds to `127.0.0.1` and has no authentication, and its model card says to use it for local experiments. Run LiteLLM on the same machine when you can. When LiteLLM runs in a container or on another machine, keep the server on `127.0.0.1` behind a reverse proxy that checks a bearer token, and set `STRANDS_DECIDER_API_KEY` to that token. `--host` changes the address the server binds to, but anything that can reach that address can call the server without a token.
+The server binds to `127.0.0.1` and has no authentication, and its model card says to use it for local experiments. Run Lumina on the same machine when you can. When Lumina runs in a container or on another machine, keep the server on `127.0.0.1` behind a reverse proxy that checks a bearer token, and set `STRANDS_DECIDER_API_KEY` to that token. `--host` changes the address the server binds to, but anything that can reach that address can call the server without a token.
 
 Check that the server answers.
 
@@ -53,11 +53,11 @@ curl -s localhost:8000/v1/systemone -H 'content-type: application/json' -d '{
 | `STRANDS_DECIDER_API_BASE` | Yes, or set `api_base` | Server base URL |
 | `STRANDS_DECIDER_API_KEY` | No | Bearer token |
 
-Set `STRANDS_DECIDER_API_BASE` to the server's base URL without `/v1/systemone`, for example `http://127.0.0.1:8000`. LiteLLM removes a trailing `/` or `/v1` and adds `/v1/systemone`, so `http://127.0.0.1:8000/v1` reaches the same route.
+Set `STRANDS_DECIDER_API_BASE` to the server's base URL without `/v1/systemone`, for example `http://127.0.0.1:8000`. Lumina removes a trailing `/` or `/v1` and adds `/v1/systemone`, so `http://127.0.0.1:8000/v1` reaches the same route.
 
-Strands Decider has no default host, so set `STRANDS_DECIDER_API_BASE` or pass `api_base`. Without either, LiteLLM answers `400` with `api_base is required for Decisions provider 'strands_decider'` and does not call the server.
+Strands Decider has no default host, so set `STRANDS_DECIDER_API_BASE` or pass `api_base`. Without either, Lumina answers `400` with `api_base is required for Decisions provider 'strands_decider'` and does not call the server.
 
-LiteLLM sends `Authorization: Bearer <key>` only when `STRANDS_DECIDER_API_KEY` or `api_key` is set, and sends no `Authorization` header otherwise. `strands-decider serve` has no authentication, so set the key only when something in front of the server checks it.
+Lumina sends `Authorization: Bearer <key>` only when `STRANDS_DECIDER_API_KEY` or `api_key` is set, and sends no `Authorization` header otherwise. `strands-decider serve` has no authentication, so set the key only when something in front of the server checks it.
 
 ## Proxy setup
 
@@ -75,7 +75,7 @@ model_list:
 
 ```bash showLineNumbers
 export STRANDS_DECIDER_API_BASE=http://127.0.0.1:8000
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ## /v1/decisions
@@ -208,19 +208,19 @@ Response
 }
 ```
 
-The server adds `latency_ms`, and LiteLLM passes it through on `/v1/systemone`.
+The server adds `latency_ms`, and Lumina passes it through on `/v1/systemone`.
 
 ## SDK
 
-Call the server from Python with `litellm.decisions` for the OpenAI Decisions format or `litellm.systemone` for the System One format. `litellm.systemone` is available in `v1.104.3` and later on the `1.104.x` line, `v1.105.0` and later on the `1.105.x` line, and `v1.106.0-rc.1` and later. [SDK usage](../decisions.md#sdk-usage) covers the async versions and the other arguments.
+Call the server from Python with `lumina.decisions` for the OpenAI Decisions format or `lumina.systemone` for the System One format. `lumina.systemone` is available in `v1.104.3` and later on the `1.104.x` line, `v1.105.0` and later on the `1.105.x` line, and `v1.106.0-rc.1` and later. [SDK usage](../decisions.md#sdk-usage) covers the async versions and the other arguments.
 
 ```python showLineNumbers title="OpenAI Decisions format"
 import os
-import litellm
+import lumina
 
 os.environ["STRANDS_DECIDER_API_BASE"] = "http://127.0.0.1:8000"
 
-response = litellm.decisions(
+response = lumina.decisions(
     model="strands_decider/strands-decider-2B-hobson-v19",
     input="Help! My payouts have been failing for 3 days!",
     questions=[
@@ -232,11 +232,11 @@ print(response.answers[0].probability)
 
 ```python showLineNumbers title="System One format"
 import os
-import litellm
+import lumina
 
 os.environ["STRANDS_DECIDER_API_BASE"] = "http://127.0.0.1:8000"
 
-response = litellm.systemone(
+response = lumina.systemone(
     model="strands_decider/strands-decider-2B-hobson-v19",
     state="Help! My payouts have been failing for 3 days!",
     questions={
@@ -250,8 +250,8 @@ Both print `0.8287` for this input.
 
 ## Cost tracking
 
-The LiteLLM cost map prices `strands_decider/strands-decider-2B-hobson-v19` at $0 per input and output token, since you pay for the server yourself. It is the only Strands Decider model in the cost map, and the proxy records calls to other checkpoints at $0. To track what the server costs you, set `input_cost_per_token` and `output_cost_per_token` under `model_info` on the deployment, as shown in [Custom pricing](../proxy/custom_pricing.md#cost-per-token-eg-azure).
+The Lumina cost map prices `strands_decider/strands-decider-2B-hobson-v19` at $0 per input and output token, since you pay for the server yourself. It is the only Strands Decider model in the cost map, and the proxy records calls to other checkpoints at $0. To track what the server costs you, set `input_cost_per_token` and `output_cost_per_token` under `model_info` on the deployment, as shown in [Custom pricing](../proxy/custom_pricing.md#cost-per-token-eg-azure).
 
 ## Use it as the Auto Router classifier
 
-Strands Decider can pick the model tier for each request in LiteLLM Auto Router. Add the deployment above to `model_list` and set `deployment_name` in the router's `opensource_classifier_config` to its `model_name`, as shown in [Use a deployed decision model](../auto_router/decision_classifiers.md#use-a-deployed-decision-model). Available in `v1.104.3` and later on the `1.104.x` line, `v1.105.0` and later on the `1.105.x` line, and `v1.106.0-rc.1` and later. A server on CPU can need far more than the classifier's 3000 ms default timeout, so time a few requests to your server after warm-up and set `timeout_ms` above that. With `classifier_fallback: default_model`, as in that example, the `x-litellm-complexity-router-cause` response header is `jev_classifier` when the classifier answered and `default_model_fallback` when it did not.
+Strands Decider can pick the model tier for each request in Lumina Auto Router. Add the deployment above to `model_list` and set `deployment_name` in the router's `opensource_classifier_config` to its `model_name`, as shown in [Use a deployed decision model](../auto_router/decision_classifiers.md#use-a-deployed-decision-model). Available in `v1.104.3` and later on the `1.104.x` line, `v1.105.0` and later on the `1.105.x` line, and `v1.106.0-rc.1` and later. A server on CPU can need far more than the classifier's 3000 ms default timeout, so time a few requests to your server after warm-up and set `timeout_ms` above that. With `classifier_fallback: default_model`, as in that example, the `x-lumina-complexity-router-cause` response header is `jev_classifier` when the classifier answered and `default_model_fallback` when it did not.

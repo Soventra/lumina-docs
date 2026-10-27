@@ -1,7 +1,7 @@
 const {AsyncLocalStorage} = require('node:async_hooks');
 const {createHmac, timingSafeEqual} = require('node:crypto');
 
-const AGENT_NAME = 'litellm-docs-search';
+const AGENT_NAME = 'lumina-docs-search';
 const instances = new WeakMap();
 const emptySpan = {setAttribute() {}, setAttributes() {}, setError() {}};
 const disabled = {

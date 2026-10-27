@@ -1,7 +1,7 @@
 ---
 title: Set up the LiteAdmin Slack app
 sidebar_label: Set up the Slack app
-description: Install LiteAdmin in Slack, deploy the Enterprise worker or a standalone agent, and connect your own LiteLLM admin account.
+description: Install LiteAdmin in Slack, deploy the Enterprise worker or a standalone agent, and connect your own Lumina admin account.
 toc_max_heading_level: 2
 ---
 
@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 
 # Set up the LiteAdmin Slack app
 
-Use **LiteAdmin** to ask about teams, budgets, models, and spend from a Slack DM. Each admin connects their own LiteLLM account
+Use **LiteAdmin** to ask about teams, budgets, models, and spend from a Slack DM. Each admin connects their own Lumina account
 
 Install the Slack app once, then choose one deployment below. **Enterprise** uses the worker bundled with your gateway and its existing SSO. **Standalone** runs a separate agent service with its own HTTPS address and login configuration
 
@@ -18,7 +18,7 @@ To connect Claude Code or Codex to an MCP endpoint on your Enterprise deployment
 
 ## Before you start
 
-You need a working LiteLLM gateway with HTTPS, a database, and a tool-calling model each connecting admin can use. Each user needs an active [`proxy_admin` account](./access_control.md#global-proxy-roles) whose email matches their Slack profile. You also need permission to create and install a Slack app in your workspace
+You need a working Lumina gateway with HTTPS, a database, and a tool-calling model each connecting admin can use. Each user needs an active [`proxy_admin` account](./access_control.md#global-proxy-roles) whose email matches their Slack profile. You also need permission to create and install a Slack app in your workspace
 
 Run one worker for each Slack app, workspace, and gateway, with persistent storage and outbound Slack WebSocket access. Use HTTPS origins without URL subpaths. The Enterprise deployment additionally requires a valid license and [SSO configured on the gateway](./admin_ui_sso.md)
 
@@ -39,7 +39,7 @@ Use a separate Slack app for each environment, for example **LiteAdmin Dev** for
 {
   "display_information": {
     "name": "LiteAdmin",
-    "description": "Ask about your LiteLLM gateway. Send connect in a DM to sign in.",
+    "description": "Ask about your Lumina gateway. Send connect in a DM to sign in.",
     "background_color": "#111827"
   },
   "features": {
@@ -92,7 +92,7 @@ The gateway and worker run as separate containers from the same image. Slack del
 
 :::note Availability
 
-Use an image and chart containing [LiteLLM PR #44444](https://github.com/BerriAI/litellm/pull/44444) and the pinned worker from [Admin Agent PR #18](https://github.com/BerriAI/litellm-admin-agent/pull/18). Older images and charts do not contain this integration. The image names below are examples, not published release tags
+Use an image and chart containing [Lumina PR #44444](https://github.com/Soventra/lumina/pull/44444) and the pinned worker from [Admin Agent PR #18](https://github.com/Soventra/lumina-admin-agent/pull/18). Older images and charts do not contain this integration. The image names below are examples, not published release tags
 
 :::
 
@@ -133,13 +133,13 @@ Choose the deployment method you already use for the gateway. Both examples star
 <Tabs groupId="liteadmin-native-deployment">
 <TabItem value="helm" label="Kubernetes / Helm" default>
 
-Use the `helm/litellm-helm` chart from a LiteLLM checkout containing this integration. Keep your existing gateway values, including the Enterprise license, database, and SSO settings
+Use the `helm/lumina-helm` chart from a Lumina checkout containing this integration. Keep your existing gateway values, including the Enterprise license, database, and SSO settings
 
 Create a Secret named `liteadmin-slack` in the gateway's namespace through your usual secret-management workflow. It must contain the five settings from **Store the worker's credentials** above. For a manual installation, save only those settings in a private `liteadmin-secrets.env` file, then run:
 
 ```bash
 chmod 600 liteadmin-secrets.env
-export LUMINA_NAMESPACE=litellm
+export LUMINA_NAMESPACE=lumina
 kubectl --namespace "$LUMINA_NAMESPACE" create secret generic liteadmin-slack \
   --from-env-file=liteadmin-secrets.env
 ```
@@ -150,7 +150,7 @@ Add a `liteadmin-values.yaml` file:
 
 ```yaml title="liteadmin-values.yaml"
 image:
-  repository: registry.example.com/your-team/litellm
+  repository: registry.example.com/your-team/lumina
   tag: native-slack
 
 liteadmin:
@@ -164,12 +164,12 @@ liteadmin:
 
 Replace the image with a build containing this integration. Set `gatewayUrl` and `model` to your gateway URL and model name. Use `storageClassName` under `liteadmin` if your cluster requires a particular storage class
 
-Apply the configuration to your existing release. Replace `litellm` with your release name and `gateway-values.yaml` with the values file you already use:
+Apply the configuration to your existing release. Replace `lumina` with your release name and `gateway-values.yaml` with the values file you already use:
 
 ```bash
-export LUMINA_RELEASE=litellm
-helm dependency build ./helm/litellm-helm
-helm upgrade "$LUMINA_RELEASE" ./helm/litellm-helm \
+export LUMINA_RELEASE=lumina
+helm dependency build ./helm/lumina-helm
+helm upgrade "$LUMINA_RELEASE" ./helm/lumina-helm \
   --namespace "$LUMINA_NAMESPACE" \
   -f gateway-values.yaml \
   -f liteadmin-values.yaml
@@ -182,16 +182,16 @@ Gateway autoscaling does not scale the worker. Keep the worker at one replica an
 </TabItem>
 <TabItem value="compose" label="Docker Compose">
 
-From a LiteLLM checkout containing this integration, build the image or use a published build that contains it:
+From a Lumina checkout containing this integration, build the image or use a published build that contains it:
 
 ```bash
-docker build -t litellm-native-admin:local .
+docker build -t lumina-native-admin:local .
 ```
 
 Keep your existing gateway `.env` and Compose configuration, including its license, database, model, and SSO settings. Save the worker settings in a separate private file:
 
 ```dotenv title="liteadmin.env"
-LUMINA_IMAGE=litellm-native-admin:local
+LUMINA_IMAGE=lumina-native-admin:local
 LUMINA_PUBLIC_URL=https://gateway.example.com
 LUMINA_ADMIN_MODEL=your-tool-capable-model
 SLACK_BOT_TOKEN=your-installed-bot-token
@@ -225,7 +225,7 @@ For **Helm**, find the worker Deployment in your namespace. Its name ends in `-l
 
 ```bash
 kubectl --namespace "$LUMINA_NAMESPACE" get deployments
-export LITEADMIN_DEPLOYMENT=litellm-liteadmin
+export LITEADMIN_DEPLOYMENT=lumina-liteadmin
 kubectl --namespace "$LUMINA_NAMESPACE" rollout status \
   "deployment/$LITEADMIN_DEPLOYMENT" --timeout=180s
 kubectl --namespace "$LUMINA_NAMESPACE" exec \
@@ -251,9 +251,9 @@ Expect `{"status": "ready"}`. With Slack enabled, readiness checks the state dat
 
 1. Open **LiteAdmin** in Slack **Apps**, or the name you chose in the manifest, and send `connect` in a DM
 2. Open the private connection link within ten minutes. It should use your gateway's HTTPS address
-3. Sign in through your normal LiteLLM login. If you already have a valid browser session, proceed to the connection page
+3. Sign in through your normal Lumina login. If you already have a valid browser session, proceed to the connection page
 4. Check the email on the page and select **Connect account**. Expect **Account connected**
-5. Return to Slack and ask: **What is my current LiteLLM role? Use the gateway to verify it**
+5. Return to Slack and ask: **What is my current Lumina role? Use the gateway to verify it**
 
 Expect a reply confirming `proxy_admin`. You can then ask **List my teams and their current budgets**. The worker uses your personal session for model requests and admin operations, and verifies your Slack identity and current gateway permissions
 
@@ -267,7 +267,7 @@ Choose a change you intend to make and verify the result in the gateway. The con
 
 ### Move an existing app to the Enterprise worker {#existing-liteadmin-installations}
 
-This deployment uses the [LiteLLM Admin Agent](https://github.com/BerriAI/litellm-admin-agent) code in `native` authentication mode. A separate Slack app has its own worker and saved connections. Your existing standalone app continues to use its configured backend
+This deployment uses the [Lumina Admin Agent](https://github.com/Soventra/lumina-admin-agent) code in `native` authentication mode. A separate Slack app has its own worker and saved connections. Your existing standalone app continues to use its configured backend
 
 To reuse an existing Slack app, stop its old worker before starting the bundled worker with that app's credentials. Run one worker for those credentials. Have users send `connect` again to establish native gateway sessions. Keep the old deployment's state and encryption key until you finish the migration
 
@@ -276,15 +276,15 @@ Native mode uses the gateway's connection page and existing SSO configuration. Y
 </TabItem>
 <TabItem value="standalone" label="Standalone">
 
-Deploy the [LiteLLM Admin Agent](https://github.com/BerriAI/litellm-admin-agent) as a separate service with its own HTTPS address and login configuration. Use Python 3.12 for the local setup commands, plus Docker Compose or a paid Render service with persistent storage. {/* keep-python-version */}
+Deploy the [Lumina Admin Agent](https://github.com/Soventra/lumina-admin-agent) as a separate service with its own HTTPS address and login configuration. Use Python 3.12 for the local setup commands, plus Docker Compose or a paid Render service with persistent storage. {/* keep-python-version */}
 
 The app bundles a pinned [Admin MCP connector](./liteadmin_mcp.md) and launches it with the requesting user's credential. You do not need to register an MCP server in the gateway or deploy another connector
 
 ### Create your configuration {#1-create-your-configuration}
 
 ```bash keep-python-version
-git clone https://github.com/BerriAI/litellm-admin-agent.git
-cd litellm-admin-agent
+git clone https://github.com/Soventra/lumina-admin-agent.git
+cd lumina-admin-agent
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install --require-hashes -r requirements.txt
@@ -343,7 +343,7 @@ Keep the `admin-state` volume and encryption key across restarts and upgrades. R
 </TabItem>
 <TabItem value="render" label="Render">
 
-Create a Render **Blueprint** from the [agent repository](https://github.com/BerriAI/litellm-admin-agent) or your fork. Use its [`render.yaml`](https://github.com/BerriAI/litellm-admin-agent/blob/main/render.yaml), a paid plan with a persistent disk, and one instance.
+Create a Render **Blueprint** from the [agent repository](https://github.com/Soventra/lumina-admin-agent) or your fork. Use its [`render.yaml`](https://github.com/Soventra/lumina-admin-agent/blob/main/render.yaml), a paid plan with a persistent disk, and one instance.
 
 Enter these settings when Render prompts you:
 
@@ -392,7 +392,7 @@ Use your own app URL. A successful readiness check confirms the database and Sla
 
 After the read succeeds, try a change you intend to make, such as “Create a key for Engineering with a $100 monthly budget.” The default configuration permits writes for connected admins. Use [read-only mode](#optional-restrict-tools) to limit the app to lookups.
 
-Personal-key connections expire after 24 hours; SSO connections follow the gateway token's expiry. Gateway expiry or revocation can end access sooner. Send `connect` again to sign in. Send `disconnect` to remove your saved connection; revoke the credential in LiteLLM if you also want to invalidate it.
+Personal-key connections expire after 24 hours; SSO connections follow the gateway token's expiry. Gateway expiry or revocation can end access sooner. Send `connect` again to sign in. Send `disconnect` to remove your saved connection; revoke the credential in Lumina if you also want to invalidate it.
 
 ### Optional: restrict tools
 
@@ -407,9 +407,9 @@ An empty `ADMIN_TOOL_NAMES` allows all reviewed tools available on your gateway,
 
 ### Optional: SSO login
 
-Your gateway must have an SSO provider configured and support the hosted **proxy API** authorization-code flow: `/register`, `/authorize` with S256 PKCE, and `/token`. Support depends on the installed gateway release. Check the [agent's compatibility requirements](https://github.com/BerriAI/litellm-admin-agent/blob/main/docs/compatibility.md#optional-browser-sso) before enabling this mode.
+Your gateway must have an SSO provider configured and support the hosted **proxy API** authorization-code flow: `/register`, `/authorize` with S256 PKCE, and `/token`. Support depends on the installed gateway release. Check the [agent's compatibility requirements](https://github.com/Soventra/lumina-admin-agent/blob/main/docs/compatibility.md#optional-browser-sso) before enabling this mode.
 
-On the **gateway**, no setting currently allows the app's hosted callback. LiteLLM currently accepts only loopback `redirect_uri` values for proxy API grants, so `/authorize` rejects `https://admin.example.com/oauth/callback` with `400 invalid_request` and `a proxy-API grant may only redirect to a loopback address`. `MCP_TRUSTED_REDIRECT_ORIGINS` covers MCP OAuth only and does not change this. Until your gateway release accepts hosted proxy API callbacks, use `api_key` mode. The app uses your gateway's SSO provider and does not need a separate Google or Okta client secret.
+On the **gateway**, no setting currently allows the app's hosted callback. Lumina currently accepts only loopback `redirect_uri` values for proxy API grants, so `/authorize` rejects `https://admin.example.com/oauth/callback` with `400 invalid_request` and `a proxy-API grant may only redirect to a loopback address`. `MCP_TRUSTED_REDIRECT_ORIGINS` covers MCP OAuth only and does not change this. Until your gateway release accepts hosted proxy API callbacks, use `api_key` mode. The app uses your gateway's SSO provider and does not need a separate Google or Okta client secret.
 
 On the **agent**, set `CONNECTION_AUTH_MODE=sso` and redeploy. Verify the full flow: send `connect`, sign in, return to the browser page, then make a read request in Slack. If your gateway lacks this flow, configure `api_key` mode instead; the app does not switch modes on its own.
 
@@ -444,4 +444,4 @@ Use a connector you operate and trust, configured for the same gateway. The agen
 | Changes are refused | Check `liteadmin.readOnly` or `ADMIN_READ_ONLY` and any hosted connector restrictions. The Enterprise examples start in read-only mode |
 | A change times out | Inspect the gateway resource before retrying. A timeout does not undo a completed operation |
 
-See the [agent operations guide](https://github.com/BerriAI/litellm-admin-agent/blob/main/docs/operations.md) for backups and upgrades. [Gateway Agents / A2A registration](https://github.com/BerriAI/litellm-admin-agent/blob/main/docs/compatibility.md#optional-gateway-agents--a2a) is optional for standalone Slack use
+See the [agent operations guide](https://github.com/Soventra/lumina-admin-agent/blob/main/docs/operations.md) for backups and upgrades. [Gateway Agents / A2A registration](https://github.com/Soventra/lumina-admin-agent/blob/main/docs/compatibility.md#optional-gateway-agents--a2a) is optional for standalone Slack use

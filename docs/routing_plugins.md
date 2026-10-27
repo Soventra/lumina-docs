@@ -2,7 +2,7 @@
 
 :::info
 
-Routing plugins are available from **v1.92.x** (Thursday's release). The design is still evolving, so tell us how you'd use it and what you'd want next in the autorouter discussion on GitHub: [#32168](https://github.com/BerriAI/litellm/discussions/32168).
+Routing plugins are available from **v1.92.x** (Thursday's release). The design is still evolving, so tell us how you'd use it and what you'd want next in the autorouter discussion on GitHub: [#32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -45,8 +45,8 @@ A plugin cannot:
 ## Quick start
 
 ```python
-from litellm import Router
-from litellm.types.router import RoutingContext
+from lumina import Router
+from lumina.types.router import RoutingContext
 
 
 class LanguageDetector:
@@ -144,7 +144,7 @@ Plugins compose with the complexity auto-router in two ways:
 
 ### On the proxy (YAML)
 
-Add `plugins` under `complexity_router_config`. Each entry is a dotted path to a `RoutingPlugin` instance, resolved the same way `litellm_settings.callbacks` are (path relative to `config.yaml`'s directory).
+Add `plugins` under `complexity_router_config`. Each entry is a dotted path to a `RoutingPlugin` instance, resolved the same way `lumina_settings.callbacks` are (path relative to `config.yaml`'s directory).
 
 ```yaml
 model_list:
@@ -209,7 +209,7 @@ Two behaviors to know when using plugins with the complexity router on the proxy
 Same wiring, plugins passed as instances to `Router(plugins=[...])`. Same rules: candidate narrowing runs against the classified tier's pool, zero survivors raises, `default_model` is not an escape hatch.
 
 ```python
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[
@@ -241,7 +241,7 @@ Reach for it when the tier does not follow from reading the prompt: route by tea
 
 :::info
 
-Classifier plugins ship in **v1.99.x** ([PR #37249](https://github.com/BerriAI/litellm/pull/37249)). Config file only, the same close-off `plugins` has: a live object does not travel over HTTP, so neither key can be set through the model-management API or the UI.
+Classifier plugins ship in **v1.99.x** ([PR #37249](https://github.com/Soventra/lumina/pull/37249)). Config file only, the same close-off `plugins` has: a live object does not travel over HTTP, so neither key can be set through the model-management API or the UI.
 
 :::
 
@@ -316,8 +316,8 @@ Current candidate filtering is include/exclude only. Weighted scoring, where plu
 ## Reference
 
 Config: [`router_settings.plugins`](./proxy/config_settings#router_settings---reference).
-PRs: [#32972](https://github.com/BerriAI/litellm/pull/32972) (SDK), [#33251](https://github.com/BerriAI/litellm/pull/33251) (proxy YAML for complexity router), [#37249](https://github.com/BerriAI/litellm/pull/37249) (classifier plugins). Discussion: [#32168](https://github.com/BerriAI/litellm/discussions/32168).
+PRs: [#32972](https://github.com/Soventra/lumina/pull/32972) (SDK), [#33251](https://github.com/Soventra/lumina/pull/33251) (proxy YAML for complexity router), [#37249](https://github.com/Soventra/lumina/pull/37249) (classifier plugins). Discussion: [#32168](https://github.com/Soventra/lumina/discussions/32168).
 
 ## Join the discussion
 
-Available from **v1.92.x** (Thursday's release). We're actively shaping where routing plugins and the autorouter go next, and want your input on the plugins you'd write, the signals you'd want, and the routing strategies you'd reach for. Share your use case and follow along in the autorouter discussion on GitHub: [#32168](https://github.com/BerriAI/litellm/discussions/32168).
+Available from **v1.92.x** (Thursday's release). We're actively shaping where routing plugins and the autorouter go next, and want your input on the plugins you'd write, the signals you'd want, and the routing strategies you'd reach for. Share your use case and follow along in the autorouter discussion on GitHub: [#32168](https://github.com/Soventra/lumina/discussions/32168).

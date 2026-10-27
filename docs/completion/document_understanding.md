@@ -24,8 +24,8 @@ Works for:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
-from litellm.utils import supports_pdf_input
+from lumina import completion
+from lumina.utils import supports_pdf_input
 
 # set aws credentials
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -77,7 +77,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -110,8 +110,8 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
-from litellm.utils import supports_pdf_input
+from lumina import completion
+from lumina.utils import supports_pdf_input
 
 # set aws credentials
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -168,7 +168,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -204,8 +204,8 @@ To specify the format of the document, you can use the `format` parameter.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
-from litellm.utils import supports_pdf_input
+from lumina import completion
+from lumina.utils import supports_pdf_input
 
 # set aws credentials
 os.environ["AWS_ACCESS_KEY_ID"] = ""
@@ -258,7 +258,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -296,7 +296,7 @@ Here is a sample payload for using the Mistral model for document understanding:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # pdf file_id received from files endpoint
 file_id = "fa778e5e-46ec-4562-8418-36623fe25a71"
@@ -357,10 +357,10 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <Tabs>
 <TabItem label="SDK" value="sdk">
 
-Use `supports_pdf_input(model="bedrock/us.anthropic.{{anthropic}}")` from `litellm.utils`, which returns `True` if the model can accept pdf input. It is not exported on the top-level `litellm` module
+Use `supports_pdf_input(model="bedrock/us.anthropic.{{anthropic}}")` from `lumina.utils`, which returns `True` if the model can accept pdf input. It is not exported on the top-level `lumina` module
 
 ```python
-from litellm.utils import supports_pdf_input
+from lumina.utils import supports_pdf_input
 
 assert supports_pdf_input(model="bedrock/us.anthropic.{{anthropic}}") == True
 ```
@@ -385,7 +385,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Call `/model/info` to check if a model supports `pdf` input. `/model_group/info` does not return `supports_pdf_input`
@@ -406,7 +406,7 @@ Expected Response
       "model_name": "bedrock-model",
       "lumina_params": {...},
       "model_info": {
-        "litellm_provider": "bedrock_converse",
+        "lumina_provider": "bedrock_converse",
         "mode": "chat",
         ...,
         "supports_pdf_input": true

@@ -6,11 +6,11 @@ https://inference.readthedocs.io/en/latest/index.html
 | Property | Details |
 |-------|-------|
 | Description | Xinference is an open-source platform to run inference with any open-source LLMs, image generation models, and more. |
-| Provider Route on LiteLLM | `xinference/` |
+| Provider Route on Lumina | `xinference/` |
 | Link to Provider Doc | [Xinference ↗](https://inference.readthedocs.io/en/latest/index.html) |
 | Supported Operations | [`/embeddings`](#sample-usage---embedding), [`/images/generations`](#image-generation) |
 
-LiteLLM supports Xinference Embedding + Image Generation calls.
+Lumina supports Xinference Embedding + Image Generation calls.
 
 ## API Base, Key
 ```python
@@ -23,36 +23,36 @@ These env variables are only read by `embedding()`. `image_generation()` ignores
 
 ## Sample Usage - Embedding
 ```python showLineNumbers
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['XINFERENCE_API_BASE'] = "http://127.0.0.1:9997/v1"
 response = embedding(
     model="xinference/bge-base-en",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
 
 ## Sample Usage `api_base` param
 ```python showLineNumbers
-from litellm import embedding
+from lumina import embedding
 import os
 
 response = embedding(
     model="xinference/bge-base-en",
     api_base="http://127.0.0.1:9997/v1",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
 
 ## Image Generation
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 ```python showLineNumbers
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 # xinference image generation call
@@ -65,7 +65,7 @@ response = image_generation(
 print(response)
 ```
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Setup config.yaml
 
@@ -86,7 +86,7 @@ general_settings:
 #### 2. Start the proxy
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -109,7 +109,7 @@ curl --location 'http://0.0.0.0:4000/v1/images/generations' \
 ### Advanced Usage - With Additional Parameters
 
 ```python showLineNumbers
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 response = image_generation(

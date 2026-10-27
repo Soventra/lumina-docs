@@ -27,8 +27,8 @@ Your guardrail checks input, then output. If something's wrong, raise an excepti
 ### Create Your Directory
 
 ```bash
-mkdir -p litellm/proxy/guardrails/guardrail_hooks/my_guardrail
-cd litellm/proxy/guardrails/guardrail_hooks/my_guardrail
+mkdir -p lumina/proxy/guardrails/guardrail_hooks/my_guardrail
+cd lumina/proxy/guardrails/guardrail_hooks/my_guardrail
 ```
 
 Two files: `my_guardrail.py` (main class) and `__init__.py` (initialization).
@@ -46,16 +46,16 @@ Follow from [Custom Guardrail](/docs/proxy/guardrails/custom_guardrail#1-write-a
 ```python
 from typing import TYPE_CHECKING
 
-from litellm.types.guardrails import SupportedGuardrailIntegrations
+from lumina.types.guardrails import SupportedGuardrailIntegrations
 
 from .my_guardrail import MyGuardrail
 
 if TYPE_CHECKING:
-    from litellm.types.guardrails import Guardrail, LitellmParams
+    from lumina.types.guardrails import Guardrail, LuminaParams
 
 
-def initialize_guardrail(lumina_params: "LitellmParams", guardrail: "Guardrail"):
-    import litellm
+def initialize_guardrail(lumina_params: "LuminaParams", guardrail: "Guardrail"):
+    import lumina
     
     _my_guardrail_callback = MyGuardrail(
         api_base=lumina_params.api_base,
@@ -65,7 +65,7 @@ def initialize_guardrail(lumina_params: "LitellmParams", guardrail: "Guardrail")
         default_on=lumina_params.default_on,
     )
     
-    litellm.logging_callback_manager.add_litellm_callback(_my_guardrail_callback)
+    lumina.logging_callback_manager.add_lumina_callback(_my_guardrail_callback)
     return _my_guardrail_callback
 
 
@@ -80,7 +80,7 @@ guardrail_class_registry = {
 
 ### Register Your Guardrail Type
 
-Add to `litellm/types/guardrails.py`:
+Add to `lumina/types/guardrails.py`:
 
 ```python
 class SupportedGuardrailIntegrations(str, Enum):
@@ -127,7 +127,7 @@ curl --location 'http://localhost:4000/chat/completions' \
 
 ## Testing
 
-Add unit tests inside `test_litellm/` folder.
+Add unit tests inside `test_lumina/` folder.
 
 
 

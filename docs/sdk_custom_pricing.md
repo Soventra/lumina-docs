@@ -2,7 +2,7 @@
 
 Register custom pricing for sagemaker completion model
 
-For chat, completion, embedding and responses models, set `cost_per_second`. LiteLLM multiplies it by the full request
+For chat, completion, embedding and responses models, set `cost_per_second`. Lumina multiplies it by the full request
 duration, including streaming until the last chunk, and ignores it when per-token pricing is configured
 
 For chat, completion, embedding and responses, `input_cost_per_second` and `output_cost_per_second` remain accepted as
@@ -14,7 +14,7 @@ legacy aliases. `cost_per_second` takes precedence, followed by `input_cost_per_
 
 ```python
 # !uv add boto3 
-from litellm import completion, completion_cost 
+from lumina import completion, completion_cost 
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
@@ -44,7 +44,7 @@ def test_completion_sagemaker():
 
 ```python
 # !uv add boto3 
-from litellm import completion, completion_cost 
+from lumina import completion, completion_cost 
 
 ## set ENV variables
 os.environ["AZURE_API_KEY"] = ""

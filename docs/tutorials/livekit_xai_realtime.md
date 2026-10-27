@@ -3,9 +3,9 @@ import TabItem from '@theme/TabItem';
 
 # LiveKit xAI Realtime Voice Agent
 
-Use LiveKit's xAI Grok Voice Agent plugin with LiteLLM Proxy to build low-latency voice AI agents.
+Use LiveKit's xAI Grok Voice Agent plugin with Lumina Proxy to build low-latency voice AI agents.
 
-The LiveKit Agents framework provides tools for building real-time voice and video AI applications. By routing through LiteLLM Proxy, you get unified access to multiple realtime voice providers, cost tracking, rate limiting, and more.
+The LiveKit Agents framework provides tools for building real-time voice and video AI applications. By routing through Lumina Proxy, you get unified access to multiple realtime voice providers, cost tracking, rate limiting, and more.
 
 ## Quick Start
 
@@ -15,7 +15,7 @@ The LiveKit Agents framework provides tools for building real-time voice and vid
 uv add livekit-agents[xai]
 ```
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 Create a config file with your xAI realtime model:
 
@@ -28,7 +28,7 @@ model_list:
     model_info:
       mode: realtime
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 
 general_settings:
@@ -38,21 +38,21 @@ general_settings:
 Start the proxy:
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ### 3. Configure LiveKit xAI Plugin
 
-Point LiveKit's xAI plugin to your LiteLLM proxy:
+Point LiveKit's xAI plugin to your Lumina proxy:
 
 ```python
 from livekit.plugins import xai
 
-# Configure xAI to use LiteLLM proxy
+# Configure xAI to use Lumina proxy
 model = xai.realtime.RealtimeModel(
     voice="ara",                      # Voice option
-    api_key="sk-<your-litellm-master-key>",               # Your LiteLLM proxy master key
-    base_url="http://localhost:4000", # LiteLLM proxy URL
+    api_key="sk-<your-lumina-master-key>",               # Your Lumina proxy master key
+    base_url="http://localhost:4000", # Lumina proxy URL
 )
 ```
 
@@ -66,18 +66,18 @@ Here's a complete working example:
 ```python
 #!/usr/bin/env python3
 """
-Simple xAI realtime voice agent through LiteLLM proxy.
+Simple xAI realtime voice agent through Lumina proxy.
 """
 import asyncio
 import json
 import websockets
 
 PROXY_URL = "ws://localhost:4000/v1/realtime"
-API_KEY = "sk-<your-litellm-api-key>"
+API_KEY = "sk-<your-lumina-api-key>"
 MODEL = "grok-voice-agent"
 
 async def run_voice_agent():
-    """Connect to xAI realtime API through LiteLLM proxy"""
+    """Connect to xAI realtime API through Lumina proxy"""
     url = f"{PROXY_URL}?model={MODEL}"
     headers = {"Authorization": f"Bearer {API_KEY}"}
     
@@ -139,7 +139,7 @@ class VoiceAgent(Agent):
             instructions="You are a helpful voice assistant.",
             llm=xai.realtime.RealtimeModel(
                 voice="ara",
-                api_key="sk-<your-litellm-api-key>",
+                api_key="sk-<your-lumina-api-key>",
                 base_url="http://localhost:4000",
             ),
         )
@@ -157,9 +157,9 @@ if __name__ == "__main__":
 
 ## Running the Example
 
-1. **Start LiteLLM Proxy** (if not already running):
+1. **Start Lumina Proxy** (if not already running):
    ```bash
-   litellm --config config.yaml --port 4000
+   lumina --config config.yaml --port 4000
    ```
 
 2. **Run the example**:
@@ -180,11 +180,11 @@ Because they make up everything!
 
 ## Complete Working Example
 
-**[LiveKit Agent SDK Cookbook](https://github.com/BerriAI/litellm/tree/main/cookbook/livekit_agent_sdk)**
+**[LiveKit Agent SDK Cookbook](https://github.com/Soventra/lumina/tree/main/cookbook/livekit_agent_sdk)**
 
 
 ## Learn More
 
 - [xAI Realtime API](/docs/providers/xai_realtime)
 - [LiveKit xAI Plugin](https://docs.livekit.io/agents/models/realtime/plugins/xai/)
-- [LiteLLM Realtime API](/docs/realtime)
+- [Lumina Realtime API](/docs/realtime)

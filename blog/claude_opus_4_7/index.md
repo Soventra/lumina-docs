@@ -6,7 +6,7 @@ authors:
   - sameer
   - ishaan-alt
   - krrish
-description: "Day 0 support for Claude Opus 4.7 on LiteLLM AI Gateway - use across Anthropic, Azure, Vertex AI, and Bedrock."
+description: "Day 0 support for Claude Opus 4.7 on Lumina AI Gateway - use across Anthropic, Azure, Vertex AI, and Bedrock."
 tags: [anthropic, claude, opus 4.7]
 hide_table_of_contents: false
 ---
@@ -14,20 +14,20 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports [Claude Opus 4.7](https://www.anthropic.com/news/claude-opus-4-7) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the LiteLLM AI Gateway.
+Lumina now supports [Claude Opus 4.7](https://www.anthropic.com/news/claude-opus-4-7) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the Lumina AI Gateway.
 
 {/* truncate */}
 
 ## Docker Image
 
 ```bash
-docker pull ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.83.3-stable.opus-4.7
+docker pull ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.83.3-stable.opus-4.7
 ```
 
 ## Usage - Anthropic
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -46,7 +46,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.83.3-stable.opus-4.7 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.83.3-stable.opus-4.7 \
   --config /app/config.yaml
 ```
 
@@ -73,7 +73,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Azure
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -94,7 +94,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.83.3-stable.opus-4.7 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.83.3-stable.opus-4.7 \
   --config /app/config.yaml
 ```
 
@@ -121,7 +121,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Vertex AI
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -143,7 +143,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.83.3-stable.opus-4.7 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.83.3-stable.opus-4.7 \
   --config /app/config.yaml
 ```
 
@@ -170,7 +170,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Bedrock
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -192,7 +192,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.83.3-stable.opus-4.7 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.83.3-stable.opus-4.7 \
   --config /app/config.yaml
 ```
 
@@ -227,7 +227,7 @@ When using `reasoning_effort` with Claude Opus 4.7, all values (`low`, `medium`,
 <Tabs>
 <TabItem value="completions" label="/chat/completions">
 
-LiteLLM supports adaptive thinking through the `reasoning_effort` parameter:
+Lumina supports adaptive thinking through the `reasoning_effort` parameter:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -305,7 +305,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 import openai
 
 client = openai.OpenAI(
-    api_key="your-litellm-key",
+    api_key="your-lumina-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -316,10 +316,10 @@ response = client.chat.completions.create(
 )
 ```
 
-**Using LiteLLM SDK:**
+**Using Lumina SDK:**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/claude-opus-4-7",

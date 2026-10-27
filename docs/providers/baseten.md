@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Baseten
 
-LiteLLM supports both Baseten Model APIs and dedicated deployments with automatic routing.
+Lumina supports both Baseten Model APIs and dedicated deployments with automatic routing.
 
 ## API Types
 
@@ -18,7 +18,7 @@ LiteLLM supports both Baseten Model APIs and dedicated deployments with automati
 - **Best for**: Custom models, latency SLAs
 
 :::tip
-**Automatic Routing**: LiteLLM detects the type based on model format:
+**Automatic Routing**: Lumina detects the type based on model format:
 - 8-digit alphanumeric codes → Dedicated deployment
 - All other formats → Model API
 :::
@@ -28,7 +28,7 @@ LiteLLM supports both Baseten Model APIs and dedicated deployments with automati
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ['BASETEN_API_KEY'] = "your-api-key"
 
@@ -80,7 +80,7 @@ for chunk in response:
         print(chunk.choices[0].delta.content, end="")
 ```
 
-## Usage with LiteLLM Proxy
+## Usage with Lumina Proxy
 
 1. **Config**:
 ```yaml
@@ -95,7 +95,7 @@ model_list:
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 

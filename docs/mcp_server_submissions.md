@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 # MCP Server Submissions
 
-LiteLLM supports a submission and approval workflow for MCP servers. Team members can submit MCP servers for admin review, and the server is held in a `pending_review` state until an admin approves or rejects it.
+Lumina supports a submission and approval workflow for MCP servers. Team members can submit MCP servers for admin review, and the server is held in a `pending_review` state until an admin approves or rejects it.
 
 This lets organizations give team members self-service MCP registration without immediately exposing unapproved servers to all users.
 

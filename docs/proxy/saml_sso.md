@@ -6,14 +6,14 @@ import TabItem from '@theme/TabItem';
 
 <EnterpriseFeature feature="SSO">SSO is free for up to 5 users. Beyond that, an enterprise license is required.</EnterpriseFeature>
 
-LiteLLM supports SAML 2.0 single sign-on for the admin UI alongside its existing OIDC providers (Google, Microsoft, Generic OAuth). SAML can be configured from the admin UI (**Admin Settings -> SSO Settings**) or through environment variables; no changes to `config.yaml` are needed. When SAML is configured and no OIDC provider is set, the existing **SSO** login button on the admin UI automatically redirects to the SAML Identity Provider.
+Lumina supports SAML 2.0 single sign-on for the admin UI alongside its existing OIDC providers (Google, Microsoft, Generic OAuth). SAML can be configured from the admin UI (**Admin Settings -> SSO Settings**) or through environment variables; no changes to `config.yaml` are needed. When SAML is configured and no OIDC provider is set, the existing **SSO** login button on the admin UI automatically redirects to the SAML Identity Provider.
 
 ## How it works
 
 ```mermaid
 sequenceDiagram
     participant B as User Browser
-    participant P as LiteLLM Proxy<br/>(Service Provider)
+    participant P as Lumina Proxy<br/>(Service Provider)
     participant I as Identity Provider<br/>(Okta / Entra ID / etc.)
 
     B->>P: 1. GET /sso/saml/login
@@ -43,10 +43,10 @@ The settings are stored (encrypted) in the SSO config table and applied as the `
 The SAML integration depends on the `python3-saml` library, which bundles the native `xmlsec`/`libxml2` libraries. Install it with the `saml` extra:
 
 ```bash
-pip install 'litellm[saml]'
+pip install 'lumina[saml]'
 ```
 
-The official Docker images already include this extra. If you are building your own image, add `litellm[saml]` to your install step.
+The official Docker images already include this extra. If you are building your own image, add `lumina[saml]` to your install step.
 
 ### 2. Set environment variables
 
@@ -59,10 +59,10 @@ SAML_IDP_METADATA_URL="https://your-idp.example.com/app/abc123/sso/saml/metadata
 SAML_IDP_METADATA_XML="<EntityDescriptor ...>...</EntityDescriptor>"
 
 # Optional: override the SP entity ID (defaults to the metadata endpoint URL)
-SAML_SP_ENTITY_ID="https://litellm.yourcompany.com/sso/saml/metadata"
+SAML_SP_ENTITY_ID="https://lumina.yourcompany.com/sso/saml/metadata"
 
 # Required for any SSO
-PROXY_BASE_URL="https://litellm.yourcompany.com"
+PROXY_BASE_URL="https://lumina.yourcompany.com"
 LUMINA_MASTER_KEY="sk-..."
 DATABASE_URL="postgresql://..."
 ```
@@ -95,7 +95,7 @@ Start (or restart) the proxy. Navigate to `https://<proxy_base_url>/ui` and clic
 
 In your Okta Admin Console, go to **Applications > Create App Integration** and select **SAML 2.0**.
 
-On the **General Settings** page, give the app a name (e.g. "LiteLLM Proxy").
+On the **General Settings** page, give the app a name (e.g. "Lumina Proxy").
 
 On the **Configure SAML** page, fill in:
 
@@ -123,19 +123,19 @@ After creating the app, go to the **Sign On** tab and copy the **Metadata URL** 
 
 ```bash
 SAML_IDP_METADATA_URL="https://your-org.okta.com/app/abc123/sso/saml/metadata"
-PROXY_BASE_URL="https://litellm.yourcompany.com"
+PROXY_BASE_URL="https://lumina.yourcompany.com"
 ```
 
 #### Step 4: Assign users
 
-In the **Assignments** tab of the Okta app, assign the users or groups that should have access to the LiteLLM admin UI.
+In the **Assignments** tab of the Okta app, assign the users or groups that should have access to the Lumina admin UI.
 
 </TabItem>
 <TabItem value="azure" label="Microsoft Entra ID (Azure AD)">
 
 #### Step 1: Create an Enterprise Application
 
-In the Azure portal, go to **Microsoft Entra ID > Enterprise applications > New application > Create your own application**. Name it (e.g. "LiteLLM Proxy") and select "Integrate any other application you don't find in the gallery (Non-gallery)".
+In the Azure portal, go to **Microsoft Entra ID > Enterprise applications > New application > Create your own application**. Name it (e.g. "Lumina Proxy") and select "Integrate any other application you don't find in the gallery (Non-gallery)".
 
 #### Step 2: Set up SAML SSO
 
@@ -146,9 +146,9 @@ Go to **Single sign-on > SAML** and configure:
 | **Identifier (Entity ID)** | `https://<proxy_base_url>/sso/saml/metadata` |
 | **Reply URL (ACS URL)** | `https://<proxy_base_url>/sso/saml/callback` |
 
-Under **Attributes & Claims**, verify that the default claims include the user's email. The default Entra ID claims (`emailaddress`, `givenname`, `surname`) are auto-detected by LiteLLM.
+Under **Attributes & Claims**, verify that the default claims include the user's email. The default Entra ID claims (`emailaddress`, `givenname`, `surname`) are auto-detected by Lumina.
 
-To map LiteLLM roles, add a custom claim named `role` with a value sourced from an App Role or directory attribute.
+To map Lumina roles, add a custom claim named `role` with a value sourced from an App Role or directory attribute.
 
 #### Step 3: Copy the metadata URL
 
@@ -158,7 +158,7 @@ Under **SAML Certificates**, copy the **App Federation Metadata Url**.
 
 ```bash
 SAML_IDP_METADATA_URL="https://login.microsoftonline.com/<tenant-id>/federationmetadata/2007-06/federationmetadata.xml?appid=<app-id>"
-PROXY_BASE_URL="https://litellm.yourcompany.com"
+PROXY_BASE_URL="https://lumina.yourcompany.com"
 ```
 
 #### Step 5: Assign users
@@ -181,7 +181,7 @@ SAML_IDP_METADATA_URL="https://idp.example.com/metadata"
 # Or paste the full metadata XML inline
 SAML_IDP_METADATA_XML='<EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" entityID="https://idp.example.com">...</EntityDescriptor>'
 
-PROXY_BASE_URL="https://litellm.yourcompany.com"
+PROXY_BASE_URL="https://lumina.yourcompany.com"
 ```
 
 </TabItem>
@@ -190,7 +190,7 @@ PROXY_BASE_URL="https://litellm.yourcompany.com"
 
 ## Attribute mapping
 
-LiteLLM auto-detects common SAML attribute names (URN/OID and friendly names) for email, first name, last name, role, and teams. If your IdP uses non-standard attribute names, override them with environment variables:
+Lumina auto-detects common SAML attribute names (URN/OID and friendly names) for email, first name, last name, role, and teams. If your IdP uses non-standard attribute names, override them with environment variables:
 
 | Environment Variable | Default candidates | Description |
 | --- | --- | --- |
@@ -198,8 +198,8 @@ LiteLLM auto-detects common SAML attribute names (URN/OID and friendly names) fo
 | `SAML_ATTRIBUTE_USER_ID` | NameID | Attribute for the stable user identifier |
 | `SAML_ATTRIBUTE_FIRST_NAME` | `urn:oid:2.5.4.42`, `givenname` claim URI, `givenName` | First name attribute |
 | `SAML_ATTRIBUTE_LAST_NAME` | `urn:oid:2.5.4.4`, `surname` claim URI, `sn` | Last name attribute |
-| `SAML_ATTRIBUTE_ROLE` | `role`, `roles`, `litellm_role` | Attribute mapped to the LiteLLM user role |
-| `SAML_ATTRIBUTE_TEAM_IDS` | `teams`, `team_ids`, `groups` | Attribute mapped to LiteLLM team IDs |
+| `SAML_ATTRIBUTE_ROLE` | `role`, `roles`, `lumina_role` | Attribute mapped to the Lumina user role |
+| `SAML_ATTRIBUTE_TEAM_IDS` | `teams`, `team_ids`, `groups` | Attribute mapped to Lumina team IDs |
 
 The role attribute value must be one of: `proxy_admin`, `proxy_admin_viewer`, `internal_user`, or `internal_user_viewer`.
 
@@ -223,7 +223,7 @@ All configuration is done through environment variables. SAML is activated when 
 | `SAML_ATTRIBUTE_USER_ID` | NameID | Override the assertion attribute for user ID |
 | `SAML_ATTRIBUTE_FIRST_NAME` | auto-detected | Override the assertion attribute for first name |
 | `SAML_ATTRIBUTE_LAST_NAME` | auto-detected | Override the assertion attribute for last name |
-| `SAML_ATTRIBUTE_ROLE` | `role` | Override the assertion attribute for the LiteLLM role |
+| `SAML_ATTRIBUTE_ROLE` | `role` | Override the assertion attribute for the Lumina role |
 | `SAML_ATTRIBUTE_TEAM_IDS` | `teams`/`groups` | Override the assertion attribute for team IDs |
 
 ## SP endpoints
@@ -240,7 +240,7 @@ The existing `GET /sso/key/generate` endpoint (the login button on the admin UI)
 
 ## Security
 
-SP-initiated logins use an HttpOnly state cookie (`litellm_saml_authn`) to bind the SAML response to the browser that started the login. This prevents login CSRF attacks where a signed response is captured and replayed into a different browser session. The cookie is `Secure; SameSite=None` over HTTPS (so it survives the IdP's cross-site POST) and `SameSite=Lax` over plain HTTP for local development.
+SP-initiated logins use an HttpOnly state cookie (`lumina_saml_authn`) to bind the SAML response to the browser that started the login. This prevents login CSRF attacks where a signed response is captured and replayed into a different browser session. The cookie is `Secure; SameSite=None` over HTTPS (so it survives the IdP's cross-site POST) and `SameSite=Lax` over plain HTTP for local development.
 
 Assertions are checked for replay via a consumed-assertion guard keyed on the assertion ID. Each assertion can only be used once within its validity window.
 
@@ -248,7 +248,7 @@ IdP-initiated (unsolicited) responses cannot be browser-bound, which is why they
 
 ## Troubleshooting
 
-**"SAML SSO requires the optional 'python3-saml' dependency"** (501 error). Install the SAML extra: `pip install 'litellm[saml]'`. The official Docker images include it.
+**"SAML SSO requires the optional 'python3-saml' dependency"** (501 error). Install the SAML extra: `pip install 'lumina[saml]'`. The official Docker images include it.
 
 **"Could not parse an IdP entityID/SSO URL/certificate from the SAML metadata"** (502 error). The metadata URL returned something the parser could not extract an IdP descriptor from. Verify the URL is correct and accessible from the proxy. If using `SAML_IDP_METADATA_XML`, make sure the full XML is set (not truncated by shell quoting).
 

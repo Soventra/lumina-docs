@@ -1,6 +1,6 @@
 ---
 title: Production Best Practices
-description: Checklist for running LiteLLM in production; configuration, sizing and workers, Redis, and database and migrations.
+description: Checklist for running Lumina in production; configuration, sizing and workers, Redis, and database and migrations.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -23,7 +23,7 @@ export LUMINA_MASTER_KEY="sk-<long-random-value>"
 
 ### Set trusted proxy ranges
 
-Failed Admin UI sign-ins are limited per source address (see [security best practices](./security_best_practices.md#limit-failed-admin-ui-sign-in-attempts)). That limit only runs when the proxy knows which address is the client, so set `general_settings.trusted_proxy_ranges` to the CIDR ranges of the load balancer or ingress in front of LiteLLM, or to `[]` if clients connect directly. Left unset, the proxy warns at startup and only the weaker per-username limit applies.
+Failed Admin UI sign-ins are limited per source address (see [security best practices](./security_best_practices.md#limit-failed-admin-ui-sign-in-attempts)). That limit only runs when the proxy knows which address is the client, so set `general_settings.trusted_proxy_ranges` to the CIDR ranges of the load balancer or ingress in front of Lumina, or to `[]` if clients connect directly. Left unset, the proxy warns at startup and only the weaker per-username limit applies.
 
 ```yaml
 general_settings:
@@ -78,7 +78,7 @@ Each instance multiplies your total connections: 3 instances × 4 workers × 10 
 
 :::
 
-Once an autoscaler owns the replica count, the instance count in that formula is `maxReplicas`, not the number of pods you are running today. The `litellm-helm` chart defaults `autoscaling.maxReplicas` and `keda.maxReplicas` to 100, so a deployment that scales out fully asks for roughly 1000 connections at the default pool limit of 10, which is far past what a stock Postgres accepts. Set `maxReplicas` from what your database can serve, and see [how to calculate the right value](./configs.md#configure-db-pool-limits--connection-timeouts) for the full division.
+Once an autoscaler owns the replica count, the instance count in that formula is `maxReplicas`, not the number of pods you are running today. The `lumina-helm` chart defaults `autoscaling.maxReplicas` and `keda.maxReplicas` to 100, so a deployment that scales out fully asks for roughly 1000 connections at the default pool limit of 10, which is far past what a stock Postgres accepts. Set `maxReplicas` from what your database can serve, and see [how to calculate the right value](./configs.md#configure-db-pool-limits--connection-timeouts) for the full division.
 
 ### Keep error logs out of the database
 
@@ -94,7 +94,7 @@ general_settings:
 Fail requests that hang instead of holding connections open; the default is 6000 seconds.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   request_timeout: 600
 ```
 
@@ -103,7 +103,7 @@ litellm_settings:
 Switch off debug logging, emit JSON logs, and silence FastAPI's per-request info logs:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   set_verbose: False
   json_logs: true
 ```
@@ -124,7 +124,7 @@ If you use the database, set a salt key for encrypting and decrypting stored var
 export LUMINA_SALT_KEY="sk-<paste-a-long-random-key>"
 ```
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/036a6821d588bd36d170713dcf5a72791a694178/litellm/proxy/common_utils/encrypt_decrypt_utils.py#L15)
+[**See Code**](https://github.com/Soventra/lumina/blob/036a6821d588bd36d170713dcf5a72791a694178/lumina/proxy/common_utils/encrypt_decrypt_utils.py#L15)
 
 ## Sizing and workers
 
@@ -156,7 +156,7 @@ Scale on CPU, and leave the memory target unset. Memory is not a usable scaling 
 targetCPUUtilizationPercentage: 60
 ```
 
-60 rather than a higher threshold because a replica is not useful the moment it is created. The `litellm-helm` startup probe allows up to 300 seconds for a pod to pass its first readiness check, so a replica added at 80 percent CPU arrives minutes after the saturation that triggered it. Both charts ship higher defaults, 80 on `litellm-helm` and 70 on the componentized chart's gateway, chosen so the charts install cleanly anywhere; lower them for production.
+60 rather than a higher threshold because a replica is not useful the moment it is created. The `lumina-helm` startup probe allows up to 300 seconds for a pod to pass its first readiness check, so a replica added at 80 percent CPU arrives minutes after the saturation that triggered it. Both charts ship higher defaults, 80 on `lumina-helm` and 70 on the componentized chart's gateway, chosen so the charts install cleanly anywhere; lower them for production.
 
 ### Workers and scaling
 
@@ -190,7 +190,7 @@ A pod set to `serving` stops registering the budget reset job, spend log cleanup
 
 It keeps registering the spend flush, the daily tag spend flush, the gateway request counter flush, the periodic config reload, and the database model and credential reloads, because each of those drains that pod's own in-memory queues or refreshes that pod's own model registry rather than acting on state another pod could act on. A `serving` pod therefore keeps writing its own spend to the database and keeps picking up models added at runtime; the role changes which shared work it schedules, not whether it tracks what it served.
 
-Ownership is observable at runtime. The elected pod logs `<job name>: pod <id> owns this run` at INFO, and the `litellm_pod_lock_manager_size` Prometheus gauge carries a `<job>:<pod>` label naming the job and the pod holding its lock.
+Ownership is observable at runtime. The elected pod logs `<job name>: pod <id> owns this run` at INFO, and the `lumina_pod_lock_manager_size` Prometheus gauge carries a `<job>:<pod>` label naming the job and the pod holding its lock.
 
 #### Kubernetes reference topology
 
@@ -200,20 +200,20 @@ Scale the serving Deployment as usual and keep the worker at one replica. Both p
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: litellm-serving
+  name: lumina-serving
 spec:
   replicas: 10
   selector:
     matchLabels:
-      app: litellm-serving
+      app: lumina-serving
   template:
     metadata:
       labels:
-        app: litellm-serving
+        app: lumina-serving
     spec:
       containers:
-        - name: litellm
-          image: docker.litellm.ai/berriai/litellm:v1.98.0 # pin a version, do not use :latest
+        - name: lumina
+          image: docker.lumina.ai/soventra/lumina:v1.98.0 # pin a version, do not use :latest
           args: ["--config", "/app/proxy_server_config.yaml", "--num_workers", "1"]
           ports:
             - containerPort: 4000
@@ -222,7 +222,7 @@ spec:
               value: serving
           envFrom:
             - secretRef:
-                name: litellm-secrets # DATABASE_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, LUMINA_MASTER_KEY
+                name: lumina-secrets # DATABASE_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, LUMINA_MASTER_KEY
           volumeMounts:
             - name: config-volume
               mountPath: /app/proxy_server_config.yaml
@@ -236,25 +236,25 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: litellm-config-file
+            name: lumina-config-file
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: litellm-jobs
+  name: lumina-jobs
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: litellm-jobs
+      app: lumina-jobs
   template:
     metadata:
       labels:
-        app: litellm-jobs
+        app: lumina-jobs
     spec:
       containers:
-        - name: litellm
-          image: docker.litellm.ai/berriai/litellm:v1.98.0 # keep in lockstep with the serving image
+        - name: lumina
+          image: docker.lumina.ai/soventra/lumina:v1.98.0 # keep in lockstep with the serving image
           args: ["--config", "/app/proxy_server_config.yaml", "--num_workers", "1"]
           ports:
             - containerPort: 4000
@@ -263,7 +263,7 @@ spec:
               value: worker
           envFrom:
             - secretRef:
-                name: litellm-secrets # the same secret, so both reach the same database and Redis
+                name: lumina-secrets # the same secret, so both reach the same database and Redis
           volumeMounts:
             - name: config-volume
               mountPath: /app/proxy_server_config.yaml
@@ -277,10 +277,10 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: litellm-config-file
+            name: lumina-config-file
 ```
 
-Point your Service and Ingress at `app: litellm-serving` only, so the worker takes no request traffic. Give the worker one Uvicorn worker for the same reason the serving pods get one, since a second process would register a second copy of every job on the one deployment meant to run them once.
+Point your Service and Ingress at `app: lumina-serving` only, so the worker takes no request traffic. Give the worker one Uvicorn worker for the same reason the serving pods get one, since a second process would register a second copy of every job on the one deployment meant to run them once.
 
 ## Redis
 
@@ -293,7 +293,7 @@ router_settings:
   redis_port: os.environ/REDIS_PORT
   redis_password: os.environ/REDIS_PASSWORD
 
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: redis
@@ -313,7 +313,7 @@ general_settings:
   use_redis_transaction_buffer: true
 ```
 
-Monitor it with the `litellm_pod_lock_manager_size` Prometheus metric (which pod holds the flush lock) and the `litellm_in_memory_spend_update_queue_size` / `litellm_redis_spend_update_queue_size` gauges (spend updates waiting in memory and in Redis; the `_daily_` variants track per-user daily aggregates). If you see `Got exception from REDIS No connection available` under load, raise `max_connections` in your Redis `cache_params`.
+Monitor it with the `lumina_pod_lock_manager_size` Prometheus metric (which pod holds the flush lock) and the `lumina_in_memory_spend_update_queue_size` / `lumina_redis_spend_update_queue_size` gauges (spend updates waiting in memory and in Redis; the `_daily_` variants track per-user daily aggregates). If you see `Got exception from REDIS No connection available` under load, raise `max_connections` in your Redis `cache_params`.
 
 ## Database and migrations
 
@@ -321,25 +321,25 @@ For instance sizes, storage and IOPS, the connection ceiling on each cloud's man
 
 ### Gracefully handle DB unavailability
 
-When running LiteLLM on a VPC (and inaccessible from the public internet), you can enable graceful degradation so that request processing continues even if the database is temporarily unavailable.
+When running Lumina on a VPC (and inaccessible from the public internet), you can enable graceful degradation so that request processing continues even if the database is temporarily unavailable.
 
-**WARNING: Only do this if you're running LiteLLM on VPC, that cannot be accessed from the public internet.**
+**WARNING: Only do this if you're running Lumina on VPC, that cannot be accessed from the public internet.**
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 general_settings:
   allow_requests_on_db_unavailable: True
 ```
 
-When `allow_requests_on_db_unavailable` is set to `true`, LiteLLM will handle errors as follows:
+When `allow_requests_on_db_unavailable` is set to `true`, Lumina will handle errors as follows:
 
 | Type of Error | Expected Behavior | Details |
 |---------------|-------------------|----------------|
 | Prisma connection errors | Request will be allowed | The database engine cannot be reached (connection refused or reset, `EngineConnectionError`). Requests proceed with a restricted `INTERNAL_USER` fallback identity, never admin. |
 | Prisma query errors (P2xxx, e.g. P2010) | Request will be blocked | The database answered but the query failed, so the key cannot be verified and the request gets a 401. Treated as fail-closed because the database is reachable. |
 | Httpx Errors | Request will be allowed | Occurs when the database is unreachable, allowing the request to proceed despite the DB outage. |
-| Pod Startup Behavior | Pods start regardless | LiteLLM Pods will start even if the database is down or unreachable, ensuring higher uptime guarantees for deployments. |
+| Pod Startup Behavior | Pods start regardless | Lumina Pods will start even if the database is down or unreachable, ensuring higher uptime guarantees for deployments. |
 | Health/Readiness Check | Always returns 200 OK | The /health/readiness endpoint returns a 200 OK status to ensure that pods remain operational even when the database is unavailable. |
-| LiteLLM Budget Errors or Model Errors | Request will be blocked | Triggered when the DB is reachable but the authentication token is invalid, lacks access, or exceeds budget limits. |
+| Lumina Budget Errors or Model Errors | Request will be blocked | Triggered when the DB is reachable but the authentication token is invalid, lacks access, or exceeds budget limits. |
 
 During a database outage, virtual keys already in the in-memory auth cache keep authenticating until `user_api_key_cache_ttl` expires, which defaults to 60 seconds and can be longer with `enable_redis_auth_cache`; see [caching_redis](./caching_redis.md#virtual-key-authentication-cache-redis). The master key and models defined in the config file keep working. Uncached virtual key lookups, key/team/user management endpoints, and spend log writes fail or are deferred until the database is back
 
@@ -350,20 +350,20 @@ During a database outage, virtual keys already in the in-memory auth cache keep 
 Managed Postgres (AWS RDS, Cloud SQL, Azure Flexible Server, an internal PKI) serves a certificate issued by the provider's own CA, which is not in the stock image's trust store. You do not need a custom image to verify it: mount the CA bundle into the container and point the DB URL at it with the same libpq params the provider docs give you.
 
 ```bash
-export DATABASE_URL="postgresql://user:pass@mydb.abc123.us-east-1.rds.amazonaws.com:5432/litellm?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem"
+export DATABASE_URL="postgresql://user:pass@mydb.abc123.us-east-1.rds.amazonaws.com:5432/lumina?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem"
 ```
 
-LiteLLM rewrites `sslmode=verify-full` (or `verify-ca`) and `sslrootcert` into the params its Postgres driver understands (`sslmode=require`, `sslcert=<bundle>`, `sslaccept=strict`) on `DATABASE_URL`, `DIRECT_URL` and `DATABASE_URL_READ_REPLICA`, so the server certificate chain and hostname are checked on every connection, including migrations. A server whose certificate does not chain to the mounted bundle fails at boot with `P1011: Error opening a TLS connection ... certificate verify failed`. The driver has no chain-only mode, so `verify-ca` also checks the hostname. Setting the driver params directly (`sslmode=require&sslcert=/certs/global-bundle.pem&sslaccept=strict`) works too, and any driver param you pin yourself wins over the translation. The same keys can be set from config instead of the URL through `database_extra_connection_params` (see [Cap Idle DB Connections + Pass Extra Prisma URL Params](./configs.md#cap-idle-db-connections--pass-extra-prisma-url-params)).
+Lumina rewrites `sslmode=verify-full` (or `verify-ca`) and `sslrootcert` into the params its Postgres driver understands (`sslmode=require`, `sslcert=<bundle>`, `sslaccept=strict`) on `DATABASE_URL`, `DIRECT_URL` and `DATABASE_URL_READ_REPLICA`, so the server certificate chain and hostname are checked on every connection, including migrations. A server whose certificate does not chain to the mounted bundle fails at boot with `P1011: Error opening a TLS connection ... certificate verify failed`. The driver has no chain-only mode, so `verify-ca` also checks the hostname. Setting the driver params directly (`sslmode=require&sslcert=/certs/global-bundle.pem&sslaccept=strict`) works too, and any driver param you pin yourself wins over the translation. The same keys can be set from config instead of the URL through `database_extra_connection_params` (see [Cap Idle DB Connections + Pass Extra Prisma URL Params](./configs.md#cap-idle-db-connections--pass-extra-prisma-url-params)).
 
 Plain Docker:
 
 ```bash
 docker run \
   -v /path/to/global-bundle.pem:/certs/global-bundle.pem:ro \
-  -e DATABASE_URL="postgresql://user:pass@mydb.abc123.us-east-1.rds.amazonaws.com:5432/litellm?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem" \
+  -e DATABASE_URL="postgresql://user:pass@mydb.abc123.us-east-1.rds.amazonaws.com:5432/lumina?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem" \
   -e LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
   -p 4000:4000 \
-  ghcr.io/berriai/litellm:main-stable --config /app/config.yaml
+  ghcr.io/soventra/lumina:main-stable --config /app/config.yaml
 ```
 
 Helm: put the bundle in a ConfigMap or Secret and mount it with `volumes` / `volumeMounts`. Both the Deployment and the migrations Job get these mounts, so migrations verify the certificate too.
@@ -376,7 +376,7 @@ kubectl create configmap rds-ca --from-file=global-bundle.pem
 db:
   useExisting: true
   endpoint: mydb.abc123.us-east-1.rds.amazonaws.com
-  database: litellm
+  database: lumina
   url: postgresql://$(DATABASE_USERNAME):$(DATABASE_PASSWORD)@$(DATABASE_HOST)/$(DATABASE_NAME)?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem
 volumes:
   - name: rds-ca
@@ -388,17 +388,17 @@ volumeMounts:
     readOnly: true
 ```
 
-Download the RDS bundle from [AWS](https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem); other providers publish theirs the same way. This is separate from `SSL_CERT_FILE`, which only affects LiteLLM's outbound HTTPS calls to LLM providers and callbacks; the DB driver does not read it. If you need both, mount one bundle and point both settings at it.
+Download the RDS bundle from [AWS](https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem); other providers publish theirs the same way. This is separate from `SSL_CERT_FILE`, which only affects Lumina's outbound HTTPS calls to LLM providers and callbacks; the DB driver does not read it. If you need both, mount one bundle and point both settings at it.
 
 ### Stagger scheduled background jobs
 
-LiteLLM runs a set of scheduled background jobs against the database: spend flushes, daily tag spend, budget resets, config-in-DB reloads, credential reloads, spend log retention cleanup, and any cost export integrations you enable. Every one of those is registered when the proxy starts, and an interval job's first run is one interval after that instant, so without staggering they all fire at the same moment, on every replica a rollout brought up together, for the life of the process. On a large deployment that shows up as a periodic database CPU spike that competes with request-path auth and budget queries.
+Lumina runs a set of scheduled background jobs against the database: spend flushes, daily tag spend, budget resets, config-in-DB reloads, credential reloads, spend log retention cleanup, and any cost export integrations you enable. Every one of those is registered when the proxy starts, and an interval job's first run is one interval after that instant, so without staggering they all fire at the same moment, on every replica a rollout brought up together, for the life of the process. On a large deployment that shows up as a periodic database CPU spike that competes with request-path auth and budget queries.
 
-LiteLLM spreads them out by default. Each job is shifted by a deterministic offset derived from its scheduler job id and the identity of the process running it, so two jobs on one pod land at different instants, the same job lands at a different instant on each replica, and a simultaneous restart does not put everything back on one timestamp. Nothing is delayed by more than one of its own periods.
+Lumina spreads them out by default. Each job is shifted by a deterministic offset derived from its scheduler job id and the identity of the process running it, so two jobs on one pod land at different instants, the same job lands at a different instant on each replica, and a simultaneous restart does not put everything back on one timestamp. Nothing is delayed by more than one of its own periods.
 
 The defaults suit most deployments. For a large multi-pod cluster, widen the window so the same number of jobs spreads over more time:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 general_settings:
   scheduled_job_stagger:
     window_seconds: 600
@@ -406,9 +406,9 @@ general_settings:
 
 The applied offsets are logged once at startup, at INFO, as a single line naming the identity, the window, and every job's offset, so a schedule you are debugging can be reproduced from the log rather than guessed. Set the log level to DEBUG to also get each fire's scheduled time against the time it actually started.
 
-Offsets never touch a cron schedule you supplied yourself, such as `maximum_spend_logs_cleanup_cron`, since that names an instant you chose. To pin one of LiteLLM's own jobs to its unshifted schedule, or to place it exactly where you want it, set its offset explicitly:
+Offsets never touch a cron schedule you supplied yourself, such as `maximum_spend_logs_cleanup_cron`, since that names an instant you chose. To pin one of Lumina's own jobs to its unshifted schedule, or to place it exactly where you want it, set its offset explicitly:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 general_settings:
   scheduled_job_stagger:
     offsets:
@@ -424,7 +424,7 @@ Replicas are placed in the window using `POD_NAME`, falling back to `HOSTNAME` a
 The Helm PreSync hook flow is in beta.
 :::
 
-To ensure only one service manages database migrations, use our [Helm PreSync hook for Database Migrations](https://github.com/BerriAI/litellm/blob/main/helm/litellm-helm/templates/migrations-job.yaml). This ensures migrations are handled during `helm upgrade` or `helm install`, while LiteLLM pods explicitly disable migrations.
+To ensure only one service manages database migrations, use our [Helm PreSync hook for Database Migrations](https://github.com/Soventra/lumina/blob/main/helm/lumina-helm/templates/migrations-job.yaml). This ensures migrations are handled during `helm upgrade` or `helm install`, while Lumina pods explicitly disable migrations.
 
 1. **Helm PreSync Hook**:
    - The Helm PreSync hook is configured in the chart to run database migrations during deployments.
@@ -438,10 +438,10 @@ To ensure only one service manages database migrations, use our [Helm PreSync ho
     url: postgresql://ishaanjaffer0324:... # url of existing Postgres DB
   ```
 
-2. **LiteLLM Pods**:
-   - Set `DISABLE_SCHEMA_UPDATE=true` in LiteLLM pod configurations to prevent them from running migrations.
+2. **Lumina Pods**:
+   - Set `DISABLE_SCHEMA_UPDATE=true` in Lumina pod configurations to prevent them from running migrations.
 
-   Example configuration for LiteLLM pod:
+   Example configuration for Lumina pod:
    ```yaml
    env:
      - name: DISABLE_SCHEMA_UPDATE
@@ -450,11 +450,11 @@ To ensure only one service manages database migrations, use our [Helm PreSync ho
 
 ### Use prisma migrate deploy
 
-LiteLLM runs `prisma migrate deploy` on startup by default, so db migrations are handled across versions in production with no configuration. To stop a pod from running migrations at all, set `DISABLE_SCHEMA_UPDATE=true` as described in [Run migrations from the Helm PreSync hook](#run-migrations-from-the-helm-presync-hook).
+Lumina runs `prisma migrate deploy` on startup by default, so db migrations are handled across versions in production with no configuration. To stop a pod from running migrations at all, set `DISABLE_SCHEMA_UPDATE=true` as described in [Run migrations from the Helm PreSync hook](#run-migrations-from-the-helm-presync-hook).
 
 :::info
 
-Older versions gated this behind `USE_PRISMA_MIGRATE="True"`. That flag was removed in [PR #13555](https://github.com/BerriAI/litellm/pull/13555) when migrate deploy became the default, and this page continued to recommend it after the fact. Setting `USE_PRISMA_MIGRATE` today does nothing; it is safe to remove from your environment, and removing it does not change migration behavior
+Older versions gated this behind `USE_PRISMA_MIGRATE="True"`. That flag was removed in [PR #13555](https://github.com/Soventra/lumina/pull/13555) when migrate deploy became the default, and this page continued to recommend it after the fact. Setting `USE_PRISMA_MIGRATE` today does nothing; it is safe to remove from your environment, and removing it does not change migration behavior
 
 :::
 
@@ -465,21 +465,21 @@ The migrate deploy command:
 - **Does not** reset the database or generate artifacts (such as Prisma Client)
 - **Does not** rely on a shadow database
 
-How LiteLLM ships migrations:
+How Lumina ships migrations:
 
-1. A new migration file is written to our `litellm-proxy-extras` package. [See all](https://github.com/BerriAI/litellm/tree/main/litellm-proxy-extras/litellm_proxy_extras/migrations)
+1. A new migration file is written to our `lumina-proxy-extras` package. [See all](https://github.com/Soventra/lumina/tree/main/lumina-proxy-extras/lumina_proxy_extras/migrations)
 
-2. The core litellm pip package is bumped to point to the new `litellm-proxy-extras` package. This ensures, older versions of LiteLLM will continue to use the old migrations. [See code](https://github.com/BerriAI/litellm/blob/52b35cd8093b9ad833987b24f494586a1e923209/pyproject.toml#L58)
+2. The core lumina pip package is bumped to point to the new `lumina-proxy-extras` package. This ensures, older versions of Lumina will continue to use the old migrations. [See code](https://github.com/Soventra/lumina/blob/52b35cd8093b9ad833987b24f494586a1e923209/pyproject.toml#L58)
 
-3. When you upgrade to a new version of LiteLLM, the migration file is applied to the database. [See code](https://github.com/BerriAI/litellm/blob/52b35cd8093b9ad833987b24f494586a1e923209/litellm-proxy-extras/litellm_proxy_extras/utils.py#L42)
+3. When you upgrade to a new version of Lumina, the migration file is applied to the database. [See code](https://github.com/Soventra/lumina/blob/52b35cd8093b9ad833987b24f494586a1e923209/lumina-proxy-extras/lumina_proxy_extras/utils.py#L42)
 
 For how long migrations take at production scale and how to plan an upgrade around them, see the [Upgrade Guide](./upgrade_guide.md#database-migrations).
 
 ### Read-only file system
 
-Running LiteLLM with `readOnlyRootFilesystem: true` is a Kubernetes security best practice that prevents container processes from writing to the root filesystem. LiteLLM fully supports this configuration.
+Running Lumina with `readOnlyRootFilesystem: true` is a Kubernetes security best practice that prevents container processes from writing to the root filesystem. Lumina fully supports this configuration.
 
-If you see a `Permission denied` error, it means the LiteLLM pod is running with a read-only file system. LiteLLM needs writable directories for:
+If you see a `Permission denied` error, it means the Lumina pod is running with a read-only file system. Lumina needs writable directories for:
 - **Database migrations**: Set `LUMINA_MIGRATION_DIR="/path/to/writable/directory"`
 - **Admin UI**: Set `LUMINA_UI_PATH="/path/to/writable/directory"`
 - **UI assets/logos**: Set `LUMINA_ASSETS_PATH="/path/to/writable/directory"`
@@ -495,35 +495,35 @@ This approach copies the pre-built UI from the Docker image to writable emptyDir
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: litellm-proxy
+  name: lumina-proxy
 spec:
   template:
     spec:
       initContainers:
         - name: setup-ui
-          image: ghcr.io/berriai/litellm:latest
+          image: ghcr.io/soventra/lumina:latest
           command:
             - sh
             - -c
             - |
-              cp -r /var/lib/litellm/ui/* /app/var/litellm/ui/ && \
-              cp -r /var/lib/litellm/assets/* /app/var/litellm/assets/
+              cp -r /var/lib/lumina/ui/* /app/var/lumina/ui/ && \
+              cp -r /var/lib/lumina/assets/* /app/var/lumina/assets/
           volumeMounts:
             - name: ui-volume
-              mountPath: /app/var/litellm/ui
+              mountPath: /app/var/lumina/ui
             - name: assets-volume
-              mountPath: /app/var/litellm/assets
+              mountPath: /app/var/lumina/assets
 
       containers:
-        - name: litellm
-          image: ghcr.io/berriai/litellm:latest
+        - name: lumina
+          image: ghcr.io/soventra/lumina:latest
           env:
             - name: LUMINA_NON_ROOT
               value: "true"
             - name: LUMINA_UI_PATH
-              value: "/app/var/litellm/ui"
+              value: "/app/var/lumina/ui"
             - name: LUMINA_ASSETS_PATH
-              value: "/app/var/litellm/assets"
+              value: "/app/var/lumina/assets"
             - name: LUMINA_MIGRATION_DIR
               value: "/app/migrations"
             - name: PRISMA_BINARY_CACHE_DIR
@@ -543,9 +543,9 @@ spec:
               subPath: config.yaml
               readOnly: true
             - name: ui-volume
-              mountPath: /app/var/litellm/ui
+              mountPath: /app/var/lumina/ui
             - name: assets-volume
-              mountPath: /app/var/litellm/assets
+              mountPath: /app/var/lumina/assets
             - name: cache
               mountPath: /app/cache
             - name: migrations
@@ -554,7 +554,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: litellm-config
+            name: lumina-config
         - name: ui-volume
           emptyDir:
             sizeLimit: 100Mi
@@ -591,13 +591,13 @@ Environment variables for read-only filesystems:
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `LUMINA_UI_PATH` | Admin UI directory | `/var/lib/litellm/ui` (Docker) |
-| `LUMINA_ASSETS_PATH` | UI assets/logos | `/var/lib/litellm/assets` (Docker) |
+| `LUMINA_UI_PATH` | Admin UI directory | `/var/lib/lumina/ui` (Docker) |
+| `LUMINA_ASSETS_PATH` | UI assets/logos | `/var/lib/lumina/assets` (Docker) |
 | `LUMINA_MIGRATION_DIR` | Database migrations | Package directory |
 | `PRISMA_BINARY_CACHE_DIR` | Prisma binary cache | System default |
 | `XDG_CACHE_HOME` | General cache directory | System default |
 
-Notes: always set `LUMINA_MIGRATION_DIR` to a writable emptyDir path, and set `PRISMA_BINARY_CACHE_DIR` and `XDG_CACHE_HOME` to writable paths. If using a custom `server_root_path`, you must pre-process UI files in your Dockerfile as the proxy cannot modify files at runtime with a read-only filesystem. The UI is automatically detected as pre-restructured if it contains a `.litellm_ui_ready` marker file (created by the official Docker images).
+Notes: always set `LUMINA_MIGRATION_DIR` to a writable emptyDir path, and set `PRISMA_BINARY_CACHE_DIR` and `XDG_CACHE_HOME` to writable paths. If using a custom `server_root_path`, you must pre-process UI files in your Dockerfile as the proxy cannot modify files at runtime with a read-only filesystem. The UI is automatically detected as pre-restructured if it contains a `.lumina_ui_ready` marker file (created by the official Docker images).
 
 ## Verify production readiness
 
@@ -621,14 +621,14 @@ You should only see the following level of details in logs on the proxy server:
 
 A: We explored MySQL but that was hard to maintain and led to bugs for customers. Currently, PostgreSQL is our primary supported database for production deployments.
 
-Because LiteLLM talks to the database through Prisma over the PostgreSQL wire protocol, any Postgres-wire-compatible distributed SQL database works as a drop-in replacement. [YugabyteDB](https://www.yugabyte.com/) is used in production this way; point `DATABASE_URL` at its YSQL endpoint (`postgresql://<user>:<password>@<host>:<port>/<dbname>`) and LiteLLM runs its migrations and queries unchanged. This is a good fit if you need horizontal scale or multi-region high availability beyond what a single Postgres instance provides.
+Because Lumina talks to the database through Prisma over the PostgreSQL wire protocol, any Postgres-wire-compatible distributed SQL database works as a drop-in replacement. [YugabyteDB](https://www.yugabyte.com/) is used in production this way; point `DATABASE_URL` at its YSQL endpoint (`postgresql://<user>:<password>@<host>:<port>/<dbname>`) and Lumina runs its migrations and queries unchanged. This is a good fit if you need horizontal scale or multi-region high availability beyond what a single Postgres instance provides.
 
-**Q: If there is Postgres downtime, how does LiteLLM react? Does it fail-open or is there API downtime?**
+**Q: If there is Postgres downtime, how does Lumina react? Does it fail-open or is there API downtime?**
 
 A: You can gracefully handle DB unavailability if it's on your VPC; see [Gracefully handle DB unavailability](#gracefully-handle-db-unavailability) above.
 
 :::info
 
-Need help or want dedicated support? Talk to a founder [here](https://enterprise.litellm.ai/demo).
+Need help or want dedicated support? Talk to a founder [here](https://enterprise.lumina.ai/demo).
 
 :::

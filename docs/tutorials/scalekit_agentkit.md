@@ -1,24 +1,24 @@
-# Scalekit with LiteLLM
+# Scalekit with Lumina
 
-Add authenticated tool calls to your LiteLLM-powered agents. [Scalekit](https://docs.scalekit.com/agentkit/overview/) manages OAuth flows, token storage, and API execution for 100+ third-party apps (Gmail, GitHub, Slack, Salesforce, etc.). Your agent picks tools at runtime and LiteLLM routes the model calls to any provider.
+Add authenticated tool calls to your Lumina-powered agents. [Scalekit](https://docs.scalekit.com/agentkit/overview/) manages OAuth flows, token storage, and API execution for 100+ third-party apps (Gmail, GitHub, Slack, Salesforce, etc.). Your agent picks tools at runtime and Lumina routes the model calls to any provider.
 
 ## Overview
 
-- Fetch user-scoped tool definitions from Scalekit and pass them as function schemas to `litellm.completion()`
-- Switch models freely, since the same tool definitions work across OpenAI, Anthropic, Bedrock, Vertex AI, and every other provider LiteLLM supports
+- Fetch user-scoped tool definitions from Scalekit and pass them as function schemas to `lumina.completion()`
+- Switch models freely, since the same tool definitions work across OpenAI, Anthropic, Bedrock, Vertex AI, and every other provider Lumina supports
 - Execute tool calls through Scalekit, with no API keys, endpoints, or auth headers to manage per third-party app
 
 ## Prerequisites
 
 - Python {{python_min_version}}+
 - A [Scalekit account](https://app.scalekit.com) with a connection configured (this tutorial uses Gmail)
-- API keys for at least one LLM provider, or a running LiteLLM proxy
+- API keys for at least one LLM provider, or a running Lumina proxy
 - Scalekit API credentials (`SCALEKIT_CLIENT_ID`, `SCALEKIT_CLIENT_SECRET`, `SCALEKIT_ENV_URL`) from Dashboard → **Developers** → **API Credentials**
 
 ## 1. Install Dependencies
 
 ```bash
-pip install litellm scalekit-sdk-python
+pip install lumina scalekit-sdk-python
 ```
 
 ## 2. Initialize Clients
@@ -26,7 +26,7 @@ pip install litellm scalekit-sdk-python
 ```python showLineNumbers title="setup.py"
 import os
 import json
-import litellm
+import lumina
 import scalekit.client
 from google.protobuf.json_format import MessageToDict  # installed with scalekit-sdk-python
 
@@ -62,7 +62,7 @@ if connected_account.status != "ACTIVE":
 
 ## 4. Fetch Scoped Tools
 
-`list_scoped_tools` returns only the tools this specific user is authorized to call. Convert them to OpenAI's function-calling format, the same format LiteLLM normalizes to across all providers.
+`list_scoped_tools` returns only the tools this specific user is authorized to call. Convert them to OpenAI's function-calling format, the same format Lumina normalizes to across all providers.
 
 ```python showLineNumbers title="fetch_tools.py"
 scoped_response, _ = actions.tools.list_scoped_tools(
@@ -71,7 +71,7 @@ scoped_response, _ = actions.tools.list_scoped_tools(
     page_size=100,
 )
 
-# Convert to OpenAI function-calling format (used by litellm for all providers)
+# Convert to OpenAI function-calling format (used by lumina for all providers)
 llm_tools = [
     {
         "type": "function",
@@ -87,14 +87,14 @@ llm_tools = [
 
 ## 5. Run the Agent Loop
 
-Call `litellm.completion()` with the tool definitions. When the model returns tool calls, execute them through Scalekit and feed the results back. Change the `model` parameter to switch providers; no other code changes needed.
+Call `lumina.completion()` with the tool definitions. When the model returns tool calls, execute them through Scalekit and feed the results back. Change the `model` parameter to switch providers; no other code changes needed.
 
 ```python showLineNumbers title="agent_loop.py"
 messages = [{"role": "user", "content": "Fetch my last 5 unread emails and summarize them"}]
 
 while True:
-    response = litellm.completion(
-        model="anthropic/{{anthropic}}",  # swap to any litellm-supported model
+    response = lumina.completion(
+        model="anthropic/{{anthropic}}",  # swap to any lumina-supported model
         tools=llm_tools,
         messages=messages,
     )
@@ -128,7 +128,7 @@ Full end-to-end script, copy and run:
 ```python showLineNumbers title="scalekit_agent.py"
 import os
 import json
-import litellm
+import lumina
 import scalekit.client
 from google.protobuf.json_format import MessageToDict
 
@@ -181,7 +181,7 @@ print(f"Loaded {len(llm_tools)} tools for {CONNECTION_NAME}")
 messages = [{"role": "user", "content": "Fetch my last 5 unread emails and summarize them"}]
 
 while True:
-    response = litellm.completion(model=MODEL, tools=llm_tools, messages=messages)
+    response = lumina.completion(model=MODEL, tools=llm_tools, messages=messages)
     message = response.choices[0].message
 
     if not message.tool_calls:
@@ -215,22 +215,22 @@ MODEL=anthropic/{{anthropic}} python scalekit_agent.py
 # AWS Bedrock
 MODEL=bedrock/us.anthropic.{{anthropic}} python scalekit_agent.py
 
-# Via LiteLLM Proxy
+# Via Lumina Proxy
 OPENAI_API_BASE=http://localhost:4000 OPENAI_API_KEY=sk-<your-api-key> MODEL={{anthropic}} python scalekit_agent.py
 ```
 
-## Route Through LiteLLM Proxy for Cost Tracking and Rate Limits
+## Route Through Lumina Proxy for Cost Tracking and Rate Limits
 
-If you're running a LiteLLM proxy, point your agent at it for centralized model management, cost tracking, and rate limiting. The agent code stays the same; set the proxy URL:
+If you're running a Lumina proxy, point your agent at it for centralized model management, cost tracking, and rate limiting. The agent code stays the same; set the proxy URL:
 
 ```python showLineNumbers title="proxy_agent.py"
-import litellm
+import lumina
 
-# Point litellm at your proxy
-response = litellm.completion(
+# Point lumina at your proxy
+response = lumina.completion(
     model="{{anthropic}}",                          # model name from your proxy config
     api_base="http://localhost:4000",                  # proxy URL
-    api_key="sk-<your-litellm-api-key>",                                 # proxy virtual key
+    api_key="sk-<your-lumina-api-key>",                                 # proxy virtual key
     tools=llm_tools,
     messages=messages,
 )
@@ -246,7 +246,7 @@ python scalekit_agent.py
 
 ## End-to-End Example: Inbox Triage Agent
 
-For a production-style example that combines Scalekit tool execution with per-stage model routing through LiteLLM, see [litellm-agentkit-inbox-triage](https://github.com/scalekit-developers/litellm-agentkit-inbox-triage). It demonstrates:
+For a production-style example that combines Scalekit tool execution with per-stage model routing through Lumina, see [lumina-agentkit-inbox-triage](https://github.com/scalekit-developers/lumina-agentkit-inbox-triage). It demonstrates:
 
 - Polling Gmail and classifying threads with different models per pipeline stage
 - Routing to GitHub repos using keyword rules and LLM tie-breaking
@@ -260,12 +260,12 @@ For a production-style example that combines Scalekit tool execution with per-st
 | `execute_tool` returns "connection not found" | The `connection_name` must match the exact label in Dashboard → **AgentKit** → **Connections** (including case). Use an env var instead of hardcoding. |
 | Connected account stays in `PENDING` | The user hasn't completed the OAuth flow. Regenerate the authorization link and have them open it in a browser. |
 | Model returns text instead of tool calls | Not all models support function calling. Use a model that does (GPT-4o, Claude Sonnet/Opus, Gemini Pro). Check [supported providers](../providers/). |
-| `litellm.completion()` raises an auth error | Verify your LLM provider API key is set (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, etc.) or that your proxy URL and key are correct. |
+| `lumina.completion()` raises an auth error | Verify your LLM provider API key is set (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, etc.) or that your proxy URL and key are correct. |
 
 ## Related Resources
 
 - [Scalekit Docs](https://docs.scalekit.com/agentkit/overview/) — Full documentation
 - [Built-in Tools Reference](https://docs.scalekit.com/agentkit/tools/scalekit-optimized-tools/) — Tool calling across 100+ connectors
 - [Supported Connectors](https://docs.scalekit.com/agentkit/connectors/) — Gmail, GitHub, Slack, Salesforce, and more
-- [LiteLLM Proxy Quick Start](../proxy/quick_start) — Set up centralized model routing
-- [LiteLLM Function Calling](../completion/function_call) — Function calling docs
+- [Lumina Proxy Quick Start](../proxy/quick_start) — Set up centralized model routing
+- [Lumina Function Calling](../completion/function_call) — Function calling docs

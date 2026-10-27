@@ -129,13 +129,13 @@ export const COMPONENTS = [
       {id: 'edenai', size: 0.25},
       {id: 'manus', size: 0.25},
       {id: 'sail', size: 0.25},
-      {id: 'litellm_proxy', size: 0.25},
+      {id: 'lumina_proxy', size: 0.25},
       {id: 'openai_like', size: 0.25},
     ],
   },
   {
     // The Python-only request features each route's detectors find, which keep
-    // a request on Python until Rust serves them (BerriAI/litellm#46714). The
+    // a request on Python until Rust serves them (Soventra/lumina#46714). The
     // response cache and pre-request hooks are counted under cache and logging.
     id: 'features',
     text: 'Python-only request features',

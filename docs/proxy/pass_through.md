@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Create Pass Through Endpoints 
 
-Route requests from your LiteLLM proxy to any external API. Perfect for custom models, image generation APIs, or any service you want to proxy through LiteLLM.
+Route requests from your Lumina proxy to any external API. Perfect for custom models, image generation APIs, or any service you want to proxy through Lumina.
 
 **Key Benefits:**
 - Onboard third-party endpoints like Bria API and Mistral OCR
@@ -14,20 +14,20 @@ Route requests from your LiteLLM proxy to any external API. Perfect for custom m
 
 ## Quick Start with UI (Recommended)
 
-The easiest way to create pass through endpoints is through the LiteLLM UI. In this example, we'll onboard the [Bria API](https://docs.bria.ai/image-generation/endpoints/text-to-image-base) and set a cost per request.
+The easiest way to create pass through endpoints is through the Lumina UI. In this example, we'll onboard the [Bria API](https://docs.bria.ai/image-generation/endpoints/text-to-image-base) and set a cost per request.
 
 ### Step 1: Create Route Mappings
 
 To create a pass through endpoint:
 
-1. Navigate to the LiteLLM Proxy UI
+1. Navigate to the Lumina Proxy UI
 2. Go to the `Models + Endpoints` tab
 3. Click on `Pass Through Endpoints`
 4. Click "Add Pass Through Endpoint"
 5. Enter the following details:
 
 **Required Fields:**
-- `Path Prefix`: The route clients will use when calling LiteLLM Proxy (e.g., `/bria`, `/mistral-ocr`)
+- `Path Prefix`: The route clients will use when calling Lumina Proxy (e.g., `/bria`, `/mistral-ocr`)
 - `Target URL`: The URL where requests will be forwarded
 
 <Image 
@@ -39,7 +39,7 @@ To create a pass through endpoint:
 
 The above configuration creates these route mappings:
 
-| LiteLLM Proxy Route | Target URL |
+| Lumina Proxy Route | Target URL |
 |-------------------|------------|
 | `/bria` | `https://engine.prod.bria-api.com` |
 | `/bria/v1/text-to-image/base/model` | `https://engine.prod.bria-api.com/v1/text-to-image/base/model` |
@@ -47,7 +47,7 @@ The above configuration creates these route mappings:
 | `/bria/<any-sub-path>` | `https://engine.prod.bria-api.com/<any-sub-path>` |
 
 :::info
-All routes are prefixed with your LiteLLM proxy base URL: `https://<litellm-proxy-base-url>`
+All routes are prefixed with your Lumina proxy base URL: `https://<lumina-proxy-base-url>`
 :::
 
 ### Step 2: Configure Headers and Pricing
@@ -88,13 +88,13 @@ Once you've completed the configuration:
 
 ### Step 4: Test Your Endpoint
 
-Verify your setup by making a test request to the Bria API through your LiteLLM Proxy:
+Verify your setup by making a test request to the Bria API through your Lumina Proxy:
 
 ```shell
 curl -i -X POST \
   'http://localhost:4000/bria/v1/text-to-image/base/2.3' \
   -H 'Content-Type: application/json' \
-  -H 'Authorization: Bearer <your-litellm-api-key>' \
+  -H 'Authorization: Bearer <your-lumina-api-key>' \
   -d '{
     "prompt": "a book",
     "num_results": 2,
@@ -117,7 +117,7 @@ You can also create pass through endpoints using the `config.yaml` file. Here's 
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   pass_through_endpoints:
-    - path: "/v1/rerank"                                  # Route on LiteLLM Proxy
+    - path: "/v1/rerank"                                  # Route on Lumina Proxy
       target: "https://api.cohere.com/v1/rerank"          # Target endpoint
       headers:                                            # Headers to forward
         Authorization: "bearer os.environ/COHERE_API_KEY"
@@ -133,7 +133,7 @@ general_settings:
 
 1. **Start the proxy:**
    ```shell
-   litellm --config config.yaml --detailed_debug
+   lumina --config config.yaml --detailed_debug
    ```
 
 2. **Make a test request:**
@@ -177,9 +177,9 @@ general_settings:
 general_settings:
   pass_through_request_timeout: 600   # Optional: upstream timeout (seconds) for all pass-through routes. Default: 600
   pass_through_endpoints:
-    - path: string                    # Route on LiteLLM Proxy Server
+    - path: string                    # Route on Lumina Proxy Server
       target: string                  # Target URL for forwarding
-      auth: boolean                   # Enable LiteLLM authentication (Enterprise)
+      auth: boolean                   # Enable Lumina authentication (Enterprise)
       forward_headers: boolean        # Forward all incoming headers
       include_subpath: boolean        # If true, forwards requests to sub-paths (default: false)
       timeout: float                  # Optional: per-endpoint upstream timeout (seconds). Overrides pass_through_request_timeout
@@ -199,7 +199,7 @@ general_settings:
 
 Pass-through routes default to a **600 second** upstream timeout. Set `general_settings.pass_through_request_timeout` for a global override, or `timeout` on a custom endpoint (per-endpoint wins)
 
-Native provider passthrough routes (Bedrock `/converse`, `/v1/messages`, and the native `/v1/responses` stream) resolve their timeout through the router, and the first value set wins: the request's `timeout`, the deployment's `timeout` under `lumina_params`, `router_settings.timeout`, `litellm_settings.request_timeout` when you set it (or the `REQUEST_TIMEOUT` env var), `general_settings.pass_through_request_timeout`, then 600 seconds. A streaming request checks `stream_timeout` at each of those levels before `timeout`. So a `litellm_settings.request_timeout` you set outranks `pass_through_request_timeout` on these routes, and on a stream it bounds each wait for the next chunk, so a stalled upstream ends the stream with an error instead of hanging
+Native provider passthrough routes (Bedrock `/converse`, `/v1/messages`, and the native `/v1/responses` stream) resolve their timeout through the router, and the first value set wins: the request's `timeout`, the deployment's `timeout` under `lumina_params`, `router_settings.timeout`, `lumina_settings.request_timeout` when you set it (or the `REQUEST_TIMEOUT` env var), `general_settings.pass_through_request_timeout`, then 600 seconds. A streaming request checks `stream_timeout` at each of those levels before `timeout`. So a `lumina_settings.request_timeout` you set outranks `pass_through_request_timeout` on these routes, and on a stream it bounds each wait for the next chunk, so a stalled upstream ends the stream with an error instead of hanging
 
 ### Header Options
 - **Authorization**: Authentication for the target API
@@ -256,9 +256,9 @@ curl -X POST http://localhost:4000/key/generate \
 
 An entry matches its exact path and everything under it, a trailing `/` on an entry is ignored, and a trailing `*` matches any route that starts with the text before it (`/custom-api/adm*`). A more specific allow cannot re-open a route under a denied prefix. Team endpoint listings also hide the authenticated endpoints a team denies
 
-The deny list is checked against the path LiteLLM forwards, after `..`, `//` and percent-encoding are resolved, and it matches that path exactly. Variants that LiteLLM forwards unchanged, such as `/custom-api/ADMIN`, `/custom-api/admin;x=1`, a trailing `%20` or a backslash, are not denied. If your upstream treats those as the same path, grant only the routes a key needs with `allowed_passthrough_routes` instead of relying on a deny entry
+The deny list is checked against the path Lumina forwards, after `..`, `//` and percent-encoding are resolved, and it matches that path exactly. Variants that Lumina forwards unchanged, such as `/custom-api/ADMIN`, `/custom-api/admin;x=1`, a trailing `%20` or a backslash, are not denied. If your upstream treats those as the same path, grant only the routes a key needs with `allowed_passthrough_routes` instead of relying on a deny entry
 
-Both fields are Enterprise features, and only proxy admins can set or change them. A non-admin update that would change, clear or drop an existing deny list, including by replacing `metadata`, gets a 403. Proxy admin keys are not restricted by either list. The deny list only applies to custom endpoints with `auth: true`; endpoints with `auth: false` and LiteLLM's built-in provider routes such as `/anthropic/*` ignore it
+Both fields are Enterprise features, and only proxy admins can set or change them. A non-admin update that would change, clear or drop an existing deny list, including by replacing `metadata`, gets a 403. Proxy admin keys are not restricted by either list. The deny list only applies to custom endpoints with `auth: true`; endpoints with `auth: false` and Lumina's built-in provider routes such as `/anthropic/*` ignore it
 
 ---
 
@@ -355,21 +355,21 @@ For complex integrations (like Anthropic/Bedrock clients), you can create custom
 ### 1. Create an Adapter
 
 ```python
-from litellm import adapter_completion
-from litellm.integrations.custom_logger import CustomLogger
-from litellm.types.llms.anthropic import AnthropicMessagesRequest, AnthropicResponse
+from lumina import adapter_completion
+from lumina.integrations.custom_logger import CustomLogger
+from lumina.types.llms.anthropic import AnthropicMessagesRequest, AnthropicResponse
 
 class AnthropicAdapter(CustomLogger):
     def translate_completion_input_params(self, kwargs):
         """Translate Anthropic format to OpenAI format"""
         request_body = AnthropicMessagesRequest(**kwargs)
-        return litellm.AnthropicConfig().translate_anthropic_to_openai(
+        return lumina.AnthropicConfig().translate_anthropic_to_openai(
             anthropic_message_request=request_body
         )
 
     def translate_completion_output_params(self, response):
         """Translate OpenAI response back to Anthropic format"""
-        return litellm.AnthropicConfig().translate_openai_response_to_anthropic(
+        return lumina.AnthropicConfig().translate_openai_response_to_anthropic(
             response=response
         )
 
@@ -391,7 +391,7 @@ general_settings:
     - path: "/v1/messages"
       target: custom_callbacks.anthropic_adapter
       headers:
-        litellm_user_api_key: "x-api-key"
+        lumina_user_api_key: "x-api-key"
 ```
 
 ### 3. Test Custom Endpoint
@@ -412,7 +412,7 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 
 ## Tutorial - Add Azure OpenAI Assistants API as a Pass Through Endpoint
 
-In this video, we'll add the Azure OpenAI Assistants API as a pass through endpoint to LiteLLM Proxy.
+In this video, we'll add the Azure OpenAI Assistants API as a pass through endpoint to Lumina Proxy.
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/12965cb299d24fc0bd7b6b413ab6d0ad" frameBorder="0" allowFullScreen></iframe>
 
@@ -437,36 +437,36 @@ In this video, we'll add the Azure OpenAI Assistants API as a pass through endpo
 
 **Response Errors:**
 - Enable detailed debugging with `--detailed_debug`
-- Check LiteLLM proxy logs for error details
+- Check Lumina proxy logs for error details
 - Verify the target API's expected request format
 
 ### Allowing Team JWTs to use pass-through routes
 
-If you are using pass-through provider routes (e.g., `/anthropic/*`) and want your JWT team tokens to access these routes, add `mapped_pass_through_routes` to the `team_allowed_routes` in `litellm_jwtauth` or explicitly add the relevant route(s).
+If you are using pass-through provider routes (e.g., `/anthropic/*`) and want your JWT team tokens to access these routes, add `mapped_pass_through_routes` to the `team_allowed_routes` in `lumina_jwtauth` or explicitly add the relevant route(s).
 
 Example (`proxy_server_config.yaml`):
 
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_ids_jwt_field: "team_ids"
     team_allowed_routes: ["openai_routes","info_routes","mapped_pass_through_routes"]
 ```
 
-For your own pass-through endpoints, `mapped_pass_through_routes` only covers the provider prefixes LiteLLM ships with. If your endpoints share a custom prefix, grant that prefix once with a trailing `*` and every endpoint you register under it later is allowed without another config change.
+For your own pass-through endpoints, `mapped_pass_through_routes` only covers the provider prefixes Lumina ships with. If your endpoints share a custom prefix, grant that prefix once with a trailing `*` and every endpoint you register under it later is allowed without another config change.
 
 ```yaml
 general_settings:
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_ids_jwt_field: "team_ids"
     team_allowed_routes: ["openai_routes","info_routes","/internal-models/*"]
 ```
 
 ### Getting Help
 
-[Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+[Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 
 [Community Discord](https://discord.gg/wuPM9dRgDw)
 

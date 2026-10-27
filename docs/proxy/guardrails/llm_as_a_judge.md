@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Score every incoming request or LLM response 0-100 against weighted criteria using a judge model, and block or log the ones that fall below a threshold. |
-| Provider | LiteLLM native (any chat model on your proxy or any provider model can act as the judge) |
+| Provider | Lumina native (any chat model on your proxy or any provider model can act as the judge) |
 | Supported Actions | `block` (raises HTTP 422 when the score is below the threshold), `log` (records the verdict, lets the request or response through) |
 | Supported Modes | `pre_call` (the judge evaluates the request messages before they reach the LLM), `during_call` (same as `pre_call`, but the judge runs in parallel with the LLM call), `post_call` (the judge evaluates the LLM response) |
 | Streaming Support | Yes. A failing verdict terminates the stream. |
@@ -23,7 +23,7 @@ Every judged request or response costs one extra LLM call to the judge model.
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 Define your guardrails under the `guardrails` section:
 
@@ -60,10 +60,10 @@ Criterion weights must sum to 100. `overall_threshold` defaults to 80 and `on_fa
 
 To judge the request instead of the response, set `mode: pre_call` (or `mode: [pre_call, post_call]` to judge both sides) and write the criteria about the request, for example `description: Is the request about cooking or recipes?`. A rejected request returns HTTP 422 with `"message": "LLM judge rejected request: score below threshold"` and the same `verdicts` payload as below, and the main model is never called.
 
-### 2. Start LiteLLM Gateway
+### 2. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request
@@ -110,7 +110,7 @@ A response that meets the threshold is returned unchanged. With `on_failure: log
 
 ## Creating the guardrail from the Admin UI
 
-The guardrail can be created entirely from the dashboard: Guardrails, Add New Guardrail, provider "LiteLLM LLM as a Judge". The judge model dropdown is populated from your proxy's model list, and the criteria, threshold, and failure action map to the config fields above. Guardrails created this way are stored in the database and load on startup with no config file entry.
+The guardrail can be created entirely from the dashboard: Guardrails, Add New Guardrail, provider "Lumina LLM as a Judge". The judge model dropdown is populated from your proxy's model list, and the criteria, threshold, and failure action map to the config fields above. Guardrails created this way are stored in the database and load on startup with no config file entry.
 
 <Image img={require('../../../img/llm_judge_ui_dropdown.png')} />
 
@@ -120,7 +120,7 @@ A blocked response as seen from the Playground; the judge's rejection terminates
 
 ## How the judge model's credentials resolve
 
-`judge_model` is resolved against the proxy's Router first. If the name matches a configured deployment (exact public name, a wildcard route such as `anthropic/*`, or a `model_group_alias` entry), the judge call goes through that deployment and uses its credentials; this is what makes judge models selected in the Admin UI dropdown work, since their keys live in the deployment rather than the environment. A name the Router cannot serve falls back to the SDK, resolving credentials from environment variables like any direct `litellm.completion` call.
+`judge_model` is resolved against the proxy's Router first. If the name matches a configured deployment (exact public name, a wildcard route such as `anthropic/*`, or a `model_group_alias` entry), the judge call goes through that deployment and uses its credentials; this is what makes judge models selected in the Admin UI dropdown work, since their keys live in the deployment rather than the environment. A name the Router cannot serve falls back to the SDK, resolving credentials from environment variables like any direct `lumina.completion` call.
 
 Two consequences of the Router path are worth knowing. If a judge model name matches both a deployment and a valid provider model id, the deployment wins, so the deployment's key is used rather than the environment key. And judge calls through a deployment participate in that deployment's rate and cooldown accounting like any other call, so a persistently failing judge can cool down a deployment it shares with user traffic. The judge call itself is made with retries and standard fallbacks disabled so the configured `judge_model` stays authoritative.
 

@@ -6,7 +6,7 @@ import Image from '@theme/IdealImage';
 :::tip
 
 This is community maintained, Please make an issue if you run into a bug
-https://github.com/BerriAI/litellm
+https://github.com/Soventra/lumina
 
 :::
 
@@ -19,7 +19,7 @@ https://github.com/BerriAI/litellm
 
 Use Athina to log requests across all LLM Providers (OpenAI, Azure, Anthropic, Cohere, Replicate, PaLM)
 
-liteLLM provides `callbacks`, making it easy for you to log data depending on the status of your responses.
+Lumina provides `callbacks`, making it easy for you to log data depending on the status of your responses.
 
 ## Using Callbacks
 
@@ -28,20 +28,20 @@ First, sign up to get an API_KEY on the [Athina dashboard](https://app.athina.ai
 Use just 1 line of code, to instantly log your responses **across all providers** with Athina:
 
 ```python
-litellm.success_callback = ["athina"]
+lumina.success_callback = ["athina"]
 ```
 
 ### Complete code
 
 ```python
-from litellm import completion
+from lumina import completion
 
 ## set env variables
 os.environ["ATHINA_API_KEY"] = "your-athina-api-key"
 os.environ["OPENAI_API_KEY"]= ""
 
 # set callback
-litellm.success_callback = ["athina"]
+lumina.success_callback = ["athina"]
 
 #openai call
 response = completion(
@@ -96,7 +96,7 @@ os.environ["ATHINA_BASE_URL"]= "http://localhost:9000"
 ## Support & Talk with Athina Team
 
 - [Schedule Demo](https://cal.com/shiv-athina/30min)
-- [Website](https://athina.ai/?utm_source=litellm&utm_medium=website)
-- [Docs](https://docs.athina.ai/?utm_source=litellm&utm_medium=website)
+- [Website](https://athina.ai/?utm_source=lumina&utm_medium=website)
+- [Docs](https://docs.athina.ai/?utm_source=lumina&utm_medium=website)
 - [Demo Video](https://www.loom.com/share/d9ef2c62e91b46769a39c42bb6669834?sid=711df413-0adb-4267-9708-5f29cef929e3)
 - Our emails shiv@athina.ai, akshat@athina.ai, vivek@athina.ai

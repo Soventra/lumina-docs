@@ -7,11 +7,11 @@ import TabItem from '@theme/TabItem';
 
 # Image Generation in Chat Completions, Responses API
 
-This guide covers how to generate images when using the `chat/completions`. Note - if you want this on Responses API please file a Feature Request [here](https://github.com/BerriAI/litellm/issues/new).
+This guide covers how to generate images when using the `chat/completions`. Note - if you want this on Responses API please file a Feature Request [here](https://github.com/Soventra/lumina/issues/new).
 
 :::info
 
-Requires LiteLLM v1.76.1+
+Requires Lumina v1.76.1+
 
 :::
 
@@ -19,9 +19,9 @@ Supported Providers:
 - Google AI Studio (`gemini`)
 - Vertex AI (`vertex_ai/`)
 
-LiteLLM will standardize the `images` response in the assistant message for models that support image generation during chat completions.
+Lumina will standardize the `images` response in the assistant message for models that support image generation during chat completions.
 
-```json title="Example response from litellm"
+```json title="Example response from lumina"
 "message": {
     ...
     "content": "Here's the image you requested:",
@@ -44,7 +44,7 @@ LiteLLM will standardize the `images` response in the assistant message for mode
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers title="Image generation with chat completion"
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -52,7 +52,7 @@ os.environ["GEMINI_API_KEY"] = "your-api-key"
 response = completion(
     model="gemini/gemini-2.5-flash-image-preview",
     messages=[
-        {"role": "user", "content": "Generate an image of a banana wearing a costume that says LiteLLM"}
+        {"role": "user", "content": "Generate an image of a banana wearing a costume that says Lumina"}
     ],
 )
 
@@ -76,7 +76,7 @@ model_list:
 2. Run proxy server
 
 ```bash showLineNumbers title="Start the proxy"
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -92,7 +92,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
     "messages": [
       {
         "role": "user",
-        "content": "Generate an image of a banana wearing a costume that says LiteLLM"
+        "content": "Generate an image of a banana wearing a costume that says Lumina"
       }
     ]
   }'
@@ -143,7 +143,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers title="Streaming image generation"
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -151,7 +151,7 @@ os.environ["GEMINI_API_KEY"] = "your-api-key"
 response = completion(
     model="gemini/gemini-2.5-flash-image-preview",
     messages=[
-        {"role": "user", "content": "Generate an image of a banana wearing a costume that says LiteLLM"}
+        {"role": "user", "content": "Generate an image of a banana wearing a costume that says Lumina"}
     ],
     stream=True,
 )
@@ -174,7 +174,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
     "messages": [
       {
         "role": "user",
-        "content": "Generate an image of a banana wearing a costume that says LiteLLM"
+        "content": "Generate an image of a banana wearing a costume that says Lumina"
       }
     ],
     "stream": true
@@ -201,7 +201,7 @@ data: [DONE]
 ## Async Support
 
 ```python showLineNumbers title="Async image generation"
-from litellm import acompletion
+from lumina import acompletion
 import asyncio
 import os 
 
@@ -211,7 +211,7 @@ async def generate_image():
     response = await acompletion(
         model="gemini/gemini-2.5-flash-image-preview",
         messages=[
-            {"role": "user", "content": "Generate an image of a banana wearing a costume that says LiteLLM"}
+            {"role": "user", "content": "Generate an image of a banana wearing a costume that says Lumina"}
         ],
     )
     

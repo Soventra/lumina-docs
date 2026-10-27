@@ -1,17 +1,17 @@
 ---
 slug: ci-cd-v2-improvements
-title: "Announcing CI/CD v2 for LiteLLM"
+title: "Announcing CI/CD v2 for Lumina"
 date: 2026-03-30T21:30:00
 authors:
   - krrish
-description: "CI/CD v2 introduces isolated environments, stronger security gates, and safer release separation for LiteLLM."
+description: "CI/CD v2 introduces isolated environments, stronger security gates, and safer release separation for Lumina."
 tags: [engineering, ci-cd, security]
 hide_table_of_contents: false
 ---
 
 import Image from '@theme/IdealImage';
 
-The CI/CD v2 is now live for LiteLLM.
+The CI/CD v2 is now live for Lumina.
 
 {/* truncate */}
 
@@ -21,7 +21,7 @@ The CI/CD v2 is now live for LiteLLM.
 />
 
 <br/>
-Building on the roadmap from our [security incident](https://docs.litellm.ai/blog/security-townhall-updates#roadmap), CI/CD v2 introduces isolated environments, stronger security gates, and safer release separation for LiteLLM.
+Building on the roadmap from our [security incident](https://docs.lumina.ai/blog/security-townhall-updates#roadmap), CI/CD v2 introduces isolated environments, stronger security gates, and safer release separation for Lumina.
 
 ## What changed
 
@@ -33,7 +33,7 @@ Building on the roadmap from our [security incident](https://docs.litellm.ai/blo
 
 ## Verify Docker image signatures
 
-Starting from `v1.83.0-nightly`, all LiteLLM Docker images published to GHCR are signed with [cosign](https://docs.sigstore.dev/cosign/overview/). Every release is signed with the same key introduced in [commit `0112e53`](https://github.com/BerriAI/litellm/commit/0112e53046018d726492c814b3644b7d376029d0).
+Starting from `v1.83.0-nightly`, all Lumina Docker images published to GHCR are signed with [cosign](https://docs.sigstore.dev/cosign/overview/). Every release is signed with the same key introduced in [commit `0112e53`](https://github.com/Soventra/lumina/commit/0112e53046018d726492c814b3644b7d376029d0).
 
 **Verify using the pinned commit hash (recommended):**
 
@@ -41,8 +41,8 @@ A commit hash is cryptographically immutable, so this is the strongest way to en
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-  ghcr.io/berriai/litellm:<release-tag>
+  --key https://raw.githubusercontent.com/Soventra/lumina/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
+  ghcr.io/soventra/lumina:<release-tag>
 ```
 
 **Verify using a release tag (convenience):**
@@ -51,8 +51,8 @@ Tags are protected in this repository and resolve to the same key. This option i
 
 ```bash
 cosign verify \
-  --key https://raw.githubusercontent.com/BerriAI/litellm/<release-tag>/cosign.pub \
-  ghcr.io/berriai/litellm:<release-tag>
+  --key https://raw.githubusercontent.com/Soventra/lumina/<release-tag>/cosign.pub \
+  ghcr.io/soventra/lumina:<release-tag>
 ```
 
 Replace `<release-tag>` with the version you are deploying (e.g. `v1.83.0-stable`).
@@ -89,4 +89,4 @@ The new CI/CD pipeline reflects the principles, outlined below, and is designed 
 
 ## How to help: 
 
-Help us plan April's stability sprint - https://github.com/BerriAI/litellm/issues/24825
+Help us plan April's stability sprint - https://github.com/Soventra/lumina/issues/24825

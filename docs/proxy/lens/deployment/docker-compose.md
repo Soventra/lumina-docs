@@ -1,16 +1,16 @@
 ---
 title: "Connect Lens to Docker Compose"
-description: "Add a running Lens service to your existing LiteLLM Compose deployment."
+description: "Add a running Lens service to your existing Lumina Compose deployment."
 slug: "/proxy/lens/deployment/docker-compose"
 ---
 
 # Connect Lens to Docker Compose
 
-Use this guide when LiteLLM already runs with Docker Compose. Lens can run in another Compose project, on Render, or on another reachable server. Keep your gateway's existing services, model configuration, database, and volumes.
+Use this guide when Lumina already runs with Docker Compose. Lens can run in another Compose project, on Render, or on another reachable server. Keep your gateway's existing services, model configuration, database, and volumes.
 
 ## 1. Prepare the connection {#1-set-the-connection-values}
 
-Complete [steps 1–3 of Add Lens to LiteLLM](./litellm.md#1-get-the-lens-address). You need a ready Lens URL and two connection secrets already configured on Lens.
+Complete [steps 1–3 of Add Lens to Lumina](./lumina.md#1-get-the-lens-address). You need a ready Lens URL and two connection secrets already configured on Lens.
 
 In the directory that contains your gateway's Compose file, create a private `lens-gateway.env` file with these values:
 
@@ -33,11 +33,11 @@ Using the public HTTPS Lens URL for both addresses works when the gateway and ag
 
 ## 2. Apply the gateway settings {#2-apply-the-gateway-settings}
 
-Add the environment file to your gateway service in its existing Compose file. This example uses the service name `litellm`; use the name in your file. Preserve any existing `env_file` entries:
+Add the environment file to your gateway service in its existing Compose file. This example uses the service name `lumina`; use the name in your file. Preserve any existing `env_file` entries:
 
 ```yaml
 services:
-  litellm:
+  lumina:
     env_file:
       - lens-gateway.env
 ```
@@ -63,14 +63,14 @@ From your gateway's Compose directory, list the service names:
 docker compose config --services
 ```
 
-Recreate the gateway service so it loads the settings. Replace `litellm` with its service name. Include the backend service too if you use a split deployment:
+Recreate the gateway service so it loads the settings. Replace `lumina` with its service name. Include the backend service too if you use a split deployment:
 
 ```sh
-docker compose up -d --no-deps litellm
+docker compose up -d --no-deps lumina
 ```
 
 Keep any Compose file or project flags that your deployment normally uses. This step restarts the selected service and can interrupt requests.
 
 ## 4. Check the result {#4-check-the-installation}
 
-Sign in to LiteLLM and select **Lens**. Use [the connection check](./litellm.md#5-open-lens-in-the-gateway), then [send your first trace](../first-trace.md). Your existing model requests should continue to work.
+Sign in to Lumina and select **Lens**. Use [the connection check](./lumina.md#5-open-lens-in-the-gateway), then [send your first trace](../first-trace.md). Your existing model requests should continue to work.

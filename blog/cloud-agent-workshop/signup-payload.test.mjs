@@ -9,7 +9,7 @@ const base = {
   linkedin: 'https://www.linkedin.com/in/alex-chen/',
   workflow: 'Turn a Slack bug report into a tested pull request.',
 };
-const metadata = {submissionId: 'qa-stable-id', source: 'https://docs.litellm.ai/blog/cloud-agent-workshop'};
+const metadata = {submissionId: 'qa-stable-id', source: 'https://docs.lumina.ai/blog/cloud-agent-workshop'};
 
 test('client payload contains every workshop answer and stable metadata', () => {
   const values = {...base, onsiteInterest: 'Yes'};
@@ -25,7 +25,7 @@ test('removed fields and sales routing are not sent in workshop payload', () => 
     sandbox: 'Our VPC',
     location: 'San Francisco',
     priorAttempts: 'A previous prototype',
-    litellmBlockers: 'Model routing',
+    luminaBlockers: 'Model routing',
   };
   const values = normalizeWorkshopValues({...base, ...removed});
   const payload = buildWorkshopSubmission({...base, ...removed}, metadata);

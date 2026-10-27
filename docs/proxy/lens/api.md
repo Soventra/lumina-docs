@@ -1,12 +1,12 @@
 ---
 title: "API reference"
-description: "List and read agent runs, read investigation findings, and query traces with SQL through LiteLLM."
+description: "List and read agent runs, read investigation findings, and query traces with SQL through Lumina."
 slug: "/proxy/lens/api"
 ---
 
 # API reference
 
-Most integrations need three calls on your LiteLLM proxy: list recent runs, read one run step by step, and read the findings an investigation saved. For questions those calls do not answer, an agent can [query traces with SQL](#query-traces).
+Most integrations need three calls on your Lumina proxy: list recent runs, read one run step by step, and read the findings an investigation saved. For questions those calls do not answer, an agent can [query traces with SQL](#query-traces).
 
 | Task | Endpoint |
 | --- | --- |
@@ -15,7 +15,7 @@ Most integrations need three calls on your LiteLLM proxy: list recent runs, read
 | Read an investigation's findings | [`GET /lens/{id}`](#read-findings) |
 | Ask your own question with SQL | [`POST /v1/traces/query`](#query-traces) |
 
-Every call uses your LiteLLM base URL and a proxy key in `Authorization: Bearer <key>`. There is no Lens command-line tool for these endpoints. Use curl, any HTTP client, or a coding agent that calls them directly.
+Every call uses your Lumina base URL and a proxy key in `Authorization: Bearer <key>`. There is no Lens command-line tool for these endpoints. Use curl, any HTTP client, or a coding agent that calls them directly.
 
 The examples come from a support agent that answers order questions with a `lookup_order` tool. Responses are shortened to the fields most callers use.
 
@@ -23,7 +23,7 @@ The examples come from a support agent that answers order questions with a `look
 
 ```bash
 curl -H "Authorization: Bearer <key>" \
-  "https://<your-litellm-proxy>/v1/traces"
+  "https://<your-lumina-proxy>/v1/traces"
 ```
 
 ```json
@@ -53,7 +53,7 @@ curl -H "Authorization: Bearer <key>" \
 }
 ```
 
-Optional `start_ms` and `end_ms` are Unix milliseconds. The default window is the last 24 hours. Each page holds up to 50 summaries. Pass `next_cursor` back as `cursor` to read the next page. `spend` is `null` when no LiteLLM spend record matches the run's model calls.
+Optional `start_ms` and `end_ms` are Unix milliseconds. The default window is the last 24 hours. Each page holds up to 50 summaries. Pass `next_cursor` back as `cursor` to read the next page. `spend` is `null` when no Lumina spend record matches the run's model calls.
 
 A summary's `source` holds `type`, `url`, and `title` when the run set [`agent.source.url`](./first-trace.md#link-a-run-to-its-source), and is absent otherwise.
 
@@ -63,7 +63,7 @@ Pass the summary's `trace_ref` with the trace ID.
 
 ```bash
 curl -H "Authorization: Bearer <key>" \
-  "https://<your-litellm-proxy>/v1/traces/<trace_id>?trace_ref=<trace_ref>"
+  "https://<your-lumina-proxy>/v1/traces/<trace_id>?trace_ref=<trace_ref>"
 ```
 
 The response holds the same `summary` as the list, one entry per agent in `agents`, and every step in `spans`:
@@ -90,7 +90,7 @@ To read a step's full input and output, add its span ID:
 
 ```bash
 curl -H "Authorization: Bearer <key>" \
-  "https://<your-litellm-proxy>/v1/traces/<trace_id>/spans/<span_id>?trace_ref=<trace_ref>"
+  "https://<your-lumina-proxy>/v1/traces/<trace_id>/spans/<span_id>?trace_ref=<trace_ref>"
 ```
 
 ```json
@@ -109,7 +109,7 @@ The response also holds `input_ui` and `output_ui`, the same content shaped for 
 Findings come from [investigations](./investigations.md). List existing investigations with `GET /lens`, or create one. These calls need a proxy administrator key.
 
 ```bash
-curl -X POST "https://<your-litellm-proxy>/lens" \
+curl -X POST "https://<your-lumina-proxy>/lens" \
   -H "Authorization: Bearer <admin-key>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -127,7 +127,7 @@ Poll the investigation until its newest job reports `completed`:
 
 ```bash
 curl -H "Authorization: Bearer <admin-key>" \
-  "https://<your-litellm-proxy>/lens/<id>"
+  "https://<your-lumina-proxy>/lens/<id>"
 ```
 
 ```json
@@ -165,15 +165,15 @@ Each evidence item quotes one step and names its `span_id`. The response also ho
 
 ## Query traces with SQL {#query-traces}
 
-`POST /v1/traces/query` runs a read-only ClickHouse SQL query over your traces and LiteLLM spend records. Before an agent writes a query, have it call `GET /v1/traces/query/help`. That response lists the tables, their columns, example queries, and the query rules, so you can give a coding agent a LiteLLM key and ask it to answer questions on its own.
+`POST /v1/traces/query` runs a read-only ClickHouse SQL query over your traces and Lumina spend records. Before an agent writes a query, have it call `GET /v1/traces/query/help`. That response lists the tables, their columns, example queries, and the query rules, so you can give a coding agent a Lumina key and ask it to answer questions on its own.
 
 ```bash
 curl -H "Authorization: Bearer <key>" \
-  "https://<your-litellm-proxy>/v1/traces/query/help"
+  "https://<your-lumina-proxy>/v1/traces/query/help"
 ```
 
 ```bash
-curl -X POST "https://<your-litellm-proxy>/v1/traces/query" \
+curl -X POST "https://<your-lumina-proxy>/v1/traces/query" \
   -H "Authorization: Bearer <key>" \
   -H "Content-Type: application/json" \
   -d "{\"sql\": \"SELECT SpanName, count() AS spans, round(avg(Duration) / 1e6, 1) AS avg_ms FROM otel_traces WHERE Timestamp >= now() - INTERVAL 1 DAY AND ServiceName = 'support-agent' GROUP BY SpanName ORDER BY spans DESC LIMIT 10\"}"
@@ -193,7 +193,7 @@ curl -X POST "https://<your-litellm-proxy>/v1/traces/query" \
 | --- | --- |
 | `otel_traces` | Span |
 | `agent_traces_by_key` | Run summary |
-| `spend_logs` | LiteLLM request |
+| `spend_logs` | Lumina request |
 
 A query sees the same rows as the caller's trace reads. Always bound `Timestamp` and add a `LIMIT`. Each query gets 256 MiB of memory and 10 seconds. Do not add a `FORMAT` clause. `Duration` is in nanoseconds. Read `spend_logs FINAL` when you add up costs. SQL that does not parse returns 400. A query that ClickHouse rejects, such as a write or a query over the limits, returns 503. The proxy must have a master key configured. Without one, both query endpoints return 503.
 
@@ -211,7 +211,7 @@ It covers the trace retention window by default and accepts the same `start_ms` 
 
 ## Upload traces {#upload}
 
-Agents upload traces directly to Lens using a dedicated tracing key in `Authorization: Bearer <tracing-key>`. Generate a key with `POST /lens/tracing/keys` on LiteLLM as a proxy administrator, or open **Lens > Traces**, click **Connect project**, and click **Generate tracing key**. `GET /lens/service` on LiteLLM returns the public ingestion base URL and connection status.
+Agents upload traces directly to Lens using a dedicated tracing key in `Authorization: Bearer <tracing-key>`. Generate a key with `POST /lens/tracing/keys` on Lumina as a proxy administrator, or open **Lens > Traces**, click **Connect project**, and click **Generate tracing key**. `GET /lens/service` on Lumina returns the public ingestion base URL and connection status.
 
 Use the Lens base URL, keeping `/lens-ingest` when present, followed by the path below. The dashboard's **Traces endpoint** already includes `/v1/traces`.
 
@@ -234,7 +234,7 @@ Proxy administrators and proxy administrator viewers can read every trace. Every
 A team shares its traces with its members through the `/spend/logs` member permission. A team admin always sees the team's traces, and a regular member sees them once the team's `team_member_permissions` includes `/spend/logs`. Grant it from the Admin UI (Teams, open the team, Member Permissions tab) or with the API:
 
 ```bash
-curl -X POST "https://<your-litellm-proxy>/team/permissions_update" \
+curl -X POST "https://<your-lumina-proxy>/team/permissions_update" \
   -H "Authorization: Bearer <admin-key>" \
   -H "Content-Type: application/json" \
   -d '{"team_id": "<team-id>", "team_member_permissions": ["/spend/logs"]}'
@@ -243,7 +243,7 @@ curl -X POST "https://<your-litellm-proxy>/team/permissions_update" \
 To grant it to every existing team at once:
 
 ```bash
-curl -X POST "https://<your-litellm-proxy>/team/permissions_bulk_update" \
+curl -X POST "https://<your-lumina-proxy>/team/permissions_bulk_update" \
   -H "Authorization: Bearer <admin-key>" \
   -H "Content-Type: application/json" \
   -d '{"permissions": ["/spend/logs"], "apply_to_all_teams": true}'
@@ -252,7 +252,7 @@ curl -X POST "https://<your-litellm-proxy>/team/permissions_bulk_update" \
 To have every new team share its traces, including the teams that [SCIM](../identity_provisioning.md) creates from identity provider groups, set it in [`default_team_params`](../self_serve.md#set-default-params-for-new-teams). Group membership in the identity provider then decides who sees which traces, with no per-team step:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   default_team_params:
     team_member_permissions: ["/spend/logs"]
 ```
@@ -261,7 +261,7 @@ Later SCIM updates to a group keep the team's permissions. The same permission l
 
 ## Investigations API {#use-the-api}
 
-These endpoints on your LiteLLM proxy manage investigations. Send a proxy administrator key in the `Authorization: Bearer <key>` header.
+These endpoints on your Lumina proxy manage investigations. Send a proxy administrator key in the `Authorization: Bearer <key>` header.
 
 | Endpoint | Purpose |
 | --- | --- |

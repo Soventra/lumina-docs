@@ -76,7 +76,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
         "model_config": {
             "defaultconfig": {
                 "azure": {
-                    "litellm_credentials": "hotel-azure-eastus"
+                    "lumina_credentials": "hotel-azure-eastus"
                 }
             }
         }
@@ -95,7 +95,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
         "model_config": {
             "defaultconfig": {
                 "azure": {
-                    "litellm_credentials": "flight-azure-centralus"
+                    "lumina_credentials": "flight-azure-centralus"
                 }
             }
         }
@@ -135,12 +135,12 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
         "model_config": {
             "defaultconfig": {
                 "azure": {
-                    "litellm_credentials": "hotel-azure-eastus"
+                    "lumina_credentials": "hotel-azure-eastus"
                 }
             },
             "{{openai_large}}": {
                 "azure": {
-                    "litellm_credentials": "hotel-azure-westus"
+                    "lumina_credentials": "hotel-azure-westus"
                 }
             }
         }
@@ -167,12 +167,12 @@ curl -X POST 'http://0.0.0.0:4000/project/update' \
         "model_config": {
             "defaultconfig": {
                 "azure": {
-                    "litellm_credentials": "hotel-rec-azure"
+                    "lumina_credentials": "hotel-rec-azure"
                 }
             },
             "gpt-4-vision": {
                 "azure": {
-                    "litellm_credentials": "hotel-rec-vision"
+                    "lumina_credentials": "hotel-rec-vision"
                 }
             }
         }
@@ -205,12 +205,12 @@ The `model_config` key is a JSON object in team/project `metadata`:
     "model_config": {
         "defaultconfig": {
             "<provider>": {
-                "litellm_credentials": "<credential-name>"
+                "lumina_credentials": "<credential-name>"
             }
         },
         "<model-name>": {
             "<provider>": {
-                "litellm_credentials": "<credential-name>"
+                "lumina_credentials": "<credential-name>"
             }
         }
     }
@@ -220,9 +220,9 @@ The `model_config` key is a JSON object in team/project `metadata`:
 | Field | Description |
 |---|---|
 | `defaultconfig` | Fallback credential for any model not explicitly listed |
-| `<model-name>` | Model-specific override — must match the LiteLLM model group name |
+| `<model-name>` | Model-specific override — must match the Lumina model group name |
 | `<provider>` | Provider key (e.g. `azure`, `openai`, `bedrock`). When the model name includes a provider prefix (e.g. `azure/gpt-4`), the system prefers the matching provider key |
-| `litellm_credentials` | Name of a credential in the [credentials table](./model_management.md#reusable-provider-credentials) |
+| `lumina_credentials` | Name of a credential in the [credentials table](./model_management.md#reusable-provider-credentials) |
 
 ### Credential Values
 
@@ -245,7 +245,7 @@ This feature is **disabled by default** and must be explicitly enabled. To enabl
 <TabItem value="config" label="config.yaml">
 
 ```yaml
-litellm_settings:
+lumina_settings:
     enable_model_config_credential_overrides: true
 ```
 

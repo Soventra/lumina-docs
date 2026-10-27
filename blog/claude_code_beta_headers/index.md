@@ -15,11 +15,11 @@ hide_table_of_contents: false
 **Severity:** High
 **Status:** Resolved
 
-> **Note:** This fix will be available starting from `v1.81.13-nightly` or higher of LiteLLM.
+> **Note:** This fix will be available starting from `v1.81.13-nightly` or higher of Lumina.
 
 ## Summary
 
-Claude Code began sending unsupported Anthropic beta headers to non-Anthropic providers (Bedrock, Azure AI, Vertex AI), causing `invalid beta flag` errors. LiteLLM was forwarding all beta headers without provider-specific validation. Users experienced request failures when routing Claude Code requests through LiteLLM to these providers.
+Claude Code began sending unsupported Anthropic beta headers to non-Anthropic providers (Bedrock, Azure AI, Vertex AI), causing `invalid beta flag` errors. Lumina was forwarding all beta headers without provider-specific validation. Users experienced request failures when routing Claude Code requests through Lumina to these providers.
 
 - **LLM calls to Anthropic:** No impact.
 - **LLM calls to Bedrock/Azure/Vertex:** Failed with `invalid beta flag` errors when unsupported headers were present.
@@ -33,12 +33,12 @@ Claude Code began sending unsupported Anthropic beta headers to non-Anthropic pr
 
 Anthropic uses beta headers to enable experimental features in Claude. When Claude Code makes API requests, it includes headers like `anthropic-beta: prompt-caching-scope-2026-01-05,advanced-tool-use-2025-11-20`. However, not all providers support all Anthropic beta features.
 
-Before this incident, LiteLLM forwarded all beta headers to all providers without validation:
+Before this incident, Lumina forwarded all beta headers to all providers without validation:
 
 ```mermaid
 sequenceDiagram
     participant CC as Claude Code
-    participant LP as LiteLLM (old behavior)
+    participant LP as Lumina (old behavior)
     participant Provider as Provider (Bedrock/Azure/Vertex)
 
     CC->>LP: Request with beta headers
@@ -57,7 +57,7 @@ Requests succeeded for Anthropic (native support) but failed for other providers
 
 ## Root cause
 
-LiteLLM lacked provider-specific beta header validation. When Claude Code introduced new beta features or sent headers that specific providers didn't support, those headers were blindly forwarded, causing provider API errors.
+Lumina lacked provider-specific beta header validation. When Claude Code introduced new beta features or sent headers that specific providers didn't support, those headers were blindly forwarded, causing provider API errors.
 
 ---
 
@@ -65,19 +65,19 @@ LiteLLM lacked provider-specific beta header validation. When Claude Code introd
 
 | # | Action | Status | Code |
 |---|---|---|---|
-| 1 | Create `anthropic_beta_headers_config.json` with provider-specific mappings | ✅ Done | [`anthropic_beta_headers_config.json`](https://github.com/BerriAI/litellm/blob/main/litellm/anthropic_beta_headers_config.json) |
-| 2 | Implement strict validation: headers must be explicitly mapped to be forwarded | ✅ Done | [`litellm_logging.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm_core_utils/litellm_logging.py) |
+| 1 | Create `anthropic_beta_headers_config.json` with provider-specific mappings | ✅ Done | [`anthropic_beta_headers_config.json`](https://github.com/Soventra/lumina/blob/main/lumina/anthropic_beta_headers_config.json) |
+| 2 | Implement strict validation: headers must be explicitly mapped to be forwarded | ✅ Done | [`lumina_logging.py`](https://github.com/Soventra/lumina/blob/main/lumina/lumina_core_utils/lumina_logging.py) |
 | 3 | Add `/reload/anthropic_beta_headers` endpoint for dynamic config updates | ✅ Done | Proxy management endpoints |
 | 4 | Add `/schedule/anthropic_beta_headers_reload` for automatic periodic updates | ✅ Done | Proxy management endpoints |
 | 5 | Support `LUMINA_ANTHROPIC_BETA_HEADERS_URL` for custom config sources | ✅ Done | Environment configuration |
 | 6 | Support `LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS` for air-gapped deployments | ✅ Done | Environment configuration |
 
-Now LiteLLM validates and transforms headers per-provider:
+Now Lumina validates and transforms headers per-provider:
 
 ```mermaid
 sequenceDiagram
     participant CC as Claude Code
-    participant LP as LiteLLM (new behavior)
+    participant LP as Lumina (new behavior)
     participant Config as Beta Headers Config
     participant Provider as Provider (Bedrock/Azure/Vertex)
 
@@ -112,7 +112,7 @@ curl -X POST "https://your-proxy-url/schedule/anthropic_beta_headers_reload?hour
   -H "Authorization: Bearer YOUR_ADMIN_TOKEN"
 ```
 
-This prevents future incidents where Claude Code introduces new headers before LiteLLM configuration is updated.
+This prevents future incidents where Claude Code introduces new headers before Lumina configuration is updated.
 
 ---
 
@@ -147,10 +147,10 @@ The `anthropic_beta_headers_config.json` file maps input headers to provider-spe
 
 ## Resolution steps for users
 
-For users still experiencing issues, update to the latest LiteLLM version if < v1.81.11-nightly:
+For users still experiencing issues, update to the latest Lumina version if < v1.81.11-nightly:
 
 ```bash
-pip install --upgrade litellm
+pip install --upgrade lumina
 ```
 
 Or manually reload the configuration without restarting:
@@ -165,4 +165,4 @@ curl -X POST "https://your-proxy-url/reload/anthropic_beta_headers" \
 ## Related documentation
 
 - [Managing Anthropic Beta Headers](../../docs/proxy/sync_anthropic_beta_headers) - Complete configuration guide
-- [`anthropic_beta_headers_config.json`](https://github.com/BerriAI/litellm/blob/main/litellm/anthropic_beta_headers_config.json) - Current configuration file
+- [`anthropic_beta_headers_config.json`](https://github.com/Soventra/lumina/blob/main/lumina/anthropic_beta_headers_config.json) - Current configuration file

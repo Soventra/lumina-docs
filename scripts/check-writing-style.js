@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Writing style check for LiteLLM docs.
+ * Writing style check for Lumina docs.
  *
  * Errors (fail the build):
  *   - em dashes used as prose punctuation

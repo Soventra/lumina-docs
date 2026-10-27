@@ -4,14 +4,14 @@ title: Events
 
 # Events
 
-`litellm.agent(..., stream=True)` yields eight kinds of event. Each adapter translates its runtime's native events into these.
+`lumina.agent(..., stream=True)` yields eight kinds of event. Each adapter translates its runtime's native events into these.
 
 ```python
-from litellm.harness import (
+from lumina.harness import (
     Text, Reasoning, ToolCall, ToolResult, FileChange, Compaction, Approval, Done,
 )
 
-for event in litellm.agent(Harness.CLAUDE_CODE, "Add type hints to utils.py", sandbox=box, model="litellm_proxy/coder", stream=True):
+for event in lumina.agent(Harness.CLAUDE_CODE, "Add type hints to utils.py", sandbox=box, model="lumina_proxy/coder", stream=True):
     match event:
         case Text(delta=d):
             print(d, end="")
@@ -68,7 +68,7 @@ Tools that aren't in this table keep their native name in `name`.
 ## Stream result
 
 ```python
-stream = litellm.agent(Harness.OPENCODE, prompt, sandbox=box, model="litellm_proxy/coder", stream=True)
+stream = lumina.agent(Harness.OPENCODE, prompt, sandbox=box, model="lumina_proxy/coder", stream=True)
 for event in stream:
     render(event)
 result = stream.result  # the same Result the Done event carries

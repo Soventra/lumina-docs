@@ -6,10 +6,10 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for Claude Fable 5 on the LiteLLM AI Gateway. Use it across Anthropic, Azure, Vertex AI, and Bedrock."
+description: "Day 0 support for Claude Fable 5 on the Lumina AI Gateway. Use it across Anthropic, Azure, Vertex AI, and Bedrock."
 card_title: "Claude Fable 5"
 card_summary: "Anthropic's new frontier model: 1M context, adaptive thinking only, $10 / $50 per 1M, Opus 4.8 fallback when flagged."
-image: /img/litellm_claude_fable_5_announcement.png
+image: /img/lumina_claude_fable_5_announcement.png
 tags: [anthropic, claude, fable 5, day 0 support]
 hide_table_of_contents: false
 ---
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Claude Fable 5](/img/litellm_claude_fable_5_announcement.png)
+![Lumina x Claude Fable 5](/img/lumina_claude_fable_5_announcement.png)
 
-LiteLLM now supports [Claude Fable 5](https://www.anthropic.com/news/claude-fable-5-mythos-5) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the LiteLLM AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
+Lumina now supports [Claude Fable 5](https://www.anthropic.com/news/claude-fable-5-mythos-5) on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the Lumina AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
 
 {/* truncate */}
 
@@ -30,7 +30,7 @@ Fable 5 is Anthropic's first publicly available Mythos-class model, priced at 2x
 - **The frontier, now public.** Anthropic reports Fable 5 is state-of-the-art on nearly all tested benchmarks, and the highest scorer among frontier models on Cognition's frontier coding benchmark, even at medium reasoning effort. ([details from Anthropic](https://www.anthropic.com/news/claude-fable-5-mythos-5))
 - **Built for long-running work.** A 1M-token context window and up to 128K output tokens, with focus that holds across millions of tokens in long-horizon agentic tasks.
 - **Adaptive thinking only.** Fable 5 decides how deeply to think on its own. You steer it per request with `reasoning_effort` or `output_config.effort`; fixed thinking budgets, `temperature`, `top_p`, and assistant message prefill are not supported by the model.
-- **$10 / MTok input and $50 / MTok output**, with prompt caching at $1.00 / MTok (read) and $12.50 / MTok (write). On Bedrock, the `us.` and `eu.` inference profiles carry the usual 10% regional premium while `global.` stays at base price; LiteLLM tracks every variant automatically.
+- **$10 / MTok input and $50 / MTok output**, with prompt caching at $1.00 / MTok (read) and $12.50 / MTok (write). On Bedrock, the `us.` and `eu.` inference profiles carry the usual 10% regional premium while `global.` stays at base price; Lumina tracks every variant automatically.
 - **A fallback you might notice.** On flagged cybersecurity and biology requests (under 5% of sessions, per Anthropic), the response is served by Opus 4.8 instead.
 - **One gateway, every surface.** Vision, PDF input, computer use, tool calling, prompt caching, adaptive thinking, and structured output, all available across Anthropic, Azure, Vertex AI, and Bedrock with unified spend tracking, logging, and fallbacks.
 
@@ -46,17 +46,17 @@ Fable 5 requires a data sharing opt-in on some clouds; prompts are shared with A
 
 Fable 5 ships in the **`v1.89.0-rc.2`** image (and every release after it). How you pick it up depends on where your proxy reads pricing from:
 
-- **Default (remote cost map): no upgrade needed.** In the LiteLLM UI, open the **Price Data** tab under **Models + Endpoints** and click **Reload Price Data** (or, as a proxy admin, `POST /reload/model_cost_map`). This refetches the latest pricing from LiteLLM's cost map **and** re-registers provider routing in one step, so `claude-fable-5` becomes available across Anthropic, Azure, Vertex AI, and Bedrock, even if you're on an older proxy version.
+- **Default (remote cost map): no upgrade needed.** In the Lumina UI, open the **Price Data** tab under **Models + Endpoints** and click **Reload Price Data** (or, as a proxy admin, `POST /reload/model_cost_map`). This refetches the latest pricing from Lumina's cost map **and** re-registers provider routing in one step, so `claude-fable-5` becomes available across Anthropic, Azure, Vertex AI, and Bedrock, even if you're on an older proxy version.
 - **Running `LUMINA_LOCAL_MODEL_COST_MAP=true`?** The cost map is baked into the image, so the Reload button won't reach it. Pull `v1.89.0-rc.2` or later to get the bundled Fable 5 metadata:
 
   ```bash
-  docker pull ghcr.io/berriai/litellm:v1.89.0-rc.2
+  docker pull ghcr.io/soventra/lumina:v1.89.0-rc.2
   ```
 
 ## Usage - Anthropic
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -75,7 +75,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.89.0-rc.2 \
+  ghcr.io/soventra/lumina:v1.89.0-rc.2 \
   --config /app/config.yaml
 ```
 
@@ -102,7 +102,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Azure
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -123,7 +123,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.89.0-rc.2 \
+  ghcr.io/soventra/lumina:v1.89.0-rc.2 \
   --config /app/config.yaml
 ```
 
@@ -150,7 +150,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Vertex AI
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -172,7 +172,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.89.0-rc.2 \
+  ghcr.io/soventra/lumina:v1.89.0-rc.2 \
   --config /app/config.yaml
 ```
 
@@ -203,7 +203,7 @@ Bedrock only serves Fable 5 through inference profiles, so the model ID must car
 :::
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -225,7 +225,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.89.0-rc.2 \
+  ghcr.io/soventra/lumina:v1.89.0-rc.2 \
   --config /app/config.yaml
 ```
 
@@ -260,7 +260,7 @@ When using `reasoning_effort` with Claude Fable 5, all values are mapped to `thi
 <Tabs>
 <TabItem value="completions" label="/chat/completions">
 
-LiteLLM supports adaptive thinking through the `reasoning_effort` parameter:
+Lumina supports adaptive thinking through the `reasoning_effort` parameter:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -338,7 +338,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 import openai
 
 client = openai.OpenAI(
-    api_key="your-litellm-key",
+    api_key="your-lumina-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -349,10 +349,10 @@ response = client.chat.completions.create(
 )
 ```
 
-**Using LiteLLM SDK:**
+**Using Lumina SDK:**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/claude-fable-5",

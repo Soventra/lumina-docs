@@ -8,7 +8,7 @@ Cannot add callback - would exceed MAX_CALLBACKS limit of 100. Current callbacks
 
 ## What This Means
 
-LiteLLM limits the number of callbacks that can be registered to prevent performance degradation. Each callback runs on every LLM request, so having too many callbacks can cause exponential CPU usage and slow down your proxy. When a callback list is already at the limit, LiteLLM logs this message as a warning and skips the new callback
+Lumina limits the number of callbacks that can be registered to prevent performance degradation. Each callback runs on every LLM request, so having too many callbacks can cause exponential CPU usage and slow down your proxy. When a callback list is already at the limit, Lumina logs this message as a warning and skips the new callback
 
 The default limit is **100 callbacks**.
 
@@ -37,7 +37,7 @@ env:
 
 # Direct
 export LUMINA_MAX_CALLBACKS=200
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ## Recommendations
@@ -54,7 +54,7 @@ For an organization with 150+ teams, each with a guardrail callback:
 
 ```yaml
 # config.yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["prometheus", "langfuse"]  # 2 global callbacks
 
 # Each team adds 1 guardrail callback = 150+ callbacks

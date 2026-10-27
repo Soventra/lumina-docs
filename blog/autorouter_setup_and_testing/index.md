@@ -6,12 +6,12 @@ authors:
   - tin
 image: ./hero.png
 description: "Six changes to the Auto-Router: 1-click Anthropic and OpenAI presets, a one-line agent setup skill, Test Routing in the UI, a replaceable classifier prompt, customizable tiers, and configurable reminder markers."
-keywords: [auto router, llm routing, litellm, model routing, claude code, llm classifier, complexity router]
+keywords: [auto router, llm routing, lumina, model routing, claude code, llm classifier, complexity router]
 tags: [routing, complexity-router, ui, engineering]
 hide_table_of_contents: false
 ---
 
-![LiteLLM Autorouter V2: always use the latest models](./hero.png)
+![Lumina Autorouter V2: always use the latest models](./hero.png)
 
 We've made it easier than ever to setup and test your Auto-Router, and with customizable tier names + classifier system prompts you can go beyond complexity routing. 
 
@@ -25,13 +25,13 @@ Everything below ships in **v1.97.x**.
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -39,7 +39,7 @@ Already testing it? Share your results in [discussion #32168](https://github.com
 
 ![The Add Auto Router dialog in Models + Endpoints, with Configure automatically and template options](./auto-setup.png)
 
-- In the LiteLLM Dashboard, go to **Models + Endpoints** and open the **Auto Router** tab. Add a new Auto Router model, or enable and configure an existing one.
+- In the Lumina Dashboard, go to **Models + Endpoints** and open the **Auto Router** tab. Add a new Auto Router model, or enable and configure an existing one.
 - Enter an Auto Router name, then select **Configure automatically** or choose a template. Review the generated tiers, test routing, and save.
 - **Configure automatically** checks the models your proxy already serves, selects the best available models for all four tiers, and fills in the form for you
 - Picking a family builds the whole config for you with the **latest models** in that family, so every tier is on current models without writing any YAML
@@ -51,7 +51,7 @@ Already testing it? Share your results in [discussion #32168](https://github.com
 Paste this into Claude Code, Codex, Cursor, or any agent with shell access:
 
 ```
-run curl -fsSL https://docs.litellm.ai/skills/auto-router and follow the instructions
+run curl -fsSL https://docs.lumina.ai/skills/auto-router and follow the instructions
 ```
 
 - It reads the models your proxy already serves, then interviews you for the router name and the model behind each tier
@@ -93,7 +93,7 @@ complexity_router_config:
 
 :::info
 
-Start with the one-line agent command, or go to **Models + Endpoints → Auto Router** in the dashboard to add or enable an Auto Router model. Questions and results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), or [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner) to work on this with us directly.
+Start with the one-line agent command, or go to **Models + Endpoints → Auto Router** in the dashboard to add or enable an Auto Router model. Questions and results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168), or [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner) to work on this with us directly.
 
 :::
 

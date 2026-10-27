@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://firecrawl.dev](https://firecrawl.dev)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Firecrawl Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["FIRECRAWL_API_KEY"] = "fc-..."
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -59,7 +59,7 @@ curl http://0.0.0.0:4000/v1/search/firecrawl-search \
 
 ```python showLineNumbers title="Firecrawl Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["FIRECRAWL_API_KEY"] = "fc-..."
 
@@ -107,7 +107,7 @@ Use the `tbs` parameter to filter by time periods:
 - `qdr:y` - Past year
 
 ### Content Scraping
-Firecrawl automatically scrapes full page content for search results when `scrapeOptions` is specified. By default, LiteLLM requests markdown format with main content only.
+Firecrawl automatically scrapes full page content for search results when `scrapeOptions` is specified. By default, Lumina requests markdown format with main content only.
 
 ### Geo-Targeting
 Combine `location` and `country` parameters for geo-targeted results:

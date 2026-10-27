@@ -22,5 +22,5 @@ general_settings:
     hosted_keys: ["LUMINA_MASTER_KEY"] # WHICH KEYS ARE STORED ON KMS
 ```
 
-[**See Decryption Code**](https://github.com/BerriAI/litellm/blob/a2da2a8f168d45648b61279d4795d647d94f90c9/litellm/utils.py#L10182)
+[**See Decryption Code**](https://github.com/Soventra/lumina/blob/a2da2a8f168d45648b61279d4795d647d94f90c9/lumina/utils.py#L10182)
 

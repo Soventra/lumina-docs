@@ -4,7 +4,7 @@ sidebar_label: "Web Search Interception"
 
 # Web Search Integration
 
-Enable transparent server-side web search execution for any LLM provider. LiteLLM automatically intercepts web search tool calls and executes them using your configured search provider (Parallel, Perplexity, Tavily, and others).
+Enable transparent server-side web search execution for any LLM provider. Lumina automatically intercepts web search tool calls and executes them using your configured search provider (Parallel, Perplexity, Tavily, and others).
 
 ## Quick Start
 
@@ -19,7 +19,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["websearch_interception"]
   websearch_interception_params:
     enabled_providers:
@@ -38,9 +38,9 @@ search_tools:
 ### 2. Use with Any Provider
 
 ```python
-import litellm
+import lumina
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="{{openai_large}}",
     messages=[
         {"role": "user", "content": "What's the weather in San Francisco today?"}
@@ -49,7 +49,7 @@ response = await litellm.acompletion(
         {
             "type": "function",
             "function": {
-                "name": "litellm_web_search",
+                "name": "lumina_web_search",
                 "description": "Search the web for information",
                 "parameters": {
                     "type": "object",
@@ -69,9 +69,9 @@ print(response.choices[0].message.content)
 
 ## How It Works
 
-When a model makes a web search tool call, LiteLLM:
+When a model makes a web search tool call, Lumina:
 
-1. **Detects** the `litellm_web_search` tool call in the response
+1. **Detects** the `lumina_web_search` tool call in the response
 2. **Executes** the search using your configured search provider
 3. **Makes a follow-up request** with the search results
 4. **Returns** the final answer to the user
@@ -79,28 +79,28 @@ When a model makes a web search tool call, LiteLLM:
 ```mermaid
 sequenceDiagram
     participant User
-    participant LiteLLM
+    participant Lumina
     participant LLM as LLM Provider
     participant Search as Search Provider
 
-    User->>LiteLLM: Request with web_search tool
-    LiteLLM->>LLM: Forward request
-    LLM-->>LiteLLM: Response with tool_call
-    Note over LiteLLM: Detect web search<br/>tool call
-    LiteLLM->>Search: Execute search
-    Search-->>LiteLLM: Search results
-    LiteLLM->>LLM: Follow-up with results
-    LLM-->>LiteLLM: Final answer
-    LiteLLM-->>User: Final answer with search results
+    User->>Lumina: Request with web_search tool
+    Lumina->>LLM: Forward request
+    LLM-->>Lumina: Response with tool_call
+    Note over Lumina: Detect web search<br/>tool call
+    Lumina->>Search: Execute search
+    Search-->>Lumina: Search results
+    Lumina->>LLM: Follow-up with results
+    LLM-->>Lumina: Final answer
+    Lumina-->>User: Final answer with search results
 ```
 
 **Result**: One API call from user → Complete answer with search results
 
 ## The Search Tool the Model Sees
 
-Whatever web search tool the request carries, LiteLLM replaces it with its own `litellm_web_search` definition before the model sees it. Anthropic's `web_search_20250305`, the Responses API's `web_search_preview`, Claude Code's `web_search`, and a `litellm_web_search` function tool you define yourself with only a `query` parameter all reach the model as the schema below, in the tool format of the API you called (an Anthropic `input_schema`, a Chat Completions `function.parameters`, or a flat Responses function tool).
+Whatever web search tool the request carries, Lumina replaces it with its own `lumina_web_search` definition before the model sees it. Anthropic's `web_search_20250305`, the Responses API's `web_search_preview`, Claude Code's `web_search`, and a `lumina_web_search` function tool you define yourself with only a `query` parameter all reach the model as the schema below, in the tool format of the API you called (an Anthropic `input_schema`, a Chat Completions `function.parameters`, or a flat Responses function tool).
 
-```json title="litellm_web_search input schema"
+```json title="lumina_web_search input schema"
 {
   "type": "object",
   "properties": {
@@ -122,15 +122,15 @@ Whatever web search tool the request carries, LiteLLM replaces it with its own `
 }
 ```
 
-`query` is required and is what most search providers receive. `objective` and `search_queries` are optional: they let the model say what it is after and fan out several keyword searches in one tool call. LiteLLM forwards them only to search providers whose API takes that shape natively, which today means [Parallel AI](../search/parallel_ai.md). There the `search_queries` list becomes the provider's queries and `objective` goes alongside it, unless the search tool's `lumina_params` already sets an `objective`, which is kept over the model's. Every other search provider (Perplexity, Tavily, Exa, and the rest) keeps receiving the single `query` string, and a model that fills only `query` behaves exactly as before on every provider.
+`query` is required and is what most search providers receive. `objective` and `search_queries` are optional: they let the model say what it is after and fan out several keyword searches in one tool call. Lumina forwards them only to search providers whose API takes that shape natively, which today means [Parallel AI](../search/parallel_ai.md). There the `search_queries` list becomes the provider's queries and `objective` goes alongside it, unless the search tool's `lumina_params` already sets an `objective`, which is kept over the model's. Every other search provider (Perplexity, Tavily, Exa, and the rest) keeps receiving the single `query` string, and a model that fills only `query` behaves exactly as before on every provider.
 
 The optional fields are validated before they are forwarded: a blank `objective` is ignored, `search_queries` has to be an array (a bare string is ignored rather than split into characters), entries that are not non-empty strings are dropped, and only the first five queries are kept, matching Parallel's own cap.
 
-With a Parallel AI search tool configured, a tool call from the model and the request LiteLLM builds from it look like this. The outbound body is what `--detailed_debug` prints as the request sent to `https://api.parallel.ai/v1/search`.
+With a Parallel AI search tool configured, a tool call from the model and the request Lumina builds from it look like this. The outbound body is what `--detailed_debug` prints as the request sent to `https://api.parallel.ai/v1/search`.
 
 ```json title="Tool call emitted by the model"
 {
-  "name": "litellm_web_search",
+  "name": "lumina_web_search",
   "input": {
     "query": "latest stable Node.js release",
     "objective": "Find the most current stable Node.js release version and what changes were included in that release",
@@ -139,7 +139,7 @@ With a Parallel AI search tool configured, a tool call from the model and the re
 }
 ```
 
-```json title="Request LiteLLM sends to Parallel AI"
+```json title="Request Lumina sends to Parallel AI"
 {
   "objective": "Find the most current stable Node.js release version and what changes were included in that release",
   "search_queries": ["latest stable Node.js release", "Node.js newest version changelog", "current Node.js LTS release"],
@@ -226,7 +226,7 @@ Use these values in `enabled_providers`:
 
 ## Search Providers
 
-Configure which search provider to use. LiteLLM supports multiple search providers:
+Configure which search provider to use. Lumina supports multiple search providers:
 
 | Provider | `search_provider` Value | Environment Variable |
 |----------|------------------------|----------------------|
@@ -274,7 +274,7 @@ model_list:
       api_base: https://my-azure.openai.azure.com
       api_key: os.environ/AZURE_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["websearch_interception"]
   websearch_interception_params:
     enabled_providers:
@@ -308,13 +308,13 @@ To use Parallel Search, set `search_tool_name: parallel-search` in `websearch_in
 ### Python SDK
 
 ```python
-import litellm
+import lumina
 
 # Configure callbacks
-litellm.callbacks = ["websearch_interception"]
+lumina.callbacks = ["websearch_interception"]
 
 # Make completion with web search tool
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="{{openai_large}}",
     messages=[
         {"role": "user", "content": "What are the latest AI news?"}
@@ -323,7 +323,7 @@ response = await litellm.acompletion(
         {
             "type": "function",
             "function": {
-                "name": "litellm_web_search",
+                "name": "lumina_web_search",
                 "description": "Search the web for current information",
                 "parameters": {
                     "type": "object",
@@ -347,7 +347,7 @@ print(response.choices[0].message.content)
 
 ```bash
 # Start proxy with config
-litellm --config config.yaml
+lumina --config config.yaml
 
 # Make request
 curl http://localhost:4000/v1/chat/completions \
@@ -362,7 +362,7 @@ curl http://localhost:4000/v1/chat/completions \
       {
         "type": "function",
         "function": {
-          "name": "litellm_web_search",
+          "name": "lumina_web_search",
           "description": "Search the web",
           "parameters": {
             "type": "object",
@@ -421,7 +421,7 @@ search_tools:
 
 4. **Enable debug logging**:
    ```python
-   litellm.set_verbose = True
+   lumina.set_verbose = True
    ```
 
 ### Common Issues
@@ -436,7 +436,7 @@ search_tools:
 
 **Issue**: "Invalid function arguments json string" error (MiniMax)
 - **Cause**: Fixed in latest version - arguments weren't properly JSON serialized
-- **Solution**: Update to latest LiteLLM version
+- **Solution**: Update to latest Lumina version
 
 ## Related Documentation
 
@@ -451,7 +451,7 @@ search_tools:
 
 Web search integration is implemented as a custom callback (`WebSearchInterceptionLogger`) that:
 
-1. **Pre-request Hook**: Converts native web search tools to LiteLLM standard format
+1. **Pre-request Hook**: Converts native web search tools to Lumina standard format
 2. **Post-response Hook**: Detects web search tool calls in responses
 3. **Agentic Loop**: Executes searches and makes follow-up requests automatically
 
@@ -476,4 +476,4 @@ The handler automatically detects response format:
 
 ## Contributing
 
-Found a bug or want to add support for a new provider? See our [Contributing Guide](https://github.com/BerriAI/litellm/blob/main/CONTRIBUTING.md).
+Found a bug or want to add support for a new provider? See our [Contributing Guide](https://github.com/Soventra/lumina/blob/main/CONTRIBUTING.md).

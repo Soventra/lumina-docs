@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.94.1 - Team Key Budget Enforcement Reverted"
+title: "Lumina v1.94.1 - Team Key Budget Enforcement Reverted"
 description: "Reverts user budget enforcement on team keys that locked users out of the Admin UI. Removes skip_user_budget_on_team_key."
 slug: "v1-94-1"
 date: 2026-07-30T21:45:00
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.94.1
+docker.lumina.ai/soventra/lumina:1.94.1
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.94.1
+pip install lumina==1.94.1
 ```
 
 </TabItem>
@@ -54,8 +54,8 @@ The `general_settings.skip_user_budget_on_team_key` flag that `v1.94.0` introduc
 
 ### What's Changed
 
-- revert(proxy): stop enforcing user budget on team keys - [PR #35271](https://github.com/BerriAI/litellm/pull/35271)
+- revert(proxy): stop enforcing user budget on team keys - [PR #35271](https://github.com/Soventra/lumina/pull/35271)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.94.0...v1.94.1
+https://github.com/Soventra/lumina/compare/v1.94.0...v1.94.1

@@ -23,11 +23,11 @@ Before configuring the guardrail, you need two things from the Repello dashboard
 - **API key** — go to your account settings and generate an API key. Set it as `ARGUS_API_KEY` in your environment.
 - **Asset ID** — create an asset in the dashboard and configure the policies you want enforced. Copy the asset ID; this is what you pass as `asset_id` in the config.
 
-Policies (what to block, what to flag, thresholds) are managed entirely from the dashboard on a per-asset basis. The LiteLLM config only points at an asset; it does not define policies inline.
+Policies (what to block, what to flag, thresholds) are managed entirely from the dashboard on a per-asset basis. The Lumina config only points at an asset; it does not define policies inline.
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -58,10 +58,10 @@ export ARGUS_API_KEY="your-argus-api-key"
 export REPELLOAI_API_BASE="https://argusapi.repello.ai/sdk/v1"   # Optional, this is the default
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test request
@@ -158,7 +158,7 @@ RepelloAI supports `post_call` streaming flows by buffering the stream, analyzin
 - returning the original chunks when the output is allowed
 - raising a streaming callback error when the output is blocked
 
-Flagged responses are allowed, but LiteLLM logs a warning so the policy hit is still visible in operator logs.
+Flagged responses are allowed, but Lumina logs a warning so the policy hit is still visible in operator logs.
 
 ## Supported Parameters
 
@@ -195,7 +195,7 @@ guardrails:
 Argus returns one of three verdicts per scan:
 
 - `passed` the request is allowed
-- `flagged` the request is allowed and LiteLLM logs a warning with the violated policies
+- `flagged` the request is allowed and Lumina logs a warning with the violated policies
 - `blocked` the request is blocked with an HTTP 400 listing the violated policies
 
 An unrecognized or missing verdict is treated as `blocked` so an upstream schema change cannot silently disable enforcement.

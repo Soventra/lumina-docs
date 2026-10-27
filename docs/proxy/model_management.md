@@ -8,7 +8,7 @@ This page covers those ongoing operations. If you are adding your very first mod
 
 ## The model list
 
-Go to **Models + Endpoints** and open the **All Models** tab to see every model the gateway currently serves. Each row shows the public model name, the underlying provider and litellm model, and the input and output cost per token that LiteLLM maps automatically from its [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).
+Go to **Models + Endpoints** and open the **All Models** tab to see every model the gateway currently serves. Each row shows the public model name, the underlying provider and lumina model, and the input and output cost per token that Lumina maps automatically from its [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json).
 
 A badge on each model tells you where it came from: models added through the UI or API carry a database badge, while models loaded from `config.yaml` are marked as config. This distinction matters because config models cannot be edited from the UI (see [Database vs config.yaml models](#database-vs-configyaml-models) below). Use the search box and the provider filters to narrow a long list down to the models you care about.
 
@@ -18,7 +18,7 @@ A badge on each model tells you where it came from: models added through the UI 
 
 Click a Model ID in the list to open its detail page. The **Overview** tab summarizes the model's settings and provider, and the **Raw JSON** tab shows the full stored definition, useful when you want to confirm exactly what the gateway is holding.
 
-Click **Edit Settings** to change the model in place. You can update the public model name that clients call, the litellm model name that requests are routed to, and the input and output cost per 1M tokens when you want to override the mapped pricing. Save, and the change takes effect immediately for new requests.
+Click **Edit Settings** to change the model in place. You can update the public model name that clients call, the lumina model name that requests are routed to, and the input and output cost per 1M tokens when you want to override the mapped pricing. Save, and the change takes effect immediately for new requests.
 
 Two more actions live on this page. **Test Connection** re-verifies the model against the provider using its stored credentials, so you can confirm a key still works or that a newly edited setting is valid before clients hit it. **Delete Model** removes the model from the gateway; for database models this deletes the stored definition outright.
 
@@ -46,7 +46,7 @@ With it enabled, every model you add through the UI or the API persists in the d
 
 Database storage does not replace your `config.yaml`. Any models defined there keep working and show up alongside your database models. The one difference is that config models are owned by the file, so they cannot be edited or deleted from the UI; change them in the config and reload. For the config format itself, see [Config.yaml](./configs.md).
 
-Settings behave differently from models here. Anything the UI writes into `general_settings`, `router_settings`, `litellm_settings`, or `environment_variables` is stored in `LiteLLM_Config` and overlaid on top of your `config.yaml` at startup, so the database value wins and editing the same key in the YAML then restarting will not take effect. See [config.yaml vs database settings](./configs.md#configyaml-vs-database-settings).
+Settings behave differently from models here. Anything the UI writes into `general_settings`, `router_settings`, `lumina_settings`, or `environment_variables` is stored in `Lumina_Config` and overlaid on top of your `config.yaml` at startup, so the database value wins and editing the same key in the YAML then restarting will not take effect. See [config.yaml vs database settings](./configs.md#configyaml-vs-database-settings).
 
 ### Choose one source of truth for models
 
@@ -55,11 +55,11 @@ For production deployments, use one primary source of truth for model definition
 | Approach | Storage | Restart required for model changes? | Best for |
 | --- | --- | --- | --- |
 | `config.yaml` | Configuration file | Yes. Reload or restart the proxy tasks after changing the file. | GitOps workflows where every model change is deployed with the application. |
-| Admin UI, management API, or Terraform | LiteLLM database | No. Changes apply to new requests after the write succeeds. | Day-2 operations, frequent model changes, and centralized automation. |
+| Admin UI, management API, or Terraform | Lumina database | No. Changes apply to new requests after the write succeeds. | Day-2 operations, frequent model changes, and centralized automation. |
 
-LiteLLM can load file-based and database-backed models at the same time, but using both as model-management systems creates two sources of truth. A model loaded from `config.yaml` remains owned by that file and cannot be edited or deleted through the UI. Keep model definitions in one system, and continue using `config.yaml` or environment variables for infrastructure settings that are not exposed through the management API.
+Lumina can load file-based and database-backed models at the same time, but using both as model-management systems creates two sources of truth. A model loaded from `config.yaml` remains owned by that file and cannot be edited or deleted through the UI. Keep model definitions in one system, and continue using `config.yaml` or environment variables for infrastructure settings that are not exposed through the management API.
 
-The [LiteLLM Terraform provider](https://github.com/BerriAI/terraform-provider-litellm) calls the same management API used by the Admin UI. It persists resources in the LiteLLM database, so you do not need to build a separate REST client or restart the proxy for model changes.
+The [Lumina Terraform provider](https://github.com/BerriAI/terraform-provider-lumina) calls the same management API used by the Admin UI. It persists resources in the Lumina database, so you do not need to build a separate REST client or restart the proxy for model changes.
 
 ## Automation (API)
 

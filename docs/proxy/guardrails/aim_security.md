@@ -24,12 +24,12 @@ In the newly created guard's page, you can find a reference to the prompt policy
 You can decide which detections will be enabled, and set the threshold for each detection.
 
 :::info 
-When using LiteLLM with virtual keys, key-specific policies can be set directly in Aim's guards page by specifying the virtual key alias when creating the guard.
+When using Lumina with virtual keys, key-specific policies can be set directly in Aim's guards page by specifying the virtual key alias when creating the guard.
 
 Only the aliases of your virtual keys (and not the actual key secrets) will be sent to Aim.
 :::
 
-### 3. Add Aim Guardrail on your LiteLLM config.yaml 
+### 3. Add Aim Guardrail on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 ```yaml
@@ -55,9 +55,9 @@ You can also set `AIM_API_KEY` as an environment variable.
 
 By default, the `api_base` is set to `https://api.aim.security`. If you are using a self-hosted Aim Outpost, you can set the `api_base` to your Outpost's URL.
 
-### 4. Start LiteLLM Gateway
+### 4. Start Lumina Gateway
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 5. Make your first request
@@ -71,7 +71,7 @@ You can adjust the request content to match different guard's policies.
 <TabItem label="Successfully blocked request" value = "blocked">
 
 :::note
-When using LiteLLM with virtual keys, an `Authorization` header with the virtual key is required.
+When using Lumina with virtual keys, an `Authorization` header with the virtual key is required.
 :::
 
 ```shell
@@ -104,7 +104,7 @@ If configured correctly, since `ishaan@berri.ai` would be detected by the Aim Gu
 <TabItem label="Successfully permitted request" value = "allowed">
 
 :::note
-When using LiteLLM with virtual keys, an `Authorization` header with the virtual key is required.
+When using Lumina with virtual keys, an `Authorization` header with the virtual key is required.
 :::
 
 ```shell

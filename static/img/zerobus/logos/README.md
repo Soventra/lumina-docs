@@ -1,9 +1,9 @@
 # Brand assets
 
-These brand marks are reused unchanged from the LiteLLM dashboard's provider
-logos at `BerriAI/litellm`, commit
+These brand marks are reused unchanged from the Lumina dashboard's provider
+logos at `Soventra/lumina`, commit
 `03b1cdb48d0723b4717de3ba5402898f1966df9d`, under
-`ui/litellm-dashboard/public/assets/logos/`.
+`ui/lumina-dashboard/public/assets/logos/`.
 
 | File | Source file |
 | --- | --- |

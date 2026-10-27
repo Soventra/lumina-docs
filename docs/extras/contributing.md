@@ -5,8 +5,8 @@ This website is built using [Docusaurus 3](https://docusaurus.io/), a modern sta
 Clone the docs repo:
 
 ```bash
-git clone https://github.com/BerriAI/litellm-docs.git
-cd litellm-docs
+git clone https://github.com/Soventra/lumina-docs.git
+cd lumina-docs
 ```
 
 ### Local setup for locally running docs
@@ -38,4 +38,4 @@ Before opening a PR, run:
 npm run build
 ```
 
-After testing your changes, open a pull request against [github.com/BerriAI/litellm-docs](https://github.com/BerriAI/litellm-docs).
+After testing your changes, open a pull request against [github.com/Soventra/lumina-docs](https://github.com/Soventra/lumina-docs).

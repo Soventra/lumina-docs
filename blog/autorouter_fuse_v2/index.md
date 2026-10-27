@@ -17,9 +17,9 @@ We’re improving Fuse V2 by combining complexity and capability assessment to l
 
 :::info[Help shape the Auto-Router]
 
-Work with the LiteLLM team to evaluate routing on your production traffic.
+Work with the Lumina team to evaluate routing on your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::
 
@@ -53,7 +53,7 @@ We want to predict when a model will struggle with a task and when another model
 
 We ask the judge for both assessments at the start of each task, then reuse the model choice. We choose between solvers using the difference in their predicted success probabilities.
 
-In this experiment, we compared Sonnet 5 and Opus 5, with GPT-5.4-mini as the judge. See the [Fuse V2 implementation](https://github.com/BerriAI/litellm/blob/32326a08184497431a20d63c4e1f08d7ad05dc07/litellm/router_strategy/complexity_router/llm_v2.py).
+In this experiment, we compared Sonnet 5 and Opus 5, with GPT-5.4-mini as the judge. See the [Fuse V2 implementation](https://github.com/Soventra/lumina/blob/32326a08184497431a20d63c4e1f08d7ad05dc07/lumina/router_strategy/complexity_router/llm_v2.py).
 
 ## Learning where each model works
 
@@ -76,12 +76,12 @@ Our goal is to match the capability classifier’s cost while delivering the com
 
 - **Harness:** Harbor 0.22.0 with mini-swe-agent 2.4.6; the same agent configuration and budgets across arms.
 - **Tasks:** 25 SWE-bench Verified tasks, sampled with seed `20260911`; one attempt per task and configuration.
-- **Scoring and cost:** Harbor verifier `reward == 1.0`; LiteLLM spend logs with prompt caching enabled across arms. We excluded superseded setup-failure trials.
+- **Scoring and cost:** Harbor verifier `reward == 1.0`; Lumina spend logs with prompt caching enabled across arms. We excluded superseded setup-failure trials.
 
 :::info[Become an Auto-Router design partner]
 
-Work with the LiteLLM team to test Fuse V2 on your workload and help improve model selection.
+Work with the Lumina team to test Fuse V2 on your workload and help improve model selection.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::

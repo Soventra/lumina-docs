@@ -126,7 +126,7 @@ type CloudKey =
   | 'azure-aks'
   | 'azure-aks-micro';
 
-const MONO_PILLS = ['litellm', 'litellm', 'litellm'];
+const MONO_PILLS = ['lumina', 'lumina', 'lumina'];
 const MICRO_PILLS = ['gateway', 'backend', 'ui'];
 
 const CLOUD_SPECS: Record<
@@ -153,7 +153,7 @@ const CLOUD_SPECS: Record<
   },
   'aws-eks': {
     lb: { icon: 'aws-elb.svg', title: 'Load Balancer', subtitle: 'ALB or NLB via Service / Ingress' },
-    compute: { icon: 'aws-eks.svg', title: 'EKS', subtitle: 'litellm-helm chart, HPA on CPU', pills: MONO_PILLS },
+    compute: { icon: 'aws-eks.svg', title: 'EKS', subtitle: 'lumina-helm chart, HPA on CPU', pills: MONO_PILLS },
     data: [
       { icon: 'aws-rds.svg', title: 'RDS PostgreSQL', subtitle: 'DATABASE_URL' },
       { icon: 'aws-elasticache.svg', title: 'ElastiCache Redis', subtitle: 'REDIS_HOST / PORT / PASSWORD' },
@@ -164,7 +164,7 @@ const CLOUD_SPECS: Record<
     compute: {
       icon: 'aws-eks.svg',
       title: 'EKS',
-      subtitle: 'litellm chart: gateway :4000, backend :4001, ui :3000',
+      subtitle: 'lumina chart: gateway :4000, backend :4001, ui :3000',
       pills: MICRO_PILLS,
     },
     data: [
@@ -190,7 +190,7 @@ const CLOUD_SPECS: Record<
     compute: {
       icon: 'gcp-google-kubernetes-engine.svg',
       title: 'GKE',
-      subtitle: 'litellm-helm chart, HPA on CPU',
+      subtitle: 'lumina-helm chart, HPA on CPU',
       pills: MONO_PILLS,
     },
     data: [
@@ -203,7 +203,7 @@ const CLOUD_SPECS: Record<
     compute: {
       icon: 'gcp-google-kubernetes-engine.svg',
       title: 'GKE',
-      subtitle: 'litellm chart: gateway :4000, backend :4001, ui :3000',
+      subtitle: 'lumina chart: gateway :4000, backend :4001, ui :3000',
       pills: MICRO_PILLS,
     },
     data: [
@@ -216,7 +216,7 @@ const CLOUD_SPECS: Record<
     compute: {
       icon: 'azure-kubernetes-services.svg',
       title: 'AKS',
-      subtitle: 'litellm-helm chart, HPA on CPU',
+      subtitle: 'lumina-helm chart, HPA on CPU',
       pills: MONO_PILLS,
     },
     data: [
@@ -229,7 +229,7 @@ const CLOUD_SPECS: Record<
     compute: {
       icon: 'azure-kubernetes-services.svg',
       title: 'AKS',
-      subtitle: 'litellm chart: gateway :4000, backend :4001, ui :3000',
+      subtitle: 'lumina chart: gateway :4000, backend :4001, ui :3000',
       pills: MICRO_PILLS,
     },
     data: [
@@ -432,7 +432,7 @@ export function MultiRegionArchitecture() {
         <Branch legs={2} />
         <div className={styles.regionsRow}>
           <Region name={spec.primaryRegion} brandIcon={spec.brand} primary>
-            <Node icon="kubernetes.svg" title="LiteLLM instances" subtitle="regional load balancer + pods" small />
+            <Node icon="kubernetes.svg" title="Lumina instances" subtitle="regional load balancer + pods" small />
             <ConnectorDown />
             <Node icon="redis.svg" title="Regional Redis" subtitle="rate limits, router state, cache" small />
             <ConnectorDown />
@@ -445,7 +445,7 @@ export function MultiRegionArchitecture() {
             />
           </Region>
           <Region name={spec.secondaryRegion} brandIcon={spec.brand}>
-            <Node icon="kubernetes.svg" title="LiteLLM instances" subtitle="regional load balancer + pods" small />
+            <Node icon="kubernetes.svg" title="Lumina instances" subtitle="regional load balancer + pods" small />
             <ConnectorDown />
             <Node icon="redis.svg" title="Regional Redis" subtitle="rate limits, router state, cache" small />
             <ConnectorDown label="reads (optional replica), writes go to primary" />
@@ -460,8 +460,8 @@ export function MultiRegionArchitecture() {
         <div className={`${styles.callout} ${styles.calloutSuccess}`}>
           <span>
             One Enterprise license covers every region. Each instance validates the same
-            LITELLM_LICENSE, and user / team limits are counted from the single shared database. All
-            instances must also share the same LITELLM_MASTER_KEY and LITELLM_SALT_KEY.
+            LUMINA_LICENSE, and user / team limits are counted from the single shared database. All
+            instances must also share the same LUMINA_MASTER_KEY and LUMINA_SALT_KEY.
           </span>
         </div>
       </div>

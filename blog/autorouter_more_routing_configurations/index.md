@@ -6,7 +6,7 @@ authors:
   - tin
 image: ./hero.png
 description: "The Auto-Router now supports more routing configurations: context-window escalation moves oversized prompts to the cheapest tier that fits them before dispatch, modality routing sends image requests to tiers that can see, classification can run on user turns only, and shadow evaluations can compare several router configs on a team's live traffic."
-keywords: [auto router, complexity router, context window routing, modality routing, capability routing, model routing, shadow evaluation, litellm auto routing, llm gateway]
+keywords: [auto router, complexity router, context window routing, modality routing, capability routing, model routing, shadow evaluation, lumina auto routing, llm gateway]
 tags: [routing, complexity-router, engineering]
 hide_table_of_contents: false
 ---
@@ -19,13 +19,13 @@ The Auto-Router picks a model by asking how hard the request is. This release ad
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -117,8 +117,8 @@ Context-window escalation is already on; long sessions just stop failing. Modali
 
 :::info[Try it on your traffic]
 
-Point a shadow-eval job at your busiest team, compare your current config against one with the new gates on, and tell us what you see in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), or
+Point a shadow-eval job at your busiest team, compare your current config against one with the new gates on, and tell us what you see in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168), or
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::

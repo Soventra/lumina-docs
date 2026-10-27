@@ -94,7 +94,7 @@ For coordinating checks across multiple pods so expensive models are not probed 
 
 ## Model modes
 
-The health check picks the operation to test from the model's `model_info.mode`. Set it so the probe uses the right API surface; if you leave it unset, LiteLLM auto-detects from the model's capabilities and falls back to a chat completion.
+The health check picks the operation to test from the model's `model_info.mode`. Set it so the probe uses the right API surface; if you leave it unset, Lumina auto-detects from the model's capabilities and falls back to a chat completion.
 
 | `mode` | Health check calls |
 |--------|--------------------|
@@ -143,7 +143,7 @@ Set these under a model's `model_info` unless noted otherwise. They control how 
 | `health_check_model` | unset | Concrete model a wildcard route probes |
 | `disable_background_health_check` | false | Skip this model in the background loop |
 
-Reasoning models often need a higher probe `max_tokens` because providers count reasoning tokens toward the completion budget; the separate reasoning and non-reasoning keys let you raise it without listing every model. Three environment variables set global defaults: `DEFAULT_HEALTH_CHECK_PROMPT` overrides the default probe prompt (`"test from litellm"`), `BACKGROUND_HEALTH_CHECK_MAX_TOKENS` is the global `max_tokens` fallback, and `BACKGROUND_HEALTH_CHECK_MAX_TOKENS_REASONING` takes precedence for non-wildcard reasoning models.
+Reasoning models often need a higher probe `max_tokens` because providers count reasoning tokens toward the completion budget; the separate reasoning and non-reasoning keys let you raise it without listing every model. Three environment variables set global defaults: `DEFAULT_HEALTH_CHECK_PROMPT` overrides the default probe prompt (`"test from lumina"`), `BACKGROUND_HEALTH_CHECK_MAX_TOKENS` is the global `max_tokens` fallback, and `BACKGROUND_HEALTH_CHECK_MAX_TOKENS_REASONING` takes precedence for non-wildcard reasoning models.
 
 To route traffic away from deployments that fail health checks, see [Health Check Driven Routing](./health_check_routing.md).
 

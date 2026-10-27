@@ -13,7 +13,7 @@ Contents of `parent_config.yaml`:
 include:
   - model_config.yaml # Key change, will include the contents of model_config.yaml
 
-litellm_settings:
+lumina_settings:
   callbacks: ["prometheus"] 
 ```
 
@@ -36,7 +36,7 @@ Start proxy server
 
 This will start the proxy server with config `parent_config.yaml`. Since the `include` directive is used, the server will also include the contents of `model_config.yaml`.
 ```
-litellm --config parent_config.yaml --detailed_debug
+lumina --config parent_config.yaml --detailed_debug
 ```
 
 

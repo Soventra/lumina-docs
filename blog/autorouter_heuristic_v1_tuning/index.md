@@ -6,7 +6,7 @@ authors:
   - tin
 description: "Tune AutoRouter heuristic dimensions for specific workloads, improve classification accuracy, and configure tiers from models you already serve."
 image: ./hero.png
-keywords: [auto router, heuristic routing, dimension weights, model routing, llm benchmark, litellm]
+keywords: [auto router, heuristic routing, dimension weights, model routing, llm benchmark, lumina]
 tags: [routing, complexity-router, benchmarks, engineering, product]
 hide_table_of_contents: false
 ---
@@ -19,13 +19,13 @@ Heuristic v1 scores seven prompt signals, including reasoning language, code, te
 
 :::info[🚀 Help shape the Auto-Router]
 
-Test heuristic tuning on your production traffic with the LiteLLM team and influence the roadmap.
+Test heuristic tuning on your production traffic with the Lumina team and influence the roadmap.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Share benchmark results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Share benchmark results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -63,7 +63,7 @@ The [shadow evaluation workflow](/docs/auto_router/evaluate) tests a candidate o
 
 ## Auto-configure from models you already have
 
-Select **Configure automatically**. LiteLLM checks the models your proxy can access and, using current family presets, picks the best available model for each routing tier.
+Select **Configure automatically**. Lumina checks the models your proxy can access and, using current family presets, picks the best available model for each routing tier.
 
 - Each tier uses a model from your existing deployments.
 - The configuration opens for review before you save it.
@@ -95,7 +95,7 @@ Recent AutoRouter changes also cover long-running agent sessions:
 
 :::info
 
-Open **Add Model → Auto Router** and select **Configure automatically**. Review the generated tiers, then test them against your traffic. Share results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), or [apply to be a design partner](https://calendly.com/tin-berri/litellm-auto-router-design-partner) to work with the LiteLLM team.
+Open **Add Model → Auto Router** and select **Configure automatically**. Review the generated tiers, then test them against your traffic. Share results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168), or [apply to be a design partner](https://calendly.com/tin-berri/lumina-auto-router-design-partner) to work with the Lumina team.
 
 :::
 

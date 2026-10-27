@@ -11,12 +11,12 @@ You.com offers two tiers:
 
 If `YOUCOM_API_KEY` is not set, the adapter automatically uses the keyless endpoint, so no signup is required to start.
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ### Keyless (zero config)
 
 ```python showLineNumbers title="You.com Search - keyless"
-from litellm import search
+from lumina import search
 
 response = search(
     query="latest AI developments",
@@ -33,7 +33,7 @@ for result in response.results:
 
 ```python showLineNumbers title="You.com Search - keyed"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["YOUCOM_API_KEY"] = "sk-..."
 
@@ -44,7 +44,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -66,7 +66,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -88,7 +88,7 @@ curl http://0.0.0.0:4000/v1/search/you-com-search \
 You.com supports the standard Perplexity unified spec parameters:
 
 ```python showLineNumbers title="You.com Search with unified parameters"
-from litellm import search
+from lumina import search
 
 response = search(
     query="machine learning research",
@@ -111,7 +111,7 @@ response = search(
 You can pass any You.com-specific parameter as a keyword argument; unrecognized parameters are forwarded to the upstream request body:
 
 ```python showLineNumbers title="You.com Search with provider-specific parameters"
-from litellm import search
+from lumina import search
 
 response = search(
     query="AI breakthroughs",
@@ -125,7 +125,7 @@ response = search(
 
 ## Response Notes
 
-You.com's API returns results split into `web` and `news` arrays. The LiteLLM adapter flattens both into a single ordered `results` list (web first, then news) so the response matches the unified [`SearchResponse`](/docs/search#response-format) shape.
+You.com's API returns results split into `web` and `news` arrays. The Lumina adapter flattens both into a single ordered `results` list (web first, then news) so the response matches the unified [`SearchResponse`](/docs/search#response-format) shape.
 
 For each result:
 - `snippet` prefers the first entry of the upstream `snippets` array; falls back to `description`.

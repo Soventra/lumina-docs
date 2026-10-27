@@ -1,6 +1,6 @@
 ---
 title: "Kubernetes"
-description: "Deploy independent Lens with its own Helm chart and optional LiteLLM connection."
+description: "Deploy independent Lens with its own Helm chart and optional Lumina connection."
 slug: "/proxy/lens/deployment/kubernetes"
 ---
 
@@ -39,11 +39,11 @@ Keep that credential private. Helm reuses generated credentials on upgrades, and
 
 For [external ClickHouse](./storage.md#external-clickhouse), provide a stable endpoint reaching one server with KeeperMap. Multiple Lens replicas may share that server. Multi-server load balancing and automatic failover to a different ClickHouse server are outside the supported topology
 
-## Connect an existing LiteLLM deployment {#existing-deployment}
+## Connect an existing Lumina deployment {#existing-deployment}
 
 Use **external** mode when Lens already runs in its own release or on a platform such as Render. This connects the gateway to Lens without deploying another Lens or ClickHouse instance.
 
-First complete [steps 1–3 of Add Lens to LiteLLM](./litellm.md#1-get-the-lens-address). The gateway must have the adapter and UI described in that guide. Keep your existing gateway chart family, release name, namespace, and model configuration.
+First complete [steps 1–3 of Add Lens to Lumina](./lumina.md#1-get-the-lens-address). The gateway must have the adapter and UI described in that guide. Keep your existing gateway chart family, release name, namespace, and model configuration.
 
 ### 1. Store the connection secrets
 
@@ -86,8 +86,8 @@ lensWorker:
 
 Add the tracing store setting in the same file. Use the block for your existing chart:
 
-<Tabs groupId="litellm-chart">
-<TabItem value="combined" label="litellm-helm chart">
+<Tabs groupId="lumina-chart">
+<TabItem value="combined" label="lumina-helm chart">
 
 ```yaml
 proxy_config:
@@ -98,7 +98,7 @@ proxy_config:
 ```
 
 </TabItem>
-<TabItem value="split" label="Componentized litellm chart">
+<TabItem value="split" label="Componentized lumina chart">
 
 ```yaml
 gateway:
@@ -135,7 +135,7 @@ helm upgrade "$GATEWAY_RELEASE" "$GATEWAY_CHART" \
 
 This rolls the gateway pods to load the connection settings. For GitOps, commit the values and Secret references through your normal review and sync process instead.
 
-Sign in to LiteLLM, select **Lens**, and complete [the connection check](./litellm.md#5-open-lens-in-the-gateway). Then [send your first trace](../first-trace.md).
+Sign in to Lumina, select **Lens**, and complete [the connection check](./lumina.md#5-open-lens-in-the-gateway). Then [send your first trace](../first-trace.md).
 
 If Lens is already owned by the gateway's Helm release, do not change it to external mode with this procedure. Use the [ownership-transfer guide](https://github.com/BerriAI/lens/blob/main/helm/lens/README.md#select-versions-independently) to preserve its resources and storage first.
 

@@ -29,11 +29,11 @@ The web fetch tool allows LLMs to retrieve full content from specified web pages
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -62,7 +62,7 @@ response = completion(
 print(response)
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 1. Define web fetch models on config.yaml
 
@@ -77,7 +77,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it using the OpenAI Python SDK
@@ -87,7 +87,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # your litellm proxy api key
+    api_key="sk-<your-lumina-api-key>", # your lumina proxy api key
     base_url="http://0.0.0.0:4000"
 )
 
@@ -137,7 +137,7 @@ The web fetch tool currently does not support websites dynamically rendered via 
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -169,7 +169,7 @@ print(response)
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -201,7 +201,7 @@ print(response)
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -235,7 +235,7 @@ You can combine web fetch with other tools like computer use or text editor:
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 

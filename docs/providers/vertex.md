@@ -9,13 +9,13 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Vertex AI, renamed Gemini Enterprise Agent Platform by Google in 2026, is Google Cloud's fully-managed platform for building and using generative AI. |
-| Provider Route on LiteLLM | `vertex_ai/` |
+| Provider Route on Lumina | `vertex_ai/` |
 | Link to Provider Doc | [Gemini Enterprise Agent Platform (formerly Vertex AI) ↗](https://cloud.google.com/products/gemini-enterprise-agent-platform) |
 | Base URL | 1. Regional endpoints<br/>`https://{vertex_location}-aiplatform.googleapis.com/`<br/>2. Global endpoints (limited availability)<br/>`https://aiplatform.googleapis.com/`|
 | Supported Operations | [`/chat/completions`](#sample-usage), `/completions`, [`/embeddings`](#embedding-models), [`/audio/speech`](/docs/providers/vertex_speech), [`/audio/transcriptions`](/docs/providers/vertex_transcription), [`/fine_tuning`](#fine-tuning-apis), [`/batches`](/docs/providers/vertex_batch), [`/files`](/docs/providers/vertex_batch), `/images`, [`/rerank`](#rerank-api) |
 
 :::info[Vertex AI is now Gemini Enterprise Agent Platform]
-Google renamed Vertex AI to Gemini Enterprise Agent Platform (Agent Platform for short) in 2026. It is a brand rename only: the API host (`{vertex_location}-aiplatform.googleapis.com`), the model IDs, GCP authentication, and the request and response shapes are unchanged, so LiteLLM keeps `vertex_ai/` as the provider route. Nothing changes in your `model_list`, credentials, routing, or cost tracking. Google's [name change table](https://docs.cloud.google.com/gemini-enterprise-agent-platform/vertex-ai-name-changes) maps each old product name to its new one.
+Google renamed Vertex AI to Gemini Enterprise Agent Platform (Agent Platform for short) in 2026. It is a brand rename only: the API host (`{vertex_location}-aiplatform.googleapis.com`), the model IDs, GCP authentication, and the request and response shapes are unchanged, so Lumina keeps `vertex_ai/` as the provider route. Nothing changes in your `model_list`, credentials, routing, or cost tracking. Google's [name change table](https://docs.cloud.google.com/gemini-enterprise-agent-platform/vertex-ai-name-changes) maps each old product name to its new one.
 :::
 
 :::tip[Vertex AI vs Gemini API]
@@ -33,7 +33,7 @@ Models without a prefix default to Vertex AI which requires GCP authentication.
 <br />
 <br />
 
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/liteLLM_VertextAI_Example.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_VertextAI_Example.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
@@ -42,7 +42,7 @@ Models without a prefix default to Vertex AI which requires GCP authentication.
 The `vertex_ai/` route uses [Vertex AI's REST API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/reference/models/inference#syntax).
 
 ```python
-from litellm import completion
+from lumina import completion
 import json 
 
 ## GET CREDENTIALS 
@@ -69,7 +69,7 @@ response = completion(
 ### **System Message**
 
 ```python
-from litellm import completion
+from lumina import completion
 import json 
 
 ## GET CREDENTIALS 
@@ -95,7 +95,7 @@ response = completion(
 Force Gemini to make tool calls with `tool_choice="required"`.
 
 ```python
-from litellm import completion
+from lumina import completion
 import json 
 
 ## GET CREDENTIALS 
@@ -112,7 +112,7 @@ vertex_credentials_json = json.dumps(vertex_credentials)
 messages = [
     {
         "role": "system",
-        "content": "Your name is Litellm Bot, you are a helpful assistant",
+        "content": "Your name is Lumina Bot, you are a helpful assistant",
     },
     # User asks for their name and weather in San Francisco
     {
@@ -155,14 +155,14 @@ print(completion(**data))
 
 ### **JSON Schema**
 
-From v`1.40.1+` LiteLLM supports sending `response_schema` as a param for Gemini models on Vertex AI (e.g. `{{gemini_pro}}`). For models that don't support it natively, LiteLLM adds the schema to the message list with a user-controlled prompt.
+From v`1.40.1+` Lumina supports sending `response_schema` as a param for Gemini models on Vertex AI (e.g. `{{gemini_pro}}`). For models that don't support it natively, Lumina adds the schema to the message list with a user-controlled prompt.
 
 **Response Schema**
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import json 
 
 ## SETUP ENVIRONMENT
@@ -217,7 +217,7 @@ model_list:
   - model_name: {{gemini_pro}}
     lumina_params:
       model: vertex_ai/{{gemini_pro}}
-      litellm_credential_name: vertex-global
+      lumina_credential_name: vertex-global
       vertex_project: project-name-here
       vertex_location: global
       base_model: gemini
@@ -228,7 +228,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -269,7 +269,7 @@ To validate the response_schema, set `enforce_validation: true`.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion, JSONSchemaValidationError
+from lumina import completion, JSONSchemaValidationError
 try: 
 	completion(
     model="vertex_ai/{{gemini_pro}}", 
@@ -301,7 +301,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -336,7 +336,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 </TabItem>
 </Tabs>
 
-LiteLLM will validate the response against the schema, and raise a `JSONSchemaValidationError` if the response does not match the schema. 
+Lumina will validate the response against the schema, and raise a `JSONSchemaValidationError` if the response does not match the schema. 
 
 JSONSchemaValidationError inherits from `openai.APIError` 
 
@@ -345,7 +345,7 @@ Access the raw response with `e.raw_response`
 **Add to prompt yourself**
 
 ```python 
-from litellm import completion 
+from lumina import completion 
 
 ## GET CREDENTIALS 
 file_path = 'path/to/vertex_ai_service_account.json'
@@ -389,14 +389,14 @@ See the grounding metadata with `response_obj._hidden_params["vertex_ai_groundin
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import completion 
+from lumina import completion 
 
 ## SETUP ENVIRONMENT
 # !gcloud auth application-default login - run this to add vertex credentials to your env
 
 tools = [{"googleSearch": {}}] # ADD GOOGLE SEARCH
 
-resp = litellm.completion(
+resp = lumina.completion(
                     model="vertex_ai/{{gemini_pro}}",
                     messages=[{"role": "user", "content": "Who won the world cup?"}],
                     tools=tools,
@@ -414,8 +414,8 @@ print(resp)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # pass litellm proxy key, if you're using virtual keys
-    base_url="http://0.0.0.0:4000/v1/" # point to litellm proxy
+    api_key="sk-<your-lumina-api-key>", # pass lumina proxy key, if you're using virtual keys
+    base_url="http://0.0.0.0:4000/v1/" # point to lumina proxy
 )
 
 response = client.chat.completions.create(
@@ -463,7 +463,7 @@ See the grounding metadata with `response_obj._hidden_params["vertex_ai_url_cont
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = ".."
@@ -500,14 +500,14 @@ model_list:
 
 2. Start Proxy
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [{"role": "user", "content": "Summarize this document: https://ai.google.dev/gemini-api/docs/models"}],
@@ -525,14 +525,14 @@ You can also use the `enterpriseWebSearch` tool for an [enterprise compliant sea
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import completion 
+from lumina import completion 
 
 ## SETUP ENVIRONMENT
 # !gcloud auth application-default login - run this to add vertex credentials to your env
 
 tools = [{"enterpriseWebSearch": {}}] # ADD GOOGLE ENTERPRISE SEARCH
 
-resp = litellm.completion(
+resp = lumina.completion(
                     model="vertex_ai/{{gemini_pro}}",
                     messages=[{"role": "user", "content": "Who won the world cup?"}],
                     tools=tools,
@@ -550,8 +550,8 @@ print(resp)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # pass litellm proxy key, if you're using virtual keys
-    base_url="http://0.0.0.0:4000/v1/" # point to litellm proxy
+    api_key="sk-<your-lumina-api-key>", # pass lumina proxy key, if you're using virtual keys
+    base_url="http://0.0.0.0:4000/v1/" # point to lumina proxy
 )
 
 response = client.chat.completions.create(
@@ -596,7 +596,7 @@ curl http://localhost:4000/v1/chat/completions \
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 ## SETUP ENVIRONMENT
@@ -648,14 +648,14 @@ Use Google Maps to provide location-based context to your Gemini models.
 **Basic Usage - Enable Widget Only**
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 ## SETUP ENVIRONMENT
 # !gcloud auth application-default login - run this to add vertex credentials to your env
 
 tools = [{"googleMaps": {"enableWidget": "ENABLE_WIDGET"}}] # ADD GOOGLE MAPS
 
-resp = litellm.completion(
+resp = lumina.completion(
     model="vertex_ai/{{gemini_flash}}",
     messages=[{"role": "user", "content": "What restaurants are nearby?"}],
     tools=tools,
@@ -669,7 +669,7 @@ print(resp)
 You can specify a location to ground the model's responses with location-specific information:
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 ## SETUP ENVIRONMENT
 # !gcloud auth application-default login - run this to add vertex credentials to your env
@@ -683,7 +683,7 @@ tools = [{
     }
 }] # ADD GOOGLE MAPS WITH LOCATION
 
-resp = litellm.completion(
+resp = lumina.completion(
     model="vertex_ai/{{gemini_flash}}",
     messages=[{"role": "user", "content": "What restaurants are nearby?"}],
     tools=tools,
@@ -704,8 +704,8 @@ print(resp)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # pass litellm proxy key, if you're using virtual keys
-    base_url="http://0.0.0.0:4000/v1/" # point to litellm proxy
+    api_key="sk-<your-lumina-api-key>", # pass lumina proxy key, if you're using virtual keys
+    base_url="http://0.0.0.0:4000/v1/" # point to lumina proxy
 )
 
 response = client.chat.completions.create(
@@ -723,8 +723,8 @@ print(response)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # pass litellm proxy key, if you're using virtual keys
-    base_url="http://0.0.0.0:4000/v1/" # point to litellm proxy
+    api_key="sk-<your-lumina-api-key>", # pass lumina proxy key, if you're using virtual keys
+    base_url="http://0.0.0.0:4000/v1/" # point to lumina proxy
 )
 
 response = client.chat.completions.create(
@@ -793,7 +793,7 @@ curl http://localhost:4000/v1/chat/completions \
 </TabItem>
 </Tabs>
 
-#### **Moving from Vertex AI SDK to LiteLLM (GROUNDING)**
+#### **Moving from Vertex AI SDK to Lumina (GROUNDING)**
 
 
 If this was your initial VertexAI Grounding code,
@@ -825,14 +825,14 @@ print(response)
 then, this is what it looks like now
 
 ```python
-from litellm import completion
+from lumina import completion
 
 
 # !gcloud auth application-default login - run this to add vertex credentials to your env
 
 tools = [{"googleSearch": {"disable_attributon": False}}] # ADD GOOGLE SEARCH
 
-resp = litellm.completion(
+resp = lumina.completion(
                     model="vertex_ai/{{gemini_pro}}",
                     messages=[{"role": "user", "content": "Who won the world cup?"}],
                     tools=tools,
@@ -845,7 +845,7 @@ print(resp)
 
 ### **Thinking / `reasoning_content`**
 
-LiteLLM translates OpenAI's `reasoning_effort` to Gemini's `thinking` parameter. [Code](https://github.com/BerriAI/litellm/blob/620664921902d7a9bfb29897a7b27c1a7ef4ddfb/litellm/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py#L362)
+Lumina translates OpenAI's `reasoning_effort` to Gemini's `thinking` parameter. [Code](https://github.com/Soventra/lumina/blob/620664921902d7a9bfb29897a7b27c1a7ef4ddfb/lumina/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py#L362)
 
 Added an additional non-OpenAI standard "disable" value for non-reasoning Gemini requests.
 
@@ -862,7 +862,7 @@ Added an additional non-OpenAI standard "disable" value for non-reasoning Gemini
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # !gcloud auth application-default login - run this to add vertex credentials to your env
 
@@ -894,7 +894,7 @@ resp = completion(
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -902,7 +902,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -963,11 +963,11 @@ This is translated to Gemini's [`thinkingConfig` parameter](https://ai.google.de
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # !gcloud auth application-default login - run this to add vertex credentials to your env
 
-response = litellm.completion(
+response = lumina.completion(
   model="vertex_ai/{{gemini_flash}}",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   thinking={"type": "enabled", "budget_tokens": 1024},
@@ -996,9 +996,9 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ### **Long outputs**
 
-On a model that ends a request with a `continuationToken`, such as Gemini 4 Argon, LiteLLM sends the request again with that token until the answer finishes or `max_tokens` is spent, so `max_tokens` can go above Google's per-request cap. [Long outputs](/blog/gemini-4-argon#long-outputs) covers how it works, the usage it reports and the timeouts it needs.
+On a model that ends a request with a `continuationToken`, such as Gemini 4 Argon, Lumina sends the request again with that token until the answer finishes or `max_tokens` is spent, so `max_tokens` can go above Google's per-request cap. [Long outputs](/blog/gemini-4-argon#long-outputs) covers how it works, the usage it reports and the timeouts it needs.
 
-A request that sends no output limit is sent once and stops at Google's own per-request limit. From v1.108.0, set the env var `LUMINA_GEMINI_DEFAULT_MAX_OUTPUT_TOKENS` to an integer to give those requests a budget. It applies to chat completion, text completion and Responses API requests through the proxy or the Python SDK, and never to `/v1/messages`, which requires `max_tokens`. LiteLLM caps the budget at the model's `max_output_tokens` in the cost map, and any output limit the request already carries wins. It is not applied to a model the cost map does not list as a chat model, such as an image model, to a model whose cost map `supported_output_modalities` leaves out text, to a request whose `modalities` asks for anything besides text, to a request that resumes with a `continuation_token`, or to the native `:generateContent` route on a `vertex_ai/` model. A large value makes a non-streamed request run as long as the answer, so stream long answers or raise the client's timeout. The [env var reference](/docs/proxy/config_settings#environment-variables---reference) lists every case.
+A request that sends no output limit is sent once and stops at Google's own per-request limit. From v1.108.0, set the env var `LUMINA_GEMINI_DEFAULT_MAX_OUTPUT_TOKENS` to an integer to give those requests a budget. It applies to chat completion, text completion and Responses API requests through the proxy or the Python SDK, and never to `/v1/messages`, which requires `max_tokens`. Lumina caps the budget at the model's `max_output_tokens` in the cost map, and any output limit the request already carries wins. It is not applied to a model the cost map does not list as a chat model, such as an image model, to a model whose cost map `supported_output_modalities` leaves out text, to a request whose `modalities` asks for anything besides text, to a request that resumes with a `continuation_token`, or to the native `:generateContent` route on a `vertex_ai/` model. A large value makes a non-streamed request run as long as the answer, so stream long answers or raise the client's timeout. The [env var reference](/docs/proxy/config_settings#environment-variables---reference) lists every case.
 
 
 ### **Context Caching**
@@ -1014,7 +1014,7 @@ Use Vertex AI context caching in the same way as [**Google AI Studio -  Context 
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 for _ in range(2): 
     resp = completion(
@@ -1051,7 +1051,7 @@ for _ in range(2):
 <TabItem value="sdk-ttl" label="SDK with Custom TTL">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 # Cache for 2 hours (7200 seconds)
 resp = completion(
@@ -1107,7 +1107,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1156,7 +1156,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ##### 1. Create the Cache
 
-First, create the cache by sending a `POST` request to the `cachedContents` endpoint via the LiteLLM proxy.
+First, create the cache by sending a `POST` request to the `cachedContents` endpoint via the Lumina proxy.
 
 <Tabs>
 <TabItem value="proxy" label="PROXY">
@@ -1241,16 +1241,16 @@ curl http://0.0.0.0:4000/chat/completions \
 
 ## Sample Usage
 ```python
-import litellm
-litellm.vertex_project = "hardy-device-38811" # Your Project ID
-litellm.vertex_location = "us-central1"  # proj location
+import lumina
+lumina.vertex_project = "hardy-device-38811" # Your Project ID
+lumina.vertex_location = "us-central1"  # proj location
 
-response = litellm.completion(model="{{gemini_pro}}", messages=[{"role": "user", "content": "write code for saying hi from LiteLLM"}])
+response = lumina.completion(model="{{gemini_pro}}", messages=[{"role": "user", "content": "write code for saying hi from Lumina"}])
 ```
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
-Here's how to use Vertex AI with the LiteLLM Proxy Server
+Here's how to use Vertex AI with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -1276,12 +1276,12 @@ Here's how to use Vertex AI with the LiteLLM Proxy Server
 
   </TabItem>
 
-  <TabItem value="litellm_param" label="One location all vertex models">
+  <TabItem value="lumina_param" label="One location all vertex models">
 
   Use this when you have one vertex location for all models
 
   ```yaml
-  litellm_settings: 
+  lumina_settings: 
     vertex_project: "hardy-device-38811" # Your Project ID
     vertex_location: "us-central1" # proj location
 
@@ -1298,10 +1298,10 @@ Here's how to use Vertex AI with the LiteLLM Proxy Server
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -1310,8 +1310,8 @@ Here's how to use Vertex AI with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -1364,13 +1364,13 @@ You can set:
 - `vertex_location` (str) - place where vertex model is deployed (us-central1, asia-southeast1, etc.). Some models support the global location, please see [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/locations#supported_models)
 - `vertex_project` Optional[str] - use if vertex project different from the one in vertex_credentials
 
-as dynamic params for a `litellm.completion` call. 
+as dynamic params for a `lumina.completion` call. 
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import json 
 
 ## GET CREDENTIALS 
@@ -1414,7 +1414,7 @@ model_list:
 
 ### **Workload Identity Federation**
 
-LiteLLM supports [Google Cloud Workload Identity Federation (WIF)](https://cloud.google.com/iam/docs/workload-identity-federation), which allows you to grant on-premises or multi-cloud workloads access to Google Cloud resources without using a service account key. This is the recommended approach for workloads running in other cloud environments (AWS, Azure, etc.) or on-premises.
+Lumina supports [Google Cloud Workload Identity Federation (WIF)](https://cloud.google.com/iam/docs/workload-identity-federation), which allows you to grant on-premises or multi-cloud workloads access to Google Cloud resources without using a service account key. This is the recommended approach for workloads running in other cloud environments (AWS, Azure, etc.) or on-premises.
 
 To use Workload Identity Federation, pass the path to your WIF credentials configuration file via `vertex_credentials`:
 
@@ -1422,7 +1422,7 @@ To use Workload Identity Federation, pass the path to your WIF credentials confi
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/{{gemini_pro}}",
@@ -1446,7 +1446,7 @@ model_list:
       vertex_credentials: /path/to/wif-credentials.json  # WIF credentials file
 ```
 
-Alternatively, you can create credentials in **LLM Credentials** in the LiteLLM UI and use those to authenticate your models:
+Alternatively, you can create credentials in **LLM Credentials** in the Lumina UI and use those to authenticate your models:
 
 ```yaml
 model_list:
@@ -1455,7 +1455,7 @@ model_list:
       model: vertex_ai/{{gemini_pro}}
       vertex_project: your-gcp-project-id
       vertex_location: us-central1
-      litellm_credential_name: my-vertex-wif-credential  # Reference credential stored in UI
+      lumina_credential_name: my-vertex-wif-credential  # Reference credential stored in UI
 ```
 
 </TabItem>
@@ -1485,9 +1485,9 @@ For more details on setting up Workload Identity Federation, see [Google Cloud W
 
 #### Explicit AWS Credentials for WIF
 
-By default, AWS-based WIF relies on the EC2 instance metadata service to obtain AWS credentials. This works when LiteLLM runs on an EC2 instance or ECS task with an IAM role attached.
+By default, AWS-based WIF relies on the EC2 instance metadata service to obtain AWS credentials. This works when Lumina runs on an EC2 instance or ECS task with an IAM role attached.
 
-If your environment **does not have access to the EC2 metadata service** (e.g., running on-premises, in a container without host networking, or in a different cloud with security restrictions), you can provide explicit AWS credentials directly in the WIF credential JSON file. LiteLLM will use these to authenticate to AWS before performing the GCP token exchange.
+If your environment **does not have access to the EC2 metadata service** (e.g., running on-premises, in a container without host networking, or in a different cloud with security restrictions), you can provide explicit AWS credentials directly in the WIF credential JSON file. Lumina will use these to authenticate to AWS before performing the GCP token exchange.
 
 Add the `aws_*` keys at the **top level** of your WIF credential JSON (alongside `type`, `audience`, etc.):
 
@@ -1530,7 +1530,7 @@ Add the `aws_*` keys at the **top level** of your WIF credential JSON (alongside
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/{{gemini_pro}}",
@@ -1557,7 +1557,7 @@ model_list:
 </TabItem>
 </Tabs>
 
-When `aws_*` keys are present in the JSON, LiteLLM automatically uses explicit AWS authentication instead of the EC2 metadata service. When they are absent, the standard metadata-based flow is used unchanged.
+When `aws_*` keys are present in the JSON, Lumina automatically uses explicit AWS authentication instead of the EC2 metadata service. When they are absent, the standard metadata-based flow is used unchanged.
 
 ### **Environment Variables**
 
@@ -1597,7 +1597,7 @@ In certain use-cases you may need to make calls to the models and pass [safety s
 ```python
 response = completion(
     model="vertex_ai/{{gemini_pro}}", 
-    messages=[{"role": "user", "content": "write code for saying hi from LiteLLM"}],
+    messages=[{"role": "user", "content": "write code for saying hi from Lumina"}],
     safety_settings=[
         {
             "category": "HARM_CATEGORY_HARASSMENT",
@@ -1627,7 +1627,7 @@ model_list:
   - model_name: gemini-experimental
     lumina_params:
       model: vertex_ai/gemini-experimental
-      vertex_project: litellm-epic
+      vertex_project: lumina-epic
       vertex_location: us-central1
       safety_settings:
       - category: HARM_CATEGORY_HARASSMENT
@@ -1687,11 +1687,11 @@ response = client.chat.completions.create(
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm 
+import lumina 
 
-litellm.set_verbose = True # See RAW REQUEST/RESPONSE
+lumina.set_verbose = True # See RAW REQUEST/RESPONSE
 
-litellm.vertex_ai_safety_settings = [
+lumina.vertex_ai_safety_settings = [
         {
             "category": "HARM_CATEGORY_HARASSMENT",
             "threshold": "BLOCK_NONE",
@@ -1711,7 +1711,7 @@ litellm.vertex_ai_safety_settings = [
     ]
 response = completion(
     model="vertex_ai/{{gemini_pro}}", 
-    messages=[{"role": "user", "content": "write code for saying hi from LiteLLM"}]
+    messages=[{"role": "user", "content": "write code for saying hi from Lumina"}]
 )
 ```
 </TabItem>
@@ -1722,10 +1722,10 @@ model_list:
   - model_name: gemini-experimental
     lumina_params:
       model: vertex_ai/gemini-experimental
-      vertex_project: litellm-epic
+      vertex_project: lumina-epic
       vertex_location: us-central1
 
-litellm_settings:
+lumina_settings:
     vertex_ai_safety_settings:
       - category: HARM_CATEGORY_HARASSMENT
         threshold: BLOCK_NONE
@@ -1743,7 +1743,7 @@ litellm_settings:
 All calls using Vertex AI require the following parameters:
 * Your Project ID
 ```python
-import os, litellm 
+import os, lumina 
 
 # set via env var
 os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811" # Your Project ID`
@@ -1751,11 +1751,11 @@ os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811" # Your Project ID`
 ### OR ###
 
 # set directly on module 
-litellm.vertex_project = "hardy-device-38811" # Your Project ID`
+lumina.vertex_project = "hardy-device-38811" # Your Project ID`
 ```
 * Your Project Location
 ```python
-import os, litellm 
+import os, lumina 
 
 # set via env var
 os.environ["VERTEXAI_LOCATION"] = "us-central1" # Your Location
@@ -1763,7 +1763,7 @@ os.environ["VERTEXAI_LOCATION"] = "us-central1" # Your Location
 ### OR ###
 
 # set directly on module 
-litellm.vertex_location = "us-central1" # Your Location
+lumina.vertex_location = "us-central1" # Your Location
 ```
 
 ## Gemini Pro
@@ -1776,26 +1776,26 @@ litellm.vertex_location = "us-central1" # Your Location
 
 ## PayGo / Priority Cost Tracking
 
-LiteLLM automatically tracks spend for Vertex AI Gemini models using the correct pricing tier based on the response's `usageMetadata.trafficType`:
+Lumina automatically tracks spend for Vertex AI Gemini models using the correct pricing tier based on the response's `usageMetadata.trafficType`:
 
-| Vertex AI `trafficType` | LiteLLM `service_tier` | Pricing applied |
+| Vertex AI `trafficType` | Lumina `service_tier` | Pricing applied |
 |-------------------------|-------------------------|-----------------|
 | `ON_DEMAND_PRIORITY` | `priority` | PayGo / priority pricing (`input_cost_per_token_priority`, `output_cost_per_token_priority`) |
 | `ON_DEMAND` | standard | Default on-demand pricing |
 | `FLEX` / `BATCH` | `flex` | Batch/flex pricing |
 
-When you use [Vertex AI PayGo](https://cloud.google.com/vertex-ai/generative-ai/pricing) (on-demand priority) or batch workloads, LiteLLM reads `trafficType` from the response and applies the matching cost per token from the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). No configuration is required; spend tracking works for both standard and PayGo requests.
+When you use [Vertex AI PayGo](https://cloud.google.com/vertex-ai/generative-ai/pricing) (on-demand priority) or batch workloads, Lumina reads `trafficType` from the response and applies the matching cost per token from the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json). No configuration is required; spend tracking works for both standard and PayGo requests.
 
 See [Spend Tracking](../proxy/cost_tracking.md) for general cost tracking setup.
 
 ## Private Service Connect (PSC) Endpoints
 
-LiteLLM supports Vertex AI models deployed to Private Service Connect (PSC) endpoints, allowing you to use custom `api_base` URLs for private deployments.
+Lumina supports Vertex AI models deployed to Private Service Connect (PSC) endpoints, allowing you to use custom `api_base` URLs for private deployments.
 
 ### Usage
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # Use PSC endpoint with custom api_base
 response = completion(
@@ -1840,7 +1840,7 @@ model_list:
 
 ## Fine-tuned Models
 
-You can call fine-tuned Vertex AI Gemini models through LiteLLM
+You can call fine-tuned Vertex AI Gemini models through Lumina
 
 | Property | Details |
 |----------|---------|
@@ -1855,24 +1855,24 @@ model="vertex_ai/gemini/<your-finetuned-model>"
 ```
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python showLineNumbers title="Example"
-import litellm
+import lumina
 import os
 
 ## set ENV variables
 os.environ["VERTEXAI_PROJECT"] = "hardy-device-38811"
 os.environ["VERTEXAI_LOCATION"] = "us-central1"
 
-response = litellm.completion(
+response = lumina.completion(
   model="vertex_ai/gemini/<your-finetuned-model>",  # e.g. vertex_ai/gemini/4965075652664360960
   messages=[{ "content": "Hello, how are you?","role": "user"}],
 )
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Add Vertex Credentials to your env 
 
@@ -1882,7 +1882,7 @@ response = litellm.completion(
 
 2. Setup config.yaml 
 
-```yaml showLineNumbers title="Add to litellm config"
+```yaml showLineNumbers title="Add to lumina config"
 - model_name: finetuned-gemini
   lumina_params:
     model: vertex_ai/gemini/<ENDPOINT_ID>
@@ -1899,7 +1899,7 @@ response = litellm.completion(
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="your-litellm-key",
+    api_key="your-lumina-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -1936,9 +1936,9 @@ curl --location 'https://0.0.0.0:4000/v1/chat/completions' \
 
 #### Using Gemini Pro Vision
 
-Call `{{gemini_pro}}` in the same input/output format as OpenAI [`gpt-4-vision`](https://docs.litellm.ai/docs/providers/openai#openai-vision-models)
+Call `{{gemini_pro}}` in the same input/output format as OpenAI [`gpt-4-vision`](https://docs.lumina.ai/docs/providers/openai#openai-vision-models)
 
-LiteLLM Supports the following image types passed in `url`
+Lumina Supports the following image types passed in `url`
 - Images with Cloud Storage URIs - gs://cloud-samples-data/generative-ai/image/boats.jpeg
 - Images with direct links - https://storage.googleapis.com/github-repo/img/gemini/intro/landmark3.jpg
 - Videos with Cloud Storage URIs - https://storage.googleapis.com/github-repo/img/gemini/multimodality_usecases_overview/pixel8.mp4
@@ -1951,9 +1951,9 @@ LiteLLM Supports the following image types passed in `url`
 <TabItem value="direct" label="Images with direct links">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
   model = "vertex_ai/{{gemini_pro}}",
   messages=[
       {
@@ -1980,7 +1980,7 @@ print(response)
 <TabItem value="base" label="Local Base64 Images">
 
 ```python
-import litellm
+import lumina
 
 def encode_image(image_path):
     import base64
@@ -1991,7 +1991,7 @@ def encode_image(image_path):
 image_path = "cached_logo.jpg"
 # Getting the base64 string
 base64_image = encode_image(image_path)
-response = litellm.completion(
+response = lumina.completion(
     model="vertex_ai/{{gemini_pro}}",
     messages=[
         {
@@ -2015,10 +2015,10 @@ print(response)
 
 ## Usage - Function Calling 
 
-LiteLLM supports Function Calling for Vertex AI gemini models. 
+Lumina supports Function Calling for Vertex AI gemini models. 
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 # set env
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ".."
@@ -2063,7 +2063,7 @@ assert isinstance(
 
 ## Media Resolution Control (Images & Videos)
 
-LiteLLM supports per-part media resolution control using OpenAI's `detail` parameter for all Gemini models. This allows you to specify different resolution levels for individual images and videos in your request, whether using `image_url` or `file` content types.
+Lumina supports per-part media resolution control using OpenAI's `detail` parameter for all Gemini models. This allows you to specify different resolution levels for individual images and videos in your request, whether using `image_url` or `file` content types.
 
 **Supported `detail` values:**
 - `"low"` - Maps to `media_resolution: "low"` (280 tokens for images, 70 tokens per frame for videos)
@@ -2078,7 +2078,7 @@ LiteLLM supports per-part media resolution control using OpenAI's `detail` param
 <TabItem value="images" label="Images">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [
     {
@@ -2116,7 +2116,7 @@ response = completion(
 <TabItem value="videos" label="Videos with Files">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [
     {
@@ -2153,7 +2153,7 @@ response = completion(
 
 ## Video Metadata Control
 
-LiteLLM supports fine-grained video processing control through the `video_metadata` field for all Gemini models (1.x, 2.x, 3+). This allows you to specify frame extraction rates and time ranges for video analysis.
+Lumina supports fine-grained video processing control through the `video_metadata` field for all Gemini models (1.x, 2.x, 3+). This allows you to specify frame extraction rates and time ranges for video analysis.
 
 **Supported `video_metadata` parameters:**
 
@@ -2164,7 +2164,7 @@ LiteLLM supports fine-grained video processing control through the `video_metada
 | `end_offset` | String | End time for video clip processing | `"60s"` |
 
 :::note
-**Field Name Conversion:** LiteLLM automatically converts snake_case field names to camelCase for the Gemini API:
+**Field Name Conversion:** Lumina automatically converts snake_case field names to camelCase for the Gemini API:
 - `start_offset` → `startOffset`
 - `end_offset` → `endOffset`
 - `fps` remains unchanged
@@ -2185,7 +2185,7 @@ Video clipping (`start_offset`/`end_offset`) and frame rate control (`fps`) are 
 <TabItem value="basic" label="Basic Video Metadata">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/{{gemini_pro}}",
@@ -2218,7 +2218,7 @@ print(response.choices[0].message.content)
 <TabItem value="combined" label="Combined with Detail">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/{{gemini_pro}}",
@@ -2265,7 +2265,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Make request
@@ -2273,7 +2273,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_pro}}",
     "messages": [
@@ -2305,9 +2305,9 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Usage - PDF / Videos / Audio etc. Files 
 
-Pass any file supported by Vertex AI, through LiteLLM. 
+Pass any file supported by Vertex AI, through Lumina. 
 
-LiteLLM Supports the following file types passed in url. 
+Lumina Supports the following file types passed in url. 
 
 Using `file` message type for VertexAI is live from v1.65.1+ 
 
@@ -2323,7 +2323,7 @@ Base64 Encoded Local Files
 
 ### **Using `gs://` or any URL**
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/{{gemini_flash}}",
@@ -2350,7 +2350,7 @@ print(response.choices[0])
 
 ### **using base64**
 ```python
-from litellm import completion
+from lumina import completion
 import base64
 import requests
 
@@ -2405,7 +2405,7 @@ print(response.choices[0])
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2414,7 +2414,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [
@@ -2445,7 +2445,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [
@@ -2481,7 +2481,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Legacy PaLM 2 and Gemini 1.x Models
 
-Google has retired the PaLM 2 models (`chat-bison`, `codechat-bison`, `text-bison`, `code-bison`, `code-gecko`) and the Gemini 1.0 and 1.5 models on Vertex AI, and they are no longer in the LiteLLM model map. Unprefixed names like `completion('chat-bison', messages)` or `completion('gemini-1.5-pro', messages)` fail with `LLM Provider NOT provided`, and the `vertex_ai/` prefixed forms return a 404 from Vertex AI. Use a current Gemini model instead, for example `completion('vertex_ai/gemini-2.5-pro', messages)`
+Google has retired the PaLM 2 models (`chat-bison`, `codechat-bison`, `text-bison`, `code-bison`, `code-gecko`) and the Gemini 1.0 and 1.5 models on Vertex AI, and they are no longer in the Lumina model map. Unprefixed names like `completion('chat-bison', messages)` or `completion('gemini-1.5-pro', messages)` fail with `LLM Provider NOT provided`, and the `vertex_ai/` prefixed forms return a 404 from Vertex AI. Use a current Gemini model instead, for example `completion('vertex_ai/gemini-2.5-pro', messages)`
 
 
 ## **Embedding Models**
@@ -2492,20 +2492,20 @@ Google has retired the PaLM 2 models (`chat-bison`, `codechat-bison`, `text-biso
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
-from litellm import embedding
-litellm.vertex_project = "hardy-device-38811" # Your Project ID
-litellm.vertex_location = "us-central1"  # proj location
+import lumina
+from lumina import embedding
+lumina.vertex_project = "hardy-device-38811" # Your Project ID
+lumina.vertex_location = "us-central1"  # proj location
 
 response = embedding(
     model="vertex_ai/textembedding-gecko",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 
 1. Add model to config.yaml
@@ -2518,14 +2518,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: adroit-crow-413218-a956eef1a2a8.json 
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request using OpenAI Python SDK, Langchain Python SDK
@@ -2533,11 +2533,11 @@ $ litellm --config /path/to/config.yaml
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="snowflake-arctic-embed-m-long-1731622468876", 
-    input = ["good morning from litellm", "this is another item"],
+    input = ["good morning from lumina", "this is another item"],
 )
 
 print(response)
@@ -2548,7 +2548,7 @@ print(response)
 </Tabs>
 
 #### Supported Embedding Models
-All models listed [here](https://github.com/BerriAI/litellm/blob/57f37f743886a0249f630a6792d49dffc2c5d9b7/model_prices_and_context_window.json#L835) are supported
+All models listed [here](https://github.com/Soventra/lumina/blob/57f37f743886a0249f630a6792d49dffc2c5d9b7/model_prices_and_context_window.json#L835) are supported
 
 | Model Name               | Function Call                                                                                                                                                      |
 |--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -2565,7 +2565,7 @@ All models listed [here](https://github.com/BerriAI/litellm/blob/57f37f743886a02
 
 ### Supported OpenAI (Unified) Params
 
-| [param](../embedding/supported_embedding.md#input-params-for-litellmembedding) | type | [vertex equivalent](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api) |
+| [param](../embedding/supported_embedding.md#input-params-for-luminaembedding) | type | [vertex equivalent](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings-api) |
 |-------|-------------|--------------------|
 | `input` | **string or List[string]** | `instances` |
 | `dimensions` | **int** | `output_dimensionality` |
@@ -2578,25 +2578,25 @@ All models listed [here](https://github.com/BerriAI/litellm/blob/57f37f743886a02
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.embedding(
+response = lumina.embedding(
     model="vertex_ai/text-embedding-004",
-    input=["good morning from litellm", "gm"],
+    input=["good morning from lumina", "gm"],
     input_type = "RETRIEVAL_DOCUMENT",
     dimensions=1,
 )
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="text-embedding-004", 
-    input = ["good morning from litellm", "gm"],
+    input = ["good morning from lumina", "gm"],
     dimensions=1,
     extra_body = {
         "input_type": "RETRIEVAL_QUERY",
@@ -2627,9 +2627,9 @@ You can pass any vertex specific params to the embedding model. Just pass them t
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.embedding(
+response = lumina.embedding(
     model="vertex_ai/text-embedding-004",
-    input=["good morning from litellm", "gm"],
+    input=["good morning from lumina", "gm"],
     task_type = "RETRIEVAL_DOCUMENT",
     title = "test",
     dimensions=1,
@@ -2637,17 +2637,17 @@ response = litellm.embedding(
 )
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY">
+<TabItem value="proxy" label="Lumina PROXY">
 
 
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 response = client.embeddings.create(
     model="text-embedding-004", 
-    input = ["good morning from litellm", "gm"],
+    input = ["good morning from lumina", "gm"],
     dimensions=1,
     extra_body = {
         "task_type": "RETRIEVAL_QUERY",
@@ -2676,7 +2676,7 @@ Known Limitations:
 Using GCS Images
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input="gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png" # will be sent as a gcs image
 )
@@ -2685,14 +2685,14 @@ response = await litellm.aembedding(
 Using base 64 encoded images
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input="data:image/jpeg;base64,..." # will be sent as a base64 encoded image
 )
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY (Unified Endpoint)">
+<TabItem value="proxy" label="Lumina PROXY (Unified Endpoint)">
 
 1. Add model to config.yaml
 ```yaml
@@ -2704,14 +2704,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: adroit-crow-413218-a956eef1a2a8.json 
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request use OpenAI Python SDK, Langchain Python SDK
@@ -2726,9 +2726,9 @@ Requests with GCS Image / Video URI
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = "gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png",
@@ -2742,9 +2742,9 @@ Requests with base64 encoded images
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = "data:image/jpeg;base64,...",
@@ -2766,7 +2766,7 @@ embeddings_models = "multimodalembedding@001"
 embeddings = OpenAIEmbeddings(
     model="multimodalembedding@001",
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",  # type: ignore
+    api_key="sk-<your-lumina-api-key>",  # type: ignore
 )
 
 
@@ -2787,7 +2787,7 @@ embeddings_models = "multimodalembedding@001"
 embeddings = OpenAIEmbeddings(
     model="multimodalembedding@001",
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",  # type: ignore
+    api_key="sk-<your-lumina-api-key>",  # type: ignore
 )
 
 
@@ -2804,7 +2804,7 @@ print(query_result)
 </TabItem>
 
 
-<TabItem value="proxy-vtx" label="LiteLLM PROXY (Vertex SDK)">
+<TabItem value="proxy-vtx" label="Lumina PROXY (Vertex SDK)">
 
 1. Add model to config.yaml
 ```yaml
@@ -2817,7 +2817,7 @@ default_vertex_config:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request use OpenAI Python SDK
@@ -2830,7 +2830,7 @@ from vertexai.vision_models import VideoSegmentConfig
 from google.auth.credentials import Credentials
 
 
-LUMINA_PROXY_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_PROXY_API_KEY = "sk-<your-lumina-api-key>"
 LUMINA_PROXY_BASE = "http://0.0.0.0:4000/vertex-ai"
 
 import datetime
@@ -2892,7 +2892,7 @@ print(f"Text Embedding: {embeddings.text_embedding}")
 Text + Image 
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input=["hey", "gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png"] # will be sent as a gcs image
 )
@@ -2901,7 +2901,7 @@ response = await litellm.aembedding(
 Text + Video 
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input=["hey", "gs://my-bucket/embeddings/supermarket-video.mp4"] # will be sent as a gcs image
 )
@@ -2910,7 +2910,7 @@ response = await litellm.aembedding(
 Image + Video 
 
 ```python
-response = await litellm.aembedding(
+response = await lumina.aembedding(
     model="vertex_ai/multimodalembedding@001",
     input=["gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png", "gs://my-bucket/embeddings/supermarket-video.mp4"] # will be sent as a gcs image
 )
@@ -2918,7 +2918,7 @@ response = await litellm.aembedding(
 
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM PROXY (Unified Endpoint)">
+<TabItem value="proxy" label="Lumina PROXY (Unified Endpoint)">
 
 1. Add model to config.yaml
 ```yaml
@@ -2930,14 +2930,14 @@ model_list:
       vertex_location: "us-central1"
       vertex_credentials: adroit-crow-413218-a956eef1a2a8.json 
 
-litellm_settings:
+lumina_settings:
   drop_params: True
 ```
 
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request use OpenAI Python SDK, Langchain Python SDK
@@ -2948,9 +2948,9 @@ Text + Image
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = ["hey", "gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png"],
@@ -2963,9 +2963,9 @@ Text + Video
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = ["hey", "gs://my-bucket/embeddings/supermarket-video.mp4"],
@@ -2978,9 +2978,9 @@ Image + Video
 ```python
 import openai
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
-# # request sent to model set on litellm proxy, `litellm --model`
+# # request sent to model set on lumina proxy, `lumina --model`
 response = client.embeddings.create(
     model="multimodalembedding@001", 
     input = ["gs://cloud-samples-data/vertex-ai/llm/prompts/landmark1.png", "gs://my-bucket/embeddings/supermarket-video.mp4"],
@@ -3028,7 +3028,7 @@ finetune_settings:
 ft_job = await client.fine_tuning.jobs.create(
     model="{{gemini_flash}}",                  # Vertex model you want to fine-tune
     training_file="gs://cloud-samples-data/ai-platform/generative_ai/sft_train_data.jsonl",                 # file_id from create file response
-    extra_headers={"custom-llm-provider": "vertex_ai"}, # tell litellm proxy which provider to use
+    extra_headers={"custom-llm-provider": "vertex_ai"}, # tell lumina proxy which provider to use
 )
 ```
 </TabItem>
@@ -3105,13 +3105,13 @@ different applications or users.
 
 ### Usage
 
-You can use that feature through LiteLLM by sending `labels` or `metadata` field in your requests.
+You can use that feature through Lumina by sending `labels` or `metadata` field in your requests.
 
-If the client sets the `labels` field in the request to the LiteLLM,
-the LiteLLM will pass the `labels` field to the Vertex AI backend.
+If the client sets the `labels` field in the request to the Lumina,
+the Lumina will pass the `labels` field to the Vertex AI backend.
 
-If the client sets the `metadata` field in the request to the LiteLLM and the `labels` field is not set,
-the LiteLLM will create the `labels` field filled with `metadata` key/value pairs for all string values and
+If the client sets the `metadata` field in the request to the Lumina and the `labels` field is not set,
+the Lumina will create the `labels` field filled with `metadata` key/value pairs for all string values and
 pass it to the Vertex AI backend.
 
 
@@ -3181,7 +3181,7 @@ def load_vertex_ai_credentials():
 
 :::info
 
-Trying to deploy LiteLLM on Google Cloud Run? Tutorial [here](https://docs.litellm.ai/docs/proxy/deploy#deploy-with-terraform-aws-and-gcp)
+Trying to deploy Lumina on Google Cloud Run? Tutorial [here](https://docs.lumina.ai/docs/proxy/deploy#deploy-with-terraform-aws-and-gcp)
 
 :::
 
@@ -3201,7 +3201,7 @@ Click `Add Principal`
 
 <Image img={require('../../img/gcp_acc_3.png')}/>
 
-Once that's done, when you deploy the new container in the Google Cloud Run service, LiteLLM will have automatic access to all Vertex AI endpoints.
+Once that's done, when you deploy the new container in the Google Cloud Run service, Lumina will have automatic access to all Vertex AI endpoints.
 
 
 s/o @[Darien Kindlund](https://www.linkedin.com/in/kindlund/) for this tutorial
@@ -3221,7 +3221,7 @@ export VERTEXAI_PROJECT="your-project-id"
 ### Usage
 
 ```python
-from litellm import rerank
+from lumina import rerank
 
 # Using the latest model (recommended)
 response = rerank(
@@ -3283,7 +3283,7 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 Test with curl:

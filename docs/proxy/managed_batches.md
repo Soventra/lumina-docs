@@ -1,4 +1,4 @@
-# [BETA] LiteLLM Managed Files with Batches
+# [BETA] Lumina Managed Files with Batches
 
 <EnterpriseFeature free />
 
@@ -24,7 +24,7 @@ Grant developers access to Batch models.
 - Specify `mode: batch` for each model so developers can tell this is a batch model.
 - Optionally skip the pre-read of batch input files for specific batch providers or models (useful for large files on custom vLLM batch deployments).
 
-```yaml showLineNumbers title="litellm-config.yaml"
+```yaml showLineNumbers title="lumina-config.yaml"
 model_list:
   - model_name: "gpt-4o-batch"
     lumina_params:
@@ -47,7 +47,7 @@ model_list:
       vertex_project: <vertex-project>
       vertex_location: global
       vertex_credentials: /path/to/credentials
-      gcs_bucket_name: litellm-batch-api-bucket # required param for vertexai to store files
+      gcs_bucket_name: lumina-batch-api-bucket # required param for vertexai to store files
     model_info:
       mode: batch
 
@@ -60,12 +60,12 @@ general_settings:
   skip_batch_input_file_rate_limiting_for_providers:
     - hosted_vllm
 
-litellm_settings:
+lumina_settings:
   # Optional: require target_model_names on POST /v1/files (blocks classic file uploads)
   # require_managed_files: true
 ```
 
-By default, LiteLLM reads each batch input file before submission and charges its tokens and record count against the caller's TPM and RPM limits. This can add latency for large files. Use the settings above only when batch submissions do not need to be included in TPM or RPM accounting. To govern batch submissions by outstanding batch work instead of per-minute windows, see [Enqueued-token limits](../batches#enqueued-token-limits). For details and limitations, see [How rate limiting works for the Batches API](../batches#how-rate-limiting-for-batches-api-works).
+By default, Lumina reads each batch input file before submission and charges its tokens and record count against the caller's TPM and RPM limits. This can add latency for large files. Use the settings above only when batch submissions do not need to be included in TPM or RPM accounting. To govern batch submissions by outstanding batch work instead of per-minute windows, see [Enqueued-token limits](../batches#enqueued-token-limits). For details and limitations, see [How rate limiting works for the Batches API](../batches#how-rate-limiting-for-batches-api-works).
 
 ### 2. Create Virtual Key
 
@@ -80,7 +80,7 @@ The returned virtual key grants access to the batch models (see [Developer Usage
 
 ## (Developer) Usage
 
-Create a LiteLLM managed file and run batch operations against it. The steps below show the raw HTTP calls with curl; for the same workflow with the OpenAI Python SDK, see [Batch Lifecycle](#batch-lifecycle).
+Create a Lumina managed file and run batch operations against it. The steps below show the raw HTTP calls with curl; for the same workflow with the OpenAI Python SDK, see [Batch Lifecycle](#batch-lifecycle).
 
 ### 1. Create request.jsonl
 
@@ -91,15 +91,15 @@ The `model` in each line must be a model name from `/model_group/info` with `mod
 {"custom_id": "request-2", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "gpt-4o-batch", "messages": [{"role": "system", "content": "You are an unhelpful assistant."},{"role": "user", "content": "Hello world!"}],"max_tokens": 1000}}
 ```
 
-LiteLLM translates the model name to the Azure deployment specific value (e.g. `gpt-4o-mini-general-deployment`).
+Lumina translates the model name to the Azure deployment specific value (e.g. `gpt-4o-mini-general-deployment`).
 
 ### 2. Upload File
 
-`target_model_names` enables LiteLLM managed files and request validation. It must match the `model` in request.jsonl. The upload returns a file object; its `id` is the `input_file_id` for Step 3.
+`target_model_names` enables Lumina managed files and request validation. It must match the `model` in request.jsonl. The upload returns a file object; its `id` is the `input_file_id` for Step 3.
 
 ```bash showLineNumbers
 export LUMINA_BASE_URL="http://0.0.0.0:4000"
-export LUMINA_API_KEY="sk-<your-litellm-api-key>"
+export LUMINA_API_KEY="sk-<your-lumina-api-key>"
 
 curl -s "${LUMINA_BASE_URL}/v1/files" \
   -H "Authorization: Bearer ${LUMINA_API_KEY}" \
@@ -167,7 +167,7 @@ curl -s -X POST "${LUMINA_BASE_URL}/v1/batches/${BATCH_ID}/cancel" \
 
 ## Access control
 
-Every managed batch and file belongs to the user, team, and key that created it, and LiteLLM checks that ownership on every batch and file endpoint. Tenants that share a proxy cannot see or touch each other's batch jobs or results.
+Every managed batch and file belongs to the user, team, and key that created it, and Lumina checks that ownership on every batch and file endpoint. Tenants that share a proxy cannot see or touch each other's batch jobs or results.
 
 | Caller | Can retrieve, cancel, list, and download |
 |--------|------------------------------------------|
@@ -194,8 +194,8 @@ import time
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="http://0.0.0.0:4000",       # your LiteLLM proxy URL
-    api_key="sk-<your-litellm-api-key>",  # your LiteLLM virtual key
+    base_url="http://0.0.0.0:4000",       # your Lumina proxy URL
+    api_key="sk-<your-lumina-api-key>",  # your Lumina virtual key
 )
 
 # 1. Upload the input file (request.jsonl from Developer Usage Step 1)
@@ -238,7 +238,7 @@ To cancel a batch before it completes, call `client.batches.cancel(batch.id)`: i
 
 ## Output and error files
 
-When a managed batch finishes, the provider creates an output file and, if any requests failed, an error file. LiteLLM saves a managed file row for each one with the same owner and team as the batch, so they show up in the files endpoints like an uploaded file and follow the same access rules.
+When a managed batch finishes, the provider creates an output file and, if any requests failed, an error file. Lumina saves a managed file row for each one with the same owner and team as the batch, so they show up in the files endpoints like an uploaded file and follow the same access rules.
 
 - `GET /v1/files` lists input, output and error files.
 - `GET /v1/files?purpose=batch` lists input files only.
@@ -246,11 +246,11 @@ When a managed batch finishes, the provider creates an output file and, if any r
 
 ### File details
 
-When LiteLLM first saves an output or error file row, it asks the provider for the file's details, such as its size and creation time. Each lookup retries timeouts, connection errors, 429 and 5xx responses up to 3 times, and gives up after 10 seconds in total.
+When Lumina first saves an output or error file row, it asks the provider for the file's details, such as its size and creation time. Each lookup retries timeouts, connection errors, 429 and 5xx responses up to 3 times, and gives up after 10 seconds in total.
 
-If the provider still does not answer, LiteLLM saves a basic entry instead, with `purpose: "batch_output"`, `status: "processed"` and `bytes: 0` (or the real size, when the background poller has already downloaded the file to calculate cost). The file is listed and downloadable right away.
+If the provider still does not answer, Lumina saves a basic entry instead, with `purpose: "batch_output"`, `status: "processed"` and `bytes: 0` (or the real size, when the background poller has already downloaded the file to calculate cost). The file is listed and downloadable right away.
 
-LiteLLM replaces a basic entry with the provider's details later, on the next `GET /v1/files/{file_id}` call, or on the next batch retrieve, cancel or poller run once the entry is at least 60 seconds old. Only the file details change: the owner, team and provider mapping stay the same, and a file deleted while its details are being fetched stays deleted. Rows that already have the provider's details are never fetched again.
+Lumina replaces a basic entry with the provider's details later, on the next `GET /v1/files/{file_id}` call, or on the next batch retrieve, cancel or poller run once the entry is at least 60 seconds old. Only the file details change: the owner, team and provider mapping stay the same, and a file deleted while its details are being fetched stays deleted. Rows that already have the provider's details are never fetched again.
 
 ### Which endpoints call the provider
 
@@ -361,19 +361,19 @@ curl -s "http://0.0.0.0:4000/v1/files/${ERROR_FILE_ID}/content" \
   -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
-Failed requests cost nothing, so `spend` covers the successful lines only and a batch that half failed costs about half of what you budgeted for. A request the provider accepted but LiteLLM could not price still counts as successful and is billed at `$0`, which keeps the counts reconcilable with the provider's own numbers. A batch whose requests all failed has no output file at all, and its cost row records `$0`, zero successful requests, and the failure count read from the error file. Anthropic and Bedrock extended thinking batches do not report reasoning tokens per line, so `reasoning_tokens` stays absent for them even though the model was thinking. The one case where the two counts do not add up to the provider's total is an output line that is not valid JSON, which gets skipped with a warning and lands in neither count
+Failed requests cost nothing, so `spend` covers the successful lines only and a batch that half failed costs about half of what you budgeted for. A request the provider accepted but Lumina could not price still counts as successful and is billed at `$0`, which keeps the counts reconcilable with the provider's own numbers. A batch whose requests all failed has no output file at all, and its cost row records `$0`, zero successful requests, and the failure count read from the error file. Anthropic and Bedrock extended thinking batches do not report reasoning tokens per line, so `reasoning_tokens` stays absent for them even though the model was thinking. The one case where the two counts do not add up to the provider's total is an output line that is not valid JSON, which gets skipped with a warning and lands in neither count
 
 ### Storing every line's request and response
 
 The cost row sums the whole batch, and providers delete batch files after a while. To keep each request and its answer, list a bucket under `batch_line_item_callbacks`. Once the poller has billed a batch, it writes the batch's records to every bucket listed there as JSONL part objects, one record per line
 
 ```yaml showLineNumbers title="config.yaml"
-litellm_settings:
+lumina_settings:
   batch_line_item_callbacks: ["s3_v2", "gcs_bucket"]
   s3_callback_params:          # read by s3_v2, same keys as the s3 logging callback
     s3_bucket_name: my-batch-logs
     s3_region_name: us-east-2
-    s3_path: litellm           # optional prefix
+    s3_path: lumina           # optional prefix
 ```
 
 `gcs_bucket` reads `GCS_BUCKET_NAME` and `GCS_PATH_SERVICE_ACCOUNT` from the environment, the same as the [GCS logging callback](./logging#google-cloud-storage-buckets), and like that callback it needs an enterprise license. Listing a bucket here does not turn on request logging to it, and `success_callback` does not turn on batch line items. The two settings are independent
@@ -456,9 +456,9 @@ A few things to know:
 - `request` is `null` for Anthropic, which has no input file, for a Vertex AI embeddings line whose `input` list was split into one row per item, and when the input file can no longer be read
 - A Vertex AI line whose row carries no `custom_id` shows `unknown`, as in the batch's output file (or no `custom_id` at all for a batch uploaded in Vertex AI's own row format), and gets `request` `null`, so a Vertex AI line you gave the `custom_id` `unknown` also gets `request` `null`
 - When the error file can no longer be read, the parts leave the failed lines out and a warning is logged, so a batch where every line failed then gets no parts
-- `request` and `response` are both `null`, with every other field kept, when the key or team that created the batch has message logging turned off in its logging settings, when `litellm.turn_off_message_logging` is on, or when that key or team no longer exists
-- A batch created without a virtual key, such as with a JWT, a built-in OAuth2 token or the master key, follows its team's logging settings and `litellm.turn_off_message_logging`
-- A batch created from an Admin UI session, or with an `sk-` credential through custom auth (the master key included when custom auth is on) or on a proxy with no master key, gets `request` and `response` `null`, because litellm cannot find the key or team it records. So does a batch created with an OAuth2 token that is exactly 64 hex characters, which reads like a virtual key's hash
+- `request` and `response` are both `null`, with every other field kept, when the key or team that created the batch has message logging turned off in its logging settings, when `lumina.turn_off_message_logging` is on, or when that key or team no longer exists
+- A batch created without a virtual key, such as with a JWT, a built-in OAuth2 token or the master key, follows its team's logging settings and `lumina.turn_off_message_logging`
+- A batch created from an Admin UI session, or with an `sk-` credential through custom auth (the master key included when custom auth is on) or on a proxy with no master key, gets `request` and `response` `null`, because lumina cannot find the key or team it records. So does a batch created with an OAuth2 token that is exactly 64 hex characters, which reads like a virtual key's hash
 - A batch's parts are written in the background once the poller run that billed the batch and marked it done has finished with every other batch it found, one batch at a time on each proxy worker and one part at a time within a batch, so neither pricing the lines nor a slow or unreachable bucket holds up billing. A billed batch's output file is downloaded again when its turn comes, so a batch waiting for its turn holds none of its files in memory. If the output file can no longer be read by then, or the batch's model has been removed from the proxy, no part is written and an error naming the batch is logged. `s3_v2` tries a write up to 3 times when the bucket answers 403, 429, 500 or 503 or the connection fails or times out, with each try cut off after `S3_UPLOAD_ATTEMPT_TIMEOUT_SECONDS` (30 by default), the same as for request logs, and `gcs_bucket` tries once. When the bucket closes the connection without answering, the shared HTTP client sends the part again at once, as it does for request logs. A part write that still fails is logged as an error naming the batch and the part and is never retried later, the batch's other parts are still written, and the batch stays billed. `s3_v2` writes the parts through the same S3 logger as your request logs, so a failed part write counts in its `S3Logger` callback failure metric, a part's retries count in its per-flush retry warning, and with `s3_adaptive_concurrency` on, a throttled part write lowers the shared upload limit, never below `s3_max_concurrent_uploads`. A part write does not wait for that limit, so a worker can have one PUT above it
 - Parts are UTF-8 with non-ASCII text kept as is. A line holding an unpaired surrogate escape from the provider, such as a lone `\ud83d`, has no UTF-8 form, so that line alone is written with its non-ASCII characters escaped
 - With several proxy instances, the parts of an expired, cancelled or all-failed batch can be written by more than one instance. The names are the same, so the bucket keeps one copy of each part
@@ -476,4 +476,4 @@ When `target_model_names` is specified, the file is written to all deployments t
 
 ### Could the batch be created on one deployment (e.g. eastus-01) but a subsequent retrieve be routed to a different deployment (e.g. eastus2-01)?
 
-No. LiteLLM load balances between deployments for the initial batch create. The returned batch id encodes the deployment that was used, so retrieve, cancel and file content calls are sticky to that deployment.
+No. Lumina load balances between deployments for the initial batch create. The returned batch id encodes the deployment that was used, so retrieve, cancel and file content calls are sticky to that deployment.

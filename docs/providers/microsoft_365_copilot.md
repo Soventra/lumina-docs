@@ -3,9 +3,9 @@ import ThemedVideo from '@site/src/components/ThemedVideo';
 
 # Microsoft 365 Copilot
 
-Connect an app with Microsoft Entra single sign-on (SSO) to your remotely deployed LiteLLM gateway. Users sign in with their Microsoft account, then ask Copilot about the Microsoft 365 data they can access.
+Connect an app with Microsoft Entra single sign-on (SSO) to your remotely deployed Lumina gateway. Users sign in with their Microsoft account, then ask Copilot about the Microsoft 365 data they can access.
 
-An admin configures Entra ID, the gateway, and the app once. The app sends each signed-in user's access token to LiteLLM, which exchanges it for a Microsoft Graph access token. Microsoft calls this the [on-behalf-of (OBO) flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow).
+An admin configures Entra ID, the gateway, and the app once. The app sends each signed-in user's access token to Lumina, which exchanges it for a Microsoft Graph access token. Microsoft calls this the [on-behalf-of (OBO) flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-on-behalf-of-flow).
 
 ## Before you start
 
@@ -13,7 +13,7 @@ You need:
 
 - A Microsoft 365 Copilot license for each user.
 - Access to register an app in Microsoft Entra ID and grant admin consent.
-- A remotely deployed LiteLLM gateway with an HTTPS URL, dashboard access, and [JWT authentication](../proxy/token_auth.md), an enterprise feature.
+- A remotely deployed Lumina gateway with an HTTPS URL, dashboard access, and [JWT authentication](../proxy/token_auth.md), an enterprise feature.
 - An app that supports Entra SSO and can send the signed-in user's access token to an OpenAI-compatible API.
 
 ## 1. Register an app in Microsoft Entra ID
@@ -22,9 +22,9 @@ You need:
 
 In the [Microsoft Entra admin center](https://entra.microsoft.com), open **App registrations** > **New registration**. Select **Accounts in this organizational directory only**, then register the app. Copy the **Application (client) ID** and **Directory (tenant) ID** from its overview page. See Microsoft's [app registration guide](https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app).
 
-Use this registration for both your app's SSO settings and the LiteLLM credential.
+Use this registration for both your app's SSO settings and the Lumina credential.
 
-Open **Certificates & secrets** > **New client secret**. Create a secret and copy its **Value** immediately; Entra only shows it once. Keep it for the LiteLLM credential. See Microsoft's [client credentials guide](https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials).
+Open **Certificates & secrets** > **New client secret**. Create a secret and copy its **Value** immediately; Entra only shows it once. Keep it for the Lumina credential. See Microsoft's [client credentials guide](https://learn.microsoft.com/en-us/entra/identity-platform/how-to-add-credentials).
 
 ### Add Microsoft Graph permissions
 
@@ -60,14 +60,14 @@ Open **Manifest**, set `api.requestedAccessTokenVersion` to `2`, and save. The g
 
 Open **Authentication** > **Add a platform**. Choose the platform your app uses and add the exact redirect URI from its sign-in settings. See Microsoft's [redirect URI guide](https://learn.microsoft.com/en-us/entra/identity-platform/reply-url).
 
-## 2. Add the model in LiteLLM
+## 2. Add the model in Lumina
 
-In the LiteLLM dashboard, open **Models + Endpoints** > **Add Model**. Select **Microsoft 365 Copilot** as the provider and `chat` as the model. Set **Public Model Name** to `m365-copilot`; use this name in client requests.
+In the Lumina dashboard, open **Models + Endpoints** > **Add Model**. Select **Microsoft 365 Copilot** as the provider and `chat` as the model. Set **Public Model Name** to `m365-copilot`; use this name in client requests.
 
 Select **OAuth token exchange (on-behalf-of)** as the **Auth Type**, then select **Create credential**.
 
 <div className="docs-screenshot">
-  <Image img={require('../../img/m365_copilot_litellm_add_model.png')} dark={require('../../img/m365_copilot_litellm_add_model_dark.png')} alt="Add a Microsoft 365 Copilot model in LiteLLM" width={1096} height={1221} />
+  <Image img={require('../../img/m365_copilot_lumina_add_model.png')} dark={require('../../img/m365_copilot_lumina_add_model_dark.png')} alt="Add a Microsoft 365 Copilot model in Lumina" width={1096} height={1221} />
 </div>
 
 Enter these values:
@@ -83,7 +83,7 @@ Enter these values:
 | **Audience** | Leave blank |
 
 <div className="docs-screenshot">
-  <Image img={require('../../img/m365_copilot_litellm_credential.png')} dark={require('../../img/m365_copilot_litellm_credential_dark.png')} alt="Microsoft 365 Copilot token exchange credential in LiteLLM" width={656} height={1125} />
+  <Image img={require('../../img/m365_copilot_lumina_credential.png')} dark={require('../../img/m365_copilot_lumina_credential_dark.png')} alt="Microsoft 365 Copilot token exchange credential in Lumina" width={656} height={1125} />
 </div>
 
 Select **Add Credential**, select the saved credential on the model form, then select **Add Model**.
@@ -113,16 +113,16 @@ Add this to your gateway's `config.yaml`, then restart the gateway:
 ```yaml
 general_settings:
   enable_jwt_auth: true
-  litellm_jwtauth:
+  lumina_jwtauth:
     user_id_jwt_field: oid
     user_email_jwt_field: preferred_username
     user_id_upsert: true
 
-litellm_settings:
+lumina_settings:
   drop_params: true
 ```
 
-`drop_params: true` removes unsupported parameters, such as tools or temperature, from requests across the gateway. Copilot does not support tool calling, and LiteLLM ignores `max_tokens` for this provider.
+`drop_params: true` removes unsupported parameters, such as tools or temperature, from requests across the gateway. Copilot does not support tool calling, and Lumina ignores `max_tokens` for this provider.
 
 ## 4. Connect your app with SSO
 
@@ -139,7 +139,7 @@ Then configure the app's model connection:
 
 | Setting | Value |
 | --- | --- |
-| API base URL | `https://litellm.example.com/v1`, using your gateway's address |
+| API base URL | `https://lumina.example.com/v1`, using your gateway's address |
 | Model | `m365-copilot`, or the public model name you set in step 2 |
 | Authentication | Send the signed-in user's Entra access token in the `Authorization: Bearer <access-token>` header |
 
@@ -172,12 +172,12 @@ model_list:
   - model_name: m365-copilot
     lumina_params:
       model: microsoft_365_copilot/chat
-      litellm_credential_name: m365-copilot-obo
+      lumina_credential_name: m365-copilot-obo
 ```
 
 ### Credential fields
 
-LiteLLM reads token exchange settings from the saved credential. Clients cannot set them in requests.
+Lumina reads token exchange settings from the saved credential. Clients cannot set them in requests.
 
 | Field | Purpose |
 | --- | --- |
@@ -190,16 +190,16 @@ LiteLLM reads token exchange settings from the saved credential. Clients cannot 
 
 ## How requests work
 
-LiteLLM calls the Microsoft Graph beta Copilot Chat API. Microsoft chooses the model. LiteLLM lists token costs as `$0` by default because Microsoft bills Copilot by license. Admins can set [custom pricing](https://docs.litellm.ai/docs/proxy/custom_pricing#override-model-cost-map) to track usage costs in LiteLLM.
+Lumina calls the Microsoft Graph beta Copilot Chat API. Microsoft chooses the model. Lumina lists token costs as `$0` by default because Microsoft bills Copilot by license. Admins can set [custom pricing](https://docs.lumina.ai/docs/proxy/custom_pricing#override-model-cost-map) to track usage costs in Lumina.
 
-LiteLLM sends the last user message as the prompt and all other messages, in order, as context. If Graph returns the same reply twice in a row, LiteLLM removes the duplicate only when both copies match exactly.
+Lumina sends the last user message as the prompt and all other messages, in order, as context. If Graph returns the same reply twice in a row, Lumina removes the duplicate only when both copies match exactly.
 
-Each gateway worker caches exchanged access tokens in memory until 60 seconds before they expire. LiteLLM does not store refresh tokens.
+Each gateway worker caches exchanged access tokens in memory until 60 seconds before they expire. Lumina does not store refresh tokens.
 
 ## Troubleshooting
 
 | Problem | What to do |
 | --- | --- |
 | Entra returns `AADSTS240002` | Check that the app requests `api://<app-client-id>/access_as_user` and forwards the resulting access token, not an ID token. |
-| A connection test says it requires the caller's access token | Sign in through the app and send a prompt. A LiteLLM dashboard session alone cannot complete the exchange. |
+| A connection test says it requires the caller's access token | Sign in through the app and send a prompt. A Lumina dashboard session alone cannot complete the exchange. |
 | Token audience or issuer does not match | Check that the app issues v2 access tokens. The token's `aud` must match `JWT_AUDIENCE`, and its `iss` must match `JWT_ISSUER`. |

@@ -1,17 +1,17 @@
 ---
 slug: fireworks-getting-started
-title: "Getting Started with Fireworks AI on LiteLLM"
+title: "Getting Started with Fireworks AI on Lumina"
 date: 2026-09-22T10:00:00
 authors:
   - misbah
-description: "A beginner tutorial: run an open model on Fireworks AI behind a LiteLLM gateway, call it with the OpenAI SDK you already use, then add a second model and a fallback."
-keywords: [fireworks ai, litellm tutorial, ai gateway, open models, getting started, openai compatible, llm proxy]
+description: "A beginner tutorial: run an open model on Fireworks AI behind a Lumina gateway, call it with the OpenAI SDK you already use, then add a second model and a fallback."
+keywords: [fireworks ai, lumina tutorial, ai gateway, open models, getting started, openai compatible, llm proxy]
 tags: [tutorial, providers, fireworks, getting-started]
 hide_table_of_contents: false
 image: ./hero.png
 ---
 
-Fireworks AI is one of the largest open model inference platforms, serving more than 40 trillion tokens a day for companies including Uber, Notion, DoorDash, and Cursor. LiteLLM is the most widely used open source AI gateway, with over 500 million container pulls. Together they give you fast, low-cost open models behind a single OpenAI-compatible endpoint that tracks every token you spend.
+Fireworks AI is one of the largest open model inference platforms, serving more than 40 trillion tokens a day for companies including Uber, Notion, DoorDash, and Cursor. Lumina is the most widely used open source AI gateway, with over 500 million container pulls. Together they give you fast, low-cost open models behind a single OpenAI-compatible endpoint that tracks every token you spend.
 
 {/* truncate */}
 
@@ -19,9 +19,9 @@ Fireworks AI is one of the largest open model inference platforms, serving more 
 
 Fireworks AI serves open models on fast inference infrastructure. Families like DeepSeek, Qwen, GLM, Kimi, MiniMax, and GPT-OSS are available as serverless endpoints you can call immediately with an API key. As your needs grow you can host a model inside your own Fireworks account, reserve a dedicated deployment for consistent throughput, or point at a Fireworks router that keeps you on the current version of a model family. Open models run fast on Fireworks and cost a fraction of frontier pricing, and because the weights are open you can fine-tune one on your own data and serve the result from the same platform.
 
-## What LiteLLM gives you
+## What Lumina gives you
 
-LiteLLM is an open source AI gateway. You run it in front of your models, and it gives every provider one OpenAI-compatible API. Your application sends a normal OpenAI request to one endpoint, and the gateway handles the provider-specific details. It also tracks token usage and cost for every request, issues keys with budgets attached, and can fall back to another model when one is busy.
+Lumina is an open source AI gateway. You run it in front of your models, and it gives every provider one OpenAI-compatible API. Your application sends a normal OpenAI request to one endpoint, and the gateway handles the provider-specific details. It also tracks token usage and cost for every request, issues keys with budgets attached, and can fall back to another model when one is busy.
 
 ## What you get together
 
@@ -29,7 +29,7 @@ Your application code speaks OpenAI format to a single endpoint and never learns
 
 ## What you need
 
-A Fireworks API key from the [Fireworks dashboard](https://fireworks.ai), Python 3.10 or newer, and a couple of minutes. Install the gateway with `pip install 'litellm[proxy]'`.
+A Fireworks API key from the [Fireworks dashboard](https://fireworks.ai), Python 3.10 or newer, and a couple of minutes. Install the gateway with `pip install 'lumina[proxy]'`.
 
 ## 1. Write a config file
 
@@ -49,7 +49,7 @@ Writing `os.environ/FIREWORKS_AI_API_KEY` keeps the key out of the file. The gat
 
 ```bash
 export FIREWORKS_AI_API_KEY="your-key-here"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 The gateway comes up on `http://0.0.0.0:4000`.

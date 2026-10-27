@@ -6,7 +6,7 @@ authors:
   - mateo
   - krrish
   - ishaan-alt
-description: "day 0 support for Gemini 3.7 Flash on LiteLLM, with launch pricing tracked across Google AI Studio and Vertex AI."
+description: "day 0 support for Gemini 3.7 Flash on Lumina, with launch pricing tracked across Google AI Studio and Vertex AI."
 card_title: "Gemini 3.7 Flash"
 card_summary: "Gemini Flash refresh with launch pricing tracked on Google AI Studio and Vertex AI, no image upgrade needed."
 image: ./hero.png
@@ -17,21 +17,21 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Gemini 3.7 Flash](./hero.png)
+![Lumina x Gemini 3.7 Flash](./hero.png)
 
 # Gemini 3.7 Flash day 0 support
 
-LiteLLM now supports `gemini-3.7-flash` on day 0, on both Google AI Studio (`gemini/`) and Vertex AI (`vertex_ai/`). Google's newest Flash model delivers faster responses with meaningfully better quality than 3.6 Flash and scores higher on complex multi-step agentic, coding, and reasoning benchmarks.
+Lumina now supports `gemini-3.7-flash` on day 0, on both Google AI Studio (`gemini/`) and Vertex AI (`vertex_ai/`). Google's newest Flash model delivers faster responses with meaningfully better quality than 3.6 Flash and scores higher on complex multi-step agentic, coding, and reasoning benchmarks.
 
 {/* truncate */}
 
 :::note
-**No Docker image upgrade needed.** Gemini 3.7 Flash routes through the existing Gemini configs, so any recent LiteLLM version works out of the box for inference. For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the latest pricing from GitHub. This is available on `v1.76.0` and above. The `gemini-3.7-flash` pricing and metadata are also bundled starting in `v1.98.0-dev.2` for anyone running with `LUMINA_LOCAL_MODEL_COST_MAP=true`.
+**No Docker image upgrade needed.** Gemini 3.7 Flash routes through the existing Gemini configs, so any recent Lumina version works out of the box for inference. For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the latest pricing from GitHub. This is available on `v1.76.0` and above. The `gemini-3.7-flash` pricing and metadata are also bundled starting in `v1.98.0-dev.2` for anyone running with `LUMINA_LOCAL_MODEL_COST_MAP=true`.
 :::
 
 ## Launch pricing
 
-Gemini 3.7 Flash launches at a 50% discount that runs through December 31, 2026. LiteLLM tracks cost at the promotional rate.
+Gemini 3.7 Flash launches at a 50% discount that runs through December 31, 2026. Lumina tracks cost at the promotional rate.
 
 | | Promotional | Standard |
 |---|---|---|
@@ -46,7 +46,7 @@ Cache reads, batch, flex, and priority tiers are discounted proportionally.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/gemini-3.7-flash",
@@ -80,7 +80,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Make requests**
@@ -88,7 +88,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gemini-3.7-flash",
     "messages": [{"role": "user", "content": "Hello!"}]
@@ -100,10 +100,10 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 
 ## Thinking levels
 
-Gemini 3.7 Flash is a reasoning model. LiteLLM maps OpenAI `reasoning_effort` to Gemini's `thinkingLevel`, so the same request shape you use for other reasoning models works here.
+Gemini 3.7 Flash is a reasoning model. Lumina maps OpenAI `reasoning_effort` to Gemini's `thinkingLevel`, so the same request shape you use for other reasoning models works here.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/gemini-3.7-flash",
@@ -120,7 +120,7 @@ The `minimal` thinking level is not yet supported on `gemini-3.7-flash`. The Gem
 
 ## Supported Endpoints
 
-LiteLLM provides full end-to-end support for Gemini 3.7 Flash on:
+Lumina provides full end-to-end support for Gemini 3.7 Flash on:
 
 - `/v1/chat/completions` - OpenAI-compatible chat completions endpoint
 - `/v1/responses` - OpenAI Responses API endpoint (streaming and non-streaming)
@@ -131,4 +131,4 @@ All endpoints support streaming and non-streaming responses, function calling wi
 
 ## Feedback
 
-Running Gemini 3.7 Flash through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #36799](https://github.com/BerriAI/litellm/discussions/36799).
+Running Gemini 3.7 Flash through Lumina and hitting something unexpected? Share it on [GitHub discussion #36799](https://github.com/Soventra/lumina/discussions/36799).

@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://serper.dev](https://serper.dev)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Serper Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["SERPER_API_KEY"] = "your-api-key"
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -59,7 +59,7 @@ curl http://0.0.0.0:4000/v1/search/serper-search \
 
 ```python showLineNumbers title="Serper Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["SERPER_API_KEY"] = "your-api-key"
 

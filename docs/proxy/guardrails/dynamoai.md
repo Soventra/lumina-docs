@@ -3,11 +3,11 @@ import TabItem from '@theme/TabItem';
 
 # DynamoAI Guardrails
 
-LiteLLM supports DynamoAI guardrails for content moderation and policy enforcement on LLM inputs and outputs.
+Lumina supports DynamoAI guardrails for content moderation and policy enforcement on LLM inputs and outputs.
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 Define your guardrails under the `guardrails` section:
 
@@ -40,10 +40,10 @@ export DYNAMOAI_API_KEY="your-api-key"
 export DYNAMOAI_POLICY_IDS="policy-id-1,policy-id-2,policy-id-3"
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test Request
@@ -193,7 +193,7 @@ DynamoAI guardrail logs include:
 - **duration**: Time taken for guardrail check
 - **start_time** and **end_time**: Timestamps
 
-These logs are available through your configured LiteLLM logging callbacks.
+These logs are available through your configured Lumina logging callbacks.
 
 ## Error Handling
 

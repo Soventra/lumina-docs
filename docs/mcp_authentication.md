@@ -2,12 +2,12 @@
 
 This page covers upstream MCP authentication that does not use an OAuth flow, including no authentication, fixed credentials, and AWS SigV4. For OAuth setup, see [MCP OAuth](./mcp_oauth.md), [MCP OAuth Passthrough](./mcp_oauth_passthrough.md), or [MCP On-Behalf-Of Auth](./mcp_obo_auth.md).
 
-LiteLLM handles two separate authentication hops for an MCP request:
+Lumina handles two separate authentication hops for an MCP request:
 
-- **Client to LiteLLM:** the MCP client proves that it can use the LiteLLM gateway, usually with a LiteLLM API key.
-- **LiteLLM to the upstream MCP server:** LiteLLM authenticates to the selected upstream according to that server's `auth_type`.
+- **Client to Lumina:** the MCP client proves that it can use the Lumina gateway, usually with a Lumina API key.
+- **Lumina to the upstream MCP server:** Lumina authenticates to the selected upstream according to that server's `auth_type`.
 
-The `auth_type` on an MCP server controls the second hop. A LiteLLM API key used for gateway admission is not copied to the upstream server. To let individual users or service-account keys use their own upstream credential for a shared server instead of the one stored on it, see [Per-User and Per-Key Upstream Credentials](./mcp_per_user_auth.md).
+The `auth_type` on an MCP server controls the second hop. A Lumina API key used for gateway admission is not copied to the upstream server. To let individual users or service-account keys use their own upstream credential for a shared server instead of the one stored on it, see [Per-User and Per-Key Upstream Credentials](./mcp_per_user_auth.md).
 
 :::note[Transport scope]
 
@@ -35,16 +35,16 @@ Static upstream credentials are stored on the MCP server configuration. The clie
 
 For example, the client can make the same request whether the upstream server uses `none`, `basic`, or `api_key`:
 
-```http title="Client to LiteLLM"
+```http title="Client to Lumina"
 POST /inventory/mcp HTTP/1.1
-Host: litellm.example.com
-x-litellm-api-key: Bearer sk-litellm
+Host: lumina.example.com
+x-lumina-api-key: Bearer sk-lumina
 Content-Type: application/json
 
 {"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}
 ```
 
-LiteLLM authenticates the client, selects the `inventory` MCP server, and builds the upstream request from that server's `auth_type`. The following sections show the resulting upstream credential.
+Lumina authenticates the client, selects the `inventory` MCP server, and builds the upstream request from that server's `auth_type`. The following sections show the resulting upstream credential.
 
 The client does supply the upstream token for `true_passthrough` and `oauth_delegate`. See [MCP OAuth Passthrough](./mcp_oauth_passthrough.md).
 
@@ -54,7 +54,7 @@ The client does supply the upstream token for `true_passthrough` and `oauth_dele
 
 `auth_type: none` means the auth resolver contributes no upstream credential.
 
-- **Behavior:** LiteLLM adds no `Authorization`, `X-API-Key`, or other credential header for this auth type.
+- **Behavior:** Lumina adds no `Authorization`, `X-API-Key`, or other credential header for this auth type.
 - **Use when:** the upstream MCP endpoint requires no application credential. Common examples are a public MCP server or a private endpoint protected by network policy.
 - **Do not use when:** the upstream requires Basic Auth, an API key, a bearer token, or a caller-owned token.
 
@@ -66,9 +66,9 @@ mcp_servers:
     auth_type: "none"
 ```
 
-The upstream request has no auth credential added by LiteLLM:
+The upstream request has no auth credential added by Lumina:
 
-```http title="LiteLLM to upstream"
+```http title="Lumina to upstream"
 POST /mcp HTTP/1.1
 Host: mcp.example.com
 Content-Type: application/json
@@ -76,7 +76,7 @@ Content-Type: application/json
 
 :::warning[Do not put credentials in the URL]
 
-A URL such as `https://username:password@mcp.example.com/mcp` is rejected when `auth_type` is `none`. LiteLLM does not infer Basic Auth from URL userinfo. Remove the credentials from the URL and configure [`auth_type: basic`](#basic-auth) instead.
+A URL such as `https://username:password@mcp.example.com/mcp` is rejected when `auth_type` is `none`. Lumina does not infer Basic Auth from URL userinfo. Remove the credentials from the URL and configure [`auth_type: basic`](#basic-auth) instead.
 
 :::
 
@@ -85,7 +85,7 @@ A URL such as `https://username:password@mcp.example.com/mcp` is rejected when `
 `auth_type: basic` turns a raw username and password into a standard HTTP Basic header.
 
 - **Authentication value:** enter `username:password`. Do not base64-encode it and do not add the `Basic` prefix.
-- **Behavior:** LiteLLM base64-encodes the full value, adds the `Basic` scheme, and sends the same service credential on every upstream request.
+- **Behavior:** Lumina base64-encodes the full value, adds the `Basic` scheme, and sends the same service credential on every upstream request.
 - **Use when:** the upstream documentation asks for HTTP Basic authentication.
 
 ```yaml title="config.yaml"
@@ -97,9 +97,9 @@ mcp_servers:
     auth_value: os.environ/MCP_BASIC_AUTH # value: username:password
 ```
 
-For `MCP_BASIC_AUTH=username:password`, LiteLLM sends:
+For `MCP_BASIC_AUTH=username:password`, Lumina sends:
 
-```http title="LiteLLM to upstream"
+```http title="Lumina to upstream"
 Authorization: Basic dXNlcm5hbWU6cGFzc3dvcmQ=
 ```
 
@@ -110,7 +110,7 @@ The username and password belong in `auth_value`, not in the server URL.
 `auth_type: api_key` sends one fixed key in `X-API-Key`.
 
 - **Authentication value:** enter only the key value.
-- **Behavior:** LiteLLM sends the same key on each upstream request.
+- **Behavior:** Lumina sends the same key on each upstream request.
 - **Use when:** the upstream documentation requires `X-API-Key`.
 
 ```yaml title="config.yaml"
@@ -122,7 +122,7 @@ mcp_servers:
     auth_value: os.environ/INVENTORY_API_KEY
 ```
 
-```http title="LiteLLM to upstream"
+```http title="Lumina to upstream"
 X-API-Key: <INVENTORY_API_KEY>
 ```
 
@@ -133,7 +133,7 @@ If the upstream expects a different header name, use [`static_headers`](#custom-
 `auth_type: bearer_token` adds the `Bearer` scheme to a fixed token.
 
 - **Authentication value:** enter only the token. Do not add the `Bearer` prefix.
-- **Behavior:** LiteLLM sends `Authorization: Bearer <token>` on each upstream request.
+- **Behavior:** Lumina sends `Authorization: Bearer <token>` on each upstream request.
 - **Use when:** the upstream accepts a fixed bearer token, such as a service token or personal access token. For tokens that must be minted, refreshed, exchanged, or supplied by the caller, see [MCP OAuth](./mcp_oauth.md).
 
 ```yaml title="config.yaml"
@@ -145,7 +145,7 @@ mcp_servers:
     auth_value: os.environ/INVENTORY_TOKEN
 ```
 
-```http title="LiteLLM to upstream"
+```http title="Lumina to upstream"
 Authorization: Bearer <INVENTORY_TOKEN>
 ```
 
@@ -154,7 +154,7 @@ Authorization: Bearer <INVENTORY_TOKEN>
 `auth_type: token` uses the lowercase `token` authorization scheme.
 
 - **Authentication value:** enter only the token. Do not add the `token` prefix.
-- **Behavior:** LiteLLM sends `Authorization: token <token>`.
+- **Behavior:** Lumina sends `Authorization: token <token>`.
 - **Use when:** the upstream explicitly documents this scheme. Use `bearer_token` for standard bearer authentication.
 
 ```yaml title="config.yaml"
@@ -166,7 +166,7 @@ mcp_servers:
     auth_value: os.environ/LEGACY_SERVICE_TOKEN
 ```
 
-```http title="LiteLLM to upstream"
+```http title="Lumina to upstream"
 Authorization: token <LEGACY_SERVICE_TOKEN>
 ```
 
@@ -175,7 +175,7 @@ Authorization: token <LEGACY_SERVICE_TOKEN>
 `auth_type: authorization` sends the authentication value verbatim in the `Authorization` header.
 
 - **Authentication value:** enter the complete value, including the scheme or prefix.
-- **Behavior:** LiteLLM does not add, remove, or change the scheme.
+- **Behavior:** Lumina does not add, remove, or change the scheme.
 - **Use when:** the upstream uses an authorization scheme that the other static types do not cover. This value is supported in `config.yaml` and the server API, but is not currently listed in the Admin UI selector.
 
 ```yaml title="config.yaml"
@@ -187,7 +187,7 @@ mcp_servers:
     auth_value: os.environ/CUSTOM_AUTH_HEADER # value: Custom <token>
 ```
 
-```http title="LiteLLM to upstream"
+```http title="Lumina to upstream"
 Authorization: Custom <CUSTOM_AUTH_TOKEN>
 ```
 
@@ -195,9 +195,9 @@ Authorization: Custom <CUSTOM_AUTH_TOKEN>
 
 `auth_type: aws_sigv4` signs every request with AWS Signature Version 4 instead of attaching one fixed token.
 
-- **Behavior:** LiteLLM hashes and signs each request, then adds the generated `Authorization`, `x-amz-date`, and temporary-credential headers required by AWS.
+- **Behavior:** Lumina hashes and signs each request, then adds the generated `Authorization`, `x-amz-date`, and temporary-credential headers required by AWS.
 - **Use when:** the upstream is an AWS Bedrock AgentCore MCP server.
-- **Credential source:** use explicit AWS credentials, the boto3 credential chain, or an IAM role that LiteLLM can assume.
+- **Credential source:** use explicit AWS credentials, the boto3 credential chain, or an IAM role that Lumina can assume.
 
 ```yaml title="config.yaml"
 mcp_servers:
@@ -216,8 +216,8 @@ See [MCP AWS SigV4 Auth](./mcp_aws_sigv4.md) for setup and troubleshooting.
 
 Some upstreams require a custom header name or more than one fixed header. These settings are separate from `auth_type`:
 
-- **`static_headers`:** LiteLLM adds the configured values to every upstream request. Use this for a custom static credential, tenant identifier, or secondary gateway credential.
-- **`extra_headers`:** LiteLLM copies only the named headers from the current client request to the upstream. Use this for request-specific context that the client owns.
+- **`static_headers`:** Lumina adds the configured values to every upstream request. Use this for a custom static credential, tenant identifier, or secondary gateway credential.
+- **`extra_headers`:** Lumina copies only the named headers from the current client request to the upstream. Use this for request-specific context that the client owns.
 
 ```yaml title="config.yaml"
 mcp_servers:

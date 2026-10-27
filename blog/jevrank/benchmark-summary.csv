@@ -1,4 +1,4 @@
-key,model,method,ndcg_at_10,reported_usd_per_1000_queries,measurement_origin,litellm_reproduction
+key,model,method,ndcg_at_10,reported_usd_per_1000_queries,measurement_origin,lumina_reproduction
 pplx,Perplexity Decider v1.2,Multiple choice,0.777,0.15,external_reference_via_openrouter,pending
 flash,Perplexity Decider Flash v1.2,Multiple choice,0.775,0.07,external_reference_via_openrouter,pending
 liquid,Liquid D1 Ultra,Per-document,0.777,0.34,external_reference_via_openrouter,pending

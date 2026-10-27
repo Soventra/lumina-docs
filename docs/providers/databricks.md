@@ -3,17 +3,17 @@ import TabItem from '@theme/TabItem';
 
 # Databricks
 
-LiteLLM supports all models on Databricks
+Lumina supports all models on Databricks
 
 :::tip
 
-**We support ALL Databricks models, just set `model=databricks/<any-model-on-databricks>` as a prefix when sending litellm requests**
+**We support ALL Databricks models, just set `model=databricks/<any-model-on-databricks>` as a prefix when sending lumina requests**
 
 :::
 
 ## Authentication
 
-LiteLLM supports multiple authentication methods for Databricks, listed in order of preference:
+Lumina supports multiple authentication methods for Databricks, listed in order of preference:
 
 ### OAuth M2M (Recommended for Production)
 
@@ -21,7 +21,7 @@ OAuth Machine-to-Machine authentication using Service Principal credentials is t
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # Set OAuth credentials (Service Principal)
 os.environ["DATABRICKS_CLIENT_ID"] = "your-service-principal-application-id"
@@ -40,7 +40,7 @@ PAT authentication is supported for development and testing scenarios.
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["DATABRICKS_API_KEY"] = "dapi..."  # Your Personal Access Token
 os.environ["DATABRICKS_API_BASE"] = "https://adb-xxx.azuredatabricks.net/serving-endpoints"
@@ -53,10 +53,10 @@ response = completion(
 
 ### Databricks SDK Authentication (Automatic)
 
-If no credentials are provided, LiteLLM will use the Databricks SDK for automatic authentication. This supports OAuth, Azure AD, and other unified auth methods configured in your environment.
+If no credentials are provided, Lumina will use the Databricks SDK for automatic authentication. This supports OAuth, Azure AD, and other unified auth methods configured in your environment.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # No environment variables needed - uses Databricks SDK unified auth
 # Requires: uv add databricks-sdk
@@ -68,9 +68,9 @@ response = completion(
 
 ## Custom User-Agent for Partner Attribution
 
-If you're building a product on top of LiteLLM that integrates with Databricks, you can pass your own partner identifier for proper attribution in Databricks telemetry.
+If you're building a product on top of Lumina that integrates with Databricks, you can pass your own partner identifier for proper attribution in Databricks telemetry.
 
-The partner name will be prefixed to the LiteLLM user agent:
+The partner name will be prefixed to the Lumina user agent:
 
 ```python
 # Via parameter
@@ -79,25 +79,25 @@ response = completion(
     messages=[{"role": "user", "content": "Hello!"}],
     user_agent="mycompany/1.0.0",
 )
-# Resulting User-Agent: mycompany_litellm/1.79.1
+# Resulting User-Agent: mycompany_lumina/1.79.1
 
 # Via environment variable
 os.environ["DATABRICKS_USER_AGENT"] = "mycompany/1.0.0"
-# Resulting User-Agent: mycompany_litellm/1.79.1
+# Resulting User-Agent: mycompany_lumina/1.79.1
 ```
 
 | Input | Resulting User-Agent |
 |-------|---------------------|
-| (none) | `litellm/1.79.1` |
-| `mycompany/1.0.0` | `mycompany_litellm/1.79.1` |
-| `partner_product/2.5.0` | `partner_product_litellm/1.79.1` |
-| `acme` | `acme_litellm/1.79.1` |
+| (none) | `lumina/1.79.1` |
+| `mycompany/1.0.0` | `mycompany_lumina/1.79.1` |
+| `partner_product/2.5.0` | `partner_product_lumina/1.79.1` |
+| `acme` | `acme_lumina/1.79.1` |
 
-**Note:** The version from your custom user agent is ignored; LiteLLM's version is always used.
+**Note:** The version from your custom user agent is ignored; Lumina's version is always used.
 
 ## Security
 
-LiteLLM automatically redacts sensitive information (tokens, secrets, API keys) from all debug logs to prevent credential leakage. This includes:
+Lumina automatically redacts sensitive information (tokens, secrets, API keys) from all debug logs to prevent credential leakage. This includes:
 
 - Authorization headers
 - API keys and tokens
@@ -119,7 +119,7 @@ os.environ["DATABRICKS_API_BASE"] = ""
 ### Example Call
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["DATABRICKS_API_KEY"] = "databricks key"
@@ -152,10 +152,10 @@ response = completion(
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml --debug
+  $ lumina --config /path/to/config.yaml --debug
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -164,8 +164,8 @@ response = completion(
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -217,11 +217,11 @@ response = completion(
 </Tabs>
 
 ## Passing additional params - max_tokens, temperature 
-See all litellm.completion supported params [here](../completion/input.md#translated-openai-params)
+See all lumina.completion supported params [here](../completion/input.md#translated-openai-params)
 
 ```python
-# !uv add litellm
-from litellm import completion
+# !uv add lumina
+from lumina import completion
 import os
 ## set ENV variables
 os.environ["DATABRICKS_API_KEY"] = "databricks key"
@@ -251,7 +251,7 @@ response = completion(
 
 ## Usage - Thinking / `reasoning_content`
 
-LiteLLM translates OpenAI's `reasoning_effort` to Anthropic's `thinking` parameter. [Code](https://github.com/BerriAI/litellm/blob/23051d89dd3611a81617d84277059cd88b2df511/litellm/llms/anthropic/chat/transformation.py#L298)
+Lumina translates OpenAI's `reasoning_effort` to Anthropic's `thinking` parameter. [Code](https://github.com/Soventra/lumina/blob/23051d89dd3611a81617d84277059cd88b2df511/lumina/llms/anthropic/chat/transformation.py#L298)
 
 | reasoning_effort | thinking |
 | ---------------- | -------- |
@@ -261,14 +261,14 @@ LiteLLM translates OpenAI's `reasoning_effort` to Anthropic's `thinking` paramet
 
 
 Known Limitations:
-- Support for passing thinking blocks back to Claude [Issue](https://github.com/BerriAI/litellm/issues/9790)
+- Support for passing thinking blocks back to Claude [Issue](https://github.com/Soventra/lumina/issues/9790)
  
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 # set ENV variables (can also be passed in to .completion() - e.g. `api_base`, `api_key`)
@@ -300,7 +300,7 @@ resp = completion(
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -308,7 +308,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -378,7 +378,7 @@ ModelResponse(
 
 ### Citations
 
-Anthropic models served through Databricks can return citation metadata. LiteLLM
+Anthropic models served through Databricks can return citation metadata. Lumina
 exposes these via `response.choices[0].message.provider_specific_fields["citations"]`.
 
 ### Pass `thinking` to Anthropic models
@@ -392,14 +392,14 @@ You can also pass the `thinking` parameter to Anthropic models.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 # set ENV variables (can also be passed in to .completion() - e.g. `api_base`, `api_key`)
 os.environ["DATABRICKS_API_KEY"] = "databricks key"
 os.environ["DATABRICKS_API_BASE"] = "databricks base url"
 
-response = litellm.completion(
+response = lumina.completion(
   model="databricks/databricks-claude-3-7-sonnet",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   thinking={"type": "enabled", "budget_tokens": 1024},
@@ -431,7 +431,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 :::tip
 
-**We support ALL Databricks models, just set `model=databricks/<any-model-on-databricks>` as a prefix when sending litellm requests**
+**We support ALL Databricks models, just set `model=databricks/<any-model-on-databricks>` as a prefix when sending lumina requests**
 
 :::
 
@@ -451,7 +451,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Decisions (ai_decide)
 
-Databricks serves OpenJev as the [`ai_decide` AI Function](https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_decide), which answers decision questions at `POST /api/2.0/ai-functions/ai-decide` on your workspace. The function is in Beta, so a workspace admin must turn on the `ai_decide` preview first. LiteLLM exposes it on the [unified decision routes](/docs/decisions), `/v1/systemone` for System One bodies and `/v1/decisions` for the OpenAI Decisions format, and as an Auto Router classifier. Add it to `model_list`:
+Databricks serves OpenJev as the [`ai_decide` AI Function](https://docs.databricks.com/aws/en/sql/language-manual/functions/ai_decide), which answers decision questions at `POST /api/2.0/ai-functions/ai-decide` on your workspace. The function is in Beta, so a workspace admin must turn on the `ai_decide` preview first. Lumina exposes it on the [unified decision routes](/docs/decisions), `/v1/systemone` for System One bodies and `/v1/decisions` for the OpenAI Decisions format, and as an Auto Router classifier. Add it to `model_list`:
 
 ```yaml title="config.yaml"
 model_list:
@@ -462,7 +462,7 @@ model_list:
       api_key: os.environ/DATABRICKS_API_KEY
 ```
 
-`DATABRICKS_API_BASE` is `https://<workspace-host>`. The `/serving-endpoints` URL the chat deployments above use also works, since LiteLLM removes that suffix before it adds the AI Function path. LiteLLM sends no `model` field to the AI Function, since it picks the model itself. Any other `databricks/<endpoint>` name on the decision routes still goes to that serving endpoint's `/invocations` route.
+`DATABRICKS_API_BASE` is `https://<workspace-host>`. The `/serving-endpoints` URL the chat deployments above use also works, since Lumina removes that suffix before it adds the AI Function path. Lumina sends no `model` field to the AI Function, since it picks the model itself. Any other `databricks/<endpoint>` name on the decision routes still goes to that serving endpoint's `/invocations` route.
 
 ```bash
 curl http://localhost:4000/v1/systemone \
@@ -483,7 +483,7 @@ curl http://localhost:4000/v1/systemone \
   }'
 ```
 
-LiteLLM unwraps the `response` envelope Databricks returns, so the answers come back in the same shape as the other decision providers, and `metadata` is kept. A `noul` answer's `probability` is returned as `noul`, the System One field name. The AI Function reports no token usage and no model name, so `usage` is zero, spend logs record the call as `databricks/ai_decide` at zero cost, and `/v1/systemone` returns `model: null`. Databricks bills AI Functions on your workspace and publishes no per-token price. `/health` probes the deployment with a System One request, so no `model_info.mode` is needed. An OpenAI-format body sent to `/v1/decisions` reaches Databricks as the same System One request, and the answers come back in the OpenAI format.
+Lumina unwraps the `response` envelope Databricks returns, so the answers come back in the same shape as the other decision providers, and `metadata` is kept. A `noul` answer's `probability` is returned as `noul`, the System One field name. The AI Function reports no token usage and no model name, so `usage` is zero, spend logs record the call as `databricks/ai_decide` at zero cost, and `/v1/systemone` returns `model: null`. Databricks bills AI Functions on your workspace and publishes no per-token price. `/health` probes the deployment with a System One request, so no `model_info.mode` is needed. An OpenAI-format body sent to `/v1/decisions` reaches Databricks as the same System One request, and the answers come back in the OpenAI format.
 
 To route Auto Router traffic with the same AI Function, set `opensource_classifier_config.provider: databricks` and `model: ai_decide` as described in the [OSS classifier guide](/docs/auto_router/decision_classifiers#databricks-ai-decide).
 
@@ -491,21 +491,21 @@ To route Auto Router traffic with the same AI Function, set `opensource_classifi
 
 ### Passing Databricks specific params - 'instruction'
 
-For embedding models, databricks lets you pass in an additional param 'instruction'. [Full Spec](https://github.com/BerriAI/litellm/blob/43353c28b341df0d9992b45c6ce464222ebd7984/litellm/llms/databricks.py#L164)
+For embedding models, databricks lets you pass in an additional param 'instruction'. [Full Spec](https://github.com/Soventra/lumina/blob/43353c28b341df0d9992b45c6ce464222ebd7984/lumina/llms/databricks.py#L164)
 
 
 ```python
-# !uv add litellm
-from litellm import embedding
+# !uv add lumina
+from lumina import embedding
 import os
 ## set ENV variables
 os.environ["DATABRICKS_API_KEY"] = "databricks key"
 os.environ["DATABRICKS_API_BASE"] = "databricks url"
 
 # Databricks bge-large-en call
-response = litellm.embedding(
+response = lumina.embedding(
       model="databricks/databricks-bge-large-en",
-      input=["good morning from litellm"],
+      input=["good morning from lumina"],
       instruction="Represent this sentence for searching relevant passages:",
   )
 ```
@@ -526,7 +526,7 @@ response = litellm.embedding(
 
 :::tip
 
-**We support ALL Databricks models, just set `model=databricks/<any-model-on-databricks>` as a prefix when sending litellm requests**
+**We support ALL Databricks models, just set `model=databricks/<any-model-on-databricks>` as a prefix when sending lumina requests**
 
 :::
 

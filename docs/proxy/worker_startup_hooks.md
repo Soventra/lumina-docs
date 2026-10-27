@@ -4,10 +4,10 @@ Use `LUMINA_WORKER_STARTUP_HOOKS` to run custom initialization functions in **ea
 
 ## The Problem
 
-When running the LiteLLM proxy with multiple workers:
+When running the Lumina proxy with multiple workers:
 
 ```bash
-litellm --config config.yaml --num_workers 4
+lumina --config config.yaml --num_workers 4
 ```
 
 Each worker is a **separate process** spawned by uvicorn, gunicorn, or Granian (`--run_granian`). Any in-process state initialized in the master process (before `run_server()`) is **not available** in worker processes. This includes:
@@ -31,7 +31,7 @@ Each hook is called **early** in the worker startup lifecycle, before config loa
 
 ### 1. Define your wrapper module
 
-```python title="my_litellm_wrapper.py"
+```python title="my_lumina_wrapper.py"
 import gflags
 import json
 import os
@@ -76,19 +76,19 @@ import json
 import os
 import sys
 
-from my_litellm_wrapper import init_gflags
+from my_lumina_wrapper import init_gflags
 
 # Store sys.argv so workers can re-parse the same flags
 os.environ["GFLAGS_ARGV"] = json.dumps(sys.argv)
 
-# Tell LiteLLM to call our hook in each worker
-os.environ["LUMINA_WORKER_STARTUP_HOOKS"] = "my_litellm_wrapper:init_gflags_for_worker"
+# Tell Lumina to call our hook in each worker
+os.environ["LUMINA_WORKER_STARTUP_HOOKS"] = "my_lumina_wrapper:init_gflags_for_worker"
 
 # Initialize gflags in the master process
 init_gflags()
 
 # Start the proxy (programmatic invocation)
-from litellm.proxy.proxy_cli import run_server
+from lumina.proxy.proxy_cli import run_server
 
 run_server(
     ["--config", "config.yaml", "--num_workers", "4"],
@@ -100,9 +100,9 @@ Or via shell:
 
 ```bash
 export GFLAGS_ARGV='["my_app", "--my_flag=value", "--batch_size=32"]'
-export LUMINA_WORKER_STARTUP_HOOKS="my_litellm_wrapper:init_gflags_for_worker"
+export LUMINA_WORKER_STARTUP_HOOKS="my_lumina_wrapper:init_gflags_for_worker"
 
-litellm --config config.yaml --num_workers 4
+lumina --config config.yaml --num_workers 4
 ```
 
 ## How It Works

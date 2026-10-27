@@ -16,16 +16,16 @@ Computer use allows models to interact with computer interfaces by taking screen
 - `text_editor` - Text editor tool
 - `web_search` - Web search tool
 
-LiteLLM will standardize the computer use tools across all supported providers.
+Lumina will standardize the computer use tools across all supported providers.
 
 ## Quick Start
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python keep-model-ids
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -68,7 +68,7 @@ print(response)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy Server">
+<TabItem value="proxy" label="Lumina Proxy Server">
 
 1. Define computer use models on config.yaml
 
@@ -91,7 +91,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it using the OpenAI Python SDK
@@ -101,7 +101,7 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>", # your litellm proxy api key
+    api_key="sk-<your-lumina-api-key>", # your lumina proxy api key
     base_url="http://0.0.0.0:4000"
 )
 
@@ -144,12 +144,12 @@ print(response)
 ## Checking if a model supports `computer use`
 
 <Tabs>
-<TabItem label="LiteLLM Python SDK" value="Python">
+<TabItem label="Lumina Python SDK" value="Python">
 
-Use `supports_computer_use(model="")` from `litellm.utils` -> returns `True` if model supports computer use and `False` if not. It is not exported on the top-level `litellm` package, so `litellm.supports_computer_use` raises `AttributeError`
+Use `supports_computer_use(model="")` from `lumina.utils` -> returns `True` if model supports computer use and `False` if not. It is not exported on the top-level `lumina` package, so `lumina.supports_computer_use` raises `AttributeError`
 
 ```python
-from litellm.utils import supports_computer_use
+from lumina.utils import supports_computer_use
 
 assert supports_computer_use(model="anthropic/{{anthropic}}") == True
 assert supports_computer_use(model="anthropic/{{anthropic_large}}") == True
@@ -159,7 +159,7 @@ assert supports_computer_use(model="openai/{{openai_large}}") == False
 ```
 </TabItem>
 
-<TabItem label="LiteLLM Proxy Server" value="proxy">
+<TabItem label="Lumina Proxy Server" value="proxy">
 
 1. Define computer use models on config.yaml
 
@@ -182,7 +182,7 @@ model_list:
 2. Run proxy server
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Call `/model/info` to check if your model supports `computer use`. The flag is on each deployment's `model_info`. `/model_group/info` does not return `supports_computer_use`
@@ -203,7 +203,7 @@ Expected Response (trimmed)
       "model_name": "claude-sonnet",
       "lumina_params": {"model": "anthropic/{{anthropic}}"},
       "model_info": {
-        "litellm_provider": "anthropic",
+        "lumina_provider": "anthropic",
         "mode": "chat",
         "supports_computer_use": true,
         "supports_vision": true,
@@ -214,7 +214,7 @@ Expected Response (trimmed)
       "model_name": "claude-bedrock",
       "lumina_params": {"model": "bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0"},
       "model_info": {
-        "litellm_provider": "bedrock",
+        "lumina_provider": "bedrock",
         "mode": "chat",
         "supports_computer_use": true,
         "supports_vision": true,
@@ -239,7 +239,7 @@ The `computer_20241022` tool provides direct screen interaction capabilities.
 
 ```python keep-model-ids
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -287,7 +287,7 @@ The `bash_20241022` tool provides command line interface access.
 
 ```python keep-model-ids
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -321,7 +321,7 @@ The `text_editor_20250124` tool provides text file editing capabilities.
 
 ```python keep-model-ids
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -357,7 +357,7 @@ You can combine different computer use tools in a single request:
 
 ```python keep-model-ids
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 

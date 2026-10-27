@@ -1,5 +1,5 @@
 // Copies a launch post's card_title / card_summary frontmatter into the RSS
-// item's categories as "card_title:..." / "card_summary:..." so the LiteLLM
+// item's categories as "card_title:..." / "card_summary:..." so the Lumina
 // Admin UI Home page can render short cards without parsing the title.
 const CARD_FIELDS = ['card_title', 'card_summary'];
 
@@ -18,7 +18,7 @@ function withCardCategories(items, blogPosts) {
   }));
 }
 
-// The feed lists every post so readers of it (the litellm.ai blog page builds
+// The feed lists every post so readers of it (the lumina.ai blog page builds
 // its tag filters from the feed's categories) see the tags of older posts too.
 // Only the newest FULL_TEXT_ITEMS keep their full HTML; older items carry the
 // title, date, summary and tags, which keeps the feed close to its old size.

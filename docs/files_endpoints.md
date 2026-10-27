@@ -24,7 +24,7 @@ Use different OpenAI API keys for files and batches by specifying a `model` para
 
 1. Define models in `model_list` with different API keys
 2. Pass `model` parameter when creating files
-3. LiteLLM returns encoded IDs that contain routing information
+3. Lumina returns encoded IDs that contain routing information
 4. Use encoded IDs for all subsequent operations (retrieve, delete, batches)
 5. No need to specify model again - routing info is in the ID
 
@@ -32,8 +32,8 @@ Use different OpenAI API keys for files and batches by specifying a `model` para
 
 ```yaml
 model_list:
-  # litellm OpenAI Account
-  - model_name: "gpt-4o-litellm"
+  # lumina OpenAI Account
+  - model_name: "gpt-4o-lumina"
     lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_LUMINA_API_KEY
@@ -51,15 +51,15 @@ model_list:
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM proxy key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina proxy key
     base_url="http://0.0.0.0:4000"
 )
 
-# Create file using litellm account
+# Create file using lumina account
 file_response = client.files.create(
     file=open("batch_data.jsonl", "rb"),
     purpose="batch",
-    extra_body={"model": "gpt-4o-litellm"}  # Routes to litellm key
+    extra_body={"model": "gpt-4o-lumina"}  # Routes to lumina key
 )
 print(f"File ID: {file_response.id}")
 # Returns encoded ID like: file-bGl0ZWxsbTpmaWxlLWFiYzEyMzttb2RlbCxncHQtNG8taWZvb2Q
@@ -85,22 +85,22 @@ files = client.files.list(
 
 # List batches for a specific account
 batches = client.batches.list(
-    extra_query={"model": "gpt-4o-litellm"}  # List litellm batches
+    extra_query={"model": "gpt-4o-lumina"}  # List lumina batches
 )
 ```
 
 ### Parameter Options
 
 You can pass the `model` parameter via:
-- **Request body**: `extra_body={"model": "gpt-4o-litellm"}`
-- **Query parameter**: `?model=gpt-4o-litellm`
-- **Header**: `x-litellm-model: gpt-4o-litellm`
+- **Request body**: `extra_body={"model": "gpt-4o-lumina"}`
+- **Query parameter**: `?model=gpt-4o-lumina`
+- **Header**: `x-lumina-model: gpt-4o-lumina`
 
 ### How Encoded IDs Work
 
-- When you create a file/batch with a `model` parameter, LiteLLM encodes the model name into the returned ID
+- When you create a file/batch with a `model` parameter, Lumina encodes the model name into the returned ID
 - The encoded ID is base64-encoded and looks like: `file-bGl0ZWxsbTpmaWxlLWFiYzEyMzttb2RlbCxncHQtNG8taWZvb2Q`
-- When you use this ID in subsequent operations (retrieve, delete, batch create), LiteLLM automatically:
+- When you use this ID in subsequent operations (retrieve, delete, batch create), Lumina automatically:
   1. Decodes the ID
   2. Extracts the model name
   3. Looks up the credentials
@@ -149,7 +149,7 @@ client.batches.create(input_file_id=file.id)  # Routes correctly
 ```
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM PROXY Server">
+<TabItem value="proxy" label="Lumina PROXY Server">
 
 1. Setup config.yaml
 
@@ -164,10 +164,10 @@ files_settings:
     api_key: os.environ/OPENAI_API_KEY
 ```
 
-2. Start LiteLLM PROXY Server
+2. Start Lumina PROXY Server
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 ## RUNNING on http://0.0.0.0:4000
 ```
@@ -252,12 +252,12 @@ print("content=", content)
 
 **Upload a File**
 ```python
-import litellm
+import lumina
 import os 
 
 os.environ["OPENAI_API_KEY"] = "sk-.."
 
-file_obj = await litellm.acreate_file(
+file_obj = await lumina.acreate_file(
     file=open("mydata.jsonl", "rb"),
     purpose="fine-tune",
     custom_llm_provider="openai",
@@ -267,7 +267,7 @@ print("Response from creating file=", file_obj)
 
 **List Files**
 ```python
-files = await litellm.afile_list(
+files = await lumina.afile_list(
     custom_llm_provider="openai",
     limit=10
 )
@@ -276,7 +276,7 @@ print("files=", files)
 
 **Retrieve File Information**
 ```python
-file = await litellm.afile_retrieve(
+file = await lumina.afile_retrieve(
     file_id="file-abc123",
     custom_llm_provider="openai"
 )
@@ -285,7 +285,7 @@ print("file=", file)
 
 **Delete File**
 ```python
-response = await litellm.afile_delete(
+response = await lumina.afile_delete(
     file_id="file-abc123",
     custom_llm_provider="openai"
 )
@@ -294,7 +294,7 @@ print("delete response=", response)
 
 **Get File Content**
 ```python
-content = await litellm.afile_content(
+content = await lumina.afile_content(
     file_id="file-abc123",
     custom_llm_provider="openai"
 )
@@ -304,7 +304,7 @@ print("file content=", content)
 **Get File Content (Bedrock)**
 ```python
 # For Bedrock batch output files stored in S3
-content = await litellm.afile_content(
+content = await lumina.afile_content(
     file_id="s3://bucket-name/path/to/file.jsonl",  # S3 URI or unified file ID
     custom_llm_provider="bedrock",
     aws_region_name="us-west-2"
@@ -332,4 +332,4 @@ print("file content=", content.text)
 Anthropic Files API has a different purpose than OpenAI's. Rather than serving Batches or Fine-tuning, it lets you upload a file once and reference it by `file_id` in multiple messages, avoiding re-uploads. File API operations are free; file content used in Messages requests is priced as input tokens.
 :::
 
-## [Swagger API Reference](https://docs.litellm.ai/api-reference/#/files)
+## [Swagger API Reference](https://docs.lumina.ai/api-reference/#/files)

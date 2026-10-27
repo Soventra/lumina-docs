@@ -33,7 +33,7 @@ curl -i http://localhost:8800/health
 Additional deployment options are available. [Contact Qohash](https://qohash.com) for details.
 :::
 
-### 2. Configure LiteLLM Proxy (config.yaml)
+### 2. Configure Lumina Proxy (config.yaml)
 
 **Pre-call.** Block sensitive data before it reaches the model:
 
@@ -59,10 +59,10 @@ guardrails:
       default_on: true
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Test Requests
@@ -75,7 +75,7 @@ Send a prompt containing a credit card number (blocked by a `BLOCK` policy):
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_litellm_key>" \
+  -H "Authorization: Bearer <your_lumina_key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -85,7 +85,7 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-Expected: Qostodian Nexus returns `BLOCK` → LiteLLM returns an error, no provider request is made.
+Expected: Qostodian Nexus returns `BLOCK` → Lumina returns an error, no provider request is made.
 
 </TabItem>
 <TabItem label="REDACT" value="redact">
@@ -95,7 +95,7 @@ Expected: Qostodian Nexus returns `BLOCK` → LiteLLM returns an error, no provi
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_litellm_key>" \
+  -H "Authorization: Bearer <your_lumina_key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -105,14 +105,14 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-Expected: Qostodian Nexus returns `REDACT` → LiteLLM forwards a masked prompt to the provider. Response headers include `x-qostodian-nexus-outcome-decision: REDACT`.
+Expected: Qostodian Nexus returns `REDACT` → Lumina forwards a masked prompt to the provider. Response headers include `x-qostodian-nexus-outcome-decision: REDACT`.
 
 **Post-call.** Sensitive content in the model response is masked before it reaches the caller:
 
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_litellm_key>" \
+  -H "Authorization: Bearer <your_lumina_key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -122,7 +122,7 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-Expected: Qostodian Nexus returns `REDACT` → LiteLLM returns the response with masked output.
+Expected: Qostodian Nexus returns `REDACT` → Lumina returns the response with masked output.
 
 </TabItem>
 <TabItem label="LOG" value="log">
@@ -132,7 +132,7 @@ Send a prompt with low-sensitivity data that triggers a `LOG` policy (request co
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_litellm_key>" \
+  -H "Authorization: Bearer <your_lumina_key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -142,7 +142,7 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-Expected: Qostodian Nexus returns `LOG` → LiteLLM forwards to the provider, response returns normally with decision headers.
+Expected: Qostodian Nexus returns `LOG` → Lumina forwards to the provider, response returns normally with decision headers.
 
 </TabItem>
 <TabItem label="ALLOW" value="allow">
@@ -152,7 +152,7 @@ Send a benign prompt (no sensitive data detected):
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_litellm_key>" \
+  -H "Authorization: Bearer <your_lumina_key>" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -162,7 +162,7 @@ curl -i http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-Expected: Qostodian Nexus returns `ALLOW` → LiteLLM forwards to the provider normally.
+Expected: Qostodian Nexus returns `ALLOW` → Lumina forwards to the provider normally.
 
 </TabItem>
 </Tabs>
@@ -187,7 +187,7 @@ Qostodian Nexus returns one decision per request:
 | `mode` | string | `pre_call` (scan prompt) or `post_call` (scan model output) |
 | `default_on` | boolean | Apply this guardrail to all requests by default |
 
-No API key is required for LiteLLM to call Qostodian Nexus. As Qostodian Nexus is designed to be deployed within your infrastructure, you must secure it using network controls.
+No API key is required for Lumina to call Qostodian Nexus. As Qostodian Nexus is designed to be deployed within your infrastructure, you must secure it using network controls.
 
 ## Request Identifiers
 
@@ -198,7 +198,7 @@ Pass them via request headers:
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_litellm_key>" \
+  -H "Authorization: Bearer <your_lumina_key>" \
   -H "x-qostodian-nexus-identifiers-trace: trace-id" \
   -H "x-qostodian-nexus-identifiers-source: source-id" \
   -H "x-qostodian-nexus-identifiers-container: container-id" \
@@ -235,6 +235,6 @@ These fields are required in all deployment modes. Their effect depends on the o
 
 Qostodian Nexus operates on a **zero-copy, data-sovereign processing model** in all deployment modes: content is analyzed in-memory and never persisted or transmitted to Qohash. Only metadata (detection outcomes, policy decisions, identifiers) is reported, and prompt and response content stays within your infrastructure at all times.
 
-- **Use TLS** between LiteLLM and Qostodian Nexus in production environments
+- **Use TLS** between Lumina and Qostodian Nexus in production environments
 - **Authenticate calls** using mTLS (preferred) or bearer token
 - **Deploy Qostodian Nexus in customer-controlled infrastructure** (on-premises or cloud tenant) to ensure data stays within your security boundary

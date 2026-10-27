@@ -9,7 +9,7 @@ Pass-through endpoints for Anthropic - call provider-specific endpoint, in nativ
 |-------|-------|-------|
 | Cost Tracking | ✅ | supports all models on `/messages`, `/v1/messages/batches` endpoint |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ✅ | Prometheus `end_user` label is off by default; enable via `litellm.enable_end_user_cost_tracking_prometheus_only`|
+| End-user Tracking | ✅ | Prometheus `end_user` label is off by default; enable via `lumina.enable_end_user_cost_tracking_prometheus_only`|
 | Streaming | ✅ | |
 
 Just replace `https://api.anthropic.com` with `LUMINA_PROXY_BASE_URL/anthropic`
@@ -76,10 +76,10 @@ Let's call the Anthropic [`/messages` endpoint](https://docs.anthropic.com/en/ap
 export ANTHROPIC_API_KEY=""
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -118,7 +118,7 @@ Key Changes:
 
 ### **Example 1: Messages endpoint**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl --request POST \
@@ -154,7 +154,7 @@ curl https://api.anthropic.com/v1/messages \
 
 ### **Example 2: Token Counting API**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl --request POST \
@@ -192,7 +192,7 @@ curl https://api.anthropic.com/v1/messages/count_tokens \
 ### **Example 3: Batch Messages**
 
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl --request POST \
@@ -295,7 +295,7 @@ export COHERE_API_KEY=""
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -337,7 +337,7 @@ curl --request POST \
 ```
 
 
-### Send `litellm_metadata` (tags, end-user cost tracking)
+### Send `lumina_metadata` (tags, end-user cost tracking)
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -354,7 +354,7 @@ curl --request POST \
     "messages": [
         {"role": "user", "content": "Hello, world"}
     ],
-    "litellm_metadata": {
+    "lumina_metadata": {
         "tags": ["test-tag-1", "test-tag-2"], 
         "user": "test-user" # track end-user/customer cost
     }
@@ -379,7 +379,7 @@ response = client.messages.create(
         {"role": "user", "content": "Hello, world"}
     ],
     extra_body={
-        "litellm_metadata": {
+        "lumina_metadata": {
             "tags": ["test-tag-1", "test-tag-2"], 
             "user": "test-user" # track end-user/customer cost
         }

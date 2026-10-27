@@ -53,7 +53,7 @@ async function main() {
   }
   const config = readConfig(process.env);
   const tracing = getTracing(config);
-  if (!tracing.enabled) throw new Error('Configure LITELLM_TRACING_KEY and OTEL_EXPORTER_OTLP_TRACES_ENDPOINT in .env.local first.');
+  if (!tracing.enabled) throw new Error('Configure LUMINA_TRACING_KEY and OTEL_EXPORTER_OTLP_TRACES_ENDPOINT in .env.local first.');
   if (!config.apiKey) throw new Error('The existing DOCS_AI_API_KEY is missing.');
   const traces = new Map();
   const unsubscribe = tracing.subscribeExports(spans => {

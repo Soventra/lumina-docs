@@ -5,7 +5,7 @@
 | Property | Details |
 |-------|-------|
 | Description | Azure AI OCR provides document intelligence capabilities powered by Mistral and Cohere Parse, enabling text extraction from PDFs and images |
-| Provider Route on LiteLLM | `azure_ai/` |
+| Provider Route on Lumina | `azure_ai/` |
 | Supported Operations | `/ocr` |
 | Link to Provider Doc | [Azure AI ↗](https://ai.azure.com/)
 
@@ -13,10 +13,10 @@ Extract text from documents and images using Azure AI's OCR models, powered by M
 
 ## Quick Start
 
-### **LiteLLM SDK**
+### **Lumina SDK**
 
 ```python showLineNumbers title="SDK Usage"
-import litellm
+import lumina
 import os
 
 # Set environment variables
@@ -24,7 +24,7 @@ os.environ["AZURE_AI_API_KEY"] = ""
 os.environ["AZURE_AI_API_BASE"] = ""
 
 # OCR with PDF URL
-response = litellm.ocr(
+response = lumina.ocr(
     model="azure_ai/mistral-document-ai-2505",
     document={
         "type": "document_url",
@@ -37,7 +37,7 @@ for page in response.pages:
     print(page.markdown)
 ```
 
-### **LiteLLM PROXY**
+### **Lumina PROXY**
 
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
@@ -57,7 +57,7 @@ Azure AI OCR supports both PDFs and images.
 ### PDF Documents
 
 ```python showLineNumbers title="PDF OCR"
-response = litellm.ocr(
+response = lumina.ocr(
     model="azure_ai/mistral-document-ai-2505",
     document={
         "type": "document_url",
@@ -69,7 +69,7 @@ response = litellm.ocr(
 ### Image Documents
 
 ```python showLineNumbers title="Image OCR"
-response = litellm.ocr(
+response = lumina.ocr(
     model="azure_ai/mistral-document-ai-2505",
     document={
         "type": "image_url",
@@ -87,7 +87,7 @@ import base64
 with open("document.pdf", "rb") as f:
     pdf_base64 = base64.b64encode(f.read()).decode()
 
-response = litellm.ocr(
+response = lumina.ocr(
     model="azure_ai/mistral-document-ai-2505",
     document={
         "type": "document_url",
@@ -99,7 +99,7 @@ response = litellm.ocr(
 ## Supported Parameters
 
 ```python showLineNumbers title="All Parameters"
-response = litellm.ocr(
+response = lumina.ocr(
     model="azure_ai/mistral-document-ai-2505",
     document={                           # Required: Document to process
         "type": "document_url",
@@ -129,9 +129,9 @@ for page in response.pages:
 ## Async Support
 
 ```python showLineNumbers title="Async Usage"
-import litellm
+import lumina
 
-response = await litellm.aocr(
+response = await lumina.aocr(
     model="azure_ai/mistral-document-ai-2505",
     document={
         "type": "document_url",
@@ -143,25 +143,25 @@ response = await litellm.aocr(
 ## Important Notes
 
 :::info[URL Conversion]
-Azure AI OCR endpoints don't have internet access. LiteLLM automatically converts public URLs to base64 data URIs before sending requests to Azure AI.
+Azure AI OCR endpoints don't have internet access. Lumina automatically converts public URLs to base64 data URIs before sending requests to Azure AI.
 :::
 
 ## Cohere Parse
 
 Azure AI Foundry also serves [Cohere Parse](https://ai.azure.com/catalog/models/Cohere-parse-v5) through the same `/ocr` endpoint. Use `azure_ai/<deployment name>`: a deployment whose name contains both `cohere` and `parse` (the catalog's default name `Cohere-parse-v5` does) is sent to the Cohere Parse API on your Foundry resource, at `{api_base}/providers/cohere/v2/parse`. Other names keep routing to Mistral OCR, so keep `cohere` and `parse` in the deployment name if you rename it.
 
-Parse accepts `image_url` documents only, an image URL or a base64 `data:image/...` URI. PDFs and `document_url` inputs are rejected with a 400 before anything is sent to Azure. Foundry cannot fetch external URLs, so LiteLLM downloads a remote image and sends it inline as a data URI, the same conversion it applies for the Mistral models above.
+Parse accepts `image_url` documents only, an image URL or a base64 `data:image/...` URI. PDFs and `document_url` inputs are rejected with a 400 before anything is sent to Azure. Foundry cannot fetch external URLs, so Lumina downloads a remote image and sends it inline as a data URI, the same conversion it applies for the Mistral models above.
 
-### **LiteLLM SDK**
+### **Lumina SDK**
 
 ```python showLineNumbers title="Cohere Parse on Azure AI"
-import litellm
+import lumina
 import os
 
 os.environ["AZURE_AI_API_KEY"] = ""
 os.environ["AZURE_AI_API_BASE"] = "https://<resource>.services.ai.azure.com"
 
-response = litellm.ocr(
+response = lumina.ocr(
     model="azure_ai/Cohere-parse-v5",
     document={
         "type": "image_url",
@@ -175,7 +175,7 @@ for page in response.pages:
 print(response.usage_info.pages_processed)
 ```
 
-### **LiteLLM PROXY**
+### **Lumina PROXY**
 
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
@@ -199,7 +199,7 @@ curl http://0.0.0.0:4000/v1/ocr \
   }'
 ```
 
-`output_format` accepts `markdown` (default) or `blocks`, and `req_format: native` returns Cohere's own response body instead of the LiteLLM OCR shape. Cost tracking bills `usage_info.pages_processed` at the per-page price in the model cost map.
+`output_format` accepts `markdown` (default) or `blocks`, and `req_format: native` returns Cohere's own response body instead of the Lumina OCR shape. Cost tracking bills `usage_info.pages_processed` at the per-page price in the model cost map.
 
 The model cost map prices `azure_ai/Cohere-parse-v5` at Cohere's published rate of $1.50 per 1,000 pages, the price the Foundry catalog links to for this model.
 

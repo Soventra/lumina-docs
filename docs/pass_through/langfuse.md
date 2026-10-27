@@ -1,6 +1,6 @@
 # Langfuse SDK
 
-Pass-through endpoints for Langfuse - call langfuse endpoints with LiteLLM Virtual Key.
+Pass-through endpoints for Langfuse - call langfuse endpoints with Lumina Virtual Key.
 
 Just replace `https://us.cloud.langfuse.com` with `LUMINA_PROXY_BASE_URL/langfuse`
 
@@ -9,13 +9,13 @@ Just replace `https://us.cloud.langfuse.com` with `LUMINA_PROXY_BASE_URL/langfus
 from langfuse import Langfuse
 
 langfuse = Langfuse(
-    host="http://localhost:4000/langfuse", # your litellm proxy endpoint
+    host="http://localhost:4000/langfuse", # your lumina proxy endpoint
     public_key="anything",        # no key required since this is a pass through
     secret_key="LUMINA_VIRTUAL_KEY",        # no key required since this is a pass through
 )
 
 print("sending langfuse trace request")
-span = langfuse.start_observation(name="test-trace-litellm-proxy-passthrough")
+span = langfuse.start_observation(name="test-trace-lumina-proxy-passthrough")
 span.end()  # the root observation's name/input/output become the trace's
 print("flushing langfuse request")
 langfuse.flush()
@@ -38,10 +38,10 @@ export LANGFUSE_PUBLIC_KEY=""
 export LANGFUSE_SECRET_KEY=""
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -54,13 +54,13 @@ Let's log a trace to Langfuse!
 from langfuse import Langfuse
 
 langfuse = Langfuse(
-    host="http://localhost:4000/langfuse", # your litellm proxy endpoint
+    host="http://localhost:4000/langfuse", # your lumina proxy endpoint
     public_key="anything",        # no key required since this is a pass through
     secret_key="anything",        # no key required since this is a pass through
 )
 
 print("sending langfuse trace request")
-span = langfuse.start_observation(name="test-trace-litellm-proxy-passthrough")
+span = langfuse.start_observation(name="test-trace-lumina-proxy-passthrough")
 span.end()  # the root observation's name/input/output become the trace's
 print("flushing langfuse request")
 langfuse.flush()
@@ -88,7 +88,7 @@ export LANGFUSE_SECRET_KEY=""
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -118,13 +118,13 @@ Expected Response
 from langfuse import Langfuse
 
 langfuse = Langfuse(
-    host="http://localhost:4000/langfuse", # your litellm proxy endpoint
+    host="http://localhost:4000/langfuse", # your lumina proxy endpoint
     public_key="anything",        # no key required since this is a pass through
-    secret_key="sk-<your-litellm-api-key>",        # no key required since this is a pass through
+    secret_key="sk-<your-lumina-api-key>",        # no key required since this is a pass through
 )
 
 print("sending langfuse trace request")
-span = langfuse.start_observation(name="test-trace-litellm-proxy-passthrough")
+span = langfuse.start_observation(name="test-trace-lumina-proxy-passthrough")
 span.end()  # the root observation's name/input/output become the trace's
 print("flushing langfuse request")
 langfuse.flush()

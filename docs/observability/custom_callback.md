@@ -5,12 +5,12 @@
 ::: 
 
 ## Callback Class
-You can create a custom callback class to precisely log events as they occur in litellm. 
+You can create a custom callback class to precisely log events as they occur in lumina. 
 
 ```python
-import litellm
-from litellm.integrations.custom_logger import CustomLogger
-from litellm import completion, acompletion
+import lumina
+from lumina.integrations.custom_logger import CustomLogger
+from lumina import completion, acompletion
 
 class MyCustomHandler(CustomLogger):
     def log_pre_api_call(self, model, messages, kwargs): 
@@ -36,7 +36,7 @@ class MyCustomHandler(CustomLogger):
 
 customHandler = MyCustomHandler()
 
-litellm.callbacks = [customHandler]
+lumina.callbacks = [customHandler]
 
 ## sync 
 response = completion(model="{{openai_small}}", messages=[{ "role": "user", "content": "Hi - i'm openai"}],
@@ -63,7 +63,7 @@ asyncio.run(completion())
 - `log_pre_api_call` - Log before API call
 - `log_post_api_call` - Log after API call
 
-**Proxy-only hooks** (only work with LiteLLM Proxy):
+**Proxy-only hooks** (only work with Lumina Proxy):
 - `async_post_call_success_hook` - Access user data + modify responses
 - `async_pre_call_hook` - Modify requests before sending
 
@@ -80,7 +80,7 @@ These work in both the SDK and the proxy:
 A fallback chain where the first two deployments fail and the third succeeds calls the failure hook twice and the success hook once, in that order. `request_data` is that attempt's own request kwargs, not shared state carried over from an earlier attempt. `fallback_depth` is a best-effort field on the failure hook: `None` on the original attempt, `1` on the first fallback hop, `2` on the second, and so on.
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
+from lumina.integrations.custom_logger import CustomLogger
 
 class DeploymentFailureCounter(CustomLogger):
     def __init__(self):
@@ -93,7 +93,7 @@ class DeploymentFailureCounter(CustomLogger):
         print(f"deployment failure: model={model} exception={type(exception).__name__} fallback_depth={fallback_depth} total={self.failures_by_model[model]}")
 
 counter = DeploymentFailureCounter()
-litellm.callbacks = [counter]
+lumina.callbacks = [counter]
 ```
 
 ### Example: Modifying the Response in async_post_call_success_hook
@@ -104,7 +104,7 @@ You can use `async_post_call_success_hook` to add custom headers or metadata to 
 async def async_post_call_success_hook(data, user_api_key_dict, response):
     # Add a custom header to the response
     additional_headers = getattr(response, "_hidden_params", {}).get("additional_headers", {}) or {}
-    additional_headers["x-litellm-custom-header"] = "my-value"
+    additional_headers["x-lumina-custom-header"] = "my-value"
     if not hasattr(response, "_hidden_params"):
         response._hidden_params = {}
     response._hidden_params["additional_headers"] = additional_headers
@@ -117,9 +117,9 @@ This allows you to inject custom metadata or headers into the response for downs
 If you just want to log on a specific event (e.g. on input) - you can use callback functions. 
 
 You can set custom callbacks to trigger for:
-- `litellm.input_callback`   - Track inputs/transformed inputs before making the LLM API call
-- `litellm.success_callback` - Track inputs/outputs after making LLM API call
-- `litellm.failure_callback` - Track inputs/outputs + exceptions for litellm calls
+- `lumina.input_callback`   - Track inputs/transformed inputs before making the LLM API call
+- `lumina.success_callback` - Track inputs/outputs after making LLM API call
+- `lumina.failure_callback` - Track inputs/outputs + exceptions for lumina calls
 
 ## Defining a Custom Callback Function
 Create a custom callback function that takes specific arguments:
@@ -131,7 +131,7 @@ def custom_callback(
     start_time, end_time    # start/end time
 ):
     # Your custom code here
-    print("LITELLM: in custom callback function")
+    print("LUMINA: in custom callback function")
     print("kwargs", kwargs)
     print("completion_response", completion_response)
     print("start_time", start_time)
@@ -140,18 +140,18 @@ def custom_callback(
 
 ### Setting the custom callback function
 ```python
-import litellm
-litellm.success_callback = [custom_callback]
+import lumina
+lumina.success_callback = [custom_callback]
 ```
 
 ## Using Your Custom Callback Function
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 # Assign the custom callback function
-litellm.success_callback = [custom_callback]
+lumina.success_callback = [custom_callback]
 
 response = completion(
     model="{{openai_small}}",
@@ -172,8 +172,8 @@ print(response)
 We recommend using the Custom Logger class for async.
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
-from litellm import acompletion 
+from lumina.integrations.custom_logger import CustomLogger
+from lumina import acompletion 
 
 class MyCustomHandler(CustomLogger):
     #### ASYNC #### 
@@ -189,7 +189,7 @@ class MyCustomHandler(CustomLogger):
 import asyncio 
 customHandler = MyCustomHandler()
 
-litellm.callbacks = [customHandler]
+lumina.callbacks = [customHandler]
 
 async def completion():
     response = await acompletion(model="{{openai_small}}", messages=[{ "role": "user", "content": "Hi - i'm openai"}],
@@ -203,19 +203,19 @@ asyncio.run(completion())
 
 If you just want to pass in an async function for logging. 
 
-LiteLLM currently supports just async success callback functions for async completion/embedding calls. 
+Lumina currently supports just async success callback functions for async completion/embedding calls. 
 
 ```python
-import asyncio, litellm 
+import asyncio, lumina 
 
 async def async_test_logging_fn(kwargs, completion_obj, start_time, end_time):
     print(f"On Async Success!")
 
 async def test_chat_openai():
     try:
-        # litellm.set_verbose = True
-        litellm.success_callback = [async_test_logging_fn]
-        response = await litellm.acompletion(model="{{openai_small}}",
+        # lumina.set_verbose = True
+        lumina.success_callback = [async_test_logging_fn]
+        response = await lumina.acompletion(model="{{openai_small}}",
                               messages=[{
                                   "role": "user",
                                   "content": "Hi - i'm openai"
@@ -235,7 +235,7 @@ asyncio.run(test_chat_openai())
 The kwargs dictionary contains all the details about your API call.
 
 :::info
-For the complete logging payload specification, see the [Standard Logging Payload Spec](https://docs.litellm.ai/docs/proxy/logging_spec).
+For the complete logging payload specification, see the [Standard Logging Payload Spec](https://docs.lumina.ai/docs/proxy/logging_spec).
 :::
 
 ```python
@@ -262,10 +262,10 @@ def custom_callback(kwargs, completion_response, start_time, end_time):
 ### Track API Costs
 ```python
 def track_cost_callback(kwargs, completion_response, start_time, end_time):
-    cost = kwargs["response_cost"] # litellm calculates this for you
+    cost = kwargs["response_cost"] # lumina calculates this for you
     print(f"Request cost: ${cost}")
 
-litellm.success_callback = [track_cost_callback]
+lumina.success_callback = [track_cost_callback]
 
 response = completion(model="{{openai_small}}", messages=[{"role": "user", "content": "Hello"}])
 ```
@@ -276,7 +276,7 @@ def get_transformed_inputs(kwargs):
     params_to_model = kwargs["additional_args"]["complete_input_dict"]
     print("params to model", params_to_model)
 
-litellm.input_callback = [get_transformed_inputs]
+lumina.input_callback = [get_transformed_inputs]
 
 response = completion(model="{{anthropic}}", messages=[{"role": "user", "content": "Hello"}])
 ```
@@ -293,14 +293,14 @@ def send_to_analytics(kwargs, completion_response, start_time, end_time):
     }
     requests.post("https://your-analytics.com/api", json=data)
 
-litellm.success_callback = [send_to_analytics]
+lumina.success_callback = [send_to_analytics]
 ```
 
 ## Common Issues
 
 ### Callback Not Called
 Make sure you:
-1. Register callbacks correctly: `litellm.callbacks = [MyHandler()]`
+1. Register callbacks correctly: `lumina.callbacks = [MyHandler()]`
 2. Use the right hook names (check spelling)
 3. Don't use proxy-only hooks in library mode
 

@@ -10,7 +10,7 @@ Black Forest Labs provides state-of-the-art text-to-image generation using their
 | Property | Details |
 |----------|---------|
 | Description | Black Forest Labs FLUX models for high-quality text-to-image generation |
-| Provider Route on LiteLLM | `black_forest_labs/` |
+| Provider Route on Lumina | `black_forest_labs/` |
 | Provider Doc | [Black Forest Labs API ↗](https://docs.bfl.ai/) |
 | Supported Operations | [`/images/generations`](#image-generation) |
 
@@ -38,20 +38,20 @@ Get your API key from [Black Forest Labs](https://blackforestlabs.ai/).
 
 ## Image Generation
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 ```python showLineNumbers title="Basic Image Generation"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Generate an image
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="black_forest_labs/flux-pro-1.1",
     prompt="A beautiful sunset over the ocean with sailing boats",
 )
@@ -67,13 +67,13 @@ print(response.data[0].url)
 ```python showLineNumbers title="Async Image Generation"
 import os
 import asyncio
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 async def generate_image():
-    response = await litellm.aimage_generation(
+    response = await lumina.aimage_generation(
         model="black_forest_labs/flux-pro-1.1",
         prompt="A futuristic city skyline at night",
     )
@@ -89,13 +89,13 @@ asyncio.run(generate_image())
 
 ```python showLineNumbers title="Image Generation with Custom Size"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Generate with specific dimensions
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="black_forest_labs/flux-pro-1.1",
     prompt="A majestic mountain landscape",
     size="1792x1024",  # Maps to width/height
@@ -110,13 +110,13 @@ print(response.data[0].url)
 
 ```python showLineNumbers title="Ultra High Resolution with flux-pro-1.1-ultra"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Generate ultra high-resolution image
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="black_forest_labs/flux-pro-1.1-ultra",
     prompt="Detailed portrait of a fantasy character",
     size="2048x2048",    # Up to 4MP supported
@@ -132,13 +132,13 @@ print(response.data[0].url)
 
 ```python showLineNumbers title="Advanced Image Generation with BFL Parameters"
 import os
-import litellm
+import lumina
 
 # Set your API key
 os.environ["BFL_API_KEY"] = "your-api-key-here"
 
 # Generate with BFL-specific parameters
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="black_forest_labs/flux-pro-1.1",
     prompt="A cute orange cat sitting on a windowsill",
     seed=42,                    # For reproducible results
@@ -153,7 +153,7 @@ print(response.data[0].url)
 </TabItem>
 </Tabs>
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Configure your config.yaml
 
@@ -184,10 +184,10 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-#### 2. Start LiteLLM Proxy Server
+#### 2. Start Lumina Proxy Server
 
-```bash showLineNumbers title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -203,7 +203,7 @@ from openai import OpenAI
 # Initialize client with your proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 # Generate image with FLUX Pro
@@ -270,19 +270,19 @@ curl -X POST 'http://localhost:4000/v1/images/generations' \
 
 Black Forest Labs uses a polling-based API:
 
-1. **Submit Request**: LiteLLM sends your prompt to BFL
+1. **Submit Request**: Lumina sends your prompt to BFL
 2. **Get Task ID**: BFL returns a task ID and polling URL
-3. **Poll for Result**: LiteLLM automatically polls until the image is ready
+3. **Poll for Result**: Lumina automatically polls until the image is ready
 4. **Return Result**: The generated image URL is returned
 
-This polling is handled automatically by LiteLLM - you just call `image_generation()` and get the result.
+This polling is handled automatically by Lumina - you just call `image_generation()` and get the result.
 
 ## Getting Started
 
 1. Create an account at [Black Forest Labs](https://blackforestlabs.ai/)
 2. Get your API key from the dashboard
 3. Set your `BFL_API_KEY` environment variable
-4. Use `litellm.image_generation()` with any supported model
+4. Use `lumina.image_generation()` with any supported model
 
 ## Additional Resources
 

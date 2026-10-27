@@ -4,19 +4,19 @@ import TabItem from '@theme/TabItem';
 
 # Claude Code Plugin Marketplace (Managed Skills)
 
-LiteLLM AI Gateway acts as a central registry for Claude Code plugins. Admins can govern which plugins are available across the organization, and engineers can discover and install approved plugins from a single source.
+Lumina AI Gateway acts as a central registry for Claude Code plugins. Admins can govern which plugins are available across the organization, and engineers can discover and install approved plugins from a single source.
 
 ## Prerequisites
 
-- LiteLLM Proxy running with database connected
-- Admin access to LiteLLM UI
+- Lumina Proxy running with database connected
+- Admin access to Lumina UI
 - Plugins hosted on GitHub, GitLab, any git-accessible URL, or as a zip archive on an HTTPS host
 
 ## Admin Guide: Managing the Marketplace
 
 ### Step 1: Navigate to Skills
 
-In the LiteLLM Admin UI, click on **Skills** in the left navigation menu. Only proxy admins can add, edit, enable, disable, or delete plugins.
+In the Lumina Admin UI, click on **Skills** in the left navigation menu. Only proxy admins can add, edit, enable, disable, or delete plugins.
 
 <Image img={require('../../img/claude_code_marketplace/step1_navigate_plugins.jpeg')} style={{ width: '800px', height: 'auto' }} />
 
@@ -34,7 +34,7 @@ Click **+ Add Skill** to register a plugin in your marketplace.
 
 ### Step 4: Fill in Plugin Details
 
-Paste the source URL first. It can be a GitHub URL, a git clone URL over HTTPS or SSH, a `tree/<branch>/<path>` link to a subdirectory, or an HTTPS link to a zip file. LiteLLM detects the source type and suggests a name. Then fill in the name (kebab-case, e.g. `my-plugin`) and any optional fields: domain, namespace, description, category, keywords, version, and author.
+Paste the source URL first. It can be a GitHub URL, a git clone URL over HTTPS or SSH, a `tree/<branch>/<path>` link to a subdirectory, or an HTTPS link to a zip file. Lumina detects the source type and suggests a name. Then fill in the name (kebab-case, e.g. `my-plugin`) and any optional fields: domain, namespace, description, category, keywords, version, and author.
 
 <Image img={require('../../img/claude_code_marketplace/step5_plugin_form.jpeg')} style={{ width: '800px', height: 'auto' }} />
 
@@ -52,28 +52,28 @@ New plugins are enabled as soon as they are added. Toggle plugins on or off to c
 
 ## Engineer Guide: Installing Plugins
 
-### Step 1: Add the LiteLLM Marketplace
+### Step 1: Add the Lumina Marketplace
 
-Add your company's LiteLLM marketplace to Claude Code:
+Add your company's Lumina marketplace to Claude Code:
 
 ```bash
-claude plugin marketplace add http://your-litellm-proxy:4000/claude-code/marketplace.json
+claude plugin marketplace add http://your-lumina-proxy:4000/claude-code/marketplace.json
 ```
 
 If you were granted private plugins, add your key so they appear too:
 
 ```bash
-claude plugin marketplace add "http://your-litellm-proxy:4000/claude-code/marketplace.json?key=sk-..."
+claude plugin marketplace add "http://your-lumina-proxy:4000/claude-code/marketplace.json?key=sk-..."
 ```
 
 <Image img={require('../../img/claude_code_marketplace/step12_cli_marketplace.jpeg')} style={{ width: '800px', height: 'auto' }} />
 
 ### Step 2: Browse Available Plugins
 
-Run `/plugin` inside Claude Code to browse plugins from the `litellm` marketplace, or list them from the proxy:
+Run `/plugin` inside Claude Code to browse plugins from the `lumina` marketplace, or list them from the proxy:
 
 ```bash
-curl http://your-litellm-proxy:4000/claude-code/marketplace.json
+curl http://your-lumina-proxy:4000/claude-code/marketplace.json
 ```
 
 ### Step 3: Install a Plugin
@@ -81,7 +81,7 @@ curl http://your-litellm-proxy:4000/claude-code/marketplace.json
 Install any plugin from the marketplace:
 
 ```bash
-claude plugin install my-plugin@litellm
+claude plugin install my-plugin@lumina
 ```
 
 <Image img={require('../../img/claude_code_marketplace/step15_cli_paste.jpeg')} style={{ width: '800px', height: 'auto' }} />
@@ -107,10 +107,10 @@ curl http://localhost:4000/claude-code/marketplace.json
 **Response:**
 ```json
 {
-  "name": "litellm",
+  "name": "lumina",
   "owner": {
-    "name": "LiteLLM",
-    "email": "support@litellm.ai"
+    "name": "Lumina",
+    "email": "support@lumina.ai"
   },
   "plugins": [
     {
@@ -218,7 +218,7 @@ curl -X DELETE http://localhost:4000/claude-code/plugins/my-plugin \
 
 Available from v1.107.0.
 
-Claude Desktop on third-party can install a plugin for every user without each one opting in, when your LiteLLM proxy is also its inference gateway. Set `installation_preference` on the plugin and LiteLLM serves it as `installationPreference` on that plugin's `marketplace.json` entry. The field is API only, since the Admin UI has no control for it yet. `GET /claude-code/plugins`, `GET /claude-code/plugins/{name}`, and `GET /public/skill_hub` return it as `installation_preference`. The `sha256` must be the zip's 64-character hex SHA-256 digest. The digest below is only an example, so replace it with the output of `shasum -a 256 my-plugin-1.0.0.zip`. LiteLLM checks only that the digest is 64 hex characters, not that it matches the zip, and Anthropic's [Claude Desktop extensions docs](https://claude.com/docs/third-party/claude-desktop/extensions) say Desktop installs nothing from a sync when any archive in it fails to download or fails its digest check, so one wrong digest blocks every auto-install from this marketplace:
+Claude Desktop on third-party can install a plugin for every user without each one opting in, when your Lumina proxy is also its inference gateway. Set `installation_preference` on the plugin and Lumina serves it as `installationPreference` on that plugin's `marketplace.json` entry. The field is API only, since the Admin UI has no control for it yet. `GET /claude-code/plugins`, `GET /claude-code/plugins/{name}`, and `GET /public/skill_hub` return it as `installation_preference`. The `sha256` must be the zip's 64-character hex SHA-256 digest. The digest below is only an example, so replace it with the output of `shasum -a 256 my-plugin-1.0.0.zip`. Lumina checks only that the digest is 64 hex characters, not that it matches the zip, and Anthropic's [Claude Desktop extensions docs](https://claude.com/docs/third-party/claude-desktop/extensions) say Desktop installs nothing from a sync when any archive in it fails to download or fails its digest check, so one wrong digest blocks every auto-install from this marketplace:
 
 ```bash
 curl -X POST http://localhost:4000/claude-code/plugins \
@@ -228,7 +228,7 @@ curl -X POST http://localhost:4000/claude-code/plugins \
     "name": "my-plugin",
     "source": {
       "source": "archive",
-      "url": "https://litellm.example.com/plugins/my-plugin-1.0.0.zip",
+      "url": "https://lumina.example.com/plugins/my-plugin-1.0.0.zip",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     "installation_preference": "auto_install"
@@ -242,7 +242,7 @@ The plugin's entry in `marketplace.json` then looks like this:
   "name": "my-plugin",
   "source": {
     "source": "archive",
-    "url": "https://litellm.example.com/plugins/my-plugin-1.0.0.zip",
+    "url": "https://lumina.example.com/plugins/my-plugin-1.0.0.zip",
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "version": "1.0.0",
@@ -250,15 +250,15 @@ The plugin's entry in `marketplace.json` then looks like this:
 }
 ```
 
-Claude Desktop honors a per-plugin `installationPreference` only when `marketplace.json` is served from its `inferenceGatewayBaseUrl` or `bootstrapUrl` origin, and only for an `archive` source with a `sha256` whose zip sits on that same origin. Per the same Anthropic docs, it does not list other source types from a `marketplace.json` URL at all, so LiteLLM answers 400 when `installation_preference` is set on a plugin that is not an `archive` source, or when `auto_install` or `required` is set on an archive without a `sha256`. LiteLLM does not check the archive's origin and does not serve plugin zips itself, so a path like `/plugins/` in the example returns `404` until you route it to your own file server at your ingress, on the same origin as the proxy. LiteLLM also accepts the request key as `installationPreference`, the name Claude Desktop reads, and answers 422 when one request sends both spellings with values.
+Claude Desktop honors a per-plugin `installationPreference` only when `marketplace.json` is served from its `inferenceGatewayBaseUrl` or `bootstrapUrl` origin, and only for an `archive` source with a `sha256` whose zip sits on that same origin. Per the same Anthropic docs, it does not list other source types from a `marketplace.json` URL at all, so Lumina answers 400 when `installation_preference` is set on a plugin that is not an `archive` source, or when `auto_install` or `required` is set on an archive without a `sha256`. Lumina does not check the archive's origin and does not serve plugin zips itself, so a path like `/plugins/` in the example returns `404` until you route it to your own file server at your ingress, on the same origin as the proxy. Lumina also accepts the request key as `installationPreference`, the name Claude Desktop reads, and answers 422 when one request sends both spellings with values.
 
 Claude Desktop 2.31226.1 treats a per-plugin `required` the same as `auto_install`. It installs the plugin on its own, but the user can still turn it off or remove it, and a removed plugin stays removed on the next sync. A whole-marketplace `required` setting in Claude Desktop is the one that stops users from removing plugins.
 
-Claude Desktop sends the marketplace URL without `?key=`, and LiteLLM does not read the bearer token Desktop sends with it, so Desktop sees only enabled plugins. Enable an auto-install plugin instead of granting it to a key or team. Enabling makes the plugin public, so its name, description, archive URL, and `sha256` show up without auth in `marketplace.json` and `GET /public/skill_hub`. In Claude Desktop's own marketplace configuration, leave the entry's `installationPreference` at `available` and let the per-plugin values decide. See [Per-plugin auto-install from a trusted origin](https://claude.com/docs/third-party/claude-desktop/extensions#per-plugin-auto-install-from-a-trusted-origin) for the Desktop side of the setup.
+Claude Desktop sends the marketplace URL without `?key=`, and Lumina does not read the bearer token Desktop sends with it, so Desktop sees only enabled plugins. Enable an auto-install plugin instead of granting it to a key or team. Enabling makes the plugin public, so its name, description, archive URL, and `sha256` show up without auth in `marketplace.json` and `GET /public/skill_hub`. In Claude Desktop's own marketplace configuration, leave the entry's `installationPreference` at `available` and let the per-plugin values decide. See [Per-plugin auto-install from a trusted origin](https://claude.com/docs/third-party/claude-desktop/extensions#per-plugin-auto-install-from-a-trusted-origin) for the Desktop side of the setup.
 
 :::warning Older Claude Code releases
 
-Claude Code 2.1.119 and earlier reject a `marketplace.json` that lists any `archive` plugin, so `claude plugin marketplace add` and `claude plugin marketplace update` fail for every plugin in it. Releases 2.1.120 through 2.1.223 add the marketplace but fail `claude plugin install` on an `archive` plugin. Claude Code 2.1.224 is the first release that installs `archive` plugins, per the [plugin marketplace reference](https://code.claude.com/docs/en/plugins/marketplace-reference). LiteLLM serves `installationPreference` only on `archive` plugins, so the field adds no new break. Upgrade every Claude Code user of this marketplace to 2.1.224 or later before you add an `archive` plugin. Claude Code ignores `installationPreference`, so those users still install the plugin with `/plugin install`.
+Claude Code 2.1.119 and earlier reject a `marketplace.json` that lists any `archive` plugin, so `claude plugin marketplace add` and `claude plugin marketplace update` fail for every plugin in it. Releases 2.1.120 through 2.1.223 add the marketplace but fail `claude plugin install` on an `archive` plugin. Claude Code 2.1.224 is the first release that installs `archive` plugins, per the [plugin marketplace reference](https://code.claude.com/docs/en/plugins/marketplace-reference). Lumina serves `installationPreference` only on `archive` plugins, so the field adds no new break. Upgrade every Claude Code user of this marketplace to 2.1.224 or later before you add an `archive` plugin. Claude Code ignores `installationPreference`, so those users still install the plugin with `/plugin install`.
 
 :::
 
@@ -366,17 +366,17 @@ Send engineers the marketplace URL:
 
 ```bash
 # One-time setup for each engineer
-claude plugin marketplace add http://litellm.internal.company.com/claude-code/marketplace.json
+claude plugin marketplace add http://lumina.internal.company.com/claude-code/marketplace.json
 
 # Install company plugins
-claude plugin install internal-tools@litellm
+claude plugin install internal-tools@lumina
 ```
 
 ## Troubleshooting
 
 **Plugin not appearing in marketplace:**
 - Verify the plugin is **enabled** in the admin UI, or that it is granted to your key and you added the marketplace with `?key=`
-- Run `claude plugin marketplace update litellm` to refresh the local copy of the catalog
+- Run `claude plugin marketplace update lumina` to refresh the local copy of the catalog
 
 **Installation fails:**
 - Ensure the git repository is accessible from the engineer's machine
@@ -384,5 +384,5 @@ claude plugin install internal-tools@litellm
 - For `git-subdir` sources, check that `path` matches the skill's directory in the repository; Claude Code reports `Subdirectory '<path>' not found` otherwise
 
 **Database errors:**
-- Verify LiteLLM proxy is connected to the database
+- Verify Lumina proxy is connected to the database
 - Check proxy logs for detailed error messages

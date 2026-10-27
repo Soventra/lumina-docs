@@ -1,7 +1,7 @@
 ---
 title: Enterprise
 hide_title: true
-description: LiteLLM Enterprise is the open-source AI Gateway plus SSO, audit logs, delegated admin roles, multi-region deployment, and support SLAs, self-hosted in your cloud.
+description: Lumina Enterprise is the open-source AI Gateway plus SSO, audit logs, delegated admin roles, multi-region deployment, and support SLAs, self-hosted in your cloud.
 ---
 
 import {EnterpriseHero, TierStack} from '@site/src/components/Conversion/Enterprise';
@@ -18,19 +18,19 @@ Enterprise is a license key on the same Gateway image you may already run. Nothi
 ## What changes for your organization
 
 <Tiles size="lg" columns={3} items={[
-  {icon: 'compliance', title: 'Audited security you can hand to your review team', text: 'SOC 2 Type II audited, self-hosted so no data leaves your environment, and signed Docker images you can verify.', to: 'https://trust.litellm.ai/', more: 'Verify the signed images', moreTo: '/docs/proxy/docker_image_security'},
+  {icon: 'compliance', title: 'Audited security you can hand to your review team', text: 'SOC 2 Type II audited, self-hosted so no data leaves your environment, and signed Docker images you can verify.', to: 'https://trust.lumina.ai/', more: 'Verify the signed images', moreTo: '/docs/proxy/docker_image_security'},
   {icon: 'sso', title: 'Everyone signs in with your identity provider', text: 'SSO and SCIM for Okta, Entra ID, Google Workspace, or any OIDC or SAML provider. Access follows your org chart.', to: '/docs/proxy/admin_ui_sso'},
   {icon: 'audit', title: 'Every admin action is on record', text: 'Audit logs of key, team, and model changes, with retention policies your compliance team sets.', to: '/docs/proxy/audit_logs'},
   {icon: 'budget', title: 'Teams run their own keys and budgets', text: 'Team admins manage keys, models, and budgets per project, tag, and model without the master key, with alerts before anyone hits a cap.', to: '/docs/proxy/access_control'},
   {icon: 'secrets', title: 'Provider keys stay in your vault', text: 'AWS, Azure, Google, HashiCorp Vault, and CyberArk secret managers, with automatic virtual key rotation.', to: '/docs/secret_managers/overview'},
-  {icon: 'support', title: 'Engineers on call', text: 'A dedicated Slack or Teams channel with the people who build LiteLLM, and 24/7 SLAs down to one hour.', to: '/docs/enterprise/support'},
+  {icon: 'support', title: 'Engineers on call', text: 'A dedicated Slack or Teams channel with the people who build Lumina, and 24/7 SLAs down to one hour.', to: '/docs/enterprise/support'},
 ]} />
 
 <SalesBand source="enterprise-page-mid" title="See it running on your own infrastructure" text="Talk to the team about your rollout and security review, and start a 30-day trial with a full license." />
 
 ## Who is Enterprise for?
 
-For teams running LiteLLM at scale (100+ users or 10+ production AI use cases) that need SSO, audit logs, fine-grained access control, and professional support on top of open source. SSO is free for up to 5 users; beyond that, an Enterprise license is required. Engineers evaluating a trial can follow the [Production rollout](/docs/learn/enterprise_quickstart) guide, and teams already on open source can start with [Moving from OSS](/docs/enterprise/moving_from_oss).
+For teams running Lumina at scale (100+ users or 10+ production AI use cases) that need SSO, audit logs, fine-grained access control, and professional support on top of open source. SSO is free for up to 5 users; beyond that, an Enterprise license is required. Engineers evaluating a trial can follow the [Production rollout](/docs/learn/enterprise_quickstart) guide, and teams already on open source can start with [Moving from OSS](/docs/enterprise/moving_from_oss).
 
 ## Full feature list
 
@@ -60,7 +60,7 @@ Everything below is enabled by the license key. Each item links to its setup gui
 
 ### Observability and compliance
 
-- **[SOC 2 Type II](https://trust.litellm.ai/)**. Audited controls; request the report through the Trust Center
+- **[SOC 2 Type II](https://trust.lumina.ai/)**. Audited controls; request the report through the Trust Center
 - **[Team-Based Logging](./proxy/team_logging.md)**. Route each team's logs to their own Langfuse project or callback
 - **[Disable logging per team](./proxy/team_logging.md#disable-logging-for-a-team)**. GDPR-friendly opt-out at the team level
 - **[Log export to GCS / Azure Blob](./observability/gcs_bucket_integration.md)**. Durable storage for compliance
@@ -76,7 +76,7 @@ Everything below is enabled by the license key. Each item links to its setup gui
 
 ### Which guardrails need a license? {#guardrails-oss-vs-enterprise}
 
-The OSS guardrail framework includes custom guardrails and Presidio for PII masking. These built-in callback integrations require a LiteLLM Enterprise license: `llmguard_moderations`, `llamaguard_moderations`, `hide_secrets`, `openai_moderations`, `google_text_moderation`, `lakera_prompt_injection`, and `aporia_prompt_injection`.
+The OSS guardrail framework includes custom guardrails and Presidio for PII masking. These built-in callback integrations require a Lumina Enterprise license: `llmguard_moderations`, `llamaguard_moderations`, `hide_secrets`, `openai_moderations`, `google_text_moderation`, `lakera_prompt_injection`, and `aporia_prompt_injection`.
 
 ## Run it
 
@@ -86,9 +86,9 @@ Deploy the Docker image, or build from the pip package, on your own infrastructu
 LUMINA_LICENSE="eyJ..."
 ```
 
-No data leaves your environment, and LiteLLM is [SOC 2 Type II](https://trust.litellm.ai/) audited. [Procurement is available through AWS and Azure Marketplace.](./data_security.md#legalcompliance-faqs)
+No data leaves your environment, and Lumina is [SOC 2 Type II](https://trust.lumina.ai/) audited. [Procurement is available through AWS and Azure Marketplace.](./data_security.md#legalcompliance-faqs)
 
-Pricing depends on your deployment size. [Get in touch](https://enterprise.litellm.ai/demo) to scope it.
+Pricing depends on your deployment size. [Get in touch](https://enterprise.lumina.ai/demo) to scope it.
 
 ## Support {#professional-support}
 
@@ -96,7 +96,7 @@ Every license includes a dedicated Slack or Teams channel with the engineering t
 
 ## Version support
 
-LiteLLM supports the four most recent stable minor lines, and Enterprise and open source share one image and one version number. See [Version support](/docs/enterprise/version_support).
+Lumina supports the four most recent stable minor lines, and Enterprise and open source share one image and one version number. See [Version support](/docs/enterprise/version_support).
 
 ## FAQ
 
@@ -120,11 +120,11 @@ Open `http://<your-proxy-host>:<port>/`. The API docs page should show **Enterpr
 <details>
 <summary>
 
-### Is LiteLLM SOC 2 compliant?
+### Is Lumina SOC 2 compliant?
 
 </summary>
 
-Yes. LiteLLM is SOC 2 Type II audited. Request the current report through the [LiteLLM Trust Center](https://trust.litellm.ai/). For data handling, vulnerability reporting, and the rest of the security review, see [Data Security, Legal, and Compliance FAQs](./data_security.md).
+Yes. Lumina is SOC 2 Type II audited. Request the current report through the [Lumina Trust Center](https://trust.lumina.ai/). For data handling, vulnerability reporting, and the rest of the security review, see [Data Security, Legal, and Compliance FAQs](./data_security.md).
 
 </details>
 
@@ -157,7 +157,7 @@ See [Data Security, Legal, and Compliance FAQs](./data_security.md).
 
 </summary>
 
-Pricing is based on usage. [Contact us](https://enterprise.litellm.ai/demo) for a quote tailored to your team.
+Pricing is based on usage. [Contact us](https://enterprise.lumina.ai/demo) for a quote tailored to your team.
 
 </details>
 

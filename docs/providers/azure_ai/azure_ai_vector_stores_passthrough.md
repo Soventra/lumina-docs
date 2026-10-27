@@ -6,7 +6,7 @@ This is for the proxy only.
 
 ## Admin Flow
 
-### 1. Add the vector store to LiteLLM 
+### 1. Add the vector store to Lumina 
 
 ```yaml
 model_list:  
@@ -22,23 +22,23 @@ vector_store_registry:
       custom_llm_provider: "azure_ai"
       api_key: os.environ/AZURE_SEARCH_API_KEY
       api_base: https://azure-kb-search.search.windows.net
-      litellm_embedding_model: "azure/text-embedding-3-large"
-      litellm_embedding_config:
+      lumina_embedding_model: "azure/text-embedding-3-large"
+      lumina_embedding_config:
           api_base: https://krris-mh44uf7y-eastus2.cognitiveservices.azure.com/
           api_key: os.environ/AZURE_API_KEY
           api_version: "2025-09-01"
 
 general_settings:
     database_url: "postgresql://user:password@host:port/database"
-    master_key: "sk-<your-litellm-master-key>"
+    master_key: "sk-<your-lumina-master-key>"
 ```
 
-Add your vector store credentials to LiteLLM. 
+Add your vector store credentials to Lumina. 
 
 ### 2. Start the proxy. 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

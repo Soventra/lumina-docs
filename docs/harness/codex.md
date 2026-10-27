@@ -10,7 +10,7 @@ sidebar_label: Codex
 ## Install
 
 ```bash
-pip install litellm starlette uvicorn
+pip install lumina starlette uvicorn
 npm install -g @openai/codex   # inside the sandbox
 ```
 
@@ -19,19 +19,19 @@ The `codex` binary must already be on the sandbox's `PATH`. If it isn't, the cal
 ## Usage
 
 ```python
-import litellm
-from litellm import Harness, CodexOptions, sandbox
+import lumina
+from lumina import Harness, CodexOptions, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.CODEX,
     "Upgrade pydantic to v2 and make the tests pass.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"}),
-    model="litellm_proxy/gpt",
+    model="lumina_proxy/gpt",
     options=CodexOptions(reasoning_effort="high"),
 )
 ```
 
-## Use with LiteLLM AI Gateway
+## Use with Lumina AI Gateway
 
 Codex speaks the OpenAI Responses API, so it fits best on an OpenAI reasoning model, which the gateway serves on `/v1/responses` natively. You can also give it a Claude or Gemini group; the gateway translates Responses requests into that provider's format, though Codex-specific features like reasoning summaries may not come through.
 
@@ -62,17 +62,17 @@ curl -X POST http://localhost:4000/key/generate \
   -d '{"models": ["gpt"], "key_alias": "codex"}'
 ```
 
-Then run with the `litellm_proxy/` prefix. Set the gateway in the environment, or pass it on the call.
+Then run with the `lumina_proxy/` prefix. Set the gateway in the environment, or pass it on the call.
 
 ```python
-import litellm
-from litellm import Harness, CodexOptions, sandbox
+import lumina
+from lumina import Harness, CodexOptions, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.CODEX,
     "Upgrade pydantic to v2 and make the tests pass.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"}),
-    model="litellm_proxy/gpt",
+    model="lumina_proxy/gpt",
     api_base="http://localhost:4000",  # or LUMINA_PROXY_API_BASE
     api_key="sk-...",                  # or LUMINA_PROXY_API_KEY
     options=CodexOptions(reasoning_effort="high"),
@@ -80,7 +80,7 @@ result = litellm.agent(
 )
 ```
 
-Codex calls `/v1/responses`. The gateway sees each request with `model` set to `gpt`, the header `x-litellm-tags: harness,codex`, and your `metadata` as `x-litellm-spend-logs-metadata`, so the spend log row carries both.
+Codex calls `/v1/responses`. The gateway sees each request with `model` set to `gpt`, the header `x-lumina-tags: harness,codex`, and your `metadata` as `x-lumina-spend-logs-metadata`, so the spend log row carries both.
 
 `reasoning_effort` is sent to the model on every call and has the biggest effect on both quality and cost. `"high"` suits migrations and hard bugs; leave it unset for routine edits. It only does something on a group whose model supports reasoning effort, and a group behind translation may ignore it.
 
@@ -95,11 +95,11 @@ class CodexOptions:
     env: Mapping[str, str] = field(default_factory=dict)
 ```
 
-`config` passes native keys through untyped, because Codex's config changes often. Keys LiteLLM manages itself, such as `model_provider`, `model_providers` and `approval_policy`, raise `OptionsMismatch`.
+`config` passes native keys through untyped, because Codex's config changes often. Keys Lumina manages itself, such as `model_provider`, `model_providers` and `approval_policy`, raise `OptionsMismatch`.
 
 ## Models
 
-Codex speaks the OpenAI Responses API. The adapter registers a `litellm` model provider with `wire_api="responses"` pointing at the session's local endpoint, and sets `CODEX_HOME` to a temporary directory so your own Codex config and login are never used. With a `litellm_proxy/` model the endpoint forwards `/v1/responses` to the gateway with the `harness,codex` tags, and the gateway translates for non-OpenAI model groups. Without a gateway it calls `litellm.aresponses`.
+Codex speaks the OpenAI Responses API. The adapter registers a `lumina` model provider with `wire_api="responses"` pointing at the session's local endpoint, and sets `CODEX_HOME` to a temporary directory so your own Codex config and login are never used. With a `lumina_proxy/` model the endpoint forwards `/v1/responses` to the gateway with the `harness,codex` tags, and the gateway translates for non-OpenAI model groups. Without a gateway it calls `lumina.aresponses`.
 
 `OPENAI_API_KEY` and `CODEX_API_KEY` are never forwarded into the sandbox.
 

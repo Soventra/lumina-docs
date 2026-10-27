@@ -1,6 +1,6 @@
 ---
 title: "OpenClaw"
-description: "Send OpenClaw agent activity to LiteLLM Lens."
+description: "Send OpenClaw agent activity to Lumina Lens."
 slug: "/proxy/lens/integrations/openclaw"
 ---
 

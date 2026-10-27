@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Airia
 
-The Airia guardrail lets your LiteLLM proxy enforce the guardrails you set up in [Airia](https://airia.com): prompts are checked before they reach the model, responses before they reach the caller, allowing Airia to enforce whether each one is allowed, blocked, or redacted in place.
+The Airia guardrail lets your Lumina proxy enforce the guardrails you set up in [Airia](https://airia.com): prompts are checked before they reach the model, responses before they reach the caller, allowing Airia to enforce whether each one is allowed, blocked, or redacted in place.
 
 Airia detects:
 
@@ -15,11 +15,11 @@ Guardrails also inspect tool calls and tool responses when they are configured t
 
 ## Setup
 
-### 1. Connect LiteLLM in Airia
+### 1. Connect Lumina in Airia
 
-In Airia, open **Discover → Connections → LiteLLM**. Enable the connection and create an API key for it. Then open **Security → Runtime Security → Guardrails**, and on each guardrail you want enforced add **LiteLLM** as a target, choosing whether each applies to prompts, responses, or both.
+In Airia, open **Discover → Connections → Lumina**. Enable the connection and create an API key for it. Then open **Security → Runtime Security → Guardrails**, and on each guardrail you want enforced add **Lumina** as a target, choosing whether each applies to prompts, responses, or both.
 
-A guardrail with no LiteLLM target is not applied to proxy traffic, even if it is enabled elsewhere in Airia.
+A guardrail with no Lumina target is not applied to proxy traffic, even if it is enabled elsewhere in Airia.
 
 ### 2. Add the guardrail to `config.yaml`
 
@@ -50,12 +50,12 @@ Use the base URL for your Airia region, or your dedicated deployment's URL if yo
 export OPENAI_API_KEY=sk-...
 export AIRIA_GATEWAY_URL=https://gateway.airia.ai
 export AIRIA_API_KEY=ak-...
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Send a request
 
-The examples below assume an Airia guardrail targeted at LiteLLM that blocks secrets and redacts personal data.
+The examples below assume an Airia guardrail targeted at Lumina that blocks secrets and redacts personal data.
 
 <Tabs>
 <TabItem label="Blocked" value="blocked">
@@ -133,7 +133,7 @@ Airia answers each check with one of these outcomes.
 | Parameter | Environment variable | Description |
 |---|---|---|
 | `api_base` | `AIRIA_GATEWAY_URL` | Base URL of your Airia AI Gateway. Required. |
-| `api_key` | `AIRIA_API_KEY` | The API key created for the LiteLLM connection in Airia. Required. |
+| `api_key` | `AIRIA_API_KEY` | The API key created for the Lumina connection in Airia. Required. |
 | `timeout` | `AIRIA_TIMEOUT` | Seconds to wait for Airia before refusing the request. Default `10`. |
 
 Either the config value or the environment variable must be set for `api_base` and `api_key`; the proxy refuses to start otherwise, rather than failing on the first request.
@@ -146,7 +146,7 @@ Either the config value or the environment variable must be set for `api_base` a
 | `post_call` | The model's response, before it is returned |
 
 
-To apply the guardrail to some callers only, leave `default_on` unset and enable it per virtual key with LiteLLM's standard [per-key guardrail controls](./quick_start#-control-guardrails-per-api-key).
+To apply the guardrail to some callers only, leave `default_on` unset and enable it per virtual key with Lumina's standard [per-key guardrail controls](./quick_start#-control-guardrails-per-api-key).
 
 ## Limitations
 
@@ -158,6 +158,6 @@ To apply the guardrail to some callers only, leave `default_on` unset and enable
 
 | Symptom | Likely cause |
 |---|---|
-| Request fails with `Client error '401 Unauthorized'` | The key is not the one on the LiteLLM connection in Airia, or the connection has no key saved. |
-| Request fails with `Server error '503 Service Unavailable'` | The LiteLLM connection is disabled in Airia. |
-| Requests succeed but nothing is ever blocked or redacted | No guardrail has LiteLLM as a target, or the target's direction does not match the `mode` that ran. |
+| Request fails with `Client error '401 Unauthorized'` | The key is not the one on the Lumina connection in Airia, or the connection has no key saved. |
+| Request fails with `Server error '503 Service Unavailable'` | The Lumina connection is disabled in Airia. |
+| Requests succeed but nothing is ever blocked or redacted | No guardrail has Lumina as a target, or the target's direction does not match the `mode` that ran. |

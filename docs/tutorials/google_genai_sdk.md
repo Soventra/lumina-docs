@@ -1,20 +1,20 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Google GenAI SDK with LiteLLM
+# Google GenAI SDK with Lumina
 
-Use Google's official GenAI SDK (JavaScript/TypeScript and Python) with any LLM provider through LiteLLM Proxy.
+Use Google's official GenAI SDK (JavaScript/TypeScript and Python) with any LLM provider through Lumina Proxy.
 
-The Google GenAI SDK (`@google/genai` for JS, `google-genai` for Python) provides a native interface for calling Gemini models. By pointing it to LiteLLM, you can use the same SDK with OpenAI, Anthropic, Bedrock, Azure, Vertex AI, or any other provider while keeping the native Gemini request/response format.
+The Google GenAI SDK (`@google/genai` for JS, `google-genai` for Python) provides a native interface for calling Gemini models. By pointing it to Lumina, you can use the same SDK with OpenAI, Anthropic, Bedrock, Azure, Vertex AI, or any other provider while keeping the native Gemini request/response format.
 
-## Why Use LiteLLM with Google GenAI SDK?
+## Why Use Lumina with Google GenAI SDK?
 
 **Developer Benefits:**
-- **Universal Model Access**: Use any LiteLLM-supported model (Anthropic, OpenAI, Vertex AI, Bedrock, etc.) through the Google GenAI SDK interface
+- **Universal Model Access**: Use any Lumina-supported model (Anthropic, OpenAI, Vertex AI, Bedrock, etc.) through the Google GenAI SDK interface
 - **Higher Rate Limits & Reliability**: Load balance across multiple models and providers to avoid hitting individual provider limits, with fallbacks to ensure you get responses even if one provider fails
 
 **Proxy Admin Benefits:**
-- **Centralized Management**: Control access to all models through a single LiteLLM proxy instance without giving developers API keys to each provider
+- **Centralized Management**: Control access to all models through a single Lumina proxy instance without giving developers API keys to each provider
 - **Budget Controls**: Set spending limits and track costs across all SDK usage
 - **Logging & Observability**: Track all requests with cost tracking, logging, and analytics
 
@@ -23,7 +23,7 @@ The Google GenAI SDK (`@google/genai` for JS, `google-genai` for Python) provide
 | Cost Tracking | ✅ | All models on `/generateContent` endpoint |
 | Logging | ✅ | Works across all integrations |
 | Streaming | ✅ | `streamGenerateContent` supported |
-| Virtual Keys | ✅ | Use LiteLLM keys instead of Google keys |
+| Virtual Keys | ✅ | Use Lumina keys instead of Google keys |
 | Load Balancing | ✅ | Via native router endpoints |
 | Fallbacks | ✅ | Via native router endpoints |
 
@@ -48,7 +48,7 @@ uv add google-genai
 </TabItem>
 </Tabs>
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 ```yaml title="config.yaml" showLineNumbers
 model_list:
@@ -59,10 +59,10 @@ model_list:
 ```
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
-### 3. Call the SDK through LiteLLM
+### 3. Call the SDK through Lumina
 
 <Tabs>
 <TabItem value="js" label="JavaScript/TypeScript">
@@ -71,9 +71,9 @@ litellm --config config.yaml
 const { GoogleGenAI } = require("@google/genai");
 
 const ai = new GoogleGenAI({
-  apiKey: "sk-<your-api-key>",  // LiteLLM virtual key (not a Google key)
+  apiKey: "sk-<your-api-key>",  // Lumina virtual key (not a Google key)
   httpOptions: {
-    baseUrl: "http://localhost:4000/gemini",  // LiteLLM proxy URL
+    baseUrl: "http://localhost:4000/gemini",  // Lumina proxy URL
   },
 });
 
@@ -95,8 +95,8 @@ main();
 from google import genai
 
 client = genai.Client(
-    api_key="sk-<your-litellm-api-key>",  # LiteLLM virtual key (not a Google key)
-    http_options={"base_url": "http://localhost:4000/gemini"},  # LiteLLM proxy URL
+    api_key="sk-<your-lumina-api-key>",  # Lumina virtual key (not a Google key)
+    http_options={"base_url": "http://localhost:4000/gemini"},  # Lumina proxy URL
 )
 
 response = client.models.generate_content(
@@ -110,7 +110,7 @@ print(response.text)
 <TabItem value="curl" label="curl">
 
 ```bash
-curl "http://localhost:4000/gemini/v1beta/models/{{gemini_flash}}:generateContent?key=sk-<your-litellm-api-key>" \
+curl "http://localhost:4000/gemini/v1beta/models/{{gemini_flash}}:generateContent?key=sk-<your-lumina-api-key>" \
   -H 'Content-Type: application/json' \
   -X POST \
   -d '{
@@ -159,7 +159,7 @@ main();
 from google import genai
 
 client = genai.Client(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     http_options={"base_url": "http://localhost:4000/gemini"},
 )
 
@@ -212,7 +212,7 @@ main();
 from google import genai
 
 client = genai.Client(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     http_options={"base_url": "http://localhost:4000/gemini"},
 )
 
@@ -231,13 +231,13 @@ print(response2.text)
 
 ## Advanced: Use Any Model with the GenAI SDK
 
-By default, the GenAI SDK talks to Gemini models. But with LiteLLM's router, you can route GenAI SDK requests to **any provider**: Anthropic, OpenAI, Bedrock, etc.
+By default, the GenAI SDK talks to Gemini models. But with Lumina's router, you can route GenAI SDK requests to **any provider**: Anthropic, OpenAI, Bedrock, etc.
 
-This works by using `model_group_alias` to map Gemini model names to your desired provider models. LiteLLM handles the format translation internally.
+This works by using `model_group_alias` to map Gemini model names to your desired provider models. Lumina handles the format translation internally.
 
 :::info
 
-For this to work, point the SDK `baseUrl` to `http://localhost:4000` (without `/gemini`). This routes requests through LiteLLM's native Google endpoints, which go through the router and support model aliasing.
+For this to work, point the SDK `baseUrl` to `http://localhost:4000` (without `/gemini`). This routes requests through Lumina's native Google endpoints, which go through the router and support model aliasing.
 
 :::
 
@@ -314,7 +314,7 @@ router_settings:
 </TabItem>
 </Tabs>
 
-Then use the SDK with `baseUrl` pointing to LiteLLM (without `/gemini`):
+Then use the SDK with `baseUrl` pointing to Lumina (without `/gemini`):
 
 <Tabs>
 <TabItem value="js" label="JavaScript/TypeScript">
@@ -348,7 +348,7 @@ main();
 from google import genai
 
 client = genai.Client(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     http_options={"base_url": "http://localhost:4000"},  # No /gemini
 )
 
@@ -366,7 +366,7 @@ print(response.text)
 
 ## Pass-through vs Native Router Endpoints
 
-LiteLLM offers two ways to handle GenAI SDK requests:
+Lumina offers two ways to handle GenAI SDK requests:
 
 | | Pass-through (`/gemini`) | Native Router (`/`) |
 |---|---|---|
@@ -386,21 +386,21 @@ You can also configure the SDK via environment variables instead of code:
 ```bash
 # For JavaScript SDK (@google/genai)
 export GOOGLE_GEMINI_BASE_URL="http://localhost:4000/gemini"
-export GEMINI_API_KEY="sk-<your-litellm-api-key>"
+export GEMINI_API_KEY="sk-<your-lumina-api-key>"
 
 # For Python SDK (google-genai)
 # Note: The Python SDK does not support a base URL env var.
 # Configure it in code with http_options={"base_url": "..."} instead.
-export GEMINI_API_KEY="sk-<your-litellm-api-key>"
+export GEMINI_API_KEY="sk-<your-lumina-api-key>"
 ```
 
-This is especially useful for tools built on top of the GenAI SDK (like [Gemini CLI](./litellm_gemini_cli.md)).
+This is especially useful for tools built on top of the GenAI SDK (like [Gemini CLI](./lumina_gemini_cli.md)).
 
 ## Related Resources
 
-- [Gemini CLI with LiteLLM](./litellm_gemini_cli.md)
+- [Gemini CLI with Lumina](./lumina_gemini_cli.md)
 - [Google AI Studio Pass-Through](../pass_through/google_ai_studio)
-- [Google ADK with LiteLLM](./google_adk.md)
-- [LiteLLM Proxy Quick Start](../proxy/quick_start)
+- [Google ADK with Lumina](./google_adk.md)
+- [Lumina Proxy Quick Start](../proxy/quick_start)
 - [`@google/genai` npm package](https://www.npmjs.com/package/@google/genai)
 - [`google-genai` PyPI package](https://pypi.org/project/google-genai/)

@@ -4,7 +4,7 @@ Guard the records inside a batch input file, so a batch job cannot move content 
 
 ## How it works
 
-A batch job is submitted in two steps. You upload a `.jsonl` file to `/v1/files` with `purpose=batch`, then create the job against the file id. The records only ever execute at the provider, so the upload is the one moment LiteLLM holds their content.
+A batch job is submitted in two steps. You upload a `.jsonl` file to `/v1/files` with `purpose=batch`, then create the job against the file id. The records only ever execute at the provider, so the upload is the one moment Lumina holds their content.
 
 That is where guardrails run. Each record is scanned on its own, under the call type its `url` names, so a record targeting `/v1/chat/completions` is checked exactly as the equivalent chat request would be:
 
@@ -13,7 +13,7 @@ POST /v1/files  (purpose=batch)
         │
         ▼
 ┌──────────────────────┐
-│    LiteLLM Proxy     │  scans every record against your pre_call guardrails
+│    Lumina Proxy     │  scans every record against your pre_call guardrails
 └──────────┬───────────┘
            │
            │  record 1  clean          -> submitted unchanged
@@ -57,7 +57,7 @@ Records the guardrails did not object to are passed through as written, byte for
 
 ## The upload response
 
-The response is the usual file object with one extra field, `litellm_batch_guardrail`, present only when a guardrail changed something:
+The response is the usual file object with one extra field, `lumina_batch_guardrail`, present only when a guardrail changed something:
 
 ```bash
 curl -sS http://localhost:4000/v1/files \
@@ -73,7 +73,7 @@ curl -sS http://localhost:4000/v1/files \
   "purpose": "batch",
   "bytes": 594,
   "status": "processed",
-  "litellm_batch_guardrail": {
+  "lumina_batch_guardrail": {
     "submitted_records": 3,
     "modified_records": [
       {"line": 2, "custom_id": "row-2", "action": "redacted", "guardrail": null},

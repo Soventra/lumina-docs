@@ -7,31 +7,31 @@ Control runaway costs from agentic loops with per-session iteration and budget c
 
 ## Overview
 
-When agents run agentic loops, they can make unbounded LLM calls, causing unexpected costs. LiteLLM provides two controls:
+When agents run agentic loops, they can make unbounded LLM calls, causing unexpected costs. Lumina provides two controls:
 
 | Control | Description |
 |---------|-------------|
 | **Max Iterations** | Hard cap on the number of LLM calls per session |
-| **Max Budget Per Session** | Dollar cap per session (identified by `x-litellm-trace-id`) |
+| **Max Budget Per Session** | Dollar cap per session (identified by `x-lumina-trace-id`) |
 
-Both controls require a `session_id` (sent via `x-litellm-trace-id` header or `metadata.session_id`) to track calls within a session.
+Both controls require a `session_id` (sent via `x-lumina-trace-id` header or `metadata.session_id`) to track calls within a session.
 
 ## Trace-ID Enforcement
 
-LiteLLM supports two independent trace-id flags, configured in `lumina_params` on the agent:
+Lumina supports two independent trace-id flags, configured in `lumina_params` on the agent:
 
 | Flag | Description |
 |------|-------------|
-| `require_trace_id_on_calls_to_agent` | Requires callers invoking this agent to include `x-litellm-trace-id`. Use when the agent should only be called as a sub-agent with a trace context. Returns **400** if missing. |
-| `require_trace_id_on_calls_by_agent` | Requires all LLM/MCP calls made **by** this agent (via its virtual key) to include `x-litellm-trace-id`. This is what enables `max_iterations` and `max_budget_per_session` tracking. Returns **400** if missing. |
+| `require_trace_id_on_calls_to_agent` | Requires callers invoking this agent to include `x-lumina-trace-id`. Use when the agent should only be called as a sub-agent with a trace context. Returns **400** if missing. |
+| `require_trace_id_on_calls_by_agent` | Requires all LLM/MCP calls made **by** this agent (via its virtual key) to include `x-lumina-trace-id`. This is what enables `max_iterations` and `max_budget_per_session` tracking. Returns **400** if missing. |
 
 ## Configuring via UI
 
-When creating an agent in the LiteLLM Admin UI:
+When creating an agent in the Lumina Admin UI:
 
 1. Navigate to the **Agents** tab and click **Add Agent**
 2. In the **Agent Settings** step, expand the **Tracing** section
-3. Toggle **Require x-litellm-trace-id on calls BY this agent** to enable session tracking
+3. Toggle **Require x-lumina-trace-id on calls BY this agent** to enable session tracking
 4. Set **Max Iterations** to cap the number of LLM calls per session
 5. Set **Max Budget Per Session ($)** to cap spend per session
 
@@ -87,7 +87,7 @@ curl -X POST 'http://localhost:4000/v1/agents' \
 ### Session Tracking
 
 Callers identify their session by including a `session_id` in one of these ways:
-- **Header**: `x-litellm-trace-id: my-session-123`
+- **Header**: `x-lumina-trace-id: my-session-123`
 - **Metadata**: `{"metadata": {"session_id": "my-session-123"}}`
 
 ### Max Iterations
@@ -115,7 +115,7 @@ Create an agent with max 25 iterations and a $5 budget cap:
 1. Go to **Agents** → **Add Agent**
 2. Configure your agent (name, model, etc.)
 3. In **Agent Settings**, expand the **Tracing** section
-4. Toggle on **Require x-litellm-trace-id on calls BY this agent**
+4. Toggle on **Require x-lumina-trace-id on calls BY this agent**
 5. Set **Max Iterations** to `25`
 6. Set **Max Budget Per Session** to `5.00`
 7. Proceed to create a new key for the agent
@@ -160,7 +160,7 @@ curl -X POST 'http://localhost:4000/key/generate' \
 ```bash
 curl -X POST 'http://localhost:4000/chat/completions' \
   -H 'Authorization: Bearer sk-agent-key-xxx' \
-  -H 'x-litellm-trace-id: session-abc-123' \
+  -H 'x-lumina-trace-id: session-abc-123' \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "{{openai_large}}",

@@ -1,18 +1,18 @@
-In place of a long-lived virtual key, Codex can ask the `lite` CLI for a token whenever it needs one. Each developer runs [`lite login --pkce`](../cli_sso.md) once, and requests are then attributed to their LiteLLM user and team
+In place of a long-lived virtual key, Codex can ask the `lite` CLI for a token whenever it needs one. Each developer runs [`lite login --pkce`](../cli_sso.md) once, and requests are then attributed to their Lumina user and team
 
 Replace `env_key` with an `auth` table in `~/.codex/config.toml`:
 
 ```toml title="~/.codex/config.toml"
-model_provider = "litellm"
+model_provider = "lumina"
 
-[model_providers.litellm]
-name = "LiteLLM"
-base_url = "https://litellm.example.com/v1"
+[model_providers.lumina]
+name = "Lumina"
+base_url = "https://lumina.example.com/v1"
 wire_api = "responses"
 
-[model_providers.litellm.auth]
+[model_providers.lumina.auth]
 command = "/absolute/path/to/lite"
-args = ["--base-url", "https://litellm.example.com", "auth", "print-token"]
+args = ["--base-url", "https://lumina.example.com", "auth", "print-token"]
 timeout_ms = 30000
 refresh_interval_ms = 300000
 ```

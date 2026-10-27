@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 
 Create keys, track spend, add models without worrying about the config / CRUD endpoints.
 
-<Image img={require('../../img/litellm_ui_create_key.png')} dark={require('../../img/litellm_ui_create_key_dark.png')} alt="The Virtual Keys page with the Create New Key button" />
+<Image img={require('../../img/lumina_ui_create_key.png')} dark={require('../../img/lumina_ui_create_key_dark.png')} alt="The Virtual Keys page with the Create New Key button" />
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ Follow [setup](./virtual_keys.md#setup)
 ### 1. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 #INFO: Proxy running on http://0.0.0.0:4000
 ```
@@ -41,11 +41,11 @@ Out of the box, the UI accepts a login built from environment variables: the use
 
 ```shell
 LUMINA_MASTER_KEY="sk-$(openssl rand -hex 32)" # master key for the proxy; must start with sk-
-UI_USERNAME=ishaan-litellm   # username to sign in on UI
+UI_USERNAME=ishaan-lumina   # username to sign in on UI
 UI_PASSWORD=langchain        # password to sign in on UI
 ```
 
-On accessing the LiteLLM UI, you will be prompted to enter your username, password
+On accessing the Lumina UI, you will be prompted to enter your username, password
 
 :::warning[Environment credentials are for bootstrapping only]
 This login path stores a permanent, shared, cleartext admin credential in your environment, cannot be rotated per person, and leaves no way to tell which admin did what. Once you are signed in, follow the steps below to move to per-user accounts and disable it. Until you do, the dashboard shows a warning banner to every admin.
@@ -116,7 +116,7 @@ While a block is active, every sign-in attempt for that address or pair is refus
 
 Counters live in Redis when the proxy has one, so a block applies across all workers and pods. Without Redis each worker counts on its own, so the effective limit is the configured number times the worker count; the proxy warns about this at startup. If Redis becomes unreachable, the proxy falls back to per-worker counters and keeps accepting sign-ins.
 
-To count per address, the proxy has to know which address is the client. Set `general_settings.trusted_proxy_ranges` to the CIDR ranges of the load balancer or ingress in front of LiteLLM; the client is then the first `X-Forwarded-For` hop outside those ranges. If clients connect to LiteLLM directly, set it to `[]` so the peer address is used and `X-Forwarded-For` is ignored. If it is unset, the proxy cannot tell a client from a shared ingress, so it warns at startup and enforces only the per-username limit. IPv6 addresses are grouped by /64.
+To count per address, the proxy has to know which address is the client. Set `general_settings.trusted_proxy_ranges` to the CIDR ranges of the load balancer or ingress in front of Lumina; the client is then the first `X-Forwarded-For` hop outside those ranges. If clients connect to Lumina directly, set it to `[]` so the peer address is used and `X-Forwarded-For` is ignored. If it is unset, the proxy cannot tell a client from a shared ingress, so it warns at startup and enforces only the per-username limit. IPv6 addresses are grouped by /64.
 
 ```yaml
 general_settings:

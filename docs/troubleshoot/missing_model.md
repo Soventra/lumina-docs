@@ -1,24 +1,24 @@
 # Model missing after Reload Price Data
 
-A model that was just added to LiteLLM's pricing map does not show up in the Admin UI model picker, or cost tracking logs `This model isn't mapped yet` and records `$0` spend for it, even though **Reload Price Data** reported success with a model count. In almost every one of these reports the proxy did exactly what it was asked: it fetched the file it is pointed at, and that file did not contain the entry yet. Answer the two questions in Step 1 before asking anything about the deployment; they take a minute and they settle most reports on the spot.
+A model that was just added to Lumina's pricing map does not show up in the Admin UI model picker, or cost tracking logs `This model isn't mapped yet` and records `$0` spend for it, even though **Reload Price Data** reported success with a model count. In almost every one of these reports the proxy did exactly what it was asked: it fetched the file it is pointed at, and that file did not contain the entry yet. Answer the two questions in Step 1 before asking anything about the deployment; they take a minute and they settle most reports on the spot.
 
 ## Step 1: When did the entry reach `main`, and which map is the proxy on?
 
-The proxy reads pricing from `https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json`: once at startup, on every Reload Price Data, and on the optional reload schedule. A pricing PR does not always merge straight into `main`. While development happens on the `litellm_internal_staging` branch, `main` receives it in batches, so an entry can be merged, announced as day-0 pricing, and still be a day or more away from the file the proxy actually fetches. A successful reload with a model count proves the fetch worked and nothing else.
+The proxy reads pricing from `https://raw.githubusercontent.com/Soventra/lumina/main/model_prices_and_context_window.json`: once at startup, on every Reload Price Data, and on the optional reload schedule. A pricing PR does not always merge straight into `main`. While development happens on the `lumina_internal_staging` branch, `main` receives it in batches, so an entry can be merged, announced as day-0 pricing, and still be a day or more away from the file the proxy actually fetches. A successful reload with a model count proves the fetch worked and nothing else.
 
 Check whether the entry is on `main` right now. Test every key the model was added under, since providers usually get their own prefixed entry:
 
 ```bash
-curl -s https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json \
+curl -s https://raw.githubusercontent.com/Soventra/lumina/main/model_prices_and_context_window.json \
   | jq '[has("{{gemini_flash}}"), has("gemini/{{gemini_flash}}")]'
 ```
 
 Check when it got there, and when it merged upstream:
 
 ```bash
-git fetch origin main litellm_internal_staging
+git fetch origin main lumina_internal_staging
 git log -S '"{{gemini_flash}}"' --first-parent --format='%h %ci %s' origin/main -- model_prices_and_context_window.json
-git log -S '"{{gemini_flash}}"' --first-parent --format='%h %ci %s' origin/litellm_internal_staging -- model_prices_and_context_window.json
+git log -S '"{{gemini_flash}}"' --first-parent --format='%h %ci %s' origin/lumina_internal_staging -- model_prices_and_context_window.json
 ```
 
 No output for `origin/main` means the entry is not there yet, and no reload, restart, or configuration change on the deployment can find it. Otherwise the first line is the merge that carried it onto `main`, and its timestamp is the earliest moment a reload could have picked it up, plus up to five minutes while raw.githubusercontent.com serves its cached copy. The gap between the `main` line and the staging line is the delay the customer experienced.
@@ -40,7 +40,7 @@ curl -s -X POST http://localhost:4000/reload/model_cost_map \
 
 `POST /reload/model_cost_map` returns `models_count`, the number of entries in the file it just fetched (it can be larger than the file's raw key count, since the proxy adds derived alias entries). It changes with every pricing merge, which makes it a fingerprint of the `main` revision the proxy loaded: a count that does not move across a reload made after the `main` merge means the proxy is not seeing that `main`. A `502` means the fetch failed and the previous map was kept, so a success response with a count is proof the fetch went through.
 
-Record the release as well, `litellm_version` from `GET /health/readiness/details`, since the bundled pricing is frozen at build time and older releases lack some of these endpoints.
+Record the release as well, `lumina_version` from `GET /health/readiness/details`, since the bundled pricing is frozen at build time and older releases lack some of these endpoints.
 
 | Observation | Meaning |
 |-------------|---------|
@@ -63,7 +63,7 @@ If the count matches on every replica and the entry is on `main`, the request is
 Point the proxy at the branch that already has it and restart it, since the URL is read at startup. This swaps the whole pricing map for that branch's copy, so drop the override once `main` catches up:
 
 ```bash
-export LUMINA_MODEL_COST_MAP_URL=https://raw.githubusercontent.com/BerriAI/litellm/litellm_internal_staging/model_prices_and_context_window.json
+export LUMINA_MODEL_COST_MAP_URL=https://raw.githubusercontent.com/Soventra/lumina/lumina_internal_staging/model_prices_and_context_window.json
 ```
 
 Or give the deployment its own pricing with [custom pricing](../proxy/custom_pricing) in `model_info`. On current releases deployment-level pricing survives later reloads, so it is the safer choice when the model must be billed correctly before the merge lands.

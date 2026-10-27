@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Bedrock Batches
 
-Use Amazon Bedrock Batch Inference API through LiteLLM.
+Use Amazon Bedrock Batch Inference API through Lumina.
 
 | Property | Details |
 |----------|---------|
@@ -28,14 +28,14 @@ Here's how to give developers access to your Bedrock Batch models.
 - Specify `mode: batch` for each model: Allows developers to know this is a batch model
 - Configure S3 bucket and AWS credentials for batch operations
 
-```yaml showLineNumbers title="litellm_config.yaml"
+```yaml showLineNumbers title="lumina_config.yaml"
 model_list:
   - model_name: "bedrock-batch-claude"
     lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       #########################################################
       ########## batch specific params ########################
-      s3_bucket_name: litellm-proxy
+      s3_bucket_name: lumina-proxy
       s3_region_name: us-west-2
       s3_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       s3_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -57,14 +57,14 @@ model_list:
 | `s3_access_key_id` | AWS access key for S3 bucket |
 | `s3_secret_access_key` | AWS secret key for S3 bucket |
 | `aws_batch_role_arn` | IAM role ARN for Bedrock batch operations. Bedrock Batch APIs require an IAM role ARN to be set. |
-| `mode: batch` | Indicates to LiteLLM this is a batch model |
+| `mode: batch` | Indicates to Lumina this is a batch model |
 
 **Optional Parameters:**
 
 | Parameter | Description |
 |-----------|-------------|
-| `s3_encryption_key_id` | Custom KMS encryption key ID for the batch input file LiteLLM uploads to S3 and for the batch output data. Requires `kms:GenerateDataKey` on that key for the credentials LiteLLM signs the upload with. If not specified, Bedrock uses AWS managed encryption keys. |
-| `s3_output_bucket_name` | S3 bucket Bedrock writes the batch output to, under `litellm-batch-outputs/<job name>/`. Defaults to `s3_bucket_name`. Also settable via the `AWS_S3_OUTPUT_BUCKET_NAME` env var. |
+| `s3_encryption_key_id` | Custom KMS encryption key ID for the batch input file Lumina uploads to S3 and for the batch output data. Requires `kms:GenerateDataKey` on that key for the credentials Lumina signs the upload with. If not specified, Bedrock uses AWS managed encryption keys. |
+| `s3_output_bucket_name` | S3 bucket Bedrock writes the batch output to, under `lumina-batch-outputs/<job name>/`. Defaults to `s3_bucket_name`. Also settable via the `AWS_S3_OUTPUT_BUCKET_NAME` env var. |
 | `s3_bucket_owner` | AWS account id that owns the batch input and output S3 buckets. Sent as `s3BucketOwner` on both the input and output data config of the Bedrock job. Set it when the buckets live in a different account than the one running the batch job, otherwise Bedrock validates bucket ownership against the job's account and the job fails. Also settable via the `AWS_S3_BUCKET_OWNER` env var. |
 
 ### 2. Create Virtual Key
@@ -80,7 +80,7 @@ You can now use the virtual key to access the batch models (See Developer flow).
 
 ## (Developer) Usage
 
-Here's how to create a LiteLLM managed file and execute Bedrock Batch CRUD operations with the file.
+Here's how to create a Lumina managed file and execute Bedrock Batch CRUD operations with the file.
 
 ### 1. Create request.jsonl
 
@@ -95,11 +95,11 @@ Here's how to create a LiteLLM managed file and execute Bedrock Batch CRUD opera
 
 Expectation:
 
-- LiteLLM translates this to the bedrock deployment specific value (e.g. `bedrock/us.anthropic.{{anthropic}}`)
+- Lumina translates this to the bedrock deployment specific value (e.g. `bedrock/us.anthropic.{{anthropic}}`)
 
 ### 2. Upload File
 
-Specify `target_model_names: "<model-name>"` to enable LiteLLM managed files and request validation.
+Specify `target_model_names: "<model-name>"` to enable Lumina managed files and request validation.
 
 model-name should be the same as the model-name in the request.jsonl
 
@@ -111,7 +111,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
 )
 
 # Upload file
@@ -222,13 +222,13 @@ curl http://localhost:4000/v1/files/{output_file_id}/content \
 ```
 
 </TabItem>
-<TabItem value="litellm-direct" label="LiteLLM Direct">
+<TabItem value="lumina-direct" label="Lumina Direct">
 
 ```python showLineNumbers title="bedrock_batch.py"
-import litellm
-from litellm import file_content
+import lumina
+from lumina import file_content
 
-# Download using litellm directly (bypasses proxy managed files)
+# Download using lumina directly (bypasses proxy managed files)
 result = file_content(
     file_id=batch_status.output_file_id,  # Can be S3 URI or unified file ID
     custom_llm_provider="bedrock",
@@ -277,7 +277,7 @@ When a `target_model_names` is specified, the file is written to the S3 bucket c
 
 Give each team its own batch model with its own bucket, then restrict each team to its model. A team's input files and batch output then only ever land in that team's bucket.
 
-```yaml showLineNumbers title="litellm_config.yaml"
+```yaml showLineNumbers title="lumina_config.yaml"
 model_list:
   - model_name: "bedrock-batch-team-a"
     lumina_params:
@@ -285,7 +285,7 @@ model_list:
       s3_bucket_name: team-a-batch-bucket
       s3_output_bucket_name: team-a-batch-bucket
       s3_region_name: us-east-1
-      aws_batch_role_arn: arn:aws:iam::123456789012:role/LiteLLMBedrockBatchRole
+      aws_batch_role_arn: arn:aws:iam::123456789012:role/LuminaBedrockBatchRole
     model_info:
       mode: batch
   - model_name: "bedrock-batch-team-b"
@@ -294,7 +294,7 @@ model_list:
       s3_bucket_name: team-b-batch-bucket
       s3_output_bucket_name: team-b-batch-bucket
       s3_region_name: us-east-1
-      aws_batch_role_arn: arn:aws:iam::123456789012:role/LiteLLMBedrockBatchRole
+      aws_batch_role_arn: arn:aws:iam::123456789012:role/LuminaBedrockBatchRole
     model_info:
       mode: batch
 ```
@@ -310,49 +310,49 @@ curl -L -X POST 'https://{PROXY_BASE_URL}/team/new' \
 
 Team A's keys upload with `target_model_names` set to `bedrock-batch-team-a`. A team A key that names `bedrock-batch-team-b` on upload or batch create is rejected, so team A's records never reach team B's bucket. Downloading a batch's output reads from the bucket of the model that ran it, and the [managed batch access rules](../proxy/managed_batches#access-control) stop other teams from reading the results.
 
-The IAM role in `aws_batch_role_arn` needs read access to every input bucket and write access to every output bucket, and the S3 credentials LiteLLM uses need read and write access to all of them. To keep teams apart at the AWS level as well, give each team's model its own role and credentials scoped to that team's bucket.
+The IAM role in `aws_batch_role_arn` needs read access to every input bucket and write access to every output bucket, and the S3 credentials Lumina uses need read and write access to all of them. To keep teams apart at the AWS level as well, give each team's model its own role and credentials scoped to that team's bucket.
 
 ### What models are supported?
 
-Any Bedrock model that AWS lists for [batch inference](https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference-supported.html) works, as long as LiteLLM can translate the OpenAI-format records in your input file into that model's request body. Today that covers Anthropic Claude models, Amazon Nova models (each record is written in the Converse request shape Nova expects), Amazon Titan Text Embeddings V2 for `/v1/embeddings` records, and the OpenAI-compatible Bedrock models such as `openai.gpt-oss-120b-1:0`, Qwen, and DeepSeek, whose records are passed through as OpenAI-style chat bodies. Chat records can use `/v1/chat/completions`, `/v1/completions`, or `/v1/responses` as their `url`; completions and responses records are converted to chat requests before upload. Titan Text Embeddings V2 is the only embedding model translated today.
+Any Bedrock model that AWS lists for [batch inference](https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference-supported.html) works, as long as Lumina can translate the OpenAI-format records in your input file into that model's request body. Today that covers Anthropic Claude models, Amazon Nova models (each record is written in the Converse request shape Nova expects), Amazon Titan Text Embeddings V2 for `/v1/embeddings` records, and the OpenAI-compatible Bedrock models such as `openai.gpt-oss-120b-1:0`, Qwen, and DeepSeek, whose records are passed through as OpenAI-style chat bodies. Chat records can use `/v1/chat/completions`, `/v1/completions`, or `/v1/responses` as their `url`; completions and responses records are converted to chat requests before upload. Titan Text Embeddings V2 is the only embedding model translated today.
 
 Use the model id AWS accepts for batch jobs in your region. Most current models only run batch jobs through a cross-region inference profile, so the id usually carries the `us.` (or `eu.`, `apac.`) prefix, for example `us.amazon.nova-lite-v1:0` rather than `amazon.nova-lite-v1:0`. Bedrock also rejects jobs with fewer than 100 records regardless of the model.
 
 A non-Anthropic batch model is configured the same way as the Claude example above:
 
-```yaml showLineNumbers title="litellm_config.yaml"
+```yaml showLineNumbers title="lumina_config.yaml"
 model_list:
   - model_name: "bedrock-batch-nova"
     lumina_params:
       model: bedrock/us.amazon.nova-lite-v1:0
-      s3_bucket_name: litellm-proxy
+      s3_bucket_name: lumina-proxy
       s3_region_name: us-east-1
       s3_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       s3_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
-      aws_batch_role_arn: arn:aws:iam::123456789012:role/LiteLLMBedrockBatchRole
+      aws_batch_role_arn: arn:aws:iam::123456789012:role/LuminaBedrockBatchRole
     model_info:
       mode: batch
   - model_name: "bedrock-batch-titan-embeddings"
     lumina_params:
       model: bedrock/amazon.titan-embed-text-v2:0
-      s3_bucket_name: litellm-proxy
+      s3_bucket_name: lumina-proxy
       s3_region_name: us-east-1
       s3_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       s3_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
-      aws_batch_role_arn: arn:aws:iam::123456789012:role/LiteLLMBedrockBatchRole
+      aws_batch_role_arn: arn:aws:iam::123456789012:role/LuminaBedrockBatchRole
     model_info:
       mode: batch
 ```
 
 Records in the input file then reference the `model_name` (`{"model": "bedrock-batch-nova", ...}`), the upload sets `target_model_names` to that same name, and the batch is created with `endpoint` set to `/v1/chat/completions` for chat models or `/v1/embeddings` for the embeddings model. The IAM role in `aws_batch_role_arn` needs `bedrock:InvokeModel` on every model you run batch jobs with.
 
-If you need a Bedrock model LiteLLM does not translate yet, for example another embedding model, file an issue [here](https://github.com/BerriAI/litellm/issues/new/choose).
+If you need a Bedrock model Lumina does not translate yet, for example another embedding model, file an issue [here](https://github.com/Soventra/lumina/issues/new/choose).
 
 ### How do I use a custom KMS encryption key?
 
 If your S3 bucket requires a custom KMS encryption key, you can specify it in your configuration using `s3_encryption_key_id`. This is useful for enterprise customers with specific encryption requirements.
 
-The key covers both objects LiteLLM touches: the batch input file it uploads to your bucket, and the batch output Bedrock writes back. The input upload is signed with `x-amz-server-side-encryption: aws:kms` and this key ARN, so the AWS identity LiteLLM uploads with needs `kms:GenerateDataKey` on the key. Grant that before setting the key, otherwise `POST /v1/files` fails with an S3 `AccessDenied`
+The key covers both objects Lumina touches: the batch input file it uploads to your bucket, and the batch output Bedrock writes back. The input upload is signed with `x-amz-server-side-encryption: aws:kms` and this key ARN, so the AWS identity Lumina uploads with needs `kms:GenerateDataKey` on the key. Grant that before setting the key, otherwise `POST /v1/files` fails with an S3 `AccessDenied`
 
 You can set the encryption key in 2 ways:
 
@@ -373,7 +373,7 @@ export AWS_S3_ENCRYPTION_KEY_ID=arn:aws:kms:us-west-2:123456789012:key/12345678-
 
 ### How do I use S3 buckets owned by a different AWS account?
 
-Bedrock checks that the input and output buckets belong to the account named in `s3BucketOwner`, and when that field is missing it defaults to the account running the batch job. If your buckets live in another account the job fails validation with an S3 permission error even though the bucket policy grants access. Set `s3_bucket_owner` to the id of the account that owns the buckets and LiteLLM sends it on both the input and output data config
+Bedrock checks that the input and output buckets belong to the account named in `s3BucketOwner`, and when that field is missing it defaults to the account running the batch job. If your buckets live in another account the job fails validation with an S3 permission error even though the bucket policy grants access. Set `s3_bucket_owner` to the id of the account that owns the buckets and Lumina sends it on both the input and output data config
 
 Through the proxy, an `s3_bucket_owner` passed in the `/v1/batches` request body takes precedence over the deployment's `lumina_params` value, which in turn takes precedence over the `AWS_S3_BUCKET_OWNER` env var. This is the same order the router applies to every other deployment parameter such as `s3_bucket_name` or `s3_encryption_key_id`. When none is set the field is omitted and Bedrock keeps its default
 
@@ -391,14 +391,14 @@ model_list:
 export AWS_S3_BUCKET_OWNER=123456789012
 ```
 
-### How does LiteLLM get Bedrock output file details?
+### How does Lumina get Bedrock output file details?
 
-Bedrock has no file details API, so LiteLLM reads the size and last-modified time straight from the S3 object, with the same credentials as the batch's deployment. An empty output or error file shows as `bytes: 0`. See [Output and error files](../proxy/managed_batches#output-and-error-files) for when LiteLLM looks these up.
+Bedrock has no file details API, so Lumina reads the size and last-modified time straight from the S3 object, with the same credentials as the batch's deployment. An empty output or error file shows as `bytes: 0`. See [Output and error files](../proxy/managed_batches#output-and-error-files) for when Lumina looks these up.
 
 
 
 ## Further Reading
 
 - [AWS Bedrock Batch Inference Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html)
-- [LiteLLM Managed Batches](../proxy/managed_batches)
-- [LiteLLM Authentication to Bedrock](https://docs.litellm.ai/docs/providers/bedrock#boto3---authentication)
+- [Lumina Managed Batches](../proxy/managed_batches)
+- [Lumina Authentication to Bedrock](https://docs.lumina.ai/docs/providers/bedrock#boto3---authentication)

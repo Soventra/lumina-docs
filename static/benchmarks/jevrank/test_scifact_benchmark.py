@@ -84,7 +84,7 @@ def test_dry_run_makes_plan_without_model_calls_or_executed_manifest(tmp_path, m
     config = tmp_path / "config.json"
     config.write_text(json.dumps({"models": [{"name": "m", "model": "m", "strategy": "pointwise"}]}))
     monkeypatch.setattr(bench, "load_prepared", lambda _: ([{"query_id": "q", "candidates": [1, 2]}], {}))
-    monkeypatch.setenv("LITELLM_BASE_URL", "https://example.com")
+    monkeypatch.setenv("LUMINA_BASE_URL", "https://example.com")
     args = Namespace(config=config, prepared="unused", limit=None, output=tmp_path / "out", mode="gateway",
                      sdk_root=None, execute=False, resume=False)
     asyncio.run(bench.run(args))
@@ -117,7 +117,7 @@ def test_sdk_passes_price_and_strategy_and_saves_raw_provider_version(tmp_path, 
     path.write_text(json.dumps(config))
     monkeypatch.setattr(bench, "load_prepared", lambda _: ([query], {}))
     monkeypatch.setattr(bench, "sdk_provenance", lambda _: (SDK(), {"revision": "test"}))
-    monkeypatch.setenv("LITELLM_API_KEY", "test-secret")
+    monkeypatch.setenv("LUMINA_API_KEY", "test-secret")
     args = Namespace(config=path, prepared="unused", limit=None, output=tmp_path / "out", mode="sdk",
                      sdk_root="mock", execute=True, resume=False)
     assert asyncio.run(bench.run(args)) == 0

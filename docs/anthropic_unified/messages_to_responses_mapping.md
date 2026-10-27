@@ -1,8 +1,8 @@
 # v1/messages → /responses Parameter Mapping
 
-When you send a request to `/v1/messages` targeting an OpenAI or Azure model, LiteLLM internally routes it through the OpenAI Responses API. This page documents exactly how every parameter gets translated in both directions.
+When you send a request to `/v1/messages` targeting an OpenAI or Azure model, Lumina internally routes it through the OpenAI Responses API. This page documents exactly how every parameter gets translated in both directions.
 
-The transformation lives in `litellm/llms/anthropic/experimental_pass_through/responses_adapters/transformation.py`.
+The transformation lives in `lumina/llms/anthropic/experimental_pass_through/responses_adapters/transformation.py`.
 
 
 ## Request: Anthropic → Responses API
@@ -29,7 +29,7 @@ The transformation lives in `litellm/llms/anthropic/experimental_pass_through/re
 | `top_k` | ❌ Not mapped | Dropped silently |
 | `speed` | ❌ Not mapped | Only used to set Anthropic beta headers on the native path |
 
-The chat-completions path (`litellm_settings.use_chat_completions_url_for_anthropic_messages: true`, and every non-OpenAI provider) derives the same two parameters from `metadata.user_id`, with two differences: `user` is passed through untruncated, and `prompt_cache_key` is only set when the target provider's supported params include it. OpenAI, Azure OpenAI and other OpenAI-compatible providers do; Gemini, Vertex AI, Bedrock and Anthropic do not. `litellm_proxy/` deployments (one LiteLLM proxy in front of another) never get the derived key, because the downstream proxy's real provider is unknown and would reject it unless `drop_params` is set there.
+The chat-completions path (`lumina_settings.use_chat_completions_url_for_anthropic_messages: true`, and every non-OpenAI provider) derives the same two parameters from `metadata.user_id`, with two differences: `user` is passed through untruncated, and `prompt_cache_key` is only set when the target provider's supported params include it. OpenAI, Azure OpenAI and other OpenAI-compatible providers do; Gemini, Vertex AI, Bedrock and Anthropic do not. `lumina_proxy/` deployments (one Lumina proxy in front of another) never get the derived key, because the downstream proxy's real provider is unknown and would reject it unless `drop_params` is set there.
 
 
 ### How messages get converted
@@ -104,7 +104,7 @@ Responses API output:
 
 ## Response: Responses API → Anthropic
 
-When the Responses API reply comes back, LiteLLM converts it into an Anthropic `AnthropicMessagesResponse`.
+When the Responses API reply comes back, Lumina converts it into an Anthropic `AnthropicMessagesResponse`.
 
 | Responses API field | Anthropic response field | Notes |
 |---|---|---|

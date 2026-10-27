@@ -11,7 +11,7 @@ const QueryParamToken = () => {
 
   return (
     <span style={{ padding: 0, margin: 0 }}>
-      {token ? <a href={`https://admin.litellm.ai/${token}`} target="_blank" rel="noopener noreferrer">admin.litellm.ai</a> : ""}
+      {token ? <a href={`https://admin.lumina.ai/${token}`} target="_blank" rel="noopener noreferrer">admin.lumina.ai</a> : ""}
     </span>
   );
 }

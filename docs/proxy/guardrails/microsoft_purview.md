@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Microsoft Purview Guardrail
 
-LiteLLM supports [Microsoft Purview](https://learn.microsoft.com/en-us/purview/purview) DLP policies via the [Microsoft Graph `processContent` API](https://learn.microsoft.com/en-us/graph/api/dataSecurityAndGovernance-processContent).
+Lumina supports [Microsoft Purview](https://learn.microsoft.com/en-us/purview/purview) DLP policies via the [Microsoft Graph `processContent` API](https://learn.microsoft.com/en-us/graph/api/dataSecurityAndGovernance-processContent).
 
 ## Supported modes
 
@@ -22,7 +22,7 @@ LiteLLM supports [Microsoft Purview](https://learn.microsoft.com/en-us/purview/p
 
 2. **A DLP policy in Microsoft Purview** targeting your app registration's `client_id` as a Protected App. Without an active policy, `policyActions` in the API response will always be empty.
 
-3. **Entra user object IDs** — the LiteLLM API key (or JWT) used for the request must have a `user_id` bound to it that is the Entra object ID of the end-user (not a username or email). Blocking hooks (`pre_call` / `post_call`) reject the request with HTTP 400 when the key has no bound user ID; the logging-only hook skips the audit instead.
+3. **Entra user object IDs** — the Lumina API key (or JWT) used for the request must have a `user_id` bound to it that is the Entra object ID of the end-user (not a username or email). Blocking hooks (`pre_call` / `post_call`) reject the request with HTTP 400 when the key has no bound user ID; the logging-only hook skips the audit instead.
 
 ## Quick Start
 
@@ -30,7 +30,7 @@ LiteLLM supports [Microsoft Purview](https://learn.microsoft.com/en-us/purview/p
 
 ```bash
 # Create app registration and note the appId (client_id) and tenantId
-az ad app create --display-name "LiteLLM-Purview"
+az ad app create --display-name "Lumina-Purview"
 az ad sp create --id <appId>
 
 # Create a client secret
@@ -95,15 +95,15 @@ guardrails:
 </TabItem>
 </Tabs>
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test request
 
-Send the request with a LiteLLM key whose bound `user_id` is the Entra object ID of the end-user (see User ID resolution). `metadata.user_id` is shown for reference but is not used to pick the Purview identity:
+Send the request with a Lumina key whose bound `user_id` is the Entra object ID of the end-user (see User ID resolution). `metadata.user_id` is shown for reference but is not used to pick the Purview identity:
 
 ```shell
 curl -X POST http://localhost:4000/v1/chat/completions \
@@ -116,7 +116,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
   }'
 ```
 
-**When a DLP policy blocks the request**, LiteLLM returns:
+**When a DLP policy blocks the request**, Lumina returns:
 
 ```json
 {
@@ -140,12 +140,12 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 | `tenant_id` | `str` | Yes | Entra tenant ID |
 | `client_id` | `str` | Yes | Entra app registration client ID (also used as the Protected App identifier in Purview) |
 | `default_on` | `bool` | No | Run this guardrail for every request. Default: `false` |
-| `purview_app_name` | `str` | No | App name reported to Purview in `processContent`. Default: `"LiteLLM"` |
+| `purview_app_name` | `str` | No | App name reported to Purview in `processContent`. Default: `"Lumina"` |
 | `user_id_field` | `str` | No | Caller-supplied metadata field. Not used as the identity sent to Purview; only detected to return a more specific error message (see User ID resolution). Default: `"user_id"` |
 
 ## User ID resolution
 
-The Entra object ID used for Purview `protectionScopes` / `processContent` comes **only** from `user_api_key_dict.user_id`, the user bound to the LiteLLM API key or JWT. Caller-influenceable sources (`user_api_key_dict.end_user_id`, `metadata["user_api_key_user_id"]`, and `metadata[user_id_field]`) are intentionally ignored so a client cannot run the DLP check under another Entra user's policy.
+The Entra object ID used for Purview `protectionScopes` / `processContent` comes **only** from `user_api_key_dict.user_id`, the user bound to the Lumina API key or JWT. Caller-influenceable sources (`user_api_key_dict.end_user_id`, `metadata["user_api_key_user_id"]`, and `metadata[user_id_field]`) are intentionally ignored so a client cannot run the DLP check under another Entra user's policy.
 
 If the key has no bound `user_id`, the blocking hooks (`pre_call` / `post_call`) **fail closed** and reject the request with HTTP 400. When only caller-supplied identity fields are present, the error message notes that caller-supplied metadata cannot be used for blocking DLP.
 

@@ -14,14 +14,14 @@ os.environ['ZAI_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['ZAI_API_KEY'] = ""
 response = completion(
     model="zai/glm-4.7",
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -29,14 +29,14 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['ZAI_API_KEY'] = ""
 response = completion(
     model="zai/glm-4.7",
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )
@@ -75,13 +75,13 @@ We support ALL Z.AI GLM models, just set `zai/` as a prefix when sending complet
 | glm-4-32b-0414-128k | $0.10 | $0.10 | - | 128K |
 | glm-4.5-flash | **FREE** | **FREE** | - | 128K |
 
-## Using with LiteLLM Proxy
+## Using with Lumina Proxy
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['ZAI_API_KEY'] = ""
@@ -113,7 +113,7 @@ model_list:
 2. Run proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it!

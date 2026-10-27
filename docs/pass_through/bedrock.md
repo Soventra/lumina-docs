@@ -6,14 +6,14 @@ Pass-through endpoints for Bedrock - call provider-specific endpoint, in native 
 |-------|-------|-------|
 | Cost Tracking | ✅ | For `/invoke` and `/converse` endpoints |
 | Load Balancing | ✅ | You can load balance `/invoke`, `/converse` routes across multiple deployments| Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | |
 
 Just replace `https://bedrock-runtime.{aws_region_name}.amazonaws.com` with `LUMINA_PROXY_BASE_URL/bedrock`
 
 ## Overview
 
-LiteLLM supports two ways to call Bedrock endpoints:
+Lumina supports two ways to call Bedrock endpoints:
 
 ### 1. **Using config.yaml** (Recommended for model endpoints)
 
@@ -82,10 +82,10 @@ export AWS_ACCESS_KEY_ID=""  # Access key
 export AWS_SECRET_ACCESS_KEY="" # Secret access key
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -135,7 +135,7 @@ model_list:
 ### 2. Start proxy with config
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -223,7 +223,7 @@ model_list:
 #### 2. Start proxy with config
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -257,12 +257,12 @@ import boto3
 import json
 import os
 
-# Set dummy AWS credentials (required by boto3, but not used by LiteLLM proxy)
+# Set dummy AWS credentials (required by boto3, but not used by Lumina proxy)
 os.environ['AWS_ACCESS_KEY_ID'] = 'dummy'
 os.environ['AWS_SECRET_ACCESS_KEY'] = 'dummy'
-os.environ['AWS_BEARER_TOKEN_BEDROCK'] = "sk-<your-litellm-api-key>"  # your litellm proxy api key
+os.environ['AWS_BEARER_TOKEN_BEDROCK'] = "sk-<your-lumina-api-key>"  # your lumina proxy api key
 
-# Point boto3 to the LiteLLM proxy
+# Point boto3 to the Lumina proxy
 bedrock_runtime = boto3.client(
     service_name='bedrock-runtime',
     region_name='us-west-2',
@@ -341,7 +341,7 @@ Key Changes:
 
 ### **Example 1: Converse API**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/cohere.command-r-v1:0/converse' \
@@ -384,12 +384,12 @@ export AWS_REGION_NAME="us-west-2"
 Start proxy:
 
 ```bash showLineNumbers
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash showLineNumbers
 curl "http://0.0.0.0:4000/bedrock/guardrail/guardrailIdentifier/version/guardrailVersion/apply" \
@@ -428,12 +428,12 @@ export AWS_REGION_NAME="us-west-2"
 Start proxy:
 
 ```bash showLineNumbers
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-#### LiteLLM Proxy Call
+#### Lumina Proxy Call
 
 ```bash showLineNumbers
 curl -X POST "http://0.0.0.0:4000/bedrock/knowledgebases/{knowledgeBaseId}/retrieve" \
@@ -496,7 +496,7 @@ export AWS_REGION_NAME="" # us-east-1, us-east-2, us-west-1, us-west-2
 ```
 
 ```bash showLineNumbers
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -537,9 +537,9 @@ curl -X POST 'http://0.0.0.0:4000/bedrock/model/cohere.command-r-v1:0/converse' 
 
 ## Advanced - Bedrock Agents 
 
-Call Bedrock Agents via LiteLLM proxy
+Call Bedrock Agents via Lumina proxy
 
-**Setup**: Set AWS credentials on your LiteLLM proxy server
+**Setup**: Set AWS credentials on your Lumina proxy server
 
 ```bash showLineNumbers
 export AWS_ACCESS_KEY_ID="your-access-key"
@@ -550,7 +550,7 @@ export AWS_REGION_NAME="us-west-2"
 Start proxy:
 
 ```bash showLineNumbers
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -561,10 +561,10 @@ litellm
 import os 
 import boto3
 
-# Set dummy AWS credentials (required by boto3, but not used by LiteLLM proxy)
+# Set dummy AWS credentials (required by boto3, but not used by Lumina proxy)
 os.environ["AWS_ACCESS_KEY_ID"] = "dummy"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "dummy"
-os.environ["AWS_BEARER_TOKEN_BEDROCK"] = "sk-<your-litellm-api-key>"  # your litellm proxy api key
+os.environ["AWS_BEARER_TOKEN_BEDROCK"] = "sk-<your-lumina-api-key>"  # your lumina proxy api key
 
 # Create the client
 runtime_client = boto3.client(
@@ -589,9 +589,9 @@ for event in response.get("completion"):
 print(completion)
 ```
 
-## Using LangChain AWS SDK with LiteLLM
+## Using LangChain AWS SDK with Lumina
 
-You can use the [LangChain AWS SDK](https://python.langchain.com/docs/integrations/chat/bedrock/) with LiteLLM Proxy to get cost tracking, load balancing, and other LiteLLM features.
+You can use the [LangChain AWS SDK](https://python.langchain.com/docs/integrations/chat/bedrock/) with Lumina Proxy to get cost tracking, load balancing, and other Lumina features.
 
 ### Quick Start
 
@@ -601,7 +601,7 @@ You can use the [LangChain AWS SDK](https://python.langchain.com/docs/integratio
 uv add langchain-aws
 ```
 
-**2. Setup LiteLLM Proxy**:
+**2. Setup Lumina Proxy**:
 
 Create a `config.yaml`:
 
@@ -620,21 +620,21 @@ Start the proxy:
 export AWS_ACCESS_KEY_ID="your-access-key"
 export AWS_SECRET_ACCESS_KEY="your-secret-key"
 
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-**3. Use LangChain with LiteLLM**:
+**3. Use LangChain with Lumina**:
 
 ```python showLineNumbers
 from langchain_aws import ChatBedrockConverse
 from langchain_core.messages import HumanMessage
 
-# Your LiteLLM API key
-API_KEY = "Bearer sk-<your-litellm-api-key>"
+# Your Lumina API key
+API_KEY = "Bearer sk-<your-lumina-api-key>"
 
-# Initialize ChatBedrockConverse pointing to LiteLLM proxy
+# Initialize ChatBedrockConverse pointing to Lumina proxy
 llm = ChatBedrockConverse(
     model_id="us.anthropic.{{anthropic}}",
     endpoint_url="http://localhost:4000/bedrock",
@@ -652,7 +652,7 @@ print(response.content)
 
 ### Advanced Example: PDF Document Processing with Citations
 
-LangChain AWS SDK supports Bedrock's document processing features. Here's how to use it with LiteLLM:
+LangChain AWS SDK supports Bedrock's document processing features. Here's how to use it with Lumina:
 
 ```python showLineNumbers
 import os
@@ -660,11 +660,11 @@ import json
 from langchain_aws import ChatBedrockConverse
 from langchain_core.messages import HumanMessage
 
-# Your LiteLLM API key
-API_KEY = "Bearer sk-<your-litellm-api-key>"
+# Your Lumina API key
+API_KEY = "Bearer sk-<your-lumina-api-key>"
 
 def get_llm() -> ChatBedrockConverse:
-    """Initialize LLM pointing to LiteLLM proxy"""
+    """Initialize LLM pointing to Lumina proxy"""
     llm = ChatBedrockConverse(
         model_id="us.anthropic.{{anthropic}}",
         base_model_id="anthropic.{{anthropic}}",
@@ -707,7 +707,7 @@ if __name__ == "__main__":
 
 ### Supported LangChain Features
 
-All LangChain AWS features work with LiteLLM:
+All LangChain AWS features work with Lumina:
 
 | Feature | Supported | Notes |
 |---------|-----------|-------|
@@ -730,5 +730,5 @@ All LangChain AWS features work with LiteLLM:
 
 **Solution**: Ensure your API key is in the correct format:
 ```python
-aws_access_key_id="Bearer sk-<your-litellm-api-key>"  # Include "Bearer " prefix
+aws_access_key_id="Bearer sk-<your-lumina-api-key>"  # Include "Bearer " prefix
 ```

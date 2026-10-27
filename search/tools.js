@@ -4,7 +4,7 @@ const {isContentUrl, contentType, contentPage} = require('./content');
 const intents = ['general', 'setup', 'benchmark', 'history', 'latest', 'blog'];
 const tools = [
   {type: 'function', function: {name: 'search_docs',
-    description: 'Search LiteLLM docs, API reference, blogs, and release notes with one or more keyword queries. Preserve the user\'s feature terms, even unfamiliar ones, together with the provider or integration; generic provider setup does not establish support for a named capability. Results are grouped by query, with each page title followed by matching passages. Short, distinctive topic names work best. Read passages for full evidence.',
+    description: 'Search Lumina docs, API reference, blogs, and release notes with one or more keyword queries. Preserve the user\'s feature terms, even unfamiliar ones, together with the provider or integration; generic provider setup does not establish support for a named capability. Results are grouped by query, with each page title followed by matching passages. Short, distinctive topic names work best. Read passages for full evidence.',
     parameters: {type: 'object', additionalProperties: false, required: ['queries'], properties: {
       queries: {type: 'array', minItems: 1, maxItems: 3, items: {type: 'string', minLength: 1, maxLength: 160}},
       intent: {type: 'string', enum: intents},

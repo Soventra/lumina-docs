@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.90.2 - Realtime Stability & Bounded Logging"
+title: "Lumina v1.90.2 - Realtime Stability & Bounded Logging"
 description: "Prevents a second Gemini Live setup in realtime sessions and closes a guardrail bypass. Also retries hung handshakes."
 slug: "v1-90-2"
 date: 2026-07-01T02:09:44
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.90.2
+docker.lumina.ai/soventra/lumina:1.90.2
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.90.2
+pip install lumina==1.90.2
 ```
 
 </TabItem>
@@ -48,9 +48,9 @@ pip install litellm==1.90.2
 
 ### What's Changed
 
-- fix(realtime): stop second Gemini Live setup, retry hung handshake, close guardrail bypass - [PR #31519](https://github.com/BerriAI/litellm/pull/31519)
-- fix(logging): route realtime success logging through the bounded worker - [PR #31733](https://github.com/BerriAI/litellm/pull/31733)
+- fix(realtime): stop second Gemini Live setup, retry hung handshake, close guardrail bypass - [PR #31519](https://github.com/Soventra/lumina/pull/31519)
+- fix(logging): route realtime success logging through the bounded worker - [PR #31733](https://github.com/Soventra/lumina/pull/31733)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.90.1...v1.90.2
+https://github.com/Soventra/lumina/compare/v1.90.1...v1.90.2

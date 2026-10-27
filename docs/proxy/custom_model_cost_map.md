@@ -1,12 +1,12 @@
 # Custom Model Cost Map
 
-LiteLLM prices every request from its model cost map, a JSON file mapping each model to per-token rates, context limits, and capabilities. By default the proxy fetches the latest map from GitHub at startup, so pricing for new models arrives without upgrading LiteLLM. When a price is wrong or missing for your deployment (a regional price variant, a negotiated rate, a brand-new tier the default map does not carry yet), you have two ways to correct it: override pricing on the specific deployment in your config, or replace the whole map with your own hosted copy.
+Lumina prices every request from its model cost map, a JSON file mapping each model to per-token rates, context limits, and capabilities. By default the proxy fetches the latest map from GitHub at startup, so pricing for new models arrives without upgrading Lumina. When a price is wrong or missing for your deployment (a regional price variant, a negotiated rate, a brand-new tier the default map does not carry yet), you have two ways to correct it: override pricing on the specific deployment in your config, or replace the whole map with your own hosted copy.
 
 Prefer the per-deployment override for a bounded correction. It changes only the deployments you name, survives every upstream map update, needs no file hosting, and has no fallback failure mode. Reach for a full custom map only when the correction spans so many models that per-deployment config stops being maintainable.
 
 ## Option 1: per-deployment pricing overrides (recommended)
 
-Any pricing key from the cost map can be set directly in `lumina_params` on a deployment, including the tiered long-context keys of the form `input_cost_per_token_above_{N}k_tokens`. When the input token count crosses the threshold, LiteLLM bills the whole request at the tier rate.
+Any pricing key from the cost map can be set directly in `lumina_params` on a deployment, including the tiered long-context keys of the form `input_cost_per_token_above_{N}k_tokens`. When the input token count crosses the threshold, Lumina bills the whole request at the tier rate.
 
 Example: an Azure deployment billed under a regional price variant (such as US Data Zone) whose long-context tier is missing from the default map:
 
@@ -31,7 +31,7 @@ No code change is needed for tiered pricing to apply; the cost engine reads what
 
 ### Partial overrides do not fall back to default pricing
 
-Setting any custom pricing field detaches the deployment from the default cost map entry: LiteLLM builds a standalone pricing entry for that deployment and bills only from it. If you override `input_cost_per_token` but leave `input_cost_per_token_above_272k_tokens` unset, that deployment has no tier boundary at all, so requests above 272k tokens bill at your custom base rate. The unset tier key does not inherit the default map's tier price, and LiteLLM never mixes your base rate with a default tier premium.
+Setting any custom pricing field detaches the deployment from the default cost map entry: Lumina builds a standalone pricing entry for that deployment and bills only from it. If you override `input_cost_per_token` but leave `input_cost_per_token_above_272k_tokens` unset, that deployment has no tier boundary at all, so requests above 272k tokens bill at your custom base rate. The unset tier key does not inherit the default map's tier price, and Lumina never mixes your base rate with a default tier premium.
 
 The one deliberate exception is cache pricing. When you override the base input rate, missing cache fields (`cache_read_input_token_cost`, `cache_creation_input_token_cost`, and their `above_1hr` and `above_200k` variants) are inherited from the backend model's default entry so cache reads are not silently billed at zero. Note that those inherited values are the default prices, not your price variant's, so a regional or negotiated rate card should override the cache keys as well.
 
@@ -47,13 +47,13 @@ export LUMINA_MODEL_COST_MAP_URL="https://your-host.example.com/model_prices.jso
 export LUMINA_MODEL_COST_MAP_URL="s3://my-bucket/prices/model_prices.json"
 ```
 
-The map is fetched at startup with a 5 second timeout, so the variable must be set in the proxy's environment before it starts (a `.env` file, `docker run -e`, or the Kubernetes `env:` block); setting it under `environment_variables` in `config.yaml` is too late. The URL can be HTTP(S) or `s3://`; `file://` paths are not supported. To run fully offline instead, set `LUMINA_LOCAL_MODEL_COST_MAP=True`, which skips the fetch and uses the backup map bundled with the package (`litellm/model_prices_and_context_window_backup.json`), a file you can overwrite in your own image.
+The map is fetched at startup with a 5 second timeout, so the variable must be set in the proxy's environment before it starts (a `.env` file, `docker run -e`, or the Kubernetes `env:` block); setting it under `environment_variables` in `config.yaml` is too late. The URL can be HTTP(S) or `s3://`; `file://` paths are not supported. To run fully offline instead, set `LUMINA_LOCAL_MODEL_COST_MAP=True`, which skips the fetch and uses the backup map bundled with the package (`lumina/model_prices_and_context_window_backup.json`), a file you can overwrite in your own image.
 
 ### Reading the map from S3
 
-With an `s3://bucket/key` URL the proxy reads the object with boto3 `get_object` at startup, on `POST /reload/model_cost_map`, and on the scheduled reload. This needs a LiteLLM version that includes [PR #46972](https://github.com/BerriAI/litellm/pull/46972).
+With an `s3://bucket/key` URL the proxy reads the object with boto3 `get_object` at startup, on `POST /reload/model_cost_map`, and on the scheduled reload. This needs a Lumina version that includes [PR #46972](https://github.com/Soventra/lumina/pull/46972).
 
-LiteLLM has no setting of its own for these credentials. boto3 finds them the standard AWS way in the proxy's process: the IAM role of the pod or instance (EKS IRSA, ECS task role, EC2 instance role), `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (plus `AWS_SESSION_TOKEN` for temporary keys), or `AWS_PROFILE` with a mounted AWS config file. AWS credentials in `config.yaml`, including the Bedrock `aws_access_key_id` and `aws_role_name` params, are not used, because the map is fetched before the config is loaded. Set `AWS_REGION_NAME` to pin the bucket's region; it is optional.
+Lumina has no setting of its own for these credentials. boto3 finds them the standard AWS way in the proxy's process: the IAM role of the pod or instance (EKS IRSA, ECS task role, EC2 instance role), `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (plus `AWS_SESSION_TOKEN` for temporary keys), or `AWS_PROFILE` with a mounted AWS config file. AWS credentials in `config.yaml`, including the Bedrock `aws_access_key_id` and `aws_role_name` params, are not used, because the map is fetched before the config is loaded. Set `AWS_REGION_NAME` to pin the bucket's region; it is optional.
 
 The identity needs `s3:GetObject` on the object:
 
@@ -71,7 +71,7 @@ S3 errors are not retried. At startup a missing credential, `AccessDenied`, or `
 
 ### Start from the full upstream file
 
-Always build your custom map as a fork of the complete [model_prices_and_context_window.json](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) with your corrections edited in. A small file containing only your models will be rejected: the fetched map must contain at least 50 model entries and at least half as many entries as the bundled backup, or LiteLLM discards it. Both thresholds are tunable via `MODEL_COST_MAP_MIN_MODEL_COUNT` and `MODEL_COST_MAP_MAX_SHRINK_RATIO` if you accept the risk of a corrupted map passing validation.
+Always build your custom map as a fork of the complete [model_prices_and_context_window.json](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) with your corrections edited in. A small file containing only your models will be rejected: the fetched map must contain at least 50 model entries and at least half as many entries as the bundled backup, or Lumina discards it. Both thresholds are tunable via `MODEL_COST_MAP_MIN_MODEL_COUNT` and `MODEL_COST_MAP_MAX_SHRINK_RATIO` if you accept the risk of a corrupted map passing validation.
 
 ### Fallback semantics: monitor them
 

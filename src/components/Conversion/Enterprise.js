@@ -13,7 +13,7 @@ import shared from './styles.module.css';
 export function EnterpriseHero({source = 'enterprise-page'}) {
   return (
     <header className={styles.hero}>
-      <p className={styles.heroEyebrow}>LiteLLM Enterprise</p>
+      <p className={styles.heroEyebrow}>Lumina Enterprise</p>
       <h1 className={styles.heroTitle}>{ENTERPRISE_HERO.title}</h1>
       <p className={styles.heroText}>{ENTERPRISE_HERO.text}</p>
       <div className={styles.heroActions}>
@@ -22,7 +22,7 @@ export function EnterpriseHero({source = 'enterprise-page'}) {
       </div>
       <ul className={styles.proof}>
         <li className={styles.proofBadge}>
-          <Link to="https://trust.litellm.ai/">
+          <Link to="https://trust.lumina.ai/">
             <IconCompliance size={16} />
             SOC 2 Type II audited
           </Link>

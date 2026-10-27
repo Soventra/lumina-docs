@@ -3,7 +3,7 @@ import video from './hero.mp4';
 import poster from './hero-poster.jpg';
 import styles from './hero.module.css';
 
-const description = 'GPT-6.1 Terra on LiteLLM: the LiteLLM and GPT-6.1 Terra lockup, then GPT-6.1 Terra selected in the LiteLLM model list next to the prices of GPT-6.1 Sol, GPT-6 Sol and GPT-5.6 Terra.';
+const description = 'GPT-6.1 Terra on Lumina: the Lumina and GPT-6.1 Terra lockup, then GPT-6.1 Terra selected in the Lumina model list next to the prices of GPT-6.1 Sol, GPT-6 Sol and GPT-5.6 Terra.';
 const posterUrl = typeof poster === 'string' ? poster : poster.src.src;
 
 export default function GptTerraHero() {

@@ -51,7 +51,7 @@ policy_attachments:
 ```
 
 </TabItem>
-<TabItem value="ui" label="UI (LiteLLM Dashboard)">
+<TabItem value="ui" label="UI (Lumina Dashboard)">
 
 **Step 1: Create a Policy**
 
@@ -73,8 +73,8 @@ Go to **Policies** tab and click **+ Create New Policy**. Fill in the policy nam
 Response headers show what ran:
 
 ```
-x-litellm-applied-policies: my-policy
-x-litellm-applied-guardrails: pii_masking,prompt_injection
+x-lumina-applied-policies: my-policy
+x-lumina-applied-guardrails: pii_masking,prompt_injection
 ```
 
 ## Add guardrails for a specific team
@@ -110,7 +110,7 @@ policy_attachments:
 ```
 
 </TabItem>
-<TabItem value="ui" label="UI (LiteLLM Dashboard)">
+<TabItem value="ui" label="UI (Lumina Dashboard)">
 
 **Option 1: Create a team-scoped attachment**
 
@@ -221,7 +221,7 @@ policies:
 
 ## Attachments
 
-Policies don't do anything until you attach them. Attachments tell LiteLLM *where* to apply each policy.
+Policies don't do anything until you attach them. Attachments tell Lumina *where* to apply each policy.
 
 **Global** - runs on every request:
 
@@ -268,7 +268,7 @@ Tags are read from key and team `metadata.tags`. For example, a key created with
 Debug which policies and guardrails apply for a given context. Use this to verify your policy configuration before deploying.
 
 <Tabs>
-<TabItem value="ui" label="UI (LiteLLM Dashboard)">
+<TabItem value="ui" label="UI (Lumina Dashboard)">
 
 Go to **Policies** > **Test** tab. Enter a team alias, key alias, model, or tags and click **Test** to see which policies match and what guardrails would be applied.
 
@@ -307,9 +307,9 @@ Response:
 
 ## Policy Execution Order
 
-When several policies match one request, LiteLLM runs them from the broadest attachment to the narrowest: `scope: "*"` first, then `teams`, then `keys`, then `tags`, then `models`. An attachment that combines several of these is ranked by its narrowest one and after the single-constraint attachments in that tier (`models: [gpt-4o]` before `teams: [finance], models: [gpt-4o]`). Attachments that still tie keep their `config.yaml` order, followed by attachments created through the API or UI, newest first. Policies passed in the request body (`"policies": [...]`) run after every attachment match, in the order given. Across tiers, the order does not depend on how attachments are listed in `config.yaml` or on which proxy worker handles the request.
+When several policies match one request, Lumina runs them from the broadest attachment to the narrowest: `scope: "*"` first, then `teams`, then `keys`, then `tags`, then `models`. An attachment that combines several of these is ranked by its narrowest one and after the single-constraint attachments in that tier (`models: [gpt-4o]` before `teams: [finance], models: [gpt-4o]`). Attachments that still tie keep their `config.yaml` order, followed by attachments created through the API or UI, newest first. Policies passed in the request body (`"policies": [...]`) run after every attachment match, in the order given. Across tiers, the order does not depend on how attachments are listed in `config.yaml` or on which proxy worker handles the request.
 
-This is the order pipelines execute in, so a global blocking policy always rejects a request before a model-scoped one gets to run. It is also the order of `x-litellm-applied-policies` and of `matched_policies` in `/policies/resolve` and the Policy Simulator. When the same policy is attached at more than one matching scope, it runs once, ranked by whichever of its attachments sorts first, and `matched_via` reports that attachment (`scope:*` rather than `model:gpt-4o` when neither has a `priority`).
+This is the order pipelines execute in, so a global blocking policy always rejects a request before a model-scoped one gets to run. It is also the order of `x-lumina-applied-policies` and of `matched_policies` in `/policies/resolve` and the Policy Simulator. When the same policy is attached at more than one matching scope, it runs once, ranked by whichever of its attachments sorts first, and `matched_via` reports that attachment (`scope:*` rather than `model:gpt-4o` when neither has a `priority`).
 
 To override the tier order, set an optional integer `priority` on an attachment. Attachments with a `priority` run before every attachment without one, lowest value first, and fall back to the tier order above when two share the same value. Attachments without a `priority` behave exactly as before, so existing configs do not change. Here `model-policy` runs before `tag-policy` even though `tags` is the broader tier:
 
@@ -335,7 +335,7 @@ policy_attachments:
     scope: "*"
 ```
 
-A `gpt-4o` request from a `finance` key runs `global-policy`, then `team-policy`, then `model-policy`, and returns `x-litellm-applied-policies: global-policy,team-policy,model-policy`.
+A `gpt-4o` request from a `finance` key runs `global-policy`, then `team-policy`, then `model-policy`, and returns `x-lumina-applied-policies: global-policy,team-policy,model-policy`.
 
 ## Default (Fallback) Attachments
 
@@ -413,9 +413,9 @@ policy_attachments:
 
 | Header | Description |
 |--------|-------------|
-| `x-litellm-applied-policies` | Policies that matched this request |
-| `x-litellm-applied-guardrails` | Guardrails that actually ran |
-| `x-litellm-policy-sources` | Why each policy matched (e.g., `hipaa=tag:healthcare; baseline=scope:*`) |
+| `x-lumina-applied-policies` | Policies that matched this request |
+| `x-lumina-applied-guardrails` | Guardrails that actually ran |
+| `x-lumina-policy-sources` | Why each policy matched (e.g., `hipaa=tag:healthcare; baseline=scope:*`) |
 
 ## How it works
 

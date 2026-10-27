@@ -10,12 +10,12 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Azure OpenAI Service provides REST API access to OpenAI's powerful language models including o1, o1-mini, GPT-5, GPT-4o, GPT-4o mini, GPT-4 Turbo with Vision, GPT-4, GPT-3.5-Turbo, and Embeddings model series. Also supports Claude models via Azure Foundry. |
-| Provider Route on LiteLLM | `azure/`, [`azure/o_series/`](#o-series-models), [`azure/gpt5_series/`](#gpt-5-models). Claude models via Azure Foundry use the [`azure_ai/claude-*`](/docs/providers/azure/azure_anthropic) route instead. |
+| Provider Route on Lumina | `azure/`, [`azure/o_series/`](#o-series-models), [`azure/gpt5_series/`](#gpt-5-models). Claude models via Azure Foundry use the [`azure_ai/claude-*`](/docs/providers/azure/azure_anthropic) route instead. |
 | Supported Operations | [`/chat/completions`](#azure-openai-chat-completion-models), [`/responses`](/docs/providers/azure/azure_responses), [`/completions`](#azure-instruct-models), [`/embeddings`](/docs/providers/azure/azure_embedding), [`/audio/speech`](/docs/providers/azure/azure_speech), [`/audio/transcriptions`](/docs/audio_transcription), `/fine_tuning`, [`/batches`](#azure-batches-api), `/files`, [`/images`](/docs/image_generation#azure-openai-image-generation-models) |
 | Link to Provider Doc | [Azure OpenAI ↗](https://learn.microsoft.com/en-us/azure/ai-services/openai/overview), [Azure Foundry Claude ↗](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/how-to/use-foundry-models-claude)
 
 ## API Keys, Params
-api_key, api_base, api_version etc can be passed directly to `litellm.completion` - see here or set as `litellm.api_key` params see here
+api_key, api_base, api_version etc can be passed directly to `lumina.completion` - see here or set as `lumina.api_key` params see here
 ```python
 import os
 os.environ["AZURE_API_KEY"] = "" # "my-azure-api-key"
@@ -33,15 +33,15 @@ Claude models via Azure Foundry are routed through the `azure_ai/` provider, not
 
 :::
 
-## **Usage - LiteLLM Python SDK**
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/LiteLLM_Azure_OpenAI.ipynb">
+## **Usage - Lumina Python SDK**
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_Azure_OpenAI.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 ### Completion - using .env variables
 
 ```python
-from litellm import completion
+from lumina import completion
 
 ## set ENV variables
 os.environ["AZURE_API_KEY"] = ""
@@ -58,10 +58,10 @@ response = completion(
 ### Completion - using api_key, api_base, api_version
 
 ```python
-import litellm
+import lumina
 
 # azure call
-response = litellm.completion(
+response = lumina.completion(
     model = "azure/<your deployment name>",             # model = azure/<your deployment name> 
     api_base = "",                                      # azure api base
     api_version = "",                                   # azure api version
@@ -73,10 +73,10 @@ response = litellm.completion(
 ### Completion - using azure_ad_token, api_base, api_version
 
 ```python
-import litellm
+import lumina
 
 # azure call
-response = litellm.completion(
+response = lumina.completion(
     model = "azure/<your deployment name>",             # model = azure/<your deployment name> 
     api_base = "",                                      # azure api base
     api_version = "",                                   # azure api version
@@ -86,9 +86,9 @@ response = litellm.completion(
 ```
 
 
-## **Usage - LiteLLM Proxy Server**
+## **Usage - Lumina Proxy Server**
 
-Here's how to call Azure OpenAI models with the LiteLLM Proxy Server
+Here's how to call Azure OpenAI models with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -105,7 +105,7 @@ model_list:
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
-      api_key: os.environ/AZURE_API_KEY # The `os.environ/` prefix tells litellm to read this from the env.
+      api_key: os.environ/AZURE_API_KEY # The `os.environ/` prefix tells lumina to read this from the env.
 ```
 
 ### 3. Test it
@@ -160,7 +160,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "{{openai_small}}",
     temperature=0.1
 )
@@ -170,7 +170,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -205,7 +205,7 @@ model_list:
 
 :::tip
 
-**We support ALL Azure models, just set `model=azure/<your deployment name>` as a prefix when sending litellm requests**
+**We support ALL Azure models, just set `model=azure/<your deployment name>` as a prefix when sending lumina requests**
 
 :::
 
@@ -239,7 +239,7 @@ model_list:
 #### Usage
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["AZURE_API_KEY"] = "your-api-key"
 
@@ -280,7 +280,7 @@ base_url="https://gpt-4-vision-resource.openai.azure.com/openai/deployments/gpt-
 **Usage**
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["AZURE_API_KEY"] = "your-api-key"
 
@@ -319,9 +319,9 @@ response = completion(
 
 ## O-Series Models
 
-Azure OpenAI O-Series models are supported on LiteLLM. 
+Azure OpenAI O-Series models are supported on Lumina. 
 
-LiteLLM routes any deployment name with `o1` or `o3` in the model name, to the O-Series [transformation](https://github.com/BerriAI/litellm/blob/91ed05df2962b8eee8492374b048d27cc144d08c/litellm/llms/azure/chat/o1_transformation.py#L4) logic.
+Lumina routes any deployment name with `o1` or `o3` in the model name, to the O-Series [transformation](https://github.com/Soventra/lumina/blob/91ed05df2962b8eee8492374b048d27cc144d08c/lumina/llms/azure/chat/o1_transformation.py#L4) logic.
 
 To set this explicitly, set `model` to `azure/o_series/<your-deployment-name>`.
 
@@ -331,9 +331,9 @@ To set this explicitly, set `model` to `azure/o_series/<your-deployment-name>`.
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
-litellm.completion(model="azure/my-o3-deployment", messages=[{"role": "user", "content": "Hello, world!"}]) # Note: 'o3' in the deployment name
+lumina.completion(model="azure/my-o3-deployment", messages=[{"role": "user", "content": "Hello, world!"}]) # Note: 'o3' in the deployment name
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
@@ -356,9 +356,9 @@ model_list:
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
-litellm.completion(model="azure/o_series/my-random-deployment-name", messages=[{"role": "user", "content": "Hello, world!"}]) # Note: 'o_series/' in the deployment name
+lumina.completion(model="azure/o_series/my-random-deployment-name", messages=[{"role": "user", "content": "Hello, world!"}]) # Note: 'o_series/' in the deployment name
 ```
 </TabItem>
 <TabItem value="proxy" label="PROXY">
@@ -380,11 +380,11 @@ model_list:
 | Property | Details |
 |-------|-------|
 | Description | Azure OpenAI GPT-5 models |
-| Provider Route on LiteLLM | `azure/gpt5_series/<custom-name>` or `azure/gpt-5-deployment-name` |
+| Provider Route on Lumina | `azure/gpt5_series/<custom-name>` or `azure/gpt-5-deployment-name` |
 
-LiteLLM supports using Azure GPT-5 models in one of the two ways:
-1. Explicit Routing: `model = azure/gpt5_series/<deployment-name>`. In this scenario the model onboarded to litellm follows the format `model=azure/gpt5_series/<deployment-name>`.
-2. Inferred Routing (If the azure deployment name contains `gpt-5` in the name): `model = azure/gpt-5.6-luna`. In this scenario the model onboarded to litellm follows the format `model=azure/gpt-5.6-luna`.
+Lumina supports using Azure GPT-5 models in one of the two ways:
+1. Explicit Routing: `model = azure/gpt5_series/<deployment-name>`. In this scenario the model onboarded to lumina follows the format `model=azure/gpt5_series/<deployment-name>`.
+2. Inferred Routing (If the azure deployment name contains `gpt-5` in the name): `model = azure/gpt-5.6-luna`. In this scenario the model onboarded to lumina follows the format `model=azure/gpt-5.6-luna`.
 
 #### Explicit Routing
 Use `azure/gpt5_series/<deployment-name>` for explicit GPT-5 model routing. 
@@ -393,9 +393,9 @@ Use `azure/gpt5_series/<deployment-name>` for explicit GPT-5 model routing.
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure/gpt5_series/my-gpt-5-deployment",
     messages=[{"role": "user", "content": "Hello, world!"}]
 )
@@ -416,16 +416,16 @@ model_list:
 </Tabs>
 
 #### Inferred Routing (gpt-5 in the deployment name)
-If your Azure deployment name contains `gpt-5`, LiteLLM automatically recognizes it as a GPT-5 model.
+If your Azure deployment name contains `gpt-5`, Lumina automatically recognizes it as a GPT-5 model.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
 # Deployment name contains 'gpt-5' - automatically inferred
-response = litellm.completion(
+response = lumina.completion(
     model="azure/my-gpt-5-deployment", 
     messages=[{"role": "user", "content": "Hello, world!"}]
 )
@@ -457,7 +457,7 @@ model_list:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["AZURE_API_KEY"] = ""
@@ -496,7 +496,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -529,14 +529,14 @@ Use `model="azure_text/<your-deployment>"`
 
 
 ```python
-import litellm
+import lumina
 
 ## set ENV variables
 os.environ["AZURE_API_KEY"] = ""
 os.environ["AZURE_API_BASE"] = ""
 os.environ["AZURE_API_VERSION"] = ""
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure_text/<your-deployment-name",
     messages=[{"role": "user", "content": "What is the weather like in Boston?"}]
 )
@@ -549,8 +549,8 @@ print(response)
 
 ### Entra ID - use `azure_ad_token`
 
-This is a walkthrough on how to use Azure Active Directory Tokens - Microsoft Entra ID to make `litellm.completion()` calls.  
-> **Note:** You can follow the same process below to use Azure Active Directory Tokens for all other Azure endpoints (e.g., chat, embeddings, image, audio, etc.) with LiteLLM.
+This is a walkthrough on how to use Azure Active Directory Tokens - Microsoft Entra ID to make `lumina.completion()` calls.  
+> **Note:** You can follow the same process below to use Azure Active Directory Tokens for all other Azure endpoints (e.g., chat, embeddings, image, audio, etc.) with Lumina.
 
 Step 1 - Download Azure CLI 
 Installation instructions: https://learn.microsoft.com/en-us/cli/azure/install-azure-cli
@@ -579,7 +579,7 @@ In this step you should see an `accessToken` generated
 }
 ```
 
-Step 4 - Make litellm.completion call with Azure AD token
+Step 4 - Make lumina.completion call with Azure AD token
 
 Set `azure_ad_token` = `accessToken` from step 3 or set `os.environ['AZURE_AD_TOKEN']`
 
@@ -589,7 +589,7 @@ Set `azure_ad_token` = `accessToken` from step 3 or set `os.environ['AZURE_AD_TO
 
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model = "azure/<your deployment name>",             # model = azure/<your deployment name> 
     api_base = "",                                      # azure api base
     api_version = "",                                   # azure api version
@@ -617,7 +617,7 @@ model_list:
 
 ### Entra ID - use tenant_id, client_id, client_secret
 
-Here is an example of setting up `tenant_id`, `client_id`, `client_secret` in your litellm proxy `config.yaml`
+Here is an example of setting up `tenant_id`, `client_id`, `client_secret` in your lumina proxy `config.yaml`
 ```yaml
 model_list:
   - model_name: {{openai_small}}
@@ -648,13 +648,13 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 '
 ```
 
-Example video of using `tenant_id`, `client_id`, `client_secret` with LiteLLM Proxy Server
+Example video of using `tenant_id`, `client_id`, `client_secret` with Lumina Proxy Server
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/70d3f219ee7f4e5d84778b7f17bba506?sid=04b8ff29-485f-4cb8-929e-6b392722f36d" frameBorder="0" allowFullScreen></iframe>
 
 ### Entra ID - use client_id, username, password
 
-Here is an example of setting up `client_id`, `azure_username`, `azure_password` in your litellm proxy `config.yaml`
+Here is an example of setting up `client_id`, `azure_username`, `azure_password` in your lumina proxy `config.yaml`
 ```yaml
 model_list:
   - model_name: {{openai_small}}
@@ -695,7 +695,7 @@ Use this if you want to use Azure `DefaultAzureCredential` for Authentication on
 
 **Option 1: Explicit DefaultAzureCredential (Recommended)**
 ```python
-from litellm import completion
+from lumina import completion
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 # DefaultAzureCredential automatically discovers credentials from:
@@ -714,14 +714,14 @@ response = completion(
 )
 ```
 
-**Option 2: LiteLLM Auto-Fallback to DefaultAzureCredential**
+**Option 2: Lumina Auto-Fallback to DefaultAzureCredential**
 ```python
-import litellm
+import lumina
 
 # Enable automatic fallback to DefaultAzureCredential
-litellm.enable_azure_ad_token_refresh = True
+lumina.enable_azure_ad_token_refresh = True
 
-response = litellm.completion(
+response = lumina.completion(
     model = "azure/<your deployment name>",
     api_base = "",
     api_version = "",
@@ -751,7 +751,7 @@ model_list:
       model: azure/your-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
 
-litellm_settings:
+lumina_settings:
     enable_azure_ad_token_refresh: true # KEY CHANGE
 ```
 
@@ -766,7 +766,7 @@ model_list:
       model: azure/your-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
 
-litellm_settings:
+lumina_settings:
     enable_azure_ad_token_refresh: true # KEY CHANGE
 ```
 
@@ -781,18 +781,18 @@ model_list:
       model: azure/your-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
 
-litellm_settings:
+lumina_settings:
     enable_azure_ad_token_refresh: true # KEY CHANGE
 ```
 
 3. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **How it works**: 
-- LiteLLM first tries Service Principal authentication (if environment variables are available)
+- Lumina first tries Service Principal authentication (if environment variables are available)
 - If that fails, it automatically falls back to `DefaultAzureCredential`
 - `DefaultAzureCredential` will use Managed Identity, Azure CLI credentials, or other available Azure identity sources
 - This eliminates the need for hard-coded credentials in managed environments like AKS
@@ -806,10 +806,10 @@ litellm --config /path/to/config.yaml
 | Property | Details |
 |-------|-------|
 | Description | Azure OpenAI Batches API |
-| `custom_llm_provider` on LiteLLM | `azure/` |
+| `custom_llm_provider` on Lumina | `azure/` |
 | Supported Operations | `/v1/batches`, `/v1/files` |
 | Azure OpenAI Batches API | [Azure OpenAI Batches API ↗](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/batch) |
-| Cost Tracking, Logging Support | ✅ LiteLLM will log, track cost for Batch API Requests |
+| Cost Tracking, Logging Support | ✅ Lumina will log, track cost for Batch API Requests |
 
 
 ### Quick Start
@@ -822,7 +822,7 @@ export AZURE_API_BASE=""
 ```
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM PROXY Server">
+<TabItem value="proxy" label="Lumina PROXY Server">
 
 **1. Upload a File**
 
@@ -966,12 +966,12 @@ curl http://localhost:4000/v1/batches?limit=2 \
 </TabItem>
 </Tabs>
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 **1. Create File for Batch Completion**
 
 ```python
-import litellm
+import lumina
 import os 
 
 os.environ["AZURE_API_KEY"] = ""
@@ -980,7 +980,7 @@ os.environ["AZURE_API_BASE"] = ""
 file_name = "azure_batch_completions.jsonl"
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(_current_dir, file_name)
-file_obj = await litellm.acreate_file(
+file_obj = await lumina.acreate_file(
     file=open(file_path, "rb"),
     purpose="batch",
     custom_llm_provider="azure",
@@ -991,7 +991,7 @@ print("Response from creating file=", file_obj)
 **2. Create Batch Request**
 
 ```python
-create_batch_response = await litellm.acreate_batch(
+create_batch_response = await lumina.acreate_batch(
     completion_window="24h",
     endpoint="/v1/chat/completions",
     input_file_id=batch_input_file_id,
@@ -999,20 +999,20 @@ create_batch_response = await litellm.acreate_batch(
     metadata={"key1": "value1", "key2": "value2"},
 )
 
-print("response from litellm.create_batch=", create_batch_response)
+print("response from lumina.create_batch=", create_batch_response)
 ```
 
 **3. Retrieve Batch and File Content**
 
 ```python
-retrieved_batch = await litellm.aretrieve_batch(
+retrieved_batch = await lumina.aretrieve_batch(
     batch_id=create_batch_response.id, 
     custom_llm_provider="azure"
 )
 print("retrieved batch=", retrieved_batch)
 
 # Get file content
-file_content = await litellm.afile_content(
+file_content = await lumina.afile_content(
     file_id=batch_input_file_id, 
     custom_llm_provider="azure"
 )
@@ -1022,7 +1022,7 @@ print("file content = ", file_content)
 **4. List Batches**
 
 ```python
-list_batches_response = litellm.list_batches(
+list_batches_response = lumina.list_batches(
     custom_llm_provider="azure", 
     limit=2
 )
@@ -1048,7 +1048,7 @@ model_list:
     model_info:
       mode: batch
 
-litellm_settings:
+lumina_settings:
   enable_loadbalancing_on_batch_endpoints: true # KEY CHANGE
 ```
 
@@ -1143,15 +1143,15 @@ In production, [Router connects to a Redis Cache](#redis-queue) to track usage a
 #### Quick Start
 
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ```python
-from litellm import Router
+from lumina import Router
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # openai model name 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-v-2", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1161,7 +1161,7 @@ model_list = [{ # list of model deployments
 	"rpm": 1800
 }, {
     "model_name": "{{openai_small}}", # openai model name 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1171,7 +1171,7 @@ model_list = [{ # list of model deployments
 	"rpm": 1800
 }, {
     "model_name": "{{openai_small}}", # openai model name 
-	"lumina_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for lumina completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	},
@@ -1202,7 +1202,7 @@ print(response)
 
 ### Tool Calling / Function Calling
 
-See a detailed walthrough of parallel function calling with litellm [here](https://docs.litellm.ai/docs/completion/function_call)
+See a detailed walthrough of parallel function calling with lumina [here](https://docs.lumina.ai/docs/completion/function_call)
 
 
 <Tabs>
@@ -1211,10 +1211,10 @@ See a detailed walthrough of parallel function calling with litellm [here](https
 ```python
 # set Azure env variables
 import os
-import litellm
+import lumina
 import json
 
-os.environ['AZURE_API_KEY'] = "" # litellm reads AZURE_API_KEY from .env and sends the request
+os.environ['AZURE_API_KEY'] = "" # lumina reads AZURE_API_KEY from .env and sends the request
 os.environ['AZURE_API_BASE'] = "https://openai-gpt-4-test-v-1.openai.azure.com/"
 os.environ['AZURE_API_VERSION'] = "2023-07-01-preview"
 
@@ -1239,7 +1239,7 @@ tools = [
     }
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure/chatgpt-functioncalling", # model = azure/<your-azure-deployment-name>
     messages=[{"role": "user", "content": "What's the weather like in San Francisco, Tokyo, and Paris?"}],
     tools=tools,
@@ -1268,7 +1268,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it
@@ -1316,9 +1316,9 @@ model_list:
 
 **Problem**: Azure returns `gpt-4` in the response when `azure/gpt-4-1106-preview` is used. This leads to inaccurate cost tracking
 
-**Solution** ✅ :  Set `base_model` on your config so litellm uses the correct model for calculating azure cost
+**Solution** ✅ :  Set `base_model` on your config so lumina uses the correct model for calculating azure cost
 
-Get the base model name from [here](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json)
+Get the base model name from [here](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json)
 
 Example config with `base_model`
 ```yaml

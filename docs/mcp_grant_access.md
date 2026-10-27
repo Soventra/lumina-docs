@@ -156,15 +156,15 @@ curl -X POST "http://localhost:4000/team/update" \
 
 ## Grant MCP access through SCIM-provisioned teams
 
-When your identity provider (IdP) provisions LiteLLM over [SCIM](./tutorials/scim_litellm), the supported way to give an IdP group MCP access is through the LiteLLM team that SCIM creates for that group. SCIM syncs the group into a team and keeps its membership current; you grant MCP servers or access groups on that team once, and every member reaches them through keys that belong to the team.
+When your identity provider (IdP) provisions Lumina over [SCIM](./tutorials/scim_lumina), the supported way to give an IdP group MCP access is through the Lumina team that SCIM creates for that group. SCIM syncs the group into a team and keeps its membership current; you grant MCP servers or access groups on that team once, and every member reaches them through keys that belong to the team.
 
 ```text
-IdP group -> SCIM /scim/v2/Groups -> LiteLLM team (team_id, members) -> team object_permission -> team keys
+IdP group -> SCIM /scim/v2/Groups -> Lumina team (team_id, members) -> team object_permission -> team keys
 ```
 
 ### 1. Provision the group as a team
 
-Assign the group to the LiteLLM app in your IdP, as described in [SCIM with LiteLLM](./tutorials/scim_litellm#3-test-scim-connection). The IdP then sends a SCIM group such as the one below. LiteLLM creates a team whose `team_id` is the group `id` (or `externalId` when no `id` is sent), whose `team_alias` is the group `displayName`, and whose members are the group `members`.
+Assign the group to the Lumina app in your IdP, as described in [SCIM with Lumina](./tutorials/scim_lumina#3-test-scim-connection). The IdP then sends a SCIM group such as the one below. Lumina creates a team whose `team_id` is the group `id` (or `externalId` when no `id` is sent), whose `team_alias` is the group `displayName`, and whose members are the group `members`.
 
 ```bash title="SCIM group the IdP sends" showLineNumbers
 curl -X POST "http://localhost:4000/scim/v2/Groups" \
@@ -225,17 +225,17 @@ curl "http://localhost:4000/mcp-rest/tools/list" \
 
 The response lists only tools from servers in the `research` access group. Calling a tool on a server outside the grant returns `403` with `The key is not allowed to access server <server>`.
 
-When the IdP removes a user from the group, LiteLLM removes them from the team and deletes their keys for that team. If the user is added back, they need a new team key.
+When the IdP removes a user from the group, Lumina removes them from the team and deletes their keys for that team. If the user is added back, they need a new team key.
 
 If callers authenticate with JWTs instead of virtual keys, the token reaches the team's MCP grant only when it resolves to the SCIM team, for example by listing its `team_id` in the claim configured as `team_ids_jwt_field`, see [Control model access with Teams](./proxy/token_auth#control-model-access-with-teams).
 
 ### Direct claim mapping is not supported
 
-LiteLLM does not map IdP claims straight to MCP access groups, and this is by design. A SCIM `groups[].value`, `roles`, or `entitlements` value, or a JWT claim, that names an MCP access group grants nothing on its own: SCIM `groups[].value` entries are read as LiteLLM `team_id`s, `roles` and `entitlements` are stored as metadata only, and no `litellm_jwtauth` setting reads MCP access groups from a token. Keeping the IdP responsible for who belongs to which group, and LiteLLM team `object_permission` responsible for what that group may reach, gives every MCP grant a single auditable path that you can inspect on the team.
+Lumina does not map IdP claims straight to MCP access groups, and this is by design. A SCIM `groups[].value`, `roles`, or `entitlements` value, or a JWT claim, that names an MCP access group grants nothing on its own: SCIM `groups[].value` entries are read as Lumina `team_id`s, `roles` and `entitlements` are stored as metadata only, and no `lumina_jwtauth` setting reads MCP access groups from a token. Keeping the IdP responsible for who belongs to which group, and Lumina team `object_permission` responsible for what that group may reach, gives every MCP grant a single auditable path that you can inspect on the team.
 
 ## How key and team grants resolve
 
-The full rule set is in [Permission Hierarchy](./mcp_control#permission-hierarchy) and [Per-entity Tool-Level Permissions](./mcp_control#per-entity-tool-level-permissions). The cases below are the ones you hit when only a key and its team carry grants, in the order LiteLLM applies them.
+The full rule set is in [Permission Hierarchy](./mcp_control#permission-hierarchy) and [Per-entity Tool-Level Permissions](./mcp_control#per-entity-tool-level-permissions). The cases below are the ones you hit when only a key and its team carry grants, in the order Lumina applies them.
 
 A key with no MCP grant of its own inherits the team's grant. Every server and every tool the team allows is available to the key, and nothing else. With `require_key_mcp_access_defined: true` in `general_settings` the same key gets no MCP servers at all until it is granted some explicitly, see [Require keys to define their own MCP access](./mcp_control#require-keys-to-define-their-own-mcp-access).
 

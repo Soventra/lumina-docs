@@ -3,67 +3,67 @@ import TabItem from '@theme/TabItem';
 
 # GitHub Copilot / VS Code
 
-This tutorial shows two ways to use LiteLLM Proxy from VS Code's chat. The [LiteLLM extension](#option-1-litellm-extension-for-vs-code) adds your gateway as a language model provider, so the chat model picker lists the models your key can reach, with each model's price and a reasoning effort control. The [Copilot proxy override](#option-2-route-github-copilot-through-litellm) instead points GitHub Copilot's own traffic at the proxy.
+This tutorial shows two ways to use Lumina Proxy from VS Code's chat. The [Lumina extension](#option-1-lumina-extension-for-vs-code) adds your gateway as a language model provider, so the chat model picker lists the models your key can reach, with each model's price and a reasoning effort control. The [Copilot proxy override](#option-2-route-github-copilot-through-lumina) instead points GitHub Copilot's own traffic at the proxy.
 
 :::info
 
-The proxy override section is based on [Sergio Pino's guide](https://dev.to/spino327/calling-github-copilot-models-from-openhands-using-litellm-proxy-1hl4) for calling GitHub Copilot models through LiteLLM Proxy.
+The proxy override section is based on [Sergio Pino's guide](https://dev.to/spino327/calling-github-copilot-models-from-openhands-using-lumina-proxy-1hl4) for calling GitHub Copilot models through Lumina Proxy.
 
 :::
 
-## Benefits of using VS Code chat with LiteLLM
+## Benefits of using VS Code chat with Lumina
 
-When you use VS Code chat with LiteLLM you get the following benefits:
+When you use VS Code chat with Lumina you get the following benefits:
 
 **Developer Benefits:**
-- Universal Model Access: Use any LiteLLM supported model (Anthropic, OpenAI, Vertex AI, Bedrock, etc.) from the VS Code chat model picker.
+- Universal Model Access: Use any Lumina supported model (Anthropic, OpenAI, Vertex AI, Bedrock, etc.) from the VS Code chat model picker.
 - Higher Rate Limits & Reliability: Load balance across multiple models and providers to avoid hitting individual provider limits, with fallbacks to ensure you get responses even if one provider fails.
 
 **Proxy Admin Benefits:**
-- Centralized Management: Control access to all models through a single LiteLLM proxy instance without giving your developers API Keys to each provider.
+- Centralized Management: Control access to all models through a single Lumina proxy instance without giving your developers API Keys to each provider.
 - Budget Controls: Set spending limits and track costs across all VS Code usage.
 
 ## Prerequisites
 
 Before you begin, ensure you have:
-- A running LiteLLM Proxy instance
-- A LiteLLM Proxy API key, or on a gateway where users sign in through SSO, the [`lite` CLI](#sign-in-with-sso-instead-of-a-virtual-key)
+- A running Lumina Proxy instance
+- A Lumina Proxy API key, or on a gateway where users sign in through SSO, the [`lite` CLI](#sign-in-with-sso-instead-of-a-virtual-key)
 - VS Code 1.115 or newer with the GitHub Copilot Chat extension (the chat view and model picker come from it)
 
-## Option 1: LiteLLM extension for VS Code
+## Option 1: Lumina extension for VS Code
 
-The extension lives in the LiteLLM repository under [`vscode-extension/`](https://github.com/BerriAI/litellm/tree/main/vscode-extension). It reads the gateway's `GET /model_group/info` for the key you configure, so the picker shows exactly the chat models that key can use, each with its input and output price per 1M tokens. Models whose gateway entry lists `supported_reasoning_efforts` get a Reasoning Effort option in the model picker, and the effort you pick is sent as `reasoning_effort` on every request to that model. Requests go to `POST /v1/chat/completions` as streaming chat completions with tools and images passed through, so routing, fallbacks, guardrails, and spend tracking all apply as usual.
+The extension lives in the Lumina repository under [`vscode-extension/`](https://github.com/Soventra/lumina/tree/main/vscode-extension). It reads the gateway's `GET /model_group/info` for the key you configure, so the picker shows exactly the chat models that key can use, each with its input and output price per 1M tokens. Models whose gateway entry lists `supported_reasoning_efforts` get a Reasoning Effort option in the model picker, and the effort you pick is sent as `reasoning_effort` on every request to that model. Requests go to `POST /v1/chat/completions` as streaming chat completions with tools and images passed through, so routing, fallbacks, guardrails, and spend tracking all apply as usual.
 
 ### Step 1: Build and install the extension
 
 ```bash
-git clone https://github.com/BerriAI/litellm.git
-cd litellm/vscode-extension
+git clone https://github.com/Soventra/lumina.git
+cd lumina/vscode-extension
 npm ci
 npm run package
-code --install-extension litellm-vscode-0.1.0.vsix
+code --install-extension lumina-vscode-0.1.0.vsix
 ```
 
-Every push to `main` that touches the extension also builds a `litellm-vscode` artifact on the [VS Code Extension workflow](https://github.com/BerriAI/litellm/actions/workflows/test-vscode-extension.yml), which you can download and install the same way.
+Every push to `main` that touches the extension also builds a `lumina-vscode` artifact on the [VS Code Extension workflow](https://github.com/Soventra/lumina/actions/workflows/test-vscode-extension.yml), which you can download and install the same way.
 
 ### Step 2: Connect to your gateway
 
-1. Run `Chat: Manage Language Models` from the Command Palette and pick `LiteLLM`
-2. Enter a name for the connection, the gateway URL (for example `https://litellm.example.com`), and a LiteLLM API key: a virtual key, or on an SSO gateway the output of `lite auth print-token` (see [the next section](#sign-in-with-sso-instead-of-a-virtual-key)). The key is stored in VS Code's secret storage
+1. Run `Chat: Manage Language Models` from the Command Palette and pick `Lumina`
+2. Enter a name for the connection, the gateway URL (for example `https://lumina.example.com`), and a Lumina API key: a virtual key, or on an SSO gateway the output of `lite auth print-token` (see [the next section](#sign-in-with-sso-instead-of-a-virtual-key)). The key is stored in VS Code's secret storage
 
-The Language Models editor now lists the chat models that key can reach under the name you chose. Add `LiteLLM` again with another name to reach a second gateway or a second key.
+The Language Models editor now lists the chat models that key can reach under the name you chose. Add `Lumina` again with another name to reach a second gateway or a second key.
 
 ### Sign in with SSO instead of a virtual key
 
-If your users sign in to LiteLLM through your identity provider and nobody issues them virtual keys, each developer gets the extension's key from the LiteLLM CLI instead. This needs a proxy with SSO configured and `EXPERIMENTAL_UI_LOGIN=True`, as described in [CLI Authentication](../proxy/cli_sso.md). Option 2 below sets no LiteLLM credential on the client, so use this option on an SSO-only gateway
+If your users sign in to Lumina through your identity provider and nobody issues them virtual keys, each developer gets the extension's key from the Lumina CLI instead. This needs a proxy with SSO configured and `EXPERIMENTAL_UI_LOGIN=True`, as described in [CLI Authentication](../proxy/cli_sso.md). Option 2 below sets no Lumina credential on the client, so use this option on an SSO-only gateway
 
 ```shell
-export LUMINA_PROXY_URL=https://litellm.example.com
+export LUMINA_PROXY_URL=https://lumina.example.com
 lite login --pkce
 lite auth print-token
 ```
 
-`lite login --pkce` opens your browser at your identity provider's sign-in, then at a LiteLLM consent page where you pick the team to attribute requests to and click Approve. `lite auth print-token` prints the resulting key, which starts with `litellm_login_`; paste it as the API key in Step 2. The picker then lists the chat models that user and team can reach, and spend is logged against the signed-in user
+`lite login --pkce` opens your browser at your identity provider's sign-in, then at a Lumina consent page where you pick the team to attribute requests to and click Approve. `lite auth print-token` prints the resulting key, which starts with `lumina_login_`; paste it as the API key in Step 2. The picker then lists the chat models that user and team can reach, and spend is logged against the signed-in user
 
 The key expires after `LUMINA_CLI_JWT_EXPIRATION_HOURS` (24 hours by default), and the extension keeps the key you pasted without renewing it. When requests start failing with an authentication error, run `lite auth print-token` again, which renews the key without a browser sign-in, and paste the new value through the gear on the connection's row and `Update API Key`. If it prints `Key expired. Run 'lite login --pkce' again.`, sign in again first. To make this less frequent, raise `LUMINA_CLI_JWT_EXPIRATION_HOURS` on the proxy
 
@@ -73,21 +73,21 @@ Open the chat view and click the model name in the toolbar. The gateway's models
 
 ### Keeping the list current
 
-Run `LiteLLM: Refresh Models` after the gateway's model list or pricing changes. To rotate the key of a connection, use the gear on its row in the Language Models editor and pick `Update API Key`; `Delete` removes the connection, and `Open in Language Models (JSON)` opens the entry to change its URL. If the stored key is ever lost, the editor shows a `missing its API key` row for that connection until you update the key.
+Run `Lumina: Refresh Models` after the gateway's model list or pricing changes. To rotate the key of a connection, use the gear on its row in the Language Models editor and pick `Update API Key`; `Delete` removes the connection, and `Open in Language Models (JSON)` opens the entry to change its URL. If the stored key is ever lost, the editor shows a `missing its API key` row for that connection until you update the key.
 
-## Option 2: Route GitHub Copilot through LiteLLM
+## Option 2: Route GitHub Copilot through Lumina
 
 This route keeps GitHub Copilot's own model picker and sends Copilot's traffic through the proxy instead. It needs a GitHub Copilot subscription (Individual, Business, or Enterprise) on top of the prerequisites above.
 
-### Step 1: Install LiteLLM
+### Step 1: Install Lumina
 
-Install LiteLLM with proxy support:
+Install Lumina with proxy support:
 
 ```bash
-uv tool install litellm[proxy]
+uv tool install lumina[proxy]
 ```
 
-### Step 2: Configure LiteLLM Proxy
+### Step 2: Configure Lumina Proxy
 
 Create a `config.yaml` file with your model configurations:
 
@@ -107,17 +107,17 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-### Step 3: Start LiteLLM Proxy
+### Step 3: Start Lumina Proxy
 
 Start the proxy server:
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ### Step 4: Configure GitHub Copilot
 
-Configure GitHub Copilot to use your LiteLLM proxy. Add the following to your VS Code `settings.json`:
+Configure GitHub Copilot to use your Lumina proxy. Add the following to your VS Code `settings.json`:
 
 ```json
 {
@@ -130,7 +130,7 @@ Configure GitHub Copilot to use your LiteLLM proxy. Add the following to your VS
 
 ### Step 5: Test the Integration
 
-Restart VS Code and test GitHub Copilot. Your requests will now be routed through LiteLLM Proxy, giving you access to LiteLLM's features like:
+Restart VS Code and test GitHub Copilot. Your requests will now be routed through Lumina Proxy, giving you access to Lumina's features like:
 - Request/response logging
 - Rate limiting
 - Cost tracking
@@ -140,7 +140,7 @@ Restart VS Code and test GitHub Copilot. Your requests will now be routed throug
 
 ### Use Anthropic, OpenAI, Bedrock, etc. models from VS Code
 
-Both options route to whatever the proxy config lists, so you can reach any provider by configuring different models in your LiteLLM Proxy config:
+Both options route to whatever the proxy config lists, so you can reach any provider by configuring different models in your Lumina Proxy config:
 
 <Tabs>
 <TabItem value="anthropic" label="Anthropic">
@@ -218,18 +218,18 @@ general_settings:
 </TabItem>
 </Tabs>
 
-With this configuration, VS Code chat requests are routed through LiteLLM to your configured provider(s) with load balancing and fallbacks.
+With this configuration, VS Code chat requests are routed through Lumina to your configured provider(s) with load balancing and fallbacks.
 
 ## Troubleshooting
 
 If you encounter issues:
 
-1. **No LiteLLM models in the picker**: the picker only lists model groups whose mode is `chat` and that the configured key can access; check `GET /model_group/info` with that key, then run `LiteLLM: Refresh Models`. A window in Restricted Mode shows "Models unavailable" until you trust the workspace
+1. **No Lumina models in the picker**: the picker only lists model groups whose mode is `chat` and that the configured key can access; check `GET /model_group/info` with that key, then run `Lumina: Refresh Models`. A window in Restricted Mode shows "Models unavailable" until you trust the workspace
 2. **`missing its API key` row in the Language Models editor**: the stored key was lost; use the gear on the connection's row and pick `Update API Key`
-3. **GitHub Copilot not using proxy**: Verify the proxy URL is correctly configured in VS Code settings and that LiteLLM proxy is running
+3. **GitHub Copilot not using proxy**: Verify the proxy URL is correctly configured in VS Code settings and that Lumina proxy is running
 4. **Authentication errors**: Ensure your master key is valid and API keys for providers are correctly set
-5. **Connection errors**: Check that your LiteLLM Proxy is accessible at `http://localhost:4000`
+5. **Connection errors**: Check that your Lumina Proxy is accessible at `http://localhost:4000`
 
 ## Credits
 
-The proxy override route is based on the work by [Sergio Pino](https://dev.to/spino327) from his original article: [Calling GitHub Copilot models from OpenHands using LiteLLM Proxy](https://dev.to/spino327/calling-github-copilot-models-from-openhands-using-litellm-proxy-1hl4). Thank you for the foundational work! 
+The proxy override route is based on the work by [Sergio Pino](https://dev.to/spino327) from his original article: [Calling GitHub Copilot models from OpenHands using Lumina Proxy](https://dev.to/spino327/calling-github-copilot-models-from-openhands-using-lumina-proxy-1hl4). Thank you for the foundational work! 

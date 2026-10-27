@@ -1,13 +1,13 @@
 ---
 slug: security-incident-oct-21-2026
-title: "Contained: Oct 21, 2026 LiteLLM release v1.107.0 Compromised"
+title: "Contained: Oct 21, 2026 Lumina release v1.107.0 Compromised"
 date: 2026-10-21T10:00:00
 authors:
   - krrish
   - ishaan
   - oliver
   - nate
-description: "LiteLLM release v1.107.0 was compromised by a malicious actor."
+description: "Lumina release v1.107.0 was compromised by a malicious actor."
 tags: [security, incident-report]
 hide_table_of_contents: false
 ---
@@ -16,15 +16,15 @@ hide_table_of_contents: false
 
 > **Last updated:** October 21, 2026 20:30 UTC
 
-In the early morning of October 21, LiteLLM's release pipeline was compromised
+In the early morning of October 21, Lumina's release pipeline was compromised
 and pushed v1.107.0 to the docker registry and PyPi. This version contained
 compiled malware which steals credentials and loads remote-code execution tools.
 All previous versions are safe, and the impacted releases have been pulled.
-**Enterprise Customers running the private enterprise release of LiteLLM were not impacted.**
+**Enterprise Customers running the private enterprise release of Lumina were not impacted.**
 
 **Update (20:30 UTC):** We believe we have identified the attack chain which facilitated this attack. The attacker had to compromise multiple independent security controls to be successful. See **How this happened** below.
 
-**Update (October 23, 21:50 UTC):** This post was written while our investigation was ongoing. Some our assumptions and beliefs reflected in our status updates and the text below were later discovered to be inaccurate or incomplete. We have left them in their original form as a record of our investigation, but have posted a canonical record [here](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain).
+**Update (October 23, 21:50 UTC):** This post was written while our investigation was ongoing. Some our assumptions and beliefs reflected in our status updates and the text below were later discovered to be inaccurate or incomplete. We have left them in their original form as a record of our investigation, but have posted a canonical record [here](https://docs.lumina.ai/blog/security-incident-oct-21-2026-attack-chain).
 
 {/* truncate */}
 
@@ -32,27 +32,27 @@ All previous versions are safe, and the impacted releases have been pulled.
 
 ## TLDR;
 
-- A malicious `litellm==1.107.0` package was published to PyPI and was live for approximately 2 hours (11:39 UTC to 13:23 UTC). **It has since been pulled.**
+- A malicious `lumina==1.107.0` package was published to PyPI and was live for approximately 2 hours (11:39 UTC to 13:23 UTC). **It has since been pulled.**
 - Docker images `v1.107.0`, `latest`, `main-latest`, and `main-stable` were compromised from 11:46 UTC to 14:20 UTC. **The `v1.107.0` image was removed, and the others were pointed at secure sources.**
-- **Enterprise Customers running the private enterprise release of LiteLLM were not impacted.**
+- **Enterprise Customers running the private enterprise release of Lumina were not impacted.**
 
 ## Overview
 
-At around 4:40 AM PDT (11:40 UTC) October 21, LiteLLM's release pipeline was compromised
+At around 4:40 AM PDT (11:40 UTC) October 21, Lumina's release pipeline was compromised
 and pushed v1.107.0 to the docker registry and PyPi. This version contained
 compiled malware which steals credentials and loads remote-code execution tools.
 All previous versions are safe, and the impacted releases have been pulled.
 
 ## Confirmed Affected Versions
 
-The following LiteLLM artifacts were impacted:
+The following Lumina artifacts were impacted:
 
-- **PyPI: `litellm==1.107.0`**: all seven wheels, live from 11:39:51 to 13:23 UTC
+- **PyPI: `lumina==1.107.0`**: all seven wheels, live from 11:39:51 to 13:23 UTC
 - **Docker Hub: `v1.107.0`, `latest`, `main-latest`, and `main-stable`**: pointed to compromised image index `sha256:1bbcb1443bc962e45f5aad53fe3d2c30600e0379715fb6c664cdd3ac126c339e` from 11:46:56 to 14:20 UTC
 - **GHCR: `v1.107.0`, `latest`, `main-latest`, and `main-stable`**: pointed to the compromised image indexes below from 11:46:56 UTC until they were made unavailable by 13:51 UTC
-  - `ghcr.io/berriai/litellm`: `sha256:1bbcb1443bc9…`
-  - `ghcr.io/berriai/litellm-database`: `sha256:c00f9d92c427…`
-  - `ghcr.io/berriai/litellm-non_root`: `sha256:7b00e91cd2fe…`
+  - `ghcr.io/soventra/lumina`: `sha256:1bbcb1443bc9…`
+  - `ghcr.io/soventra/lumina-database`: `sha256:c00f9d92c427…`
+  - `ghcr.io/soventra/lumina-non_root`: `sha256:7b00e91cd2fe…`
 
 The official `v1.107.0` source tag in GitHub does not contain the malicious files. The compromised artifacts were built from an attacker-controlled repository.
 
@@ -64,27 +64,27 @@ Note: These artifacts have already been removed from PyPI, Docker Hub, and GHCR.
 
 ## Who is affected
 
-You are affected if you used an unpinned version of LiteLLM between 11:39 and 13:23 UTC via pip or if you used the docker image `v1.107.0`, `latest`, `main-latest`, or `main-stable` between 11:46 and 14:20 UTC.
+You are affected if you used an unpinned version of Lumina between 11:39 and 13:23 UTC via pip or if you used the docker image `v1.107.0`, `latest`, `main-latest`, or `main-stable` between 11:46 and 14:20 UTC.
 
 **OSS Users**
 
-If you ran `pip install` on LiteLLM v1.107.0 or started the docker image in the compromised interval, assume it is compromised.
+If you ran `pip install` on Lumina v1.107.0 or started the docker image in the compromised interval, assume it is compromised.
 
 For the time being, please pin your version to 1.106.2 or any explicit version published prior to now.
 
 **Enterprise Customers**
 
-There currently exists a private LiteLLM registry for enterprise customers, in which we are distributing an embargoed release that remediates a vulnerability whose disclosure date is scheduled for October 27. Our private registry is not affected. If you are an enterprise customer pulling from our private registry you are not affected.
+There currently exists a private Lumina registry for enterprise customers, in which we are distributing an embargoed release that remediates a vulnerability whose disclosure date is scheduled for October 27. Our private registry is not affected. If you are an enterprise customer pulling from our private registry you are not affected.
 
 ### How to check if you are affected
 
-If you ran `pip install` on LiteLLM v1.107.0 or started the docker image in the compromised interval, assume it is compromised.
+If you ran `pip install` on Lumina v1.107.0 or started the docker image in the compromised interval, assume it is compromised.
 
-- If an environment started Python with litellm==1.107.0, treat that environment as compromised. You can check with `pip show litellm`.
+- If an environment started Python with lumina==1.107.0, treat that environment as compromised. You can check with `pip show lumina`.
 - If a container executed affected image digest sha256:1bbcb1443bc962e45f5aad53fe3d2c30600e0379715fb6c664cdd3ac126c339e, treat it as compromised.
-- Search filesystem evidence for litellm-1.107.0.dist-info, cook.pth, and sitecustomize.py. Finding one confirms exposure, but not finding one does not prove the environment is clean.
+- Search filesystem evidence for lumina-1.107.0.dist-info, cook.pth, and sitecustomize.py. Finding one confirms exposure, but not finding one does not prove the environment is clean.
 
-We will be posting more detail on how specifically to find indication of compromise. For now, you can find details of the attack and our initial responses in this [GitHub Issue](https://github.com/BerriAI/litellm/issues/47826#issue-5960147552).
+We will be posting more detail on how specifically to find indication of compromise. For now, you can find details of the attack and our initial responses in this [GitHub Issue](https://github.com/Soventra/lumina/issues/47826#issue-5960147552).
 
 ### What to do if you are affected
 
@@ -94,11 +94,11 @@ These instructions are courtesy of [LidorMachluf](https://github.com/LidorMachlu
 
 1. From the shell, delete `cook.pth`, `cook.py`, `sitecustomize.py` and any matching `__pycache__/cook*.pyc` and `sitecustomize*.pyc` from **every** affected site-packages.
 2. Kill the detached python daemon (it holds `/tmp/remote_code_loader.lock`).
-3. Reinstall pinned to `litellm==1.106.2`. Rebuilding images and venvs from scratch is better.
+3. Reinstall pinned to `lumina==1.106.2`. Rebuilding images and venvs from scratch is better.
 4. **If 1.107.0 was ever installed on a host with outbound internet, assume the exfil succeeded.** If the marker file exists, the exfil is confirmed. If it doesn't, that proves nothing: containers and tmp cleanup remove it.
 5. Rotate everything listed above that the host could reach. In particular:
    - the instance/task IAM role
-   - **every provider key stored in the LiteLLM proxy DB**, plus the master and virtual keys
+   - **every provider key stored in the Lumina proxy DB**, plus the master and virtual keys
    - the `DATABASE_URL` password
    - any secret that was in the environment of any process on the host
 6. Check CloudTrail for `GetCallerIdentity` from the instance role around install time, then for use of the role's credentials from outside your infrastructure.
@@ -108,7 +108,7 @@ These instructions are courtesy of [LidorMachluf](https://github.com/LidorMachlu
 ## How this happened?
 
 :::tip Notice
-This post was written while our investigation was ongoing. Some our assumptions and beliefs reflected in our status updates and the text below were later discovered to be inaccurate or incomplete. We have left them in their original form as a record of our investigation, but have posted a canonical record [here](https://docs.litellm.ai/blog/security-incident-oct-21-2026-attack-chain).
+This post was written while our investigation was ongoing. Some our assumptions and beliefs reflected in our status updates and the text below were later discovered to be inaccurate or incomplete. We have left them in their original form as a record of our investigation, but have posted a canonical record [here](https://docs.lumina.ai/blog/security-incident-oct-21-2026-attack-chain).
 :::
 
 After the prior incident in March, we [meaningfully hardened our CI release pipeline](/blog/ci-cd-v2-improvements). We moved releases to a private repo, have a strict set of workflows used in order to create them via Trusted GitHub Publishers, made our docker release tags immutable, and are signing docker images.
@@ -126,15 +126,15 @@ After the prior incident in March, we [meaningfully hardened our CI release pipe
 1. On Monday, we temporarily expanded release permissions to allow two internal engineers to publish daily bugfix backports for customers.
 2. The attacker had access to three sets of developer GitHub CLI credentials ([more on this below](#github-cli-oauth-token-exposure)). One of these had the ability to run GitHub workflows.
 3. The attacker tried to merge a change to allow the releaser to be pointed at a different source repository, but was unable to due to our protections. One of the tokens held by the attacker belonged to one of our two GitHub organization owners. The attacker used this to disable branch protections and force push the change.
-4. Finally, they ran the compromised workflow, pointed at a lookalike repository (`Berri-AI/litellm` instead of `BerriAI/litellm`), which signed and published the poisoned artifacts.
+4. Finally, they ran the compromised workflow, pointed at a lookalike repository (`Berri-AI/lumina` instead of `Soventra/lumina`), which signed and published the poisoned artifacts.
 
 ### GitHub CLI OAuth token exposure
 
-After a thorough investigation, we have observed specific situations in which Claude Code will embed a user's GitHub CLI OAuth token into a response body, and in situations where response bodies are logged, these tokens may appear in LiteLLM logs.
+After a thorough investigation, we have observed specific situations in which Claude Code will embed a user's GitHub CLI OAuth token into a response body, and in situations where response bodies are logged, these tokens may appear in Lumina logs.
 
-### Access to our internal LiteLLM deployment
+### Access to our internal Lumina deployment
 
-We identified an unexpected, innocuously named user account in our internal LiteLLM deployment, which was exposed to the public internet. We believe the attacker gained access to this deployment, obtained the GitHub CLI OAuth tokens from its logs, and subsequently used those credentials to compromise our release workflow.
+We identified an unexpected, innocuously named user account in our internal Lumina deployment, which was exposed to the public internet. We believe the attacker gained access to this deployment, obtained the GitHub CLI OAuth tokens from its logs, and subsequently used those credentials to compromise our release workflow.
 
 We have not yet confirmed how the attacker gained access to our internal deployment, but currently suspect it was through a recently patched vulnerability.
 
@@ -153,15 +153,15 @@ All times are UTC on October 21, 2026.
 
 - 10:08:29: GitHub branch protection rejected an unauthorized modification to our private release workflow because it had not passed the required pull-request and status-check process.
 - 10:08:34: A credential associated with a privileged developer account was used to override those protections and apply workflow commit 9cf97e935aeaf791b9c8db224a2bb3ee156134ce.
-- 10:46:39: The modified workflow started an official staging run. It used the attacker-controlled source repository Berri-AI/litellm at commit 20535d8fa11f786a6c24df7488a0e449ed5f09ad.
+- 10:46:39: The modified workflow started an official staging run. It used the attacker-controlled source repository Berri-AI/lumina at commit 20535d8fa11f786a6c24df7488a0e449ed5f09ad.
 - 11:08:09: The staging run completed successfully.
 - 11:08:53: The production release pipeline began.
 - 11:11:18: A credential associated with a second developer account was used to satisfy the production approval gate.
-- 11:39:51–11:40:13: Seven malicious litellm==1.107.0 wheels were uploaded to PyPI. The official 1.107.0 source tag did not contain the malicious files.
+- 11:39:51–11:40:13: Seven malicious lumina==1.107.0 wheels were uploaded to PyPI. The official 1.107.0 source tag did not contain the malicious files.
 - 11:46:56: Container publication jobs ran for the same release. The published Docker image included malicious content from the attacker-controlled source.
 - 11:53:49–11:54:01: Credentials associated with a third developer account were used to delete the production and staging workflow records. This limited the workflow logs available for investigation.
 - 12:09:38–12:24:52: The unauthorized workflow revision was removed, and the release workflow was restored to its preceding revision.
-- By 13:23: PyPI had removed litellm==1.107.0.
+- By 13:23: PyPI had removed lumina==1.107.0.
 - 13:51: A registry verification found the affected GHCR tags unavailable. Docker Hub tags v1.107.0, latest, main-latest, and main-stable still resolved to compromised image index sha256:1bbcb1443bc962e45f5aad53fe3d2c30600e0379715fb6c664cdd3ac126c339e.
 - 14:20: All affected Docker Hub tags and image variants were removed or repointed to verified clean artifacts.
 
@@ -175,4 +175,4 @@ We have already taken the following steps:
 
 ---
 
-If you discover a security issue in LiteLLM, please report it through our [bug bounty program](https://github.com/BerriAI/litellm/security).
+If you discover a security issue in Lumina, please report it through our [bug bounty program](https://github.com/Soventra/lumina/security).

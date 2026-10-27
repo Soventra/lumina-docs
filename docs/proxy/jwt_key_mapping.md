@@ -2,11 +2,11 @@
 
 <EnterpriseFeature feature="JWT → Virtual Key Mapping" />
 
-Map JWT tokens to LiteLLM virtual keys, so every JWT client gets the same granular controls as a virtual key: model restrictions, spend limits, rate limits, guardrails, and full spend tracking.
+Map JWT tokens to Lumina virtual keys, so every JWT client gets the same granular controls as a virtual key: model restrictions, spend limits, rate limits, guardrails, and full spend tracking.
 
 **Why this matters:** Standard JWT auth maps a JWT to a *team*. That's a shared boundary, so all clients under a team share the same limits. With JWT → Virtual Key Mapping, each individual JWT client (identified by a claim like `client_id`, `azp`, or `sub`) maps to its own virtual key. You get per-client accountability without issuing API keys to your users.
 
-**Common use case:** Your company uses SSO/OIDC. Developers use Claude Code with their identity tokens. You want to enforce per-developer model access and spend limits without giving each person a LiteLLM API key.
+**Common use case:** Your company uses SSO/OIDC. Developers use Claude Code with their identity tokens. You want to enforce per-developer model access and spend limits without giving each person a Lumina API key.
 
 ---
 
@@ -15,7 +15,7 @@ Map JWT tokens to LiteLLM virtual keys, so every JWT client gets the same granul
 ```mermaid
 sequenceDiagram
     participant Client as Client (Claude Code / API)
-    participant Proxy as LiteLLM Proxy
+    participant Proxy as Lumina Proxy
     participant OIDC as OIDC Provider
     participant DB as Mapping Table
 
@@ -52,13 +52,13 @@ Complete [OIDC JWT Auth setup](./token_auth.md) first; you need `JWT_PUBLIC_KEY_
 
 ### Step 1. Configure the JWT claim to map on
 
-Add `virtual_key_claim_field` to your `litellm_jwtauth` config. This is the JWT claim LiteLLM uses as the lookup key:
+Add `virtual_key_claim_field` to your `lumina_jwtauth` config. This is the JWT claim Lumina uses as the lookup key:
 
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
-  litellm_jwtauth:
+  lumina_jwtauth:
     team_id_jwt_field: "team_id"          # existing team mapping (optional)
     user_id_jwt_field: "sub"
     virtual_key_claim_field: "client_id"  # claim used as the key-mapping lookup
@@ -180,11 +180,11 @@ For teams where everyone starts from the same defaults, skip the per-developer c
 Set the proxy as the API base in your team's Claude Code config:
 
 ```bash
-# Point Claude Code at the LiteLLM proxy instead of Anthropic directly.
+# Point Claude Code at the Lumina proxy instead of Anthropic directly.
 # ANTHROPIC_API_KEY here is the bearer token sent to the proxy — set it to
 # the user's SSO/OIDC JWT token (obtained from your IdP at login).
 export ANTHROPIC_API_KEY="<user-sso-jwt-token>"
-export ANTHROPIC_BASE_URL="http://your-litellm-proxy:4000"
+export ANTHROPIC_BASE_URL="http://your-lumina-proxy:4000"
 ```
 
 Or in `~/.claude/settings.json`:
@@ -192,18 +192,18 @@ Or in `~/.claude/settings.json`:
 ```json
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://your-litellm-proxy:4000"
+    "ANTHROPIC_BASE_URL": "http://your-lumina-proxy:4000"
   }
 }
 ```
 
 **4. Developers authenticate with SSO as usual**
 
-When Alice runs Claude Code, her JWT (issued by your IdP with `client_id: alice@corp.com`) goes to the proxy. LiteLLM looks up the mapping, finds her virtual key, and enforces her specific limits: her $200/month budget, 200 RPM cap, and access to Sonnet and Opus only.
+When Alice runs Claude Code, her JWT (issued by your IdP with `client_id: alice@corp.com`) goes to the proxy. Lumina looks up the mapping, finds her virtual key, and enforces her specific limits: her $200/month budget, 200 RPM cap, and access to Sonnet and Opus only.
 
 Bob's token maps to his own key: $20/month, Sonnet only, 30 RPM.
 
-No API keys distributed. No shared limits. Full per-developer spend visibility in the LiteLLM dashboard.
+No API keys distributed. No shared limits. Full per-developer spend visibility in the Lumina dashboard.
 
 ---
 

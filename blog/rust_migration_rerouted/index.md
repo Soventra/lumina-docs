@@ -5,7 +5,7 @@ date: 2026-10-26T09:00:00
 authors:
   - nate
 description: "By December 1st, the proxy will handle Anthropic messages requests 20x faster"
-keywords: [litellm rust, rust migration, ai gateway]
+keywords: [lumina rust, rust migration, ai gateway]
 tags: [rust, rust-migration, ai-gateway, engineering]
 hide_table_of_contents: true
 ---
@@ -18,7 +18,7 @@ The Rust migration is being slightly rerouted to get the largest performance imp
 
 {/* truncate */}
 
-Earlier, LiteLLM's path towards having a proxy server that runs blazingly fast in Rust was to build from the bottom up. We would first port over the translation layer which handles putting a request from one provider in terms of another. Then, we would port over the core routing logic which selects a particular deployment for a given request. Finally, we would migrate the actual proxy webserver.
+Earlier, Lumina's path towards having a proxy server that runs blazingly fast in Rust was to build from the bottom up. We would first port over the translation layer which handles putting a request from one provider in terms of another. Then, we would port over the core routing logic which selects a particular deployment for a given request. Finally, we would migrate the actual proxy webserver.
 
 Doing things that way gives us the cleanest set of lines across which to move dependencies, but it also means that users wait a longer time in order to see the real payoff. If the translation layer and router are ported, a request will still have to:
 
@@ -46,7 +46,7 @@ A request will come in and go to the Axum server. Early on, the server will chec
 
 ![Requests enter Axum, which sends supported requests directly to providers and forwards the rest to four Python workers on a separate local port. Rust and Python share Redis and Postgres.](./rust-python-architecture.svg)
 
-We recommend running LiteLLM with 4 workers running on a host with 4 vCPUs. With this setup, the initiating Uvicorn process starts listening on the appropriate port, then spawns 4 worker processes. The workers communicate amongst themselves via Redis and our Postgres database. They do not keep meaningful persistent state. The incoming connections are automatically split among the workers by the operating system, as they all have a handle to the port from before the split.
+We recommend running Lumina with 4 workers running on a host with 4 vCPUs. With this setup, the initiating Uvicorn process starts listening on the appropriate port, then spawns 4 worker processes. The workers communicate amongst themselves via Redis and our Postgres database. They do not keep meaningful persistent state. The incoming connections are automatically split among the workers by the operating system, as they all have a handle to the port from before the split.
 
 The Rust server will be able to run alongside the Python servers in a similar manner, and it speaks the exact same Redis and Postgres protocols, so we will ensure seamless failover.
 

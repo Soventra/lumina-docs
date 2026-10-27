@@ -1,12 +1,12 @@
 # Contribute Custom Webhook API
 
-If your API just needs a Webhook event from LiteLLM, here's how to add a 'native' integration for it on LiteLLM: 
+If your API just needs a Webhook event from Lumina, here's how to add a 'native' integration for it on Lumina: 
 
 1. Clone the repo and open the `generic_api_compatible_callbacks.json`
 
 ```bash
-git clone https://github.com/BerriAI/litellm.git
-cd litellm
+git clone https://github.com/Soventra/lumina.git
+cd lumina
 open .
 ```
 
@@ -59,7 +59,7 @@ model_list:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["rubrik"]
 
 environment_variables:
@@ -70,7 +70,7 @@ environment_variables:
 b. Start the proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 c. Test it! 
@@ -100,7 +100,7 @@ curl -L -X POST 'http://0.0.0.0:4000/chat/completions' \
 If you're adding a new integration, please add documentation for it under the `observability` folder:
 
 - Create a new file at `docs/my-website/docs/observability/<your_integration>_integration.md`
-- Follow the format of existing integration docs, such as [Langsmith Integration](https://github.com/BerriAI/litellm/blob/main/docs/my-website/docs/observability/langsmith_integration.md)
+- Follow the format of existing integration docs, such as [Langsmith Integration](https://github.com/Soventra/lumina/blob/main/docs/my-website/docs/observability/langsmith_integration.md)
 - Include: Quick Start, SDK usage, Proxy usage, and any advanced configuration options
 
 5. File a PR! 
@@ -111,4 +111,4 @@ If you're adding a new integration, please add documentation for it under the `o
 
 ## What get's logged? 
 
-The [LiteLLM Standard Logging Payload](https://docs.litellm.ai/docs/proxy/logging_spec) is sent to your endpoint.
+The [Lumina Standard Logging Payload](https://docs.lumina.ai/docs/proxy/logging_spec) is sent to your endpoint.

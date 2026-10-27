@@ -14,7 +14,7 @@ process.env.FONTCONFIG_FILE = fontconfig;
 const imageData = async file => `data:image/png;base64,${(await readFile(path.join(root,'assets',file))).toString('base64')}`;
 const providerHrefs = {microsoft: await imageData('microsoft-copilot.png')};
 for (const dark of [false,true]) {
-  const logo = await imageData(dark ? 'litellm-logo-white.png' : 'litellm-logo-blue.png');
+  const logo = await imageData(dark ? 'lumina-logo-white.png' : 'lumina-logo-blue.png');
   for (const mobile of [false,true]) {
     const name = `cover${mobile ? '-mobile' : ''}${dark ? '-dark' : ''}`;
     const svg = (mobile ? mobileScene : svgScene)(logo,providerHrefs,dark);

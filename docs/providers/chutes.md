@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | Chutes is a cloud-native AI deployment platform that allows you to deploy, run, and scale LLM applications with OpenAI-compatible APIs using pre-built templates for popular frameworks like vLLM and SGLang. |
-| Provider Route on LiteLLM | `chutes/` |
+| Provider Route on Lumina | `chutes/` |
 | Link to Provider Doc | [Chutes Website ↗](https://chutes.ai) |
 | Base URL | `https://llm.chutes.ai/v1/` |
-| Supported Operations | [`/chat/completions`](/docs/providers/chutes#usage---litellm-python-sdk), Embeddings |
+| Supported Operations | [`/chat/completions`](/docs/providers/chutes#usage---lumina-python-sdk), Embeddings |
 
 <br />
 
@@ -30,14 +30,14 @@ os.environ["CHUTES_API_KEY"] = ""  # your Chutes API key
 
 Get your Chutes API key from [chutes.ai](https://chutes.ai).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Chutes Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["CHUTES_API_KEY"] = ""  # your Chutes API key
 
@@ -56,8 +56,8 @@ print(response)
 
 ```python showLineNumbers title="Chutes Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["CHUTES_API_KEY"] = ""  # your Chutes API key
 
@@ -74,7 +74,7 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -143,7 +143,7 @@ Chutes supports multiple authentication methods:
 - API Key via `X-API-Key` header
 - Bearer token via `Authorization` header
 
-Example for LiteLLM (uses environment variable):
+Example for Lumina (uses environment variable):
 ```python
 os.environ["CHUTES_API_KEY"] = "your-api-key"
 ```

@@ -5,7 +5,7 @@ date: 2026-04-10T12:00:00
 authors:
   - krrish
   - ishaan-alt
-description: "A recap of the April LiteLLM town hall covering CI/CD v2, product stability work, and the near-term roadmap."
+description: "A recap of the April Lumina town hall covering CI/CD v2, product stability work, and the near-term roadmap."
 tags: [townhall, reliability, product]
 hide_table_of_contents: false
 ---
@@ -38,13 +38,13 @@ We have begun moving to isolated environments for distinct CI/CD stages to reduc
 
 #### Current rollout status
 
-These changes are deployed in our current release workflow. [See here](https://github.com/BerriAI/litellm/tags)
+These changes are deployed in our current release workflow. [See here](https://github.com/Soventra/lumina/tags)
 
 #### Independently verify releases
 
 A key part of CI/CD v2 is supporting independent verification of release artifacts using our published verification process, while reducing reliance on any single credential or release path.
 
-[**Learn more about how to verify releases**](https://docs.litellm.ai/docs/proxy/docker_image_security)
+[**Learn more about how to verify releases**](https://docs.lumina.ai/docs/proxy/docker_image_security)
 
 <Image
   img={require('../../img/verify_releases.png')}
@@ -147,11 +147,11 @@ Roadmap timelines in this post are targets and may evolve based on validation an
 ### Feature reliability
 
 - Polish MCP authentication.
-- Better understand how teams are using agents through LiteLLM.
+- Better understand how teams are using agents through Lumina.
 
 ### Governance
 
-- Launch Skills as a first-class citizen in LiteLLM.
+- Launch Skills as a first-class citizen in Lumina.
 
 ## Q&A
 
@@ -159,4 +159,4 @@ Thank you again for all the questions and direct feedback. We will keep sharing 
 
 ## Hiring
 
-We are actively hiring across several roles, please apply [here](https://jobs.ashbyhq.com/litellm) if you're interested!
+We are actively hiring across several roles, please apply [here](https://jobs.ashbyhq.com/lumina) if you're interested!

@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://www.parallel.ai](https://www.parallel.ai)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Parallel AI Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["PARALLEL_AI_API_KEY"] = "..."
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -59,7 +59,7 @@ curl http://0.0.0.0:4000/v1/search/parallel-search \
 
 ```python showLineNumbers title="Parallel AI Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["PARALLEL_AI_API_KEY"] = "..."
 
@@ -75,7 +75,7 @@ response = search(
 
 ## Web Search Interception
 
-When a Parallel AI search tool backs [web search interception](../integrations/websearch_interception.md), the intercepted `litellm_web_search` tool's optional `objective` and `search_queries` fields are forwarded to Parallel's v1 Search API as `objective` and `search_queries`, so one tool call from the model searches several keyword angles at once. Parallel AI is the only search provider that receives this richer shape today; every other provider gets the tool call's single `query`.
+When a Parallel AI search tool backs [web search interception](../integrations/websearch_interception.md), the intercepted `lumina_web_search` tool's optional `objective` and `search_queries` fields are forwarded to Parallel's v1 Search API as `objective` and `search_queries`, so one tool call from the model searches several keyword angles at once. Parallel AI is the only search provider that receives this richer shape today; every other provider gets the tool call's single `query`.
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -91,7 +91,7 @@ search_tools:
       api_key: os.environ/PARALLEL_AI_API_KEY
       max_results: 5
 
-litellm_settings:
+lumina_settings:
   callbacks: ["websearch_interception"]
   websearch_interception_params:
     enabled_providers: ["anthropic"]
@@ -110,7 +110,7 @@ curl http://0.0.0.0:4000/v1/messages \
   }'
 ```
 
-The model sees the [three-field schema](../integrations/websearch_interception.md#the-search-tool-the-model-sees) and typically fills all of them. LiteLLM then sends Parallel the model's `objective` and up to five of its `search_queries`; queries past the fifth are dropped before the request goes out, matching Parallel's cap.
+The model sees the [three-field schema](../integrations/websearch_interception.md#the-search-tool-the-model-sees) and typically fills all of them. Lumina then sends Parallel the model's `objective` and up to five of its `search_queries`; queries past the fifth are dropped before the request goes out, matching Parallel's cap.
 
 ```json title="Outbound Parallel AI request"
 {

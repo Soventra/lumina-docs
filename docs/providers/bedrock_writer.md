@@ -8,23 +8,23 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Writer Palmyra X5 and X4 foundation models on Amazon Bedrock, offering advanced reasoning, tool calling, and document processing capabilities |
-| Provider Route on LiteLLM | `bedrock/` |
+| Provider Route on Lumina | `bedrock/` |
 | Supported Operations | `/chat/completions` |
 | Link to Provider Doc | [Writer on AWS Bedrock ↗](https://aws.amazon.com/bedrock/writer/) |
 
 ## Quick Start
 
-### LiteLLM SDK
+### Lumina SDK
 
 ```python showLineNumbers title="SDK Usage"
-import litellm
+import lumina
 import os
 
 os.environ["AWS_ACCESS_KEY_ID"] = ""
 os.environ["AWS_SECRET_ACCESS_KEY"] = ""
 os.environ["AWS_REGION_NAME"] = "us-west-2"
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/us.writer.palmyra-x5-v1:0",
     messages=[{"role": "user", "content": "Hello, how are you?"}]
 )
@@ -32,7 +32,7 @@ response = litellm.completion(
 print(response.choices[0].message.content)
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 **1. Setup config.yaml**
 
@@ -49,7 +49,7 @@ model_list:
 **2. Start the proxy**
 
 ```bash showLineNumbers title="Start Proxy"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 **3. Call the proxy**
@@ -74,7 +74,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000/v1"
 )
 
@@ -93,10 +93,10 @@ print(response.choices[0].message.content)
 
 Writer Palmyra models support multi-step tool calling for complex workflows.
 
-### LiteLLM SDK
+### Lumina SDK
 
 ```python showLineNumbers title="Tool Calling - SDK"
-import litellm
+import lumina
 
 tools = [
     {
@@ -118,14 +118,14 @@ tools = [
     }
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/us.writer.palmyra-x5-v1:0",
     messages=[{"role": "user", "content": "What's the weather in Boston?"}],
     tools=tools
 )
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -161,7 +161,7 @@ curl -X POST http://localhost:4000/v1/chat/completions \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000/v1"
 )
 
@@ -199,17 +199,17 @@ response = client.chat.completions.create(
 
 Writer Palmyra models support document inputs including PDFs.
 
-### LiteLLM SDK
+### Lumina SDK
 
 ```python showLineNumbers title="PDF Document Input - SDK"
-import litellm
+import lumina
 import base64
 
 # Read and encode PDF
 with open("document.pdf", "rb") as f:
     pdf_base64 = base64.b64encode(f.read()).decode("utf-8")
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/us.writer.palmyra-x5-v1:0",
     messages=[
         {
@@ -231,7 +231,7 @@ response = litellm.completion(
 )
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 <Tabs>
 <TabItem value="curl" label="curl">
@@ -269,7 +269,7 @@ from openai import OpenAI
 import base64
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000/v1"
 )
 

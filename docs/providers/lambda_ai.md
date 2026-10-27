@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Lambda AI provides access to a wide range of open-source language models through their cloud GPU infrastructure, optimized for inference at scale. |
-| Provider Route on LiteLLM | `lambda_ai/` |
+| Provider Route on Lumina | `lambda_ai/` |
 | Link to Provider Doc | [Lambda AI API Documentation ↗](https://docs.lambda.ai/api) |
 | Base URL | `https://api.lambda.ai/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/lambda_ai#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](/docs/providers/lambda_ai#usage---lumina-python-sdk) |
 
 <br />
 <br />
@@ -79,14 +79,14 @@ Lambda AI offers a diverse selection of state-of-the-art open-source models:
 os.environ["LAMBDA_API_KEY"] = ""  # your Lambda AI API key
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Lambda AI Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LAMBDA_API_KEY"] = ""  # your Lambda AI API key
 
@@ -105,8 +105,8 @@ print(response)
 
 ```python showLineNumbers title="Lambda AI Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LAMBDA_API_KEY"] = ""  # your Lambda AI API key
 
@@ -129,8 +129,8 @@ The Llama 3.2 Vision model supports image inputs:
 
 ```python showLineNumbers title="Lambda AI Vision/Multimodal"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LAMBDA_API_KEY"] = ""  # your Lambda AI API key
 
@@ -165,8 +165,8 @@ Lambda AI models support function calling:
 
 ```python showLineNumbers title="Lambda AI Function Calling"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["LAMBDA_API_KEY"] = ""  # your Lambda AI API key
 
@@ -202,7 +202,7 @@ response = completion(
 print(response)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -230,8 +230,8 @@ If you need to use a custom API base URL:
 
 ```python showLineNumbers title="Custom API Base"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 # Using environment variable
 os.environ["LAMBDA_API_BASE"] = "https://custom.lambda-api.com/v1"

@@ -10,7 +10,7 @@ Fal AI provides fast, scalable access to state-of-the-art image generation model
 | Property | Details |
 |----------|---------|
 | Description | Fal AI offers optimized infrastructure for running image generation models at scale with low latency. |
-| Provider Route on LiteLLM | `fal_ai/` |
+| Provider Route on Lumina | `fal_ai/` |
 | Provider Doc | [Fal AI Documentation ↗](https://fal.ai/models) |
 | Supported Operations | [`/images/generations`](#image-generation) |
 
@@ -44,20 +44,20 @@ Get your API key from [fal.ai](https://fal.ai/).
 
 ## Image Generation
 
-### Usage - LiteLLM Python SDK
+### Usage - Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 ```python showLineNumbers title="Basic Image Generation"
-import litellm
+import lumina
 import os
 
 # Set your API key
 os.environ["FAL_AI_API_KEY"] = "your-fal-api-key"
 
 # Generate an image
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="fal_ai/fal-ai/flux-pro/v1.1-ultra",
     prompt="A serene mountain landscape at sunset with vibrant colors"
 )
@@ -70,13 +70,13 @@ print(response.data[0].url)
 <TabItem value="imagen4" label="Imagen 4">
 
 ```python showLineNumbers title="Google Imagen 4 Generation"
-import litellm
+import lumina
 import os
 
 os.environ["FAL_AI_API_KEY"] = "your-fal-api-key"
 
 # Generate with Imagen 4
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="fal_ai/fal-ai/imagen4/preview",
     prompt="A vintage 1960s kitchen with flour package on countertop",
     aspect_ratio="16:9",
@@ -91,13 +91,13 @@ print(response.data[0].url)
 <TabItem value="recraft" label="Recraft v3">
 
 ```python showLineNumbers title="Recraft v3 with Style"
-import litellm
+import lumina
 import os
 
 os.environ["FAL_AI_API_KEY"] = "your-fal-api-key"
 
 # Generate with specific style
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="fal_ai/fal-ai/recraft/v3/text-to-image",
     prompt="A red panda eating bamboo",
     style="realistic_image",
@@ -112,14 +112,14 @@ print(response.data[0].url)
 <TabItem value="async" label="Async Usage">
 
 ```python showLineNumbers title="Async Image Generation"
-import litellm
+import lumina
 import asyncio
 import os
 
 async def generate_image():
     os.environ["FAL_AI_API_KEY"] = "your-fal-api-key"
     
-    response = await litellm.aimage_generation(
+    response = await lumina.aimage_generation(
         model="fal_ai/fal-ai/stable-diffusion-v35-medium",
         prompt="A cyberpunk cityscape with neon lights",
         guidance_scale=7.5,
@@ -137,13 +137,13 @@ asyncio.run(generate_image())
 <TabItem value="advanced" label="Advanced Parameters">
 
 ```python showLineNumbers title="Advanced FLUX Pro Generation"
-import litellm
+import lumina
 import os
 
 os.environ["FAL_AI_API_KEY"] = "your-fal-api-key"
 
 # Generate with advanced parameters
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="fal_ai/fal-ai/flux-pro/v1.1-ultra",
     prompt="A majestic dragon soaring over mountains",
     n=2,
@@ -160,7 +160,7 @@ for image in response.data:
 </TabItem>
 </Tabs>
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
 #### 1. Configure your config.yaml
 
@@ -191,10 +191,10 @@ general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-#### 2. Start LiteLLM Proxy Server
+#### 2. Start Lumina Proxy Server
 
 ```bash showLineNumbers title="Start Proxy Server"
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -209,7 +209,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 response = client.images.generate(
@@ -224,16 +224,16 @@ print(response.data[0].url)
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Generate via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Generate via Proxy - Lumina SDK"
+import lumina
 
-response = litellm.image_generation(
-    model="litellm_proxy/imagen4",
+response = lumina.image_generation(
+    model="lumina_proxy/imagen4",
     prompt="A cozy coffee shop interior",
     api_base="http://localhost:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 print(response.data[0].url)
@@ -262,13 +262,13 @@ curl --location 'http://localhost:4000/v1/images/generations' \
 
 ## Using Model-Specific Parameters
 
-LiteLLM forwards any additional parameters directly to the Fal AI API. You can pass model-specific parameters in your request and they will be sent to Fal AI.
+Lumina forwards any additional parameters directly to the Fal AI API. You can pass model-specific parameters in your request and they will be sent to Fal AI.
 
 ```python showLineNumbers title="Pass Model-Specific Parameters"
-import litellm
+import lumina
 
 # Any parameters beyond the standard ones are forwarded to Fal AI
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="fal_ai/fal-ai/flux-pro/v1.1-ultra",
     prompt="A beautiful sunset",
     # Model-specific Fal AI parameters
@@ -304,7 +304,7 @@ Standard OpenAI-compatible parameters that work across all models:
 2. Get your API key from your account settings
 3. Set `FAL_AI_API_KEY` environment variable
 4. Choose a model from the [Fal AI model gallery](https://fal.ai/models)
-5. Start generating images with LiteLLM
+5. Start generating images with Lumina
 
 ## Additional Resources
 

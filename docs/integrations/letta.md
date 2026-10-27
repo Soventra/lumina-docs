@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Letta Integration
 
-[Letta](https://github.com/letta-ai/letta) (formerly MemGPT) is a framework for building stateful LLM agents with persistent memory. This guide shows how to integrate both LiteLLM SDK and LiteLLM Proxy with Letta so you can use multiple LLM providers while building memory-enabled agents.
+[Letta](https://github.com/letta-ai/letta) (formerly MemGPT) is a framework for building stateful LLM agents with persistent memory. This guide shows how to integrate both Lumina SDK and Lumina Proxy with Letta so you can use multiple LLM providers while building memory-enabled agents.
 
 ## What is Letta?
 
@@ -16,17 +16,17 @@ Letta allows you to build LLM agents that can:
 ## Prerequisites
 
 ```bash
-uv add letta litellm
+uv add letta lumina
 ```
 
 ## Quick Start
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
-### 1. Start LiteLLM Proxy
+### 1. Start Lumina Proxy
 
-First, create a configuration file for your LiteLLM proxy:
+First, create a configuration file for your Lumina proxy:
 
 ```yaml
 # config.yaml
@@ -52,25 +52,25 @@ model_list:
 Start the proxy:
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
-### 2. Configure Letta with LiteLLM Proxy
+### 2. Configure Letta with Lumina Proxy
 
-Configure Letta to use your LiteLLM proxy endpoint:
+Configure Letta to use your Lumina proxy endpoint:
 
 ```python
 import letta
 from letta import create_client
 
-# Configure Letta to use LiteLLM proxy
+# Configure Letta to use Lumina proxy
 client = create_client()
 
 # Configure the LLM endpoint
 client.set_default_llm_config(
-    model="{{openai_large}}",  # This should match a model from your LiteLLM config
+    model="{{openai_large}}",  # This should match a model from your Lumina config
     model_endpoint_type="openai",
-    model_endpoint="http://localhost:4000",  # Your LiteLLM proxy URL
+    model_endpoint="http://localhost:4000",  # Your Lumina proxy URL
     context_window=8192
 )
 
@@ -83,49 +83,49 @@ client.set_default_embedding_config(
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
-### 1. Configure LiteLLM SDK
+### 1. Configure Lumina SDK
 
-Set up your API keys and configure LiteLLM:
+Set up your API keys and configure Lumina:
 
 ```python
 import os
-import litellm
+import lumina
 
 # Set your API keys
 os.environ["OPENAI_API_KEY"] = "your-openai-key"
 os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-key"
 
 # Optional: Configure default settings
-litellm.set_verbose = True  # For debugging
+lumina.set_verbose = True  # For debugging
 ```
 
 ### 2. Create Custom LLM Wrapper for Letta
 
-Create a custom LLM wrapper that uses LiteLLM SDK:
+Create a custom LLM wrapper that uses Lumina SDK:
 
 ```python
 import letta
 from letta import create_client
 from letta.llm_api.llm_api_base import LLMConfig
-import litellm
+import lumina
 from typing import List, Dict, Any
 
-class LiteLLMWrapper:
+class LuminaWrapper:
     def __init__(self, model: str):
         self.model = model
     
     def chat_completions_create(self, messages: List[Dict], **kwargs):
-        # Use LiteLLM SDK for completion
-        response = litellm.completion(
+        # Use Lumina SDK for completion
+        response = lumina.completion(
             model=self.model,
             messages=messages,
             **kwargs
         )
         return response
 
-# Configure Letta with custom LiteLLM wrapper
+# Configure Letta with custom Lumina wrapper
 client = create_client()
 
 # Set up LLM configuration using direct SDK integration
@@ -144,7 +144,7 @@ client.set_default_llm_config(llm_config)
 ### 3. Create and Use a Letta Agent
 
 <Tabs>
-<TabItem value="proxy" label="Using LiteLLM Proxy">
+<TabItem value="proxy" label="Using Lumina Proxy">
 
 ```python
 import letta
@@ -179,18 +179,18 @@ print(f"Agent response: {response.messages[-1].text}")
 ```
 
 </TabItem>
-<TabItem value="sdk" label="Using LiteLLM SDK">
+<TabItem value="sdk" label="Using Lumina SDK">
 
 ```python
 import letta
 from letta import create_client
-import litellm
+import lumina
 import os
 
 # Set up environment variables
 os.environ["OPENAI_API_KEY"] = "your-openai-key"
 
-# Create Letta client with LiteLLM integration
+# Create Letta client with Lumina integration
 client = create_client()
 
 # Create a new agent
@@ -226,7 +226,7 @@ print(f"Agent response: {response.messages[-1].text}")
 ### Using Different Models for Different Agents
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```python
 from letta import LLMConfig, EmbeddingConfig
@@ -261,11 +261,11 @@ creative_agent = client.create_agent(
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
 import os
-import litellm
+import lumina
 from letta import LLMConfig, EmbeddingConfig
 
 # Set up API keys for different providers
@@ -274,13 +274,13 @@ os.environ["ANTHROPIC_API_KEY"] = "your-anthropic-key"
 
 # Create different LLM configurations for direct SDK usage
 gpt_config = LLMConfig(
-    model="openai/{{openai_large}}",  # Using LiteLLM model format
+    model="openai/{{openai_large}}",  # Using Lumina model format
     model_endpoint_type="openai",
     context_window=8192
 )
 
 claude_config = LLMConfig(
-    model="anthropic/{{anthropic}}",  # Using LiteLLM model format
+    model="anthropic/{{anthropic}}",  # Using Lumina model format
     model_endpoint_type="openai",
     context_window=200000
 )
@@ -305,7 +305,7 @@ creative_agent = client.create_agent(
 ### Function Calling with Tools
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 ```python
 # Define custom tools for your agent
@@ -336,10 +336,10 @@ response = client.user_message(
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-import litellm
+import lumina
 import os
 
 # Set up API keys
@@ -356,7 +356,7 @@ def save_note(content: str) -> str:
     # Your note saving implementation
     return f"Note saved: {content}"
 
-# Create agent with tools (using LiteLLM SDK directly)
+# Create agent with tools (using Lumina SDK directly)
 agent_state = client.create_agent(
     name="research-assistant",
     system="You are a research assistant that can search the web and save notes.",
@@ -382,9 +382,9 @@ response = client.user_message(
 ## Authentication
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy Authentication">
+<TabItem value="proxy" label="Lumina Proxy Authentication">
 
-If your LiteLLM proxy requires authentication:
+If your Lumina proxy requires authentication:
 
 ```python
 import os
@@ -400,7 +400,7 @@ llm_config = LLMConfig(
 )
 
 # If using API keys with your proxy
-os.environ["OPENAI_API_KEY"] = "your-litellm-proxy-api-key"
+os.environ["OPENAI_API_KEY"] = "your-lumina-proxy-api-key"
 
 client = create_client()
 client.set_default_llm_config(llm_config)
@@ -432,13 +432,13 @@ llm_config = LLMConfig(
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK Authentication">
+<TabItem value="sdk" label="Lumina SDK Authentication">
 
-With LiteLLM SDK, set up your provider API keys directly:
+With Lumina SDK, set up your provider API keys directly:
 
 ```python
 import os
-import litellm
+import lumina
 
 # Set up API keys for different providers
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
@@ -448,8 +448,8 @@ os.environ["AZURE_API_BASE"] = "https://your-resource.openai.azure.com"
 os.environ["AZURE_API_VERSION"] = "2023-07-01-preview"
 
 # Optional: Configure default settings
-litellm.api_key = os.environ.get("OPENAI_API_KEY")  # Default key
-litellm.set_verbose = True  # For debugging
+lumina.api_key = os.environ.get("OPENAI_API_KEY")  # Default key
+lumina.set_verbose = True  # For debugging
 
 # Use in Letta configuration
 from letta import LLMConfig
@@ -474,9 +474,9 @@ azure_config = LLMConfig(
 ## Load Balancing and Fallbacks
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy Features">
+<TabItem value="proxy" label="Lumina Proxy Features">
 
-LiteLLM proxy's load balancing and fallback features work with Letta:
+Lumina proxy's load balancing and fallback features work with Letta:
 
 ```yaml
 # config.yaml with fallbacks
@@ -505,13 +505,13 @@ router_settings:
 The proxy handles all routing, load balancing, and fallbacks transparently for Letta.
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK Router">
+<TabItem value="sdk" label="Lumina SDK Router">
 
-With LiteLLM SDK, you can set up routing and fallbacks programmatically:
+With Lumina SDK, you can set up routing and fallbacks programmatically:
 
 ```python
-import litellm
-from litellm import Router
+import lumina
+from lumina import Router
 
 # Configure router with multiple models
 router = Router(
@@ -550,7 +550,7 @@ def custom_completion(messages, model="{{openai_large}}", **kwargs):
     )
 
 # Use with Letta by monkey-patching or custom wrapper
-litellm.completion = custom_completion
+lumina.completion = custom_completion
 ```
 
 </TabItem>
@@ -559,7 +559,7 @@ litellm.completion = custom_completion
 ## Monitoring and Observability
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy Monitoring">
+<TabItem value="proxy" label="Lumina Proxy Monitoring">
 
 Enable logging to track your Letta agents' LLM usage through the proxy:
 
@@ -568,7 +568,7 @@ Enable logging to track your Letta agents' LLM usage through the proxy:
 model_list:
   # ... your models
 
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]  # or other observability tools
   
 environment_variables:
@@ -579,16 +579,16 @@ environment_variables:
 View metrics in the proxy dashboard:
 ```bash
 # Start proxy with UI
-litellm --config config.yaml --port 4000 --detailed_debug
+lumina --config config.yaml --port 4000 --detailed_debug
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK Monitoring">
+<TabItem value="sdk" label="Lumina SDK Monitoring">
 
 Set up observability directly in your SDK integration:
 
 ```python
-import litellm
+import lumina
 import os
 
 # Configure observability callbacks
@@ -596,16 +596,16 @@ os.environ["LANGFUSE_PUBLIC_KEY"] = "your-key"
 os.environ["LANGFUSE_SECRET_KEY"] = "your-secret"
 
 # Set global callbacks
-litellm.success_callback = ["langfuse"]
-litellm.failure_callback = ["langfuse"]
+lumina.success_callback = ["langfuse"]
+lumina.failure_callback = ["langfuse"]
 
 # Optional: Set up custom logging
-litellm.set_verbose = True
+lumina.set_verbose = True
 
 # Create custom completion wrapper with logging
 def logged_completion(messages, model="{{openai_large}}", **kwargs):
     try:
-        response = litellm.completion(
+        response = lumina.completion(
             model=model,
             messages=messages,
             **kwargs
@@ -618,7 +618,7 @@ def logged_completion(messages, model="{{openai_large}}", **kwargs):
         raise
 
 # Use in Letta configuration
-litellm.completion = logged_completion
+lumina.completion = logged_completion
 ```
 
 </TabItem>
@@ -627,7 +627,7 @@ litellm.completion = logged_completion
 ## Example: Multi-Agent System
 
 <Tabs>
-<TabItem value="proxy" label="Using LiteLLM Proxy">
+<TabItem value="proxy" label="Using Lumina Proxy">
 
 ```python
 import letta
@@ -684,12 +684,12 @@ print(article)
 ```
 
 </TabItem>
-<TabItem value="sdk" label="Using LiteLLM SDK">
+<TabItem value="sdk" label="Using Lumina SDK">
 
 ```python
 import letta
 from letta import create_client, LLMConfig
-import litellm
+import lumina
 import os
 
 # Set up environment
@@ -768,7 +768,7 @@ print(article)
 ## Best Practices
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy Best Practices">
+<TabItem value="proxy" label="Lumina Proxy Best Practices">
 
 1. **Model Selection**: Use appropriate models for different tasks:
    - Claude for analysis and reasoning
@@ -790,7 +790,7 @@ print(article)
 5. **Monitoring**: Enable observability to track agent performance and token usage
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK Best Practices">
+<TabItem value="sdk" label="Lumina SDK Best Practices">
 
 1. **Model Selection**: Choose models based on task requirements:
    - Use `openai/{{openai_large}}` for complex reasoning
@@ -799,12 +799,12 @@ print(article)
 
 2. **Error Handling**: Implement robust error handling with retries:
    ```python
-   import litellm
-   from litellm import completion
+   import lumina
+   from lumina import completion
    
    # Set up retry logic
-   litellm.num_retries = 3
-   litellm.request_timeout = 60
+   lumina.num_retries = 3
+   lumina.request_timeout = 60
    
    # Custom error handling
    def safe_completion(**kwargs):
@@ -837,11 +837,11 @@ print(article)
 ## Troubleshooting
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy Issues">
+<TabItem value="proxy" label="Lumina Proxy Issues">
 
 ### Connection Issues
 ```bash
-# Test your LiteLLM proxy
+# Test your Lumina proxy
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
@@ -868,38 +868,38 @@ print(client.get_default_llm_config())
 - **Rate limiting**: Monitor proxy logs for rate limit hits
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK Issues">
+<TabItem value="sdk" label="Lumina SDK Issues">
 
 ### API Key Issues
 ```python
 import os
-import litellm
+import lumina
 
 # Check if API keys are set
 print("OpenAI Key:", os.environ.get("OPENAI_API_KEY", "Not set"))
 print("Anthropic Key:", os.environ.get("ANTHROPIC_API_KEY", "Not set"))
 
-# Test direct LiteLLM call
+# Test direct Lumina call
 try:
-    response = litellm.completion(
+    response = lumina.completion(
         model="openai/{{openai_small}}",
         messages=[{"role": "user", "content": "Hello"}]
     )
-    print("LiteLLM working:", response.choices[0].message.content)
+    print("Lumina working:", response.choices[0].message.content)
 except Exception as e:
-    print("LiteLLM error:", e)
+    print("Lumina error:", e)
 ```
 
 ### Configuration Debugging
 ```python
 # Enable verbose logging
-litellm.set_verbose = True
+lumina.set_verbose = True
 
 # Test model availability
 models = ["openai/{{openai_large}}", "anthropic/{{anthropic}}"]
 for model in models:
     try:
-        response = litellm.completion(
+        response = lumina.completion(
             model=model,
             messages=[{"role": "user", "content": "Test"}],
             max_tokens=10
@@ -910,7 +910,7 @@ for model in models:
 ```
 
 ### Common SDK Issues
-- **Import errors**: Ensure `uv add litellm letta` is run
+- **Import errors**: Ensure `uv add lumina letta` is run
 - **Model format**: Use `provider/model` format (e.g., `openai/{{openai_large}}`)
 - **API key format**: Different providers have different key formats
 - **Rate limits**: Implement exponential backoff for retries
@@ -921,8 +921,8 @@ for model in models:
 ## Resources
 
 - [Letta Documentation](https://docs.letta.com/)
-- [LiteLLM Proxy Documentation](/docs/simple_proxy)
-- [LiteLLM SDK Documentation](/docs/#litellm-python-sdk)
+- [Lumina Proxy Documentation](/docs/simple_proxy)
+- [Lumina SDK Documentation](/docs/#lumina-python-sdk)
 - [Function Calling Guide](/docs/completion/function_call)
 - [Observability Setup](/docs/integrations/observability_integrations)
 - [Router Configuration](/docs/routing)

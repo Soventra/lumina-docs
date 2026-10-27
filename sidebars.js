@@ -22,7 +22,7 @@ const sidebars = {
       link: {
         type: "generated-index",
         title: "AI Tools",
-        description: "Integrate LiteLLM with AI tools like OpenWebUI, Claude Code, and more",
+        description: "Integrate Lumina with AI tools like OpenWebUI, Claude Code, and more",
         slug: "/ai_tools"
       },
       items: [
@@ -95,13 +95,13 @@ const sidebars = {
         },
         {
           type: "ref",
-          id: "tutorials/litellm_gemini_cli",
+          id: "tutorials/lumina_gemini_cli",
           className: "sidebar-xlink",
           customProps: { icon: "/img/integrations/google.png" },
         },
         {
           type: "ref",
-          id: "tutorials/litellm_qwen_code_cli",
+          id: "tutorials/lumina_qwen_code_cli",
           className: "sidebar-xlink",
           customProps: { icon: "/img/integrations/qwen.png" },
         },
@@ -113,9 +113,9 @@ const sidebars = {
         {
           type: "doc",
           id: "tutorials/cost_tracking_coding",
-          customProps: { icon: "/img/integrations/litellm.png" },
+          customProps: { icon: "/img/integrations/lumina.png" },
         },
-        { type: "doc", id: "tutorials/claude_code_skills", label: "Manage LiteLLM with AI Agents", customProps: { icon: "/img/integrations/litellm.png" } },
+        { type: "doc", id: "tutorials/claude_code_skills", label: "Manage Lumina with AI Agents", customProps: { icon: "/img/integrations/lumina.png" } },
       ]
     },
     {
@@ -124,7 +124,7 @@ const sidebars = {
       link: {
         type: "generated-index",
         title: "Agent SDKs",
-        description: "Use LiteLLM with agent frameworks and SDKs",
+        description: "Use Lumina with agent frameworks and SDKs",
         slug: "/agent_sdks"
       },
       items: [
@@ -135,11 +135,11 @@ const sidebars = {
         { type: "doc", id: "tutorials/google_genai_sdk", customProps: { icon: "/img/integrations/google.png" } },
         { type: "doc", id: "tutorials/livekit_xai_realtime", customProps: { icon: "/img/integrations/livekit.png" } },
         { type: "doc", id: "integrations/letta", customProps: { icon: "/img/integrations/letta.png" } },
-        { type: "doc", id: "tutorials/scalekit_agentkit", label: "Scalekit with LiteLLM", customProps: { icon: "/img/integrations/scalekit.png" } },
-        { type: "doc", id: "langchain/langchain", label: "LangChain with LiteLLM", customProps: { icon: "/img/integrations/langchain.png" } },
+        { type: "doc", id: "tutorials/scalekit_agentkit", label: "Scalekit with Lumina", customProps: { icon: "/img/integrations/scalekit.png" } },
+        { type: "doc", id: "langchain/langchain", label: "LangChain with Lumina", customProps: { icon: "/img/integrations/langchain.png" } },
         { type: "ref", id: "projects/openai-agents", customProps: { icon: "/img/integrations/openai.png" } },
-        { type: "doc", id: "tutorials/instructor", label: "Instructor with LiteLLM" },
-        { type: "link", label: "Agent Harnesses (litellm.agent)", href: "/docs/harness", className: "sidebar-xlink" },
+        { type: "doc", id: "tutorials/instructor", label: "Instructor with Lumina" },
+        { type: "link", label: "Agent Harnesses (lumina.agent)", href: "/docs/harness", className: "sidebar-xlink" },
       ]
     },
     {
@@ -265,7 +265,7 @@ const sidebars = {
           { type: "doc", id: "proxy/guardrails/azure_content_guardrail", customProps: { icon: "/img/integrations/azure.png" } },
           { type: "doc", id: "proxy/guardrails/bedrock", customProps: { icon: "/img/integrations/aws.png" } },
           { type: "doc", id: "proxy/guardrails/compresr", customProps: { icon: "/img/integrations/compresr.png" } },
-          { type: "doc", id: "proxy/guardrails/decision_model", customProps: { icon: "/img/integrations/litellm.png" } },
+          { type: "doc", id: "proxy/guardrails/decision_model", customProps: { icon: "/img/integrations/lumina.png" } },
           "proxy/guardrails/typesafe",
           { type: "doc", id: "proxy/guardrails/crowdstrike_aidr", customProps: { icon: "/img/integrations/crowdstrike.png" } },
           { type: "doc", id: "proxy/guardrails/enkryptai", customProps: { icon: "/img/integrations/enkrypt.png" } },
@@ -275,7 +275,7 @@ const sidebars = {
           { type: "doc", id: "proxy/guardrails/lasso_security", customProps: { icon: "/img/integrations/lasso.png" } },
           { type: "doc", id: "proxy/guardrails/guardrails_ai", customProps: { icon: "/img/integrations/guardrails-ai.png" } },
           { type: "doc", id: "proxy/guardrails/lakera_ai", customProps: { icon: "/img/integrations/lakera.png" } },
-          { type: "doc", id: "proxy/guardrails/llm_as_a_judge", customProps: { icon: "/img/integrations/litellm.png" } },
+          { type: "doc", id: "proxy/guardrails/llm_as_a_judge", customProps: { icon: "/img/integrations/lumina.png" } },
           { type: "doc", id: "proxy/guardrails/microsoft_agent_365", customProps: { icon: "/img/integrations/microsoft.png" } },
           { type: "doc", id: "proxy/guardrails/microsoft_purview", customProps: { icon: "/img/integrations/microsoft.png" } },
           { type: "doc", id: "proxy/guardrails/model_armor", customProps: { icon: "/img/integrations/google.png" } },
@@ -288,12 +288,12 @@ const sidebars = {
           { type: "doc", id: "proxy/guardrails/promptguard", customProps: { icon: "/img/integrations/prompt-security.png" } },
           { type: "doc", id: "proxy/guardrails/pii_masking_v2", customProps: { icon: "/img/integrations/microsoft.png" } },
           { type: "doc", id: "proxy/guardrails/panw_prisma_airs", customProps: { icon: "/img/integrations/panw.png" } },
-          { type: "doc", id: "proxy/guardrails/secret_detection", customProps: { icon: "/img/integrations/litellm.png" } },
-          { type: "doc", id: "proxy/guardrails/sensitive_data_routing", customProps: { icon: "/img/integrations/litellm.png" } },
-          { type: "doc", id: "proxy/guardrails/custom_guardrail", customProps: { icon: "/img/integrations/litellm.png" } },
-          { type: "doc", id: "proxy/guardrails/custom_code_guardrail", customProps: { icon: "/img/integrations/litellm.png" } },
-          { type: "doc", id: "proxy/guardrails/prompt_injection", customProps: { icon: "/img/integrations/litellm.png" } },
-          { type: "doc", id: "proxy/guardrails/tool_permission", customProps: { icon: "/img/integrations/litellm.png" } },
+          { type: "doc", id: "proxy/guardrails/secret_detection", customProps: { icon: "/img/integrations/lumina.png" } },
+          { type: "doc", id: "proxy/guardrails/sensitive_data_routing", customProps: { icon: "/img/integrations/lumina.png" } },
+          { type: "doc", id: "proxy/guardrails/custom_guardrail", customProps: { icon: "/img/integrations/lumina.png" } },
+          { type: "doc", id: "proxy/guardrails/custom_code_guardrail", customProps: { icon: "/img/integrations/lumina.png" } },
+          { type: "doc", id: "proxy/guardrails/prompt_injection", customProps: { icon: "/img/integrations/lumina.png" } },
+          { type: "doc", id: "proxy/guardrails/tool_permission", customProps: { icon: "/img/integrations/lumina.png" } },
           { type: "doc", id: "proxy/guardrails/rubrik", customProps: { icon: "/img/integrations/rubrik.png" } },
           { type: "doc", id: "proxy/guardrails/zscaler_ai_guard", customProps: { icon: "/img/integrations/zscaler.png" } },
           { type: "doc", id: "proxy/guardrails/javelin", customProps: { icon: "/img/integrations/javelin.png" } },
@@ -322,9 +322,9 @@ const sidebars = {
       type: "category",
       label: "Prompt Management (Beta)",
       items: [
-        "proxy/litellm_prompt_management",
+        "proxy/lumina_prompt_management",
         "proxy/custom_prompt_management",
-        "proxy/native_litellm_prompt",
+        "proxy/native_lumina_prompt",
         "proxy/prompt_management",
         "proxy/arize_phoenix_prompts"
       ]
@@ -380,7 +380,7 @@ const sidebars = {
     // Add new pages inside one of these groups, or in the groups after them.
     // ════════════════════════════════════════════════════════════
     { type: "html", value: "Products", className: "sidebar-caption", defaultStyle: true },
-    // LiteLLM Gateway: the gateway overview heads the four parts of the
+    // Lumina Gateway: the gateway overview heads the four parts of the
     // gateway, which sit on a rail ("sidebar-rail") below it.
     { type: "doc", id: "gateway_overview", className: "top-level-doc-item" },
     {
@@ -533,7 +533,7 @@ const sidebars = {
             {
               type: "category",
               label: "Gemini CLI",
-              items: [{ type: "doc", id: "tutorials/litellm_gemini_cli", label: "Setup" }],
+              items: [{ type: "doc", id: "tutorials/lumina_gemini_cli", label: "Setup" }],
             },
             {
               type: "category",
@@ -553,7 +553,7 @@ const sidebars = {
             {
               type: "category",
               label: "Qwen Code",
-              items: [{ type: "doc", id: "tutorials/litellm_qwen_code_cli", label: "Setup" }],
+              items: [{ type: "doc", id: "tutorials/lumina_qwen_code_cli", label: "Setup" }],
             },
             {
               type: "category",
@@ -593,7 +593,7 @@ const sidebars = {
                 { type: "doc", id: "proxy/admin_ui_sso", className: "sidebar-enterprise" },
                 { type: "doc", id: "proxy/saml_sso", className: "sidebar-enterprise" },
                 { type: "doc", id: "proxy/custom_sso", className: "sidebar-enterprise" },
-                { type: "doc", id: "tutorials/scim_litellm", className: "sidebar-enterprise" },
+                { type: "doc", id: "tutorials/scim_lumina", className: "sidebar-enterprise" },
                 "proxy/cli_sso",
               ],
             },
@@ -712,7 +712,7 @@ const sidebars = {
             "proxy/guardrails/team_based_guardrails",
             "proxy/guardrails/guardrail_load_balancing",
             "proxy/guardrails/test_playground",
-            "proxy/guardrails/litellm_content_filter",
+            "proxy/guardrails/lumina_content_filter",
             "proxy/guardrails/realtime_guardrails",
             "proxy/guardrails/batch_guardrails",
             {
@@ -848,7 +848,7 @@ const sidebars = {
         {
           type: "link",
           label: "All Endpoints (Swagger)",
-          href: "https://docs.litellm.ai/api-reference/",
+          href: "https://docs.lumina.ai/api-reference/",
         },
         {
           type: "category",
@@ -860,7 +860,7 @@ const sidebars = {
     {
       type: "category",
       label: "MCP Gateway",
-      // Part of the LiteLLM Gateway: the rail ties it to the LiteLLM Gateway item above
+      // Part of the Lumina Gateway: the rail ties it to the Lumina Gateway item above
       className: "sidebar-rail",
       link: { type: "doc", id: "mcp" },
       items: [
@@ -926,7 +926,7 @@ const sidebars = {
     {
       type: "category",
       label: "Agent Gateway",
-      // Part of the LiteLLM Gateway: the rail ties it to the LiteLLM Gateway item above
+      // Part of the Lumina Gateway: the rail ties it to the Lumina Gateway item above
       className: "sidebar-rail",
       link: { type: "doc", id: "a2a" },
       items: [
@@ -946,7 +946,7 @@ const sidebars = {
     {
       type: "category",
       label: "Auto Router",
-      // Part of the LiteLLM Gateway: the rail ties it to the LiteLLM Gateway item above
+      // Part of the Lumina Gateway: the rail ties it to the Lumina Gateway item above
       className: "sidebar-rail",
       link: { type: "doc", id: "auto_router/index" },
       items: [
@@ -975,7 +975,7 @@ const sidebars = {
       link: { type: "doc", id: "python_sdk" },
       items: [
         { type: "doc", id: "learn/sdk_quickstart", label: "Quickstart" },
-        { type: "doc", id: "litellm_core", label: "LiteLLM Core" },
+        { type: "doc", id: "lumina_core", label: "Lumina Core" },
         {
           type: "category",
           label: "SDK Functions",
@@ -1033,8 +1033,8 @@ const sidebars = {
             },
           ],
         },
-        // litellm.agent(): agent harnesses (Claude Code, Codex, OpenCode, Deep Agents, Tool Loop).
-        // Styled by the "litellm.harness docs" block in src/css/custom.css.
+        // lumina.agent(): agent harnesses (Claude Code, Codex, OpenCode, Deep Agents, Tool Loop).
+        // Styled by the "lumina.harness docs" block in src/css/custom.css.
         {
           type: "category",
           label: "Agent Harnesses",
@@ -1236,7 +1236,7 @@ const sidebars = {
       link: {
         type: "generated-index",
         title: "Self-Hosted Coding Agents",
-        description: "Run coding agents on your own infrastructure, with LiteLLM as the model gateway",
+        description: "Run coding agents on your own infrastructure, with Lumina as the model gateway",
         slug: "/self_hosted_coding_agents"
       },
       items: [
@@ -1259,7 +1259,7 @@ const sidebars = {
         type: "generated-index",
         title: "Supported Endpoints",
         description:
-          "Learn how to deploy + call models from different providers on LiteLLM",
+          "Learn how to deploy + call models from different providers on Lumina",
         slug: "/supported_endpoints",
       },
       items: [
@@ -1301,7 +1301,7 @@ const sidebars = {
           label: "/files",
           items: [
             "files_endpoints",
-            "proxy/litellm_managed_files",
+            "proxy/lumina_managed_files",
           ],
         },
         {
@@ -1441,11 +1441,11 @@ const sidebars = {
         type: "generated-index",
         title: "Providers",
         description:
-          "Learn how to deploy + call models from different providers on LiteLLM",
+          "Learn how to deploy + call models from different providers on Lumina",
         slug: "/providers",
       },
       items: [
-        { type: "link", label: "Models & Pricing", href: "https://models.litellm.ai" },
+        { type: "link", label: "Models & Pricing", href: "https://models.lumina.ai" },
         "guides/finetuned_models",
         { type: "category", label: "Popular", items: [
           { type: "category", label: "OpenAI", items: [
@@ -1551,7 +1551,7 @@ const sidebars = {
         ] },
         { type: "category", label: "Gateways & OpenAI-Compatible", items: [
           "providers/openai_compatible",
-          "providers/litellm_proxy",
+          "providers/lumina_proxy",
           "providers/openrouter",
           "providers/opencode_go",
           "providers/vercel_ai_gateway",
@@ -1736,12 +1736,12 @@ const sidebars = {
         "load_test_rpm",
         {
           type: "category",
-          label: "Projects built on LiteLLM",
+          label: "Projects built on Lumina",
           link: {
             type: "generated-index",
-            title: "Projects built on LiteLLM",
+            title: "Projects built on Lumina",
             description:
-              "Learn how to deploy + call models from different providers on LiteLLM",
+              "Learn how to deploy + call models from different providers on Lumina",
             slug: "/project",
           },
           items: [
@@ -1826,12 +1826,12 @@ const enterpriseSidebar = {
     { type: "doc", id: "data_security", label: "Data privacy and security" },
     { type: "doc", id: "shared_responsibility", label: "Shared responsibility" },
     { type: "doc", id: "proxy/security_encryption_faq", label: "Security and encryption FAQ" },
-    { type: "link", label: "Trust Center", href: "https://trust.litellm.ai/" },
+    { type: "link", label: "Trust Center", href: "https://trust.lumina.ai/" },
     { type: "html", value: "Support", className: "sidebar-group-label", defaultStyle: true },
     { type: "doc", id: "enterprise/support", label: "Support and SLA" },
     { type: "doc", id: "enterprise/version_support", label: "Version support" },
     { type: "link", label: "Release notes", href: "/release_notes", className: "sidebar-xlink" },
-    { type: "link", label: "Book a demo", href: "https://enterprise.litellm.ai/demo" },
+    { type: "link", label: "Book a demo", href: "https://enterprise.lumina.ai/demo" },
   ],
 };
 
@@ -1856,7 +1856,7 @@ const learnSidebar = {
         "tutorials/provider_specific_params",
         "tutorials/gradio_integration",
         "tutorials/azure_openai",
-        "tutorials/TogetherAI_liteLLM",
+        "tutorials/TogetherAI_Lumina",
         "tutorials/huggingface_tutorial",
         "tutorials/huggingface_codellama",
         "tutorials/finetuned_chat_gpt",
@@ -1888,14 +1888,14 @@ const learnSidebar = {
       label: "Control content",
       link: { type: "generated-index", title: "Control content", description: "Add guardrails that examine requests and mask personal data before the model receives it.", slug: "/learn/add-safety" },
       items: [
-        "tutorials/litellm_proxy_aporia",
+        "tutorials/lumina_proxy_aporia",
         "tutorials/presidio_pii_masking",
       ],
     },
     {
       type: "category",
       label: "Connect tools and agents",
-      link: { type: "generated-index", title: "Connect tools and agents", description: "Use LiteLLM with agent frameworks, coding tools, files, and vector stores.", slug: "/learn/agents-and-tools" },
+      link: { type: "generated-index", title: "Connect tools and agents", description: "Use Lumina with agent frameworks, coding tools, files, and vector stores.", slug: "/learn/agents-and-tools" },
       items: [
         "tutorials/file_search_responses_api",
         "tutorials/mongodb_vector_search",
@@ -1910,7 +1910,7 @@ const learnSidebar = {
       items: [
         "tutorials/elasticsearch_logging",
         "tutorials/compare_llms",
-        "tutorials/litellm_Test_Multiple_Providers",
+        "tutorials/lumina_Test_Multiple_Providers",
         "tutorials/eval_suites",
         "tutorials/lm_evaluation_harness",
       ],

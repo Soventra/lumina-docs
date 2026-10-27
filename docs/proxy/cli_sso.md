@@ -1,6 +1,6 @@
 # CLI Authentication
 
-Use the litellm cli to authenticate to the LiteLLM Gateway. This is great if you're trying to give a large number of developers self-serve access to the LiteLLM Gateway.
+Use the lumina cli to authenticate to the Lumina Gateway. This is great if you're trying to give a large number of developers self-serve access to the Lumina Gateway.
 
 
 ## Demo
@@ -9,21 +9,21 @@ Use the litellm cli to authenticate to the LiteLLM Gateway. This is great if you
 
 ## Usage 
 
-### Prerequisites - Start LiteLLM Proxy with Beta Flag
+### Prerequisites - Start Lumina Proxy with Beta Flag
 
 :::warning[Beta Feature - Required]
 
-CLI SSO Authentication is currently in beta. You must set this environment variable **when starting up your LiteLLM Proxy**:
+CLI SSO Authentication is currently in beta. You must set this environment variable **when starting up your Lumina Proxy**:
 
 ```bash
 export EXPERIMENTAL_UI_LOGIN="True"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 Or add it to your proxy startup command:
 
 ```bash
-EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
+EXPERIMENTAL_UI_LOGIN="True" lumina --config config.yaml
 ```
 
 :::
@@ -32,19 +32,19 @@ EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
 
 #### JWT Token Expiration
 
-By default, CLI authentication tokens expire after **24 hours**. You can customize this expiration time by setting the `LUMINA_CLI_JWT_EXPIRATION_HOURS` environment variable when starting your LiteLLM Proxy:
+By default, CLI authentication tokens expire after **24 hours**. You can customize this expiration time by setting the `LUMINA_CLI_JWT_EXPIRATION_HOURS` environment variable when starting your Lumina Proxy:
 
 ```bash
 # Set CLI JWT tokens to expire after 48 hours
 export LUMINA_CLI_JWT_EXPIRATION_HOURS=48
 export EXPERIMENTAL_UI_LOGIN="True"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 Or in a single command:
 
 ```bash
-LUMINA_CLI_JWT_EXPIRATION_HOURS=48 EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
+LUMINA_CLI_JWT_EXPIRATION_HOURS=48 EXPERIMENTAL_UI_LOGIN="True" lumina --config config.yaml
 ```
 
 **Examples:**
@@ -78,7 +78,7 @@ If that browser is already signed in to your SSO provider and you would rather s
 
 #### Attribution metadata (OIDC claims)
 
-Map allowlisted OIDC claims into the LiteLLM user's `metadata` and return them to the CLI in `/sso/cli/poll` as `attribution_metadata`. Use this for stable attribution fields (for example employment type or cost center) without parsing large group lists in the client.
+Map allowlisted OIDC claims into the Lumina user's `metadata` and return them to the CLI in `/sso/cli/poll` as `attribution_metadata`. Use this for stable attribution fields (for example employment type or cost center) without parsing large group lists in the client.
 
 Set on the **proxy** before startup:
 
@@ -92,7 +92,7 @@ export GENERIC_USER_EXTRA_ATTRIBUTES="employment_type,org_info.department"
 | Part | Meaning |
 |------|---------|
 | `source_claim` | OIDC claim path (dot notation), including fields from `GENERIC_USER_EXTRA_ATTRIBUTES` |
-| `metadata_key` | Key under LiteLLM user `metadata` (supports nested keys via dots) |
+| `metadata_key` | Key under Lumina user `metadata` (supports nested keys via dots) |
 
 Only non-secret scalar values (`string`, `int`, `float`, `bool`) are persisted and returned. Lists, objects, and destination keys containing fragments like `token` or `secret` are dropped.
 
@@ -110,25 +110,25 @@ Example poll response (after SSO completes):
 }
 ```
 
-**Local testing without a real IdP:** run `python scripts/mock_oidc_server_for_cli_sso.py` from the LiteLLM repo, point Generic SSO env vars at `http://127.0.0.1:8765`, then run `python scripts/test_cli_sso_claims_e2e.py`.
+**Local testing without a real IdP:** run `python scripts/mock_oidc_server_for_cli_sso.py` from the Lumina repo, point Generic SSO env vars at `http://127.0.0.1:8765`, then run `python scripts/test_cli_sso_claims_e2e.py`.
 
 ### Steps
 
 1. **Install the CLI**
 
-   The `lite` client is a thin laptop install: it points at a LiteLLM proxy and runs your coding agents through it, with none of the proxy server runtime pulled in. The one-line installer needs only `curl`; it bootstraps [uv](https://github.com/astral-sh/uv) when it's missing and lets uv provision a compatible Python for you:
+   The `lite` client is a thin laptop install: it points at a Lumina proxy and runs your coding agents through it, with none of the proxy server runtime pulled in. The one-line installer needs only `curl`; it bootstraps [uv](https://github.com/astral-sh/uv) when it's missing and lets uv provision a compatible Python for you:
 
    ```shell
-   curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/install-cli.sh | sh
+   curl -fsSL https://raw.githubusercontent.com/Soventra/lumina/main/scripts/install-cli.sh | sh
    ```
 
    Already have uv and prefer to drive it yourself? Install the package directly:
 
    ```shell
-   uv tool install 'litellm[cli]'
+   uv tool install 'lumina[cli]'
    ```
 
-   Any of these gives you the `lite` command. A proxy server installed from `litellm[proxy]` ships it too, but that extra leaves out `keyring`, so its credential stays in a file instead of your OS keychain. Start by typing it in your terminal:
+   Any of these gives you the `lite` command. A proxy server installed from `lumina[proxy]` ships it too, but that extra leaves out `keyring`, so its credential stays in a file instead of your OS keychain. Start by typing it in your terminal:
 
    ```shell
    lite
@@ -150,11 +150,11 @@ Example poll response (after SSO completes):
    lite login
    ```
 
-   This will open a browser window to authenticate. If you have connected LiteLLM Proxy to your SSO provider, you should be able to login with your SSO credentials. Once logged in, you can use the CLI to make requests to the LiteLLM Gateway.
+   This will open a browser window to authenticate. If you have connected Lumina Proxy to your SSO provider, you should be able to login with your SSO credentials. Once logged in, you can use the CLI to make requests to the Lumina Gateway.
 
    The browser page asks for the verification code the terminal printed. To skip typing it, either have the proxy [pre-fill the verification code](#pre-fill-the-verification-code) or, when the browser already holds your SSO session, use [`lite login --pkce`](#browser-sign-in-with-pkce), which needs no code at all
 
-   The credential goes into your OS keychain, and `lite login` prints where it landed. On a machine with no keychain it falls back to `~/.litellm/token.json` with owner-only permissions. See [the `lite login` credential](./management_cli.md#the-lite-login-credential) for the details and for how to turn keychain storage off
+   The credential goes into your OS keychain, and `lite login` prints where it landed. On a machine with no keychain it falls back to `~/.lumina/token.json` with owner-only permissions. See [the `lite login` credential](./management_cli.md#the-lite-login-credential) for the details and for how to turn keychain storage off
 
 4. **Make a test request to view models**
 
@@ -169,12 +169,12 @@ Example poll response (after SSO completes):
 `lite login --pkce` signs you in through your system browser with OAuth 2.0 authorization code and PKCE (S256). The CLI acts as a public client: it registers itself with the proxy, listens on a loopback port that the OS assigns, and never holds a client secret. The proxy sign-in page and your SSO provider do the authentication, and the CLI only ever sees the resulting credential
 
 ```shell
-export LUMINA_PROXY_URL=https://litellm.example.com
+export LUMINA_PROXY_URL=https://lumina.example.com
 lite login --pkce
 ```
 
 ```text
-Opening browser to: https://litellm.example.com/authorize?response_type=code&client_id=llm_dcrc_...&redirect_uri=http%3A%2F%2F127.0.0.1%3A57485%2Fcallback&state=...&code_challenge=...&code_challenge_method=S256&resource=https%3A%2F%2Flitellm.example.com
+Opening browser to: https://lumina.example.com/authorize?response_type=code&client_id=llm_dcrc_...&redirect_uri=http%3A%2F%2F127.0.0.1%3A57485%2Fcallback&state=...&code_challenge=...&code_challenge_method=S256&resource=https%3A%2F%2Flumina.example.com
 Approve the sign-in in your browser. Waiting...
 
 Login successful!
@@ -183,13 +183,13 @@ Credential stored in your OS keychain.
 You can now use the CLI without specifying --api-key
 ```
 
-In the browser, the proxy sign-in page opens first if you have no session (SSO if the proxy is connected to your identity provider, otherwise username and password). After sign-in, the browser comes back to a consent page. The page names the CLI's loopback address, for example `http://127.0.0.1:57485`, shows the user you are signed in as, and lets you pick the team that requests are attributed to. Users who belong to teams must pick one, the same rule as `lite login`. Click Approve. The browser shows "Signed in to LiteLLM. You can close this window and return to the terminal." and the terminal prints `Login successful!`
+In the browser, the proxy sign-in page opens first if you have no session (SSO if the proxy is connected to your identity provider, otherwise username and password). After sign-in, the browser comes back to a consent page. The page names the CLI's loopback address, for example `http://127.0.0.1:57485`, shows the user you are signed in as, and lets you pick the team that requests are attributed to. Users who belong to teams must pick one, the same rule as `lite login`. Click Approve. The browser shows "Signed in to Lumina. You can close this window and return to the terminal." and the terminal prints `Login successful!`
 
-The classic `lite login` flow and virtual API keys keep working unchanged. `--pkce` needs a proxy that serves `/.well-known/litellm-cli-auth`; on an older proxy the command stops with a message that says so
+The classic `lite login` flow and virtual API keys keep working unchanged. `--pkce` needs a proxy that serves `/.well-known/lumina-cli-auth`; on an older proxy the command stops with a message that says so
 
 ### The stored credential
 
-The key and the refresh token both go to your OS keychain, the same place `lite login` puts the key, and the rest of the record goes to `~/.litellm/token.json` (mode `0600`). Next to the `base_url`, `user_id`, and `user_role` fields that `lite login` writes, a `--pkce` record also holds `expires_at`, `client_id`, `token_endpoint`, `revocation_endpoint`, `resource`, and `team_id`, none of which gets anyone a key on its own. On a machine with no usable keychain the key and the refresh token fall back into that same file and `lite login` says so; treat `~/.litellm/token.json` as sensitive whenever it does, because anyone who can read it can exchange the refresh token for a working key. A `--pkce` login made with an earlier `lite` leaves its refresh token in the file until the next `lite` command reads it and moves it into the keychain
+The key and the refresh token both go to your OS keychain, the same place `lite login` puts the key, and the rest of the record goes to `~/.lumina/token.json` (mode `0600`). Next to the `base_url`, `user_id`, and `user_role` fields that `lite login` writes, a `--pkce` record also holds `expires_at`, `client_id`, `token_endpoint`, `revocation_endpoint`, `resource`, and `team_id`, none of which gets anyone a key on its own. On a machine with no usable keychain the key and the refresh token fall back into that same file and `lite login` says so; treat `~/.lumina/token.json` as sensitive whenever it does, because anyone who can read it can exchange the refresh token for a working key. A `--pkce` login made with an earlier `lite` leaves its refresh token in the file until the next `lite` command reads it and moves it into the keychain
 
 The key expires after `LUMINA_CLI_JWT_EXPIRATION_HOURS` (24 hours by default, see [JWT Token Expiration](#jwt-token-expiration)). You do not need to log in again when it does: the next `lite` command that needs the key renews it with the refresh token and saves the new pair. Each renewal rotates the refresh token, and a refresh token that was already used is refused
 
@@ -202,9 +202,9 @@ Claude Code can run it as its [`apiKeyHelper`](https://code.claude.com/docs/en/s
 ```json title="~/.claude/settings.json"
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "https://litellm.example.com"
+    "ANTHROPIC_BASE_URL": "https://lumina.example.com"
   },
-  "apiKeyHelper": "/absolute/path/to/lite --base-url https://litellm.example.com auth print-token"
+  "apiKeyHelper": "/absolute/path/to/lite --base-url https://lumina.example.com auth print-token"
 }
 ```
 
@@ -218,11 +218,11 @@ LUMINA_PROXY_KEY=$(lite auth print-token) opencode
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "litellm": {
+    "lumina": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "LiteLLM proxy",
+      "name": "Lumina proxy",
       "options": {
-        "baseURL": "https://litellm.example.com/v1",
+        "baseURL": "https://lumina.example.com/v1",
         "apiKey": "{env:LUMINA_PROXY_KEY}"
       },
       "models": {
@@ -230,7 +230,7 @@ LUMINA_PROXY_KEY=$(lite auth print-token) opencode
       }
     }
   },
-  "model": "litellm/{{openai_small}}"
+  "model": "lumina/{{openai_small}}"
 }
 ```
 
@@ -242,7 +242,7 @@ Requests made with the key are attributed to your user and the team you picked, 
 lite logout
 ```
 
-`lite logout` sends the refresh token to the proxy's `POST /revoke` endpoint and then clears both stores, the keychain entry and `~/.litellm/token.json`. The refresh token is dead from that point on. The key itself is not revocable; it expires on its own within `LUMINA_CLI_JWT_EXPIRATION_HOURS`
+`lite logout` sends the refresh token to the proxy's `POST /revoke` endpoint and then clears both stores, the keychain entry and `~/.lumina/token.json`. The refresh token is dead from that point on. The key itself is not revocable; it expires on its own within `LUMINA_CLI_JWT_EXPIRATION_HOURS`
 
 Signing in again, with `lite login --pkce` or the classic `lite login`, does the same to the record it replaces: the new credential is saved first, then the previous login's refresh token is revoked, so an older copy of `token.json` cannot be renewed once you have signed in again. If the proxy cannot be reached for that revocation, the login still succeeds and says so
 
@@ -250,27 +250,27 @@ An admin cannot revoke a `--pkce` login from the dashboard; only the holder's `l
 
 ### Several workers or replicas
 
-Refresh-token single use, replay detection, and `POST /revoke` are enforced through the proxy's Redis cache when one is configured, either `litellm_settings.cache` with Redis `cache_params` or `general_settings.coordination_redis`, and they fail closed while Redis is unreachable: a refresh or a `POST /revoke` that arrives then answers `503 temporarily_unavailable`, the CLI keeps the key it already has and tries again on its next command, and `lite logout` keeps your login record, exits 1, and asks you to run it again shortly, so the refresh token still gets revoked. Without Redis each worker keeps its own record, so on a proxy with more than one worker or replica a revoked or already-used refresh token can still be accepted by a worker that never saw it. Run a single worker or configure Redis
+Refresh-token single use, replay detection, and `POST /revoke` are enforced through the proxy's Redis cache when one is configured, either `lumina_settings.cache` with Redis `cache_params` or `general_settings.coordination_redis`, and they fail closed while Redis is unreachable: a refresh or a `POST /revoke` that arrives then answers `503 temporarily_unavailable`, the CLI keeps the key it already has and tries again on its next command, and `lite logout` keeps your login record, exits 1, and asks you to run it again shortly, so the refresh token still gets revoked. Without Redis each worker keeps its own record, so on a proxy with more than one worker or replica a revoked or already-used refresh token can still be accepted by a worker that never saw it. Run a single worker or configure Redis
 
 ## Native client contract
 
-A CLI written in any language can run the same sign-in from one discovery document, without reading LiteLLM source. A typical case is a Go launcher that signs the user in and then starts OpenCode with the key. The contract is versioned: check `contract_version` before you trust the rest of the document. Adding fields never bumps the version; only a field that changes meaning or goes away does
+A CLI written in any language can run the same sign-in from one discovery document, without reading Lumina source. A typical case is a Go launcher that signs the user in and then starts OpenCode with the key. The contract is versioned: check `contract_version` before you trust the rest of the document. Adding fields never bumps the version; only a field that changes meaning or goes away does
 
 ### Discovery document
 
 ```shell
-curl https://litellm.example.com/.well-known/litellm-cli-auth
+curl https://lumina.example.com/.well-known/lumina-cli-auth
 ```
 
 ```json
 {
   "contract_version": 1,
-  "issuer": "https://litellm.example.com",
-  "authorization_endpoint": "https://litellm.example.com/authorize",
-  "token_endpoint": "https://litellm.example.com/token",
-  "registration_endpoint": "https://litellm.example.com/register",
-  "revocation_endpoint": "https://litellm.example.com/revoke",
-  "resource": "https://litellm.example.com",
+  "issuer": "https://lumina.example.com",
+  "authorization_endpoint": "https://lumina.example.com/authorize",
+  "token_endpoint": "https://lumina.example.com/token",
+  "registration_endpoint": "https://lumina.example.com/register",
+  "revocation_endpoint": "https://lumina.example.com/revoke",
+  "resource": "https://lumina.example.com",
   "response_types_supported": ["code"],
   "grant_types_supported": ["authorization_code", "refresh_token"],
   "code_challenge_methods_supported": ["S256"],
@@ -290,7 +290,7 @@ The URLs are built from the request's base URL. Behind a load balancer or revers
 2. Register a public client. Start a listener on `127.0.0.1` on a port the OS assigns and register that address as the redirect URI. Keep the returned `client_id`; there is no secret
 
    ```shell
-   curl -X POST https://litellm.example.com/register \
+   curl -X POST https://lumina.example.com/register \
      -H 'content-type: application/json' \
      -d '{
        "client_name": "my-cli",
@@ -312,14 +312,14 @@ The URLs are built from the request's base URL. Behind a load balancer or revers
 3. Generate a PKCE code verifier (43 to 128 characters) and its S256 code challenge, plus a random `state`, and open the system browser on the authorization endpoint
 
    ```text
-   https://litellm.example.com/authorize
+   https://lumina.example.com/authorize
      ?response_type=code
      &client_id=llm_dcrc_lq411b6QkPmfxjW...
      &redirect_uri=http://127.0.0.1:53187/callback
      &state=<random>
      &code_challenge=<S256 challenge>
      &code_challenge_method=S256
-     &resource=https://litellm.example.com
+     &resource=https://lumina.example.com
    ```
 
    With no proxy session, the browser is sent to the sign-in page and returns to this URL afterwards. With a session, the consent page renders right away. The user picks a team and clicks Approve
@@ -329,13 +329,13 @@ The URLs are built from the request's base URL. Behind a load balancer or revers
 5. Exchange the code for the credential. The request is form-encoded and there is no client secret; `code_verifier` proves the client is the one that started the flow
 
    ```shell
-   curl -X POST https://litellm.example.com/token \
+   curl -X POST https://lumina.example.com/token \
      -d grant_type=authorization_code \
      -d code=<code> \
      -d redirect_uri=http://127.0.0.1:53187/callback \
      -d client_id=llm_dcrc_lq411b6QkPmfxjW... \
      -d code_verifier=<verifier> \
-     -d resource=https://litellm.example.com
+     -d resource=https://lumina.example.com
    ```
 
    ```json
@@ -354,7 +354,7 @@ The URLs are built from the request's base URL. Behind a load balancer or revers
 6. Use `access_token` as the Bearer token on the proxy's LLM routes: `/v1/chat/completions`, `/v1/responses`, `/v1/messages`, `/v1/models`, and the rest. Spend is attributed to the user and the team from the token response
 
    ```shell
-   curl https://litellm.example.com/v1/chat/completions \
+   curl https://lumina.example.com/v1/chat/completions \
      -H "Authorization: Bearer LneZuxEFqvemEwK6lRzgg6BN..." \
      -H 'content-type: application/json' \
      -d '{"model": "{{openai_small}}", "messages": [{"role": "user", "content": "Say hi in three words."}]}'
@@ -363,30 +363,30 @@ The URLs are built from the request's base URL. Behind a load balancer or revers
 7. Renew the credential before `expires_in` runs out. The response has the same shape as in step 5 and carries a new refresh token. The old refresh token is refused with `400 invalid_grant` if it is used again, so store the new pair before you use the new access token
 
    ```shell
-   curl -X POST https://litellm.example.com/token \
+   curl -X POST https://lumina.example.com/token \
      -d grant_type=refresh_token \
      -d refresh_token=llm_srefresh_eyJhbGciOiJ... \
      -d client_id=llm_dcrc_lq411b6QkPmfxjW... \
-     -d resource=https://litellm.example.com
+     -d resource=https://lumina.example.com
    ```
 
 8. Revoke the refresh token on logout ([RFC 7009](https://www.rfc-editor.org/rfc/rfc7009)), and revoke the refresh token of any credential you replace when the user signs in again. Only refresh tokens are revocable; access tokens expire on their own. The endpoint answers `200` with `{}` even for a token it no longer recognizes, so it is safe to call more than once
 
    ```shell
-   curl -X POST https://litellm.example.com/revoke \
+   curl -X POST https://lumina.example.com/revoke \
      -d token=llm_srefresh_eyJhbGciOiJ... \
      -d client_id=llm_dcrc_lq411b6QkPmfxjW...
    ```
 
 ### Redeem an identity assertion (RFC 7523)
 
-An agent that already holds an ID-JAG (Identity Assertion Authorization Grant, the cross app access profile) from your identity provider can trade it for the same proxy credential without a browser by posting it to `PROXY_BASE_URL/token` with the `jwt-bearer` grant. Setup at the identity provider, the LiteLLM configuration, the request and response, and troubleshooting are on [LiteLLM as resource app](./id_jag/resource_app.md). The rules below are what the gateway enforces on top of that.
+An agent that already holds an ID-JAG (Identity Assertion Authorization Grant, the cross app access profile) from your identity provider can trade it for the same proxy credential without a browser by posting it to `PROXY_BASE_URL/token` with the `jwt-bearer` grant. Setup at the identity provider, the Lumina configuration, the request and response, and troubleshooting are on [Lumina as resource app](./id_jag/resource_app.md). The rules below are what the gateway enforces on top of that.
 
 **Metadata.** The gateway's own document at `PROXY_BASE_URL/.well-known/oauth-authorization-server` (issuer the bare origin, token endpoint `PROXY_BASE_URL/token`) lists the grant in `grant_types_supported` only when the prerequisites on that page are met; the aggregate document at `PROXY_BASE_URL/.well-known/oauth-authorization-server/mcp` lists it too. When exactly one OAuth2 MCP server is configured, the root document is that upstream's and does not list the grant, so use `/.well-known/oauth-authorization-server/mcp` then.
 
-**Audience.** The documented `aud` is the bare origin `PROXY_BASE_URL`, such as `https://litellm.example.com`; the gateway never takes it from the request's `Host`. `https://litellm.example.com/mcp`, the MCP resource identifier, is also accepted, and because it names the MCP resource the credential it mints is ceilinged to the MCP routes: no `scope` or `litellm:mcp` mints an MCP-only credential with `scope` `litellm:mcp` in the response, and `litellm:llm` under that audience is refused with `400 invalid_scope`. Use the bare origin as the audience for LLM routes.
+**Audience.** The documented `aud` is the bare origin `PROXY_BASE_URL`, such as `https://lumina.example.com`; the gateway never takes it from the request's `Host`. `https://lumina.example.com/mcp`, the MCP resource identifier, is also accepted, and because it names the MCP resource the credential it mints is ceilinged to the MCP routes: no `scope` or `lumina:mcp` mints an MCP-only credential with `scope` `lumina:mcp` in the response, and `lumina:llm` under that audience is refused with `400 invalid_scope`. Use the bare origin as the audience for LLM routes.
 
-**Scope.** The assertion's `scope` claim narrows the credential, and the response's `scope` is exactly what is enforced. `litellm:mcp` opens the MCP gateway routes (`/mcp`, its tools and SSE paths, `/token`, `/introspect`) and nothing else, `litellm:llm` opens the LLM API routes (`/chat/completions`, `/v1/messages`, `/responses`, embeddings, the provider pass-through routes, endpoints added under `pass_through_endpoints` and `GET /auto_router/session`, but not `GET /v1/mcp/server`) and nothing else, and both together open both groups. The restriction is the credential's `allowed_routes`, enforced in the proxy's auth on every route the same way a virtual key's is, so a `litellm:mcp` credential gets `403` on `/chat/completions` and a `litellm:llm` one gets `403` on `/mcp`. An assertion without a `scope` claim mints the full credential exactly as `lite login` does. Any other scope value is refused with `400 invalid_scope` and a description naming the two supported values.
+**Scope.** The assertion's `scope` claim narrows the credential, and the response's `scope` is exactly what is enforced. `lumina:mcp` opens the MCP gateway routes (`/mcp`, its tools and SSE paths, `/token`, `/introspect`) and nothing else, `lumina:llm` opens the LLM API routes (`/chat/completions`, `/v1/messages`, `/responses`, embeddings, the provider pass-through routes, endpoints added under `pass_through_endpoints` and `GET /auto_router/session`, but not `GET /v1/mcp/server`) and nothing else, and both together open both groups. The restriction is the credential's `allowed_routes`, enforced in the proxy's auth on every route the same way a virtual key's is, so a `lumina:mcp` credential gets `403` on `/chat/completions` and a `lumina:llm` one gets `403` on `/mcp`. An assertion without a `scope` claim mints the full credential exactly as `lite login` does. Any other scope value is refused with `400 invalid_scope` and a description naming the two supported values.
 
 **Client authentication.** HTTP Basic credentials are form-encoded before base64, as RFC 6749 section 2.3.1 requires, so a space in a `client_id` or secret travels as `+` or `%20`.
 
@@ -401,7 +401,7 @@ The device authorization grant, embedded browsers, and the resource owner passwo
 
 ## Hosted app sign-in
 
-A hosted application can reuse the gateway's configured Google, Okta or other SSO provider through the same authorization-code and S256 PKCE flow. Configure the application with the gateway URL and register its exact HTTPS callback on the gateway. Use a gateway release whose `/.well-known/litellm-cli-auth` discovery document advertises the required hosted scope
+A hosted application can reuse the gateway's configured Google, Okta or other SSO provider through the same authorization-code and S256 PKCE flow. Configure the application with the gateway URL and register its exact HTTPS callback on the gateway. Use a gateway release whose `/.well-known/lumina-cli-auth` discovery document advertises the required hosted scope
 
 | Requested scope | Gateway callback setting | Access |
 | --- | --- | --- |

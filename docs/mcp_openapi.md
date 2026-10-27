@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 # MCP from OpenAPI Specs
 
-LiteLLM can convert any OpenAPI/Swagger spec into an MCP server, with no custom MCP server code required.
+Lumina can convert any OpenAPI/Swagger spec into an MCP server, with no custom MCP server code required.
 
 ## Step 1: Add the MCP Server
 
@@ -30,7 +30,7 @@ mcp_servers:
     auth_value: "your-bearer-token"
 ```
 
-Or from the UI: go to **MCP Servers → Add New MCP Server**, fill in the URL and spec path, and LiteLLM will fetch the spec and load all endpoints as tools.
+Or from the UI: go to **MCP Servers → Add New MCP Server**, fill in the URL and spec path, and Lumina will fetch the spec and load all endpoints as tools.
 
 **Configuration parameters:**
 
@@ -48,17 +48,17 @@ Or from the UI: go to **MCP Servers → Add New MCP Server**, fill in the URL an
 
 ## Internal spec URLs (SSRF)
 
-When `spec_path` is an `http://` or `https://` URL, the LiteLLM proxy fetches it with **SSRF protection** enabled by default: the hostname is resolved and the request is **rejected** if any resolved address is not globally routable (e.g. `10.x`, `192.168.x`, `127.0.0.1`), unless you allowlist the **hostname from the URL** (not the resolved IP).
+When `spec_path` is an `http://` or `https://` URL, the Lumina proxy fetches it with **SSRF protection** enabled by default: the hostname is resolved and the request is **rejected** if any resolved address is not globally routable (e.g. `10.x`, `192.168.x`, `127.0.0.1`), unless you allowlist the **hostname from the URL** (not the resolved IP).
 
 Typical cases:
 
 - Spec URL uses `https://api.example.com/...` but DNS inside your network returns a private IP. Add `api.example.com` to the allowlist (or `api.example.com:443` if you pin the port).
 - Spec URL is `http://127.0.0.1:8080/openapi.json`. Add `127.0.0.1` or `127.0.0.1:8080`.
 
-Configure under **`litellm_settings`** in your proxy `config.yaml` (this is **not** read from `general_settings`):
+Configure under **`lumina_settings`** in your proxy `config.yaml` (this is **not** read from `general_settings`):
 
 ```yaml title="config.yaml" showLineNumbers
-litellm_settings:
+lumina_settings:
   user_url_validation: true # default; set false only if you fully trust URL sources
   user_url_allowed_hosts:
     - "api.example.com"
@@ -66,7 +66,7 @@ litellm_settings:
     - "127.0.0.1:8080"
 ```
 
-For a full reference of these fields, see [config settings: `litellm_settings`](./proxy/config_settings.md#litellm_settings---reference).
+For a full reference of these fields, see [config settings: `lumina_settings`](./proxy/config_settings.md#lumina_settings---reference).
 
 Once tools are loaded, you'll see them in the Tool Configuration section:
 
@@ -143,7 +143,7 @@ curl -X PUT http://localhost:4000/v1/mcp/server \
   }'
 ```
 
-The map key is the **original `operationId`** from the spec, not the prefixed tool name. LiteLLM strips the server prefix before doing the lookup.
+The map key is the **original `operationId`** from the spec, not the prefixed tool name. Lumina strips the server prefix before doing the lookup.
 
 For example, if your server is `petstore_mcp`, the tool is exposed as `petstore_mcp-getPetById`. The map key is still `getPetById`.
 
@@ -179,7 +179,7 @@ config = {
         "petstore": {
             "url": "http://localhost:4000/petstore_mcp/mcp",
             "headers": {
-                "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>"
+                "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>"
             }
         }
     }
@@ -212,7 +212,7 @@ if __name__ == "__main__":
     "Petstore": {
       "url": "http://localhost:4000/petstore_mcp/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>"
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>"
       }
     }
   }
@@ -236,7 +236,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "http://localhost:4000/petstore_mcp/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY"
+                "x-lumina-api-key": "Bearer YOUR_LUMINA_API_KEY"
             }
         }
     ],

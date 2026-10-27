@@ -10,7 +10,7 @@ import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
 import {visit} from 'unist-util-visit';
 
-const REPOSITORY = 'BerriAI/litellm-lens-example';
+const REPOSITORY = 'Soventra/lumina-lens-example';
 const SITE_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const LENS_DIR = path.join(SITE_DIR, 'docs/proxy/lens');
 const parser = unified().use(remarkParse).use(remarkGfm).use(remarkStringify, {fences: true});
@@ -48,7 +48,7 @@ export async function transformReadme(content, page, pages, revision, readFile, 
   visit(tree, (node) => {
     if (!['link', 'image', 'definition'].includes(node.type)) return;
     const url = node.url;
-    const old = 'https://docs.litellm.ai/docs/proxy/lens';
+    const old = 'https://docs.lumina.ai/docs/proxy/lens';
     if (url === old || url.startsWith(old + '#') || url.startsWith(old + '/') || url.startsWith('/docs/proxy/lens')) {
       const tail = url.startsWith(old) ? url.slice(old.length) : url.slice('/docs/proxy/lens'.length);
       if (tail.startsWith('/coding_agents')) node.url = '/docs/proxy/lens/coding-agents' + tail.slice('/coding_agents'.length);
@@ -102,7 +102,7 @@ async function main() {
   try {
     let source = args[1];
     if (!source) {
-      temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'litellm-lens-docs-'));
+      temporary = await fs.mkdtemp(path.join(os.tmpdir(), 'lumina-lens-docs-'));
       source = path.join(temporary, 'examples');
       execFileSync('git', ['clone', '--depth', '1', '--branch', 'main', 'https://github.com/' + REPOSITORY + '.git', source], {stdio: 'inherit'});
     }

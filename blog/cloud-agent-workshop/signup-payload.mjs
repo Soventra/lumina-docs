@@ -19,7 +19,7 @@ const LABELS = {
   company: 'Company',
   linkedin: 'LinkedIn profile',
   workflow: 'What are you hoping to achieve?',
-  onsiteInterest: 'Would you like the LiteLLM team to work with you on-site?',
+  onsiteInterest: 'Would you like the Lumina team to work with you on-site?',
   deploymentTimeline: 'Deployment timeline',
 };
 

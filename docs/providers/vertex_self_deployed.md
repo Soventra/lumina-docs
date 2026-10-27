@@ -24,14 +24,14 @@ All OpenAI compatible models from Vertex Model Garden are supported.
 | Property | Details |
 |----------|---------|
 | Provider Route | `vertex_ai/openai/{MODEL_ID}` |
-| Vertex Documentation | [Model Garden LiteLLM Inference](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/open-models/use-cases/model_garden_litellm_inference.ipynb), [Vertex Model Garden](https://cloud.google.com/model-garden?hl=en) |
+| Vertex Documentation | [Model Garden Lumina Inference](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/open-models/use-cases/model_garden_lumina_inference.ipynb), [Vertex Model Garden](https://cloud.google.com/model-garden?hl=en) |
 | Supported Operations | `/chat/completions`, `/embeddings` |
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 ## set ENV variables
@@ -63,7 +63,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -97,7 +97,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="non-openai" label="Non-OpenAI Compatible Models">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 ## set ENV variables
@@ -141,7 +141,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Test it**
@@ -160,7 +160,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 **SDK Usage:**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/gemma/gemma-3-12b-it-1222199011122",
@@ -198,7 +198,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Test it**
@@ -217,7 +217,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 **SDK Usage:**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/gemma/medgemma-2b-v1",

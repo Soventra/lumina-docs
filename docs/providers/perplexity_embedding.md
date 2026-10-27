@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 https://docs.perplexity.ai/docs/embeddings/quickstart
 
-LiteLLM supports Perplexity's pplx-embed embedding models for web-scale text retrieval.
+Lumina supports Perplexity's pplx-embed embedding models for web-scale text retrieval.
 
 ## API Key
 
@@ -20,14 +20,14 @@ os.environ['PERPLEXITYAI_API_KEY']
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['PERPLEXITYAI_API_KEY'] = ""
 
 response = embedding(
     model="perplexity/pplx-embed-v1-0.6b",
-    input=["good morning from litellm"],
+    input=["good morning from lumina"],
 )
 print(response)
 ```
@@ -52,7 +52,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -63,7 +63,7 @@ curl http://0.0.0.0:4000/v1/embeddings \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "pplx-embed-v1-0.6b",
-    "input": ["good morning from litellm"]
+    "input": ["good morning from lumina"]
   }'
 ```
 
@@ -85,7 +85,7 @@ Perplexity embeddings support the following optional parameters:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['PERPLEXITYAI_API_KEY'] = ""

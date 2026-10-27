@@ -4,20 +4,20 @@ import TabItem from '@theme/TabItem';
 
 # Agent Kill Switch
 
-Store a "stop this agent" webhook on each agent and fire it from LiteLLM when the agent misbehaves.
+Store a "stop this agent" webhook on each agent and fire it from Lumina when the agent misbehaves.
 
 ## Overview
 
-A kill switch is an optional outbound webhook saved alongside the rest of an agent's config. It holds the endpoint, HTTP method, headers, query params, JSON body and auth that the agent's runtime expects for a shutdown call. A proxy admin fires it with a single request or from the Danger Zone on the agent's page in the Admin UI. LiteLLM only makes the webhook call; the agent stays registered and enabled on the LiteLLM side, so you decide separately whether to delete it. Every fire is written to the audit log.
+A kill switch is an optional outbound webhook saved alongside the rest of an agent's config. It holds the endpoint, HTTP method, headers, query params, JSON body and auth that the agent's runtime expects for a shutdown call. A proxy admin fires it with a single request or from the Danger Zone on the agent's page in the Admin UI. Lumina only makes the webhook call; the agent stays registered and enabled on the Lumina side, so you decide separately whether to delete it. Every fire is written to the audit log.
 
-Only proxy admins can set or fire a kill switch. Secrets in the auth block (bearer tokens, API keys, basic auth passwords) are redacted to `REDACTED_BY_LITELM` on every read. Non admin readers of an agent see `kill_switch: null`.
+Only proxy admins can set or fire a kill switch. Secrets in the auth block (bearer tokens, API keys, basic auth passwords) are redacted to `REDACTED_BY_LUMINA` on every read. Non admin readers of an agent see `kill_switch: null`.
 
 ## Configure a kill switch
 
 <Tabs>
 <TabItem value="ui" label="UI">
 
-1. Go to **Agents** in the LiteLLM dashboard.
+1. Go to **Agents** in the Lumina dashboard.
 2. Create or edit an agent.
 3. Open the **Kill switch** panel and fill in the URL, method, headers, query params, JSON body and auth type.
 4. Save. The agent detail page now shows the configured endpoint and method, with the credential redacted.
@@ -35,7 +35,7 @@ curl -X POST http://localhost:4000/v1/agents \
     "agent_name": "inventory-agent",
     "agent_card_params": { ... },
     "kill_switch": {
-      "url": "https://agents.internal.example.com/agents/inventory/kill?source=litellm",
+      "url": "https://agents.internal.example.com/agents/inventory/kill?source=lumina",
       "method": "DELETE",
       "headers": {"X-Env": "prod"},
       "query_params": {"force": "1"},
@@ -45,7 +45,7 @@ curl -X POST http://localhost:4000/v1/agents \
   }'
 ```
 
-The same field works on `PATCH /v1/agents/{agent_id}` and `PUT /v1/agents/{agent_id}`. A PATCH that omits `kill_switch` leaves the stored one alone, while `"kill_switch": null` removes it. When you PATCH an agent whose auth was returned redacted, send `REDACTED_BY_LITELM` back as the token and the stored secret is kept.
+The same field works on `PATCH /v1/agents/{agent_id}` and `PUT /v1/agents/{agent_id}`. A PATCH that omits `kill_switch` leaves the stored one alone, while `"kill_switch": null` removes it. When you PATCH an agent whose auth was returned redacted, send `REDACTED_BY_LUMINA` back as the token and the stored secret is kept.
 
 </TabItem>
 <TabItem value="config" label="config.yaml">
@@ -121,13 +121,13 @@ curl -X POST http://localhost:4000/v1/agents/{agent_id}/kill_switch \
 </TabItem>
 </Tabs>
 
-LiteLLM sends exactly what was configured, with a 10 second timeout and without following redirects. A 2xx from the webhook returns `200` with the receiver's status code and up to the first 2000 characters of its body. A non 2xx response or a transport failure returns `502` with the same shape so you can see what the receiver said. Firing an agent that has no kill switch returns `400`, an unknown agent returns `404`, and a non admin key gets `403` before anything is sent.
+Lumina sends exactly what was configured, with a 10 second timeout and without following redirects. A 2xx from the webhook returns `200` with the receiver's status code and up to the first 2000 characters of its body. A non 2xx response or a transport failure returns `502` with the same shape so you can see what the receiver said. Firing an agent that has no kill switch returns `400`, an unknown agent returns `404`, and a non admin key gets `403` before anything is sent.
 
 The response body is shown to the admin who fired the switch, so point the webhook at an endpoint that does not echo secrets.
 
 ## Audit log
 
-Every fire that reaches the webhook, whether it came back 2xx or not, writes a `kill_switch_fired` row to the audit log against the `LiteLLM_AgentsTable` table with the agent id as the object. The row records who fired it (user and key), the target URL, method, the status code and truncated body the webhook returned, and the transport error if there was one. The kill switch config itself, including auth, custom headers, body and query params, is never written to the row. Audit logging needs `litellm_settings.store_audit_logs: true`, see [Audit Logs](./proxy/audit_logs).
+Every fire that reaches the webhook, whether it came back 2xx or not, writes a `kill_switch_fired` row to the audit log against the `Lumina_AgentsTable` table with the agent id as the object. The row records who fired it (user and key), the target URL, method, the status code and truncated body the webhook returned, and the transport error if there was one. The kill switch config itself, including auth, custom headers, body and query params, is never written to the row. Audit logging needs `lumina_settings.store_audit_logs: true`, see [Audit Logs](./proxy/audit_logs).
 
 In the Admin UI, open **Logs**, switch to the **Audit Logs** tab and filter the action to **Kill switch fired** (or the table to **Agents**). Click a row to see the full payload.
 

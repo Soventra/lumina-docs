@@ -5,7 +5,7 @@ date: 2026-02-17T10:00:00
 authors:
   - ishaan-alt
   - krrish
-description: "Day 0 support for Claude Sonnet 4.6 on LiteLLM AI Gateway - use across Anthropic, Azure, Vertex AI, and Bedrock."
+description: "Day 0 support for Claude Sonnet 4.6 on Lumina AI Gateway - use across Anthropic, Azure, Vertex AI, and Bedrock."
 tags: [anthropic, claude, sonnet 4.6]
 hide_table_of_contents: false
 ---
@@ -13,20 +13,20 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports Claude Sonnet 4.6 on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the LiteLLM AI Gateway.
+Lumina now supports Claude Sonnet 4.6 on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the Lumina AI Gateway.
 
 {/* truncate */}
 
 ## Docker Image
 
 ```bash
-docker pull ghcr.io/berriai/litellm:v1.81.3-stable.sonnet-4-6
+docker pull ghcr.io/soventra/lumina:v1.81.3-stable.sonnet-4-6
 ```
 
 ## Usage - Anthropic
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -45,7 +45,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.3-stable.sonnet-4-6 \
+  ghcr.io/soventra/lumina:v1.81.3-stable.sonnet-4-6 \
   --config /app/config.yaml
 ```
 
@@ -68,10 +68,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 </TabItem>
 
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/claude-sonnet-4-6",
@@ -86,7 +86,7 @@ print(response.choices[0].message.content)
 ## Usage - Azure
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -107,7 +107,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.3-stable.sonnet-4-6 \
+  ghcr.io/soventra/lumina:v1.81.3-stable.sonnet-4-6 \
   --config /app/config.yaml
 ```
 
@@ -130,10 +130,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 </TabItem>
 
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="azure_ai/claude-sonnet-4-6",
@@ -150,7 +150,7 @@ print(response.choices[0].message.content)
 ## Usage - Vertex AI
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -172,7 +172,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.81.3-stable.sonnet-4-6 \
+  ghcr.io/soventra/lumina:v1.81.3-stable.sonnet-4-6 \
   --config /app/config.yaml
 ```
 
@@ -195,10 +195,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 </TabItem>
 
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="vertex_ai/claude-sonnet-4-6",
@@ -215,7 +215,7 @@ print(response.choices[0].message.content)
 ## Usage - Bedrock
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -237,7 +237,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.81.3-stable.sonnet-4-6 \
+  ghcr.io/soventra/lumina:v1.81.3-stable.sonnet-4-6 \
   --config /app/config.yaml
 ```
 
@@ -260,10 +260,10 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 </TabItem>
 
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/anthropic.claude-sonnet-4-6-v1",

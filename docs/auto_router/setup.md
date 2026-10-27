@@ -27,7 +27,7 @@ items={[
 
 ![The Add Auto Router dialog in Models + Endpoints, with Configure automatically and template options](../../blog/autorouter_setup_and_testing/auto-setup.png)
 
-- In the LiteLLM Dashboard, go to **Models + Endpoints** and open the **Auto Router** tab. Add a new Auto Router model, or enable and configure an existing one.
+- In the Lumina Dashboard, go to **Models + Endpoints** and open the **Auto Router** tab. Add a new Auto Router model, or enable and configure an existing one.
 - Enter an Auto Router name, then select **Configure automatically** or choose a template. Review the generated tiers, test routing, and save.
 - **Configure automatically** checks the models your proxy already serves, selects the best available models for all four complexity tiers, and fills in the form for you.
 - Templates: 1M Context, Anthropic Family, OpenAI Family, Gemini Family, Lite. Each fills all four tiers from models your proxy already serves.
@@ -41,7 +41,7 @@ The templates as config.yaml: [Recommended Configurations](/docs/auto_router/rec
 ## Agent skill
 
 ```
-run curl -fsSL https://docs.litellm.ai/skills/auto-router and follow the instructions
+run curl -fsSL https://docs.lumina.ai/skills/auto-router and follow the instructions
 ```
 
 - Reads the models your proxy already serves.
@@ -81,17 +81,17 @@ model_list:
 
 ## JEV classifier (TypeSafe AI)
 
-This section uses the Jev configuration and dashboard labels supported by released builds. The new **OSS Classifier** configuration requires [backend #43626](https://github.com/BerriAI/litellm/pull/43626), and its dashboard requires [UI #43768](https://github.com/BerriAI/litellm/pull/43768). See [OSS classifiers](/docs/auto_router/decision_classifiers) for hosted Jev, self-hosted Nimble and Laya, the Databricks `ai_decide` AI Function, and the [migration from the existing names](/docs/auto_router/decision_classifiers#migrate-an-existing-jev-or-nimble-router). The new backend continues to accept the configuration below.
+This section uses the Jev configuration and dashboard labels supported by released builds. The new **OSS Classifier** configuration requires [backend #43626](https://github.com/Soventra/lumina/pull/43626), and its dashboard requires [UI #43768](https://github.com/Soventra/lumina/pull/43768). See [OSS classifiers](/docs/auto_router/decision_classifiers) for hosted Jev, self-hosted Nimble and Laya, the Databricks `ai_decide` AI Function, and the [migration from the existing names](/docs/auto_router/decision_classifiers#migrate-an-existing-jev-or-nimble-router). The new backend continues to accept the configuration below.
 
-`classifier_type: jev` uses TypeSafe System One Choice evaluation to select a tier inside the existing Auto Router. LiteLLM sends the classifier input to `POST /v1/systemone` as `state`, with one `questions.tier` question whose criteria describe the configured tiers. The chosen tier's model serves the completion
+`classifier_type: jev` uses TypeSafe System One Choice evaluation to select a tier inside the existing Auto Router. Lumina sends the classifier input to `POST /v1/systemone` as `state`, with one `questions.tier` question whose criteria describe the configured tiers. The chosen tier's model serves the completion
 
 ### Set the server key
 
-Provision `TYPESAFE_API_KEY` in the proxy process through your deployment's secret manager. The dashboard does not need the provider key. Clients keep using a LiteLLM virtual key
+Provision `TYPESAFE_API_KEY` in the proxy process through your deployment's secret manager. The dashboard does not need the provider key. Clients keep using a Lumina virtual key
 
 ```bash
 export TYPESAFE_API_BASE="https://api.typesafe.ai"
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 `TYPESAFE_API_BASE` is optional and defaults to `https://api.typesafe.ai`. Omitting `jev_classifier_config.api_key` and `api_base` uses these server settings. A missing TypeSafe key prevents JEV initialization. An explicit `api_base` requires an explicit `api_key`, so a configuration override cannot redirect the server's environment key to a different host. Team members using the management API cannot set either field
@@ -104,7 +104,7 @@ Set **JEV Model** (`jev-latest` by default) and **JEV Timeout (ms)** (`3000` by 
 
 JEV uses the same history defaults as the LLM classifier: up to three prior user turns within an 8,000-character prior-turn budget, with assistant turns excluded. This history is sent to the configured TypeSafe endpoint, which can differ from your completion provider. Set **Context Window Size** to `0` to omit history; the current ask and selected system text are still sent
 
-When upgrading an existing JEV router to the [dashboard and context integration](https://github.com/BerriAI/litellm/pull/41886), omitting these settings enables those defaults. Set `classifier_context_window_size: 0` before upgrading if the router should continue sending no prior conversation
+When upgrading an existing JEV router to the [dashboard and context integration](https://github.com/Soventra/lumina/pull/41886), omitting these settings enables those defaults. Set `classifier_context_window_size: 0` before upgrading if the router should continue sending no prior conversation
 
 **Test Routing** classifies your input without creating a router or calling the selected completion model. It can make a paid JEV request, and semantic keyword matching can also make a paid embedding request. **Test Connection** checks the configured model dependencies and makes a separate JEV classification probe. Its JEV result reports an error when routing used a fallback, even if the selected completion model is reachable. These probes can incur provider charges
 
@@ -163,7 +163,7 @@ curl -X POST "http://localhost:4000/model/new" \
           "REASONING": "claude-opus-5-high"
         },
         "classifier_type": "heuristic",
-        "escalation_keywords": ["LITELLM ESCALATE"],
+        "escalation_keywords": ["LUMINA ESCALATE"],
         "session_affinity": false
       },
       "complexity_router_default_model": "{{anthropic}}"

@@ -9,7 +9,7 @@ Anyone using the following models with /chat/completions:
 ## Key Change
 
 :::info
-From v1.77.0, LiteLLM will return the List of images in `response.choices[0].message.images` instead of a single image in `response.choices[0].message.image`.
+From v1.77.0, Lumina will return the List of images in `response.choices[0].message.images` instead of a single image in `response.choices[0].message.image`.
 :::
 
 Gemini models now support image generation through chat completions. Images are returned in `response.choices[0].message.images` with base64 data URLs.
@@ -18,7 +18,7 @@ Gemini models now support image generation through chat completions. Images are 
 
 ### Before
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/gemini-2.0-flash-exp-image-generation",
@@ -32,7 +32,7 @@ base_64_image_data = response.choices[0].message.content
 
 ### After  
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/gemini-2.0-flash-exp-image-generation",
@@ -67,7 +67,7 @@ This is to be consistent with the OpenRouter API, making sure we are using simpl
 #### Basic Image Generation
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 # Set your API key
@@ -100,7 +100,7 @@ The image is returned in the `message.images` field:
 }
 ```
 
-### Using the LiteLLM Proxy Server
+### Using the Lumina Proxy Server
 
 **Key Change:**
 ```diff
@@ -141,7 +141,7 @@ general_settings:
 2. **Start the proxy server:**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -155,7 +155,7 @@ from openai import OpenAI
 
 # Point to your proxy server
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your proxy API key
+    api_key="sk-<your-lumina-api-key>",  # Your proxy API key
     base_url="http://0.0.0.0:4000"
 )
 

@@ -6,24 +6,24 @@ authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "Use the LiteLLM proxy to route OpenAI-style WebRTC realtime via HTTP: client_secrets and SDP exchange."
+description: "Use the Lumina proxy to route OpenAI-style WebRTC realtime via HTTP: client_secrets and SDP exchange."
 tags: [realtime, webrtc, proxy, openai]
 hide_table_of_contents: false
 ---
 
 import WebRTCTester from '@site/src/components/WebRTCTester';
 
-Connect to the Realtime API via WebRTC from browser/mobile clients. LiteLLM handles auth and key management.
+Connect to the Realtime API via WebRTC from browser/mobile clients. Lumina handles auth and key management.
 
 {/* truncate */}
 
 ## How it works
 
-![WebRTC flow: Browser, LiteLLM Proxy, and OpenAI/Azure](../../img/webrtc_flow.png)
+![WebRTC flow: Browser, Lumina Proxy, and OpenAI/Azure](../../img/webrtc_flow.png)
 
 **Flow of generating ephemeral token**
 
-![Ephemeral token flow: Browser requests token, LiteLLM gets real token from OpenAI, returns encrypted token](../../img/ephemeral_token.png)
+![Ephemeral token flow: Browser requests token, Lumina gets real token from OpenAI, returns encrypted token](../../img/ephemeral_token.png)
 
 
 ## Proxy Setup
@@ -41,7 +41,7 @@ model_list:
 **Azure:** use `model: azure/gpt-4o-realtime-preview`, `api_key`, `api_base`.
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ## Try it live
@@ -50,7 +50,7 @@ litellm --config /path/to/config.yaml
 
 ## Client Usage
 
-**1. Get token** - `POST /v1/realtime/client_secrets` with LiteLLM API key and `{ model }`.
+**1. Get token** - `POST /v1/realtime/client_secrets` with Lumina API key and `{ model }`.
 
 **2. WebRTC handshake** - Create `RTCPeerConnection`, add mic track, create data channel `oai-events`, send SDP offer to `POST /v1/realtime/calls` with `Authorization: Bearer <encrypted_token>` and `Content-Type: application/sdp`.
 
@@ -63,7 +63,7 @@ litellm --config /path/to/config.yaml
 // 1. Token
 const r = await fetch("http://proxy:4000/v1/realtime/client_secrets", {
   method: "POST",
-  headers: { "Authorization": "Bearer sk-litellm-key", "Content-Type": "application/json" },
+  headers: { "Authorization": "Bearer sk-lumina-key", "Content-Type": "application/json" },
   body: JSON.stringify({ model: "gpt-4o-realtime" }),
 });
 const { client_secret } = await r.json();

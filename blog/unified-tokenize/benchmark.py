@@ -1,6 +1,6 @@
 """Measure public atokenize calls against an independent loopback HTTP stub.
 
-Run from a LiteLLM source checkout after `uv run maturin develop --release`:
+Run from a Lumina source checkout after `uv run maturin develop --release`:
     PYTHONPATH=. uv run --no-sync python /path/to/benchmark.py --output results.json
 
 Requires the checkout's compiled Rust extension, uvicorn, and Starlette.
@@ -63,13 +63,13 @@ def percentile(values: list[float], fraction: float) -> float:
 
 
 async def measure(base: str, concurrency: int, requests: int) -> dict[str, object]:
-    import litellm
+    import lumina
 
     async def worker(count: int) -> list[float]:
         latencies = []
         for _ in range(count):
             start = time.perf_counter()
-            response = await litellm.atokenize(
+            response = await lumina.atokenize(
                 model="hosted_vllm/benchmark-model",
                 prompt="Hello world",
                 api_base=base,
@@ -84,7 +84,7 @@ async def measure(base: str, concurrency: int, requests: int) -> dict[str, objec
             }:
                 raise AssertionError("Unexpected normalized tokenization response")
             headers = response._hidden_params.get("additional_headers", {})
-            if headers.get("x-litellm-rust") != "true":
+            if headers.get("x-lumina-rust") != "true":
                 raise AssertionError("Response was not marked as Rust execution")
             latencies.append(elapsed_ms)
         return latencies
@@ -117,15 +117,15 @@ def stats(base: str) -> dict[str, int]:
 async def benchmark(args: argparse.Namespace) -> dict[str, object]:
     import uvicorn
 
-    from litellm.rust_bridge.loader import get_native_bridge
+    from lumina.rust_bridge.loader import get_native_bridge
 
     native = get_native_bridge()
     if native is None or native.__file__ is None:
         raise RuntimeError("Build and install the Rust extension before benchmarking")
     native_path = Path(native.__file__)
-    artifact = Path("litellm-rust/target/release/lib_native.dylib")
+    artifact = Path("lumina-rust/target/release/lib_native.dylib")
     if not artifact.exists():
-        artifact = Path("litellm-rust/target/release/lib_native.so")
+        artifact = Path("lumina-rust/target/release/lib_native.so")
     digest = hashlib.sha256(native_path.read_bytes()).hexdigest()
     if not artifact.exists() or hashlib.sha256(artifact.read_bytes()).hexdigest() != digest:
         raise RuntimeError("Installed native extension must match this checkout's release artifact")
@@ -186,7 +186,7 @@ async def benchmark(args: argparse.Namespace) -> dict[str, object]:
             "implementation_commit": command_output("git", "rev-parse", "HEAD"),
         },
         "methodology": {
-            "api": "litellm.atokenize",
+            "api": "lumina.atokenize",
             "requests_per_trial": args.requests,
             "warmup_requests_per_concurrency": args.warmup,
             "trials": args.trials,

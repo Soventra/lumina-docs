@@ -3,11 +3,11 @@ import TabItem from '@theme/TabItem';
 
 # AWS S3 Vectors
 
-Use [Amazon S3 Vectors](https://aws.amazon.com/s3/features/vectors/) as the vector store behind LiteLLM's unified vector store and RAG endpoints. LiteLLM calls the S3 Vectors REST API directly with SigV4-signed requests; no boto3 client is needed for the vector operations themselves.
+Use [Amazon S3 Vectors](https://aws.amazon.com/s3/features/vectors/) as the vector store behind Lumina's unified vector store and RAG endpoints. Lumina calls the S3 Vectors REST API directly with SigV4-signed requests; no boto3 client is needed for the vector operations themselves.
 
 | Property | Details |
 |----------|---------|
-| Provider Route on LiteLLM | `s3_vectors` |
+| Provider Route on Lumina | `s3_vectors` |
 | Supported Endpoints | `POST /v1/vector_stores/{id}/search`, `POST /rag/ingest`, `POST /rag/query`, `file_search` on `/chat/completions` and `/v1/responses` |
 | Not Supported | `POST /v1/vector_stores` (OpenAI-shaped create). Use `/rag/ingest`, which auto-creates the vector bucket and index |
 | Vector store id format | `<vector_bucket_name>:<index_name>` |
@@ -15,9 +15,9 @@ Use [Amazon S3 Vectors](https://aws.amazon.com/s3/features/vectors/) as the vect
 
 ## How it works
 
-`/rag/ingest` takes a document, chunks it, generates embeddings with any LiteLLM embedding model, then writes the vectors into an index inside an S3 vector bucket (`PutVectors`). The bucket and index are created automatically if they do not exist. The resulting store is addressed as `bucket_name:index_name` everywhere else: `/v1/vector_stores/{id}/search` embeds your query with the configured embedding model and runs `QueryVectors` against that index, and the same id works in the `file_search` tool on `/chat/completions` and `/v1/responses`.
+`/rag/ingest` takes a document, chunks it, generates embeddings with any Lumina embedding model, then writes the vectors into an index inside an S3 vector bucket (`PutVectors`). The bucket and index are created automatically if they do not exist. The resulting store is addressed as `bucket_name:index_name` everywhere else: `/v1/vector_stores/{id}/search` embeds your query with the configured embedding model and runs `QueryVectors` against that index, and the same id works in the `file_search` tool on `/chat/completions` and `/v1/responses`.
 
-On the proxy, a successful ingest also registers the store in the LiteLLM database (see [tracking and access control](#how-ingested-files-are-tracked) below), so it shows up in the Admin UI and can be searched by id without any per-request AWS configuration.
+On the proxy, a successful ingest also registers the store in the Lumina database (see [tracking and access control](#how-ingested-files-are-tracked) below), so it shows up in the Admin UI and can be searched by id without any per-request AWS configuration.
 
 ## Quick Start
 
@@ -38,7 +38,7 @@ export AWS_ACCESS_KEY_ID="your-access-key"
 export AWS_SECRET_ACCESS_KEY="your-secret-key"
 export AWS_REGION_NAME="us-west-2"
 
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 2. Ingest a document
@@ -71,12 +71,12 @@ curl -X POST "http://localhost:4000/v1/rag/ingest" \
 {
   "id": "ingest_abc123",
   "status": "completed",
-  "vector_store_id": "my-embeddings:litellm-index-a1b2c3d4",
+  "vector_store_id": "my-embeddings:lumina-index-a1b2c3d4",
   "file_id": "document.txt"
 }
 ```
 
-When `index_name` is omitted LiteLLM generates one (`litellm-index-<id>`). Pass an explicit `index_name` to keep ingesting into the same index across requests. The full list of ingest options is in the [RAG Ingest reference](../rag_ingest.md#vector_store-aws-s3-vectors).
+When `index_name` is omitted Lumina generates one (`lumina-index-<id>`). Pass an explicit `index_name` to keep ingesting into the same index across requests. The full list of ingest options is in the [RAG Ingest reference](../rag_ingest.md#vector_store-aws-s3-vectors).
 
 :::warning[Keep the embedding model consistent]
 The index dimension is fixed at creation time from the ingest embedding model (auto-detected, e.g. 1536 for `text-embedding-3-small`). Searches must embed the query with a model of the same dimension. Set `embedding_model` inside the `vector_store` block (as above) or on the registry entry; if it is not set anywhere, search falls back to `text-embedding-3-small`.
@@ -85,7 +85,7 @@ The index dimension is fixed at creation time from the ingest embedding model (a
 ### 3. Search the store
 
 ```bash showLineNumbers title="Search"
-curl -X POST "http://localhost:4000/v1/vector_stores/my-embeddings:litellm-index-a1b2c3d4/search" \
+curl -X POST "http://localhost:4000/v1/vector_stores/my-embeddings:lumina-index-a1b2c3d4/search" \
     -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{"query": "What does the document say about pricing?", "max_num_results": 5}'
@@ -107,7 +107,7 @@ curl -X POST "http://localhost:4000/v1/vector_stores/my-embeddings:litellm-index
 }
 ```
 
-`max_num_results` maps to S3 Vectors `topK` (default 5). Results are read from the `source_text` metadata key LiteLLM writes at ingest time; vectors written to the index by other tools without that key are skipped.
+`max_num_results` maps to S3 Vectors `topK` (default 5). Results are read from the `source_text` metadata key Lumina writes at ingest time; vectors written to the index by other tools without that key are skipped.
 
 ### 4. Use it for RAG in chat completions
 
@@ -118,7 +118,7 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
     -d '{
         "model": "{{openai_large}}",
         "messages": [{"role": "user", "content": "Summarize our pricing policy"}],
-        "tools": [{"type": "file_search", "vector_store_ids": ["my-embeddings:litellm-index-a1b2c3d4"]}]
+        "tools": [{"type": "file_search", "vector_store_ids": ["my-embeddings:lumina-index-a1b2c3d4"]}]
     }'
 ```
 
@@ -152,19 +152,19 @@ Search-side `lumina_params` (registry entry, or persisted automatically from ing
 | `embedding_model` | no | Model used to embed search queries. Default `text-embedding-3-small` |
 | `vector_bucket_name` | no | Lets `vector_store_id` be a bare index name |
 | `aws_access_key_id`, `aws_secret_access_key`, `aws_session_token`, `aws_role_name`, `aws_session_name`, `aws_profile_name`, `aws_web_identity_token` | no | Explicit AWS credentials, see [Credentials](#credentials) |
-| `litellm_credential_name` | no | Reference a named credential from `credential_list` |
+| `lumina_credential_name` | no | Reference a named credential from `credential_list` |
 
 Ingest-side options (the `vector_store` block of `ingest_options`) are documented in the [RAG Ingest reference](../rag_ingest.md#vector_store-aws-s3-vectors): `vector_store_id` (an existing index as `bucket:index`, or a bare index name when `vector_bucket_name` is set), `vector_bucket_name` (required unless `vector_store_id` carries the bucket), `index_name`, `dimension`, `distance_metric` (`cosine`, default, or `euclidean`), `non_filterable_metadata_keys` (default `["source_text"]`), plus the same AWS credential parameters.
 
 ## Region, endpoint, and encryption
 
-LiteLLM always calls the regional S3 Vectors endpoint `https://s3vectors.<aws_region_name>.api.aws`. There is no `api_base` override for this provider. For ingest, the region resolves from `aws_region_name` in the request, then the `AWS_REGION_NAME` and `AWS_REGION` environment variables, then falls back to `us-west-2`. For search, `aws_region_name` must be present on the registry entry or persisted ingest params.
+Lumina always calls the regional S3 Vectors endpoint `https://s3vectors.<aws_region_name>.api.aws`. There is no `api_base` override for this provider. For ingest, the region resolves from `aws_region_name` in the request, then the `AWS_REGION_NAME` and `AWS_REGION` environment variables, then falls back to `us-west-2`. For search, `aws_region_name` must be present on the registry entry or persisted ingest params.
 
-Auto-created vector buckets use the S3 Vectors default server-side encryption (SSE-S3). LiteLLM does not pass an encryption configuration on `CreateVectorBucket`, so to use SSE-KMS create the vector bucket yourself with your KMS key and point LiteLLM at it; the existence check sees the bucket and skips creation. Bucket names follow S3 rules: at least 3 characters, lowercase letters, numbers, hyphens, and periods only.
+Auto-created vector buckets use the S3 Vectors default server-side encryption (SSE-S3). Lumina does not pass an encryption configuration on `CreateVectorBucket`, so to use SSE-KMS create the vector bucket yourself with your KMS key and point Lumina at it; the existence check sees the bucket and skips creation. Bucket names follow S3 rules: at least 3 characters, lowercase letters, numbers, hyphens, and periods only.
 
 ## Credentials
 
-Authentication reuses LiteLLM's standard AWS credential resolution (the same `BaseAWSLLM` chain as Bedrock). In order: explicit `aws_*` parameters on the registry entry or ingest request, a named credential via `litellm_credential_name`, environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`), `aws_profile_name`, STS role assumption via `aws_role_name` and `aws_session_name`, web identity tokens (IRSA on EKS), and finally the default boto3 chain (instance profiles, ECS task roles). See [Bedrock authentication](./bedrock.md#boto3---authentication) for details on each method.
+Authentication reuses Lumina's standard AWS credential resolution (the same `BaseAWSLLM` chain as Bedrock). In order: explicit `aws_*` parameters on the registry entry or ingest request, a named credential via `lumina_credential_name`, environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`), `aws_profile_name`, STS role assumption via `aws_role_name` and `aws_session_name`, web identity tokens (IRSA on EKS), and finally the default boto3 chain (instance profiles, ECS task roles). See [Bedrock authentication](./bedrock.md#boto3---authentication) for details on each method.
 
 ### IAM permissions
 
@@ -181,13 +181,13 @@ With pre-created buckets and indexes, the minimal ingest policy is `GetVectorBuc
 
 ## How ingested files are tracked
 
-On a database-connected proxy, `/rag/ingest` saves the new store to the `LiteLLM_ManagedVectorStoresTable` with the `team_id` and `user_id` of the calling key, adds it to the in-memory registry, and records each ingested file (filename or URL, timestamp) in the store's `ingested_files` metadata. Ingesting again into the same bucket and index appends to that file list instead of creating a new entry. The store then appears in the Admin UI under Vector Stores, and access follows the standard [vector store permission model](../vector_stores/managed_vector_stores.md): set `object_permission.vector_stores` on a key or team to control which store ids its requests may reference.
+On a database-connected proxy, `/rag/ingest` saves the new store to the `Lumina_ManagedVectorStoresTable` with the `team_id` and `user_id` of the calling key, adds it to the in-memory registry, and records each ingested file (filename or URL, timestamp) in the store's `ingested_files` metadata. Ingesting again into the same bucket and index appends to that file list instead of creating a new entry. The store then appears in the Admin UI under Vector Stores, and access follows the standard [vector store permission model](../vector_stores/managed_vector_stores.md): set `object_permission.vector_stores` on a key or team to control which store ids its requests may reference.
 
-The raw file bytes are not stored in S3 or in the LiteLLM database; only chunk text (in vector metadata as `source_text`) and file metadata are kept.
+The raw file bytes are not stored in S3 or in the Lumina database; only chunk text (in vector metadata as `source_text`) and file metadata are kept.
 
 ## Is there a "default vector store" setting?
 
-No. LiteLLM has no proxy-wide default vector store provider today. `/rag/ingest` defaults to `custom_llm_provider: "openai"` when the `vector_store` block omits the provider, so every ingest request that should land in S3 Vectors must pass `custom_llm_provider: "s3_vectors"` explicitly, unless its `vector_store_id` names a store in the registry or the database: then the provider, region, credentials, and embedding model come from that registration and the request needs only the id. After ingest, no provider choice is needed anywhere else: search, `/rag/query`, and `file_search` all address the store by its id, and the persisted registration carries the provider and AWS settings.
+No. Lumina has no proxy-wide default vector store provider today. `/rag/ingest` defaults to `custom_llm_provider: "openai"` when the `vector_store` block omits the provider, so every ingest request that should land in S3 Vectors must pass `custom_llm_provider: "s3_vectors"` explicitly, unless its `vector_store_id` names a store in the registry or the database: then the provider, region, credentials, and embedding model come from that registration and the request needs only the id. After ingest, no provider choice is needed anywhere else: search, `/rag/query`, and `file_search` all address the store by its id, and the persisted registration carries the provider and AWS settings.
 
 ## Can S3 be the default storage for /v1/files?
 

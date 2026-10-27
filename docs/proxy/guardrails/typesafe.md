@@ -1,6 +1,6 @@
 # Relevance-Based Compaction (TypeSafe / Jev)
 
-[TypeSafe](https://typesafe.ai)'s Jev model judges whether each completed tool exchange is still relevant to the current task. As a LiteLLM guardrail, it blanks out tool results Jev scores below a relevance threshold before the request reaches the model, so dead context stops consuming input tokens. Unlike summarizing compressors, this is all-or-nothing per exchange: a result is either kept verbatim or replaced with a removal notice.
+[TypeSafe](https://typesafe.ai)'s Jev model judges whether each completed tool exchange is still relevant to the current task. As a Lumina guardrail, it blanks out tool results Jev scores below a relevance threshold before the request reaches the model, so dead context stops consuming input tokens. Unlike summarizing compressors, this is all-or-nothing per exchange: a result is either kept verbatim or replaced with a removal notice.
 
 This is available on `/v1/chat/completions`, `/v1/messages` (Anthropic format), and `/v1/responses`.
 
@@ -12,13 +12,13 @@ The guardrail runs in-process during the `pre_call` step and calls TypeSafe's ho
 
 Compaction happens per completed tool exchange:
 
-1. **Select candidates.** A candidate is an assistant message that made tool calls plus the `tool`/`function` messages answering it, whose combined result text is at least `min_chars_to_evaluate` characters. System messages, the last user message, and the most recent exchange (via the last-assistant rule) are never evaluated or rewritten, matching litellm's shared compression protection policy. At most the 200 most recent eligible exchanges are evaluated per request.
+1. **Select candidates.** A candidate is an assistant message that made tool calls plus the `tool`/`function` messages answering it, whose combined result text is at least `min_chars_to_evaluate` characters. System messages, the last user message, and the most recent exchange (via the last-assistant rule) are never evaluated or rewritten, matching lumina's shared compression protection policy. At most the 200 most recent eligible exchanges are evaluated per request.
 2. **Evaluate.** One `POST {api_base}/v1/systemone` call sends the last user message as `task`, the joined system text, and each candidate's tool calls and (truncated) result in `state`, with one `noul` yes/no question per exchange: is this exchange still needed to complete the task?
 3. **Compact.** Every exchange whose `noul` score falls below `relevance_threshold` has its tool results replaced with `[Tool result removed by TypeSafe compaction: judged no longer relevant to the current task]`. Assistant tool-call rows stay intact, so the conversation remains well-formed. If nothing is dropped, the request is forwarded byte-identical.
 
 ## Requirements
 
-A LiteLLM build that includes the `typesafe` guardrail and a TypeSafe API key from [typesafe.ai](https://typesafe.ai).
+A Lumina build that includes the `typesafe` guardrail and a TypeSafe API key from [typesafe.ai](https://typesafe.ai).
 
 ## Quick Start
 
@@ -43,10 +43,10 @@ guardrails:
 
 Use `mode: pre_call`, since the guardrail only transforms request input. The `api_key` is required and can come from the config or the `TYPESAFE_API_KEY` env var. Set `default_on: true` to compact every request, or leave it off to keep compaction opt-in per key or per request.
 
-### 2. Start the LiteLLM gateway
+### 2. Start the Lumina gateway
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Send a request
@@ -84,7 +84,7 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ## Enabling compaction per request
 
-Clients can opt in on a single call by passing a `guardrails` array in the request body, or `litellm_metadata.guardrails` for `/v1/messages`, which has no top-level `guardrails` field. The response includes an `x-litellm-applied-guardrails: jev-compaction` header when compaction ran.
+Clients can opt in on a single call by passing a `guardrails` array in the request body, or `lumina_metadata.guardrails` for `/v1/messages`, which has no top-level `guardrails` field. The response includes an `x-lumina-applied-guardrails: jev-compaction` header when compaction ran.
 
 ## Failure semantics
 
@@ -94,7 +94,7 @@ Set `unreachable_fallback: fail_closed` to fail the request with a `500` and a g
 
 ## Validate TypeSafe ran
 
-1. The `x-litellm-applied-guardrails: jev-compaction` response header.
+1. The `x-lumina-applied-guardrails: jev-compaction` response header.
 2. `guardrail_information` on the spend log row: `exchanges_evaluated`, `exchanges_dropped`, `chars_removed`, `model`.
 3. The Admin UI: open any request in **Logs**, scroll to **Guardrails & Policy Compliance**, and `jev-compaction` appears under **Request Lifecycle** as a `pre-call` step.
 

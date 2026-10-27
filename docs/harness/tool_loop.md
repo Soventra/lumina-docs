@@ -5,11 +5,11 @@ sidebar_label: Tool Loop
 
 # Tool Loop
 
-`Harness.TOOL_LOOP` runs a minimal tool-calling loop in your Python process. It calls `litellm.acompletion()`, validates tool arguments against your Python function signatures, runs the functions, and sends their results back to the model until it returns a final answer
+`Harness.TOOL_LOOP` runs a minimal tool-calling loop in your Python process. It calls `lumina.acompletion()`, validates tool arguments against your Python function signatures, runs the functions, and sends their results back to the model until it returns a final answer
 
 ## Install
 
-Tool Loop needs only the regular `litellm` package. There are no additional packages or runtime binaries to install
+Tool Loop needs only the regular `lumina` package. There are no additional packages or runtime binaries to install
 
 ## Use your own Python tools
 
@@ -18,10 +18,10 @@ Pass synchronous or asynchronous Python functions in `tools=`. Type hints and do
 ```python
 from typing import Literal
 
-import litellm
+import lumina
 from pydantic import BaseModel
 
-from litellm import Harness, sandbox
+from lumina import Harness, sandbox
 
 def search_code(query: str, path: str = ".") -> list[str]:
     """Find matching lines in the repository."""
@@ -36,11 +36,11 @@ class Review(BaseModel):
     verdict: Literal["approve", "request_changes"]
     findings: list[str]
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.TOOL_LOOP,
     "Review the changes in this repository. Search for relevant code, read files as needed, and return your findings.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
     tools=[search_code, read_file],
     output=Review,
 )
@@ -50,38 +50,38 @@ print(result.output)
 
 The loop returns tool exceptions, unknown tool names, and invalid arguments to the model as tool errors, so the model can recover or explain the problem. Tool calls are run sequentially
 
-Your functions execute in the Python process running LiteLLM, not inside the sandbox. Pass a sandbox because it is part of the common agent API, and have your tools enforce any file or network boundaries they need
+Your functions execute in the Python process running Lumina, not inside the sandbox. Pass a sandbox because it is part of the common agent API, and have your tools enforce any file or network boundaries they need
 
-## Use with LiteLLM AI Gateway
+## Use with Lumina AI Gateway
 
-Prefix a gateway model group with `litellm_proxy/`. Requests go through LiteLLM's Chat Completions API and carry the `harness,tool_loop` tags. The virtual key is used by the Python process running Tool Loop
+Prefix a gateway model group with `lumina_proxy/`. Requests go through Lumina's Chat Completions API and carry the `harness,tool_loop` tags. The virtual key is used by the Python process running Tool Loop
 
 ```python
-result = litellm.agent(
+result = lumina.agent(
     Harness.TOOL_LOOP,
     "Find the owner of the authentication module and summarize their recent changes.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
     tools=[search_code, read_file],
     metadata={"task": "code-review"},
 )
 ```
 
-Without the prefix, Tool Loop calls the provider through the LiteLLM SDK. Pass provider credentials with `api_key=` and `api_base=`, or use the standard provider environment variables
+Without the prefix, Tool Loop calls the provider through the Lumina SDK. Pass provider credentials with `api_key=` and `api_base=`, or use the standard provider environment variables
 
 ## Completion options
 
-Use `ToolLoopOptions` to pass additional keyword arguments to every `litellm.acompletion()` call. Model and routing values managed by the harness take precedence over values in `completion_kwargs`
+Use `ToolLoopOptions` to pass additional keyword arguments to every `lumina.acompletion()` call. Model and routing values managed by the harness take precedence over values in `completion_kwargs`
 
 ```python
-import litellm
-from litellm import Harness, ToolLoopOptions, sandbox
+import lumina
+from lumina import Harness, ToolLoopOptions, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.TOOL_LOOP,
     "Summarize the latest changes.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
     tools=[search_code, read_file],
     options=ToolLoopOptions(
         completion_kwargs={"temperature": 0.2, "reasoning_effort": "high"}

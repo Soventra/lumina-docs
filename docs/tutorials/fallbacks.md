@@ -20,11 +20,11 @@ The `fallbacks` list holds the backup models to try, in order, if the primary mo
 response = completion(model="bad-model", fallbacks=["{{openai_small}}", "command-nightly"], messages=messages)
 ```
 
-An entry in `fallbacks` can also be a dict that overrides litellm params for that attempt, for example `{"model": "{{openai_small}}", "api_key": "sk-..."}`.
+An entry in `fallbacks` can also be a dict that overrides lumina params for that attempt, for example `{"model": "{{openai_small}}", "api_key": "sk-..."}`.
 
 ## How does `completion_with_fallbacks()` work
 
-When `fallbacks` is set (or `litellm.model_fallbacks` is configured), `completion()` hands the call to `completion_with_fallbacks()`, which runs `async_completion_with_fallbacks()`. It makes a single ordered pass over `[model] + fallbacks`, calling each model once. The first non-`None` response is returned, with an `x-litellm-attempted-fallbacks` header set to the number of fallbacks tried before the successful model (0 when the primary model succeeded). If every attempt fails, an exception is raised containing the most recent error and the message `All fallback attempts failed`. There is no time window, no retry loop and no per-model cooldown; each model is attempted exactly once.
+When `fallbacks` is set (or `lumina.model_fallbacks` is configured), `completion()` hands the call to `completion_with_fallbacks()`, which runs `async_completion_with_fallbacks()`. It makes a single ordered pass over `[model] + fallbacks`, calling each model once. The first non-`None` response is returned, with an `x-lumina-attempted-fallbacks` header set to the number of fallbacks tried before the successful model (0 when the primary model succeeded). If every attempt fails, an exception is raised containing the most recent error and the message `All fallback attempts failed`. There is no time window, no retry loop and no per-model cooldown; each model is attempted exactly once.
 
 ### Output from calls
 ```
@@ -71,7 +71,7 @@ for attempted_fallbacks, fallback in enumerate(fallbacks):
         else:
             model = fallback
 
-        response = await litellm.acompletion(**completion_kwargs, model=model)
+        response = await lumina.acompletion(**completion_kwargs, model=model)
         if response is not None:
             return add_fallback_headers_to_response(
                 response=response, attempted_fallbacks=attempted_fallbacks
@@ -83,4 +83,4 @@ for attempted_fallbacks, fallback in enumerate(fallbacks):
 raise Exception(f"{most_recent_exception_str}. All fallback attempts failed. ...")
 ```
 
-See `litellm/litellm_core_utils/fallback_utils.py` for the full implementation.
+See `lumina/lumina_core_utils/fallback_utils.py` for the full implementation.

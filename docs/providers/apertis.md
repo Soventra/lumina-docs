@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | Apertis AI (formerly Stima API) is a unified API platform providing access to 430+ AI models through a single interface, with cost savings of up to 50%. |
-| Provider Route on LiteLLM | `apertis/` |
+| Provider Route on Lumina | `apertis/` |
 | Link to Provider Doc | [Apertis AI Website ↗](https://api.stima.tech) |
 | Base URL | `https://api.stima.tech/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/apertis#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](/docs/providers/apertis#usage---lumina-python-sdk) |
 
 <br />
 
@@ -29,14 +29,14 @@ os.environ["STIMA_API_KEY"] = ""  # your Apertis AI API key
 
 Get your Apertis AI API key from [api.stima.tech](https://api.stima.tech).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Apertis AI Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["STIMA_API_KEY"] = ""  # your Apertis AI API key
 
@@ -55,8 +55,8 @@ print(response)
 
 ```python showLineNumbers title="Apertis AI Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["STIMA_API_KEY"] = ""  # your Apertis AI API key
 
@@ -73,7 +73,7 @@ for chunk in response:
     print(chunk)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 

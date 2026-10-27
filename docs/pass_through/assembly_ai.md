@@ -15,7 +15,7 @@ Supports **ALL** AssemblyAI Endpoints
 
 ## Supported Routes
 
-| AssemblyAI Service | LiteLLM Route | AssemblyAI Base URL |
+| AssemblyAI Service | Lumina Route | AssemblyAI Base URL |
 |-------------------|---------------|---------------------|
 | Speech-to-Text (US) | `/assemblyai/*` | `api.assemblyai.com` |
 | Speech-to-Text (EU) | `/eu.assemblyai/*` | `eu.api.assemblyai.com` |
@@ -30,10 +30,10 @@ Let's call the AssemblyAI [`/v2/transcripts` endpoint](https://www.assemblyai.co
 export ASSEMBLYAI_API_KEY=""
 ```
 
-2. Start LiteLLM Proxy
+2. Start Lumina Proxy
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -46,7 +46,7 @@ Let's call the AssemblyAI [`/v2/transcripts` endpoint](https://www.assemblyai.co
 import assemblyai as aai
 
 aai.settings.base_url = "http://0.0.0.0:4000/assemblyai" # <your-proxy-base-url>/assemblyai
-aai.settings.api_key = "Bearer sk-<your-litellm-api-key>" # Bearer <your-virtual-key>
+aai.settings.api_key = "Bearer sk-<your-lumina-api-key>" # Bearer <your-virtual-key>
 
 # Use a publicly-accessible URL
 audio_file = "https://assembly.ai/wildfires.mp3"
@@ -86,7 +86,7 @@ print(f"\nFull Transcript:\n\n{transcript.text}")
 import assemblyai as aai
 
 aai.settings.base_url = "http://0.0.0.0:4000/assemblyai" # <your-proxy-base-url>/assemblyai
-aai.settings.api_key = "Bearer sk-<your-litellm-api-key>" # Bearer <your-virtual-key>
+aai.settings.api_key = "Bearer sk-<your-lumina-api-key>" # Bearer <your-virtual-key>
 
 audio_file = "https://assemblyaiassets.com/audios/verbatim.mp3"
 
@@ -110,7 +110,7 @@ If you want to send your request to the AssemblyAI EU endpoint, you can do so by
 import assemblyai as aai
 
 aai.settings.base_url = "http://0.0.0.0:4000/eu.assemblyai" # <your-proxy-base-url>/eu.assemblyai
-aai.settings.api_key = "Bearer sk-<your-litellm-api-key>" # Bearer <your-virtual-key>
+aai.settings.api_key = "Bearer sk-<your-lumina-api-key>" # Bearer <your-virtual-key>
 
 # Use a publicly-accessible URL
 audio_file = "https://assembly.ai/wildfires.mp3"
@@ -126,21 +126,21 @@ print(transcript.id)
 
 ## LLM Gateway
 
-Use AssemblyAI's [LLM Gateway](https://www.assemblyai.com/docs/llm-gateway) as an OpenAI-compatible provider: a unified API for Claude, GPT, and Gemini models with full LiteLLM logging, guardrails, and cost tracking support.
+Use AssemblyAI's [LLM Gateway](https://www.assemblyai.com/docs/llm-gateway) as an OpenAI-compatible provider: a unified API for Claude, GPT, and Gemini models with full Lumina logging, guardrails, and cost tracking support.
 
 [**See Available Models**](https://www.assemblyai.com/docs/llm-gateway#available-models)
 
 ### Usage
 
-#### LiteLLM Python SDK
+#### Lumina Python SDK
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["ASSEMBLYAI_API_KEY"] = "your-assemblyai-api-key"
 
-response = litellm.completion(
+response = lumina.completion(
     model="assemblyai/claude-sonnet-4-5-20250929",
     messages=[{"role": "user", "content": "What is the capital of France?"}]
 )
@@ -148,7 +148,7 @@ response = litellm.completion(
 print(response.choices[0].message.content)
 ```
 
-#### LiteLLM Proxy
+#### Lumina Proxy
 
 1. Config
 
@@ -163,7 +163,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -174,7 +174,7 @@ litellm --config config.yaml
 import requests
 
 headers = {
-    "authorization": "Bearer sk-<your-litellm-api-key>"  # Bearer <your-virtual-key>
+    "authorization": "Bearer sk-<your-lumina-api-key>"  # Bearer <your-virtual-key>
 }
 
 response = requests.post(

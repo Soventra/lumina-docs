@@ -1,9 +1,9 @@
-# Upgrading LiteLLM Proxy (uv/venv)
+# Upgrading Lumina Proxy (uv/venv)
 
-Guide for upgrading LiteLLM Proxy when installed via uv in a virtual environment.
+Guide for upgrading Lumina Proxy when installed via uv in a virtual environment.
 
 :::info[Important]
-Always activate your virtual environment before running any `litellm` or `prisma` commands. All commands in this guide assume you're working inside an activated venv.
+Always activate your virtual environment before running any `lumina` or `prisma` commands. All commands in this guide assume you're working inside an activated venv.
 :::
 
 ## How uv/venv Upgrades Work
@@ -13,13 +13,13 @@ There are two pieces that need to stay in sync:
 1. **Prisma client** - Generated Python code that talks to the DB
 2. **DB schema** - Tables/columns in PostgreSQL
 
-When you upgrade via uv, the `litellm-proxy-extras` package ships with a new `schema.prisma` and a `migrations/` directory. But unlike the Docker image, `uv add` does not automatically regenerate the Prisma client or run migrations. You have to do both manually.
+When you upgrade via uv, the `lumina-proxy-extras` package ships with a new `schema.prisma` and a `migrations/` directory. But unlike the Docker image, `uv add` does not automatically regenerate the Prisma client or run migrations. You have to do both manually.
 
 ## Upgrade Workflow (uv/venv)
 
 ### 1. Stop the proxy
 
-Stop your running LiteLLM proxy instance.
+Stop your running Lumina proxy instance.
 
 ### 2. (Optional) Back up your DB
 
@@ -30,13 +30,13 @@ pg_dump -h <host> -U <user> -d <db> -F c -f backup_$(date +%Y%m%d).dump
 ### 3. Upgrade the package
 
 ```bash
-uv add 'litellm[proxy]==<version>'
+uv add 'lumina[proxy]==<version>'
 ```
 
 ### 4. Regenerate the Prisma client
 
 ```bash
-prisma generate --schema <venv>/lib/python<version>/site-packages/litellm_proxy_extras/schema.prisma
+prisma generate --schema <venv>/lib/python<version>/site-packages/lumina_proxy_extras/schema.prisma
 ```
 
 Replace `<venv>` with your virtual environment path and `<version>` with your interpreter's version (for example `python{{python_version}}`).
@@ -58,7 +58,7 @@ source <venv>/bin/activate
 Then start the proxy:
 
 ```bash
-litellm --config your_config.yaml --port 4000
+lumina --config your_config.yaml --port 4000
 ```
 
 **Option B: Run manually before starting**
@@ -72,7 +72,7 @@ source <venv>/bin/activate
 Then run the migration with the explicit schema path:
 
 ```bash
-prisma migrate deploy --schema <venv>/lib/python<version>/site-packages/litellm_proxy_extras/schema.prisma
+prisma migrate deploy --schema <venv>/lib/python<version>/site-packages/lumina_proxy_extras/schema.prisma
 ```
 
 Replace `<venv>` with your virtual environment path and `<version>` with your interpreter's version (for example `python{{python_version}}`).
@@ -82,16 +82,16 @@ Replace `<venv>` with your virtual environment path and `<version>` with your in
 If you used Option B above, now start the proxy (with venv still activated):
 
 ```bash
-litellm --config your_config.yaml --port 4000
+lumina --config your_config.yaml --port 4000
 ```
 
 ## How to Verify Migrations
 
-> **Note:** `<schema-path>` = `<venv>/lib/python<version>/site-packages/litellm_proxy_extras/schema.prisma`
+> **Note:** `<schema-path>` = `<venv>/lib/python<version>/site-packages/lumina_proxy_extras/schema.prisma`
 
 ### Before applying migrations: Preview what will change
 
-Run `uv add 'litellm[proxy]==<version>'` first (Step 3) so the new `schema.prisma` is available.
+Run `uv add 'lumina[proxy]==<version>'` first (Step 3) so the new `schema.prisma` is available.
 
 ```bash
 prisma migrate diff \
@@ -114,7 +114,7 @@ All migrations should have a `finished_at` timestamp and no `rolled_back_at`.
 
 - **`prisma db push`** is the nuclear option: force-syncs the DB to match the schema, bypassing migration history. Safe when all changes are additive (new columns/tables), but always have a backup.
 
-- **The `schema.prisma` inside `litellm_proxy_extras` is the source of truth** - always use that one, not one from a different version or from the git repo
+- **The `schema.prisma` inside `lumina_proxy_extras` is the source of truth** - always use that one, not one from a different version or from the git repo
 
 ## Troubleshooting
 

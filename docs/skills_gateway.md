@@ -2,20 +2,20 @@
 
 <iframe width="840" height="500" src="https://www.loom.com/embed/cb74eb79df3e4c2b83a6efae54a589f9" frameBorder="0" allowFullScreen></iframe>
 
-LiteLLM acts as a **Skills Registry**, a central place to register, manage, and discover Claude Code skills across your organization. Teams publish a skill once, and developers and agents find it through a single hub and install it from one Claude Code marketplace.
+Lumina acts as a **Skills Registry**, a central place to register, manage, and discover Claude Code skills across your organization. Teams publish a skill once, and developers and agents find it through a single hub and install it from one Claude Code marketplace.
 
 ## How it works
 
 ```mermaid
 graph TD
-    Admin["Proxy admin<br/>registers a skill<br/>(git repo, subdir, or zip archive)"] -->|POST /claude-code/plugins| Proxy["LiteLLM Proxy<br/>(Skills Registry)"]
+    Admin["Proxy admin<br/>registers a skill<br/>(git repo, subdir, or zip archive)"] -->|POST /claude-code/plugins| Proxy["Lumina Proxy<br/>(Skills Registry)"]
     Admin -->|enable via UI or API| Proxy
 
     Proxy -->|GET /public/skill_hub| SkillHub["Skill Hub<br/>(AI Hub, Skill Hub tab)"]
-    Proxy -->|GET /claude-code/marketplace.json| Marketplace["Claude Code<br/>marketplace 'litellm'"]
+    Proxy -->|GET /claude-code/marketplace.json| Marketplace["Claude Code<br/>marketplace 'lumina'"]
 
     SkillHub --> Human["Developer<br/>browses skills in the UI"]
-    Marketplace --> Agent["Claude Code<br/>/plugin install &lt;name&gt;@litellm"]
+    Marketplace --> Agent["Claude Code<br/>/plugin install &lt;name&gt;@lumina"]
 
     style Proxy fill:#1a73e8,color:#fff
     style SkillHub fill:#e8f0fe,color:#1a73e8
@@ -28,7 +28,7 @@ Enabled skills are public: they appear in the Skill Hub and in `marketplace.json
 
 ### 1. Register a skill
 
-In the Admin UI open **Skills**, click **+ Add Skill**, and paste a GitHub URL, a git clone URL (HTTPS or SSH), or an HTTPS link to a zip file. LiteLLM detects the source type and suggests a skill name, including for skills nested in a subdirectory such as `github.com/org/repo/tree/main/skills/my-skill`.
+In the Admin UI open **Skills**, click **+ Add Skill**, and paste a GitHub URL, a git clone URL (HTTPS or SSH), or an HTTPS link to a zip file. Lumina detects the source type and suggests a skill name, including for skills nested in a subdirectory such as `github.com/org/repo/tree/main/skills/my-skill`.
 
 Or register it through the API with an admin key:
 
@@ -68,26 +68,26 @@ Public skills appear in the Admin UI under **AI Hub → Skill Hub**, on the publ
 
 ### 4. Install in Claude Code
 
-Add the proxy marketplace once. The marketplace is always named `litellm`:
+Add the proxy marketplace once. The marketplace is always named `lumina`:
 
 ```
 /plugin marketplace add https://your-proxy/claude-code/marketplace.json
 ```
 
-Then install any skill by `<name>@litellm`:
+Then install any skill by `<name>@lumina`:
 
 ```
-/plugin install grill-me@litellm
+/plugin install grill-me@lumina
 ```
 
-The same commands work from a shell as `claude plugin marketplace add <url>` and `claude plugin install grill-me@litellm`.
+The same commands work from a shell as `claude plugin marketplace add <url>` and `claude plugin install grill-me@lumina`.
 
 To roll the marketplace out through settings instead, add it to `extraKnownMarketplaces`. The `source` value is an object; a flat `"source": "url"` entry is rejected by Claude Code as an invalid marketplace entry and ignored:
 
 ```json title="~/.claude/settings.json"
 {
   "extraKnownMarketplaces": {
-    "litellm": {
+    "lumina": {
       "source": {
         "source": "url",
         "url": "https://your-proxy/claude-code/marketplace.json"
@@ -120,7 +120,7 @@ When both the key and its team list skills, the key gets the intersection of the
 
 | Field | Description |
 |-------|-------------|
-| `name` | Unique kebab-case identifier (`^[a-z0-9-]+$`), used in `/plugin install <name>@litellm`. Set on create and fixed afterwards |
+| `name` | Unique kebab-case identifier (`^[a-z0-9-]+$`), used in `/plugin install <name>@lumina`. Set on create and fixed afterwards |
 | `source` | Where Claude Code fetches the skill from; see [Source formats](#source-formats) |
 | `description` | Short description shown in the hub |
 | `domain` | Top-level grouping in the Skill Hub (e.g. `Engineering`, `Productivity`) |
@@ -159,12 +159,12 @@ When both the key and its team list skills, the key gets the intersection of the
 
 ## Agent Skills discovery index
 
-Skills uploaded to the proxy's own store through [`/v1/skills`](./skills.md) with `custom_llm_provider=litellm_proxy` can also be published as an [Agent Skills](https://agentskills.io) discovery index, so any agent that supports the format can install them with `npx skills add`. This store is separate from the Claude Code marketplace above: plugins registered through `/claude-code/plugins` do not appear in it.
+Skills uploaded to the proxy's own store through [`/v1/skills`](./skills.md) with `custom_llm_provider=lumina_proxy` can also be published as an [Agent Skills](https://agentskills.io) discovery index, so any agent that supports the format can install them with `npx skills add`. This store is separate from the Claude Code marketplace above: plugins registered through `/claude-code/plugins` do not appear in it.
 
 The index is off by default because discovery clients send no credentials, so turning it on publishes every stored skill to anyone who can reach the proxy:
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   public_skills_index: true
 ```
 

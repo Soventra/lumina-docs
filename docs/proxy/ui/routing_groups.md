@@ -6,7 +6,7 @@ import Image from '@theme/IdealImage';
 
 # Manage Routing Groups
 
-Routing groups let you apply different routing strategies to different models in the same router, for example latency-based routing for `{{openai_large}}` while cheaper models use simple-shuffle. You can manage them from the LiteLLM dashboard without editing your `proxy_config.yaml`.
+Routing groups let you apply different routing strategies to different models in the same router, for example latency-based routing for `{{openai_large}}` while cheaper models use simple-shuffle. You can manage them from the Lumina dashboard without editing your `proxy_config.yaml`.
 
 For the conceptual overview and full strategy reference, see [Routing Groups - Per-Model Strategies](../../routing.md#routing-groups---per-model-strategies-and-callable-virtual-models).
 
@@ -66,7 +66,7 @@ See [Routing Groups - Per-Model Strategies](../../routing.md#routing-groups---pe
 
 ## Test a Request
 
-After configuring a group, confirm that requests to a grouped model are actually being routed by that group's strategy. LiteLLM logs the `routing_group`, `model`, and `strategy` chosen for every request, so verification comes down to sending a request and inspecting the proxy logs.
+After configuring a group, confirm that requests to a grouped model are actually being routed by that group's strategy. Lumina logs the `routing_group`, `model`, and `strategy` chosen for every request, so verification comes down to sending a request and inspecting the proxy logs.
 
 ### 1. Send a request
 
@@ -103,13 +103,13 @@ Each request emits a log line containing `routing_group=<name> model=<model> str
 **Plain logs.** Grep the proxy stdout directly:
 
 ```bash
-kubectl logs -n litellm -l app=litellm --tail=200 | grep routing_group=
+kubectl logs -n lumina -l app=lumina --tail=200 | grep routing_group=
 ```
 
 **Loki (LogQL).** Extract and reformat the fields for a clean readout:
 
 ```logql
-{namespace="litellm", pod=~"<your-litellm-pod-regex>"} |= "routing_group="
+{namespace="lumina", pod=~"<your-lumina-pod-regex>"} |= "routing_group="
 | regexp `routing_group=(?P<routing_group>\S+) model=(?P<model>\S+) strategy=(?P<strategy>\S+)`
 | line_format `{{.routing_group}} {{.model}} {{.strategy}}`
 ```

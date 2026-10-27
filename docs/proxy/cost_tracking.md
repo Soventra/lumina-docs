@@ -6,7 +6,7 @@ import Image from '@theme/IdealImage';
 
 Track spend for keys, users, and teams across 100+ LLMs.
 
-LiteLLM automatically tracks spend for all known models. See how the [model cost map](./model_cost_map) prices each request
+Lumina automatically tracks spend for all known models. See how the [model cost map](./model_cost_map) prices each request
 
 Provider-specific cost tracking (e.g., [Vertex AI PayGo / priority pricing](../providers/vertex.md#paygo--priority-cost-tracking), [Bedrock service tiers](../providers/bedrock.md#usage---service-tier), [Azure base model mapping](./custom_pricing.md#set-base_model-for-cost-tracking-eg-azure-deployments)) is applied automatically when the response includes tier metadata.
 
@@ -18,11 +18,11 @@ Provider-specific cost tracking (e.g., [Vertex AI PayGo / priority pricing](../p
 Use the step-by-step workflow in [Debugging a cost discrepancy](../troubleshoot/cost_discrepancy): align time ranges, compare token categories (including cache), then decide whether the gap is ingestion, formula, or model-map pricing.
 :::
 
-### How to Track Spend with LiteLLM
+### How to Track Spend with Lumina
 
 **Step 1**
 
-[Setup LiteLLM with a Database](https://docs.litellm.ai/docs/proxy/virtual_keys#setup)
+[Setup Lumina with a Database](https://docs.lumina.ai/docs/proxy/virtual_keys#setup)
 
 **Step2** Send `/chat/completions` request
 
@@ -32,7 +32,7 @@ Use the step-by-step workflow in [Debugging a cost discrepancy](../troubleshoot/
 ```python title="Send Request with Spend Tracking" showLineNumbers
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -111,7 +111,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -128,24 +128,24 @@ That's IT. Now Verify your spend was tracked
 <Tabs>
 <TabItem value="curl" label="Response Headers">
 
-Expect to see `x-litellm-response-cost` in the response headers with calculated cost
+Expect to see `x-lumina-response-cost` in the response headers with calculated cost
 
 <Image img={require('../../img/response_cost_img.png')} />
 
 </TabItem>
 <TabItem value="db" label="DB + UI">
 
-The following spend gets tracked in Table `LiteLLM_SpendLogs`
+The following spend gets tracked in Table `Lumina_SpendLogs`
 
 ```json title="Spend Log Entry Format" showLineNumbers
 {
   "api_key": "fe6b0cab4ff5a5a8df823196cc8a450*****",                            # Hash of API Key used
-  "user": "default_user",                                                       # Internal User (LiteLLM_UserTable) that owns `api_key=sk-<your-litellm-api-key>`.
-  "team_id": "e8d1460f-846c-45d7-9b43-55f3cc52ac32",                            # Team (LiteLLM_TeamTable) that owns `api_key=sk-<your-litellm-api-key>`
+  "user": "default_user",                                                       # Internal User (Lumina_UserTable) that owns `api_key=sk-<your-lumina-api-key>`.
+  "team_id": "e8d1460f-846c-45d7-9b43-55f3cc52ac32",                            # Team (Lumina_TeamTable) that owns `api_key=sk-<your-lumina-api-key>`
   "request_tags": ["jobID:214590dsff09fds", "taskName:run_page_classification"],# Tags sent in request
   "end_user": "palantir",                                                       # Customer - the `user` sent in the request
-  "model_group": "llama3",                                                      # "model" passed to LiteLLM
-  "api_base": "https://api.groq.com/openai/v1/",                                # "api_base" of model used by LiteLLM
+  "model_group": "llama3",                                                      # "model" passed to Lumina
+  "api_base": "https://api.groq.com/openai/v1/",                                # "api_base" of model used by Lumina
   "spend": 0.000002,                                                            # Spend in $
   "total_tokens": 100,
   "completion_tokens": 80,
@@ -158,7 +158,7 @@ The following spend gets tracked in Table `LiteLLM_SpendLogs`
 }
 ```
 
-Navigate to the Usage Tab on the LiteLLM UI (found on https://your-proxy-endpoint/ui) and verify you see spend tracked under `Usage`
+Navigate to the Usage Tab on the Lumina UI (found on https://your-proxy-endpoint/ui) and verify you see spend tracked under `Usage`
 
 <Image img={require('../../img/admin_ui_spend.png')} />
 
@@ -167,10 +167,10 @@ Navigate to the Usage Tab on the LiteLLM UI (found on https://your-proxy-endpoin
 
 ### Requests that price to $0
 
-A request that carries usage but prices to `$0` on a model whose pricing entry has a non-zero rate is still written to `LiteLLM_SpendLogs` with `spend = 0`, and LiteLLM flags it in two places so the gap is visible instead of silently under-billed
+A request that carries usage but prices to `$0` on a model whose pricing entry has a non-zero rate is still written to `Lumina_SpendLogs` with `spend = 0`, and Lumina flags it in two places so the gap is visible instead of silently under-billed
 
 - one `WARNING` line in the proxy log naming the model group, the deployment's pricing entry and the pricing key it is missing, for example `pricing entry '<model_id>' has no input_cost_per_token, output_cost_per_token`
-- the Prometheus counter `litellm_zero_cost_requests_total`, labelled by `requested_model`, `model`, `model_id`, `api_provider` and `reason` (`missing_pricing_key`, `pricing_not_applied` or `cost_calculation_error`), so you can alert on it (see [Prometheus metrics](prometheus#request-counting-metrics))
+- the Prometheus counter `lumina_zero_cost_requests_total`, labelled by `requested_model`, `model`, `model_id`, `api_provider` and `reason` (`missing_pricing_key`, `pricing_not_applied` or `cost_calculation_error`), so you can alert on it (see [Prometheus metrics](prometheus#request-counting-metrics))
 
 Free models (every rate the request used is set to `0`) and requests that carry no usage are not flagged. To fix a `missing_pricing_key`, set the missing rate in the deployment's `model_info` or in the model cost map, or set every rate to `0` to mark the model free
 
@@ -180,7 +180,7 @@ Use this when you want non-proxy admins to access `/spend` endpoints
 
 :::info
 
-Schedule a [meeting with us to get your Enterprise License](https://enterprise.litellm.ai/demo)
+Schedule a [meeting with us to get your Enterprise License](https://enterprise.lumina.ai/demo)
 
 :::
 
@@ -210,9 +210,9 @@ curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end
 
 Use `/global/spend/reset` if you want to:
 
-- Reset the Spend for all API Keys, Teams. The `spend` for ALL Teams and Keys in `LiteLLM_TeamTable` and `LiteLLM_VerificationToken` will be set to `spend=0`
+- Reset the Spend for all API Keys, Teams. The `spend` for ALL Teams and Keys in `Lumina_TeamTable` and `Lumina_VerificationToken` will be set to `spend=0`
 
-- LiteLLM will maintain all the logs in `LiteLLMSpendLogs` for Auditing Purposes
+- Lumina will maintain all the logs in `LuminaSpendLogs` for Auditing Purposes
 
 ##### Request
 
@@ -279,8 +279,8 @@ curl -L -X GET 'http://localhost:4000/user/info?user_id=jane_smith' \
       "created_by": "582b168f-fc11-4e14-ad6a-cf4bb3656ddc",
       "updated_at": "2025-07-24T19:14:13.970000Z",
       "updated_by": "582b168f-fc11-4e14-ad6a-cf4bb3656ddc",
-      "litellm_budget_table": null,
-      "litellm_organization_table": null,
+      "lumina_budget_table": null,
+      "lumina_organization_table": null,
       "object_permission": null,
       "team_alias": null
     }
@@ -376,7 +376,7 @@ curl -L -X GET 'http://localhost:4000/user/daily/activity?start_date=2025-03-20&
 
 ### API Reference
 
-See our [Swagger API](https://docs.litellm.ai/api-reference/#/Budget%20%26%20Spend%20Tracking/get_user_daily_activity_user_daily_activity_get) for more details on the `/user/daily/activity` endpoint
+See our [Swagger API](https://docs.lumina.ai/api-reference/#/Budget%20%26%20Spend%20Tracking/get_user_daily_activity_user_daily_activity_get) for more details on the `/user/daily/activity` endpoint
 
 :::info
 Request counts on this endpoint are derived from spend logs, so they only cover requests that were logged and they record each upstream attempt separately. For counts of what the gateway actually answered, including requests rejected before a key or model was resolved, use [`/gateway/daily/activity`](./endpoint_activity.md#gateway-daily-activity). The two are not expected to match
@@ -385,14 +385,14 @@ Request counts on this endpoint are derived from spend logs, so they only cover 
 ## Custom Tags
 
 :::tip[See Full Request Tags Documentation]
-For full documentation on all tag options including `x-litellm-tags` header, request body `tags`, and config-based tags, see the dedicated [Request Tags](./request_tags.md) page.
+For full documentation on all tag options including `x-lumina-tags` header, request body `tags`, and config-based tags, see the dedicated [Request Tags](./request_tags.md) page.
 :::
 
 Requirements:
 
-- Virtual Keys & a database should be set up, see [virtual keys](https://docs.litellm.ai/docs/proxy/virtual_keys)
+- Virtual Keys & a database should be set up, see [virtual keys](https://docs.lumina.ai/docs/proxy/virtual_keys)
 
-**Note:** By default, LiteLLM will track `User-Agent` as a custom tag for cost tracking. This enables viewing usage for tools like Claude Code, Gemini CLI, etc.
+**Note:** By default, Lumina will track `User-Agent` as a custom tag for cost tracking. This enables viewing usage for tools like Claude Code, Gemini CLI, etc.
 
 <Image img={require('../../img/claude_cli_tag_usage.png')} />
 
@@ -547,7 +547,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -563,17 +563,17 @@ print(response)
 You can add custom headers to the request to track spend and usage.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   extra_spend_tag_headers:
     - "x-custom-header"
 ```
 
 ### Disable user-agent tracking
 
-You can disable user-agent tracking by setting `litellm_settings.disable_add_user_agent_to_request_tags` to `true`.
+You can disable user-agent tracking by setting `lumina_settings.disable_add_user_agent_to_request_tags` to `true`.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   disable_add_user_agent_to_request_tags: true
 ```
 
@@ -655,7 +655,7 @@ params = {
 }
 
 headers = {
-    'Authorization': 'Bearer sk-<your-litellm-api-key>'
+    'Authorization': 'Bearer sk-<your-lumina-api-key>'
 }
 
 # Make the GET request
@@ -711,9 +711,9 @@ Output from script
 
 :::info
 
-Customer [this is `user` passed to `/chat/completions` request](#how-to-track-spend-with-litellm)
+Customer [this is `user` passed to `/chat/completions` request](#how-to-track-spend-with-lumina)
 
-- [LiteLLM API key](virtual_keys.md)
+- [Lumina API key](virtual_keys.md)
 
 :::
 
@@ -772,10 +772,10 @@ curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end
 
 <TabItem value="per key" label="Spend for Specific API Key">
 
-Key Change: Specify `api_key=sk-<your-litellm-api-key>`
+Key Change: Specify `api_key=sk-<your-lumina-api-key>`
 
 ```shell
-curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end_date=2024-06-30&api_key=sk-<your-litellm-api-key>' \
+curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end_date=2024-06-30&api_key=sk-<your-lumina-api-key>' \
   -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
@@ -812,7 +812,7 @@ curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end
 
 :::info
 
-Internal User (Key Owner): This is the value of `user_id` passed when calling [`/key/generate`](https://docs.litellm.ai/api-reference/#/key%20management/generate_key_fn_key_generate_post)
+Internal User (Key Owner): This is the value of `user_id` passed when calling [`/key/generate`](https://docs.lumina.ai/api-reference/#/key%20management/generate_key_fn_key_generate_post)
 
 :::
 
@@ -921,7 +921,7 @@ curl -X GET "http://localhost:4000/spend/logs?start_date=2024-01-01&end_date=202
 
 ## Paginated Spend Logs - `/spend/logs/v2`
 
-Use `/spend/logs/v2` for programmatic access to individual spend logs with page-based pagination. The legacy `/spend/logs` endpoint above truncates results to the 10,000 most recent matching rows (the response then carries an `x-litellm-spend-logs-truncated: true` header), so `/spend/logs/v2` is the recommended endpoint for exports and integrations.
+Use `/spend/logs/v2` for programmatic access to individual spend logs with page-based pagination. The legacy `/spend/logs` endpoint above truncates results to the 10,000 most recent matching rows (the response then carries an `x-lumina-spend-logs-truncated: true` header), so `/spend/logs/v2` is the recommended endpoint for exports and integrations.
 
 ```bash title="Get a page of spend logs" showLineNumbers
 curl -X GET "http://localhost:4000/spend/logs/v2?start_date=2024-01-01%2000:00:00&end_date=2024-01-02%2023:59:59&page=1&page_size=100" \
@@ -955,7 +955,7 @@ Log specific key,value pairs as part of the metadata for a spend log
 
 Requirements: 
 
-- Virtual Keys & a database should be set up, see [virtual keys](https://docs.litellm.ai/docs/proxy/virtual_keys)
+- Virtual Keys & a database should be set up, see [virtual keys](https://docs.lumina.ai/docs/proxy/virtual_keys)
 
 #### Usage - /chat/completions requests with special spend logs metadata 
 
@@ -1009,7 +1009,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -1035,7 +1035,7 @@ print(response)
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -1049,7 +1049,7 @@ response = client.chat.completions.create(
         }
     ],
     extra_headers={
-        "x-litellm-spend-logs-metadata": '{"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}'
+        "x-lumina-spend-logs-metadata": '{"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}'
     }
 )
 
@@ -1118,7 +1118,7 @@ async function runOpenAI() {
       ]
     }, {
       headers: {
-        'x-litellm-spend-logs-metadata': '{"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}'
+        'x-lumina-spend-logs-metadata': '{"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}'
       }
     });
     console.log(response);
@@ -1161,13 +1161,13 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 <TabItem value="headers" label="Using Headers">
 
-Pass `x-litellm-spend-logs-metadata` as a request header with JSON string
+Pass `x-lumina-spend-logs-metadata` as a request header with JSON string
 
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
     --header "Authorization: Bearer $LUMINA_API_KEY" \
-    --header 'x-litellm-spend-logs-metadata: {"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}' \
+    --header 'x-lumina-spend-logs-metadata: {"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}' \
     --data '{
     "model": "{{openai_small}}",
     "messages": [
@@ -1209,7 +1209,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)

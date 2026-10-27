@@ -1,6 +1,6 @@
 ---
 title: "[Beta] Rust AI Gateway"
-description: Run LiteLLM request translation on the Rust core. Enable it per model on your existing Python server, or run the standalone Axum server.
+description: Run Lumina request translation on the Rust core. Enable it per model on your existing Python server, or run the standalone Axum server.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -20,7 +20,7 @@ On `/chat/completions` that automatic fallback covers the requests the Rust path
 
 :::
 
-LiteLLM is porting its request/response translation to a Rust core (the `litellm-rust` workspace, shipped inside the LiteLLM wheel). The goal is lower per-request CPU and latency while Python keeps owning auth, configuration, routing, logging, callbacks, and spend tracking until each Rust path has parity coverage.
+Lumina is porting its request/response translation to a Rust core (the `lumina-rust` workspace, shipped inside the Lumina wheel). The goal is lower per-request CPU and latency while Python keeps owning auth, configuration, routing, logging, callbacks, and spend tracking until each Rust path has parity coverage.
 
 There are two ways to adopt it.
 
@@ -46,7 +46,7 @@ model_list:
       rust: true
 ```
 
-A response served by the Rust core carries an `x-litellm-rust: true` header, so you can confirm the path per request:
+A response served by the Rust core carries an `x-lumina-rust: true` header, so you can confirm the path per request:
 
 ```bash
 curl -i http://localhost:4000/v1/messages \
@@ -59,7 +59,7 @@ curl -i http://localhost:4000/v1/messages \
   }'
 ```
 
-Look for `x-litellm-rust: true` in the response headers. If the header is absent, the request was served by the Python path (either because the route/provider is not on Rust yet, or because a Rust error triggered the automatic fallback).
+Look for `x-lumina-rust: true` in the response headers. If the header is absent, the request was served by the Python path (either because the route/provider is not on Rust yet, or because a Rust error triggered the automatic fallback).
 
 ### What `rust: true` covers today
 
@@ -78,14 +78,14 @@ On `/chat/completions` the Rust core takes non-streaming text conversations. A r
 
 Which path serves the request is decided before the provider is called, so anything outside that subset is served by Python with no config change and no error. That covers any request with `stream: true`, tool calls and tool results, images and other non-text content parts, a message with an empty content list, `response_format` and JSON mode, extended thinking, prompt caching, `top_k` on `bedrock`, `n` above 1, and any other parameter the Rust path does not recognize. On this route the choice is final once the provider call has gone out: a failure after that point comes back as an error rather than being retried on Python, since retrying would issue the same provider call a second time and bill for it twice
 
-The response body is the same on either path, token counts included, so the header is the only way to tell them apart: a Rust-served response carries `x-litellm-rust: true` and a Python-served one carries no such header
+The response body is the same on either path, token counts included, so the header is the only way to tell them apart: a Rust-served response carries `x-lumina-rust: true` and a Python-served one carries no such header
 
 ## Mode 2: Run the standalone Axum server
 
-Mode 2 replaces the Python host with the Rust `litellm-ai-gateway` Axum server binary, so routing and network I/O run entirely in Rust. This is the higher-ceiling option for throughput, but it currently covers fewer routes than the Python host and does not yet have the full proxy feature set.
+Mode 2 replaces the Python host with the Rust `lumina-ai-gateway` Axum server binary, so routing and network I/O run entirely in Rust. This is the higher-ceiling option for throughput, but it currently covers fewer routes than the Python host and does not yet have the full proxy feature set.
 
 :::note[Pending]
 
-A prebuilt Docker image for the Axum server is not published yet. This section will be filled in with the image reference and a deployment example once it ships. In the meantime you can build the server from the `litellm-rust` workspace with the `server` feature; reach out in the community channel if you want to trial it early.
+A prebuilt Docker image for the Axum server is not published yet. This section will be filled in with the image reference and a deployment example once it ships. In the meantime you can build the server from the `lumina-rust` workspace with the `server` feature; reach out in the community channel if you want to trial it early.
 
 :::

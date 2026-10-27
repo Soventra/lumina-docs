@@ -67,7 +67,7 @@ import requests
 response = requests.post(
     "http://localhost:4000/fallback",
     headers={
-        "Authorization": "Bearer sk-<your-litellm-api-key>",
+        "Authorization": "Bearer sk-<your-lumina-api-key>",
         "Content-Type": "application/json"
     },
     json={
@@ -109,7 +109,7 @@ import requests
 
 response = requests.get(
     "http://localhost:4000/fallback/{{openai_small}}",
-    headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+    headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
     params={"fallback_type": "general"}
 )
 
@@ -145,7 +145,7 @@ import requests
 
 response = requests.delete(
     "http://localhost:4000/fallback/{{openai_small}}",
-    headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+    headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
     params={"fallback_type": "general"}
 )
 
@@ -155,7 +155,7 @@ print(response.json())
 ### Test fallback
 
 :::warning[Deprecated for Proxy requests]
-Starting in LiteLLM Proxy v1.85.0, `mock_testing_fallbacks` is stripped from incoming Proxy requests and has no effect. It remains supported only for direct `litellm.Router` calls in tests.
+Starting in Lumina Proxy v1.85.0, `mock_testing_fallbacks` is stripped from incoming Proxy requests and has no effect. It remains supported only for direct `lumina.Router` calls in tests.
 :::
 
 To validate the fallback through the Proxy, make the primary deployment unavailable in a non-production environment and send a normal request:

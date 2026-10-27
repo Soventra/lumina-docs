@@ -6,7 +6,7 @@ Pass-through endpoints for the [TinyFish Agent API](https://docs.tinyfish.ai/age
 |---------|-----------|-------|
 | Cost Tracking | ✅ | `COMPLETED` runs billed as `num_of_steps x $0.016` (TinyFish's published rate) |
 | Logging | ✅ | Runs logged as model `tinyfish/automation-run` |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | `run-sse` progress events relayed live |
 
 Just replace `https://agent.tinyfish.ai` with `LUMINA_PROXY_BASE_URL/tinyfish`
@@ -61,14 +61,14 @@ curl http://localhost:4000/tinyfish/v1/automation/run \
 
 ### 3. Or use the official TinyFish SDK
 
-The SDK accepts a `base_url` with the `/tinyfish` prefix and sends the virtual key on the `X-API-Key` header, which LiteLLM accepts natively
+The SDK accepts a `base_url` with the `/tinyfish` prefix and sends the virtual key on the `X-API-Key` header, which Lumina accepts natively
 
 ```python
 from tinyfish import TinyFish
 
 client = TinyFish(
     base_url="http://localhost:4000/tinyfish",
-    api_key="sk-your-litellm-virtual-key",
+    api_key="sk-your-lumina-virtual-key",
 )
 run = client.agent.run(
     url="https://scrapeme.live/shop",
@@ -86,7 +86,7 @@ Navigate to **Logs** in the sidebar and filter by `tinyfish`. Each run shows mod
 Runs are billed `num_of_steps x $0.016` to the calling key and team:
 
 - `POST /v1/automation/run` bills when the blocking response returns
-- `POST /v1/automation/run-async` bills exactly once: LiteLLM polls the run in the background and writes one spend log when it reaches a terminal status. Client polls of `GET /v1/runs/{id}` are never billed, no matter how many
+- `POST /v1/automation/run-async` bills exactly once: Lumina polls the run in the background and writes one spend log when it reaches a terminal status. Client polls of `GET /v1/runs/{id}` are never billed, no matter how many
 - `POST /v1/automation/run-sse` bills exactly once when the run reaches a terminal status, the same way: a client that disconnects mid-stream is still billed once the run completes
 - Only `COMPLETED` runs carry cost. `FAILED` and `CANCELLED` runs write a $0 spend log, matching how TinyFish invoices
 - `GET /v1/runs/{id}` and cancels never write spend logs
@@ -99,7 +99,7 @@ One operational caveat: run-async and SSE billing runs in an in-memory backgroun
 
 Request fields that run with the TinyFish account's saved logins (`use_vault`, `credential_item_ids`, `use_profile`, `profile_id`) are rejected with a 403 by default, because every caller shares the proxy's upstream key. Set `TINYFISH_ALLOW_AUTHENTICATED_RUNS=true` on the proxy to allow them
 
-LiteLLM's generic pass-through envelope fields (`custom_body`, `stream`, `query_params`) are rejected with a 400 on this route: send the native TinyFish request body, and streaming is determined by the endpoint you call
+Lumina's generic pass-through envelope fields (`custom_body`, `stream`, `query_params`) are rejected with a 400 on this route: send the native TinyFish request body, and streaming is determined by the endpoint you call
 
 ## Timeouts
 

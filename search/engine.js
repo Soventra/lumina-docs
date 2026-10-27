@@ -175,7 +175,7 @@ function titleRelevance(title, terms, queryTerms, exactBoost = 90) {
   terms = expandTitleTerms(clean, terms, queryTerms);
   // Parentheses can be either decoration or useful aliases such as (RBAC).
   return Math.max(...[clean, title].map(value => {
-    const core = termsOf(value).filter(term => !['litellm', 'aws', 'overview', 'introduction'].includes(term))
+    const core = termsOf(value).filter(term => !['lumina', 'aws', 'overview', 'introduction'].includes(term))
       .flatMap(term => terms.length > 1 && term === terms.join('') ? terms : [term]);
     const matched = terms.filter(term => core.includes(term));
     const coverage = matched.length / terms.length;
@@ -194,7 +194,7 @@ function expandTitleTerms(title, terms, queryTerms = terms) {
 function searchCollection(index, query, {limit = 10, groupPages = true, category = 'All docs', correctTypo = true} = {}) {
   const rawTerms = termsOf(query.slice(0, 500));
   // Setup verbs and the product name add noise when someone names a specific feature.
-  const optional = new Set(['litellm', 'setup', 'configure', 'enable', 'set', 'up', 'docs', 'documentation', 'page']);
+  const optional = new Set(['lumina', 'setup', 'configure', 'enable', 'set', 'up', 'docs', 'documentation', 'page']);
   // The planner often adds the product name to an otherwise specific topic.
   // Requiring those words can hide guides whose title uses the provider's name.
   if (rawTerms.filter(term => !optional.has(term) && !['ai', 'gateway'].includes(term)).length >= 2) {
@@ -313,7 +313,7 @@ function search(index, query, {limit = 10, groupPages = true, type = 'all', cate
   const prereleaseOnly = /\b(release candidates?|pre-?releases?|rcs?)\b/i.test(query) && !stableOnly && !versions.length;
   let scopedQuery = query.replace(/\b(?:blogs?(?: posts?)?|articles?|release candidates?|pre-?releases?|rcs?(?!\.)|release(?:s| notes?)?|changelog|latest|newest|recent)\b|what['’]?s new/gi, ' ').trim();
   if (stableOnly) scopedQuery = scopedQuery.replace(/\bstable\b/gi, ' ');
-  const browse = (wantsBlog || wantsRelease || intent === 'latest') && !termsOf(scopedQuery).filter(term => term !== 'litellm').length;
+  const browse = (wantsBlog || wantsRelease || intent === 'latest') && !termsOf(scopedQuery).filter(term => term !== 'lumina').length;
   if (wantsRelease && !browse && !versions.length) scopedQuery += ' release';
   scopedQuery = scopedQuery.replace(/\b(compare|versus|vs)\b/gi, ' ');
   const scope = type !== 'all' ? type : wantsBlog ? 'blog' : browse && (wantsRelease || intent === 'latest') ? 'release' : 'all';

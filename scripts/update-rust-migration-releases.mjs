@@ -3,8 +3,8 @@ import {get} from 'node:https';
 import process from 'node:process';
 import * as semver from 'semver';
 
-const RELEASES_URL = 'https://api.github.com/repos/BerriAI/litellm/releases?per_page=100';
-const PYPROJECT_URL = 'https://raw.githubusercontent.com/BerriAI/litellm/main/pyproject.toml';
+const RELEASES_URL = 'https://api.github.com/repos/Soventra/lumina/releases?per_page=100';
+const PYPROJECT_URL = 'https://raw.githubusercontent.com/Soventra/lumina/main/pyproject.toml';
 const OUTPUT_URL = new URL('../src/data/rustMigration/releases.json', import.meta.url);
 const RELEASE_COUNT = 10;
 
@@ -12,7 +12,7 @@ function request(url, accept) {
   return new Promise((resolve, reject) => {
     const headers = {
       Accept: accept,
-      'User-Agent': 'litellm-docs-rust-migration-release-sync',
+      'User-Agent': 'lumina-docs-rust-migration-release-sync',
     };
     if (process.env.GITHUB_TOKEN) {
       headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -85,7 +85,7 @@ async function generateSnapshot() {
     plannedFor: nextSaturday(published.at(-1).releasedAt),
   };
   return `${JSON.stringify({
-    source: 'BerriAI/litellm',
+    source: 'Soventra/lumina',
     published,
     main,
   }, null, 2)}\n`;

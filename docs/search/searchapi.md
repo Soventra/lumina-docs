@@ -6,11 +6,11 @@ SearchAPI.io provides access to Google Search results with a simple API. It supp
 
 For complete documentation on all supported parameters, visit https://www.searchapi.io/docs/google.
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="SearchAPI.io Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["SEARCHAPI_API_KEY"] = "your-api-key"
 
@@ -32,7 +32,7 @@ SearchAPI.io supports many Google Search-specific parameters:
 
 ```python showLineNumbers title="Advanced SearchAPI.io Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["SEARCHAPI_API_KEY"] = "your-api-key"
 
@@ -53,7 +53,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -74,7 +74,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -147,7 +147,7 @@ response = search(
 
 ## Response Format
 
-SearchAPI.io returns results in the standard LiteLLM search format:
+SearchAPI.io returns results in the standard Lumina search format:
 
 ```json
 {
@@ -174,7 +174,7 @@ Check your current usage at https://www.searchapi.io/dashboard.
 ## Error Handling
 
 ```python showLineNumbers title="Error Handling"
-from litellm import search
+from lumina import search
 import os
 
 os.environ["SEARCHAPI_API_KEY"] = "your-api-key"

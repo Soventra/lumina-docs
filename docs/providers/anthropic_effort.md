@@ -11,9 +11,9 @@ The `effort` parameter allows you to control how eager Claude is about spending 
 
 **Supported models:**
 - **Claude 4.6** (Opus 4.6, Sonnet 4.6): `output_config` is a stable API feature, no beta header needed. Opus 4.6 also supports `effort="max"`.
-- **Claude Opus 4.5** — requires the `effort-2025-11-24` beta header (automatically added by LiteLLM).
+- **Claude Opus 4.5** — requires the `effort-2025-11-24` beta header (automatically added by Lumina).
 
-LiteLLM automatically maps `reasoning_effort` → `output_config={"effort": ...}` for all supported models.
+Lumina automatically maps `reasoning_effort` → `output_config={"effort": ...}` for all supported models.
 
 ## How Effort Works
 
@@ -43,16 +43,16 @@ This gives a much greater degree of control over efficiency.
 
 ## Quick Start
 
-### Using LiteLLM SDK
+### Using Lumina SDK
 
 <Tabs>
 <TabItem value="python" label="Python">
 
 ```python keep-model-ids
-import litellm
+import lumina
 
 # Works with Claude 4.6 models (no beta header needed)
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/claude-sonnet-4-6",
     messages=[{
         "role": "user",
@@ -66,7 +66,7 @@ print(response.choices[0].message.content)
 
 ```python keep-model-ids
 # Also works with Claude Opus 4.5 (beta header auto-injected)
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/claude-opus-4-5-20251101",
     messages=[{
         "role": "user",
@@ -105,7 +105,7 @@ console.log(response.content[0].text);
 </TabItem>
 </Tabs>
 
-### Using LiteLLM Proxy
+### Using Lumina Proxy
 
 ```bash keep-model-ids
 curl http://localhost:4000/v1/chat/completions \
@@ -200,9 +200,9 @@ When using tools, the effort parameter affects both the explanations around tool
 Example with tools:
 
 ```python keep-model-ids
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/claude-sonnet-4-6",
     messages=[{
         "role": "user",
@@ -231,9 +231,9 @@ response = litellm.completion(
 The effort parameter works together with extended thinking. When both are enabled, effort controls the token budget across all response types:
 
 ```python keep-model-ids
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/claude-sonnet-4-6",
     messages=[{
         "role": "user",
@@ -264,7 +264,7 @@ The effort parameter is supported across all Anthropic-compatible providers:
 - **Amazon Bedrock**: ✅ Supported (Claude 4.6, Opus 4.5)
 - **Google Cloud Vertex AI**: ✅ Supported (Claude 4.6, Opus 4.5)
 
-LiteLLM automatically handles:
+Lumina automatically handles:
 - Parameter mapping: `reasoning_effort` → `output_config={"effort": ...}` for all supported models
 - Beta header injection (`effort-2025-11-24`) only for Claude Opus 4.5 (not needed for 4.6 models)
 
@@ -273,7 +273,7 @@ LiteLLM automatically handles:
 Token usage with different effort levels is tracked in the standard usage object. Lower effort levels result in fewer output tokens, which directly reduces costs:
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic_large}}",
     messages=[{"role": "user", "content": "Analyze this"}],
     output_config={"effort": "low"}
@@ -287,7 +287,7 @@ print(f"Total tokens: {response.usage.total_tokens}")
 
 ### Beta header not being added (Claude Opus 4.5)
 
-LiteLLM automatically adds the `effort-2025-11-24` beta header for Claude Opus 4.5 when `reasoning_effort` or `output_config` is provided.
+Lumina automatically adds the `effort-2025-11-24` beta header for Claude Opus 4.5 when `reasoning_effort` or `output_config` is provided.
 
 **Note:** Claude 4.6 models do NOT need a beta header, since `output_config` is a stable API feature for these models.
 
@@ -295,7 +295,7 @@ If you're not seeing the header for Opus 4.5:
 
 1. Ensure you're using `reasoning_effort` parameter
 2. Verify the model is Claude Opus 4.5
-3. Check that LiteLLM version supports this feature
+3. Check that Lumina version supports this feature
 
 ### Invalid effort value error
 
@@ -309,10 +309,10 @@ output_config={"effort": "very_low"}
 output_config={"effort": "low"}
 
 # ❌ This will raise an error (max only works on Opus 4.6)
-litellm.completion(model="anthropic/claude-sonnet-4-6", messages=messages, reasoning_effort="max")
+lumina.completion(model="anthropic/claude-sonnet-4-6", messages=messages, reasoning_effort="max")
 
 # ✅ max is only for Opus 4.6
-litellm.completion(model="anthropic/claude-opus-4-6", messages=messages, reasoning_effort="max")
+lumina.completion(model="anthropic/claude-opus-4-6", messages=messages, reasoning_effort="max")
 ```
 
 ### Model not supported
@@ -329,6 +329,6 @@ The effort parameter is supported by Claude Opus 4.6, Sonnet 4.6, and Opus 4.5. 
 ## Additional Resources
 
 - [Anthropic Effort Documentation](https://docs.anthropic.com/en/docs/build-with-claude/effort)
-- [LiteLLM Anthropic Provider Guide](/docs/providers/anthropic)
+- [Lumina Anthropic Provider Guide](/docs/providers/anthropic)
 - [Cost Optimization Best Practices](/docs/proxy/cost_tracking)
 

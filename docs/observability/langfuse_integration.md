@@ -7,7 +7,7 @@ import Image from '@theme/IdealImage';
 Langfuse ([GitHub](https://github.com/langfuse/langfuse)) is an open-source LLM engineering platform for model [tracing](https://langfuse.com/docs/tracing), [prompt management](https://langfuse.com/docs/prompts/get-started), and application [evaluation](https://langfuse.com/docs/scores/overview). Langfuse helps teams to collaboratively debug, analyze, and iterate on their LLM applications. 
 
 
-Example trace in Langfuse using multiple models via LiteLLM:
+Example trace in Langfuse using multiple models via Lumina:
 <Image img={require('../../img/langfuse-example-trace-multiple-models-min.png')} />
 
 
@@ -15,21 +15,21 @@ Example trace in Langfuse using multiple models via LiteLLM:
 
 For Langfuse v3 and v4, we recommend using the `langfuse_otel` preset in the [OpenTelemetry v2 guide](./opentelemetry_v2#2-send-traces-to-a-specific-tool-presets). This provides better span quality, lower latency, and native OpenTelemetry semantics.
 
-The SDK callback below (`langfuse`) requires the Langfuse Python SDK v4 (`langfuse>=4.7,<5`). It exports traces through LiteLLM's own OpenTelemetry pipeline to Langfuse's OTLP endpoint, so traces appear in near real time, and uses the SDK's REST client only for prompt management and credential checks. Batch size and prompt cache TTL are tuned with `LANGFUSE_FLUSH_AT` and `LANGFUSE_PROMPT_CACHE_DEFAULT_TTL_SECONDS` (see [config settings](../proxy/config_settings)).
+The SDK callback below (`langfuse`) requires the Langfuse Python SDK v4 (`langfuse>=4.7,<5`). It exports traces through Lumina's own OpenTelemetry pipeline to Langfuse's OTLP endpoint, so traces appear in near real time, and uses the SDK's REST client only for prompt management and credential checks. Batch size and prompt cache TTL are tuned with `LANGFUSE_FLUSH_AT` and `LANGFUSE_PROMPT_CACHE_DEFAULT_TTL_SECONDS` (see [config settings](../proxy/config_settings)).
 
-Self-hosted Langfuse must be on server 3.63.0 or newer for SDK v4, per the [Langfuse compatibility matrix](https://langfuse.com/self-hosting/upgrade/versioning#sdk-server); OSS v2 servers do not serve the `/api/public/otel/v1/traces` route the callback exports to, so traces are rejected with a 404 and the proxy logs the rejection. Upgrade the server before upgrading LiteLLM, or keep the previous LiteLLM version until then. An ingress or reverse proxy with a request body limit in front of Langfuse answers 413 to a large batch; the callback splits that batch in halves and resends, and only a single span that alone exceeds the limit is dropped, with an error log.
+Self-hosted Langfuse must be on server 3.63.0 or newer for SDK v4, per the [Langfuse compatibility matrix](https://langfuse.com/self-hosting/upgrade/versioning#sdk-server); OSS v2 servers do not serve the `/api/public/otel/v1/traces` route the callback exports to, so traces are rejected with a 404 and the proxy logs the rejection. Upgrade the server before upgrading Lumina, or keep the previous Lumina version until then. An ingress or reverse proxy with a request body limit in front of Langfuse answers 413 to a large batch; the callback splits that batch in halves and resends, and only a single span that alone exceeds the limit is dropped, with an error log.
 
 :::
 
 
-## Usage with LiteLLM Proxy (LLM Gateway)
+## Usage with Lumina Proxy (LLM Gateway)
 
-[**Follow this link to start sending logs to langfuse with LiteLLM Proxy server**](../proxy/logging)
+[**Follow this link to start sending logs to langfuse with Lumina Proxy server**](../proxy/logging)
 
 To route different teams or virtual keys to different Langfuse projects, see [Team/Key Based Logging](../proxy/team_logging). Team defaults live in trusted `config.yaml` (where `os.environ/...` references are resolved by the gateway), while per-key callbacks are provisioned via `/key/generate` or `/key/update` with resolved credential values; these are stored settings on the key, not per-request credentials.
 
 
-## Usage with LiteLLM Python SDK
+## Usage with Lumina Python SDK
 
 :::note
 
@@ -40,24 +40,24 @@ This section covers the `langfuse` callback, which uses the Langfuse Python SDK 
 ### Pre-Requisites
 Ensure you have run `uv add langfuse` for this integration
 ```shell
-uv add "langfuse>=4.7,<5" litellm
+uv add "langfuse>=4.7,<5" lumina
 ```
 
 ### Quick Start
 Use just 2 lines of code, to instantly log your responses **across all providers** with Langfuse:
 
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/logging_observability/LiteLLM_Langfuse.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/logging_observability/Lumina_Langfuse.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 Get your Langfuse API Keys from https://cloud.langfuse.com/
 ```python
-litellm.success_callback = ["langfuse"]
-litellm.failure_callback = ["langfuse"] # logs errors to langfuse
+lumina.success_callback = ["langfuse"]
+lumina.failure_callback = ["langfuse"] # logs errors to langfuse
 ```
 ```python
 # uv add langfuse 
-import litellm
+import lumina
 import os
 
 # from https://cloud.langfuse.com/
@@ -69,11 +69,11 @@ os.environ["LANGFUSE_HOST"] # optional
 # LLM API Keys
 os.environ['OPENAI_API_KEY']=""
 
-# set langfuse as a callback, litellm will send the data to langfuse
-litellm.success_callback = ["langfuse"] 
+# set langfuse as a callback, lumina will send the data to langfuse
+lumina.success_callback = ["langfuse"] 
  
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_small}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -87,8 +87,8 @@ response = litellm.completion(
 Pass `generation_name` in `metadata`
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 import os
 
 # from https://cloud.langfuse.com/
@@ -97,11 +97,11 @@ os.environ["LANGFUSE_SECRET_KEY"] = "sk-..."
 
 
 # OpenAI and Cohere keys 
-# You can use any of the litellm supported providers: https://docs.litellm.ai/docs/providers
+# You can use any of the lumina supported providers: https://docs.lumina.ai/docs/providers
 os.environ['OPENAI_API_KEY']="sk-..."
 
-# set langfuse as a callback, litellm will send the data to langfuse
-litellm.success_callback = ["langfuse"] 
+# set langfuse as a callback, lumina will send the data to langfuse
+lumina.success_callback = ["langfuse"] 
  
 # openai call
 response = completion(
@@ -110,9 +110,9 @@ response = completion(
     {"role": "user", "content": "Hi - i'm openai"}
   ],
   metadata = {
-    "generation_name": "litellm-ishaan-gen", # set langfuse generation name
+    "generation_name": "lumina-ishaan-gen", # set langfuse generation name
     # custom metadata fields
-    "project": "litellm-proxy" 
+    "project": "lumina-proxy" 
   }
 )
  
@@ -126,8 +126,8 @@ Pass `trace_id`, `trace_user_id`, `trace_metadata`, `trace_version`, `trace_rele
 
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 import os
 
 # from https://cloud.langfuse.com/
@@ -136,8 +136,8 @@ os.environ["LANGFUSE_SECRET_KEY"] = "sk-..."
 
 os.environ['OPENAI_API_KEY']="sk-..."
 
-# set langfuse as a callback, litellm will send the data to langfuse
-litellm.success_callback = ["langfuse"] 
+# set langfuse as a callback, lumina will send the data to langfuse
+lumina.success_callback = ["langfuse"] 
 
 # set custom langfuse trace params and generation params
 response = completion(
@@ -164,7 +164,7 @@ response = completion(
       "existing_trace_id": "trace-id22",
       "trace_metadata": {"key": "updated_trace_value"},            # The new value to use for the langfuse Trace Metadata
       "update_trace_keys": ["input", "output", "trace_metadata"],  # Updates the trace input & output to be this generations input & output (written via observation fields in v4) and updates the Trace Metadata to match the passed in value. Requires `langfuse_enable_update_trace_keys: true`
-      "debug_langfuse": True,                                      # Will log the scalar metadata sent to litellm for the trace/generation as `metadata_passed_to_litellm` 
+      "debug_langfuse": True,                                      # Will log the scalar metadata sent to lumina for the trace/generation as `metadata_passed_to_lumina` 
   },
 )
 
@@ -174,7 +174,7 @@ print(response)
 
 :::info[Langfuse v4 semantics]
 
-- **Custom `trace_id`**: Langfuse v4 requires W3C trace IDs (32 lowercase hex chars). LiteLLM first lowercases your `trace_id` and strips hyphens, so a UUID such as `01234567-89AB-CDEF-0123-456789ABCDEF` becomes `0123456789abcdef0123456789abcdef` and is used as is. Anything that still isn't 32 hex chars is deterministically hashed to one (via `Langfuse.create_trace_id(seed=<your id>)`). The same `trace_id` always maps to the same Langfuse trace, but the ID visible in Langfuse is the normalized or hashed form, not your original string.
+- **Custom `trace_id`**: Langfuse v4 requires W3C trace IDs (32 lowercase hex chars). Lumina first lowercases your `trace_id` and strips hyphens, so a UUID such as `01234567-89AB-CDEF-0123-456789ABCDEF` becomes `0123456789abcdef0123456789abcdef` and is used as is. Anything that still isn't 32 hex chars is deterministically hashed to one (via `Langfuse.create_trace_id(seed=<your id>)`). The same `trace_id` always maps to the same Langfuse trace, but the ID visible in Langfuse is the normalized or hashed form, not your original string.
 - **`version` / `trace_version`**: Langfuse v4 has a single `version` attribute. On a new trace, `trace_version` takes precedence over `version`; on an `existing_trace_id` continuation, `version` still lands on the generation.
 - **Continued traces**: the v4 server derives a trace's name/input/output from the latest root observation in the trace. `update_trace_keys` with `input`/`output` is still honored - the values are written via observation fields.
 
@@ -225,7 +225,7 @@ curl --location --request POST 'http://0.0.0.0:4000/chat/completions' \
 Any other key value pairs passed into the metadata are logged on the generation under `requester_metadata`. On the proxy this happens automatically for whatever you send in the request body. From the SDK, nest them so they are picked up:
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Hi"}],
     metadata={"metadata": {"my_key": "my_value"}},   # arrives as requester_metadata
@@ -239,15 +239,15 @@ You can send traces to different Langfuse projects per request by passing creden
 Pass **`langfuse_public_key`**, **`langfuse_secret_key`** (or **`langfuse_secret`**), and optionally **`langfuse_host`** as keyword arguments:
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 # Optional: set a default via env for requests that don't pass credentials
 # os.environ["LANGFUSE_PUBLIC_KEY"] = "pk-default..."
 # os.environ["LANGFUSE_SECRET_KEY"] = "sk-default..."
 
-litellm.success_callback = ["langfuse"]
-litellm.failure_callback = ["langfuse"]
+lumina.success_callback = ["langfuse"]
+lumina.failure_callback = ["langfuse"]
 
 # Request 1 → Langfuse Project A
 response_a = completion(
@@ -271,11 +271,11 @@ response_b = completion(
 Async usage with per-request credentials:
 
 ```python
-import litellm
-from litellm import acompletion
+import lumina
+from lumina import acompletion
 
-litellm.success_callback = ["langfuse"]
-litellm.failure_callback = ["langfuse"]
+lumina.success_callback = ["langfuse"]
+lumina.failure_callback = ["langfuse"]
 
 response = await acompletion(
     model="{{openai_small}}",
@@ -290,7 +290,7 @@ response = await acompletion(
 - **`langfuse_secret_key`** or **`langfuse_secret`** – Langfuse secret key (either name is accepted).
 - **`langfuse_host`** – Langfuse host URL (e.g. `https://us.cloud.langfuse.com`); optional, defaults to env or Langfuse cloud.
 
-When these are passed, that request uses this project (and host) for the Langfuse callback; when omitted, the callback uses the global Langfuse client (from env vars if set). LiteLLM caches a Langfuse client per credential set to avoid creating a new client on every request.
+When these are passed, that request uses this project (and host) for the Langfuse callback; when omitted, the callback uses the global Langfuse client (from env vars if set). Lumina caches a Langfuse client per credential set to avoid creating a new client on every request.
 
 #### Disable Logging - Specific Calls
 
@@ -299,13 +299,13 @@ To disable logging for specific calls use the `no-log` flag.
 `completion(messages = ..., model = ...,  **{"no-log": True})`
 
 
-### Use LangChain ChatLiteLLM + Langfuse
+### Use LangChain ChatLumina + Langfuse
 Pass `trace_user_id`, `session_id` in model_kwargs
 ```python
 import os
-from langchain.chat_models import ChatLiteLLM
+from langchain.chat_models import ChatLumina
 from langchain.schema import HumanMessage
-import litellm
+import lumina
 
 # from https://cloud.langfuse.com/
 os.environ["LANGFUSE_PUBLIC_KEY"] = "pk-..."
@@ -313,10 +313,10 @@ os.environ["LANGFUSE_SECRET_KEY"] = "sk-..."
 
 os.environ['OPENAI_API_KEY']="sk-..."
 
-# set langfuse as a callback, litellm will send the data to langfuse
-litellm.success_callback = ["langfuse"] 
+# set langfuse as a callback, lumina will send the data to langfuse
+lumina.success_callback = ["langfuse"] 
 
-chat = ChatLiteLLM(
+chat = ChatLumina(
   model="{{openai_small}}",
   model_kwargs={
       "metadata": {
@@ -338,7 +338,7 @@ chat(messages)
 
 #### Redact Messages and Responses from all Langfuse Logging
 
-Set `litellm.turn_off_message_logging=True` This will prevent the messages and responses from being logged to langfuse, but request metadata will still be logged.
+Set `lumina.turn_off_message_logging=True` This will prevent the messages and responses from being logged to langfuse, but request metadata will still be logged.
 
 #### Redact Messages and Responses from specific Langfuse Logging
 
@@ -352,11 +352,11 @@ Be aware that if you are continuing an existing trace, and you set `update_trace
 
 ## Troubleshooting & Errors
 ### Data not getting logged to Langfuse ? 
-- Ensure you're on the latest version of langfuse `uv add langfuse -U`. The latest version allows litellm to log JSON input/outputs to langfuse
+- Ensure you're on the latest version of langfuse `uv add langfuse -U`. The latest version allows lumina to log JSON input/outputs to langfuse
 - Follow [this checklist](https://langfuse.com/faq/all/missing-traces) if you don't see any traces in langfuse.
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

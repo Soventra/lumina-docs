@@ -2,11 +2,11 @@
 
 **Get API Key:** [https://www.perplexity.ai/settings/api](https://www.perplexity.ai/settings/api)
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="Perplexity Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["PERPLEXITYAI_API_KEY"] = "pplx-..."
 
@@ -17,7 +17,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -38,7 +38,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

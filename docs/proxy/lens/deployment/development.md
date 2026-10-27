@@ -6,9 +6,9 @@ slug: "/proxy/lens/deployment/development"
 
 # Build from source
 
-For optional help from your coding agent, [Set it up for me](https://github.com/BerriAI/lens/blob/main/docs/setup-with-agent.md) has prompts for an existing LiteLLM deployment, standalone Lens, and external ClickHouse. The agent should inspect the installed version before applying this guide
+For optional help from your coding agent, [Set it up for me](https://github.com/BerriAI/lens/blob/main/docs/setup-with-agent.md) has prompts for an existing Lumina deployment, standalone Lens, and external ClickHouse. The agent should inspect the installed version before applying this guide
 
-Develop Lens from the public [Lens repository](https://github.com/BerriAI/lens). It owns the Rust backend and the shared UI that LiteLLM embeds. You can develop and run it with ClickHouse without a gateway or PostgreSQL
+Develop Lens from the public [Lens repository](https://github.com/BerriAI/lens). It owns the Rust backend and the shared UI that Lumina embeds. You can develop and run it with ClickHouse without a gateway or PostgreSQL
 
 ## Start a development environment {#local-development}
 
@@ -49,4 +49,4 @@ docker compose -f deploy/lens/compose.yaml stop
 
 Run `npm run dev` again to resume. Keep the environment file and ClickHouse volume so your credentials and saved records survive
 
-For the source installation without development tooling, use [Run Lens](https://github.com/BerriAI/lens/blob/main/deploy/lens/README.md). That guide also states the current published-release status. Official paired releases use the same Lens and LiteLLM version; connecting a gateway requires the compatible adapter and credentials described in the [gateway integration guide](./docker-compose.md)
+For the source installation without development tooling, use [Run Lens](https://github.com/BerriAI/lens/blob/main/deploy/lens/README.md). That guide also states the current published-release status. Official paired releases use the same Lens and Lumina version; connecting a gateway requires the compatible adapter and credentials described in the [gateway integration guide](./docker-compose.md)

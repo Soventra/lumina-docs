@@ -1,5 +1,5 @@
 ---
-title: Learn LiteLLM
+title: Learn Lumina
 sidebar_label: Overview
 slug: /learn
 ---
@@ -7,16 +7,16 @@ slug: /learn
 import NavigationCards from '@site/src/components/NavigationCards';
 import {IconEnterprise, IconGateway, IconGuardrails, IconKey, IconLogs, IconProviders, IconRoute, IconSdk, IconTools} from '@site/src/components/Conversion/icons';
 
-LiteLLM gives you one OpenAI-compatible interface for 100+ LLM providers. Start with the path that matches your setup.
+Lumina gives you one OpenAI-compatible interface for 100+ LLM providers. Start with the path that matches your setup.
 
 <NavigationCards
 columns={1}
 items={[
   {
-    title: "LiteLLM Academy",
+    title: "Lumina Academy",
     description: "Get started with our interactive course. Learn the fundamentals every platform admin needs, from gateway setup and access control to routing and observability.",
     ctaLabel: "Get started",
-    to: "https://litellm.ai/course",
+    to: "https://lumina.ai/course",
   },
 ]}
 />
@@ -33,7 +33,7 @@ items={[
   {
     icon: <IconGateway />,
     title: "Gateway Quickstart",
-    description: "Run LiteLLM as a shared gateway.",
+    description: "Run Lumina as a shared gateway.",
     listDescription: [
       "Start the gateway",
       "Add models and keys",
@@ -44,7 +44,7 @@ items={[
   {
     icon: <IconSdk />,
     title: "SDK Quickstart",
-    description: "Use LiteLLM directly in application code.",
+    description: "Use Lumina directly in application code.",
     listDescription: [
       "Install",
       "First request",
@@ -55,7 +55,7 @@ items={[
   {
     icon: <IconEnterprise />,
     title: "Enterprise Quickstart",
-    description: "Roll out LiteLLM Enterprise for all the teams in your company.",
+    description: "Roll out Lumina Enterprise for all the teams in your company.",
     listDescription: [
       "Deploy and give access",
       "Connect clients and secure auth",

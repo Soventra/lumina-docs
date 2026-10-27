@@ -1,15 +1,15 @@
 ---
 slug: claude-haiku-5-5
-title: "Claude Haiku 5.5 API Pricing and Day 0 Support on LiteLLM"
+title: "Claude Haiku 5.5 API Pricing and Day 0 Support on Lumina"
 date: 2026-10-07T10:00:00
 authors:
   - misbah
   - mateo
   - kerry
-description: "Claude Haiku 5.5 costs $0.10 per 1M input tokens and $0.50 per 1M output tokens. LiteLLM supports it on day 0 on Anthropic, AWS, Google Cloud and Azure."
+description: "Claude Haiku 5.5 costs $0.10 per 1M input tokens and $0.50 per 1M output tokens. Lumina supports it on day 0 on Anthropic, AWS, Google Cloud and Azure."
 card_title: "Claude Haiku 5.5"
 card_summary: "90% cheaper than Haiku 4.5 on short prompts, 1M context, 72.4% on OSWorld 2.1, $0.10 / $0.50 per 1M tokens."
-image: /img/litellm_claude_haiku_5_5_announcement.png
+image: /img/lumina_claude_haiku_5_5_announcement.png
 tags: [anthropic, claude, claude haiku, haiku 5.5, pricing, day 0 support]
 hide_table_of_contents: false
 ---
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![Claude Haiku 5.5 on LiteLLM](/img/litellm_claude_haiku_5_5_announcement.png)
+![Claude Haiku 5.5 on Lumina](/img/lumina_claude_haiku_5_5_announcement.png)
 
-LiteLLM now supports [Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5-5) on Day 0. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure through the LiteLLM AI Gateway, with spend, rate limits, and logging in one place.
+Lumina now supports [Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5-5) on Day 0. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure through the Lumina AI Gateway, with spend, rate limits, and logging in one place.
 
 {/* truncate */}
 
@@ -30,7 +30,7 @@ LiteLLM now supports [Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5
 - **Cache read:** $0.01 / MTok, or $0.05 / MTok above 100K
 - **Batch:** 50% off input and output
 
-Prices on every provider: https://models.litellm.ai/models
+Prices on every provider: https://models.lumina.ai/models
 
 ## What's new in Claude Haiku 5.5
 
@@ -38,9 +38,9 @@ Prices on every provider: https://models.litellm.ai/models
 - **72.4% on OSWorld 2.1**, up from Haiku 4.5's 15.7%
 - **1M-token context**, up to 128K output tokens
 
-## Use Claude Haiku 5.5 with LiteLLM
+## Use Claude Haiku 5.5 with Lumina
 
-Pricing landed in [PR #45108](https://github.com/BerriAI/litellm/pull/45108). No upgrade needed: open **Price Data** under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map`), on `v1.76.0` and above.
+Pricing landed in [PR #45108](https://github.com/Soventra/lumina/pull/45108). No upgrade needed: open **Price Data** under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map`), on `v1.76.0` and above.
 
 <Tabs>
 <TabItem value="anthropic" label="Anthropic">
@@ -62,7 +62,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.104.0 \
+  ghcr.io/soventra/lumina:v1.104.0 \
   --config /app/config.yaml
 ```
 
@@ -89,7 +89,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.104.0 \
+  ghcr.io/soventra/lumina:v1.104.0 \
   --config /app/config.yaml
 ```
 
@@ -116,7 +116,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.104.0 \
+  ghcr.io/soventra/lumina:v1.104.0 \
   --config /app/config.yaml
 ```
 
@@ -142,7 +142,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.104.0 \
+  ghcr.io/soventra/lumina:v1.104.0 \
   --config /app/config.yaml
 ```
 
@@ -178,8 +178,8 @@ $0.10 per 1M input tokens and $0.50 per 1M output tokens for prompts up to 100K 
 
 ### How do I call Claude Haiku 5.5 with an OpenAI-compatible API?
 
-Add `anthropic/claude-haiku-5-5` to your LiteLLM config, then send a standard `/chat/completions` request to the proxy with `"model": "claude-haiku-5-5"`.
+Add `anthropic/claude-haiku-5-5` to your Lumina config, then send a standard `/chat/completions` request to the proxy with `"model": "claude-haiku-5-5"`.
 
 ## Feedback
 
-Questions and feedback go in [GitHub discussion #45133](https://github.com/BerriAI/litellm/discussions/45133).
+Questions and feedback go in [GitHub discussion #45133](https://github.com/Soventra/lumina/discussions/45133).

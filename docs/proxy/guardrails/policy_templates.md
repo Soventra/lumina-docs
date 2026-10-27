@@ -6,7 +6,7 @@ Policy templates provide pre-configured guardrail policies that you can use as a
 
 ### In the UI
 
-1. Navigate to **Policies → Templates** tab in the LiteLLM Admin UI
+1. Navigate to **Policies → Templates** tab in the Lumina Admin UI
 2. Browse available templates (e.g., "PII Protection", "Cost Control", "HR Compliance")
 3. Click **"Use Template"** on any template
 4. Review the guardrails that will be created:
@@ -30,7 +30,7 @@ The system automatically:
 
 ## Available Templates
 
-Templates are fetched from [GitHub](https://raw.githubusercontent.com/BerriAI/litellm/main/policy_templates.json) with automatic fallback to local backup.
+Templates are fetched from [GitHub](https://raw.githubusercontent.com/Soventra/lumina/main/policy_templates.json) with automatic fallback to local backup.
 
 ### Current Templates
 
@@ -57,7 +57,7 @@ Templates are fetched from [GitHub](https://raw.githubusercontent.com/BerriAI/li
 
 ## Creating Your Own Policy Templates
 
-You can contribute policy templates for the entire LiteLLM community to use.
+You can contribute policy templates for the entire Lumina community to use.
 
 ### Template Structure
 
@@ -80,7 +80,7 @@ Templates are defined in JSON format with the following structure:
     {
       "guardrail_name": "example-guardrail",
       "lumina_params": {
-        "guardrail": "litellm_content_filter",
+        "guardrail": "lumina_content_filter",
         "mode": "pre_call",
         "patterns": [
           {
@@ -153,7 +153,7 @@ Here's a complete example for a HIPAA compliance template:
     {
       "guardrail_name": "phi-detector",
       "lumina_params": {
-        "guardrail": "litellm_content_filter",
+        "guardrail": "lumina_content_filter",
         "mode": "pre_call",
         "patterns": [
           {
@@ -205,9 +205,9 @@ To contribute a policy template for everyone to use:
 
 ### Step 2: Submit a Pull Request
 
-1. Fork the [LiteLLM repository](https://github.com/BerriAI/litellm)
+1. Fork the [Lumina repository](https://github.com/Soventra/lumina)
 2. Add your template to `policy_templates.json` at the root
-3. Add your template to `litellm/policy_templates_backup.json` (keep both in sync)
+3. Add your template to `lumina/policy_templates_backup.json` (keep both in sync)
 4. Create a pull request with:
    - Clear description of what the template protects
    - Use case examples
@@ -237,12 +237,12 @@ For air-gapped or offline deployments, set the environment variable:
 export LUMINA_LOCAL_POLICY_TEMPLATES=true
 ```
 
-This forces the system to use the local backup (`litellm/policy_templates_backup.json`) instead of fetching from GitHub.
+This forces the system to use the local backup (`lumina/policy_templates_backup.json`) instead of fetching from GitHub.
 
 ## Template Sources
 
-- **GitHub (default):** https://raw.githubusercontent.com/BerriAI/litellm/main/policy_templates.json
-- **Local backup:** `litellm/policy_templates_backup.json`
+- **GitHub (default):** https://raw.githubusercontent.com/Soventra/lumina/main/policy_templates.json
+- **Local backup:** `lumina/policy_templates_backup.json`
 
 Templates are automatically fetched from GitHub on each request, with fallback to local backup on any failure.
 
@@ -286,11 +286,11 @@ When creating guardrails for templates, you can use these prebuilt patterns:
 - `military_status`
 - `public_assistance`
 
-See the [full patterns list](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/guardrails/guardrail_hooks/litellm_content_filter/patterns.json) for all available patterns.
+See the [full patterns list](https://github.com/Soventra/lumina/blob/main/lumina/proxy/guardrails/guardrail_hooks/lumina_content_filter/patterns.json) for all available patterns.
 
 ## Related Docs
 
 - [Guardrail Policies](./guardrail_policies)
 - [Policy Tags](./policy_tags)
-- [Content Filter Patterns](/docs/proxy/guardrails/litellm_content_filter)
+- [Content Filter Patterns](/docs/proxy/guardrails/lumina_content_filter)
 - [Custom Code Guardrails](/docs/proxy/guardrails/custom_code_guardrail)

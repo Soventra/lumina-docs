@@ -10,7 +10,7 @@ Use this if you want to write code to run a custom guardrail
 
 ### 1. Write a `CustomGuardrail` Class
 
-You only have to implement one method: `apply_guardrail`. LiteLLM pulls the content out of a request (or a response), hands it to you as `inputs`, and writes back whatever you return. Raise an exception to block the call.
+You only have to implement one method: `apply_guardrail`. Lumina pulls the content out of a request (or a response), hands it to you as `inputs`, and writes back whatever you return. Raise an exception to block the call.
 
 **Example `CustomGuardrail` Class**
 
@@ -20,15 +20,15 @@ Create a new file called `custom_guardrail.py` and add this code to it:
 import os
 from typing import TYPE_CHECKING, List, Literal, Optional
 
-from litellm.integrations.custom_guardrail import CustomGuardrail
-from litellm.llms.custom_httpx.http_handler import (
+from lumina.integrations.custom_guardrail import CustomGuardrail
+from lumina.llms.custom_httpx.http_handler import (
     get_async_httpx_client,
     httpxSpecialProvider,
 )
-from litellm.types.utils import GenericGuardrailAPIInputs
+from lumina.types.utils import GenericGuardrailAPIInputs
 
 if TYPE_CHECKING:
-    from litellm.litellm_core_utils.litellm_logging import Logging as LiteLLMLoggingObj
+    from lumina.lumina_core_utils.lumina_logging import Logging as LuminaLoggingObj
 
 
 class myCustomGuardrail(CustomGuardrail):
@@ -42,7 +42,7 @@ class myCustomGuardrail(CustomGuardrail):
         inputs: GenericGuardrailAPIInputs,
         request_data: dict,
         input_type: Literal["request", "response"],
-        logging_obj: Optional["LiteLLMLoggingObj"] = None,
+        logging_obj: Optional["LuminaLoggingObj"] = None,
     ) -> GenericGuardrailAPIInputs:
         """
         Check the extracted content against your guardrail rules.
@@ -84,10 +84,10 @@ class myCustomGuardrail(CustomGuardrail):
 
 | Parameter | What it is |
 |-----------|------------|
-| `inputs` | Everything LiteLLM pulled out of this call. Keys below. |
+| `inputs` | Everything Lumina pulled out of this call. Keys below. |
 | `request_data` | The request body. `request_data["metadata"]` holds the caller — `user_api_key_user_id`, `user_api_key_team_id`, and so on. |
 | `input_type` | `"request"` on the way in, `"response"` on the way out. Lets one class handle both directions. |
-| `logging_obj` | LiteLLM's logging object for the call, if you want to attach your own metadata. |
+| `logging_obj` | Lumina's logging object for the call, if you want to attach your own metadata. |
 
 Every key in `inputs` is optional, so you only get the ones this call actually had:
 
@@ -100,11 +100,11 @@ Every key in `inputs` is optional, so you only get the ones this call actually h
 | `structured_messages` | The full messages in OpenAI format, so you can tell a system message from a user message. |
 | `model` | The model this call is routed to. |
 
-**To allow the call, return `inputs`.** To mask, edit `texts` or `tool_calls` in place; LiteLLM maps them back onto the original request or response.
+**To allow the call, return `inputs`.** To mask, edit `texts` or `tool_calls` in place; Lumina maps them back onto the original request or response.
 
-`structured_messages` is the exception: **replace the list with a new one.** LiteLLM only uses it if you hand back a different object, so edits made in place are ignored.
+`structured_messages` is the exception: **replace the list with a new one.** Lumina only uses it if you hand back a different object, so edits made in place are ignored.
 
-While streaming, you can also set `stream_holdback_chars`, a per-text count of trailing characters for LiteLLM to withhold, so a match never gets split across two chunks.
+While streaming, you can also set `stream_holdback_chars`, a per-text count of trailing characters for Lumina to withhold, so a match never gets split across two chunks.
 
 :::tip[Advanced: Using Individual Event Hooks]
 
@@ -119,7 +119,7 @@ If you need more fine-grained control, you can implement individual event hooks 
 
 :::
 
-### 2. Pass your custom guardrail class in LiteLLM `config.yaml`
+### 2. Pass your custom guardrail class in Lumina `config.yaml`
 
 In the config below, we point the guardrail to our custom guardrail by setting `guardrail: custom_guardrail.myCustomGuardrail`
 
@@ -166,7 +166,7 @@ For **streaming responses**, `post_call` guardrails run on the fully assembled r
 
 To filter or block streaming content in real-time, use `async_post_call_streaming_iterator_hook` instead, which processes chunks as they arrive.
 
-Built-in guardrails that implement `apply_guardrail` (for example [Bedrock](./bedrock#streaming)) take the opposite default on streams: LiteLLM buffers every chunk until the assembled response passes moderation, so a block lands before any content reaches the client. Set `streaming_buffer_until_moderated: false` together with `streaming_end_of_stream_only: true` on such a guardrail to get the audit-only behavior described above, with no added time-to-first-token.
+Built-in guardrails that implement `apply_guardrail` (for example [Bedrock](./bedrock#streaming)) take the opposite default on streams: Lumina buffers every chunk until the assembled response passes moderation, so a block lands before any content reaches the client. Set `streaming_buffer_until_moderated: false` together with `streaming_end_of_stream_only: true` on such a guardrail to get the audit-only behavior described above, with no added time-to-first-token.
 
 :::
 
@@ -193,14 +193,14 @@ guardrails:
 
 </details>
 
-### 3. Start LiteLLM Gateway 
+### 3. Start Lumina Gateway 
 
 <Tabs>
 <TabItem value="docker" label="Docker Run">
 
-Mount your `custom_guardrail.py` on the LiteLLM Docker container
+Mount your `custom_guardrail.py` on the Lumina Docker container
 
-This mounts your `custom_guardrail.py` file from your local directory to the `/app` directory in the Docker container, making it accessible to the LiteLLM Gateway.
+This mounts your `custom_guardrail.py` file from your local directory to the `/app` directory in the Docker container, making it accessible to the Lumina Gateway.
 
 
 ```shell
@@ -218,11 +218,11 @@ docker run -d \
 
 </TabItem>
 
-<TabItem value="py" label="litellm pip">
+<TabItem value="py" label="lumina pip">
 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 </TabItem>
@@ -300,7 +300,7 @@ If you're using individual event hooks, you can test each mode separately:
 <Tabs>
 <TabItem label="Modify input" value = "not-allowed">
 
-Expect this to mask the word `litellm` before sending the request to the LLM API. [This runs the `async_pre_call_hook`](#advanced-individual-event-hooks)
+Expect this to mask the word `lumina` before sending the request to the LLM API. [This runs the `async_pre_call_hook`](#advanced-individual-event-hooks)
 
 ```shell
 curl -i  -X POST http://localhost:4000/v1/chat/completions \
@@ -311,7 +311,7 @@ curl -i  -X POST http://localhost:4000/v1/chat/completions \
     "messages": [
         {
             "role": "user",
-            "content": "say the word - `litellm`"
+            "content": "say the word - `lumina`"
         }
     ],
    "guardrails": ["custom-pre-guard"]
@@ -344,7 +344,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 <Tabs>
 <TabItem label="Unsuccessful call" value = "not-allowed">
 
-Expect this to fail since `litellm` is in the message content. [This runs the `async_moderation_hook`](#advanced-individual-event-hooks)
+Expect this to fail since `lumina` is in the message content. [This runs the `async_moderation_hook`](#advanced-individual-event-hooks)
 
 ```shell
 curl -i  -X POST http://localhost:4000/v1/chat/completions \
@@ -355,7 +355,7 @@ curl -i  -X POST http://localhost:4000/v1/chat/completions \
     "messages": [
         {
             "role": "user",
-            "content": "say the word - `litellm`"
+            "content": "say the word - `lumina`"
         }
     ],
    "guardrails": ["custom-during-guard"]
@@ -367,7 +367,7 @@ Expected response:
 ```json
 {
   "error": {
-    "message": "Guardrail failed words - `litellm` detected",
+    "message": "Guardrail failed words - `lumina` detected",
     "type": "None",
     "param": "None",
     "code": "500"
@@ -466,15 +466,15 @@ Use this to pass additional parameters to the guardrail API call. e.g. things li
 
 1. Use `get_guardrail_dynamic_request_body_params`
 
-`get_guardrail_dynamic_request_body_params` is a method of the `litellm.integrations.custom_guardrail.CustomGuardrail` class that fetches the dynamic guardrail params passed in the request body.
+`get_guardrail_dynamic_request_body_params` is a method of the `lumina.integrations.custom_guardrail.CustomGuardrail` class that fetches the dynamic guardrail params passed in the request body.
 
 ```python
 from typing import Any, Dict, List, Literal, Optional, Union
-import litellm
-from litellm._logging import verbose_proxy_logger
-from litellm.caching.caching import DualCache
-from litellm.integrations.custom_guardrail import CustomGuardrail
-from litellm.proxy._types import UserAPIKeyAuth
+import lumina
+from lumina._logging import verbose_proxy_logger
+from lumina.caching.caching import DualCache
+from lumina.integrations.custom_guardrail import CustomGuardrail
+from lumina.proxy._types import UserAPIKeyAuth
 
 class myCustomGuardrail(CustomGuardrail):
     def __init__(self, **kwargs):
@@ -505,7 +505,7 @@ class myCustomGuardrail(CustomGuardrail):
 
 2. Pass parameters in your API requests:
 
-LiteLLM Proxy allows you to pass `guardrails` in the request body, following the [`guardrails` spec](/docs/proxy/guardrails/quick_start#guardrails-request-parameter). To attach `extra_body` to a guardrail, send `guardrails` as a list and make the guardrail an object keyed by its `guardrail_name`.
+Lumina Proxy allows you to pass `guardrails` in the request body, following the [`guardrails` spec](/docs/proxy/guardrails/quick_start#guardrails-request-parameter). To attach `extra_body` to a guardrail, send `guardrails` as a list and make the guardrail an object keyed by its `guardrail_name`.
 
 <Tabs>
 <TabItem value="openai" label="OpenAI Python">
@@ -585,12 +585,12 @@ For more fine-grained control over when and how your guardrail runs, you can imp
 ```python
 from typing import Any, AsyncGenerator, Literal, Optional, Union
 
-import litellm
-from litellm._logging import verbose_proxy_logger
-from litellm.caching.caching import DualCache
-from litellm.integrations.custom_guardrail import CustomGuardrail
-from litellm.proxy._types import UserAPIKeyAuth
-from litellm.types.utils import ModelResponseStream, CallTypes
+import lumina
+from lumina._logging import verbose_proxy_logger
+from lumina.caching.caching import DualCache
+from lumina.integrations.custom_guardrail import CustomGuardrail
+from lumina.proxy._types import UserAPIKeyAuth
+from lumina.types.utils import ModelResponseStream, CallTypes
 
 
 class myCustomGuardrail(CustomGuardrail):
@@ -616,14 +616,14 @@ class myCustomGuardrail(CustomGuardrail):
         Use this if you want to MODIFY the input
         """
 
-        # In this guardrail, if a user inputs `litellm` we will mask it and then send it to the LLM
+        # In this guardrail, if a user inputs `lumina` we will mask it and then send it to the LLM
         _messages = data.get("messages")
         if _messages:
             for message in _messages:
                 _content = message.get("content")
                 if isinstance(_content, str):
-                    if "litellm" in _content.lower():
-                        _content = _content.replace("litellm", "********")
+                    if "lumina" in _content.lower():
+                        _content = _content.replace("lumina", "********")
                         message["content"] = _content
 
         verbose_proxy_logger.debug(
@@ -646,14 +646,14 @@ class myCustomGuardrail(CustomGuardrail):
         """
 
         # this works the same as async_pre_call_hook, but just runs in parallel as the LLM API Call
-        # In this guardrail, if a user inputs `litellm` we will mask it.
+        # In this guardrail, if a user inputs `lumina` we will mask it.
         _messages = data.get("messages")
         if _messages:
             for message in _messages:
                 _content = message.get("content")
                 if isinstance(_content, str):
-                    if "litellm" in _content.lower():
-                        raise ValueError("Guardrail failed words - `litellm` detected")
+                    if "lumina" in _content.lower():
+                        raise ValueError("Guardrail failed words - `lumina` detected")
 
     async def async_post_call_success_hook(
         self,
@@ -669,9 +669,9 @@ class myCustomGuardrail(CustomGuardrail):
         If a response contains the word "coffee" -> we will raise an exception
         """
         verbose_proxy_logger.debug("async_pre_call_hook response: %s", response)
-        if isinstance(response, litellm.ModelResponse):
+        if isinstance(response, lumina.ModelResponse):
             for choice in response.choices:
-                if isinstance(choice, litellm.Choices):
+                if isinstance(choice, lumina.Choices):
                     verbose_proxy_logger.debug("async_pre_call_hook choice: %s", choice)
                     if (
                         choice.message.content
@@ -691,7 +691,7 @@ class myCustomGuardrail(CustomGuardrail):
 
         This is useful for guardrails that need to see the entire response, such as PII masking.
 
-        See Aim guardrail implementation for an example - https://github.com/BerriAI/litellm/blob/d0e022cfacb8e9ebc5409bb652059b6fd97b45c0/litellm/proxy/guardrails/guardrail_hooks/aim.py#L168
+        See Aim guardrail implementation for an example - https://github.com/Soventra/lumina/blob/d0e022cfacb8e9ebc5409bb652059b6fd97b45c0/lumina/proxy/guardrails/guardrail_hooks/aim.py#L168
 
         Triggered by mode: 'post_call'
         """
@@ -715,11 +715,11 @@ class myCustomGuardrail(CustomGuardrail):
 
 **Q. Is `apply_guardrail` relevant both in the request and in the response (pre_call, during_call and post_call hooks)?**
 
-**A.** Yes, one function works in both - See implementation [here](https://github.com/BerriAI/litellm/blob/0292b84dc47473ddeff29bd5a86f529bc523034b/litellm/proxy/utils.py#L825)
+**A.** Yes, one function works in both - See implementation [here](https://github.com/Soventra/lumina/blob/0292b84dc47473ddeff29bd5a86f529bc523034b/lumina/proxy/utils.py#L825)
 
 **Q. What do I get in the inputs of `apply_guardrail`? What does each field represent?**
 
-**A.** See [the parameter reference above](#apply_guardrail-parameters). The one you should care about first is `inputs["texts"]`, the extracted text you'll send to your API for verification - See implementation [here](https://github.com/BerriAI/litellm/blob/main/litellm/llms/anthropic/chat/guardrail_translation/handler.py)
+**A.** See [the parameter reference above](#apply_guardrail-parameters). The one you should care about first is `inputs["texts"]`, the extracted text you'll send to your API for verification - See implementation [here](https://github.com/Soventra/lumina/blob/main/lumina/llms/anthropic/chat/guardrail_translation/handler.py)
 
 **Q. Is this function agnostic to the LLM provider? Meaning does it pass the same values for OpenAI and Anthropic for example?**
 

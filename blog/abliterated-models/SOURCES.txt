@@ -11,7 +11,7 @@ Rates are dated October 26, 2026 in the article.
 Artwork is original code: a shaded parametric surface with ordered Bayer
 dithering in artwork.js. It is decorative, not a model architecture diagram.
 The page follows Docusaurus's theme setting; no separate preference is stored.
-Geist and the LiteLLM mark use the repository's existing official assets.
+Geist and the Lumina mark use the repository's existing official assets.
 
 To reproduce the cover, serve the repository root with a static file server,
 open blog/abliterated-models/cover.html at 1200 x 630, wait for fonts, and export

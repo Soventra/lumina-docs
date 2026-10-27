@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # /v1/messages
 
-Use LiteLLM to call all your LLM APIs in the Anthropic `v1/messages` format. 
+Use Lumina to call all your LLM APIs in the Anthropic `v1/messages` format. 
 
 
 ## Overview 
@@ -17,20 +17,20 @@ Use LiteLLM to call all your LLM APIs in the Anthropic `v1/messages` format.
 | Fallbacks | ✅ | Works between supported models |
 | Loadbalancing | ✅ | Works between supported models |
 | Guardrails | ✅ | Applies to input and output text. On streamed output a guardrail can block the response, but text rewrites such as masking only apply to non-streaming responses |
-| Supported Providers | **All LiteLLM supported providers** | `openai`, `anthropic`, `bedrock`, `vertex_ai`, `gemini`, `azure`, `azure_ai`, etc. |
+| Supported Providers | **All Lumina supported providers** | `openai`, `anthropic`, `bedrock`, `vertex_ai`, `gemini`, `azure`, `azure_ai`, etc. |
 
 ## Usage 
 ---
 
-### LiteLLM Python SDK 
+### Lumina Python SDK 
 
 <Tabs>
 <TabItem value="anthropic" label="Anthropic">
 
 #### Non-streaming example
-```python showLineNumbers title="Anthropic Example using LiteLLM Python SDK"
-import litellm
-response = await litellm.anthropic.messages.acreate(
+```python showLineNumbers title="Anthropic Example using Lumina Python SDK"
+import lumina
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     api_key=api_key,
     model="anthropic/{{anthropic}}",
@@ -39,9 +39,9 @@ response = await litellm.anthropic.messages.acreate(
 ```
 
 #### Streaming example
-```python showLineNumbers title="Anthropic Streaming Example using LiteLLM Python SDK"
-import litellm
-response = await litellm.anthropic.messages.acreate(
+```python showLineNumbers title="Anthropic Streaming Example using Lumina Python SDK"
+import lumina
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     api_key=api_key,
     model="anthropic/{{anthropic}}",
@@ -57,14 +57,14 @@ async for chunk in response:
 <TabItem value="openai" label="OpenAI">
 
 #### Non-streaming example
-```python showLineNumbers title="OpenAI Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="OpenAI Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set API key
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="openai/{{openai_large}}",
     max_tokens=100,
@@ -72,14 +72,14 @@ response = await litellm.anthropic.messages.acreate(
 ```
 
 #### Streaming example
-```python showLineNumbers title="OpenAI Streaming Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="OpenAI Streaming Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set API key
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="openai/{{openai_large}}",
     max_tokens=100,
@@ -94,14 +94,14 @@ async for chunk in response:
 <TabItem value="gemini" label="Google AI Studio">
 
 #### Non-streaming example
-```python showLineNumbers title="Google Gemini Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Google Gemini Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set API key
 os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="gemini/{{gemini_flash}}",
     max_tokens=100,
@@ -109,14 +109,14 @@ response = await litellm.anthropic.messages.acreate(
 ```
 
 #### Streaming example
-```python showLineNumbers title="Google Gemini Streaming Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Google Gemini Streaming Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set API key
 os.environ["GEMINI_API_KEY"] = "your-gemini-api-key"
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="gemini/{{gemini_flash}}",
     max_tokens=100,
@@ -131,8 +131,8 @@ async for chunk in response:
 <TabItem value="vertex" label="Vertex AI">
 
 #### Non-streaming example
-```python showLineNumbers title="Vertex AI Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Vertex AI Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set credentials - Vertex AI uses application default credentials
@@ -140,7 +140,7 @@ import os
 os.environ["VERTEXAI_PROJECT"] = "your-gcp-project-id"
 os.environ["VERTEXAI_LOCATION"] = "us-central1"
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="vertex_ai/{{gemini_flash}}",
     max_tokens=100,
@@ -148,8 +148,8 @@ response = await litellm.anthropic.messages.acreate(
 ```
 
 #### Streaming example
-```python showLineNumbers title="Vertex AI Streaming Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="Vertex AI Streaming Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set credentials - Vertex AI uses application default credentials
@@ -157,7 +157,7 @@ import os
 os.environ["VERTEXAI_PROJECT"] = "your-gcp-project-id"
 os.environ["VERTEXAI_LOCATION"] = "us-central1"
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="vertex_ai/{{gemini_flash}}",
     max_tokens=100,
@@ -172,8 +172,8 @@ async for chunk in response:
 <TabItem value="bedrock" label="AWS Bedrock">
 
 #### Non-streaming example
-```python showLineNumbers title="AWS Bedrock Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="AWS Bedrock Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set AWS credentials
@@ -181,7 +181,7 @@ os.environ["AWS_ACCESS_KEY_ID"] = "your-access-key-id"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "your-secret-access-key"
 os.environ["AWS_REGION_NAME"] = "us-west-2"  # or your AWS region
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="bedrock/us.anthropic.{{anthropic}}",
     max_tokens=100,
@@ -189,8 +189,8 @@ response = await litellm.anthropic.messages.acreate(
 ```
 
 #### Streaming example
-```python showLineNumbers title="AWS Bedrock Streaming Example using LiteLLM Python SDK"
-import litellm
+```python showLineNumbers title="AWS Bedrock Streaming Example using Lumina Python SDK"
+import lumina
 import os
 
 # Set AWS credentials
@@ -198,7 +198,7 @@ os.environ["AWS_ACCESS_KEY_ID"] = "your-access-key-id"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "your-secret-access-key"
 os.environ["AWS_REGION_NAME"] = "us-west-2"  # or your AWS region
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     messages=[{"role": "user", "content": "Hello, can you tell me a short joke?"}],
     model="bedrock/us.anthropic.{{anthropic}}",
     max_tokens=100,
@@ -235,7 +235,7 @@ Example response:
 }
 ```
 
-### LiteLLM Proxy Server 
+### Lumina Proxy Server 
 
 <Tabs>
 <TabItem value="anthropic-proxy" label="Anthropic">
@@ -253,18 +253,18 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-```python showLineNumbers title="Anthropic Example using LiteLLM Proxy Server"
+```python showLineNumbers title="Anthropic Example using Lumina Proxy Server"
 import anthropic
 
-# point anthropic sdk to litellm proxy 
+# point anthropic sdk to lumina proxy 
 client = anthropic.Anthropic(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
 )
 
 response = client.messages.create(
@@ -291,18 +291,18 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-```python showLineNumbers title="OpenAI Example using LiteLLM Proxy Server"
+```python showLineNumbers title="OpenAI Example using Lumina Proxy Server"
 import anthropic
 
-# point anthropic sdk to litellm proxy 
+# point anthropic sdk to lumina proxy 
 client = anthropic.Anthropic(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
 )
 
 response = client.messages.create(
@@ -329,18 +329,18 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-```python showLineNumbers title="Google Gemini Example using LiteLLM Proxy Server"
+```python showLineNumbers title="Google Gemini Example using Lumina Proxy Server"
 import anthropic
 
-# point anthropic sdk to litellm proxy 
+# point anthropic sdk to lumina proxy 
 client = anthropic.Anthropic(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
 )
 
 response = client.messages.create(
@@ -368,18 +368,18 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-```python showLineNumbers title="Vertex AI Example using LiteLLM Proxy Server"
+```python showLineNumbers title="Vertex AI Example using Lumina Proxy Server"
 import anthropic
 
-# point anthropic sdk to litellm proxy 
+# point anthropic sdk to lumina proxy 
 client = anthropic.Anthropic(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
 )
 
 response = client.messages.create(
@@ -408,18 +408,18 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-```python showLineNumbers title="AWS Bedrock Example using LiteLLM Proxy Server"
+```python showLineNumbers title="AWS Bedrock Example using Lumina Proxy Server"
 import anthropic
 
-# point anthropic sdk to litellm proxy 
+# point anthropic sdk to lumina proxy 
 client = anthropic.Anthropic(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
 )
 
 response = client.messages.create(
@@ -433,7 +433,7 @@ response = client.messages.create(
 
 <TabItem value="curl-proxy" label="curl">
 
-```bash showLineNumbers title="Example using LiteLLM Proxy Server"
+```bash showLineNumbers title="Example using Lumina Proxy Server"
 curl -L -X POST 'http://0.0.0.0:4000/v1/messages' \
 -H 'content-type: application/json' \
 -H "x-api-key: $LUMINA_API_KEY" \
@@ -456,7 +456,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/messages' \
 ## Request Format
 ---
 
-Request body will be in the Anthropic messages API format. **litellm follows the Anthropic messages specification for this endpoint.**
+Request body will be in the Anthropic messages API format. **lumina follows the Anthropic messages specification for this endpoint.**
 
 #### Example request body
 

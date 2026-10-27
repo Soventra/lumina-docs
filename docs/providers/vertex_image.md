@@ -8,7 +8,7 @@ Vertex AI supports two types of image generation:
 | Property | Details |
 |----------|---------|
 | Description | Vertex AI Image Generation supports both Gemini image generation models |
-| Provider Route on LiteLLM | `vertex_ai/` |
+| Provider Route on Lumina | `vertex_ai/` |
 | Provider Doc | [Google Cloud Vertex AI Image Generation ↗](https://cloud.google.com/vertex-ai/docs/generative-ai/image/generate-images) |
 | Gemini Image Generation Docs | [Gemini Image Generation ↗](https://ai.google.dev/gemini-api/docs/image-generation) |
 
@@ -24,10 +24,10 @@ Gemini image generation models support conversational image creation with featur
 - Up to 4K resolution (Gemini 3 Pro)
 
 ```python showLineNumbers title="Gemini 2.5 Flash Image"
-import litellm
+import lumina
 
 # Generate a single image
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     prompt="A nano banana dish in a fancy restaurant with a Gemini theme",
     model="vertex_ai/gemini-2.5-flash-image",
     vertex_ai_project="your-project-id",
@@ -40,10 +40,10 @@ print(response.data[0].b64_json)  # Gemini returns base64 images
 ```
 
 ```python showLineNumbers title="Gemini 3 Pro Image Preview (4K output)"
-import litellm
+import lumina
 
 # Generate high-resolution image
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     prompt="Da Vinci style anatomical sketch of a dissected Monarch butterfly",
     model="vertex_ai/gemini-3-pro-image-preview",
     vertex_ai_project="your-project-id",
@@ -59,12 +59,12 @@ print(response.data[0].b64_json)
 
 ### Google Search Grounding
 
-Gemini image models (e.g. `gemini-3.1-flash-image-preview`, `gemini-3-pro-image-preview`) support Google Search on `/v1/images/generations`. LiteLLM maps `web_search_options` or OpenAI-style `web_search` tools to Gemini's `googleSearch` tool on the underlying `generateContent` request.
+Gemini image models (e.g. `gemini-3.1-flash-image-preview`, `gemini-3-pro-image-preview`) support Google Search on `/v1/images/generations`. Lumina maps `web_search_options` or OpenAI-style `web_search` tools to Gemini's `googleSearch` tool on the underlying `generateContent` request.
 
 ```python showLineNumbers title="Image generation with Google Search"
-import litellm
+import lumina
 
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     prompt="Generate an image of the latest iPhone design",
     model="vertex_ai/gemini-3.1-flash-image-preview",
     vertex_ai_project="your-project-id",
@@ -76,9 +76,9 @@ print(response.data[0].b64_json)
 ```
 
 ```python showLineNumbers title="Using OpenAI-style web_search tool"
-import litellm
+import lumina
 
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     prompt="Generate an image of the latest iPhone design",
     model="vertex_ai/gemini-3.1-flash-image-preview",
     vertex_ai_project="your-project-id",
@@ -87,7 +87,7 @@ response = await litellm.aimage_generation(
 )
 ```
 
-Via LiteLLM Proxy (`/v1/images/generations`):
+Via Lumina Proxy (`/v1/images/generations`):
 
 ```bash showLineNumbers title="Proxy request with web_search_options"
 curl -X POST 'http://localhost:4000/v1/images/generations' \
@@ -102,7 +102,7 @@ curl -X POST 'http://localhost:4000/v1/images/generations' \
 
 ### Passing imageConfig (Gemini models)
 
-Gemini image generation models support the full [`ImageConfig`](https://cloud.google.com/vertex-ai/docs/reference/rpc/google.cloud.aiplatform.v1#imageconfig) object. Pass it as `imageConfig` on any `/v1/images/generations` request and LiteLLM will forward all fields verbatim to `generationConfig.imageConfig`.
+Gemini image generation models support the full [`ImageConfig`](https://cloud.google.com/vertex-ai/docs/reference/rpc/google.cloud.aiplatform.v1#imageconfig) object. Pass it as `imageConfig` on any `/v1/images/generations` request and Lumina will forward all fields verbatim to `generationConfig.imageConfig`.
 
 | Field | Type | Description |
 |---|---|---|
@@ -112,9 +112,9 @@ Gemini image generation models support the full [`ImageConfig`](https://cloud.go
 | `imageOutputOptions` | object | `{"mimeType": "image/jpeg"\|"image/png"\|"image/webp", "compressionQuality": 0–100}` |
 
 ```python showLineNumbers title="Passing imageConfig via Python SDK"
-import litellm
+import lumina
 
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     model="vertex_ai/gemini-3.1-flash-image",
     prompt="A nano banana on a desk",
     vertex_ai_project="your-project-id",
@@ -153,7 +153,7 @@ curl -X POST 'http://localhost:4000/v1/images/generations' \
 You can also use flat params as shorthand for `aspectRatio` and `imageSize`:
 
 ```python showLineNumbers title="Flat param shorthand"
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     model="vertex_ai/gemini-3.1-flash-image",
     prompt="A nano banana on a desk",
     aspect_ratio="16:9",   # or aspectRatio="16:9"
@@ -168,10 +168,10 @@ Flat params (`aspect_ratio`, `image_size`, `aspectRatio`, `imageSize`) override 
 ### Imagen Models
 
 ```python showLineNumbers title="Imagen Image Generation"
-import litellm
+import lumina
 
 # Generate a single image
-response = await litellm.aimage_generation(
+response = await lumina.aimage_generation(
     prompt="An olympic size swimming pool with crystal clear water and modern architecture",
     model="vertex_ai/imagen-4.0-generate-001",
     vertex_ai_project="your-project-id",
@@ -183,7 +183,7 @@ response = await litellm.aimage_generation(
 print(response.data[0].b64_json)  # Imagen also returns base64 images
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your config.yaml
 
@@ -197,10 +197,10 @@ model_list:
       vertex_ai_credentials: "path/to/service-account.json"  # Optional if using environment auth
 ```
 
-#### 2. Start LiteLLM Proxy Server
+#### 2. Start Lumina Proxy Server
 
-```bash title="Start LiteLLM Proxy Server"
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy Server"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -243,9 +243,9 @@ print(response.data[0].url)
 
 :::tip
 
-**We support ALL Vertex AI Image Generation models, just set `model=vertex_ai/<any-model-on-vertex_ai>` as a prefix when sending litellm requests**
+**We support ALL Vertex AI Image Generation models, just set `model=vertex_ai/<any-model-on-vertex_ai>` as a prefix when sending lumina requests**
 
 :::
 
-For the complete and up-to-date list of supported models, visit: [https://models.litellm.ai/](https://models.litellm.ai/)
+For the complete and up-to-date list of supported models, visit: [https://models.lumina.ai/](https://models.lumina.ai/)
 

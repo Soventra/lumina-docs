@@ -45,7 +45,7 @@ items={[
     to: "/blog/auto-router-terminal-bench-benchmark",
   },
   {
-    title: "Introducing LiteLLM Fusion: 56% More Tasks Solved Than Fable 5",
+    title: "Introducing Lumina Fusion: 56% More Tasks Solved Than Fable 5",
     description: "Same 21 tasks, three models in parallel plus one synthesizer: +36% spend, 12% less per solved task, 5x turn latency.",
     to: "/blog/fusion-terminal-bench-benchmark",
   },

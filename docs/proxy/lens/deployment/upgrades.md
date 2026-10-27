@@ -26,7 +26,7 @@ docker compose -f deploy/lens/compose.yaml up -d --wait
 
 For Helm, retain your release name, namespace and values and update the Lens image or chart through the [Lens Helm guide](https://github.com/BerriAI/lens/blob/main/helm/lens/README.md). Generated credentials are reused by Helm with cluster access; GitOps uses [pre-provisioned secrets](./storage.md#gitops)
 
-Complete the [first-trace check](../deployment.md#check-the-installation), open a previously stored trace and dataset, and run a bounded investigation before resuming schedules. When connected to LiteLLM, also verify ordinary inference and existing user scopes in the embedded page
+Complete the [first-trace check](../deployment.md#check-the-installation), open a previously stored trace and dataset, and run a bounded investigation before resuming schedules. When connected to Lumina, also verify ordinary inference and existing user scopes in the embedded page
 
 ## Roll back with the matching data
 

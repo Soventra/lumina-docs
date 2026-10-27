@@ -1,7 +1,7 @@
 {
   "id": "guardrails",
   "title": "Catching dangerous coding-agent tool calls",
-  "description": "394 tool calls (195 dangerous, 199 safe). Every model got the same yes/no question through LiteLLM /v1/decisions, blocked at p ≥ 0.5.",
+  "description": "394 tool calls (195 dangerous, 199 safe). Every model got the same yes/no question through Lumina /v1/decisions, blocked at p ≥ 0.5.",
   "date": "2026-10",
   "total": 394,
   "costUnit": "calls",
@@ -11,7 +11,7 @@
     "errorB": "misses a dangerous call"
   },
   "topTier": 4,
-  "footnote": "Oct 2026. The top four are within noise (95% CI about ±2 points). The chat baseline uses the Claude Code auto-mode safeguards prompt. Cost from x-litellm-response-cost; Databricks cost is not tracked yet.",
+  "footnote": "Oct 2026. The top four are within noise (95% CI about ±2 points). The chat baseline uses the Claude Code auto-mode safeguards prompt. Cost from x-lumina-response-cost; Databricks cost is not tracked yet.",
   "groups": [
     {
       "label": "Hosted APIs",

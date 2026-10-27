@@ -1,6 +1,6 @@
 # Outage Troubleshooting
 
-Use this page when LiteLLM nodes go down: pods restart or get OOMKilled, the load balancer marks targets unhealthy, or requests time out across the deployment. Most outages we investigate come down to sizing (CPU or memory per worker), workers recycling at the same time, or a dependency (database, Redis, an upstream provider) stalling the event loop. All of those are only visible from the deployment side, so support needs the information below to give you a root cause rather than a list of follow-up questions.
+Use this page when Lumina nodes go down: pods restart or get OOMKilled, the load balancer marks targets unhealthy, or requests time out across the deployment. Most outages we investigate come down to sizing (CPU or memory per worker), workers recycling at the same time, or a dependency (database, Redis, an upstream provider) stalling the event loop. All of those are only visible from the deployment side, so support needs the information below to give you a root cause rather than a list of follow-up questions.
 
 Gather everything in this list before opening a ticket. Redact API keys, database passwords, and other secrets from every file you share.
 
@@ -16,7 +16,7 @@ Gather everything in this list before opening a ticket. Redact API keys, databas
 | Memory | Memory requests and limits per pod and memory usage over the incident window; an `OOMKilled` pod is a memory problem regardless of what the logs say | `kubectl top pod` and your metrics dashboard, see [CPU and memory](#cpu-and-memory) |
 | RPS | Requests per second the deployment was serving when it went down, and the normal baseline, so we can check the CPU and memory numbers against the load | Prometheus or load balancer metrics, see [RPS](#rps) |
 
-Along with those, include the LiteLLM version (the image tag, or `litellm_version` from `GET /health/readiness/details`), the timeline of the incident in UTC, what "down" looked like from your side (5xx from the load balancer, probe failures, restarts, timeouts), whether every replica failed at once or one at a time, whether the database and Redis were healthy at the same time, and anything that changed in the days before (a version upgrade, new models, a traffic increase, a change to `values.yaml` or `config.yaml`).
+Along with those, include the Lumina version (the image tag, or `lumina_version` from `GET /health/readiness/details`), the timeline of the incident in UTC, what "down" looked like from your side (5xx from the load balancer, probe failures, restarts, timeouts), whether every replica failed at once or one at a time, whether the database and Redis were healthy at the same time, and anything that changed in the days before (a version upgrade, new models, a traffic increase, a change to `values.yaml` or `config.yaml`).
 
 ## Kubernetes events
 
@@ -47,10 +47,10 @@ Add `--all` to include the chart defaults if you have not overridden `resources`
 
 ## config.yaml
 
-The Helm chart renders `proxy_config` from `values.yaml` into a ConfigMap and mounts it at `/etc/litellm/config.yaml`. Read it from a running pod so we see the configuration the proxy loaded, including any environment variable substitutions:
+The Helm chart renders `proxy_config` from `values.yaml` into a ConfigMap and mounts it at `/etc/lumina/config.yaml`. Read it from a running pod so we see the configuration the proxy loaded, including any environment variable substitutions:
 
 ```shell
-kubectl exec -n <namespace> <pod-name> -- cat /etc/litellm/config.yaml
+kubectl exec -n <namespace> <pod-name> -- cat /etc/lumina/config.yaml
 ```
 
 If the pods are crash looping and `exec` fails with `container not found`, read the ConfigMap instead:
@@ -63,7 +63,7 @@ Redact `api_key`, `database_url`, `master_key`, and any other secret before send
 
 ## Node type
 
-The node type is the instance class or machine spec of the Kubernetes nodes the LiteLLM pods are scheduled on. Cloud providers label each node with it, and `describe node` also shows how much of the node is already committed to other pods:
+The node type is the instance class or machine spec of the Kubernetes nodes the Lumina pods are scheduled on. Cloud providers label each node with it, and `describe node` also shows how much of the node is already committed to other pods:
 
 ```shell
 kubectl get pod -n <namespace> <pod-name> -o wide
@@ -71,7 +71,7 @@ kubectl get node <node-name> -o jsonpath='{.metadata.labels.node\.kubernetes\.io
 kubectl describe node <node-name>
 ```
 
-Send the instance type (for example `m6i.2xlarge` or `n2-standard-8`) and the `Capacity`, `Allocatable`, and `Allocated resources` sections from `describe node`. If you run on bare metal or a VM, send the vCPU count and memory of the machine instead. A node that is oversubscribed will throttle LiteLLM even when the pod's own limits look correct.
+Send the instance type (for example `m6i.2xlarge` or `n2-standard-8`) and the `Capacity`, `Allocatable`, and `Allocated resources` sections from `describe node`. If you run on bare metal or a VM, send the vCPU count and memory of the machine instead. A node that is oversubscribed will throttle Lumina even when the pod's own limits look correct.
 
 ## CPU and memory
 
@@ -89,11 +89,11 @@ kubectl top pod -n <namespace>
 Requests per second tells us whether the deployment fell over under normal load or under a spike. If you have [Prometheus metrics](./proxy/prometheus.md) enabled, query the proxy request counter over the incident window:
 
 ```promql
-sum(rate(litellm_proxy_total_requests_metric_total[1m]))
-sum by (pod) (rate(litellm_proxy_total_requests_metric_total[1m]))
+sum(rate(lumina_proxy_total_requests_metric_total[1m]))
+sum by (pod) (rate(lumina_proxy_total_requests_metric_total[1m]))
 ```
 
-If you do not scrape LiteLLM metrics, use the request count from the load balancer or ingress in front of it (for example the ALB `RequestCount` metric in CloudWatch). Send the peak RPS during the incident, the RPS in the hour before it, and the typical baseline, along with the number of replicas serving that traffic, so we can work out RPS per pod and per worker.
+If you do not scrape Lumina metrics, use the request count from the load balancer or ingress in front of it (for example the ALB `RequestCount` metric in CloudWatch). Send the peak RPS during the incident, the RPS in the hour before it, and the typical baseline, along with the number of replicas serving that traffic, so we can work out RPS per pod and per worker.
 
 ## Deployments without Kubernetes
 
@@ -114,4 +114,4 @@ Knowing what support checks first helps you check it yourself while you wait. Un
 
 ## Support
 
-Share the collected information with the LiteLLM team on [Slack](https://www.litellm.ai/support), on [Discord](https://discord.gg/wuPM9dRgDw), or by email at [ishaan@berri.ai](mailto:ishaan@berri.ai) and [krrish@berri.ai](mailto:krrish@berri.ai). If you already have a support channel with us, post there.
+Share the collected information with the Lumina team on [Slack](https://www.lumina.ai/support), on [Discord](https://discord.gg/wuPM9dRgDw), or by email at [ishaan@berri.ai](mailto:ishaan@berri.ai) and [krrish@berri.ai](mailto:krrish@berri.ai). If you already have a support channel with us, post there.

@@ -6,7 +6,7 @@ Pass-through endpoints for Cohere - call provider-specific endpoint, in native f
 |-------|-------|-------|
 | Cost Tracking | ✅ | Supported for `/v1/chat`, and `/v2/chat` |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | |
 
 Just replace `https://api.cohere.com` with `LUMINA_PROXY_BASE_URL/cohere`
@@ -42,10 +42,10 @@ Let's call the Cohere [`/rerank` endpoint](https://docs.cohere.com/reference/rer
 export COHERE_API_KEY=""
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -87,7 +87,7 @@ Key Changes:
 
 ### **Example 1: Rerank endpoint**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl --request POST \
@@ -129,7 +129,7 @@ curl --request POST \
 
 ### **Example 2: Chat API**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl --request POST \
@@ -167,7 +167,7 @@ curl --request POST \
 
 ### **Example 3: Embedding**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl --request POST \
@@ -216,7 +216,7 @@ export COHERE_API_KEY=""
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```

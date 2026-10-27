@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Pillar Security
 
-Pillar Security integrates with [LiteLLM Proxy](https://docs.litellm.ai) via the [Generic Guardrail API](https://docs.litellm.ai/docs/adding_provider/generic_guardrail_api), providing AI security scanning for your LLM applications.
+Pillar Security integrates with [Lumina Proxy](https://docs.lumina.ai) via the [Generic Guardrail API](https://docs.lumina.ai/docs/adding_provider/generic_guardrail_api), providing AI security scanning for your LLM applications.
 
 - **Prompt Injection Protection**: Prevent malicious prompt manipulation
 - **Jailbreak Detection**: Detect attempts to bypass AI safety measures
@@ -22,7 +22,7 @@ export PILLAR_API_KEY=your-pillar-api-key
 export OPENAI_API_KEY=your-openai-api-key
 ```
 
-### 2. Configure LiteLLM
+### 2. Configure Lumina
 
 Create or update your `config.yaml`:
 
@@ -38,7 +38,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       default_on: true
       additional_provider_specific_params:
@@ -48,14 +48,14 @@ guardrails:
 ```
 
 :::warning[Important]
-- The `api_base` must be exactly `https://api.pillar.security/api/v1/integrations/litellm`, the only endpoint that supports the Generic Guardrail API integration.
-- The value `guardrail: generic_guardrail_api` must not be changed. This is the LiteLLM built-in guardrail type. However, you can customize the `guardrail_name` to any value you prefer.
+- The `api_base` must be exactly `https://api.pillar.security/api/v1/integrations/lumina`, the only endpoint that supports the Generic Guardrail API integration.
+- The value `guardrail: generic_guardrail_api` must not be changed. This is the Lumina built-in guardrail type. However, you can customize the `guardrail_name` to any value you prefer.
 :::
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ### 4. Test the Integration
@@ -76,7 +76,7 @@ Before you begin, ensure you have:
 
 1. **Pillar Security Account**: Sign up at [Pillar Dashboard](https://app.pillar.security)
 2. **API Credentials**: Get your API key from the dashboard
-3. **LiteLLM Proxy**: Install and configure LiteLLM proxy
+3. **Lumina Proxy**: Install and configure Lumina proxy
 
 ## Guardrail Modes
 
@@ -106,7 +106,7 @@ Use `[pre_call, post_call]` for complete protection of both inputs and outputs.
 | Parameter | Description |
 |-----------|-------------|
 | `guardrail` | Must be `generic_guardrail_api` (do not change this value) |
-| `api_base` | Must be `https://api.pillar.security/api/v1/integrations/litellm` (do not change this value) |
+| `api_base` | Must be `https://api.pillar.security/api/v1/integrations/lumina` (do not change this value) |
 | `api_key` | Pillar API key (sent as `x-api-key` header) |
 | `mode` | When to run: `pre_call`, `post_call`, `during_call`, or array like `[pre_call, post_call]` |
 | `default_on` | Enable guardrail for all requests by default |
@@ -148,7 +148,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       default_on: true
       additional_provider_specific_params:
@@ -160,7 +160,7 @@ guardrails:
 general_settings:
   master_key: "your-secure-master-key-here"
 
-litellm_settings:
+lumina_settings:
   set_verbose: true
 ```
 
@@ -184,7 +184,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       default_on: true
       additional_provider_specific_params:
@@ -217,7 +217,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: pre_call
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       default_on: true
       additional_provider_specific_params:
@@ -249,7 +249,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: during_call
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       default_on: true
       additional_provider_specific_params:
@@ -330,7 +330,7 @@ Ideal for debugging, audit logs, or compliance exports.
 
 ## Session Tracking
 
-Pillar supports session tracking using LiteLLM's metadata system:
+Pillar supports session tracking using Lumina's metadata system:
 
 ```bash
 curl -X POST "http://localhost:4000/v1/chat/completions" \
@@ -346,7 +346,7 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
   }'
 ```
 
-This provides clear, explicit conversation tracking that works with LiteLLM's session management.
+This provides clear, explicit conversation tracking that works with Lumina's session management.
 
 ## Environment Variables
 
@@ -505,14 +505,14 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
 
 - **Monitor your applications**: Use the [Pillar Dashboard](https://app.pillar.security) to view security events and analytics
 - **Customize detection**: Configure specific scanners and thresholds for your use case
-- **Scale your deployment**: Use LiteLLM's load balancing features with Pillar protection
+- **Scale your deployment**: Use Lumina's load balancing features with Pillar protection
 
 ## Support
 
-Need help with your LiteLLM integration? Contact us at support@pillar.security
+Need help with your Lumina integration? Contact us at support@pillar.security
 
 ### Resources
 
 - [Pillar Dashboard](https://app.pillar.security)
-- [LiteLLM Documentation](https://docs.litellm.ai)
+- [Lumina Documentation](https://docs.lumina.ai)
 - [Pillar API Reference](https://docs.pillar.security/docs/api/introduction)

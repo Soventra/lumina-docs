@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Azure Content Safety Guardrail
 
-LiteLLM supports Azure Content Safety guardrails via the [Azure Content Safety API](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview). 
+Lumina supports Azure Content Safety guardrails via the [Azure Content Safety API](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/overview). 
 
 
 ## Supported Guardrails
@@ -13,7 +13,7 @@ LiteLLM supports Azure Content Safety guardrails via the [Azure Content Safety A
 - [Text Moderation](https://learn.microsoft.com/en-us/azure/ai-services/content-safety/quickstart-text?tabs=visual-studio%2Clinux&pivots=programming-language-rest)
 
 ## Quick Start
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 
@@ -45,11 +45,11 @@ guardrails:
 - `pre_call` Run **before** LLM call, on **input**
 - `post_call` Run **after** LLM call, on **input & output**
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request 
@@ -118,7 +118,7 @@ guardrails:
 When pricing is configured, every guardrail run records its billable usage and estimated cost:
 
 - **Usage counters** - `requests` (Azure API calls), `input_characters`, and `text_records` (Azure's billing unit: one per started 1,000 characters of each submitted chunk). Long prompts split across the 10,000 character limit accumulate usage per chunk. A chunk that triggers an intervention was still submitted to Azure, so it is counted; chunks after it are never sent and never counted
-- **Estimated cost** - `text_records x price_per_1000_text_records / 1000`, shown on the request's log entry in the dashboard and exported on the guardrail OTEL span as `litellm.cost.guardrail`
+- **Estimated cost** - `text_records x price_per_1000_text_records / 1000`, shown on the request's log entry in the dashboard and exported on the guardrail OTEL span as `lumina.cost.guardrail`
 - **Spend isolation** - the guardrail cost estimate is reporting-only. It is never added to the request's `response_cost`, key/team/user spend, or budget enforcement
 
 A `paid` tier without a positive `price_per_1000_text_records` fails at proxy startup, so a misconfigured deployment cannot silently report wrong costs. If neither `cost_tier` nor a price is set, usage counters are still recorded and no cost is invented.
@@ -129,7 +129,7 @@ A `paid` tier without a positive `price_per_1000_text_records` fails at proxy st
 
 Both Azure Prompt Shield and Azure Text Moderation have a **10,000 character limit** per request. When text exceeds this limit:
 
-- LiteLLM automatically splits the text into chunks at word boundaries (no words are broken)
+- Lumina automatically splits the text into chunks at word boundaries (no words are broken)
 - Each chunk is sent separately to the Azure Content Safety API for analysis
 - If any chunk is flagged (attack detected or severity threshold exceeded), the entire request is blocked
 - If all chunks are safe, the request is allowed to proceed

@@ -4,7 +4,7 @@ title: "How we built our own internal Devin in 2 days"
 date: 2026-10-03
 authors:
   - tin
-description: "How we built Moyai Devin with Render, Modal, Hermes, Temporal, and LiteLLM: durable sessions, parallel agents, Slack, and shared organization connections."
+description: "How we built Moyai Devin with Render, Modal, Hermes, Temporal, and Lumina: durable sessions, parallel agents, Slack, and shared organization connections."
 tags: [engineering, agents, infrastructure, slack]
 image: ./hero.png
 hide_table_of_contents: true
@@ -39,7 +39,7 @@ We wanted:
 
 We split the system at the lifetime of a chat session. Render owns the conversation, permissions, and saved execution state. Temporal schedules the next step. Modal provides the computer where Hermes runs code and uses a browser.
 
-![Moyai architecture: Slack and the web enter the Render application; Temporal coordinates sessions; Hermes executes in Modal sandboxes; the Render broker calls LiteLLM and connected applications.](./architecture.svg)
+![Moyai architecture: Slack and the web enter the Render application; Temporal coordinates sessions; Hermes executes in Modal sandboxes; the Render broker calls Lumina and connected applications.](./architecture.svg)
 
 [Open the architecture diagram](./architecture.svg). Model requests and connected-app tools return through the Render broker. The sandbox receives a session capability; provider credentials stay on the server.
 
@@ -51,7 +51,7 @@ We used five services:
 | [Modal](https://modal.com) | Cloud sandboxes with a terminal, filesystem, and Chromium |
 | [Hermes Agent](https://github.com/NousResearch/hermes-agent) | The agent loop: call the model, execute tools, and continue from their results |
 | [Temporal Cloud](https://temporal.io) | Session orchestration, waiting, and recovery across interruptions |
-| [LiteLLM](https://github.com/BerriAI/litellm) | Access to multiple models through one gateway, with request costs for accounting |
+| [Lumina](https://github.com/Soventra/lumina) | Access to multiple models through one gateway, with request costs for accounting |
 
 **Render hosts the application; Modal hosts the agent's computer.** That separation lets us provision execution environments as work arrives.
 
@@ -202,7 +202,7 @@ We also added personal and organization skills, plus secure credential requests 
 
 Our next priorities are:
 
-- **Billing recovery.** LiteLLM can bill a request whose final response never reaches Moyai. We track returned costs today; we're evaluating durable receipts to recover the missing ones.
+- **Billing recovery.** Lumina can bill a request whose final response never reaches Moyai. We track returned costs today; we're evaluating durable receipts to recover the missing ones.
 - **Higher-concurrency testing.** Exercise larger worker groups, failure recovery, and resource limits before increasing usage.
 - **Total cost visibility.** Combine model spend with Render, Modal, and Temporal charges.
 

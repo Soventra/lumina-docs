@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Custom Prompt Management
 
-Connect LiteLLM to your prompt management system with custom hooks.
+Connect Lumina to your prompt management system with custom hooks.
 
 ## Overview
 
@@ -29,10 +29,10 @@ Create a new file called `custom_prompt.py` and add this code. The key method he
 
 ```python
 from typing import List, Tuple, Optional
-from litellm.integrations.custom_prompt_management import CustomPromptManagement
-from litellm.types.llms.openai import AllMessageValues
-from litellm.types.prompts.init_prompts import PromptSpec
-from litellm.types.utils import StandardCallbackDynamicParams
+from lumina.integrations.custom_prompt_management import CustomPromptManagement
+from lumina.types.llms.openai import AllMessageValues
+from lumina.types.prompts.init_prompts import PromptSpec
+from lumina.types.utils import StandardCallbackDynamicParams
 
 class MyCustomPromptManagement(CustomPromptManagement):
     def get_chat_completion_prompt(
@@ -71,7 +71,7 @@ class MyCustomPromptManagement(CustomPromptManagement):
 prompt_management = MyCustomPromptManagement()
 ```
 
-### 2. Configure Your Prompt Manager in LiteLLM `config.yaml`
+### 2. Configure Your Prompt Manager in Lumina `config.yaml`
 
 ```yaml
 model_list:
@@ -80,16 +80,16 @@ model_list:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
-  callbacks: custom_prompt.prompt_management  # sets litellm.callbacks = [prompt_management]
+lumina_settings:
+  callbacks: custom_prompt.prompt_management  # sets lumina.callbacks = [prompt_management]
 ```
 
-### 3. Start LiteLLM Gateway
+### 3. Start Lumina Gateway
 
 <Tabs>
 <TabItem value="docker" label="Docker Run">
 
-Mount your `custom_logger.py` on the LiteLLM Docker container.
+Mount your `custom_logger.py` on the Lumina Docker container.
 
 ```shell
 docker run -d \
@@ -106,10 +106,10 @@ docker run -d \
 
 </TabItem>
 
-<TabItem value="py" label="litellm pip">
+<TabItem value="py" label="lumina pip">
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 </TabItem>
@@ -126,7 +126,7 @@ When you pass `prompt_id="1234"`, the custom prompt manager will add a system me
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -179,18 +179,18 @@ curl -X POST http://0.0.0.0:4000/v1/chat/completions \
 </TabItem>
 </Tabs>
 
-### Using the LiteLLM SDK Directly
+### Using the Lumina SDK Directly
 
-If you call `litellm.completion()` from a Python script (without going through the proxy), register your custom prompt manager before making the request:
+If you call `lumina.completion()` from a Python script (without going through the proxy), register your custom prompt manager before making the request:
 
 ```python
 
-import litellm
+import lumina
 from custom_prompt import prompt_management
 
-litellm.callbacks = [prompt_management]
+lumina.callbacks = [prompt_management]
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "hi"}],
     prompt_id="1234",
@@ -198,7 +198,7 @@ response = litellm.completion(
 )
 ```
 
-> **Note:** `litellm.callbacks = [prompt_management]` (or equivalently `litellm.logging_callback_manager.add_litellm_callback(prompt_management)`) is required in SDK scripts. The proxy reads `callbacks` from `config.yaml` automatically, but standalone scripts do not.
+> **Note:** `lumina.callbacks = [prompt_management]` (or equivalently `lumina.logging_callback_manager.add_lumina_callback(prompt_management)`) is required in SDK scripts. The proxy reads `callbacks` from `config.yaml` automatically, but standalone scripts do not.
 
 The request will be transformed from:
 ```json

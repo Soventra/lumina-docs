@@ -60,7 +60,7 @@ export const TERMS = {
 
 export type TermId = keyof typeof TERMS;
 
-// Display names for litellm provider ids, so per-provider work can name itself
+// Display names for lumina provider ids, so per-provider work can name itself
 // by id alone.
 export const PROVIDERS = {
   'ai21': 'AI21',
@@ -92,7 +92,7 @@ export const PROVIDERS = {
   'hyperbolic': 'Hyperbolic',
   'infinity': 'Infinity',
   'jina_ai': 'Jina AI',
-  'litellm_proxy': 'LiteLLM Proxy',
+  'lumina_proxy': 'Lumina Proxy',
   'lm_studio': 'LM Studio',
   'manus': 'Manus',
   'minimax': 'MiniMax',

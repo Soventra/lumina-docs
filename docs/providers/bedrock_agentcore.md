@@ -8,24 +8,24 @@ Call Bedrock AgentCore in the OpenAI Request/Response format.
 | Property | Details |
 |----------|---------|
 | Description | Amazon Bedrock AgentCore provides direct access to hosted agent runtimes for executing agentic workflows with foundation models. |
-| Provider Route on LiteLLM | `bedrock/agentcore/{AGENT_RUNTIME_ARN}` |
+| Provider Route on Lumina | `bedrock/agentcore/{AGENT_RUNTIME_ARN}` |
 | Provider Doc | [AWS Bedrock AgentCore ↗](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agentcore_InvokeAgentRuntime.html) |
 
 :::info
 
-This documentation is for **AgentCore Agents** (agent runtimes). If you want to use AgentCore MCP servers with LiteLLM, see the [MCP AWS SigV4 Auth](https://docs.litellm.ai/docs/mcp_aws_sigv4) guide for setup instructions.
+This documentation is for **AgentCore Agents** (agent runtimes). If you want to use AgentCore MCP servers with Lumina, see the [MCP AWS SigV4 Auth](https://docs.lumina.ai/docs/mcp_aws_sigv4) guide for setup instructions.
 
 :::
 
 ## Quick Start
 
-### Model Format to LiteLLM
+### Model Format to Lumina
 
-To call a bedrock agent runtime through LiteLLM, use the following model format.
+To call a bedrock agent runtime through Lumina, use the following model format.
 
-Here the `model=bedrock/agentcore/` tells LiteLLM to call the bedrock `InvokeAgentRuntime` API.
+Here the `model=bedrock/agentcore/` tells Lumina to call the bedrock `InvokeAgentRuntime` API.
 
-```shell showLineNumbers title="Model Format to LiteLLM"
+```shell showLineNumbers title="Model Format to Lumina"
 bedrock/agentcore/{AGENT_RUNTIME_ARN}
 ```
 
@@ -34,13 +34,13 @@ bedrock/agentcore/{AGENT_RUNTIME_ARN}
 
 You can find the Agent Runtime ARN in your AWS Bedrock console under AgentCore.
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Basic AgentCore Completion"
-import litellm
+import lumina
 
 # Make a completion request to your AgentCore runtime
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/agentcore/arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/my-agent-runtime",
     messages=[
         {
@@ -55,10 +55,10 @@ print(f"Usage: {response.usage}")
 ```
 
 ```python showLineNumbers title="Streaming AgentCore Responses"
-import litellm
+import lumina
 
 # Stream responses from your AgentCore runtime
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/agentcore/arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/my-agent-runtime",
     messages=[
         {
@@ -74,14 +74,14 @@ for chunk in response:
         print(chunk.choices[0].delta.content, end="")
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your model in config.yaml
 
 <Tabs>
 <TabItem value="config-yaml" label="config.yaml">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration"
+```yaml showLineNumbers title="Lumina Proxy Configuration"
 model_list:
   - model_name: agentcore-runtime-1
     lumina_params:
@@ -101,10 +101,10 @@ model_list:
 </TabItem>
 </Tabs>
 
-#### 2. Start the LiteLLM Proxy
+#### 2. Start the Lumina Proxy
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 ```
 
 #### 3. Make requests to your AgentCore runtimes
@@ -147,13 +147,13 @@ curl http://localhost:4000/v1/chat/completions \
 
 <TabItem value="openai-sdk" label="OpenAI Python SDK">
 
-```python showLineNumbers title="Using OpenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Using OpenAI SDK with Lumina Proxy"
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Make a completion request to your AgentCore runtime
@@ -175,7 +175,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000", 
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Stream AgentCore responses
@@ -206,9 +206,9 @@ AgentCore supports additional parameters that can be passed to customize the run
 <TabItem value="sdk" label="SDK">
 
 ```python showLineNumbers title="Using AgentCore-specific parameters"
-from litellm import completion
+from lumina import completion
 
-response = litellm.completion(
+response = lumina.completion(
     model="bedrock/agentcore/arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/my-agent-runtime",
     messages=[
         {
@@ -224,7 +224,7 @@ response = litellm.completion(
 </TabItem>
 <TabItem value="proxy" label="Proxy">
 
-```yaml showLineNumbers title="LiteLLM Proxy Configuration with Parameters"
+```yaml showLineNumbers title="Lumina Proxy Configuration with Parameters"
 model_list:
   - model_name: agentcore-runtime-prod
     lumina_params:
@@ -243,11 +243,11 @@ model_list:
 | Parameter | Type | Description |
 |-----------|------|-------------|
 | `qualifier` | string | Optional runtime qualifier/version to invoke a specific version of the agent runtime |
-| `runtimeSessionId` | string | Optional custom session ID (must be 33+ characters). If not provided, LiteLLM generates one automatically |
+| `runtimeSessionId` | string | Optional custom session ID (must be 33+ characters). If not provided, Lumina generates one automatically |
 
-## LiteLLM A2A Gateway {#litellm-a2a-gateway}
+## Lumina A2A Gateway {#lumina-a2a-gateway}
 
-Register a Bedrock AgentCore runtime as a first-class A2A agent on the LiteLLM [Agent Gateway](../a2a). This gives you per-agent RBAC, access groups, trace-ID enforcement, and the `x-a2a-{agent_name_or_id}-{header}` per-user passthrough convention, the same surface as any other A2A provider.
+Register a Bedrock AgentCore runtime as a first-class A2A agent on the Lumina [Agent Gateway](../a2a). This gives you per-agent RBAC, access groups, trace-ID enforcement, and the `x-a2a-{agent_name_or_id}-{header}` per-user passthrough convention, the same surface as any other A2A provider.
 
 This path is distinct from the chat-completions invocation above. Pick one based on your client:
 
@@ -282,7 +282,7 @@ curl -X POST http://localhost:4000/v1/agents \
     },
     "lumina_params": {
       "custom_llm_provider": "bedrock",
-      "aws_role_name": "arn:aws:iam::123456789012:role/LiteLLMAgentCoreInvoker",
+      "aws_role_name": "arn:aws:iam::123456789012:role/LuminaAgentCoreInvoker",
       "aws_region_name": "us-east-1"
     }
   }'
@@ -303,7 +303,7 @@ Any credential-bearing field in `lumina_params` (`aws_access_key_id`, `aws_secre
 
 ```bash showLineNumbers
 curl -X POST http://localhost:4000/a2a/my-agentcore-runtime/message/send \
-  -H "x-litellm-api-key: Bearer sk-client-key" \
+  -H "x-lumina-api-key: Bearer sk-client-key" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -321,7 +321,7 @@ curl -X POST http://localhost:4000/a2a/my-agentcore-runtime/message/send \
 
 ### Session isolation
 
-Each AgentCore runtime session is its own microVM: reusing the same `X-Amzn-Bedrock-AgentCore-Runtime-Session-Id` keeps conversation context, and mixing two callers into one session leaks context between them. LiteLLM picks that session id in this order:
+Each AgentCore runtime session is its own microVM: reusing the same `X-Amzn-Bedrock-AgentCore-Runtime-Session-Id` keeps conversation context, and mixing two callers into one session leaks context between them. Lumina picks that session id in this order:
 
 1. **`params.message.contextId`** in the A2A request, scoped to the calling API key so two keys can never collide on the same `contextId`. This is the recommended way to isolate sessions per conversation.
 2. **`runtimeSessionId`** in the agent's `lumina_params` (see [Available Parameters](#available-parameters)), used only when the request carries no `contextId`. Every caller that omits `contextId` shares this one session.
@@ -331,7 +331,7 @@ To keep a conversation going across turns, send the same `contextId` on every `m
 
 ```bash showLineNumbers
 curl -X POST http://localhost:4000/a2a/my-agentcore-runtime/message/send \
-  -H "x-litellm-api-key: Bearer sk-client-key" \
+  -H "x-lumina-api-key: Bearer sk-client-key" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -348,7 +348,7 @@ curl -X POST http://localhost:4000/a2a/my-agentcore-runtime/message/send \
   }'
 ```
 
-AWS requires the runtime session id to be 33-256 characters. LiteLLM prefixes `contextId` with a 16-character hash of the calling key before checking this, so `contextId` itself needs to be at least 16 characters; a UUID (36 characters) comfortably clears it. A `contextId` (or a configured `runtimeSessionId`) outside that range is rejected with HTTP 400 and a JSON-RPC `-32602` error before any request reaches AWS, rather than silently falling back to a shared session.
+AWS requires the runtime session id to be 33-256 characters. Lumina prefixes `contextId` with a 16-character hash of the calling key before checking this, so `contextId` itself needs to be at least 16 characters; a UUID (36 characters) comfortably clears it. A `contextId` (or a configured `runtimeSessionId`) outside that range is rejected with HTTP 400 and a JSON-RPC `-32602` error before any request reaches AWS, rather than silently falling back to a shared session.
 
 ### Authentication {#a2a-gateway-authentication}
 
@@ -402,7 +402,7 @@ curl -X POST http://localhost:4000/v1/agents \
     "lumina_params": {
       "custom_llm_provider": "bedrock",
       "aws_role_name": "arn:aws:iam::123456789012:role/AgentCoreInvocationRole",
-      "aws_session_name": "litellm-prod"
+      "aws_session_name": "lumina-prod"
     }
   }'
 ```
@@ -423,14 +423,14 @@ Note that the SigV4 / Bearer auth handled by `lumina_params` is **separate** fro
 
 All standard A2A controls apply:
 - **Per-agent RBAC** — [Agent Permission Management](../a2a_agent_permissions). Returns HTTP 403 when the calling key/team isn't authorized for the AgentCore agent.
-- **Access groups** — tag the agent with one or more access groups in the LiteLLM dashboard, then grant the group to a team or key via `object_permission.agent_access_groups`. See [Agent Access Groups](../a2a_agent_permissions#agent-access-groups).
-- **Trace ID enforcement.** Set `require_trace_id_on_calls_to_agent: true` on `lumina_params` to require `x-litellm-trace-id` on every inbound call. See [A2A Overview: Trace ID enforcement](../a2a#trace-id-enforcement-optional-per-agent).
+- **Access groups** — tag the agent with one or more access groups in the Lumina dashboard, then grant the group to a team or key via `object_permission.agent_access_groups`. See [Agent Access Groups](../a2a_agent_permissions#agent-access-groups).
+- **Trace ID enforcement.** Set `require_trace_id_on_calls_to_agent: true` on `lumina_params` to require `x-lumina-trace-id` on every inbound call. See [A2A Overview: Trace ID enforcement](../a2a#trace-id-enforcement-optional-per-agent).
 
 ## Further Reading
 
 - [AWS Bedrock AgentCore Documentation](https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agentcore_InvokeAgentRuntime.html)
-- [LiteLLM Authentication to Bedrock](https://docs.litellm.ai/docs/providers/bedrock#boto3---authentication)
-- [LiteLLM A2A Gateway Overview](../a2a)
+- [Lumina Authentication to Bedrock](https://docs.lumina.ai/docs/providers/bedrock#boto3---authentication)
+- [Lumina A2A Gateway Overview](../a2a)
 - [A2A Agent Authentication Headers](../a2a_agent_headers)
 - [A2A Agent Permission Management](../a2a_agent_permissions)
 - [MCP AWS SigV4](../mcp_aws_sigv4) — for the AgentCore-hosted MCP servers path (separate from the agent runtimes path)

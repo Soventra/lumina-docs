@@ -1,4 +1,4 @@
-// Median TTFB: https://github.com/BerriAI/litellm/pull/44221
+// Median TTFB: https://github.com/Soventra/lumina/pull/44221
 import React from 'react';
 import styles from './diagrams.module.css';
 

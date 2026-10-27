@@ -9,7 +9,7 @@ CompactifAI offers highly compressed versions of leading language models, delive
 | Property | Details |
 |-------|-------|
 | Description | CompactifAI offers compressed versions of leading language models with up to 70% cost reduction and 4x throughput gains |
-| Provider Route on LiteLLM | `compactifai/` (add this prefix to the model name - e.g. `compactifai/cai-llama-3-1-8b-slim`) |
+| Provider Route on Lumina | `compactifai/` (add this prefix to the model name - e.g. `compactifai/cai-llama-3-1-8b-slim`) |
 | Provider Doc | [CompactifAI ↗](https://docs.compactif.ai/) |
 | API Endpoint for Provider | https://api.compactif.ai/v1 |
 | Supported Endpoints | `/chat/completions`, `/completions` |
@@ -57,7 +57,7 @@ os.environ["COMPACTIFAI_API_KEY"] = "your-api-key"
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['COMPACTIFAI_API_KEY'] = "your-api-key"
@@ -65,7 +65,7 @@ os.environ['COMPACTIFAI_API_KEY'] = "your-api-key"
 response = completion(
     model="compactifai/cai-llama-3-1-8b-slim",
     messages=[
-       {"role": "user", "content": "Hello from LiteLLM!"}
+       {"role": "user", "content": "Hello from Lumina!"}
    ],
 )
 print(response)
@@ -88,7 +88,7 @@ model_list:
 ## Streaming
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['COMPACTIFAI_API_KEY'] = "your-api-key"
@@ -110,7 +110,7 @@ for chunk in response:
 ### Custom Parameters
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="compactifai/cai-llama-3-1-8b-slim",
@@ -127,7 +127,7 @@ response = completion(
 CompactifAI supports OpenAI-compatible function calling:
 
 ```python
-from litellm import completion
+from lumina import completion
 
 functions = [
     {
@@ -158,7 +158,7 @@ response = completion(
 
 ```python
 import asyncio
-from litellm import acompletion
+from lumina import acompletion
 
 async def async_call():
     response = await acompletion(
@@ -202,8 +202,8 @@ Common model formats:
 CompactifAI returns standard OpenAI-compatible error responses:
 
 ```python
-from litellm import completion
-from litellm.exceptions import AuthenticationError, RateLimitError
+from lumina import completion
+from lumina.exceptions import AuthenticationError, RateLimitError
 
 try:
     response = completion(

@@ -6,14 +6,14 @@ title: Errors
 
 Setup problems raise an exception. Limits you set, like `timeout` and `max_turns`, end the turn and return a `Result` with a `stop_reason`, so partial work is kept.
 
-All exceptions below except `TypeError` and `ValueError` subclass `litellm.harness.HarnessError`.
+All exceptions below except `TypeError` and `ValueError` subclass `lumina.harness.HarnessError`.
 
 | Exception | Raised when | Raised at |
 |---|---|---|
 | `TypeError` | `harness` isn't a `Harness` member. The message names the member you probably meant. | call |
-| `ValueError` | a `litellm_proxy/` model is used without a gateway base URL or key | call |
+| `ValueError` | a `lumina_proxy/` model is used without a gateway base URL or key | call |
 | `CapabilityUnsupported` | the harness can't do what you asked, for example `permissions="edit"` on Codex or `tools=` on Claude Code | before the runtime starts |
-| `OptionsMismatch` | options for a different harness, or a native config key LiteLLM manages | call |
+| `OptionsMismatch` | options for a different harness, or a native config key Lumina manages | call |
 | `HarnessInstallFailed` | the runtime binary isn't on the sandbox's `PATH`, or Deep Agents' packages aren't installed | session start |
 | `SandboxError` | the sandbox failed to start, run a command or reach the host | any time |
 | `SessionClosed` | a turn on a session that is closed or detached | turn start |

@@ -7,38 +7,38 @@ sidebar_label: Quickstart
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import NavigationCards from '@site/src/components/NavigationCards';
-import LiteLLMFlow from '@site/src/components/LiteLLMFlow';
+import LuminaFlow from '@site/src/components/LuminaFlow';
 import QuickStartBox from '@site/src/components/QuickStartBox';
 
-<LiteLLMFlow copyCommand={false} agentPrompt={false} />
+<LuminaFlow copyCommand={false} agentPrompt={false} />
 
 <QuickStartBox source="docs-index" />
 
-**LiteLLM** is an open-source library that gives you a single, unified interface to call 100+ LLMs (OpenAI, Anthropic, Vertex AI, Bedrock, and more) using the OpenAI format.
+**Lumina** is an open-source library that gives you a single, unified interface to call 100+ LLMs (OpenAI, Anthropic, Vertex AI, Bedrock, and more) using the OpenAI format.
 
 - Call any provider using the same `completion()` interface, with no API to re-learn for each one
 - Consistent output format regardless of which provider or model you use
 - Built-in retry / fallback logic across multiple deployments via the [Router](./routing.md)
 - Self-hosted [LLM Gateway (Proxy)](/docs/simple_proxy) with virtual keys, cost tracking, and an admin UI
 
-[![PyPI](https://img.shields.io/pypi/v/litellm.svg)](https://pypi.org/project/litellm/)
-[![GitHub Stars](https://img.shields.io/github/stars/BerriAI/litellm?style=social)](https://github.com/BerriAI/litellm)
+[![PyPI](https://img.shields.io/pypi/v/lumina.svg)](https://pypi.org/project/lumina/)
+[![GitHub Stars](https://img.shields.io/github/stars/Soventra/lumina?style=social)](https://github.com/Soventra/lumina)
 
 ---
 
 ## Installation
 
 ```shell
-uv add litellm
+uv add lumina
 ```
 
 ### A leaner SDK installation
 
-For applications that use the Python SDK directly, `litellm-core` provides the shared SDK with fewer mandatory dependencies and without the bundled dashboard or gateway CLI entry points. Python imports remain unchanged: continue using `litellm`
+For applications that use the Python SDK directly, `lumina-core` provides the shared SDK with fewer mandatory dependencies and without the bundled dashboard or gateway CLI entry points. Python imports remain unchanged: continue using `lumina`
 
-Install `litellm-core` in a fresh environment instead of installing `litellm`. Add AWS and Python Hugging Face tokenizer packages when your application needs them. The two distributions cannot be installed together because they share the same Python files
+Install `lumina-core` in a fresh environment instead of installing `lumina`. Add AWS and Python Hugging Face tokenizer packages when your application needs them. The two distributions cannot be installed together because they share the same Python files
 
-See [LiteLLM Core](https://docs.litellm.ai/docs/litellm_core) for installation, package selection, and optional dependencies. Existing `litellm` installations retain their current dependency defaults
+See [Lumina Core](https://docs.lumina.ai/docs/lumina_core) for installation, package selection, and optional dependencies. Existing `lumina` installations retain their current dependency defaults
 
 To deploy the full AI Gateway (Proxy) with the Admin UI, follow the [Quickstart](./proxy/docker_quick_start.md); it runs as a container and needs no Python setup. To run it from the CLI instead, see the [Gateway Quickstart](./learn/gateway_quickstart.md).
 
@@ -52,7 +52,7 @@ Make your first LLM call using the provider of your choice:
 <TabItem value="openai" label="OpenAI">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
@@ -68,7 +68,7 @@ print(response.choices[0].message.content)
 <TabItem value="anthropic" label="Anthropic">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -84,7 +84,7 @@ print(response.choices[0].message.content)
 <TabItem value="vertex" label="Vertex AI">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 # auth: run 'gcloud auth application-default login'
@@ -102,7 +102,7 @@ print(response.choices[0].message.content)
 <TabItem value="bedrock" label="Bedrock">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["AWS_ACCESS_KEY_ID"] = "your-key"
@@ -120,7 +120,7 @@ print(response.choices[0].message.content)
 <TabItem value="ollama" label="Ollama">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
   model="ollama/llama3",
@@ -134,7 +134,7 @@ print(response.choices[0].message.content)
 <TabItem value="azure" label="Azure OpenAI">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["AZURE_API_KEY"] = "your-key"
@@ -205,14 +205,14 @@ Streaming responses (`stream=True`) yield `ModelResponseStream` chunks:
 [Full output format reference →](/docs/completion/output)
 
 :::tip[Open in Colab]
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/liteLLM_Getting_Started.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_Getting_Started.ipynb">
 <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 :::
 
 ---
 
-## New to LiteLLM?
+## New to Lumina?
 
 **Want to get started fast?** Head to [Tutorials](/docs/tutorials) for step-by-step walkthroughs of AI coding tools, agent SDKs, proxy setup, and more.
 
@@ -227,14 +227,14 @@ columns={2}
 items={[
 {
 title: "Python SDK",
-description: "Integrate LiteLLM directly into your Python application. Drop-in replacement for the OpenAI client.",
+description: "Integrate Lumina directly into your Python application. Drop-in replacement for the OpenAI client.",
 listDescription: [
 "completion(), embedding(), image_generation() and more",
 "Router with retry, fallback, and load balancing",
 "OpenAI-compatible exceptions across all providers",
 "Observability callbacks (Langfuse, MLflow, Helicone…)",
 ],
-to: "#litellm-python-sdk",
+to: "#lumina-python-sdk",
 },
 {
 title: "Proxy Server (LLM Gateway)",
@@ -245,21 +245,21 @@ listDescription: [
 "Admin UI for monitoring and management",
 "Drop-in replacement for any OpenAI-compatible client",
 ],
-to: "#litellm-proxy-server-llm-gateway",
+to: "#lumina-proxy-server-llm-gateway",
 },
 ]}
 />
 
 ---
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ### Streaming
 
 Add `stream=True` to receive chunks as they are generated:
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
@@ -274,21 +274,21 @@ for chunk in completion(
 
 ### Exception Handling
 
-LiteLLM maps every provider's errors to the OpenAI exception types, so your existing error handling keeps working:
+Lumina maps every provider's errors to the OpenAI exception types, so your existing error handling keeps working:
 
 ```python
-import litellm
+import lumina
 
 try:
-    litellm.completion(
+    lumina.completion(
       model="anthropic/{{anthropic}}",
       messages=[{"role": "user", "content": "Hey!"}]
     )
-except litellm.AuthenticationError as e:
+except lumina.AuthenticationError as e:
     print(f"Bad API key: {e}")
-except litellm.RateLimitError as e:
+except lumina.RateLimitError as e:
     print(f"Rate limited: {e}")
-except litellm.APIError as e:
+except lumina.APIError as e:
     print(f"API error: {e}")
 ```
 
@@ -297,11 +297,11 @@ except litellm.APIError as e:
 Send input/output to Langfuse, MLflow, Helicone, Lunary, and more with a single line:
 
 ```python
-import litellm
+import lumina
 
-litellm.success_callback = ["langfuse", "mlflow", "helicone"]
+lumina.success_callback = ["langfuse", "mlflow", "helicone"]
 
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_large}}",
   messages=[{"role": "user", "content": "Hi!"}]
 )
@@ -314,14 +314,14 @@ response = litellm.completion(
 Use a callback to capture cost per response:
 
 ```python
-import litellm
+import lumina
 
 def track_cost(kwargs, completion_response, start_time, end_time):
     print("Cost:", kwargs.get("response_cost", 0))
 
-litellm.success_callback = [track_cost]
+lumina.success_callback = [track_cost]
 
-litellm.completion(
+lumina.completion(
   model="{{openai_large}}",
   messages=[{"role": "user", "content": "Hello!"}],
   stream=True
@@ -332,26 +332,26 @@ litellm.completion(
 
 ---
 
-## LiteLLM Proxy Server (LLM Gateway)
+## Lumina Proxy Server (LLM Gateway)
 
 The proxy is a self-hosted OpenAI-compatible gateway. Any client that works with OpenAI works with the proxy, with no code changes.
 
-![LiteLLM Proxy Dashboard](https://github.com/BerriAI/litellm/assets/29436595/47c97d5e-b9be-4839-b28c-43d7f4f10033)
+![Lumina Proxy Dashboard](https://github.com/Soventra/lumina/assets/29436595/47c97d5e-b9be-4839-b28c-43d7f4f10033)
 
 #### Step 1: Start the proxy
 
 <Tabs>
-<TabItem value="cli" label="LiteLLM CLI">
+<TabItem value="cli" label="Lumina CLI">
 
 ```shell
-litellm --model huggingface/bigcode/starcoder
+lumina --model huggingface/bigcode/starcoder
 # Proxy running on http://0.0.0.0:4000
 ```
 
 </TabItem>
 <TabItem value="docker" label="Docker">
 
-```yaml title="litellm_config.yaml"
+```yaml title="lumina_config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -363,11 +363,11 @@ model_list:
 
 ```shell
 docker run \
-  -v $(pwd)/litellm_config.yaml:/app/config.yaml \
+  -v $(pwd)/lumina_config.yaml:/app/config.yaml \
   -e AZURE_API_KEY=your-key \
   -e AZURE_API_BASE=https://your-resource.openai.azure.com/ \
   -p 4000:4000 \
-  docker.litellm.ai/berriai/litellm:latest \
+  docker.lumina.ai/soventra/lumina:latest \
   --config /app/config.yaml --detailed_debug
 ```
 
@@ -391,23 +391,23 @@ print(response.choices[0].message.content)
 [Full proxy quickstart →](/docs/proxy/docker_quick_start)
 
 :::tip[Debugging tool]
-Use **`/utils/transform_request`** to inspect exactly what LiteLLM sends to any provider. It helps when debugging prompt formatting, header issues, and provider-specific parameters.
+Use **`/utils/transform_request`** to inspect exactly what Lumina sends to any provider. It helps when debugging prompt formatting, header issues, and provider-specific parameters.
 :::
 
-[Interactive API explorer (Swagger) →](https://docs.litellm.ai/api-reference/)
+[Interactive API explorer (Swagger) →](https://docs.lumina.ai/api-reference/)
 
 ---
 
 ## Agent & MCP Gateway
 
-LiteLLM is a unified gateway for **LLMs, agents, and MCP**, so you don't need a separate agent or MCP gateway. One endpoint for 100+ models, A2A agents, and MCP tools.
+Lumina is a unified gateway for **LLMs, agents, and MCP**, so you don't need a separate agent or MCP gateway. One endpoint for 100+ models, A2A agents, and MCP tools.
 
 <NavigationCards
 columns={3}
 items={[
 {
 title: "A2A Agents",
-description: "Add and invoke A2A agents via the LiteLLM gateway.",
+description: "Add and invoke A2A agents via the Lumina gateway.",
 to: "/docs/a2a",
 },
 {

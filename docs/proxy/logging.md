@@ -22,9 +22,9 @@ Log Proxy input, output, and exceptions using:
 
 
 
-## Getting the LiteLLM Call ID
+## Getting the Lumina Call ID
 
-LiteLLM generates a unique `call_id` for each request. This `call_id` can be
+Lumina generates a unique `call_id` for each request. This `call_id` can be
 used to track the request across the system. This can be very useful for finding
 the info for a particular request in a logging system like one of the systems
 mentioned in this page.
@@ -36,23 +36,23 @@ curl -i -sSL --location 'http://0.0.0.0:4000/chat/completions' \
     --data '{
       "model": "{{openai_small}}",
       "messages": [{"role": "user", "content": "what llm are you"}]
-    }' | grep 'x-litellm'
+    }' | grep 'x-lumina'
 ```
 
 The output of this is:
 
 ```output
-x-litellm-call-id: b980db26-9512-45cc-b1da-c511a363b83f
-x-litellm-model-id: cb41bc03f4c33d310019bae8c5afdb1af0a8f97b36a234405a9807614988457c
-x-litellm-model-api-base: https://x-example-1234.openai.azure.com
-x-litellm-version: 1.40.21
-x-litellm-response-cost: 2.85e-05
-x-litellm-key-tpm-limit: None
-x-litellm-key-rpm-limit: None
+x-lumina-call-id: b980db26-9512-45cc-b1da-c511a363b83f
+x-lumina-model-id: cb41bc03f4c33d310019bae8c5afdb1af0a8f97b36a234405a9807614988457c
+x-lumina-model-api-base: https://x-example-1234.openai.azure.com
+x-lumina-version: 1.40.21
+x-lumina-response-cost: 2.85e-05
+x-lumina-key-tpm-limit: None
+x-lumina-key-rpm-limit: None
 ```
 
 A number of these headers could be useful for troubleshooting, but the
-`x-litellm-call-id` is the one that is most useful for tracking a request across
+`x-lumina-call-id` is the one that is most useful for tracking a request across
 components in your system, including in logging tools.
 
 
@@ -61,7 +61,7 @@ components in your system, including in logging tools.
 
 ### Redact Messages, Response Content
 
-Set `litellm.turn_off_message_logging=True` This will prevent the messages and responses from being logged to your logging provider, but request metadata - e.g. spend, will still be tracked. Useful for privacy/compliance when handling sensitive data.
+Set `lumina.turn_off_message_logging=True` This will prevent the messages and responses from being logged to your logging provider, but request metadata - e.g. spend, will still be tracked. Useful for privacy/compliance when handling sensitive data.
 
 <Tabs>
 
@@ -73,7 +73,7 @@ model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]
   turn_off_message_logging: True # Key Change
 ```
@@ -107,7 +107,7 @@ Dynamic request message redaction is in BETA.
 Pass in a request header to enable message redaction for a request.
 
 ```
-x-litellm-enable-message-redaction: true
+x-lumina-enable-message-redaction: true
 ```
 
 Example config.yaml
@@ -127,7 +127,7 @@ model_list:
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
 -H 'Authorization: Bearer sk-zV5HlSIm8ihj1F9C_ZbB1g' \
--H 'x-litellm-enable-message-redaction: true' \
+-H 'x-lumina-enable-message-redaction: true' \
 -d '{
   "model": "gpt-3.5-turbo-testing",
   "messages": [
@@ -160,15 +160,15 @@ Redact information about the user api key (hashed token, user_id, team id, etc.)
 Currently supported for Langfuse, OpenTelemetry, Logfire, ArizeAI logging.
 
 ```yaml
-litellm_settings: 
+lumina_settings: 
   callbacks: ["langfuse"]
   redact_user_api_key_info: true
 ```
 
 ### Disable Message Redaction
 
-If you have `litellm.turn_off_message_logging` turned on, you can override it for specific requests by
-setting a request header `LiteLLM-Disable-Message-Redaction: true`.
+If you have `lumina.turn_off_message_logging` turned on, you can override it for specific requests by
+setting a request header `Lumina-Disable-Message-Redaction: true`.
 
 The proxy only honors this header on keys or teams whose metadata has `allow_client_message_redaction_opt_out: true`. On any other key the header is dropped and messages stay redacted
 
@@ -185,7 +185,7 @@ Then send the header with that key
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Authorization: Bearer <key-from-above>' \
     --header 'Content-Type: application/json' \
-    --header 'LiteLLM-Disable-Message-Redaction: true' \
+    --header 'Lumina-Disable-Message-Redaction: true' \
     --data '{
     "model": "{{openai_small}}",
     "messages": [
@@ -207,7 +207,7 @@ For some use cases, you may want to turn off all tracking/logging. You can do th
 Disable this by setting `global_disable_no_log_param:true` in your config.yaml file.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   global_disable_no_log_param: True
 ```
 :::
@@ -218,7 +218,7 @@ litellm_settings:
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer <litellm-api-key>' \
+-H 'Authorization: Bearer <lumina-api-key>' \
 -d '{
     "model": "openai/{{openai_small}}",
     "messages": [
@@ -247,7 +247,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -270,16 +270,16 @@ print(response)
 **Expected Console Log**  
 
 ```
-LiteLLM.Info: "no-log request, skipping logging"
+Lumina.Info: "no-log request, skipping logging"
 ```
 
 ### Dynamically Disable specific callbacks
 
 <EnterpriseFeature />
 
-For some use cases, you may want to disable specific callbacks for a request. You can do this by passing `x-litellm-disable-callbacks: <callback_name>` in the request headers.
+For some use cases, you may want to disable specific callbacks for a request. You can do this by passing `x-lumina-disable-callbacks: <callback_name>` in the request headers.
 
-Send the list of callbacks to disable in the request header `x-litellm-disable-callbacks`.
+Send the list of callbacks to disable in the request header `x-lumina-disable-callbacks`.
 
 <Tabs>
 <TabItem value="Curl" label="Curl Request">
@@ -288,7 +288,7 @@ Send the list of callbacks to disable in the request header `x-litellm-disable-c
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
     --header "Authorization: Bearer $LUMINA_API_KEY" \
-    --header 'x-litellm-disable-callbacks: langfuse' \
+    --header 'x-lumina-disable-callbacks: langfuse' \
     --data '{
     "model": "{{anthropic}}",
     "messages": [
@@ -307,7 +307,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 import openai
 
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -320,7 +320,7 @@ response = client.chat.completions.create(
         }
     ],
     extra_headers={
-        "x-litellm-disable-callbacks": "langfuse"
+        "x-lumina-disable-callbacks": "langfuse"
     }
 )
 
@@ -345,13 +345,13 @@ Use this to:
 
 ## What gets logged?
 
-Terminal success and failure callback events include `kwargs["standard_logging_object"]` when LiteLLM finishes building the standard payload. Intermediate streaming events and callbacks where payload construction fails can omit it.
+Terminal success and failure callback events include `kwargs["standard_logging_object"]` when Lumina finishes building the standard payload. Intermediate streaming events and callbacks where payload construction fails can omit it.
 
 [**Standard Logging Payload Specification**](./logging_spec)
 
 ## Langfuse
 
-We will use the `--config` to set `litellm.success_callback = ["langfuse"]` this will log all successful LLM calls to langfuse. Make sure to set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in your environment
+We will use the `--config` to set `lumina.success_callback = ["langfuse"]` this will log all successful LLM calls to langfuse. Make sure to set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in your environment
 
 **Step 1** Install langfuse
 
@@ -359,14 +359,14 @@ We will use the `--config` to set `litellm.success_callback = ["langfuse"]` this
 uv add "langfuse>=4.7,<5"
 ```
 
-**Step 2**: Create a `config.yaml` file and set `litellm_settings`: `success_callback`
+**Step 2**: Create a `config.yaml` file and set `lumina_settings`: `success_callback`
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]
 ```
 
@@ -384,13 +384,13 @@ export LANGFUSE_HOST="https://xxx.langfuse.com"
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
 
 ```
-litellm --test
+lumina --test
 ```
 
 Expected output on Langfuse
@@ -437,7 +437,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [
@@ -490,7 +490,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -502,7 +502,7 @@ print(response)
 </Tabs>
 
 :::info
-Langfuse v4 requires W3C trace IDs (32 lowercase hex chars). LiteLLM first lowercases a custom `trace_id` and strips hyphens, so a UUID is used as is once normalized. Anything that still isn't 32 hex chars (like `trace-id22` above) is deterministically hashed to one; the same `trace_id` always maps to the same Langfuse trace, but the ID visible in Langfuse is the normalized or hashed form, not the original string.
+Langfuse v4 requires W3C trace IDs (32 lowercase hex chars). Lumina first lowercases a custom `trace_id` and strips hyphens, so a UUID is used as is once normalized. Anything that still isn't 32 hex chars (like `trace-id22` above) is deterministically hashed to one; the same `trace_id` always maps to the same Langfuse trace, but the ID visible in Langfuse is the normalized or hashed form, not the original string.
 :::
 
 ### Custom Tags
@@ -518,7 +518,7 @@ Set `tags` as part of your request body
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -595,7 +595,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -608,16 +608,16 @@ print(response)
 
 
 
-### LiteLLM Tags - `cache_hit`, `cache_key`
+### Lumina Tags - `cache_hit`, `cache_key`
 
-Use this if you want to control which LiteLLM-specific fields are logged as tags by the LiteLLM proxy. By default LiteLLM Proxy logs no LiteLLM-specific fields
+Use this if you want to control which Lumina-specific fields are logged as tags by the Lumina proxy. By default Lumina Proxy logs no Lumina-specific fields
 
-| LiteLLM specific field    | Description                                                                             | Example Value                           |
+| Lumina specific field    | Description                                                                             | Example Value                           |
 | ------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------- |
 | `cache_hit`               | Indicates whether a cache hit occurred (True) or not (False)                            | `true`, `false`                         |
 | `cache_key`               | The Cache key used for this request                                                     | `d2b758c****`                           |
 | `proxy_base_url`          | The base URL for the proxy server, the value of env var `PROXY_BASE_URL` on your server | `https://proxy.example.com`             |
-| `user_api_key_alias`      | An alias for the LiteLLM Virtual Key.                                                   | `prod-app1`                             |
+| `user_api_key_alias`      | An alias for the Lumina Virtual Key.                                                   | `prod-app1`                             |
 | `user_api_key_user_id`    | The unique ID associated with a user's API key.                                         | `user_123`, `user_456`                  |
 | `user_api_key_user_email` | The email associated with a user's API key.                                             | `user@example.com`, `admin@example.com` |
 | `user_api_key_team_alias` | An alias for a team associated with an API key.                                         | `team_alpha`, `dev_team`                |
@@ -625,7 +625,7 @@ Use this if you want to control which LiteLLM-specific fields are logged as tags
 
 **Usage**
 
-Specify `langfuse_default_tags` to control what litellm fields get logged on Langfuse
+Specify `langfuse_default_tags` to control what lumina fields get logged on Langfuse
 
 Example config.yaml 
 ```yaml
@@ -636,28 +636,28 @@ model_list:
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
-litellm_settings:
+lumina_settings:
   success_callback: ["langfuse"]
 
   # Key Change
   langfuse_default_tags: ["cache_hit", "cache_key", "proxy_base_url", "user_api_key_alias", "user_api_key_user_id", "user_api_key_user_email", "user_api_key_team_alias", "semantic-similarity", "proxy_base_url"]
 ```
 
-### View POST sent from LiteLLM to provider
+### View POST sent from Lumina to provider
 
-Use this when you want to view the RAW curl request sent from LiteLLM to the LLM API 
+Use this when you want to view the RAW curl request sent from Lumina to the LLM API 
 
-Set `log_raw_request_response: true` in `litellm_settings`. LiteLLM then attaches the curl command it sent to the provider as `raw_request` in the Langfuse metadata of every request. This is a global setting with no per-request toggle
+Set `log_raw_request_response: true` in `lumina_settings`. Lumina then attaches the curl command it sent to the provider as `raw_request` in the Langfuse metadata of every request. This is a global setting with no per-request toggle
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["langfuse"]
   log_raw_request_response: true
 ```
 
 **Expected Output on Langfuse**
 
-You will see `raw_request` in your Langfuse Metadata. This is the RAW CURL command sent from LiteLLM to your LLM API provider
+You will see `raw_request` in your Langfuse Metadata. This is the RAW CURL command sent from Lumina to your LLM API provider
 
 <Image img={require('../../img/debug_langfuse.png')} />
 
@@ -674,8 +674,8 @@ The full OpenTelemetry reference (span hierarchy, every emitted span and attribu
 [Optional] Customize OTEL Service Name and OTEL TRACER NAME by setting the following variables in your environment
 
 ```shell
-OTEL_TRACER_NAME=<your-trace-name>     # default="litellm"
-OTEL_SERVICE_NAME=<your-service-name>` # default="litellm"
+OTEL_TRACER_NAME=<your-trace-name>     # default="lumina"
+OTEL_SERVICE_NAME=<your-service-name>` # default="lumina"
 ```
 
 :::
@@ -692,10 +692,10 @@ Add the following to your env
 OTEL_EXPORTER="console"
 ```
 
-Add `otel` as a callback on your `litellm_config.yaml`
+Add `otel` as a callback on your `lumina_config.yaml`
 
 ```shell
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 ```
 
@@ -704,7 +704,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 Test Request
@@ -729,7 +729,7 @@ This is the Span from OTEL Logging
 
 ```json
 {
-    "name": "litellm-acompletion",
+    "name": "lumina-acompletion",
     "context": {
         "trace_id": "0x8d354e2346060032703637a0843b20a3",
         "span_id": "0xd8d3476a2eb12724",
@@ -749,7 +749,7 @@ This is the Span from OTEL Logging
     "links": [],
     "resource": {
         "attributes": {
-            "service.name": "litellm"
+            "service.name": "lumina"
         },
         "schema_url": ""
     }
@@ -772,10 +772,10 @@ OTEL_ENDPOINT="https://api.honeycomb.io/v1/traces"
 OTEL_HEADERS="x-honeycomb-team=<your-api-key>"
 ```
 
-Add `otel` as a callback on your `litellm_config.yaml`
+Add `otel` as a callback on your `lumina_config.yaml`
 
 ```shell
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 ```
 
@@ -784,7 +784,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 Test Request
@@ -821,7 +821,7 @@ OTEL_HEADERS="Authorization=Bearer%20<your-api-key>"
 **Step 2:** Add `otel` as a callbacks
 
 ```shell
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 ```
 
@@ -830,7 +830,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 Test Request
@@ -865,10 +865,10 @@ OTEL_ENDPOINT="http://0.0.0.0:4317"
 OTEL_HEADERS="x-honeycomb-team=<your-api-key>" # Optional
 ```
 
-Add `otel` as a callback on your `litellm_config.yaml`
+Add `otel` as a callback on your `lumina_config.yaml`
 
 ```shell
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 ```
 
@@ -877,7 +877,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 Test Request
@@ -912,12 +912,12 @@ OTEL_ENDPOINT="http:/0.0.0.0:4317"
 OTEL_HEADERS="x-honeycomb-team=<your-api-key>" # Optional
 ```
 
-> Note: OTLP gRPC requires `grpcio`. Install via `uv add "litellm[grpc]"` (or `grpcio`).
+> Note: OTLP gRPC requires `grpcio`. Install via `uv add "lumina[grpc]"` (or `grpcio`).
 
-Add `otel` as a callback on your `litellm_config.yaml`
+Add `otel` as a callback on your `lumina_config.yaml`
 
 ```shell
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 ```
 
@@ -926,7 +926,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 Test Request
@@ -956,7 +956,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 Set `message_logging=False` for `otel`, no messages / response will be logged
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 ## Key Change
@@ -978,13 +978,13 @@ traceparent: 00-80e1afed08e019fc1110464cfa66635c-7a085853722dc6d2-01
 
 Example Usage
 
-1. Make Request to LiteLLM Proxy with `traceparent` header
+1. Make Request to Lumina Proxy with `traceparent` header
 
 ```python
 import openai
 import uuid
 
-client = openai.OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = openai.OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 example_traceparent = f"00-80e1afed08e019fc1110464cfa66635c-02e80198930058d4-01"
 extra_headers = {
     "traceparent": example_traceparent
@@ -1029,7 +1029,7 @@ Only use this for self hosted LLMs, this can cause Bedrock, VertexAI calls to fa
 :::
 
 ```yaml
-litellm_settings:
+lumina_settings:
   forward_traceparent_to_llm_provider: True
 ```
 
@@ -1042,14 +1042,14 @@ Log LLM Logs to [Google Cloud Storage Buckets](https://cloud.google.com/storage?
 | Property                     | Details                                                        |
 | ---------------------------- | -------------------------------------------------------------- |
 | Description                  | Log LLM Input/Output to cloud storage buckets                  |
-| Load Test Benchmarks         | [Benchmarks](https://docs.litellm.ai/docs/benchmarks)          |
+| Load Test Benchmarks         | [Benchmarks](https://docs.lumina.ai/docs/benchmarks)          |
 | Google Docs on Cloud Storage | [Google Cloud Storage](https://cloud.google.com/storage?hl=en) |
 
 
 
 #### Usage
 
-1. Add `gcs_bucket` to LiteLLM Config.yaml
+1. Add `gcs_bucket` to Lumina Config.yaml
 ```yaml
 model_list:
 - lumina_params:
@@ -1058,7 +1058,7 @@ model_list:
     model: openai/my-fake-model
   model_name: fake-openai-endpoint
 
-litellm_settings:
+lumina_settings:
   callbacks: ["gcs_bucket"] # KEY CHANGE # KEY CHANGE
 ```
 
@@ -1072,7 +1072,7 @@ GCS_PATH_SERVICE_ACCOUNT="/Users/ishaanjaffer/Downloads/adroit-crow-413218-a956e
 3. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it! 
@@ -1113,7 +1113,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 #### Batch line items
 
-To also keep every request and response of your managed batches, as part objects per batch under `batch_line_items/`, add `gcs_bucket` to `litellm_settings.batch_line_item_callbacks`. See [Storing every line's request and response](./managed_batches#storing-every-lines-request-and-response)
+To also keep every request and response of your managed batches, as part objects per batch under `batch_line_items/`, add `gcs_bucket` to `lumina_settings.batch_line_item_callbacks`. See [Storing every line's request and response](./managed_batches#storing-every-lines-request-and-response)
 
 
 
@@ -1125,16 +1125,16 @@ Log LLM Logs/SpendLogs to [Google Cloud Storage PubSub Topic](https://cloud.goog
 
 | Property    | Details                                                            |
 | ----------- | ------------------------------------------------------------------ |
-| Description | Log LiteLLM `SpendLogs Table` to Google Cloud Storage PubSub Topic |
+| Description | Log Lumina `SpendLogs Table` to Google Cloud Storage PubSub Topic |
 
 When to use `gcs_pubsub`?
 
-- If your LiteLLM Database has crossed 1M+ spend logs and you want to send `SpendLogs` to a PubSub Topic that can be consumed by GCS BigQuery
+- If your Lumina Database has crossed 1M+ spend logs and you want to send `SpendLogs` to a PubSub Topic that can be consumed by GCS BigQuery
 
 
 #### Usage
 
-1. Add `gcs_pubsub` to LiteLLM Config.yaml
+1. Add `gcs_pubsub` to Lumina Config.yaml
 ```yaml
 model_list:
 - lumina_params:
@@ -1143,21 +1143,21 @@ model_list:
     model: openai/my-fake-model
   model_name: fake-openai-endpoint
 
-litellm_settings:
+lumina_settings:
   callbacks: ["gcs_pubsub"] # KEY CHANGE # KEY CHANGE
 ```
 
 2. Set required env variables
 
 ```shell
-GCS_PUBSUB_TOPIC_ID="litellmDB"
+GCS_PUBSUB_TOPIC_ID="luminaDB"
 GCS_PUBSUB_PROJECT_ID="reliableKeys"
 ```
 
 3. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it! 
@@ -1178,17 +1178,17 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```
 
 ## Deepeval
-LiteLLM supports logging on [Confidential AI](https://documentation.confident-ai.com/) (The Deepeval Platform):
+Lumina supports logging on [Confidential AI](https://documentation.confident-ai.com/) (The Deepeval Platform):
 
 ### Usage:
-1. Add `deepeval` in the LiteLLM `config.yaml`
+1. Add `deepeval` in the Lumina `config.yaml`
 
 ```yaml
 model_list:
   - model_name: {{openai_large}}
     lumina_params:
       model: {{openai_large}}
-litellm_settings:
+lumina_settings:
   success_callback: ["deepeval"]
   failure_callback: ["deepeval"]
 ```
@@ -1203,7 +1203,7 @@ You can obtain your `CONFIDENT_API_KEY` by logging into [Confident AI](https://a
 
 3. Start your proxy server:
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 4. Make a request:
@@ -1234,7 +1234,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 We will use the `--config` to set 
 
-- `litellm.success_callback = ["s3"]` 
+- `lumina.success_callback = ["s3"]` 
 
 This will log all successful LLM calls to s3 Bucket
 
@@ -1246,17 +1246,17 @@ AWS_SECRET_ACCESS_KEY = ""
 AWS_REGION_NAME = ""
 ```
 
-**Step 2**: Create a `config.yaml` file and set `litellm_settings`: `success_callback`
+**Step 2**: Create a `config.yaml` file and set `lumina_settings`: `success_callback`
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   success_callback: ["s3_v2"]
   s3_callback_params:
-    s3_bucket_name: logs-bucket-litellm   # AWS Bucket Name for S3
+    s3_bucket_name: logs-bucket-lumina   # AWS Bucket Name for S3
     s3_region_name: us-west-2              # AWS Region Name for S3
     s3_aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID  # us os.environ/<variable name> to pass environment variables. This is AWS Access Key ID for S3
     s3_aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY  # AWS Secret Access Key for S3
@@ -1291,7 +1291,7 @@ Failed uploads are retried, but not forever. Each flush uploads new events befor
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -1317,10 +1317,10 @@ Your logs should be available on the specified s3 Bucket
 By default `s3_v2` writes every log for a day into one date folder, `my-test-path/2026-10-01/time-14-05-09-123456_chatcmpl-abc.json`. Set `s3_partition_granularity: hour` to add an hour folder under the date, so the same object lands at `my-test-path/2026-10-01/14/time-14-05-09-123456_chatcmpl-abc.json` and a query over a time range only has to list the hours it needs
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["s3_v2"]
   s3_callback_params:
-    s3_bucket_name: logs-bucket-litellm
+    s3_bucket_name: logs-bucket-lumina
     s3_region_name: us-west-2
     s3_path: my-test-path
     s3_partition_granularity: hour
@@ -1336,10 +1336,10 @@ You can add the team alias to the object key by setting the `team_alias` in the 
 This will prefix the object key with the team alias.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["s3_v2"]
   s3_callback_params:
-    s3_bucket_name: logs-bucket-litellm
+    s3_bucket_name: logs-bucket-lumina
     s3_region_name: us-west-2
     s3_aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
     s3_aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -1355,10 +1355,10 @@ On s3 bucket, you will see the object key as `my-test-path/my-team-alias/...`
 You can add the user api key alias to the s3 object key by enabling s3_use_key_prefix.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["s3_v2"]
   s3_callback_params:
-    s3_bucket_name: logs-bucket-litellm
+    s3_bucket_name: logs-bucket-lumina
     s3_region_name: us-west-2
     s3_aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
     s3_aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -1374,7 +1374,7 @@ if both team alias and key alias are enabled then the path becomes
 
 #### Batch line items
 
-To also keep every request and response of your managed batches, as part objects per batch under `<s3_path>/batch_line_items/`, add `s3_v2` to `litellm_settings.batch_line_item_callbacks`. It writes with the same `s3_callback_params`. See [Storing every line's request and response](./managed_batches#storing-every-lines-request-and-response)
+To also keep every request and response of your managed batches, as part objects per batch under `<s3_path>/batch_line_items/`, add `s3_v2` to `lumina_settings.batch_line_item_callbacks`. It writes with the same `s3_callback_params`. See [Storing every line's request and response](./managed_batches#storing-every-lines-request-and-response)
 
 ## AWS SQS
 
@@ -1383,14 +1383,14 @@ To also keep every request and response of your managed batches, as part objects
 | -------------------- | ------------------------------------------------------------------------------------- |
 | Description          | Log LLM Input/Output to AWS SQS Queue                                                 |
 | AWS Docs on SQS      | [AWS SQS](https://aws.amazon.com/sqs/)                                                |
-| Fields Logged to SQS | LiteLLM [Standard Logging Payload is logged for each LLM call](../proxy/logging_spec) |
+| Fields Logged to SQS | Lumina [Standard Logging Payload is logged for each LLM call](../proxy/logging_spec) |
 
 
 Log LLM Logs to [AWS Simple Queue Service (SQS)](https://aws.amazon.com/sqs/)
 
-We will use the litellm `--config` to set 
+We will use the lumina `--config` to set 
 
-- `litellm.callbacks = ["aws_sqs"]` 
+- `lumina.callbacks = ["aws_sqs"]` 
 
 This will log all successful LLM calls to AWS SQS Queue
 
@@ -1402,7 +1402,7 @@ AWS_SECRET_ACCESS_KEY = ""
 AWS_REGION_NAME = ""
 ```
 
-**Step 2**: Create a `config.yaml` file and set `litellm_settings`: `callbacks`
+**Step 2**: Create a `config.yaml` file and set `lumina_settings`: `callbacks`
 
 ```yaml
 model_list:
@@ -1410,20 +1410,20 @@ model_list:
     lumina_params:
       model: {{openai_large}}
 
-litellm_settings:
+lumina_settings:
   callbacks: ["aws_sqs"]
 
   aws_sqs_callback_params:
     # --- Required Parameters ---
     sqs_queue_url: https://sqs.us-west-2.amazonaws.com/123456789012/my-queue
-    # The AWS SQS Queue URL to which LiteLLM will send log events.
+    # The AWS SQS Queue URL to which Lumina will send log events.
 
     sqs_region_name: us-west-2
     # AWS Region for your SQS queue (e.g., us-east-1, eu-central-1, etc.)
     
     # --- Logging Controls ---
     sqs_strip_base64_files: false
-    # If true, LiteLLM will remove or redact base64-encoded binary data (e.g., PDFs, images, audio)
+    # If true, Lumina will remove or redact base64-encoded binary data (e.g., PDFs, images, audio)
     # from logged messages to avoid large payloads. SQS has a 1 MB payload size limit.
 
 ```
@@ -1433,7 +1433,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -1468,7 +1468,7 @@ Log LLM Logs to [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azur
 
 #### Usage
 
-1. Add `azure_storage` to LiteLLM Config.yaml
+1. Add `azure_storage` to Lumina Config.yaml
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
@@ -1477,7 +1477,7 @@ model_list:
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
-litellm_settings:
+lumina_settings:
   callbacks: ["azure_storage"] # KEY CHANGE # KEY CHANGE
 ```
 
@@ -1485,8 +1485,8 @@ litellm_settings:
 
 ```shell
 # Required Environment Variables for Azure Storage
-AZURE_STORAGE_ACCOUNT_NAME="litellm2" # The name of the Azure Storage Account to use for logging
-AZURE_STORAGE_FILE_SYSTEM="litellm-logs" # The name of the Azure Storage File System to use for logging.  (Typically the Container name)
+AZURE_STORAGE_ACCOUNT_NAME="lumina2" # The name of the Azure Storage Account to use for logging
+AZURE_STORAGE_FILE_SYSTEM="lumina-logs" # The name of the Azure Storage File System to use for logging.  (Typically the Container name)
 
 # Authentication Variables
 # Option 1: Use Storage Account Key
@@ -1498,7 +1498,7 @@ AZURE_STORAGE_CLIENT_ID="abe66585xxxxxxxxxx" # The Application Client ID to use 
 AZURE_STORAGE_CLIENT_SECRET="uMS8Qxxxxxxxxxx" # The Application Client Secret to use for Authentication
 
 # Option 3: Use the identity the deployment already runs as
-# Leave the AZURE_STORAGE_* service principal variables unset. LiteLLM authenticates with
+# Leave the AZURE_STORAGE_* service principal variables unset. Lumina authenticates with
 # Workload Identity Federation or with a managed identity, and with nothing else: a developer
 # sign-in such as the Azure CLI is never used, and neither is the AZURE_CLIENT_SECRET service
 # principal you may have configured for Azure OpenAI. Assign Storage Blob Data Contributor to
@@ -1518,7 +1518,7 @@ AZURE_AUTHORITY_HOST="https://login.microsoftonline.us" # The Entra ID login aut
 3. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Test it! 
@@ -1550,18 +1550,18 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## [Datadog](../observability/datadog)
 
-Go here for using [Datadog LLM Observability](../observability/datadog) with LiteLLM Proxy
+Go here for using [Datadog LLM Observability](../observability/datadog) with Lumina Proxy
 
 ## [Azure Sentinel](../observability/azure_sentinel)
 
-Go here for using [Azure Sentinel](../observability/azure_sentinel) with LiteLLM Proxy
+Go here for using [Azure Sentinel](../observability/azure_sentinel) with Lumina Proxy
 
 
 ## Lunary
 #### Step1: Install dependencies and set your environment variables 
 Install the dependencies
 ```shell
-uv add litellm lunary
+uv add lumina lunary
 ```
 
 Get you Lunary public key from from https://app.lunary.ai/settings 
@@ -1576,14 +1576,14 @@ model_list:
   - model_name: "*"
     lumina_params:
       model: "*"
-litellm_settings:
+lumina_settings:
   success_callback: ["lunary"]
   failure_callback: ["lunary"]
 ```
 
-#### Step 3: Start the LiteLLM proxy
+#### Step 3: Start the Lumina proxy
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 #### Step 4: Make a request
@@ -1608,7 +1608,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ## MLflow
 
-Follow the tutorial [here](../observability/mlflow) to get started with mlflow on LiteLLM Proxy Server
+Follow the tutorial [here](../observability/mlflow) to get started with mlflow on Lumina Proxy Server
 
 
 
@@ -1616,19 +1616,19 @@ Follow the tutorial [here](../observability/mlflow) to get started with mlflow o
 
 Use this when you want to run custom callbacks in `python`
 
-#### Step 1 - Create your custom `litellm` callback class
+#### Step 1 - Create your custom `lumina` callback class
 
-We use `litellm.integrations.custom_logger` for this, **more details about litellm custom callbacks [here](https://docs.litellm.ai/docs/observability/custom_callback)**
+We use `lumina.integrations.custom_logger` for this, **more details about lumina custom callbacks [here](https://docs.lumina.ai/docs/observability/custom_callback)**
 
 Define your custom callback class in a python file.
 
 Here's an example custom logger for tracking `key, user, model, prompt, response, tokens, cost`. We create a file called `custom_callbacks.py` and initialize `proxy_handler_instance` 
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
-import litellm
+from lumina.integrations.custom_logger import CustomLogger
+import lumina
 
-# This file includes the custom callbacks for LiteLLM Proxy
+# This file includes the custom callbacks for Lumina Proxy
 # Once defined, these can be passed in proxy_config.yaml
 class MyCustomHandler(CustomLogger):
     def log_pre_api_call(self, model, messages, kwargs): 
@@ -1646,17 +1646,17 @@ class MyCustomHandler(CustomLogger):
     async def async_log_success_event(self, kwargs, response_obj, start_time, end_time):
         print(f"On Async Success!")
         # log: key, user, model, prompt, response, tokens, cost
-        # Access kwargs passed to litellm.completion()
+        # Access kwargs passed to lumina.completion()
         model = kwargs.get("model", None)
         messages = kwargs.get("messages", None)
         user = kwargs.get("user", None)
 
-        # Access lumina_params passed to litellm.completion(), example access `metadata`
+        # Access lumina_params passed to lumina.completion(), example access `metadata`
         lumina_params = kwargs.get("lumina_params", {})
-        metadata = lumina_params.get("metadata", {})   # headers passed to LiteLLM proxy, can be found here
+        metadata = lumina_params.get("metadata", {})   # headers passed to Lumina proxy, can be found here
 
-        # Calculate cost using  litellm.completion_cost()
-        cost = litellm.completion_cost(completion_response=response_obj)
+        # Calculate cost using  lumina.completion_cost()
+        cost = lumina.completion_cost(completion_response=response_obj)
         response = response_obj
         # tokens used in response 
         usage = response_obj["usage"]
@@ -1678,21 +1678,21 @@ class MyCustomHandler(CustomLogger):
         try:
             print(f"On Async Failure !")
             print("\nkwargs", kwargs)
-            # Access kwargs passed to litellm.completion()
+            # Access kwargs passed to lumina.completion()
             model = kwargs.get("model", None)
             messages = kwargs.get("messages", None)
             user = kwargs.get("user", None)
 
-            # Access lumina_params passed to litellm.completion(), example access `metadata`
+            # Access lumina_params passed to lumina.completion(), example access `metadata`
             lumina_params = kwargs.get("lumina_params", {})
-            metadata = lumina_params.get("metadata", {})   # headers passed to LiteLLM proxy, can be found here
+            metadata = lumina_params.get("metadata", {})   # headers passed to Lumina proxy, can be found here
 
             # Access Exceptions & Traceback
             exception_event = kwargs.get("exception", None)
             traceback_event = kwargs.get("traceback_exception", None)
 
-            # Calculate cost using  litellm.completion_cost()
-            cost = litellm.completion_cost(completion_response=response_obj)
+            # Calculate cost using  lumina.completion_cost()
+            cost = lumina.completion_cost(completion_response=response_obj)
             print("now checking response obj")
             
             print(
@@ -1712,7 +1712,7 @@ class MyCustomHandler(CustomLogger):
 
 proxy_handler_instance = MyCustomHandler()
 
-# Set litellm.callbacks = [proxy_handler_instance] on the proxy
+# Set lumina.callbacks = [proxy_handler_instance] on the proxy
 ```
 
 #### Step 2 - Pass your custom callback class in `config.yaml`
@@ -1733,8 +1733,8 @@ model_list:
     lumina_params:
       model: {{openai_small}}
 
-litellm_settings:
-  callbacks: custom_callbacks.proxy_handler_instance # sets litellm.callbacks = [proxy_handler_instance]
+lumina_settings:
+  callbacks: custom_callbacks.proxy_handler_instance # sets lumina.callbacks = [proxy_handler_instance]
 
 ```
 
@@ -1752,12 +1752,12 @@ Instead of using local Python files, you can load custom callbacks directly from
 
 **Example - Loading from S3:**
 
-Let's say you have a file `custom_callbacks.py` stored in your S3 bucket `litellm-proxy` with the following content:
+Let's say you have a file `custom_callbacks.py` stored in your S3 bucket `lumina-proxy` with the following content:
 
 ```python
 # custom_callbacks.py (stored in S3)
-from litellm.integrations.custom_logger import CustomLogger
-import litellm
+from lumina.integrations.custom_logger import CustomLogger
+import lumina
 
 class MyCustomHandler(CustomLogger):
     async def async_log_success_event(self, kwargs, response_obj, start_time, end_time):
@@ -1768,7 +1768,7 @@ class MyCustomHandler(CustomLogger):
         print(f"Custom UI SSO failure callback!")
         # Your failure handling logic
 
-# Instance that will be loaded by LiteLLM
+# Instance that will be loaded by Lumina
 custom_handler = MyCustomHandler()
 ```
 
@@ -1780,8 +1780,8 @@ model_list:
     lumina_params:
       model: {{openai_small}}
 
-litellm_settings:
-  callbacks: ["s3://litellm-proxy/custom_callbacks.custom_handler"]
+lumina_settings:
+  callbacks: ["s3://lumina-proxy/custom_callbacks.custom_handler"]
 ```
 
 **Example - Loading from GCS:**
@@ -1792,12 +1792,12 @@ model_list:
     lumina_params:
       model: {{openai_small}}
 
-litellm_settings:
+lumina_settings:
   callbacks: ["gcs://my-gcs-bucket/custom_callbacks.custom_handler"]
 ```
 
 **How it works:**
-1. LiteLLM detects the S3/GCS URL prefix
+1. Lumina detects the S3/GCS URL prefix
 2. Downloads the Python file to a temporary location
 3. Loads the module and extracts the specified instance
 4. Cleans up the temporary file
@@ -1825,7 +1825,7 @@ Use `subPath` in your `volumeMounts` to mount individual files without overwriti
 volumes:
   - name: callback-files
     configMap:
-      name: litellm-callback-files
+      name: lumina-callback-files
 
 volumeMounts:
   - name: callback-files
@@ -1839,10 +1839,10 @@ volumeMounts:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: litellm-callback-files
+  name: lumina-callback-files
 data:
   custom_callbacks.py: |
-    from litellm.integrations.custom_logger import CustomLogger
+    from lumina.integrations.custom_logger import CustomLogger
     
     class MyCustomHandler(CustomLogger):
         async def async_log_success_event(self, kwargs, response_obj, start_time, end_time):
@@ -1854,14 +1854,14 @@ data:
 **Reference in your config.yaml:**
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: custom_callbacks.proxy_handler_instance
 ```
 
 **How it works:**
 1. The `subPath` parameter tells Kubernetes to mount only the specific file
 2. This places `custom_callbacks.py` in `/app/` alongside your existing `config.yaml`
-3. LiteLLM automatically finds the callback file in the same directory as the config
+3. Lumina automatically finds the callback file in the same directory as the config
 4. No files are overwritten or hidden
 
 **Note:** You can mount multiple callback files by adding more `volumeMounts` entries, each with its own `subPath`.
@@ -1869,7 +1869,7 @@ litellm_settings:
 #### Step 3 - Start proxy + test request
 
 ```shell
-litellm --config proxy_config.yaml
+lumina --config proxy_config.yaml
 ```
 
 ```shell
@@ -1946,7 +1946,7 @@ class MyCustomHandler(CustomLogger):
 
 #### Logging `model_info` set in config.yaml 
 
-Here is how to log the `model_info` set in your proxy `config.yaml`. Information on setting `model_info` on [config.yaml](https://docs.litellm.ai/docs/proxy/configs)
+Here is how to log the `model_info` set in your proxy `config.yaml`. Information on setting `model_info` on [config.yaml](https://docs.lumina.ai/docs/proxy/configs)
 
 ```python
 class MyCustomHandler(CustomLogger):
@@ -2032,14 +2032,14 @@ ModelResponse(
   img={require('../../img/callback_api.png')}
   style={{width: '100%', display: 'block', margin: '2rem auto'}}
 />
-<p style={{textAlign: 'left', color: '#666'}}>Send LiteLLM logs to a custom API endpoint</p>
+<p style={{textAlign: 'left', color: '#666'}}>Send Lumina logs to a custom API endpoint</p>
 
 <EnterpriseFeature />
 
 | Property       | Details                                                                                                                                                    |
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Description    | Log LLM Input/Output to a custom API endpoint                                                                                                              |
-| Logged Payload | `List[StandardLoggingPayload]` LiteLLM logs a list of [`StandardLoggingPayload` objects](https://docs.litellm.ai/docs/proxy/logging_spec) to your endpoint |
+| Logged Payload | `List[StandardLoggingPayload]` Lumina logs a list of [`StandardLoggingPayload` objects](https://docs.lumina.ai/docs/proxy/logging_spec) to your endpoint |
 
 
 
@@ -2050,16 +2050,16 @@ Use this if you:
 
 #### Usage
 
-1. Set `success_callback: ["generic_api"]` on litellm config.yaml
+1. Set `success_callback: ["generic_api"]` on lumina config.yaml
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: openai/{{openai_large}}
     lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   success_callback: ["generic_api"]
 ```
 
@@ -2083,7 +2083,7 @@ GENERIC_LOGGER_HEADERS="Authorization=Bearer <your-api-key>,X-Custom-Header=cust
 3. Start the proxy
 
 ```shell
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 4. Make a test request
@@ -2107,18 +2107,18 @@ curl -i --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## Langsmith
 
-1. Set `success_callback: ["langsmith"]` on litellm config.yaml
+1. Set `success_callback: ["langsmith"]` on lumina config.yaml
 
 If you're using a custom LangSmith instance, you can set the
 `LANGSMITH_BASE_URL` environment variable to point to your instance.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   success_callback: ["langsmith"]
 
 environment_variables:
   LANGSMITH_API_KEY: "lsv2_pt_xxxxxxxx"
-  LANGSMITH_PROJECT: "litellm-proxy"
+  LANGSMITH_PROJECT: "lumina-proxy"
 
   LANGSMITH_BASE_URL: "https://api.smith.langchain.com" # (Optional - only needed if you have a custom Langsmith instance)
 ```
@@ -2127,7 +2127,7 @@ environment_variables:
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2152,7 +2152,7 @@ Expect to see your log on Langfuse
 
 ## Arize AI
 
-1. Set `success_callback: ["arize"]` on litellm config.yaml
+1. Set `success_callback: ["arize"]` on lumina config.yaml
 
 ```yaml
 model_list:
@@ -2162,7 +2162,7 @@ model_list:
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
-litellm_settings:
+lumina_settings:
   callbacks: ["arize"]
 
 environment_variables:
@@ -2175,7 +2175,7 @@ environment_variables:
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2201,7 +2201,7 @@ Expect to see your logs in Arize.
 
 The `langtrace` callback posts spans straight to `https://app.langtrace.ai/api/trace` with `LANGTRACE_API_KEY` in the `x-api-key` header. For a self-hosted Langtrace, set `LANGTRACE_API_HOST` to its base URL (for example `https://langtrace.example.com`) and the callback posts to `<host>/api/trace`. The [Langtrace page](../observability/langtrace_integration) covers the OpenTelemetry v2 exporter, which routes through a collector instead
 
-1. Set `callbacks: ["langtrace"]` on litellm config.yaml
+1. Set `callbacks: ["langtrace"]` on lumina config.yaml
 
 ```yaml
 model_list:
@@ -2211,7 +2211,7 @@ model_list:
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
-litellm_settings:
+lumina_settings:
   callbacks: ["langtrace"]
 
 environment_variables:
@@ -2221,7 +2221,7 @@ environment_variables:
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2290,14 +2290,14 @@ environment_variables:
   GALILEO_PROJECT_ID: "your-project-id"
   GALILEO_LOG_STREAM_ID: "your-log-stream-id"  # optional
 
-litellm_settings:
+lumina_settings:
   success_callback: ["galileo"] # KEY CHANGE
 ```
 
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2343,14 +2343,14 @@ model_list:
     model: openai/my-fake-model
   model_name: fake-openai-endpoint
 
-litellm_settings:
+lumina_settings:
   success_callback: ["openmeter"] # KEY CHANGE
 ```
 
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2376,8 +2376,8 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 We will use the `--config` to set 
 
-- `litellm.success_callback = ["dynamodb"]` 
-- `litellm.dynamodb_table_name = "your-table-name"`
+- `lumina.success_callback = ["dynamodb"]` 
+- `lumina.dynamodb_table_name = "your-table-name"`
 
 This will log all successful LLM calls to DynamoDB
 
@@ -2389,14 +2389,14 @@ AWS_SECRET_ACCESS_KEY = ""
 AWS_REGION_NAME = ""
 ```
 
-**Step 2**: Create a `config.yaml` file and set `litellm_settings`: `success_callback`
+**Step 2**: Create a `config.yaml` file and set `lumina_settings`: `success_callback`
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   success_callback: ["dynamodb"]
   dynamodb_table_name: your-table-name
 ```
@@ -2406,7 +2406,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -2508,7 +2508,7 @@ If api calls fail (llm/database) you can log those to Sentry:
 uv add --upgrade sentry-sdk
 ```
 
-**Step 2**: Save your Sentry_DSN and add `litellm_settings`: `failure_callback`
+**Step 2**: Save your Sentry_DSN and add `lumina_settings`: `failure_callback`
 
 ```shell
 export SENTRY_DSN="your-sentry-dsn"
@@ -2524,7 +2524,7 @@ model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   # other settings
   failure_callback: ["sentry"]
 general_settings: 
@@ -2536,20 +2536,20 @@ general_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
 
 ```
-litellm --test
+lumina --test
 ```
 
 ## Athina
 
 [Athina](https://athina.ai/) allows you to log LLM Input/Output for monitoring, analytics, and observability.
 
-We will use the `--config` to set `litellm.success_callback = ["athina"]` this will log all successful LLM calls to athina
+We will use the `--config` to set `lumina.success_callback = ["athina"]` this will log all successful LLM calls to athina
 
 **Step 1** Set Athina API key
 
@@ -2557,14 +2557,14 @@ We will use the `--config` to set `litellm.success_callback = ["athina"]` this w
 ATHINA_API_KEY = "your-athina-api-key"
 ```
 
-**Step 2**: Create a `config.yaml` file and set `litellm_settings`: `success_callback`
+**Step 2**: Create a `config.yaml` file and set `lumina_settings`: `success_callback`
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   success_callback: ["athina"]
 ```
 
@@ -2573,7 +2573,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -2599,7 +2599,7 @@ Note: This page is for logging callbacks and this is a moderation service. Comme
 
 [Azure Content-Safety](https://azure.microsoft.com/en-us/products/ai-services/ai-content-safety) is a Microsoft Azure service that provides content moderation APIs to detect potential offensive, harmful, or risky content in text.
 
-We will use the `--config` to set `litellm.success_callback = ["azure_content_safety"]` this will moderate all LLM calls using Azure Content Safety.
+We will use the `--config` to set `lumina.success_callback = ["azure_content_safety"]` this will moderate all LLM calls using Azure Content Safety.
 
 **Step 0** Deploy Azure Content Safety
 
@@ -2611,14 +2611,14 @@ Deploy an Azure Content-Safety instance from the Azure Portal and get the `endpo
 AZURE_CONTENT_SAFETY_KEY = "<your-azure-content-safety-key>"
 ```
 
-**Step 2**: Create a `config.yaml` file and set `litellm_settings`: `success_callback`
+**Step 2**: Create a `config.yaml` file and set `lumina_settings`: `success_callback`
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   callbacks: ["azure_content_safety"]
   azure_content_safety_params:
     endpoint: "<your-azure-content-safety-endpoint>"
@@ -2630,7 +2630,7 @@ litellm_settings:
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -2665,7 +2665,7 @@ model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   callbacks: ["azure_content_safety"]
   azure_content_safety_params:
     endpoint: "<your-azure-content-safety-endpoint>"

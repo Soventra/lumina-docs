@@ -1,5 +1,5 @@
 /**
- * Blog post page, laid out like a post on https://www.litellm.ai/blog:
+ * Blog post page, laid out like a post on https://www.lumina.ai/blog:
  * a framed column with a "← Blog" row, tag pills, a large title and the
  * cover image, a "Published" row with the authors, then the article body.
  *

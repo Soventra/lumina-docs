@@ -22,17 +22,17 @@ import Image from '@theme/IdealImage';
 ```python
 import os
 import time
-import litellm
+import lumina
 
 
 os.environ['OPENAI_API_KEY']='<your-openai-api-key>'
 os.environ['CONFIDENT_API_KEY']='<your-confident-api-key>'
 
-litellm.success_callback = ["deepeval"]
-litellm.failure_callback = ["deepeval"]
+lumina.success_callback = ["deepeval"]
+lumina.failure_callback = ["deepeval"]
 
 try:
-    response = litellm.completion(
+    response = lumina.completion(
         model="{{openai_small}}",
         messages=[
             {"role": "user", "content": "What's the weather like in San Francisco?"}

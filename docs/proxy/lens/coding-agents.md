@@ -1,15 +1,15 @@
 ---
 title: Trace coding agent sessions
-description: Send your personal Claude Code and Codex sessions to LiteLLM Lens.
+description: Send your personal Claude Code and Codex sessions to Lumina Lens.
 ---
 
 import AgentPrompt from '@site/src/components/Conversion/AgentPrompt';
 
 # Trace coding agent sessions
 
-For optional help from your coding agent, [Set it up for me](https://github.com/BerriAI/lens/blob/main/docs/setup-with-agent.md) has prompts for an existing LiteLLM deployment, standalone Lens, and external ClickHouse. The agent should inspect the installed version before applying this guide
+For optional help from your coding agent, [Set it up for me](https://github.com/BerriAI/lens/blob/main/docs/setup-with-agent.md) has prompts for an existing Lumina deployment, standalone Lens, and external ClickHouse. The agent should inspect the installed version before applying this guide
 
-Send your personal Claude Code or Codex sessions to [LiteLLM Lens](./index.md) to inspect their recorded activity. Choose your agent below.
+Send your personal Claude Code or Codex sessions to [Lumina Lens](./index.md) to inspect their recorded activity. Choose your agent below.
 
 You need a running Lens installation and a dedicated Lens tracing key. If you are starting from scratch, follow the [Lens deployment guide](./deployment/local.md). Your existing Claude Code or Codex model login continues to work.
 
@@ -59,7 +59,7 @@ Complete a prompt that uses a tool, then open **Lens > Traces**, select **claude
 
 Assistant replies use a separate telemetry stream from trace spans. Keep both exporters enabled. The allowlisted detailed-tracing endpoint is not required. See Claude Code's [monitoring reference](https://code.claude.com/docs/en/monitoring-usage) for the beta exporter's coverage and content limits.
 
-The `/v1/logs` endpoint receives OpenTelemetry events for Lens. These become part of the session trace and do not create entries in the normal LiteLLM **Logs** screen or additional spend records.
+The `/v1/logs` endpoint receives OpenTelemetry events for Lens. These become part of the session trace and do not create entries in the normal Lumina **Logs** screen or additional spend records.
 
 Claude's stable tool-output events omit failed executions and some tool kinds. To fill these gaps from the next model request, optionally enable native API-body export:
 
@@ -78,19 +78,19 @@ For persistent configuration, add these variables to the `env` object in your us
 
 ## Codex
 
-Use the [BerriAI Codex integration on GitHub](https://github.com/BerriAI/litellm-lens-codex-integration). This public preview supports local Codex desktop and CLI sessions. Automatic setup currently supports macOS and requires Python 3.11 or later. {/* keep-python-version: Codex integration prerequisite */}
+Use the [BerriAI Codex integration on GitHub](https://github.com/Soventra/lumina-lens-codex-integration). This public preview supports local Codex desktop and CLI sessions. Automatic setup currently supports macOS and requires Python 3.11 or later. {/* keep-python-version: Codex integration prerequisite */}
 
 Copy this prompt into your coding agent to have it install and configure the integration, or follow the manual steps below.
 
 <AgentPrompt id="lens-codex" />
 
-1. Follow **[From Terminal (recommended)](https://github.com/BerriAI/litellm-lens-codex-integration#from-terminal-recommended)** in the installation guide. The same installer works for desktop and CLI.
+1. Follow **[From Terminal (recommended)](https://github.com/Soventra/lumina-lens-codex-integration#from-terminal-recommended)** in the installation guide. The same installer works for desktop and CLI.
 2. At **Lens ingestion URL**, paste the full **Traces endpoint** from the dashboard. The installer accepts that endpoint and keeps `/lens-ingest` when present. Enter your **Lens tracing key** at the hidden prompt, choose an **agent name**, and confirm to start recording.
 3. **Start a new Codex chat and complete a turn.** Open **Lens > Traces** and find the agent name you chose.
 
 Each chat has one trace, updated after completed or interrupted turns. Reopening a chat continues its trace. Only activity after setup is recorded.
 
-The plugin reads visible transcript items for newly recorded turns, including commentary, repeated messages, tool outcomes, model changes, and subagents. Completed transcript turns can be recovered when a completion hook is missing. See the [coverage and privacy details](https://github.com/BerriAI/litellm-lens-codex-integration#what-youll-see) for its limits. To pause recording, ask Codex: `Use lens-setup to pause recording.`
+The plugin reads visible transcript items for newly recorded turns, including commentary, repeated messages, tool outcomes, model changes, and subagents. Completed transcript turns can be recovered when a completion hook is missing. See the [coverage and privacy details](https://github.com/Soventra/lumina-lens-codex-integration#what-youll-see) for its limits. To pause recording, ask Codex: `Use lens-setup to pause recording.`
 
 ## Coverage and troubleshooting
 

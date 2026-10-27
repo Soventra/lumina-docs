@@ -1,9 +1,9 @@
 ---
 id: gateway_overview
-title: LiteLLM AI Gateway
-sidebar_label: LiteLLM Gateway
+title: Lumina AI Gateway
+sidebar_label: Lumina Gateway
 slug: /simple_proxy
-description: The LiteLLM AI Gateway is a self-hosted server that gives your applications one OpenAI-compatible endpoint for 100+ LLM providers, MCP tools, and A2A agents.
+description: The Lumina AI Gateway is a self-hosted server that gives your applications one OpenAI-compatible endpoint for 100+ LLM providers, MCP tools, and A2A agents.
 ---
 
 import NavigationCards from '@site/src/components/NavigationCards';
@@ -12,9 +12,9 @@ import Image from '@theme/IdealImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# LiteLLM AI Gateway
+# Lumina AI Gateway
 
-The LiteLLM AI Gateway is a self-hosted server. It gives your applications one OpenAI-compatible endpoint for 100+ LLM providers, MCP tools, and A2A agents.
+The Lumina AI Gateway is a self-hosted server. It gives your applications one OpenAI-compatible endpoint for 100+ LLM providers, MCP tools, and A2A agents.
 
 Your applications send requests to the gateway. The gateway sends each request to the provider of the model. Then the gateway sends the response back to your application in the OpenAI format. If a client can use the OpenAI API, the client can also use the gateway. You do not change the client code.
 

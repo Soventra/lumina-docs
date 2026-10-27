@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Reka serves its own models and a curated selection of open models over one OpenAI-compatible API, with automatic prompt caching and no platform fee or markup. |
-| Provider Route on LiteLLM | `reka/` |
+| Provider Route on Lumina | `reka/` |
 | Link to Provider Doc | [Reka Developer Reference ↗](https://developer.reka.ai/reference) |
 | Base URL | `https://api.reka.ai/v1` |
-| Supported Operations | [`/chat/completions`](#usage---litellm-python-sdk), [`/responses`](#responses-api), [`/messages`](#usage---litellm-proxy-server) |
+| Supported Operations | [`/chat/completions`](#usage---lumina-python-sdk), [`/responses`](#responses-api), [`/messages`](#usage---lumina-proxy-server) |
 
 <br />
 <br />
@@ -37,13 +37,13 @@ os.environ["REKA_API_KEY"] = ""  # your Reka API key
 os.environ["REKA_API_BASE"] = ""  # optional, defaults to https://api.reka.ai/v1
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Reka Non-streaming Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["REKA_API_KEY"] = ""  # your Reka API key
 
@@ -59,7 +59,7 @@ print(response.choices[0].message.content)
 
 ```python showLineNumbers title="Reka Streaming Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["REKA_API_KEY"] = ""  # your Reka API key
 
@@ -79,7 +79,7 @@ for chunk in response:
 
 ```python showLineNumbers title="Reka Image Input"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["REKA_API_KEY"] = ""  # your Reka API key
 
@@ -99,15 +99,15 @@ print(response.choices[0].message.content)
 
 ### Responses API
 
-Reka does not serve `/v1/responses` natively, so LiteLLM translates `litellm.responses` calls into Reka chat completions and converts the result back into a Responses API object.
+Reka does not serve `/v1/responses` natively, so Lumina translates `lumina.responses` calls into Reka chat completions and converts the result back into a Responses API object.
 
 ```python showLineNumbers title="Reka Responses API"
 import os
-import litellm
+import lumina
 
 os.environ["REKA_API_KEY"] = ""  # your Reka API key
 
-response = litellm.responses(
+response = lumina.responses(
     model="reka/reka-flash-3",
     input="Say hello",
 )
@@ -115,7 +115,7 @@ response = litellm.responses(
 print(response.output_text)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -134,10 +134,10 @@ general_settings:
 
 Start the proxy:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
+```bash showLineNumbers title="Start Lumina Proxy"
 export REKA_API_KEY="your-api-key"
 export LUMINA_MASTER_KEY="sk-local-reka"
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -170,7 +170,7 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="reka-flash-3",
-    messages=[{"role": "user", "content": "hello from litellm"}],
+    messages=[{"role": "user", "content": "hello from lumina"}],
 )
 
 print(response.choices[0].message.content)
@@ -211,7 +211,7 @@ You can also add Reka from the Admin UI. Go to Models, then Add Model, pick Reka
 
 ## Cost Tracking
 
-Reka models are not yet in LiteLLM's model cost map, so spend is not computed automatically. Reka bills per token at each model's rate with no platform fee, and publishes the rates on [developer.reka.ai/models](https://developer.reka.ai/models) and in the `pricing` object of `GET /v1/models` (US dollars per token, as strings: `prompt`, `completion`, and `input_cache_read`). Pass those values as `input_cost_per_token` and `output_cost_per_token` on the deployment and LiteLLM will track spend for it, returning the amount in the `x-litellm-response-cost` response header and recording it in spend logs. Reka lists rates per million tokens; divide by 1,000,000 for the per-token value.
+Reka models are not yet in Lumina's model cost map, so spend is not computed automatically. Reka bills per token at each model's rate with no platform fee, and publishes the rates on [developer.reka.ai/models](https://developer.reka.ai/models) and in the `pricing` object of `GET /v1/models` (US dollars per token, as strings: `prompt`, `completion`, and `input_cache_read`). Pass those values as `input_cost_per_token` and `output_cost_per_token` on the deployment and Lumina will track spend for it, returning the amount in the `x-lumina-response-cost` response header and recording it in spend logs. Reka lists rates per million tokens; divide by 1,000,000 for the per-token value.
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -237,7 +237,7 @@ Where a model supports prompt caching, Reka caches repeated prompt prefixes auto
 
 ```python showLineNumbers title="Custom API Base via env var"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["REKA_API_BASE"] = "https://custom.reka.example/v1"
 os.environ["REKA_API_KEY"] = ""  # your API key
@@ -251,7 +251,7 @@ response = completion(
 **Option 2: Pass directly**
 
 ```python showLineNumbers title="Custom API Base via parameter"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="reka/reka-flash-3",

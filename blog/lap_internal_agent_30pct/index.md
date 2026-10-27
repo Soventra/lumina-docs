@@ -5,21 +5,21 @@ date: 2026-05-27T10:00:00
 authors:
   - krrish
   - ishaan
-description: "How we built a background agent on the LiteLLM AI Gateway that merges PRs with no human in the loop (the infra, harness, and credential-scoping calls behind it)."
+description: "How we built a background agent on the Lumina AI Gateway that merges PRs with no human in the loop (the infra, harness, and credential-scoping calls behind it)."
 tags: [agents, ai-gateway, lap, lite-harness, engineering]
 hide_table_of_contents: true
-image: /img/lap_litellm_agent_platform_hero.png
+image: /img/lap_lumina_agent_platform_hero.png
 ---
 
-<img src="/img/lap_litellm_agent_platform_hero.png" alt="LiteLLM Agent Platform: agent.litellm.ai" style={{width: "100%"}} />
+<img src="/img/lap_lumina_agent_platform_hero.png" alt="Lumina Agent Platform: agent.lumina.ai" style={{width: "100%"}} />
 
 :::info
 
-The platform we built is open source. Check out [litellm-agent-platform](https://github.com/BerriAI/litellm-agent-platform). The swappable harness layer is [lite-harness](https://github.com/LiteLLM-Labs/lite-harness).
+The platform we built is open source. Check out [lumina-agent-platform](https://github.com/Soventra/lumina-agent-platform). The swappable harness layer is [lite-harness](https://github.com/Lumina-Labs/lite-harness).
 
 Building the same thing inside your company?
 
-- [Schedule a 30-minute call](https://calendly.com/d/cr4t-yp7-pzn/litellm-1-1-feedback-chat)
+- [Schedule a 30-minute call](https://calendly.com/d/cr4t-yp7-pzn/lumina-1-1-feedback-chat)
 - [Join the LAP Discord](https://discord.gg/Q2AK7HKudm)
 
 :::
@@ -32,7 +32,7 @@ Three weeks ago we began building an agent that could own 30% of our engineering
 
 ## What we shipped
 
-Three weeks in, on `BerriAI/litellm`: **43 open PRs, 160 closed.** Between the PRs it lands and the Slack questions it answers, the agent now covers roughly **30% of the eng tickets that used to hit a human every week.** Browse [all agent-filed PRs on GitHub](https://github.com/BerriAI/litellm/pulls?q=is%3Apr+author%3Aoss-agent-shin).
+Three weeks in, on `Soventra/lumina`: **43 open PRs, 160 closed.** Between the PRs it lands and the Slack questions it answers, the agent now covers roughly **30% of the eng tickets that used to hit a human every week.** Browse [all agent-filed PRs on GitHub](https://github.com/Soventra/lumina/pulls?q=is%3Apr+author%3Aoss-agent-shin).
 
 
 ## Why we built our own
@@ -42,7 +42,7 @@ We wanted an agent that runs autonomously, in the background, pulling tickets of
 - **Cursor:** agents were not stateful. You could not store memory, skills, etc. per agent. The platform equated an agent to a session; we wanted an agent that persists across them.
 - **Anthropic:** close to what we wanted, but we wanted to swap models and harnesses freely. We did not want to be locked to one platform.
 
-So we built on the [LiteLLM Agent Platform](https://github.com/BerriAI/litellm-agent-platform). 
+So we built on the [Lumina Agent Platform](https://github.com/Soventra/lumina-agent-platform). 
 
 ## 1. Infrastructure: separate the brain from the sandbox
 
@@ -64,7 +64,7 @@ We started with agent frameworks: Pydantic AI, LangGraph, the PI SDK. Each one m
 
 We landed on **OpenCode**. The Claude Agents SDK spawns a CLI session per run and OOM'd for us at ~1 RPM. OpenCode hits the same fundamental bottleneck (long-running sessions held in memory), but its memory usage grew more slowly, making it the better fit for now.
 
-That choice stays flexible because we also wrote a harness unification layer, [`LiteLLM-Labs/lite-harness`](https://github.com/LiteLLM-Labs/lite-harness), which adapts OpenCode, Claude Code, Codex, and others to a single HTTP contract:
+That choice stays flexible because we also wrote a harness unification layer, [`Lumina-Labs/lite-harness`](https://github.com/Lumina-Labs/lite-harness), which adapts OpenCode, Claude Code, Codex, and others to a single HTTP contract:
 
 ```
 lite-harness/
@@ -113,7 +113,7 @@ For us, that means two open problems:
 
 ## Try it
 
-Both repos are open source and self-hostable: [litellm-agent-platform](https://github.com/BerriAI/litellm-agent-platform) and [lite-harness](https://github.com/LiteLLM-Labs/lite-harness). If you're building something similar and want to skip the three weeks of mistakes, [book a 30-minute chat](https://calendly.com/d/cr4t-yp7-pzn/litellm-1-1-feedback-chat) or join the [LAP Discord](https://discord.gg/Q2AK7HKudm).
+Both repos are open source and self-hostable: [lumina-agent-platform](https://github.com/Soventra/lumina-agent-platform) and [lite-harness](https://github.com/Lumina-Labs/lite-harness). If you're building something similar and want to skip the three weeks of mistakes, [book a 30-minute chat](https://calendly.com/d/cr4t-yp7-pzn/lumina-1-1-feedback-chat) or join the [LAP Discord](https://discord.gg/Q2AK7HKudm).
 
 
 *This blog was inspired in shape by Ramp's [Why we built our background agent](https://builders.ramp.com/post/why-we-built-our-background-agent).*

@@ -19,21 +19,21 @@ Create a vector store which can be used to store and search document chunks for 
 The proxy also supports **retrieve**, **list**, **update**, and **delete** for vector stores (OpenAI-compatible). See [Vector store management and routing on the proxy](#vector-store-management-and-routing-on-the-proxy) for `curl` examples and provider routing.
 
 :::info[Creating vs registering]
-`POST /v1/vector_stores` (this page) creates a **new** store on the provider and only works for providers with a create implementation (see the [overview matrix](./index.md#provider-support)). If your store **already exists** on the provider (a Bedrock Knowledge Base, Vertex AI Search datastore, Azure AI Search index, ...), you want `POST /vector_store/new` instead, which registers it with LiteLLM so it can be searched through the unified API. See [Managed Vector Stores](./managed_vector_stores.md).
+`POST /v1/vector_stores` (this page) creates a **new** store on the provider and only works for providers with a create implementation (see the [overview matrix](./index.md#provider-support)). If your store **already exists** on the provider (a Bedrock Knowledge Base, Vertex AI Search datastore, Azure AI Search index, ...), you want `POST /vector_store/new` instead, which registers it with Lumina so it can be searched through the unified API. See [Managed Vector Stores](./managed_vector_stores.md).
 :::
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 #### Async example
 ```python showLineNumbers title="Create Vector Store - Basic"
-import litellm
+import lumina
 
-response = await litellm.vector_stores.acreate(
+response = await lumina.vector_stores.acreate(
     name="My Document Store",
     file_ids=["file-abc123", "file-def456"]
 )
@@ -42,9 +42,9 @@ print(response)
 
 #### Sync example
 ```python showLineNumbers title="Create Vector Store - Sync"
-import litellm
+import lumina
 
-response = litellm.vector_stores.create(
+response = lumina.vector_stores.create(
     name="My Document Store", 
     file_ids=["file-abc123", "file-def456"]
 )
@@ -57,9 +57,9 @@ print(response)
 
 #### With expiration and chunking strategy
 ```python showLineNumbers title="Create Vector Store - Advanced"
-import litellm
+import lumina
 
-response = await litellm.vector_stores.acreate(
+response = await lumina.vector_stores.acreate(
     name="My Document Store",
     file_ids=["file-abc123", "file-def456"],
     expires_after={
@@ -87,13 +87,13 @@ print(response)
 
 #### Using OpenAI provider explicitly
 ```python showLineNumbers title="Create Vector Store - OpenAI Provider"
-import litellm
+import lumina
 import os
 
 # Set API key
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
-response = await litellm.vector_stores.acreate(
+response = await lumina.vector_stores.acreate(
     name="My Document Store",
     file_ids=["file-abc123", "file-def456"],
     custom_llm_provider="openai"
@@ -104,7 +104,7 @@ print(response)
 </TabItem>
 </Tabs>
 
-### LiteLLM Proxy Server
+### Lumina Proxy Server
 
 <Tabs>
 <TabItem value="proxy-setup" label="Setup & Usage">
@@ -125,18 +125,18 @@ general_settings:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it with OpenAI SDK!
 
-```python showLineNumbers title="OpenAI SDK via LiteLLM Proxy"
+```python showLineNumbers title="OpenAI SDK via Lumina Proxy"
 from openai import OpenAI
 
-# Point OpenAI SDK to LiteLLM proxy
+# Point OpenAI SDK to Lumina proxy
 client = OpenAI(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM API key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina API key
 )
 
 vector_store = client.beta.vector_stores.create(
@@ -241,33 +241,33 @@ print(vector_store)
 
 ## Vector store management and routing on the proxy
 
-Besides **create** (`POST /v1/vector_stores` or `/vector_stores`), the LiteLLM proxy exposes OpenAI-compatible **retrieve**, **list**, **update**, and **delete**. Paths work **with or without** the `/v1` prefix (for example `/v1/vector_stores/...` and `/vector_stores/...`).
+Besides **create** (`POST /v1/vector_stores` or `/vector_stores`), the Lumina proxy exposes OpenAI-compatible **retrieve**, **list**, **update**, and **delete**. Paths work **with or without** the `/v1` prefix (for example `/v1/vector_stores/...` and `/vector_stores/...`).
 
 For **search**, see [Search vector store](./search.md). For **files** on a store, see [Vector store files](../vector_store_files.md).
 
 ### Authentication
 
-Use your LiteLLM proxy virtual key with either:
+Use your Lumina proxy virtual key with either:
 
 ```bash
 -H "Authorization: Bearer $LUMINA_API_KEY"
 # or
--H 'x-litellm-api-key: sk-<your-litellm-api-key>'
+-H 'x-lumina-api-key: sk-<your-lumina-api-key>'
 ```
 
 ### Provider routing
 
-LiteLLM automatically selects the vector store provider from the request context, with no extra query parameters needed:
+Lumina automatically selects the vector store provider from the request context, with no extra query parameters needed:
 
-- **LiteLLM-managed stores** — If `vector_store_id` is a LiteLLM-managed store, the proxy resolves the provider from the registry (`lumina_params` stored in the database).
+- **Lumina-managed stores** — If `vector_store_id` is a Lumina-managed store, the proxy resolves the provider from the registry (`lumina_params` stored in the database).
 - **Model-based routing** — If the request includes a `model` matching a configured deployment/model group, credentials come from that deployment.
-- **SDK default** — If neither applies, the LiteLLM SDK default for that call is used (e.g. `openai`).
+- **SDK default** — If neither applies, the Lumina SDK default for that call is used (e.g. `openai`).
 
 ### OpenAI API reference (management operations)
 
 - [Retrieve vector store](https://platform.openai.com/docs/api-reference/vector-stores/retrieve)
 - [List vector stores](https://platform.openai.com/docs/api-reference/vector-stores/list)
-- [Modify vector store](https://platform.openai.com/docs/api-reference/vector-stores/modify) — on the LiteLLM proxy, modify is **`POST`** to `/v1/vector_stores/{vector_store_id}` with a JSON body.
+- [Modify vector store](https://platform.openai.com/docs/api-reference/vector-stores/modify) — on the Lumina proxy, modify is **`POST`** to `/v1/vector_stores/{vector_store_id}` with a JSON body.
 - [Delete vector store](https://platform.openai.com/docs/api-reference/vector-stores/delete)
 
 ## Request Format
@@ -367,7 +367,7 @@ The request body follows OpenAI's vector stores API format.
 For testing purposes, you can use mock responses:
 
 ```python showLineNumbers title="Mock Response Example"
-import litellm
+import lumina
 
 # Mock response for testing
 mock_response = {
@@ -386,7 +386,7 @@ mock_response = {
     "status": "completed"
 }
 
-response = await litellm.vector_stores.acreate(
+response = await lumina.vector_stores.acreate(
     name="Test Store",
     mock_response=mock_response
 )

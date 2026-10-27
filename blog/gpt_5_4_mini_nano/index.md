@@ -3,7 +3,7 @@ slug: gpt_5_4_mini_nano
 title: "Day 0 Support: GPT-5.4-mini and GPT-5.4-nano"
 date: 2026-03-17T10:00:00
 authors: [sameer, krrish, ishaan]
-description: "GPT-5.4-mini and GPT-5.4-nano model support in LiteLLM"
+description: "GPT-5.4-mini and GPT-5.4-nano model support in Lumina"
 tags: [openai, gpt-5.4-mini, gpt-5.4-nano, completion]
 hide_table_of_contents: false
 ---
@@ -11,7 +11,7 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports GPT-5.4-mini and GPT-5.4-nano, cost-effective models for simple completions and high-throughput workloads.
+Lumina now supports GPT-5.4-mini and GPT-5.4-nano, cost-effective models for simple completions and high-throughput workloads.
 
 {/* truncate */}
 
@@ -22,7 +22,7 @@ If you're on **v1.82.3-stable** or above, you don't need any update to use these
 ## Usage
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -41,7 +41,7 @@ model_list:
 **2. Start the proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Test it**
@@ -67,10 +67,10 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # GPT-5.4-mini
 response = completion(

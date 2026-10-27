@@ -1,6 +1,6 @@
 ---
 title: GCP Memorystore IAM Authentication
-description: Authenticate the LiteLLM proxy to GCP Memorystore for Redis with a service account instead of a password.
+description: Authenticate the Lumina proxy to GCP Memorystore for Redis with a service account instead of a password.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -8,7 +8,7 @@ import TabItem from '@theme/TabItem';
 
 # GCP Memorystore IAM Authentication
 
-Connect LiteLLM's Redis cache to GCP Memorystore using IAM authentication, so the proxy authenticates
+Connect Lumina's Redis cache to GCP Memorystore using IAM authentication, so the proxy authenticates
 as a service account and no Redis password exists in your config.
 
 :::info
@@ -30,7 +30,7 @@ uv add google-cloud-iam
 For Redis Cluster with GCP IAM:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: redis

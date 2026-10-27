@@ -1,16 +1,16 @@
 # Instructor
 
-Combine LiteLLM with [jxnl's instructor library](https://github.com/jxnl/instructor) for more robust structured outputs. Outputs are automatically validated into Pydantic types and validation errors are provided back to the model to increase the chance of a successful response in the retries.
+Combine Lumina with [jxnl's instructor library](https://github.com/jxnl/instructor) for more robust structured outputs. Outputs are automatically validated into Pydantic types and validation errors are provided back to the model to increase the chance of a successful response in the retries.
 
 ## Usage (Sync)
 
 ```python
 import instructor
-from litellm import completion
+from lumina import completion
 from pydantic import BaseModel
 
 
-client = instructor.from_litellm(completion)
+client = instructor.from_lumina(completion)
 
 
 class User(BaseModel):
@@ -42,11 +42,11 @@ print(f"{user=}")
 import asyncio
 
 import instructor
-from litellm import acompletion
+from lumina import acompletion
 from pydantic import BaseModel
 
 
-client = instructor.from_litellm(acompletion)
+client = instructor.from_lumina(acompletion)
 
 
 class User(BaseModel):

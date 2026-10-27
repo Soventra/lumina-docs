@@ -8,7 +8,7 @@ GigaChat is Sber AI's large language model, Russia's leading LLM provider.
 
 :::tip
 
-**We support ALL GigaChat models, just set `model=gigachat/<any-model-on-gigachat>` as a prefix when sending litellm requests**
+**We support ALL GigaChat models, just set `model=gigachat/<any-model-on-gigachat>` as a prefix when sending lumina requests**
 
 :::
 
@@ -49,7 +49,7 @@ Get your credentials at: https://developers.sber.ru/studio/
 ## Sample Usage
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
@@ -57,7 +57,7 @@ os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
 response = completion(
     model="gigachat/GigaChat-2-Max",
     messages=[
-       {"role": "user", "content": "Hello from LiteLLM!"}
+       {"role": "user", "content": "Hello from Lumina!"}
    ],
     ssl_verify=False,  # Required for GigaChat
 )
@@ -67,7 +67,7 @@ print(response)
 ## Sample Usage - Streaming
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
@@ -75,7 +75,7 @@ os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
 response = completion(
     model="gigachat/GigaChat-2-Max",
     messages=[
-       {"role": "user", "content": "Hello from LiteLLM!"}
+       {"role": "user", "content": "Hello from Lumina!"}
    ],
     stream=True,
     ssl_verify=False,  # Required for GigaChat
@@ -88,7 +88,7 @@ for chunk in response:
 ## Sample Usage - Function Calling
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
@@ -122,7 +122,7 @@ print(response)
 GigaChat supports structured output via JSON schema (emulated through function calling):
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
@@ -153,7 +153,7 @@ print(response)  # Returns JSON: {"name": "John", "age": 30}
 GigaChat supports image input via base64 or URL (GigaChat-2-Max and GigaChat-2-Pro only):
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
@@ -175,7 +175,7 @@ print(response)
 ## Sample Usage - Embeddings
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ['GIGACHAT_CREDENTIALS'] = "your-credentials-here"
@@ -188,7 +188,7 @@ response = embedding(
 print(response)
 ```
 
-## Usage with LiteLLM Proxy
+## Usage with Lumina Proxy
 
 ### 1. Set GigaChat Models on config.yaml
 
@@ -214,7 +214,7 @@ model_list:
 ### 2. Start Proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Test it

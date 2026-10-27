@@ -7,18 +7,18 @@ import TabItem from '@theme/TabItem';
 
 # Snowflake Cortex
 
-LiteLLM supports all models on the Snowflake Cortex REST API, including models from Anthropic (Claude), OpenAI (GPT), Meta (Llama), Mistral, DeepSeek, and Snowflake.
+Lumina supports all models on the Snowflake Cortex REST API, including models from Anthropic (Claude), OpenAI (GPT), Meta (Llama), Mistral, DeepSeek, and Snowflake.
 
 | | |
 |---|---|
 | Description | Snowflake Cortex REST API provides access to leading frontier LLMs through OpenAI-compatible and Anthropic-compatible endpoints. All inference runs within Snowflake's security perimeter. |
-| Provider Route on LiteLLM | `snowflake/` |
+| Provider Route on Lumina | `snowflake/` |
 | Provider Docs | [Cortex REST API ↗](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-rest-api) |
 | API Endpoints | Chat Completions: `https://{account}.snowflakecomputing.com/api/v2/cortex/v1/chat/completions` <br/> Messages: `https://{account}.snowflakecomputing.com/api/v2/cortex/v1/messages` <br/> Legacy: `https://{account}.snowflakecomputing.com/api/v2/cortex/inference:complete` |
 | Supported OpenAI Endpoints | `/chat/completions`, `/completions`, `/embeddings` |
 
 
-Tip : We support ALL Snowflake Cortex models. Use `model=snowflake/<model-name>` as a prefix when sending LiteLLM requests.
+Tip : We support ALL Snowflake Cortex models. Use `model=snowflake/<model-name>` as a prefix when sending Lumina requests.
 
 
 ## Authentication
@@ -29,11 +29,11 @@ Snowflake Cortex REST API supports three authentication methods.
 
 The simplest approach. Generate a PAT in Snowsight under **User Menu → My Profile → Programmatic Access Tokens**.
 
-LiteLLM reads the token from `SNOWFLAKE_JWT` (the same env var used for JWT auth) and the account from `SNOWFLAKE_ACCOUNT_ID`. Prefix the PAT with `pat/` so LiteLLM sends it as a `PROGRAMMATIC_ACCESS_TOKEN` instead of a `KEYPAIR_JWT`.
+Lumina reads the token from `SNOWFLAKE_JWT` (the same env var used for JWT auth) and the account from `SNOWFLAKE_ACCOUNT_ID`. Prefix the PAT with `pat/` so Lumina sends it as a `PROGRAMMATIC_ACCESS_TOKEN` instead of a `KEYPAIR_JWT`.
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["SNOWFLAKE_JWT"] = "pat/<your-programmatic-access-token>"
 os.environ["SNOWFLAKE_ACCOUNT_ID"] = "<orgname>-<account_name>"
@@ -50,7 +50,7 @@ Generate a JWT from a Snowflake key pair. See [Key-pair authentication](https://
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["SNOWFLAKE_JWT"] = "<your-jwt-token>"
 os.environ["SNOWFLAKE_ACCOUNT_ID"] = "<orgname>-<account_name>"
@@ -64,7 +64,7 @@ response = completion(
 ### Pass credentials as parameters
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # Using PAT
 response = completion(
@@ -83,7 +83,7 @@ response = completion(
 )
 ```
 
-When you pass `api_base`, use the account host (`https://<account>.snowflakecomputing.com`, optionally with `/api/v2`). LiteLLM appends `/api/v2` if it is missing and then the `/cortex/v1/messages`, `/cortex/v1/chat/completions` or `/cortex/inference:embed` path; an `api_base` that already contains `/cortex/v1` produces a duplicated, invalid URL.
+When you pass `api_base`, use the account host (`https://<account>.snowflakecomputing.com`, optionally with `/api/v2`). Lumina appends `/api/v2` if it is missing and then the `/cortex/v1/messages`, `/cortex/v1/chat/completions` or `/cortex/inference:embed` path; an `api_base` that already contains `/cortex/v1` produces a duplicated, invalid URL.
 
 For all authentication options, see [Authenticating to Cortex REST API](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-rest-api#authenticating-cortex-rest-api-requests).
 
@@ -93,7 +93,7 @@ For all authentication options, see [Authenticating to Cortex REST API](https://
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["SNOWFLAKE_JWT"] = "pat/<your-pat>"
@@ -128,7 +128,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Test**
@@ -162,7 +162,7 @@ Claude models also accept `thinking` (see below). `response_format` is not suppo
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["SNOWFLAKE_JWT"] = "pat/<your-pat>"
@@ -197,13 +197,13 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## Tool / Function Calling
 
-Supported on Claude and select models. LiteLLM automatically transforms OpenAI tool format to Snowflake's `tool_spec` format.
+Supported on Claude and select models. Lumina automatically transforms OpenAI tool format to Snowflake's `tool_spec` format.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os, json
 
 os.environ["SNOWFLAKE_JWT"] = "pat/<your-pat>"
@@ -278,7 +278,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 Claude models on Cortex support extended thinking. Pass the provider's `thinking` parameter directly; `reasoning_effort` is not a supported param for Snowflake and raises an `UnsupportedParamsError` unless `drop_params` is set.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="snowflake/claude-sonnet-4-6",
@@ -302,7 +302,7 @@ See [Cortex REST API Billing & Cost Analysis](https://www.snowflake.com/en/devel
 ## Embeddings
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ["SNOWFLAKE_JWT"] = "pat/<your-pat>"
@@ -325,7 +325,7 @@ For current model availability, rate limits, and pricing, see the official [Cort
 
 ### Chat Completion Models
 
-| Model | `litellm` model name | Function Calling | Vision | Prompt Caching |
+| Model | `lumina` model name | Function Calling | Vision | Prompt Caching |
 |---|---|---|---|---|
 | Claude Sonnet 4.5 | `snowflake/claude-sonnet-4-5` | ✅ | ✅ | ✅ |
 | Claude Sonnet 4.6 | `snowflake/claude-sonnet-4-6` | ✅ | ✅ | ✅ |
@@ -349,7 +349,7 @@ For current model availability, rate limits, and pricing, see the official [Cort
 
 ### Embedding Models
 
-| Model | `litellm` model name |
+| Model | `lumina` model name |
 |---|---|
 | Snowflake Arctic Embed L v2.0 | `snowflake/snowflake-arctic-embed-l-v2.0` |
 | Snowflake Arctic Embed M v2.0 | `snowflake/snowflake-arctic-embed-m-v2.0` |

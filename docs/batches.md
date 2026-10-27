@@ -8,7 +8,7 @@ Covers Batches, Files
 | Feature | Supported | Notes | 
 |-------|-------|-------|
 | Supported Providers | OpenAI, Azure, Vertex, Bedrock, Mistral, vLLM, xAI | - |
-| Cost Tracking | ✅ | LiteLLM Enterprise only |
+| Cost Tracking | ✅ | Lumina Enterprise only |
 | Logging | ✅ | Works across all logging integrations |
 
 Guardrails configured on your proxy are applied to the records inside a batch input file when it is
@@ -34,7 +34,7 @@ Each line is one request in the [OpenAI batch file format](https://platform.open
 ```
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM PROXY Server">
+<TabItem value="proxy" label="Lumina PROXY Server">
 
 **Setup config.yaml and start the proxy**
 
@@ -49,7 +49,7 @@ model_list:
 ```bash
 $ export OPENAI_API_KEY="sk-..."
 
-$ litellm --config config.yaml
+$ lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -99,7 +99,7 @@ curl http://localhost:4000/v1/batches \
 **Create File for Batch Completion**
 
 ```python
-import litellm
+import lumina
 import os 
 import asyncio
 
@@ -108,7 +108,7 @@ os.environ["OPENAI_API_KEY"] = "sk-.."
 file_name = "mydata.jsonl"
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 file_path = os.path.join(_current_dir, file_name)
-file_obj = await litellm.acreate_file(
+file_obj = await lumina.acreate_file(
     file=open(file_path, "rb"),
     purpose="batch",
     custom_llm_provider="openai",
@@ -119,11 +119,11 @@ print("Response from creating file=", file_obj)
 **Create Batch Request**
 
 ```python
-import litellm
+import lumina
 import os 
 import asyncio
 
-create_batch_response = await litellm.acreate_batch(
+create_batch_response = await lumina.acreate_batch(
     completion_window="24h",
     endpoint="/v1/chat/completions",
     input_file_id=batch_input_file_id,
@@ -131,7 +131,7 @@ create_batch_response = await litellm.acreate_batch(
     metadata={"key1": "value1", "key2": "value2"},
 )
 
-print("response from litellm.create_batch=", create_batch_response)
+print("response from lumina.create_batch=", create_batch_response)
 ```
 
 **Retrieve the Specific Batch and File Content**
@@ -150,7 +150,7 @@ waited = 0
 # This loop checks the batch status every few seconds (polling)
 
 while True:
-    retrieved_batch = await litellm.aretrieve_batch(
+    retrieved_batch = await lumina.aretrieve_batch(
         batch_id=create_batch_response.id,
         custom_llm_provider="openai"
     )
@@ -176,7 +176,7 @@ assert retrieved_batch.id == create_batch_response.id
 
 # try to get file content for our original file
 
-file_content = await litellm.afile_content(
+file_content = await lumina.afile_content(
     file_id=batch_input_file_id, custom_llm_provider="openai"
 )
 
@@ -186,7 +186,7 @@ print("file content = ", file_content)
 **List Batches**
 
 ```python
-list_batches_response = litellm.list_batches(custom_llm_provider="openai", limit=2)
+list_batches_response = lumina.list_batches(custom_llm_provider="openai", limit=2)
 print("list_batches_response=", list_batches_response)
 ```
 
@@ -203,7 +203,7 @@ Route batch operations to different provider accounts using model-specific crede
 
 **Priority Order:**
 1. **Encoded Batch/File ID** (highest) - Model info embedded in the ID
-2. **Model Parameter** - Via header (`x-litellm-model`), query param, or request body
+2. **Model Parameter** - Via header (`x-lumina-model`), query param, or request body
 3. **Custom Provider** (fallback) - Uses environment variables
 
 ### Configuration
@@ -234,13 +234,13 @@ model_list:
 
 #### Scenario 1: Encoded File ID with Model
 
-When you upload a file with a model parameter, LiteLLM encodes the model information in the file ID. All subsequent operations automatically use those credentials.
+When you upload a file with a model parameter, Lumina encodes the model information in the file ID. All subsequent operations automatically use those credentials.
 
 ```bash
 # Step 1: Upload file with model
 curl http://localhost:4000/v1/files \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
-  -H "x-litellm-model: gpt-4o-account-1" \
+  -H "x-lumina-model: gpt-4o-account-1" \
   -F purpose="batch" \
   -F file="@batch.jsonl"
 
@@ -285,7 +285,7 @@ Specify the model for each request without encoding it in the ID.
 # Create batch with model header
 curl http://localhost:4000/v1/batches \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
-  -H "x-litellm-model: gpt-4o-account-2" \
+  -H "x-lumina-model: gpt-4o-account-2" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "file-abc123",
@@ -340,13 +340,13 @@ curl http://localhost:4000/v1/batches \
 ```bash
 # Upload file to Account 1
 FILE_1=$(curl -s http://localhost:4000/v1/files \
-  -H "x-litellm-model: gpt-4o-account-1" \
+  -H "x-lumina-model: gpt-4o-account-1" \
   -F purpose="batch" \
   -F file="@batch1.jsonl" | jq -r '.id')
 
 # Upload file to Account 2
 FILE_2=$(curl -s http://localhost:4000/v1/files \
-  -H "x-litellm-model: gpt-4o-account-2" \
+  -H "x-lumina-model: gpt-4o-account-2" \
   -F purpose="batch" \
   -F file="@batch2.jsonl" | jq -r '.id')
 
@@ -370,11 +370,11 @@ curl "http://localhost:4000/v1/batches?model=gpt-4o-account-2"
 ### SDK Usage with Model Routing
 
 ```python
-import litellm
+import lumina
 import asyncio
 
 # Upload file with model routing
-file_obj = await litellm.acreate_file(
+file_obj = await lumina.acreate_file(
     file=open("batch.jsonl", "rb"),
     purpose="batch",
     model="gpt-4o-account-1",  # Route to specific account
@@ -384,7 +384,7 @@ print(f"File ID: {file_obj.id}")
 # File ID is encoded with model info
 
 # Create batch - automatically uses gpt-4o-account-1 credentials
-batch = await litellm.acreate_batch(
+batch = await lumina.acreate_batch(
     completion_window="24h",
     endpoint="/v1/chat/completions",
     input_file_id=file_obj.id,  # Model info embedded in ID
@@ -394,14 +394,14 @@ print(f"Batch ID: {batch.id}")
 # Batch ID is also encoded
 
 # Retrieve batch - automatically routes to correct account
-retrieved = await litellm.aretrieve_batch(
+retrieved = await lumina.aretrieve_batch(
     batch_id=batch.id,  # Model info embedded in ID
 )
 
 print(f"Batch status: {retrieved.status}")
 
 # Or explicitly specify model
-batch2 = await litellm.acreate_batch(
+batch2 = await lumina.acreate_batch(
     completion_window="24h",
     endpoint="/v1/chat/completions",
     input_file_id="file-regular-id",
@@ -411,18 +411,18 @@ batch2 = await litellm.acreate_batch(
 
 ### How ID Encoding Works
 
-LiteLLM encodes model information into file and batch IDs using base64:
+Lumina encodes model information into file and batch IDs using base64:
 
 ```
 Original:  file-abc123
 Encoded:   file-bGl0ZWxsbTpmaWxlLWFiYzEyMzttb2RlbCxncHQtNG8tdGVzdA
            └─┬─┘ └──────────────────┬──────────────────────┘
-          prefix      base64(litellm:file-abc123;model,gpt-4o-test)
+          prefix      base64(lumina:file-abc123;model,gpt-4o-test)
 
 Original:  batch_xyz789
 Encoded:   batch_bGl0ZWxsbTpiYXRjaF94eXo3ODk7bW9kZWwsZ3B0LTRvLXRlc3Q
            └──┬──┘ └──────────────────┬──────────────────────┘
-           prefix       base64(litellm:batch_xyz789;model,gpt-4o-test)
+           prefix       base64(lumina:batch_xyz789;model,gpt-4o-test)
 ```
 
 The encoding:
@@ -448,7 +448,7 @@ All batch and file endpoints support model-based routing:
 
 ## Supported providers
 
-LiteLLM supports the following provider-native batch APIs:
+Lumina supports the following provider-native batch APIs:
 
 | Provider | Documentation |
 | --- | --- |
@@ -457,14 +457,14 @@ LiteLLM supports the following provider-native batch APIs:
 | Google Vertex AI | [Vertex AI batch APIs](/docs/providers/vertex_batch) |
 | Amazon Bedrock | [Amazon Bedrock batch inference](./providers/bedrock_batches) |
 | Mistral AI | [Mistral AI Batch API](./providers/mistral_batches) |
-| vLLM | [vLLM batches](./providers/vllm_batches), run by LiteLLM when the server has no Files API |
+| vLLM | [vLLM batches](./providers/vllm_batches), run by Lumina when the server has no Files API |
 | xAI | [xAI Batch API](./providers/xai_batches) |
 
 Amazon Bedrock is the supported AWS integration for batch inference.
 
 ## Batch Input File Validation
 
-LiteLLM validates batch input files at upload time. When a client uploads a file to `POST /v1/files` with `purpose="batch"`, LiteLLM checks the file locally and rejects invalid files before anything is forwarded to the provider. Validation runs on every `/v1/files` routing path, including provider-routed uploads configured through `files_settings` and [LiteLLM managed files](./proxy/managed_batches) uploads that use `target_model_names`
+Lumina validates batch input files at upload time. When a client uploads a file to `POST /v1/files` with `purpose="batch"`, Lumina checks the file locally and rejects invalid files before anything is forwarded to the provider. Validation runs on every `/v1/files` routing path, including provider-routed uploads configured through `files_settings` and [Lumina managed files](./proxy/managed_batches) uploads that use `target_model_names`
 
 Rejections use the OpenAI error format, an `error` object with `message`, `type`, `param`, and `code` fields, so existing OpenAI SDK error handling works unchanged
 
@@ -520,7 +520,7 @@ The `general_settings` value applies to every key. A proxy admin can give one ke
 
 ### Content validation
 
-LiteLLM always validates the content of `purpose="batch"` uploads. There is no setting to configure. The filename must end in `.jsonl`, matched case-insensitively. The file must contain at least one non-blank line. Every non-blank line must be valid JSON. Every line must be a JSON object. Every object must contain the `custom_id`, `method`, `url`, and `body` keys
+Lumina always validates the content of `purpose="batch"` uploads. There is no setting to configure. The filename must end in `.jsonl`, matched case-insensitively. The file must contain at least one non-blank line. Every non-blank line must be valid JSON. Every line must be a JSON object. Every object must contain the `custom_id`, `method`, `url`, and `body` keys
 
 A file that fails any of these checks is rejected with HTTP `400` and `"type": "invalid_request_error"`. The `param` field names the offending field: `file` for a wrong extension, an empty file, a line that is not valid JSON, or a line that is not a JSON object. For a line that is missing a required key, `param` is the missing key, such as `method`. The `message` includes the 1-based line number where relevant. Line numbers count every line in the file, including blank lines
 
@@ -596,22 +596,22 @@ The limits apply to the `/v1/files` routes above, including `/files` and `/{prov
 Batch rate limits are enforced when the client calls `POST /v1/batches`, not when the input file is uploaded.
 
 1. The client uploads the JSONL input file with `POST /v1/files`. This upload does not consume the batch TPM or RPM allowance.
-2. When the client creates the batch, LiteLLM downloads and evaluates the referenced input file.
-3. LiteLLM atomically checks the complete file against every applicable limit.
-4. If any limit would be exceeded, LiteLLM returns `429` and does not submit the batch to the provider. Otherwise, it records the usage and creates the provider batch.
+2. When the client creates the batch, Lumina downloads and evaluates the referenced input file.
+3. Lumina atomically checks the complete file against every applicable limit.
+4. If any limit would be exceeded, Lumina returns `429` and does not submit the batch to the provider. Otherwise, it records the usage and creates the provider batch.
 
-This allows LiteLLM to accept or reject the batch before the provider processes it.
+This allows Lumina to accept or reject the batch before the provider processes it.
 
-### What LiteLLM counts
+### What Lumina counts
 
 | Limit | Batch charge |
 | --- | --- |
 | RPM | One request for each JSONL record. |
 | TPM | Input tokens found in each record's `body.messages`, `body.prompt`, or `body.input`. |
 | Project ITPM | The same input-token count, grouped by each record's `body.model`. |
-| Project OTPM | An output-token reservation for each record, grouped by `body.model`. LiteLLM uses `max_tokens`, `max_completion_tokens`, or `max_output_tokens` when present and accounts for `n` or `best_of`. Embedding records reserve no output tokens. If no output cap is present, LiteLLM uses the v3 limiter's built-in estimate, bounded by the smallest applicable OTPM limit. |
+| Project OTPM | An output-token reservation for each record, grouped by `body.model`. Lumina uses `max_tokens`, `max_completion_tokens`, or `max_output_tokens` when present and accounts for `n` or `best_of`. Embedding records reserve no output tokens. If no output cap is present, Lumina uses the v3 limiter's built-in estimate, bounded by the smallest applicable OTPM limit. |
 
-If LiteLLM cannot tokenize an individual record, it uses a conservative estimate based on the serialized record size. A malformed JSONL line still counts as one request.
+If Lumina cannot tokenize an individual record, it uses a conservative estimate based on the serialized record size. A malformed JSONL line still counts as one request.
 
 :::important
 
@@ -636,26 +636,26 @@ Only a proxy admin can set or change `batch_enqueued_token_limit`. Key and team 
 
 When a key or team has an enqueued-token limit, batch submission is governed only by that allowance:
 
-1. When the client creates a batch, LiteLLM reserves the file's estimated tokens (the input tokens plus each record's output cap) against the allowance.
-2. If the batch does not fit, LiteLLM returns `429` naming the enqueued token limit and does not submit the batch to the provider.
-3. When LiteLLM serves a response showing the batch in a terminal state (completed, failed, expired, or cancelled), it refunds the reservation. Polling `GET /v1/batches/{batch_id}` and cancelling with `POST /v1/batches/{batch_id}/cancel` both qualify.
+1. When the client creates a batch, Lumina reserves the file's estimated tokens (the input tokens plus each record's output cap) against the allowance.
+2. If the batch does not fit, Lumina returns `429` naming the enqueued token limit and does not submit the batch to the provider.
+3. When Lumina serves a response showing the batch in a terminal state (completed, failed, expired, or cancelled), it refunds the reservation. Polling `GET /v1/batches/{batch_id}` and cancelling with `POST /v1/batches/{batch_id}/cancel` both qualify.
 4. Batch submissions are not charged to the per-minute TPM and RPM windows, so a batch whose record count exceeds the key's RPM is accepted when it fits the allowance.
 
 Real-time traffic such as chat completions is unaffected: it consumes the key's TPM and RPM limits exactly as before.
 
 Two details to plan around:
 
-- `disable_batch_input_file_rate_limiting` and `skip_batch_input_file_rate_limiting_for_providers` take precedence. When they apply, LiteLLM performs no enqueued-token accounting.
-- Reservations for batches whose terminal state LiteLLM never observes (for example, a batch only ever polled directly against the provider) expire after 8 days.
+- `disable_batch_input_file_rate_limiting` and `skip_batch_input_file_rate_limiting_for_providers` take precedence. When they apply, Lumina performs no enqueued-token accounting.
+- Reservations for batches whose terminal state Lumina never observes (for example, a batch only ever polled directly against the provider) expire after 8 days.
 
 ### Operational behavior
 
 | Behavior | Operational impact |
 | --- | --- |
 | Accounting is based on the submitted file | Batch TPM and RPM counters are not reconciled against the provider's final usage. Final cost tracking is separate. |
-| The complete file cannot be downloaded or evaluated | LiteLLM logs the error and submits the batch without charging it to TPM or RPM. Monitor these errors if your deployment requires strict rate-limit enforcement. |
-| No applicable rate limit is configured | LiteLLM submits the batch without downloading it for rate-limit accounting. |
-| The API key has a model allowlist | LiteLLM reads the file and validates every `body.model` before submission. |
+| The complete file cannot be downloaded or evaluated | Lumina logs the error and submits the batch without charging it to TPM or RPM. Monitor these errors if your deployment requires strict rate-limit enforcement. |
+| No applicable rate limit is configured | Lumina submits the batch without downloading it for rate-limit accounting. |
+| The API key has a model allowlist | Lumina reads the file and validates every `body.model` before submission. |
 
 ### Skipping the input-file pre-read
 
@@ -673,20 +673,20 @@ general_settings:
 
 The provider-specific option uses the provider configured on the selected route. It does not use a `custom_llm_provider` value supplied by the client.
 
-For API keys with a model allowlist, LiteLLM must still read the file to validate each `body.model` value. In this case, the settings above skip the TPM and RPM counter update, but not the file download or model validation.
+For API keys with a model allowlist, Lumina must still read the file to validate each `body.model` value. In this case, the settings above skip the TPM and RPM counter update, but not the file download or model validation.
 
 The following options are not supported:
 
-- `skip_batch_input_file_rate_limiting_for_models` is retained for compatibility but has no effect. LiteLLM logs a warning at startup when it is configured.
+- `skip_batch_input_file_rate_limiting_for_models` is retained for compatibility but has no effect. Lumina logs a warning at startup when it is configured.
 - A `skip_batch_input_file_rate_limiting` flag in request metadata is ignored.
 
 Use the global or provider-specific settings above to manage this behavior at the server level.
 
 ## How Cost Tracking for Batches API Works
 
-**Enterprise:** Automated batch cost tracking requires a LiteLLM Enterprise license.
+**Enterprise:** Automated batch cost tracking requires a Lumina Enterprise license.
 
-For managed batches, LiteLLM monitors the provider job in the background. When the job reaches a terminal state, LiteLLM:
+For managed batches, Lumina monitors the provider job in the background. When the job reaches a terminal state, Lumina:
 
 1. Downloads the provider's output file.
 2. Reads each successful output record.
@@ -694,10 +694,10 @@ For managed batches, LiteLLM monitors the provider job in the background. When t
 4. Calculates each record's cost using the deployment's configured batch pricing.
 5. Records the combined usage and cost against the user, key, team, and request tags that created the batch.
 
-Failed output records are excluded from the aggregate. If the batch has no output file because every record failed, LiteLLM records zero usage and zero cost.
+Failed output records are excluded from the aggregate. If the batch has no output file because every record failed, Lumina records zero usage and zero cost.
 
 The initial submission and the completed aggregate are recorded separately. The completed aggregate is emitted through standard spend tracking as an `aretrieve_batch` record, so it is available to the Admin UI and configured logging callbacks.
 
 Batch cost tracking does not change the TPM or RPM counters reserved at submission. Those counters remain based on the input-file calculation described above.
 
-## [Swagger API Reference](https://docs.litellm.ai/api-reference/#/batch)
+## [Swagger API Reference](https://docs.lumina.ai/api-reference/#/batch)

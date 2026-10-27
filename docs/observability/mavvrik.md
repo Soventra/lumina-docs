@@ -1,13 +1,13 @@
 # Mavvrik
 
-LiteLLM can export proxy spend data to [Mavvrik](https://mavvrik.ai) as [FOCUS 1.2](https://focus.finops.org/) formatted cost reports. This lets you track and analyse LLM spend within the Mavvrik cost management platform.
+Lumina can export proxy spend data to [Mavvrik](https://mavvrik.ai) as [FOCUS 1.2](https://focus.finops.org/) formatted cost reports. This lets you track and analyse LLM spend within the Mavvrik cost management platform.
 
 ## Overview
 
 | Property | Details |
 |----------|---------|
-| Destination | Export LiteLLM usage data to Mavvrik via signed URL upload |
-| Data format | FOCUS CSV (gzip-compressed, automatically transformed from LiteLLM spend data) |
+| Destination | Export Lumina usage data to Mavvrik via signed URL upload |
+| Data format | FOCUS CSV (gzip-compressed, automatically transformed from Lumina spend data) |
 | Supported operations | Automatic daily export |
 | Authentication | Mavvrik API key + connection ID |
 
@@ -43,7 +43,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: sk-your-key
 
-litellm_settings:
+lumina_settings:
   callbacks: ["mavvrik"]
 ```
 
@@ -51,7 +51,7 @@ litellm_settings:
 export MAVVRIK_API_KEY="<your-api-key>"
 export MAVVRIK_API_ENDPOINT="https://api.mavvrik.ai/<tenant_id>"
 export MAVVRIK_CONNECTION_ID="<connection-id>"
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 The proxy registers a background job that exports FOCUS-formatted spend data once daily.
@@ -68,9 +68,9 @@ Re-running an export for the same date overwrites the previous file, so exports 
 
 ## FOCUS Field Mapping
 
-LiteLLM spend data is transformed into the FOCUS 1.2 schema before upload:
+Lumina spend data is transformed into the FOCUS 1.2 schema before upload:
 
-| LiteLLM Field | FOCUS Column | Description |
+| Lumina Field | FOCUS Column | Description |
 |---------------|-------------|-------------|
 | `spend` | BilledCost, EffectiveCost | Cost of the usage |
 | `model` | ChargeDescription, ResourceId | Model identifier |

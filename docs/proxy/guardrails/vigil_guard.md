@@ -3,24 +3,24 @@ import TabItem from '@theme/TabItem';
 
 # Vigil Guard
 
-Use [Vigil Guard](https://www.vigilguard.ai) as a LiteLLM proxy guardrail to evaluate chat input and model output before it is returned to your application.
+Use [Vigil Guard](https://www.vigilguard.ai) as a Lumina proxy guardrail to evaluate chat input and model output before it is returned to your application.
 
 **Supported endpoints:** The Vigil Guard integration supports the chat completions endpoint (`/v1/chat/completions`).
 
-For Chat Completions, Vigil Guard scans request and response text. On post-call checks, LiteLLM also scans model-generated `tool_calls[].function.arguments`; if Vigil Guard returns `SANITIZED`, LiteLLM replaces the tool call arguments with the sanitized value before returning the response.
+For Chat Completions, Vigil Guard scans request and response text. On post-call checks, Lumina also scans model-generated `tool_calls[].function.arguments`; if Vigil Guard returns `SANITIZED`, Lumina replaces the tool call arguments with the sanitized value before returning the response.
 
 Static tool schemas and tool descriptions passed in `tools` are not scanned by this integration.
 
 Vigil Guard Enterprise is an AI Detection & Response platform for securing LLM applications at runtime. It gives security and platform teams a policy layer for prompts, responses, and autonomous agent interactions, with support for prompt-injection defense, sensitive data protection, content moderation, semantic drift detection, and SIEM export.
 
-Deploy Vigil Guard Enterprise on-premises, then point LiteLLM at the deployed API. The public installation guide provides a Docker-based deployment flow for Linux x86_64 hosts. See the [Vigil Guard installation guide](https://www.vigilguard.ai/install/) for current requirements and installation steps.
+Deploy Vigil Guard Enterprise on-premises, then point Lumina at the deployed API. The public installation guide provides a Docker-based deployment flow for Linux x86_64 hosts. See the [Vigil Guard installation guide](https://www.vigilguard.ai/install/) for current requirements and installation steps.
 
 ## Overview
 
 | Property | Details |
 |----------|---------|
 | Provider | [Vigil Guard](https://www.vigilguard.ai) |
-| LiteLLM guardrail value | `vigil_guard` |
+| Lumina guardrail value | `vigil_guard` |
 | Supported modes | `pre_call`, `post_call` |
 | Supported behavior | Allow, sanitize, or block content based on your Vigil Guard policy |
 | Default failure behavior | `fail_closed` |
@@ -89,10 +89,10 @@ export VIGIL_GUARD_URL="https://api.your-hostname"
 export OPENAI_API_KEY="your-openai-api-key"
 ```
 
-### 5. Start LiteLLM Gateway
+### 5. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 6. Test a request
@@ -223,7 +223,7 @@ guardrails:
 
 ### Fail-Open Mode
 
-By default, Vigil Guard fails closed. If the guardrail backend cannot be reached, LiteLLM returns an error instead of sending unscanned content to the model.
+By default, Vigil Guard fails closed. If the guardrail backend cannot be reached, Lumina returns an error instead of sending unscanned content to the model.
 
 Set `unreachable_fallback: fail_open` to allow requests to continue when the guardrail backend is unreachable.
 
@@ -262,21 +262,21 @@ guardrails:
 | `mode` | - | required | Supported values: `pre_call`, `post_call`. |
 | `api_key` | `VIGIL_GUARD_API_KEY` | required | Vigil Guard API key. |
 | `api_base` | `VIGIL_GUARD_URL` | required | Vigil Guard API base URL. |
-| `default_on` | - | `false` | When `true`, LiteLLM runs this guardrail on every request without requiring clients to pass the guardrail name. |
+| `default_on` | - | `false` | When `true`, Lumina runs this guardrail on every request without requiring clients to pass the guardrail name. |
 | `unreachable_fallback` | - | `fail_closed` | Use `fail_closed` to block on backend failure, or `fail_open` to allow the request to continue when the backend is unreachable. |
 
 ## Error Handling
 
 | Scenario | Behavior |
 |----------|----------|
-| Vigil Guard allows the content | LiteLLM continues the request normally. |
-| Vigil Guard sanitizes the content | LiteLLM forwards the sanitized content. |
-| Vigil Guard blocks the content | LiteLLM returns a guardrail error with HTTP `400`. |
-| Backend failure with `unreachable_fallback: fail_closed` | LiteLLM fails the request instead of sending unscanned content. |
-| Backend failure with `unreachable_fallback: fail_open` | LiteLLM logs the backend failure and allows the request to continue. |
+| Vigil Guard allows the content | Lumina continues the request normally. |
+| Vigil Guard sanitizes the content | Lumina forwards the sanitized content. |
+| Vigil Guard blocks the content | Lumina returns a guardrail error with HTTP `400`. |
+| Backend failure with `unreachable_fallback: fail_closed` | Lumina fails the request instead of sending unscanned content. |
+| Backend failure with `unreachable_fallback: fail_open` | Lumina logs the backend failure and allows the request to continue. |
 
 ## Further Reading
 
-- [LiteLLM Guardrails Quick Start](./quick_start)
+- [Lumina Guardrails Quick Start](./quick_start)
 - [Control Guardrails per API Key](./quick_start#-control-guardrails-per-api-key)
 - [Vigil Guard](https://www.vigilguard.ai)

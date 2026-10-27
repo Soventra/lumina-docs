@@ -16,10 +16,10 @@ Anthropic-compatible token counting endpoint. Count tokens for messages before s
 
 ## Quick Start
 
-### 1. Start LiteLLM Proxy
+### 1. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -51,7 +51,7 @@ response = httpx.post(
     "http://localhost:4000/v1/messages/count_tokens",
     headers={
         "Content-Type": "application/json",
-        "Authorization": "Bearer sk-<your-litellm-api-key>"
+        "Authorization": "Bearer sk-<your-lumina-api-key>"
     },
     json={
         "model": "{{anthropic}}",
@@ -76,7 +76,7 @@ print(response.json())
 }
 ```
 
-## LiteLLM Proxy Configuration
+## Lumina Proxy Configuration
 
 Add models to your `config.yaml`:
 
@@ -206,11 +206,11 @@ curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
 
 ## Comparison with Anthropic Passthrough
 
-LiteLLM provides two ways to count tokens:
+Lumina provides two ways to count tokens:
 
 | Endpoint | Description | Use Case |
 |----------|-------------|----------|
-| `/v1/messages/count_tokens` | LiteLLM's Anthropic-compatible endpoint | Works with all supported providers (Anthropic, Vertex AI, Bedrock, etc.) |
+| `/v1/messages/count_tokens` | Lumina's Anthropic-compatible endpoint | Works with all supported providers (Anthropic, Vertex AI, Bedrock, etc.) |
 | `/anthropic/v1/messages/count_tokens` | [Pass-through to Anthropic API](./pass_through/anthropic_completion.md#example-2-token-counting-api) | Direct Anthropic API access with native headers |
 
 ### Pass-through Example

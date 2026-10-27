@@ -1,15 +1,15 @@
 # Arize Phoenix Prompt Management
 
-Use prompt versions from [Arize Phoenix](https://phoenix.arize.com/) with LiteLLM SDK and Proxy.
+Use prompt versions from [Arize Phoenix](https://phoenix.arize.com/) with Lumina SDK and Proxy.
 
 ## Quick Start
 
 ### SDK
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     prompt_id="UHJvbXB0VmVyc2lvbjox",
     prompt_integration="arize_phoenix",
@@ -97,7 +97,7 @@ prompt_variables = {
 ## Combine with Additional Messages
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     prompt_id="UHJvbXB0VmVyc2lvbjox",
     prompt_integration="arize_phoenix",
@@ -114,7 +114,7 @@ response = litellm.completion(
 
 ```python
 try:
-    response = litellm.completion(
+    response = lumina.completion(
         model="{{openai_large}}",
         prompt_id="invalid-id",
         prompt_integration="arize_phoenix",
@@ -129,6 +129,6 @@ except Exception as e:
 
 ## Support
 
-- [LiteLLM GitHub Issues](https://github.com/BerriAI/litellm/issues)
+- [Lumina GitHub Issues](https://github.com/Soventra/lumina/issues)
 - [Arize Phoenix Docs](https://docs.arize.com/phoenix)
 

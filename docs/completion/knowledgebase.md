@@ -12,10 +12,10 @@ import Image from '@theme/IdealImage';
   img={require('../../img/kb.png')}
   style={{width: '100%', display: 'block', margin: '2rem auto'}}
 />
-<p style={{textAlign: 'left', color: '#666'}}>Use Vector Stores with any LiteLLM supported model</p>
+<p style={{textAlign: 'left', color: '#666'}}>Use Vector Stores with any Lumina supported model</p>
 
 
-LiteLLM integrates with vector stores, allowing your models to access your organization's data for more accurate and contextually relevant responses.
+Lumina integrates with vector stores, allowing your models to access your organization's data for more accurate and contextually relevant responses.
 
 ## Supported Vector Stores
 - [Bedrock Knowledge Bases](https://aws.amazon.com/bedrock/knowledge-bases/)
@@ -29,25 +29,25 @@ LiteLLM integrates with vector stores, allowing your models to access your organ
 
 ## Quick Start
 
-To use a vector store with LiteLLM, you need to 
+To use a vector store with Lumina, you need to 
 
-- Initialize litellm.vector_store_registry
-- Pass tools with vector_store_ids to the completion request. Where `vector_store_ids` is a list of vector store ids you initialized in litellm.vector_store_registry
+- Initialize lumina.vector_store_registry
+- Pass tools with vector_store_ids to the completion request. Where `vector_store_ids` is a list of vector store ids you initialized in lumina.vector_store_registry
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
-LiteLLM's allows you to use vector stores in the [OpenAI API spec](https://platform.openai.com/docs/api-reference/chat/create) by passing a tool with vector_store_ids you want to use
+Lumina's allows you to use vector stores in the [OpenAI API spec](https://platform.openai.com/docs/api-reference/chat/create) by passing a tool with vector_store_ids you want to use
 
 ```python showLineNumbers title="Basic Bedrock Knowledge Base Usage"
 import os
-import litellm
+import lumina
 
-from litellm.vector_stores.vector_store_registry import VectorStoreRegistry, LiteLLM_ManagedVectorStore
+from lumina.vector_stores.vector_store_registry import VectorStoreRegistry, Lumina_ManagedVectorStore
 
 # Init vector store registry
-litellm.vector_store_registry = VectorStoreRegistry(
+lumina.vector_store_registry = VectorStoreRegistry(
     vector_stores=[
-        LiteLLM_ManagedVectorStore(
+        Lumina_ManagedVectorStore(
             vector_store_id="T37J8R4WTM",
             custom_llm_provider="bedrock"
         )
@@ -56,9 +56,9 @@ litellm.vector_store_registry = VectorStoreRegistry(
 
 
 # Make a completion request with vector_store_ids parameter
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}", 
-    messages=[{"role": "user", "content": "What is litellm?"}],
+    messages=[{"role": "user", "content": "What is lumina?"}],
     tools=[
         {
             "type": "file_search",
@@ -70,11 +70,11 @@ response = await litellm.acompletion(
 print(response.choices[0].message.content)
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 #### 1. Configure your vector_store_registry
 
-To use a vector store with LiteLLM, you need to configure your vector_store_registry. This tells litellm which vector stores to use and api provider to use for the vector store.
+To use a vector store with Lumina, you need to configure your vector_store_registry. This tells lumina which vector stores to use and api provider to use for the vector store.
 
 <Tabs>
 <TabItem value="config-yaml" label="config.yaml">
@@ -87,21 +87,21 @@ model_list:
       api_key: os.environ/ANTHROPIC_API_KEY
 
 vector_store_registry:
-  - vector_store_name: "bedrock-litellm-website-knowledgebase"
+  - vector_store_name: "bedrock-lumina-website-knowledgebase"
     lumina_params:
       vector_store_id: "T37J8R4WTM"
       custom_llm_provider: "bedrock"
-      vector_store_description: "Bedrock vector store for the Litellm website knowledgebase"
+      vector_store_description: "Bedrock vector store for the Lumina website knowledgebase"
       vector_store_metadata:
-        source: "https://www.litellm.com/docs"
+        source: "https://www.lumina.com/docs"
 
 ```
 
 </TabItem>
 
-<TabItem value="litellm-ui" label="LiteLLM UI">
+<TabItem value="lumina-ui" label="Lumina UI">
 
-On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Store. On this page you can create a vector store with a name, vector store id and credentials.
+On the Lumina UI, Navigate to Experimental > Vector Stores > Create Vector Store. On this page you can create a vector store with a name, vector store id and credentials.
 <Image 
   img={require('../../img/kb_2.png')}
   style={{width: '50%'}}
@@ -119,13 +119,13 @@ On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Stor
 <Tabs>
 <TabItem value="curl" label="Curl">
 
-```bash showLineNumbers title="Curl Request to LiteLLM Proxy"
+```bash showLineNumbers title="Curl Request to Lumina Proxy"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
-    "messages": [{"role": "user", "content": "What is litellm?"}],
+    "messages": [{"role": "user", "content": "What is lumina?"}],
     "tools": [
         {
             "type": "file_search",
@@ -142,16 +142,16 @@ curl http://localhost:4000/v1/chat/completions \
 ```python showLineNumbers title="OpenAI Python SDK Request"
 from openai import OpenAI
 
-# Initialize client with your LiteLLM proxy URL
+# Initialize client with your Lumina proxy URL
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 # Make a completion request with vector_store_ids parameter
 response = client.chat.completions.create(
     model="{{anthropic}}",
-    messages=[{"role": "user", "content": "What is litellm?"}],
+    messages=[{"role": "user", "content": "What is lumina?"}],
     tools=[
         {
             "type": "file_search",
@@ -168,7 +168,7 @@ print(response.choices[0].message.content)
 
 ## Provider Specific Guides
 
-This section covers how to add your vector stores to LiteLLM. If you want support for a new provider, please file an issue [here](https://github.com/BerriAI/litellm/issues).
+This section covers how to add your vector stores to Lumina. If you want support for a new provider, please file an issue [here](https://github.com/Soventra/lumina/issues).
 
 ### Bedrock Knowledge Bases
 
@@ -176,7 +176,7 @@ This section covers how to add your vector stores to LiteLLM. If you want suppor
 
 Ensure you have a Bedrock Knowledge Base created in your AWS account with the appropriate permissions configured.
 
-**2. Add to LiteLLM UI**
+**2. Add to Lumina UI**
 
 1. Navigate to **Tools > Vector Stores > "Add new vector store"**
 2. Select **"Bedrock"** as the provider
@@ -193,7 +193,7 @@ Ensure you have a Bedrock Knowledge Base created in your AWS account with the ap
 **1. Get your Vertex AI RAG Engine ID**
 
 1. Navigate to your RAG Engine Corpus in the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/rag/corpus)
-2. Select the **RAG Engine** you want to integrate with LiteLLM
+2. Select the **RAG Engine** you want to integrate with Lumina
 
 <div style={{margin: '20px 0', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', display: 'inline-block', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
 <Image 
@@ -212,7 +212,7 @@ Ensure you have a Bedrock Knowledge Base created in your AWS account with the ap
 />
 </div>
 
-**2. Add to LiteLLM UI**
+**2. Add to Lumina UI**
 
 1. Navigate to **Tools > Vector Stores > "Add new vector store"**
 2. Select **"Vertex AI RAG Engine"** as the provider
@@ -227,23 +227,23 @@ Ensure you have a Bedrock Knowledge Base created in your AWS account with the ap
 
 ### PG Vector
 
-**1. Deploy the litellm-pg-vector-store connector**
+**1. Deploy the lumina-pg-vector-store connector**
 
-LiteLLM provides a server that exposes OpenAI-compatible `vector_store` endpoints for PG Vector. The LiteLLM Proxy server connects to your deployed service and uses it as a vector store when querying.
+Lumina provides a server that exposes OpenAI-compatible `vector_store` endpoints for PG Vector. The Lumina Proxy server connects to your deployed service and uses it as a vector store when querying.
 
-1. Follow the deployment instructions for the litellm-pg-vector-store connector [here](https://github.com/BerriAI/litellm-pgvector)
-2. For detailed configuration options, see the [configuration guide](https://github.com/BerriAI/litellm-pgvector?tab=readme-ov-file#configuration)
+1. Follow the deployment instructions for the lumina-pg-vector-store connector [here](https://github.com/Soventra/lumina-pgvector)
+2. For detailed configuration options, see the [configuration guide](https://github.com/Soventra/lumina-pgvector?tab=readme-ov-file#configuration)
 
-**Example .env configuration for deploying litellm-pg-vector-store:**
+**Example .env configuration for deploying lumina-pg-vector-store:**
 
 ```env
 DATABASE_URL="postgresql://neondb_owner:xxxx"
-SERVER_API_KEY="sk-<your-litellm-api-key>"
+SERVER_API_KEY="sk-<your-lumina-api-key>"
 HOST="0.0.0.0"
 PORT=8001
 EMBEDDING__MODEL="text-embedding-ada-002"
 EMBEDDING__BASE_URL="http://localhost:4000"
-EMBEDDING__API_KEY="sk-<your-litellm-api-key>"
+EMBEDDING__API_KEY="sk-<your-lumina-api-key>"
 EMBEDDING__DIMENSIONS=1536
 DB_FIELDS__ID_FIELD="id"
 DB_FIELDS__CONTENT_FIELD="content"
@@ -253,13 +253,13 @@ DB_FIELDS__VECTOR_STORE_ID_FIELD="vector_store_id"
 DB_FIELDS__CREATED_AT_FIELD="created_at"
 ```
 
-**2. Add to LiteLLM UI**
+**2. Add to Lumina UI**
 
-Once your litellm-pg-vector-store is deployed:
+Once your lumina-pg-vector-store is deployed:
 
 1. Navigate to **Tools > Vector Stores > "Add new vector store"**
 2. Select **"PG Vector"** as the provider
-3. Enter your **API Base URL** and **API Key** for your `litellm-pg-vector-store` container
+3. Enter your **API Base URL** and **API Key** for your `lumina-pg-vector-store` container
    - The API Key field corresponds to the `SERVER_API_KEY` from your .env configuration
 
 <div style={{margin: '20px 0', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', display: 'inline-block', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'}}>
@@ -276,7 +276,7 @@ Once your litellm-pg-vector-store is deployed:
 1. Create your Vector Store on the [OpenAI platform](https://platform.openai.com/storage/vector_stores)
 2. Note your Vector Store ID (format: `vs_687ae3b2439881918b433cb99d10662e`)
 
-**2. Add to LiteLLM UI**
+**2. Add to Lumina UI**
 
 1. Navigate to **Tools > Vector Stores > "Add new vector store"**
 2. Select **"OpenAI"** as the provider
@@ -296,15 +296,15 @@ Once your litellm-pg-vector-store is deployed:
 
 ### Logging Vector Store Usage
 
-LiteLLM allows you to view your vector store usage in the LiteLLM UI on the `Logs` page.
+Lumina allows you to view your vector store usage in the Lumina UI on the `Logs` page.
 
-After completing a request with a vector store, navigate to the `Logs` page on LiteLLM. Here you should be able to see the query sent to the vector store and corresponding response with scores.
+After completing a request with a vector store, navigate to the `Logs` page on Lumina. Here you should be able to see the query sent to the vector store and corresponding response with scores.
 
 <Image 
   img={require('../../img/kb_4.png')}
   style={{width: '80%'}}
 />
-<p style={{textAlign: 'left', color: '#666'}}>LiteLLM Logs Page: Vector Store Usage</p>
+<p style={{textAlign: 'left', color: '#666'}}>Lumina Logs Page: Vector Store Usage</p>
 
 
 ### Listing available vector stores
@@ -319,7 +319,7 @@ curl -X GET "http://localhost:4000/vector_store/list" \
 
 **Response:**
 
-The response will be a list of all vector stores that are available to use with LiteLLM.
+The response will be a list of all vector stores that are available to use with Lumina.
 
 ```json
 {
@@ -328,14 +328,14 @@ The response will be a list of all vector stores that are available to use with 
     {
       "vector_store_id": "T37J8R4WTM",
       "custom_llm_provider": "bedrock",
-      "vector_store_name": "bedrock-litellm-website-knowledgebase",
-      "vector_store_description": "Bedrock vector store for the Litellm website knowledgebase",
+      "vector_store_name": "bedrock-lumina-website-knowledgebase",
+      "vector_store_description": "Bedrock vector store for the Lumina website knowledgebase",
       "vector_store_metadata": {
-        "source": "https://www.litellm.com/docs"
+        "source": "https://www.lumina.com/docs"
       },
       "created_at": "2023-05-03T18:21:36.462Z",
       "updated_at": "2023-05-03T18:21:36.462Z",
-      "litellm_credential_name": "bedrock_credentials"
+      "lumina_credential_name": "bedrock_credentials"
     }
   ],
   "total_count": 1,
@@ -359,21 +359,21 @@ model_list:
       vector_store_ids: ["T37J8R4WTM"]
 
 vector_store_registry:
-  - vector_store_name: "bedrock-litellm-website-knowledgebase"
+  - vector_store_name: "bedrock-lumina-website-knowledgebase"
     lumina_params:
       vector_store_id: "T37J8R4WTM"
       custom_llm_provider: "bedrock"
-      vector_store_description: "Bedrock vector store for the Litellm website knowledgebase"
+      vector_store_description: "Bedrock vector store for the Lumina website knowledgebase"
       vector_store_metadata:
-        source: "https://www.litellm.com/docs"
+        source: "https://www.lumina.com/docs"
 ```
 
 ## How It Works
 
-If your request includes a `vector_store_ids` parameter where any of the vector store ids are found in the `vector_store_registry`, LiteLLM will automatically use the vector store for the request.
+If your request includes a `vector_store_ids` parameter where any of the vector store ids are found in the `vector_store_registry`, Lumina will automatically use the vector store for the request.
 
-1. You make a completion request with the `vector_store_ids` parameter and any of the vector store ids are found in the `litellm.vector_store_registry`
-2. LiteLLM automatically:
+1. You make a completion request with the `vector_store_ids` parameter and any of the vector store ids are found in the `lumina.vector_store_registry`
+2. Lumina automatically:
    - Uses your last message as the query to retrieve relevant information from the Knowledge Base
    - Adds the retrieved context to your conversation
    - Sends the augmented messages to the model
@@ -382,12 +382,12 @@ If your request includes a `vector_store_ids` parameter where any of the vector 
 
 When you pass `vector_store_ids=["YOUR_KNOWLEDGE_BASE_ID"]`, your request flows through these steps:
 
-**1. Original Request to LiteLLM:**
+**1. Original Request to Lumina:**
 ```json
 {
     "model": "anthropic/{{anthropic}}",
     "messages": [
-        {"role": "user", "content": "What is litellm?"}
+        {"role": "user", "content": "What is lumina?"}
     ],
     "vector_store_ids": ["YOUR_KNOWLEDGE_BASE_ID"]
 }
@@ -397,19 +397,19 @@ When you pass `vector_store_ids=["YOUR_KNOWLEDGE_BASE_ID"]`, your request flows 
 ```json
 {
     "retrievalQuery": {
-        "text": "What is litellm?"
+        "text": "What is lumina?"
     }
 }
 ```
 This is sent to: `https://bedrock-agent-runtime.{aws_region}.amazonaws.com/knowledgebases/YOUR_KNOWLEDGE_BASE_ID/retrieve`
 
-**3. Final Request to LiteLLM:**
+**3. Final Request to Lumina:**
 ```json
 {
     "model": "anthropic/{{anthropic}}",
     "messages": [
-        {"role": "user", "content": "What is litellm?"},
-        {"role": "user", "content": "Context: \n\nLiteLLM is an open-source SDK to simplify LLM API calls across providers (OpenAI, Claude, etc). It provides a standardized interface with robust error handling, streaming, and observability tools."}
+        {"role": "user", "content": "What is lumina?"},
+        {"role": "user", "content": "Context: \n\nLumina is an open-source SDK to simplify LLM API calls across providers (OpenAI, Claude, etc). It provides a standardized interface with robust error handling, streaming, and observability tools."}
     ]
 }
 ```
@@ -418,7 +418,7 @@ This process happens automatically whenever you include the `vector_store_ids` p
 
 ## Accessing Search Results (Citations)
 
-When using vector stores, LiteLLM automatically returns search results in `provider_specific_fields`. This allows you to show users citations for the AI's response.
+When using vector stores, Lumina automatically returns search results in `provider_specific_fields`. This allows you to show users citations for the AI's response.
 
 ### Key Concept
 
@@ -438,14 +438,14 @@ For streaming: Results appear in the **final chunk** when `finish_reason == "sto
     "index": 0,
     "message": {
       "role": "assistant",
-      "content": "LiteLLM is a platform...",
+      "content": "Lumina is a platform...",
       "provider_specific_fields": {
         "search_results": [{
-          "search_query": "What is litellm?",
+          "search_query": "What is lumina?",
           "data": [{
             "score": 0.95,
             "content": [{"text": "...", "type": "text"}],
-            "filename": "litellm-docs.md",
+            "filename": "lumina-docs.md",
             "file_id": "doc-123"
           }]
         }]
@@ -464,12 +464,12 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 response = client.chat.completions.create(
     model="{{anthropic}}",
-    messages=[{"role": "user", "content": "What is litellm?"}],
+    messages=[{"role": "user", "content": "What is lumina?"}],
     tools=[{"type": "file_search", "vector_store_ids": ["T37J8R4WTM"]}]
 )
 
@@ -498,7 +498,7 @@ const client = new OpenAI({
 
 const response = await client.chat.completions.create({
   model: '{{anthropic}}',
-  messages: [{ role: 'user', content: 'What is litellm?' }],
+  messages: [{ role: 'user', content: 'What is lumina?' }],
   tools: [{ type: 'file_search', vector_store_ids: ['T37J8R4WTM'] }]
 });
 
@@ -531,11 +531,11 @@ searchResults.forEach((page: any) => {
     "delta": {
       "provider_specific_fields": {
         "search_results": [{
-          "search_query": "What is litellm?",
+          "search_query": "What is lumina?",
           "data": [{
             "score": 0.95,
             "content": [{"text": "...", "type": "text"}],
-            "filename": "litellm-docs.md",
+            "filename": "lumina-docs.md",
             "file_id": "doc-123"
           }]
         }]
@@ -554,12 +554,12 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key="your-litellm-api-key"
+    api_key="your-lumina-api-key"
 )
 
 stream = client.chat.completions.create(
     model="{{anthropic}}",
-    messages=[{"role": "user", "content": "What is litellm?"}],
+    messages=[{"role": "user", "content": "What is lumina?"}],
     tools=[{"type": "file_search", "vector_store_ids": ["T37J8R4WTM"]}],
     stream=True
 )
@@ -588,7 +588,7 @@ import OpenAI from 'openai';
 
 const stream = await client.chat.completions.create({
   model: '{{anthropic}}',
-  messages: [{ role: 'user', content: 'What is litellm?' }],
+  messages: [{ role: 'user', content: 'What is lumina?' }],
   tools: [{ type: 'file_search', vector_store_ids: ['T37J8R4WTM'] }],
   stream: true
 });
@@ -631,9 +631,9 @@ for await (const chunk of stream) {
 
 ## API Reference
 
-### LiteLLM Completion Knowledge Base Parameters
+### Lumina Completion Knowledge Base Parameters
 
-When using the Knowledge Base integration with LiteLLM, you can include the following parameters:
+When using the Knowledge Base integration with Lumina, you can include the following parameters:
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -641,24 +641,24 @@ When using the Knowledge Base integration with LiteLLM, you can include the foll
 
 ### VectorStoreRegistry
 
-The `VectorStoreRegistry` is a central component for managing vector stores in LiteLLM. It acts as a registry where you can configure and access your vector stores.
+The `VectorStoreRegistry` is a central component for managing vector stores in Lumina. It acts as a registry where you can configure and access your vector stores.
 
 #### What is VectorStoreRegistry?
 
 `VectorStoreRegistry` is a class that:
-- Maintains a collection of vector stores that LiteLLM can use
+- Maintains a collection of vector stores that Lumina can use
 - Allows you to register vector stores with their credentials and metadata
 - Makes vector stores accessible via their IDs in your completion requests
 
 #### Using VectorStoreRegistry in Python
 
 ```python
-from litellm.vector_stores.vector_store_registry import VectorStoreRegistry, LiteLLM_ManagedVectorStore
+from lumina.vector_stores.vector_store_registry import VectorStoreRegistry, Lumina_ManagedVectorStore
 
 # Initialize the vector store registry with one or more vector stores
-litellm.vector_store_registry = VectorStoreRegistry(
+lumina.vector_store_registry = VectorStoreRegistry(
     vector_stores=[
-        LiteLLM_ManagedVectorStore(
+        Lumina_ManagedVectorStore(
             vector_store_id="YOUR_VECTOR_STORE_ID",  # Required: Unique ID for referencing this store
             custom_llm_provider="bedrock"            # Required: Provider (e.g., "bedrock")
         )
@@ -666,9 +666,9 @@ litellm.vector_store_registry = VectorStoreRegistry(
 )
 ```
 
-#### LiteLLM_ManagedVectorStore Parameters
+#### Lumina_ManagedVectorStore Parameters
 
-Each vector store in the registry is configured using a `LiteLLM_ManagedVectorStore` object with these parameters:
+Each vector store in the registry is configured using a `Lumina_ManagedVectorStore` object with these parameters:
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -677,23 +677,23 @@ Each vector store in the registry is configured using a `LiteLLM_ManagedVectorSt
 | `vector_store_name` | str | No | A friendly name for the vector store |
 | `vector_store_description` | str | No | Description of what the vector store contains |
 | `vector_store_metadata` | dict or str | No | Additional metadata about the vector store |
-| `litellm_credential_name` | str | No | Name of the credentials to use for this vector store |
+| `lumina_credential_name` | str | No | Name of the credentials to use for this vector store |
 
 #### Configuring VectorStoreRegistry in config.yaml
 
-For the LiteLLM Proxy, you can configure the same registry in your `config.yaml` file:
+For the Lumina Proxy, you can configure the same registry in your `config.yaml` file:
 
 ```yaml showLineNumbers title="Vector store configuration in config.yaml"
 vector_store_registry:
-  - vector_store_name: "bedrock-litellm-website-knowledgebase"  # Optional friendly name
+  - vector_store_name: "bedrock-lumina-website-knowledgebase"  # Optional friendly name
     lumina_params:
       vector_store_id: "T37J8R4WTM"                            # Required: Unique ID  
       custom_llm_provider: "bedrock"                           # Required: Provider
-      vector_store_description: "Bedrock vector store for the Litellm website knowledgebase"
+      vector_store_description: "Bedrock vector store for the Lumina website knowledgebase"
       vector_store_metadata:
-        source: "https://www.litellm.com/docs"
+        source: "https://www.lumina.com/docs"
 ```
 
-The `lumina_params` section accepts all the same parameters as the `LiteLLM_ManagedVectorStore` constructor in the Python SDK.
+The `lumina_params` section accepts all the same parameters as the `Lumina_ManagedVectorStore` constructor in the Python SDK.
 
 

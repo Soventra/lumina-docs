@@ -269,7 +269,7 @@ export default function MoyaiLaunchHero({date, sections}) {
           <Orbit items={PROVIDERS} radius={object.orbit.outer} speed={-0.045} orbit={object.orbit} className={styles.orbitOuter} />
           <p className={styles.tagline}>
             <span>Works with Claude Code and Codex</span>
-            <span>Self-hosted · 100+ providers through LiteLLM</span>
+            <span>Self-hosted · 100+ providers through Lumina</span>
           </p>
         </div>
       </section>

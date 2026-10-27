@@ -1,6 +1,6 @@
 # xAI Batch API
 
-LiteLLM routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to xAI's [Files](https://docs.x.ai/developers/files/managing-files) and [Batch](https://docs.x.ai/developers/advanced-api-usage/batch-api) APIs. xAI bills batch requests at a reduced rate, they do not count towards rate limits, and most batches finish within 24 hours on a best-effort basis. Not every xAI model accepts batch requests, so check xAI's model list before picking one
+Lumina routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to xAI's [Files](https://docs.x.ai/developers/files/managing-files) and [Batch](https://docs.x.ai/developers/advanced-api-usage/batch-api) APIs. xAI bills batch requests at a reduced rate, they do not count towards rate limits, and most batches finish within 24 hours on a best-effort basis. Not every xAI model accepts batch requests, so check xAI's model list before picking one
 
 | Feature | Supported |
 |---------|-----------|
@@ -68,7 +68,7 @@ curl "http://0.0.0.0:4000/v1/batches/<batch id>?provider=xai" \
   -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
-xAI reports request counters instead of a status, so LiteLLM derives one: `validating` while xAI has not counted any requests yet, `in_progress` while some are still pending, `completed` once none are, `cancelled` when you cancelled it, and `failed` when xAI cancelled it (an input file that fails validation lands here, with xAI's message under `errors`). `created_at`, `expires_at`, and `cancelled_at` come back at day resolution, because xAI stores those dates without a time of day
+xAI reports request counters instead of a status, so Lumina derives one: `validating` while xAI has not counted any requests yet, `in_progress` while some are still pending, `completed` once none are, `cancelled` when you cancelled it, and `failed` when xAI cancelled it (an input file that fails validation lands here, with xAI's message under `errors`). `created_at`, `expires_at`, and `cancelled_at` come back at day resolution, because xAI stores those dates without a time of day
 
 xAI has no output file: results are read from the batch itself, so `output_file_id` is the batch id. Download them through the file content route:
 
@@ -77,7 +77,7 @@ curl "http://0.0.0.0:4000/v1/files/<batch id>/content?provider=xai" \
   -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
-The response is OpenAI batch output JSONL, one line per request, with the result under `response.body` or the failure under `error`. xAI serves results in pages of 1000, which LiteLLM walks and joins before responding, so a large batch is held in memory while it downloads. Image and video results carry media URLs that xAI expires after one hour, so fetch those right away
+The response is OpenAI batch output JSONL, one line per request, with the result under `response.body` or the failure under `error`. xAI serves results in pages of 1000, which Lumina walks and joins before responding, so a large batch is held in memory while it downloads. Image and video results carry media URLs that xAI expires after one hour, so fetch those right away
 
 ## Listing, cancelling, and deleting
 
@@ -102,28 +102,28 @@ The file list walks every page xAI returns, and the batch list picks the provide
 `XAI_API_KEY` in the environment is enough:
 
 ```python
-import litellm
+import lumina
 
 with open("batch_input.jsonl", "rb") as fh:
-    uploaded = litellm.create_file(file=fh, purpose="batch", custom_llm_provider="xai")
+    uploaded = lumina.create_file(file=fh, purpose="batch", custom_llm_provider="xai")
 
-batch = litellm.create_batch(
+batch = lumina.create_batch(
     input_file_id=uploaded.id,
     endpoint="/v1/chat/completions",
     completion_window="24h",
     custom_llm_provider="xai",
 )
 
-batch = litellm.retrieve_batch(batch_id=batch.id, custom_llm_provider="xai")
+batch = lumina.retrieve_batch(batch_id=batch.id, custom_llm_provider="xai")
 if batch.status == "completed":
-    results = litellm.file_content(file_id=batch.output_file_id, custom_llm_provider="xai")
+    results = lumina.file_content(file_id=batch.output_file_id, custom_llm_provider="xai")
     print(results.text)
 ```
 
-`litellm.list_batches(custom_llm_provider="xai")` and `litellm.cancel_batch(batch_id=..., custom_llm_provider="xai")` cover the rest
+`lumina.list_batches(custom_llm_provider="xai")` and `lumina.cancel_batch(batch_id=..., custom_llm_provider="xai")` cover the rest
 
 ## Cost tracking
 
-When a completed xAI batch is retrieved, LiteLLM reads the usage on every result line, folds xAI's reasoning tokens into the completion tokens the way it does for synchronous xAI calls, and bills each line at the model's batch rates from the [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json): `input_cost_per_token_batches`, `output_cost_per_token_batches`, and `cache_read_input_token_cost_batches`, plus their `_above_200k_tokens` variants on the models whose price steps up past 200k tokens of context. xAI also reports `cost_in_usd_ticks` on every line (ten billion ticks to the dollar), which is a handy cross-check against the spend LiteLLM records
+When a completed xAI batch is retrieved, Lumina reads the usage on every result line, folds xAI's reasoning tokens into the completion tokens the way it does for synchronous xAI calls, and bills each line at the model's batch rates from the [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json): `input_cost_per_token_batches`, `output_cost_per_token_batches`, and `cache_read_input_token_cost_batches`, plus their `_above_200k_tokens` variants on the models whose price steps up past 200k tokens of context. xAI also reports `cost_in_usd_ticks` on every line (ten billion ticks to the dollar), which is a handy cross-check against the spend Lumina records
 
 The spend is recorded the first time a completed batch is retrieved, on the key that created it, under the batch id with a `_batch_cost` suffix, and shows up on the `/spend/logs` routes and the Admin UI Logs page

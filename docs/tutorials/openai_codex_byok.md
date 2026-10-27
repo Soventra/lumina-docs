@@ -1,17 +1,17 @@
 ---
 title: Use your ChatGPT subscription with Codex
 sidebar_label: ChatGPT subscription
-description: Connect Codex to LiteLLM with your ChatGPT subscription. Configure a model, create a virtual key, and start using the CLI or desktop app.
+description: Connect Codex to Lumina with your ChatGPT subscription. Configure a model, create a virtual key, and start using the CLI or desktop app.
 ---
 
 # Use your ChatGPT subscription with Codex
 
-Send Codex requests through LiteLLM using your own ChatGPT login. LiteLLM controls model access and records token usage; Codex keeps your login and refreshes it.
+Send Codex requests through Lumina using your own ChatGPT login. Lumina controls model access and records token usage; Codex keeps your login and refreshes it.
 
 ## Prerequisites
 
 - Codex CLI or desktop app installed, with a ChatGPT account that can use your chosen model.
-- A running [LiteLLM proxy](../proxy/docker_quick_start.md), **v1.108.0 or later**, with PostgreSQL for virtual keys and logs.
+- A running [Lumina proxy](../proxy/docker_quick_start.md), **v1.108.0 or later**, with PostgreSQL for virtual keys and logs.
 
 ## Step 1: Configure the proxy
 
@@ -41,7 +41,7 @@ In your proxy dashboard, open **Virtual Keys → + Create New Key**. Enter a nam
 Save your key in `~/.codex/.env`. Both the app and CLI read this file. Create it if needed; replace the key if it already exists.
 
 ```dotenv title="~/.codex/.env"
-LUMINA_API_KEY=sk-<your-litellm-virtual-key>
+LUMINA_API_KEY=sk-<your-lumina-virtual-key>
 ```
 
 Replace the placeholder with your key. Run `chmod 600 ~/.codex/.env` to keep the file private.
@@ -51,15 +51,15 @@ Replace the placeholder with your key. Run `chmod 600 ~/.codex/.env` to keep the
 Open `~/.codex/config.toml` or use **Settings → Configuration → Open config.toml** in the app. Keep your model and reasoning settings. Update `model_provider` above any `[table]` headings, then add this provider:
 
 ```toml title="~/.codex/config.toml"
-model_provider = "litellm_subscription"
+model_provider = "lumina_subscription"
 
-[model_providers.litellm_subscription]
-name = "LiteLLM subscription"
+[model_providers.lumina_subscription]
+name = "Lumina subscription"
 base_url = "http://localhost:4000/v1"
 wire_api = "responses"
 supports_websockets = false
 requires_openai_auth = true
-env_http_headers = { "x-litellm-api-key" = "LUMINA_API_KEY" }
+env_http_headers = { "x-lumina-api-key" = "LUMINA_API_KEY" }
 ```
 
 Replace `http://localhost:4000` with your proxy URL. Keep `env_key` unset so Codex uses your ChatGPT login.
@@ -70,7 +70,7 @@ Save the file and **restart Codex**. Sign in with ChatGPT if needed, then start 
 
 Send: **Reply with exactly Hello. Do not use tools.**
 
-You should receive `Hello`. In the LiteLLM dashboard, open **Logs** and find the successful request with your model, virtual key, and input/output token counts.
+You should receive `Hello`. In the Lumina dashboard, open **Logs** and find the successful request with your model, virtual key, and input/output token counts.
 
 ## Step 5: Add a paid fallback (optional)
 
@@ -108,12 +108,12 @@ Luna falls back to API Luna; Astra falls back to API Astra. The model must be av
 
 ## Limits
 
-Your ChatGPT plan determines model access and quota. To continue after reaching your limit, configure the [optional paid fallback](#step-5-add-a-paid-fallback-optional). ChatGPT requests have a recorded cost of $0 in LiteLLM; use request or token rate limits to cap usage.
+Your ChatGPT plan determines model access and quota. To continue after reaching your limit, configure the [optional paid fallback](#step-5-add-a-paid-fallback-optional). ChatGPT requests have a recorded cost of $0 in Lumina; use request or token rate limits to cap usage.
 
 <details>
 <summary>How credentials are handled</summary>
 
-Your LiteLLM key authorizes gateway access. Your ChatGPT login authorizes OpenAI usage and takes precedence over a saved gateway login. Codex owns sign-in and refresh; LiteLLM forwards the login for that request and redacts credential headers from logging callbacks. Gateway keys and cookies are removed before forwarding.
+Your Lumina key authorizes gateway access. Your ChatGPT login authorizes OpenAI usage and takes precedence over a saved gateway login. Codex owns sign-in and refresh; Lumina forwards the login for that request and redacts credential headers from logging callbacks. Gateway keys and cookies are removed before forwarding.
 
 An explicit ChatGPT workspace selection is preserved for OpenAI to validate. Gateway and ChatGPT identities are authenticated independently. See [OpenAI's gateway guide](https://learn.chatgpt.com/docs/enterprise/sign-in-with-chatgpt-through-a-gateway) for managed rollouts.
 
@@ -127,7 +127,7 @@ An explicit ChatGPT workspace selection is preserved for OpenAI to validate. Gat
 In Pi, run `/login` and choose the built-in OpenAI Codex provider. Export your key in the Terminal that launches Pi:
 
 ```bash
-export LUMINA_API_KEY="sk-<your-litellm-virtual-key>"
+export LUMINA_API_KEY="sk-<your-lumina-virtual-key>"
 ```
 
 Add this override to `~/.pi/agent/models.json`:
@@ -138,14 +138,14 @@ Add this override to `~/.pi/agent/models.json`:
     "openai-codex": {
       "baseUrl": "http://localhost:4000/backend-api/codex",
       "headers": {
-        "x-litellm-api-key": "LUMINA_API_KEY"
+        "x-lumina-api-key": "LUMINA_API_KEY"
       }
     }
   }
 }
 ```
 
-Replace the proxy URL, restart Pi from that Terminal, and select a model your subscription and LiteLLM key allow. The header value names the environment variable; keep Pi's built-in subscription login.
+Replace the proxy URL, restart Pi from that Terminal, and select a model your subscription and Lumina key allow. The header value names the environment variable; keep Pi's built-in subscription login.
 
 Codex can use this native route too: change its provider's `base_url` to `http://localhost:4000/backend-api/codex`. Native requests need no `model_list` entry and use upstream model names, without router aliases or fallbacks. The key must allow the requested model. HTTP/SSE is supported; native WebSockets are not.
 
@@ -158,6 +158,6 @@ Codex can use this native route too: change its provider's `base_url` to `http:/
 | Gateway rejects the key | Check `LUMINA_API_KEY` in `~/.codex/.env` and restart Codex. |
 | Model access denied | Allow both `gpt-*` and `codex-*` on the key and choose a model your subscription supports. |
 | OpenAI rejects the login or model | Sign in again with ChatGPT and choose a model your plan supports. |
-| No request appears in LiteLLM | Check `model_provider` and `base_url`, then start a new Codex chat. |
+| No request appears in Lumina | Check `model_provider` and `base_url`, then start a new Codex chat. |
 
 For gateway-owned accounts, use the [ChatGPT provider guide](../providers/chatgpt.md).

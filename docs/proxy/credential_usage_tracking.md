@@ -1,10 +1,10 @@
 # Credential Usage Tracking
 
-When a model is attached to a [reusable credential](./model_management.md#reusable-provider-credentials), LiteLLM automatically injects the credential name as a tag on every request that uses that model. This means credential-level spend and usage are tracked with zero extra configuration.
+When a model is attached to a [reusable credential](./model_management.md#reusable-provider-credentials), Lumina automatically injects the credential name as a tag on every request that uses that model. This means credential-level spend and usage are tracked with zero extra configuration.
 
 ## How It Works
 
-When you attach a model to a reusable credential via `litellm_credential_name`, each request routed through that model is tagged `Credential: <name>` (for example, `Credential: xAI`). This tag flows into `DailyTagSpend` and appears in the **Tag** view on the Usage page, where you can filter spend and usage by credential.
+When you attach a model to a reusable credential via `lumina_credential_name`, each request routed through that model is tagged `Credential: <name>` (for example, `Credential: xAI`). This tag flows into `DailyTagSpend` and appears in the **Tag** view on the Usage page, where you can filter spend and usage by credential.
 
 If a model has no credential attached, behavior is unchanged and no credential tag is added.
 

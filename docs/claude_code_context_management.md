@@ -5,15 +5,15 @@ sidebar_label: Claude Code - Context Management
 
 # Claude Code - Context Management
 
-LiteLLM supports Anthropic's `context_management` beta natively across **all providers** - not just Anthropic.
+Lumina supports Anthropic's `context_management` beta natively across **all providers** - not just Anthropic.
 
-When you send a request to `/v1/messages` (or via `litellm.anthropic.messages.*`) with a `context_management` spec, LiteLLM handles it in one of two ways depending on where the request is routed:
+When you send a request to `/v1/messages` (or via `lumina.anthropic.messages.*`) with a `context_management` spec, Lumina handles it in one of two ways depending on where the request is routed:
 
 | Routing path | How context_management is applied |
 |---|---|
 | **Anthropic API** | Passed through to the Anthropic server, which applies edits natively |
 | **OpenAI Responses API** (e.g. `gpt-5.x-*`) | Passed through; handled by the Responses API |
-| **Any other provider** (OpenAI, xAI, Gemini, Azure, Bedrock non-Anthropic, …) | **In-gateway polyfill** - LiteLLM applies the edits to the message array before forwarding |
+| **Any other provider** (OpenAI, xAI, Gemini, Azure, Bedrock non-Anthropic, …) | **In-gateway polyfill** - Lumina applies the edits to the message array before forwarding |
 
 The polyfill means you write your Claude Code tool-loop once, pass `context_management` as you normally would, and it works regardless of which model is behind the proxy.
 
@@ -23,7 +23,7 @@ The polyfill means you write your Claude Code tool-loop once, pass `context_mana
 |---|---|---|
 | `clear_tool_uses_20250919` | ✅ **Supported** | Clears old `tool_result` content from conversation history when a trigger threshold is met, keeping only the most recent `N` tool results intact |
 | `clear_thinking_20251015` | ❌ Coming soon | Clears extended-thinking blocks from history |
-| `compact_20260112` | ✅ **Supported** | Summarisation edit - LiteLLM calls a configured summary model, injects the summary as a system prefix, and returns a `compaction` block in the response |
+| `compact_20260112` | ✅ **Supported** | Summarisation edit - Lumina calls a configured summary model, injects the summary as a system prefix, and returns a `compaction` block in the response |
 
 ## How It Works
 
@@ -33,7 +33,7 @@ Claude Code client
         │  POST /v1/messages  { context_management: { edits: [...] } }
         ▼
 ┌─────────────────────────────────────────────────────────┐
-│                    LiteLLM Proxy                        │
+│                    Lumina Proxy                        │
 │                                                         │
 │  1. Detect routing target                               │
 │                                                         │
@@ -72,7 +72,7 @@ Claude Code client
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────┐
-│  LiteLLM attaches applied_edits to response             │
+│  Lumina attaches applied_edits to response             │
 │  { context_management: { applied_edits: [...] } }       │
 │  (compact also prepends a compaction block to content)  │
 └─────────────────────────────────────────────────────────┘
@@ -86,9 +86,9 @@ Claude Code client
 ### Basic request
 
 ```python
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="xai/grok-4",          # any provider
     max_tokens=1024,
     messages=[...],              # your multi-turn tool history
@@ -144,7 +144,7 @@ curl -X POST http://localhost:4000/v1/messages \
 
 ## `compact_20260112` - Conversation Compaction
 
-The `compact_20260112` edit type summarizes the conversation history when the input token count exceeds a threshold. LiteLLM's polyfill makes this work on **any provider**, not just Anthropic.
+The `compact_20260112` edit type summarizes the conversation history when the input token count exceeds a threshold. Lumina's polyfill makes this work on **any provider**, not just Anthropic.
 
 ### Setup - configure a summary model
 
@@ -161,9 +161,9 @@ Without this setting, the polyfill is a no-op and `applied_edits[0].error: "summ
 ### Usage
 
 ```python
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="{{openai_small}}",          # any non-Anthropic provider
     max_tokens=1024,
     messages=[...],                # multi-turn history
@@ -210,11 +210,11 @@ If the message history already contains a `compaction` block (from a previous co
 
 **Phase B: threshold check**
 
-LiteLLM counts the effective input tokens of the (sliced) message history. If at or below the trigger threshold, the request is forwarded immediately, with no summary call.
+Lumina counts the effective input tokens of the (sliced) message history. If at or below the trigger threshold, the request is forwarded immediately, with no summary call.
 
 **Phase C: summarize (only when over threshold)**
 
-LiteLLM calls the configured `context_management_summary_model` with the full conversation history and a summarization prompt. The summary is:
+Lumina calls the configured `context_management_summary_model` with the full conversation history and a summarization prompt. The summary is:
 - Injected as a `"Previous conversation summary: ..."` prefix in the system message on the downstream model call
 - Returned as a `compaction` content block prepended to the response `content` array, so the Claude Code client can maintain rolling compaction state
 
@@ -290,7 +290,7 @@ The polyfill is best-effort. If the summary call fails or returns no parseable s
 
 ### Client-side compaction blocks (no `context_management` edit)
 
-If the request does **not** include a `compact_20260112` edit but the message history already contains a `compaction` block (e.g. from a previous Claude Code client-side compaction), LiteLLM automatically applies slice-only forwarding: the prior summary is moved to the system prefix and only the latest user question is sent downstream. No summary model call is made.
+If the request does **not** include a `compact_20260112` edit but the message history already contains a `compaction` block (e.g. from a previous Claude Code client-side compaction), Lumina automatically applies slice-only forwarding: the prior summary is moved to the system prefix and only the latest user question is sent downstream. No summary model call is made.
 
 ---
 
@@ -307,16 +307,16 @@ If the request does **not** include a `compact_20260112` edit but the message hi
 | `exclude_tools` | No | - | Tool names whose uses are never cleared |
 | `clear_tool_inputs` | No | `false` | `true`, or a list of tool names, to also empty the `input` of each cleared `tool_use` |
 
-> **Hard floor:** regardless of `keep`, LiteLLM's polyfill never clears the most recently completed `tool_result` - the one the model is about to reply to.
+> **Hard floor:** regardless of `keep`, Lumina's polyfill never clears the most recently completed `tool_result` - the one the model is about to reply to.
 
 `clear_at_least`, `exclude_tools` and `clear_tool_inputs` are available from v1.108.0. Earlier versions accept them and ignore them.
 
 The polyfill handles these fields the way Anthropic's API does:
 
-- **Batches.** With `clear_at_least`, old tool uses are cleared oldest first in batches. Each batch frees at least `clear_at_least.value` tokens, counting the cleared result and the cleared input with `litellm.token_counter`. An incomplete batch waits for a later request, so the requests in between send the same history and keep hitting the prompt cache.
+- **Batches.** With `clear_at_least`, old tool uses are cleared oldest first in batches. Each batch frees at least `clear_at_least.value` tokens, counting the cleared result and the cleared input with `lumina.token_counter`. An incomplete batch waits for a later request, so the requests in between send the same history and keep hitting the prompt cache.
 - **Excluded tools.** Uses of a tool in `exclude_tools` are never cleared, and they do not count toward `keep`, a `tool_uses` trigger, or a batch.
 - **Small results.** A tool use whose result is 1 to 46 bytes of text is skipped, unless `clear_tool_inputs` covers that tool.
-- **Malformed values.** A malformed field, such as `exclude_tools: "memory"`, gets an HTTP 400 that names the edit and the field. With `drop_params: true`, LiteLLM drops only that field instead and still applies the edit and the other edits.
+- **Malformed values.** A malformed field, such as `exclude_tools: "memory"`, gets an HTTP 400 that names the edit and the field. With `drop_params: true`, Lumina drops only that field instead and still applies the edit and the other edits.
 
 ## Responses
 
@@ -398,7 +398,7 @@ Simply don't include `context_management` in the request body.
 
 ### Per-model - `additional_drop_params`
 
-To opt a model out of the polyfill, list `context_management` in that model's `additional_drop_params`. LiteLLM will silently strip `context_management` from requests to that model instead of running the polyfill:
+To opt a model out of the polyfill, list `context_management` in that model's `additional_drop_params`. Lumina will silently strip `context_management` from requests to that model instead of running the polyfill:
 
 ```yaml
 # proxy_server_config.yaml
@@ -412,11 +412,11 @@ model_list:
 Or at call time:
 
 ```python
-import litellm
-litellm.completion(..., additional_drop_params=["context_management"])
+import lumina
+lumina.completion(..., additional_drop_params=["context_management"])
 ```
 
-`drop_params: true` does not disable the polyfill. `context_management` is a LiteLLM-supported parameter (native on Anthropic, polyfilled elsewhere), and `drop_params` only drops genuinely unsupported parameters.
+`drop_params: true` does not disable the polyfill. `context_management` is a Lumina-supported parameter (native on Anthropic, polyfilled elsewhere), and `drop_params` only drops genuinely unsupported parameters.
 
 ## Provider Support Matrix
 
@@ -435,7 +435,7 @@ litellm.completion(..., additional_drop_params=["context_management"])
 ## Notes
 
 - **`compact_20260112` requires `context_management_summary_model`** to be set in `general_settings`. Without it, the edit is acknowledged but no compaction is performed.
-- **Token counting** for polyfill threshold checks uses `litellm.token_counter` (tiktoken `cl100k_base` fallback for unknown models).
+- **Token counting** for polyfill threshold checks uses `lumina.token_counter` (tiktoken `cl100k_base` fallback for unknown models).
 - **`clear_tool_uses_20250919`** preserves the message array structure: same number of messages, same role order. Only `tool_result.content` inside matching messages is replaced with `"[Cleared by context management]"`, and the `tool_use.input` of those uses is emptied when `clear_tool_inputs` covers the tool.
 - **`compact_20260112`** collapses the entire prior history to a single system-prefix summary + the last user question. The `compaction` block in the response gives the Claude Code client the summary text to carry forward into the next turn.
 - The 50,000-token minimum for `compact_20260112` trigger is enforced at the proxy; requests with a lower value are rejected with HTTP 400.

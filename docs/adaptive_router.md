@@ -6,11 +6,11 @@ sidebar_label: Adaptive Router (Beta)
 
 :::info
 
-Beta feature. Share feedback on [Discord](https://discord.gg/wuPM9dRgDw) or [Slack](https://join.slack.com/t/litellmossslack/shared_invite/zt-3o7nkuyfr-p_kbNJj8taRfXGgQI1~YyA).
+Beta feature. Share feedback on [Discord](https://discord.gg/wuPM9dRgDw) or [Slack](https://join.slack.com/t/luminaossslack/shared_invite/zt-3o7nkuyfr-p_kbNJj8taRfXGgQI1~YyA).
 
 :::
 
-**Requirements:** LiteLLM Proxy with a Postgres database. Quality estimates are stored in Postgres and loaded on startup. Without a database the router works but forgets everything learned on restart.
+**Requirements:** Lumina Proxy with a Postgres database. Quality estimates are stored in Postgres and loaded on startup. Without a database the router works but forgets everything learned on restart.
 
 You have a cheap model and an expensive one. You want to use the cheap one when it's good enough, and the expensive one when it actually matters, without hardcoding rules you'll spend months tuning.
 
@@ -69,7 +69,7 @@ curl -X POST {{baseURL}}/v1/chat/completions \
 The response includes a header telling you which model was actually picked:
 
 ```
-x-litellm-adaptive-router-model: {{openai_large}}
+x-lumina-adaptive-router-model: {{openai_large}}
 ```
 
 The "thanks!" turn in the example above fires a satisfaction signal, and that's what moves the bandit.
@@ -92,7 +92,7 @@ The router learns over time. For the first ~10 requests per model, it relies on 
 If a specific request needs a frontier model regardless of cost, pass this header:
 
 ```
-x-litellm-min-quality-tier: 3
+x-lumina-min-quality-tier: 3
 ```
 
 You can also pass `min_quality_tier` via request metadata instead of a header.
@@ -111,7 +111,7 @@ The router classifies each request into one of 7 types and tracks how each model
 | `factual_lookup` | "what is the capital of France?" |
 | `general` | anything else |
 
-[**See classifier code**](https://github.com/BerriAI/litellm/blob/litellm_adaptive_routing/litellm/router_strategy/adaptive_router/classifier.py)
+[**See classifier code**](https://github.com/Soventra/lumina/blob/lumina_adaptive_routing/lumina/router_strategy/adaptive_router/classifier.py)
 
 Learning signals are inspired by [Signals: Trajectory Sampling and Triage for Agentic Interactions](https://arxiv.org/pdf/2604.00356).
 

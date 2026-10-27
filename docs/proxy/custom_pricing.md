@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 ## Overview
 
-LiteLLM provides flexible cost tracking and pricing customization for all LLM providers:
+Lumina provides flexible cost tracking and pricing customization for all LLM providers:
 
 - **Custom Pricing** - Override default model costs or set pricing for custom models
 - **Cost Per Token** - Track costs based on input/output tokens (most common)
@@ -18,13 +18,13 @@ By default, the response cost is accessible in the logging object via `kwargs["r
 
 :::info
 
-LiteLLM already has pricing for 100+ models in our [model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). 
+Lumina already has pricing for 100+ models in our [model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json). 
 
 :::
 
 ## Cost Per Second (e.g. Sagemaker)
 
-For chat, completion, embedding and responses models, set `cost_per_second`. LiteLLM multiplies it by the full request
+For chat, completion, embedding and responses models, set `cost_per_second`. Lumina multiplies it by the full request
 duration, including streaming until the last chunk, and ignores it when per-token pricing is configured
 
 For chat, completion, embedding and responses, `input_cost_per_second` and `output_cost_per_second` remain accepted as
@@ -34,7 +34,7 @@ legacy aliases. `cost_per_second` takes precedence, followed by `input_cost_per_
 
 `cost_per_second` needs v1.105.0 or later. On earlier versions, use `input_cost_per_second`
 
-#### Usage with LiteLLM Proxy Server
+#### Usage with Lumina Proxy Server
 
 **Step 1: Add pricing to config.yaml**
 ```yaml
@@ -54,7 +54,7 @@ model_list:
 **Step 2: Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **Step 3: View Spend Logs**
@@ -63,7 +63,7 @@ litellm --config /path/to/config.yaml
 
 ## Cost Per Token (e.g. Azure)
 
-#### Usage with LiteLLM Proxy Server
+#### Usage with Lumina Proxy Server
 
 ```yaml
 model_list:
@@ -80,7 +80,7 @@ model_list:
 
 ## Override Model Cost Map
 
-You can override [our model cost map](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) with your own custom pricing for a mapped model.
+You can override [our model cost map](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) with your own custom pricing for a mapped model.
 
 Just add a `model_info` key to your model in the config, and override the desired keys.
 
@@ -119,11 +119,11 @@ There are other keys you can use to specify costs for different scenarios and mo
 - `ocr_cost_per_page` / `annotation_cost_per_page` - Per-page pricing for `/v1/ocr` calls (Mistral OCR)
 - `ocr_cost_per_page_batches` / `annotation_cost_per_page_batches` - Per-page pricing for OCR pages processed through `/v1/batches`, falling back to the synchronous per-page keys when unset. See [Batch OCR cost tracking](../providers/mistral_batches#batch-ocr-cost-tracking)
 
-These keys evolve based on how new models handle multimodality. The latest version can be found at [https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json).
+These keys evolve based on how new models handle multimodality. The latest version can be found at [https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json).
 
 ### Service Tier / PayGo Pricing (Vertex AI, Bedrock)
 
-For providers that support multiple pricing tiers (e.g., Vertex AI PayGo, Bedrock service tiers), LiteLLM automatically applies the correct cost based on the response:
+For providers that support multiple pricing tiers (e.g., Vertex AI PayGo, Bedrock service tiers), Lumina automatically applies the correct cost based on the response:
 
 - **Vertex AI Gemini**: Uses `usageMetadata.trafficType` (`ON_DEMAND_PRIORITY` → priority, `FLEX`/`BATCH` → flex). See [Vertex AI - PayGo / Priority Cost Tracking](../providers/vertex.md#paygo--priority-cost-tracking).
 - **Bedrock**: Uses `serviceTier` from the response. See [Bedrock - Usage - Service Tier](../providers/bedrock.md#usage---service-tier).
@@ -136,7 +136,7 @@ For providers that support multiple pricing tiers (e.g., Vertex AI PayGo, Bedroc
 
 :::info
 
-When a model is configured with zero cost, LiteLLM will automatically skip ALL budget checks (user, team, team member, end-user, organization, and global proxy budget) for requests to that model.
+When a model is configured with zero cost, Lumina will automatically skip ALL budget checks (user, team, team member, end-user, organization, and global proxy budget) for requests to that model.
 
 **Important**: Both costs must be **explicitly set to 0**. If costs are `null` or undefined, the model will be treated as having cost and budget checks will apply.
 
@@ -177,9 +177,9 @@ This ensures your free/on-premises models remain accessible regardless of budget
 
 **Problem**: Azure returns `gpt-4` in the response when `azure/gpt-4-1106-preview` is used. This leads to inaccurate cost tracking
 
-**Solution** ✅ :  Set `base_model` on your config so litellm uses the correct model for calculating azure cost
+**Solution** ✅ :  Set `base_model` on your config so lumina uses the correct model for calculating azure cost
 
-Get the base model name from [here](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json)
+Get the base model name from [here](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json)
 
 Example config with `base_model`
 ```yaml
@@ -198,9 +198,9 @@ model_list:
 
 `base_model` is also useful when OpenAI returns a dated model name in the response that differs from your configured model name.
 
-**Example**: You configure custom pricing for `gpt-4o-mini-audio-preview`, but OpenAI returns `gpt-4o-mini-audio-preview-2024-12-17` in the response. Since LiteLLM uses the response model name for pricing lookup, your custom pricing won't be applied.
+**Example**: You configure custom pricing for `gpt-4o-mini-audio-preview`, but OpenAI returns `gpt-4o-mini-audio-preview-2024-12-17` in the response. Since Lumina uses the response model name for pricing lookup, your custom pricing won't be applied.
 
-**Solution** ✅: Set `base_model` to the key you want LiteLLM to use for pricing lookup.
+**Solution** ✅: Set `base_model` to the key you want Lumina to use for pricing lookup.
 
 ```yaml
 model_list:
@@ -219,7 +219,7 @@ model_list:
 
 ## Set 'pricing_provider' when the routing provider and the pricing provider differ
 
-**Problem**: You route to a third-party host through an OpenAI-compatible endpoint (`custom_llm_provider: openai` with a custom `api_base`), but the model is priced in LiteLLM's cost map under that host's own provider. The cost lookup runs under the routing provider, finds no row there, and bills the request at $0. A deployment whose `model_info.id` equals one of that provider's cost-map keys hits the same $0.
+**Problem**: You route to a third-party host through an OpenAI-compatible endpoint (`custom_llm_provider: openai` with a custom `api_base`), but the model is priced in Lumina's cost map under that host's own provider. The cost lookup runs under the routing provider, finds no row there, and bills the request at $0. A deployment whose `model_info.id` equals one of that provider's cost-map keys hits the same $0.
 
 **Solution** ✅: Set `pricing_provider` under `model_info` to the provider whose cost-map rows should price the deployment. When it is unset, the routing provider (`custom_llm_provider`) is used, which is the previous behavior.
 
@@ -247,13 +247,13 @@ If you're custom pricing is not being used or you're seeing errors, please check
 1. Run the proxy with `LUMINA_LOG="DEBUG"` or the `--detailed_debug` cli flag
 
 ```bash
-litellm --config /path/to/config.yaml --detailed_debug
+lumina --config /path/to/config.yaml --detailed_debug
 ```
 
 2. Check logs for this line: 
 
 ```
-LiteLLM:DEBUG: utils.py:263 - litellm.acompletion
+Lumina:DEBUG: utils.py:263 - lumina.acompletion
 ```
 
 3. Check if 'input_cost_per_token' and 'output_cost_per_token' are top-level keys in the acompletion function. 
@@ -266,6 +266,6 @@ acompletion(
 )
 ```
 
-If these keys are not present, LiteLLM will not use your custom pricing. 
+If these keys are not present, Lumina will not use your custom pricing. 
 
-If the problem persists, please file an issue on [GitHub](https://github.com/BerriAI/litellm/issues). 
+If the problem persists, please file an issue on [GitHub](https://github.com/Soventra/lumina/issues). 

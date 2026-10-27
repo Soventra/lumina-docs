@@ -1,6 +1,6 @@
 # MCP Per-User and Per-Key Upstream Credentials
 
-Register an MCP server once in LiteLLM, then let users and service accounts call it with their own upstream credentials. For credentials stored in LiteLLM, give each service account a distinct machine user and attach its virtual key to that user
+Register an MCP server once in Lumina, then let users and service accounts call it with their own upstream credentials. For credentials stored in Lumina, give each service account a distinct machine user and attach its virtual key to that user
 
 Stored BYOK keys, per-user env vars, and per-user OAuth tokens belong to `(user_id, server_id)`, not to an individual virtual key. **Two keys with the same `user_id` share the stored credential for that server.** Use separate machine users when service accounts need separate upstream identities. There is no native stored per-key or per-team credential override
 
@@ -31,16 +31,16 @@ For [per-user env vars](#per-user-env-vars) or [OAuth tokens](#per-user-oauth), 
 
 **Provision with the service account's own key.** The write endpoints always use the caller's `user_id`. An admin key cannot select another user as the destination. Admins can list BYOK credential owners and revoke another user's BYOK or OAuth credential
 
-A key without a `user_id` cannot use these credential-storage endpoints: they return `400 User ID not found in token`. Calls requiring a stored BYOK or interactive OAuth credential fail with `401`; missing required per-user env vars cause a tool call to fail with `412`. Client-supplied credentials are an alternative where the server's auth mode supports them, but are not stored in LiteLLM
+A key without a `user_id` cannot use these credential-storage endpoints: they return `400 User ID not found in token`. Calls requiring a stored BYOK or interactive OAuth credential fail with `401`; missing required per-user env vars cause a tool call to fail with `412`. Client-supplied credentials are an alternative where the server's auth mode supports them, but are not stored in Lumina
 
 ## Options at a glance
 
 | Option | Who supplies the credential | Where it is stored | Keyed by | Works for a key with no `user_id` |
 |---|---|---|---|---|
-| [Per-request header](#per-request-header-override) | The client, on every request | Nowhere in LiteLLM | n/a | Yes, on supported auth modes |
-| [BYOK server](#byok-servers-per-user-api-keys) (`is_byok`) | Each user, once | LiteLLM database, encrypted | `(user_id, server_id)` | No |
-| [Per-user env vars](#per-user-env-vars) (`env_vars` with `scope: user`) | Each user, once | LiteLLM database, encrypted | `(user_id, server_id)` | No |
-| [Per-user OAuth](#per-user-oauth) (`auth_type: oauth2`, authorization code) | Each user, via the OAuth flow | LiteLLM database, encrypted | `(user_id, server_id)` | No |
+| [Per-request header](#per-request-header-override) | The client, on every request | Nowhere in Lumina | n/a | Yes, on supported auth modes |
+| [BYOK server](#byok-servers-per-user-api-keys) (`is_byok`) | Each user, once | Lumina database, encrypted | `(user_id, server_id)` | No |
+| [Per-user env vars](#per-user-env-vars) (`env_vars` with `scope: user`) | Each user, once | Lumina database, encrypted | `(user_id, server_id)` | No |
+| [Per-user OAuth](#per-user-oauth) (`auth_type: oauth2`, authorization code) | Each user, via the OAuth flow | Lumina database, encrypted | `(user_id, server_id)` | No |
 | [Delegated DCR bridge](#dcr-bridge-client-held-oauth-credentials) (`oauth_delegate`, `dcr_bridge: true`) | The client, via OAuth | The client, as a sealed token | Browser user or admitted key hash | Yes for key-bound minting; browser sign-in binds the user instead |
 
 Choose the credential source to match the server's auth mode. Per-request headers do not universally override stored credentials: interactive OAuth, OBO, and ID-JAG preserve their configured credential resolution. Required per-user env vars must still be provisioned even when the client sends an auth header
@@ -57,7 +57,7 @@ See [Header routing](./auth_overview.md#3-per-user-header-passthrough) for the n
 
 ## BYOK servers (per-user API keys)
 
-A BYOK (bring your own key) server has no shared upstream credential. Each user stores their own API key once, and LiteLLM injects it on that user's tool calls
+A BYOK (bring your own key) server has no shared upstream credential. Each user stores their own API key once, and Lumina injects it on that user's tool calls
 
 BYOK is a flag on the server record, set when creating or updating a server through the Admin UI or the [REST API](./mcp_rest_api.md). It is not read from `config.yaml`
 
@@ -75,7 +75,7 @@ curl -X POST "http://localhost:4000/v1/mcp/server" \
   }'
 ```
 
-Each user then stores their key. The endpoint authenticates the caller with their LiteLLM key and stores the credential under that key's `user_id`
+Each user then stores their key. The endpoint authenticates the caller with their Lumina key and stores the credential under that key's `user_id`
 
 ```bash
 curl -X POST "http://localhost:4000/v1/mcp/server/{server_id}/user-credential" \
@@ -84,7 +84,7 @@ curl -X POST "http://localhost:4000/v1/mcp/server/{server_id}/user-credential" \
   -d '{"credential": "ghp_xxx"}'
 ```
 
-A tool call with neither a stored credential nor a supported per-request override fails with `401` and a `byok_auth_required` error body naming the server, plus a `WWW-Authenticate` header pointing an OAuth-capable MCP client at LiteLLM's built-in BYOK authorization page (`/v1/mcp/oauth/authorize`), where the user pastes their key. Clients that do not follow `WWW-Authenticate` can call the endpoint above directly or use the Admin UI
+A tool call with neither a stored credential nor a supported per-request override fails with `401` and a `byok_auth_required` error body naming the server, plus a `WWW-Authenticate` header pointing an OAuth-capable MCP client at Lumina's built-in BYOK authorization page (`/v1/mcp/oauth/authorize`), where the user pastes their key. Clients that do not follow `WWW-Authenticate` can call the endpoint above directly or use the Admin UI
 
 `DELETE /v1/mcp/server/{server_id}/user-credential` removes the caller's key. A proxy admin can pass `?user_id=` to revoke another user's key, and `GET /v1/mcp/server/{server_id}/user-credentials` lists which users have a stored credential (no secret values are returned)
 
@@ -113,15 +113,15 @@ Users fill in their values with `POST /v1/mcp/server/{server_id}/user-env-vars` 
 
 ## Per-user OAuth
 
-For an upstream that speaks OAuth, register the server with `auth_type: oauth2` and an authorization-code grant. LiteLLM runs the browser flow, stores each user's access and refresh tokens encrypted under `(user_id, server_id)`, refreshes them, and injects them on that user's calls. Setup is covered in [MCP OAuth](./mcp_oauth.md)
+For an upstream that speaks OAuth, register the server with `auth_type: oauth2` and an authorization-code grant. Lumina runs the browser flow, stores each user's access and refresh tokens encrypted under `(user_id, server_id)`, refreshes them, and injects them on that user's calls. Setup is covered in [MCP OAuth](./mcp_oauth.md)
 
-Tokens obtained outside LiteLLM can be seeded with `POST /v1/mcp/server/{server_id}/oauth-user-credential` and a body of `{"access_token": "...", "refresh_token": "...", "expires_in": 3600}`. This endpoint is closed on servers whose `oauth_identity_binding.mode` is set to `enforce`, because it cannot verify who the token belongs to. `GET .../oauth-user-credential/status` reports whether the caller has a token and when it expires, `GET /v1/mcp/user-credentials` lists every server the caller has connected, and `DELETE .../oauth-user-credential` revokes it (admins can pass `?user_id=`)
+Tokens obtained outside Lumina can be seeded with `POST /v1/mcp/server/{server_id}/oauth-user-credential` and a body of `{"access_token": "...", "refresh_token": "...", "expires_in": 3600}`. This endpoint is closed on servers whose `oauth_identity_binding.mode` is set to `enforce`, because it cannot verify who the token belongs to. `GET .../oauth-user-credential/status` reports whether the caller has a token and when it expires, `GET /v1/mcp/user-credentials` lists every server the caller has connected, and `DELETE .../oauth-user-credential` revokes it (admins can pass `?user_id=`)
 
 ## DCR bridge: client-held OAuth credentials
 
 For `true_passthrough` and `oauth_delegate` servers, `dcr_bridge: true` hosts OAuth registration and sign-in at the gateway. The client holds the resulting credential. On `oauth_delegate`, the sealed credential binds the upstream token to the browser user for interactive sign-in, or to the admitted key hash when the token request authenticates with a virtual key
 
-The OAuth-only client setup requires working LiteLLM browser sign-in and an interactive client. Signing in as an administrator binds that browser user, not a separate service-account key. The key-authenticated mint path accepts an active key without a `user_id`, but it still needs an upstream OAuth authorization-code exchange and keeps the credential client-side. It does not provide a gateway-stored credential override for that key
+The OAuth-only client setup requires working Lumina browser sign-in and an interactive client. Signing in as an administrator binds that browser user, not a separate service-account key. The key-authenticated mint path accepts an active key without a `user_id`, but it still needs an upstream OAuth authorization-code exchange and keeps the credential client-side. It does not provide a gateway-stored credential override for that key
 
 See [Gateway-hosted sign-in (DCR bridge)](./mcp_oauth_passthrough.md#gateway-hosted-sign-in-dcr-bridge) for setup and supported clients. For fully scripted delegation with client-held credentials, use the documented two-header `oauth_delegate` flow with `dcr_bridge` disabled
 

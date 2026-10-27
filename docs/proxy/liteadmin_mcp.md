@@ -1,7 +1,7 @@
 ---
 title: LiteAdmin MCP
 sidebar_label: Connect Claude or Codex
-description: Connect Claude Desktop, Claude Code, or Codex to your LiteLLM gateway with LiteAdmin MCP.
+description: Connect Claude Desktop, Claude Code, or Codex to your Lumina gateway with LiteAdmin MCP.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # LiteAdmin MCP
 
-Use **LiteAdmin MCP** ([LiteLLM Admin MCP](https://github.com/BerriAI/litellm-admin-mcp)) to manage your gateway from Claude, Codex, or another MCP client. You can ask your agent to:
+Use **LiteAdmin MCP** ([Lumina Admin MCP](https://github.com/Soventra/lumina-admin-mcp)) to manage your gateway from Claude, Codex, or another MCP client. You can ask your agent to:
 
 - Create and manage virtual keys.
 - Add model deployments.
@@ -20,11 +20,11 @@ Your client runs the agent and model. The MCP server calls your gateway's manage
 
 To host MCP inside your Enterprise deployment, follow [Deploy LiteAdmin MCP on Enterprise](./liteadmin_mcp_enterprise.md) for unified and componentized Docker images.
 
-For gateway management in Slack, follow the [LiteAdmin Slack app setup](./liteadmin_slack.md) and choose the Enterprise or standalone deployment. To route third-party MCP tools through LiteLLM, see the separate [MCP Gateway](../mcp.md) guide.
+For gateway management in Slack, follow the [LiteAdmin Slack app setup](./liteadmin_slack.md) and choose the Enterprise or standalone deployment. To route third-party MCP tools through Lumina, see the separate [MCP Gateway](../mcp.md) guide.
 
 ## Before you start
 
-You need a running LiteLLM gateway and a personal [virtual key](./virtual_keys.md) belonging to a user with the [`proxy_admin` role](./access_control.md#global-proxy-roles). The connector requires this role for **all tools, including reads**; `proxy_admin_viewer` and team-admin accounts cannot use it.
+You need a running Lumina gateway and a personal [virtual key](./virtual_keys.md) belonging to a user with the [`proxy_admin` role](./access_control.md#global-proxy-roles). The connector requires this role for **all tools, including reads**; `proxy_admin_viewer` and team-admin accounts cannot use it.
 
 For the local client setup below, install [uv](https://docs.astral.sh/uv/getting-started/installation/) on the computer that runs your MCP client. The connector requires Python 3.12 or later; uv can download a compatible interpreter. {/* keep-python-version */}
 
@@ -44,20 +44,20 @@ Choose your client below and replace the gateway URL and key placeholders. Keep 
 <Tabs groupId="liteadmin-client">
 <TabItem value="claude-desktop" label="Claude Desktop" default>
 
-Open **Settings → Developer → Edit Config** in Claude Desktop. Add the `litellm-admin` entry under `mcpServers`, preserving any existing servers:
+Open **Settings → Developer → Edit Config** in Claude Desktop. Add the `lumina-admin` entry under `mcpServers`, preserving any existing servers:
 
 ```json title="claude_desktop_config.json"
 {
   "mcpServers": {
-    "litellm-admin": {
+    "lumina-admin": {
       "command": "uvx",
       "args": [
         "--isolated",
         "--refresh-package",
-        "litellm-admin-mcp",
+        "lumina-admin-mcp",
         "--from",
-        "git+https://github.com/BerriAI/litellm-admin-mcp.git@main",
-        "litellm-admin-mcp"
+        "git+https://github.com/Soventra/lumina-admin-mcp.git@main",
+        "lumina-admin-mcp"
       ],
       "env": {
         "LUMINA_BASE_URL": "https://gateway.example.com",
@@ -68,7 +68,7 @@ Open **Settings → Developer → Edit Config** in Claude Desktop. Add the `lite
 }
 ```
 
-Quit and reopen Claude Desktop. Open **+ → Connectors** in a new chat to check for `litellm-admin` and its tools. Developer settings also show connection status and logs.
+Quit and reopen Claude Desktop. Open **+ → Connectors** in a new chat to check for `lumina-admin` and its tools. Developer settings also show connection status and logs.
 
 If Claude cannot find `uvx`, replace `"command": "uvx"` with its absolute path. Run `which uvx` on macOS or `where uvx` on Windows to find it. In JSON, escape Windows backslashes as `\\`.
 
@@ -80,12 +80,12 @@ See the [manual Claude Desktop configuration guide](https://modelcontextprotocol
 Run this in your terminal:
 
 ```bash
-claude mcp add --scope user --transport stdio litellm-admin \
+claude mcp add --scope user --transport stdio lumina-admin \
   --env LUMINA_BASE_URL=https://gateway.example.com \
   --env LUMINA_API_KEY='<your-personal-proxy-admin-key>' \
-  -- uvx --isolated --refresh-package litellm-admin-mcp \
-  --from git+https://github.com/BerriAI/litellm-admin-mcp.git@main \
-  litellm-admin-mcp
+  -- uvx --isolated --refresh-package lumina-admin-mcp \
+  --from git+https://github.com/Soventra/lumina-admin-mcp.git@main \
+  lumina-admin-mcp
 ```
 
 The `--scope user` option makes the connection available across your projects and stores it in your private Claude configuration. Your shell may also retain the command in its history.
@@ -93,7 +93,7 @@ The `--scope user` option makes the connection available across your projects an
 Restart Claude Code and run `/mcp` to check the connection. You can also inspect it from the terminal:
 
 ```bash
-claude mcp get litellm-admin
+claude mcp get lumina-admin
 ```
 
 See [Claude Code's MCP documentation](https://code.claude.com/docs/en/mcp) for configuration scopes and client troubleshooting.
@@ -104,17 +104,17 @@ See [Claude Code's MCP documentation](https://code.claude.com/docs/en/mcp) for c
 Add this server to your existing `~/.codex/config.toml`:
 
 ```toml title="~/.codex/config.toml"
-[mcp_servers.litellm-admin]
+[mcp_servers.lumina-admin]
 command = "uvx"
 args = [
   "--isolated",
-  "--refresh-package", "litellm-admin-mcp",
-  "--from", "git+https://github.com/BerriAI/litellm-admin-mcp.git@main",
-  "litellm-admin-mcp"
+  "--refresh-package", "lumina-admin-mcp",
+  "--from", "git+https://github.com/Soventra/lumina-admin-mcp.git@main",
+  "lumina-admin-mcp"
 ]
 startup_timeout_sec = 60
 
-[mcp_servers.litellm-admin.env]
+[mcp_servers.lumina-admin.env]
 LUMINA_BASE_URL = "https://gateway.example.com"
 LUMINA_API_KEY = "<your-personal-proxy-admin-key>"
 ```
@@ -128,7 +128,7 @@ See the [official Codex MCP documentation](https://developers.openai.com/codex/m
 </TabItem>
 </Tabs>
 
-These examples check the connector's GitHub `main` branch each time the client starts the server. Restart the connection after an update. For a fixed version, replace `@main` with a release tag or full commit SHA and remove `--refresh-package` and the `litellm-admin-mcp` argument immediately after it.
+These examples check the connector's GitHub `main` branch each time the client starts the server. Restart the connection after an update. For a fixed version, replace `@main` with a release tag or full commit SHA and remove `--refresh-package` and the `lumina-admin-mcp` argument immediately after it.
 
 ## Verify the connection
 
@@ -162,11 +162,11 @@ Set these variables in the MCP server's environment, then restart the connection
 | `LUMINA_ADMIN_READ_ONLY=true` | Expose only reviewed read operations. A `proxy_admin` identity is still required. |
 | `LUMINA_ADMIN_TOOLS=list_keys,list_teams` | Limit the server to these canonical tool names. |
 
-The connector discovers schemas from your gateway and exposes the reviewed operations available there. Use the [operation catalog](https://github.com/BerriAI/litellm-admin-mcp/blob/main/src/litellm_admin_mcp/operations.json) to find tool names. If you set both restrictions, only tools allowed by both remain available.
+The connector discovers schemas from your gateway and exposes the reviewed operations available there. Use the [operation catalog](https://github.com/Soventra/lumina-admin-mcp/blob/main/src/lumina_admin_mcp/operations.json) to find tool names. If you set both restrictions, only tools allowed by both remain available.
 
-## Run LiteAdmin MCP inside LiteLLM
+## Run LiteAdmin MCP inside Lumina
 
-Follow [Deploy LiteAdmin MCP on Enterprise](./liteadmin_mcp_enterprise.md) to serve `/admin/mcp` from a unified LiteLLM image or the management backend in a componentized deployment. The guide covers the opt-in flag, Enterprise license, ingress routing, authentication, client configuration, and verification
+Follow [Deploy LiteAdmin MCP on Enterprise](./liteadmin_mcp_enterprise.md) to serve `/admin/mcp` from a unified Lumina image or the management backend in a componentized deployment. The guide covers the opt-in flag, Enterprise license, ingress routing, authentication, client configuration, and verification
 
 ### Embedded tool and response settings
 
@@ -179,9 +179,9 @@ Use Streamable HTTP when you want to run the connector on a server instead of ea
 ```bash
 export LUMINA_BASE_URL=https://gateway.example.com
 export LUMINA_MCP_PUBLIC_URL=https://admin-mcp.example.com
-uvx --isolated --refresh-package litellm-admin-mcp \
-  --from git+https://github.com/BerriAI/litellm-admin-mcp.git@main \
-  litellm-admin-mcp --transport streamable-http --port 8080
+uvx --isolated --refresh-package lumina-admin-mcp \
+  --from git+https://github.com/Soventra/lumina-admin-mcp.git@main \
+  lumina-admin-mcp --transport streamable-http --port 8080
 ```
 
 Put an HTTPS reverse proxy in front of `127.0.0.1:8080` and forward to it from `admin-mcp.example.com`. The client endpoint is `https://admin-mcp.example.com/mcp`. Set `LUMINA_MCP_PUBLIC_URL` to that public origin without the `/mcp` path so the connector accepts its Host and Origin headers.
@@ -194,7 +194,7 @@ Configure your client with one of these alternatives to the local setup:
 <TabItem value="claude-code" label="Claude Code" default>
 
 ```bash
-claude mcp add --scope user --transport http litellm-admin-remote \
+claude mcp add --scope user --transport http lumina-admin-remote \
   https://admin-mcp.example.com/mcp \
   --header 'Authorization: Bearer <your-personal-proxy-admin-key>'
 ```
@@ -205,7 +205,7 @@ Restart Claude Code and run `/mcp` to check the connection. This command saves t
 <TabItem value="codex" label="Codex">
 
 ```toml title="~/.codex/config.toml"
-[mcp_servers.litellm-admin-remote]
+[mcp_servers.lumina-admin-remote]
 url = "https://admin-mcp.example.com/mcp"
 bearer_token_env_var = "LUMINA_API_KEY"
 ```
@@ -238,4 +238,4 @@ Check `/healthz` for process health, then repeat the read request to verify gate
 | Hosted connection rejected | Check the `/mcp` URL, bearer header, HTTPS proxy, and `LUMINA_MCP_PUBLIC_URL`. |
 | Write times out | Inspect gateway state before retrying; the connector does not retry tool calls. |
 
-See the [connector repository](https://github.com/BerriAI/litellm-admin-mcp) for result paging, schema-discovery options, and Docker hosting.
+See the [connector repository](https://github.com/Soventra/lumina-admin-mcp) for result paging, schema-discovery options, and Docker hosting.

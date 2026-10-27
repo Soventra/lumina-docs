@@ -1,6 +1,6 @@
 ---
 title: Cache Controls
-description: Control what the LiteLLM proxy caches and for how long, per request, per virtual key, and proxy-wide.
+description: Control what the Lumina proxy caches and for how long, per request, per virtual key, and proxy-wide.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -284,7 +284,7 @@ model_list:
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
 # default off mode
-litellm_settings:
+lumina_settings:
   set_verbose: True
   cache: True
   cache_params:
@@ -300,7 +300,7 @@ litellm_settings:
 import os
 from openai import OpenAI
 
-client = OpenAI(api_key="<litellm-api-key>", base_url="http://0.0.0.0:4000")
+client = OpenAI(api_key="<lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 chat_completion = client.chat.completions.create(
     messages=[
@@ -345,7 +345,7 @@ setting `supported_call_types` in `cache_params`
 **Cache will only be on for the call types specified in `supported_call_types`**
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: redis
@@ -362,7 +362,7 @@ instances.
 Set `supported_call_types: []` to disable caching on the actual api call.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: redis
@@ -388,7 +388,7 @@ curl -X POST "http://0.0.0.0:4000/cache/delete" \
 ### Viewing Cache Keys from responses
 
 You can view the cache_key in the response headers, on cache hits the cache key is sent as the
-`x-litellm-cache-key` response headers
+`x-lumina-cache-key` response headers
 
 ```shell
 curl -i --location 'http://0.0.0.0:4000/chat/completions' \
@@ -400,18 +400,18 @@ curl -i --location 'http://0.0.0.0:4000/chat/completions' \
     "messages": [
         {
         "role": "user",
-        "content": "what is litellm"
+        "content": "what is lumina"
         }
     ],
 }'
 ```
 
-Response from litellm proxy
+Response from lumina proxy
 
 ```text
 date: Thu, 04 Apr 2024 17:37:21 GMT
 content-type: application/json
-x-litellm-cache-key: 586bf3f3c1bf5aecb55bd9996494d3bbc69eb58397163add6d49537762a7548d
+x-lumina-cache-key: 586bf3f3c1bf5aecb55bd9996494d3bbc69eb58397163add6d49537762a7548d
 
 {
     "id": "chatcmpl-9ALJTzsBlXR9zTxPvzfFFtFbFtG6T",
@@ -432,14 +432,14 @@ x-litellm-cache-key: 586bf3f3c1bf5aecb55bd9996494d3bbc69eb58397163add6d49537762a
 
 ## Provider-Specific Optional Parameters Caching
 
-By default, LiteLLM only includes standard OpenAI parameters in cache keys. However, some providers (like Vertex AI) use additional parameters that affect the output but aren't included in the standard cache key generation.
+By default, Lumina only includes standard OpenAI parameters in cache keys. However, some providers (like Vertex AI) use additional parameters that affect the output but aren't included in the standard cache key generation.
 
 ### Enable Provider-Specific Parameter Caching
 
 Add this setting to your `config.yaml` to include provider-specific optional parameters in cache keys:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   cache: True
   cache_params:
     type: "redis"

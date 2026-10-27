@@ -9,24 +9,24 @@ import TabItem from '@theme/TabItem';
 
 ## 1. Install
 
-`litellm.agent()` is part of the regular `litellm` package and adds no dependencies to it. Install what your harness needs:
+`lumina.agent()` is part of the regular `lumina` package and adds no dependencies to it. Install what your harness needs:
 
 | Harness | Python packages | Runtime on the sandbox's `PATH` |
 |---|---|---|
-| Claude Code | `pip install litellm starlette uvicorn` | `npm install -g @anthropic-ai/claude-code` |
-| Codex | `pip install litellm starlette uvicorn` | `npm install -g @openai/codex` |
-| OpenCode | `pip install litellm starlette uvicorn` | `npm install -g opencode-ai` |
-| Deep Agents | `pip install litellm deepagents langchain-litellm` (Python 3.11+) {/* keep-python-version */} | nothing |
-| Tool Loop | `pip install litellm` | nothing |
+| Claude Code | `pip install lumina starlette uvicorn` | `npm install -g @anthropic-ai/claude-code` |
+| Codex | `pip install lumina starlette uvicorn` | `npm install -g @openai/codex` |
+| OpenCode | `pip install lumina starlette uvicorn` | `npm install -g opencode-ai` |
+| Deep Agents | `pip install lumina deepagents langchain-lumina` (Python 3.11+) {/* keep-python-version */} | nothing |
+| Tool Loop | `pip install lumina` | nothing |
 
 `starlette` and `uvicorn` run the small per-session model endpoint the CLI harnesses call. If something is missing, the call raises `HarnessInstallFailed` with the exact install command.
 
 ## 2. Point at your gateway
 
-Use a virtual key from your [LiteLLM AI Gateway](./gateway.md). It stays on your host. Models prefixed with `litellm_proxy/` are sent to this gateway.
+Use a virtual key from your [Lumina AI Gateway](./gateway.md). It stays on your host. Models prefixed with `lumina_proxy/` are sent to this gateway.
 
 ```bash
-export LUMINA_PROXY_API_BASE=https://litellm.example.com
+export LUMINA_PROXY_API_BASE=https://lumina.example.com
 export LUMINA_PROXY_API_KEY=sk-...
 ```
 
@@ -38,14 +38,14 @@ To skip the gateway, export a provider key such as `ANTHROPIC_API_KEY` instead a
 <TabItem value="sync" label="Sync">
 
 ```python title="fix_flaky.py"
-import litellm
-from litellm import Harness, sandbox
+import lumina
+from lumina import Harness, sandbox
 
-result = litellm.agent(
+result = lumina.agent(
     Harness.CLAUDE_CODE,
     "Find why tests/test_router.py is flaky and fix it.",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
 )
 
 print(result.text)
@@ -57,15 +57,15 @@ print(f"${result.cost:.4f}")
 
 ```python title="fix_flaky.py"
 import asyncio
-import litellm
-from litellm import Harness, sandbox
+import lumina
+from lumina import Harness, sandbox
 
 async def main():
-    result = await litellm.aagent(
+    result = await lumina.aagent(
         Harness.CLAUDE_CODE,
         "Find why tests/test_router.py is flaky and fix it.",
         sandbox=sandbox.local("./repo"),
-        model="litellm_proxy/coder",
+        model="lumina_proxy/coder",
     )
     print(result.text)
 
@@ -80,15 +80,15 @@ Permissions default to `"full"`, because the sandbox is the boundary. Use `permi
 ## 4. Stream events
 
 ```python
-import litellm
-from litellm import Harness, sandbox
-from litellm.harness import Text, FileChange, Done
+import lumina
+from lumina import Harness, sandbox
+from lumina.harness import Text, FileChange, Done
 
-for event in litellm.agent(
+for event in lumina.agent(
     Harness.CODEX,
     "Add type hints to utils.py",
     sandbox=sandbox.local("./repo"),
-    model="litellm_proxy/coder",
+    model="lumina_proxy/coder",
     stream=True,
 ):
     match event:

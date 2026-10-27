@@ -5,7 +5,7 @@ sidebar_label: All Recipes
 
 import NavigationCards from '@site/src/components/NavigationCards';
 
-The **Cookbook** has step-by-step recipes. Each recipe connects LiteLLM to an external tool, framework, or service, or builds a complete workflow from start to end. To set up LiteLLM first, use the [Gateway Quickstart](/docs/learn/gateway_quickstart) or the [SDK Quickstart](/docs/learn/python_sdk_quickstart).
+The **Cookbook** has step-by-step recipes. Each recipe connects Lumina to an external tool, framework, or service, or builds a complete workflow from start to end. To set up Lumina first, use the [Gateway Quickstart](/docs/learn/gateway_quickstart) or the [SDK Quickstart](/docs/learn/python_sdk_quickstart).
 
 <NavigationCards
 columns={2}

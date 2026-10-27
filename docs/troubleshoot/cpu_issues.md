@@ -6,14 +6,14 @@ Select the options that best describes the CPU behavior observed.
 
 - [ ] CPU scales with traffic (RPS-driven)
 - [ ] CPU increases without a traffic increase
-- [ ] CPU increases after a LiteLLM upgrade
+- [ ] CPU increases after a Lumina upgrade
 
 ## 2. Can you reproduce the issue?
 
 Before escalating, verify whether the CPU issue can be reproduced in a test environment that mirrors your production setup.  
 
 If reproducible, provide **detailed reproduction steps** along with any relevant requests or configuration used.  
-For guidance on the type of information we're looking for, see the [LiteLLM Troubleshooting Guide](../troubleshoot).
+For guidance on the type of information we're looking for, see the [Lumina Troubleshooting Guide](../troubleshoot).
 
 ## 3. Issue Cannot Be Reproduced
 

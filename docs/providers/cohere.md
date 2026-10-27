@@ -13,12 +13,12 @@ os.environ["COHERE_API_KEY"] = ""
 
 ## Usage
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 #### Cohere v2 API (Default)
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 ## set ENV variables
 os.environ["COHERE_API_KEY"] = "cohere key"
@@ -35,7 +35,7 @@ response = completion(
 To use the Cohere v1/chat API, prefix your model name with `cohere_chat/v1/`:
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 ## set ENV variables
 os.environ["COHERE_API_KEY"] = "cohere key"
@@ -52,7 +52,7 @@ response = completion(
 **Cohere v2 Streaming:**
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 ## set ENV variables
 os.environ["COHERE_API_KEY"] = "cohere key"
@@ -72,7 +72,7 @@ for chunk in response:
 **Cohere v1 Streaming:**
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 ## set ENV variables
 os.environ["COHERE_API_KEY"] = "cohere key"
@@ -89,9 +89,9 @@ for chunk in response:
 ```
 
 
-## Usage with LiteLLM Proxy 
+## Usage with Lumina Proxy 
 
-Here's how to call Cohere with the LiteLLM Proxy Server
+Here's how to call Cohere with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -122,7 +122,7 @@ model_list:
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 
@@ -134,7 +134,7 @@ litellm --config /path/to/config.yaml
 ```shell showLineNumbers
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer <your-litellm-api-key>' \
+--header 'Authorization: Bearer <your-lumina-api-key>' \
 --data ' {
       "model": "command-a-03-2025",
       "messages": [
@@ -152,7 +152,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```shell showLineNumbers
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer <your-litellm-api-key>' \
+--header 'Authorization: Bearer <your-lumina-api-key>' \
 --data ' {
       "model": "command-a-03-2025-v2",
       "messages": [
@@ -211,18 +211,18 @@ print(response)
 ## Supported Models
 | Model Name | Function Call |
 |------------|----------------|
-| north-large-01-2026 | `litellm.completion('cohere_chat/north-large-01-2026', messages)` |
-| command-a-03-2025 | `litellm.completion('command-a-03-2025', messages)` |
-| command-r-plus-08-2024 | `litellm.completion('command-r-plus-08-2024', messages)` |  
-| command-r-08-2024 | `litellm.completion('command-r-08-2024', messages)` |
-| command-r-plus | `litellm.completion('command-r-plus', messages)` |  
-| command-r | `litellm.completion('command-r', messages)` |
-| command-light | `litellm.completion('command-light', messages)` |  
-| command-nightly | `litellm.completion('command-nightly', messages)` |
+| north-large-01-2026 | `lumina.completion('cohere_chat/north-large-01-2026', messages)` |
+| command-a-03-2025 | `lumina.completion('command-a-03-2025', messages)` |
+| command-r-plus-08-2024 | `lumina.completion('command-r-plus-08-2024', messages)` |  
+| command-r-08-2024 | `lumina.completion('command-r-08-2024', messages)` |
+| command-r-plus | `lumina.completion('command-r-plus', messages)` |  
+| command-r | `lumina.completion('command-r', messages)` |
+| command-light | `lumina.completion('command-light', messages)` |  
+| command-nightly | `lumina.completion('command-nightly', messages)` |
 
 ### Cost tracking for north-large-01-2026
 
-Cohere does not publish a per-token price for `north-large-01-2026`, so LiteLLM has no default price for it and records its spend as $0 until you set one. Set your contract price on the deployment to track cost:
+Cohere does not publish a per-token price for `north-large-01-2026`, so Lumina has no default price for it and records its spend as $0 until you set one. Set your contract price on the deployment to track cost:
 
 ```yaml
 model_list:
@@ -240,18 +240,18 @@ Replace the two example prices with your contract prices in USD per token. See [
 ## Embedding
 
 ```python
-from litellm import embedding
+from lumina import embedding
 os.environ["COHERE_API_KEY"] = "cohere key"
 
 # cohere call
 response = embedding(
     model="embed-english-v3.0", 
-    input=["good morning from litellm", "this is another item"], 
+    input=["good morning from lumina", "this is another item"], 
 )
 ```
 
 ### Setting - Input Type for v3 models
-v3 Models have a required parameter: `input_type`. LiteLLM defaults to `search_document`. It can be one of the following four values:
+v3 Models have a required parameter: `input_type`. Lumina defaults to `search_document`. It can be one of the following four values:
 
 - `input_type="search_document"`: (default) Use this for texts (documents) you want to store in your vector database
 - `input_type="search_query"`: Use this for search queries to find the most relevant documents in your vector database
@@ -262,13 +262,13 @@ https://txt.cohere.com/introducing-embed-v3/
 
 
 ```python
-from litellm import embedding
+from lumina import embedding
 os.environ["COHERE_API_KEY"] = "cohere key"
 
 # cohere call
 response = embedding(
     model="embed-english-v3.0", 
-    input=["good morning from litellm", "this is another item"], 
+    input=["good morning from lumina", "this is another item"], 
     input_type="search_document" 
 )
 ```
@@ -276,25 +276,25 @@ response = embedding(
 ### Supported Embedding Models
 | Model Name               | Function Call                                                |
 |--------------------------|--------------------------------------------------------------|
-| embed-english-v3.0       | `embedding(model="embed-english-v3.0", input=["good morning from litellm", "this is another item"])` |
-| embed-english-light-v3.0 | `embedding(model="embed-english-light-v3.0", input=["good morning from litellm", "this is another item"])` |
-| embed-multilingual-v3.0  | `embedding(model="embed-multilingual-v3.0", input=["good morning from litellm", "this is another item"])` |
-| embed-multilingual-light-v3.0 | `embedding(model="embed-multilingual-light-v3.0", input=["good morning from litellm", "this is another item"])` |
-| embed-english-v2.0       | `embedding(model="embed-english-v2.0", input=["good morning from litellm", "this is another item"])` |
-| embed-english-light-v2.0 | `embedding(model="embed-english-light-v2.0", input=["good morning from litellm", "this is another item"])` |
-| embed-multilingual-v2.0  | `embedding(model="embed-multilingual-v2.0", input=["good morning from litellm", "this is another item"])` |
+| embed-english-v3.0       | `embedding(model="embed-english-v3.0", input=["good morning from lumina", "this is another item"])` |
+| embed-english-light-v3.0 | `embedding(model="embed-english-light-v3.0", input=["good morning from lumina", "this is another item"])` |
+| embed-multilingual-v3.0  | `embedding(model="embed-multilingual-v3.0", input=["good morning from lumina", "this is another item"])` |
+| embed-multilingual-light-v3.0 | `embedding(model="embed-multilingual-light-v3.0", input=["good morning from lumina", "this is another item"])` |
+| embed-english-v2.0       | `embedding(model="embed-english-v2.0", input=["good morning from lumina", "this is another item"])` |
+| embed-english-light-v2.0 | `embedding(model="embed-english-light-v2.0", input=["good morning from lumina", "this is another item"])` |
+| embed-multilingual-v2.0  | `embedding(model="embed-multilingual-v2.0", input=["good morning from lumina", "this is another item"])` |
 
 ## Rerank 
 
 ### Usage
 
-LiteLLM supports the v1 and v2 clients for Cohere rerank. By default, the `rerank` endpoint uses the v2 client, but you can specify the v1 client by explicitly calling `v1/rerank`
+Lumina supports the v1 and v2 clients for Cohere rerank. By default, the `rerank` endpoint uses the v2 client, but you can specify the v1 client by explicitly calling `v1/rerank`
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK Usage">
+<TabItem value="sdk" label="Lumina SDK Usage">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["COHERE_API_KEY"] = "sk-.."
@@ -317,13 +317,13 @@ print(response)
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy Usage">
+<TabItem value="proxy" label="Lumina Proxy Usage">
 
-LiteLLM provides an cohere api compatible `/rerank` endpoint for Rerank calls.
+Lumina provides an cohere api compatible `/rerank` endpoint for Rerank calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -337,10 +337,10 @@ model_list:
       api_key: os.environ/COHERE_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -369,16 +369,16 @@ curl http://0.0.0.0:4000/rerank \
 
 ## Parse (OCR)
 
-[Cohere Parse](https://docs.cohere.com/reference/parse) turns a document image into markdown. LiteLLM serves it through the [`/ocr` endpoint](../ocr), so requests and responses use the same shape as every other OCR provider and each call is cost tracked per billed page.
+[Cohere Parse](https://docs.cohere.com/reference/parse) turns a document image into markdown. Lumina serves it through the [`/ocr` endpoint](../ocr), so requests and responses use the same shape as every other OCR provider and each call is cost tracked per billed page.
 
 Parse accepts `image_url` documents only: an image URL or a base64 `data:image/...` URI. PDFs and `document_url` inputs are rejected with a 400 before anything is sent to Cohere.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK Usage">
+<TabItem value="sdk" label="Lumina SDK Usage">
 
 ```python showLineNumbers
 import os
-from litellm import ocr
+from lumina import ocr
 
 os.environ["COHERE_API_KEY"] = ""
 
@@ -396,11 +396,11 @@ print(response.usage_info.pages_processed)
 ```
 </TabItem>
 
-<TabItem value="proxy" label="LiteLLM Proxy Usage">
+<TabItem value="proxy" label="Lumina Proxy Usage">
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -410,10 +410,10 @@ model_list:
       api_key: os.environ/COHERE_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -440,6 +440,6 @@ curl http://0.0.0.0:4000/v1/ocr \
 | Parameter | Values | Description |
 |-----------|--------|-------------|
 | `output_format` | `markdown` (default), `blocks` | Cohere's output layout. With `blocks`, each page carries Cohere's `blocks` array and `markdown` is empty |
-| `req_format` | `litellm` (default), `native` | `native` returns Cohere's own response body instead of the LiteLLM OCR shape |
+| `req_format` | `lumina` (default), `native` | `native` returns Cohere's own response body instead of the Lumina OCR shape |
 
 Cohere Parse deployed on Azure AI Foundry is covered in [Azure AI OCR](./azure_ocr#cohere-parse).

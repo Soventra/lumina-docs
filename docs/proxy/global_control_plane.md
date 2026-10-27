@@ -2,7 +2,7 @@ import { ControlPlaneArchitecture } from '@site/src/components/ControlPlaneArchi
 
 # Global Control Plane
 
-Deploy a single LiteLLM UI that manages multiple independent LiteLLM proxy instances, each with its own database, Redis, and master key.
+Deploy a single Lumina UI that manages multiple independent Lumina proxy instances, each with its own database, Redis, and master key.
 
 <EnterpriseFeature />
 
@@ -16,9 +16,9 @@ Do not confuse this with the dedicated admin instance described on that page. Th
 
 <ControlPlaneArchitecture />
 
-The **control plane** is a LiteLLM instance that serves the admin UI and knows about all the workers. It exists purely so admins can switch between workers and manage them from a single UI
+The **control plane** is a Lumina instance that serves the admin UI and knows about all the workers. It exists purely so admins can switch between workers and manage them from a single UI
 
-Each **worker** is a fully independent LiteLLM proxy that handles LLM requests for its region or team. Workers have their own database, Redis, users, keys, teams, and budgets
+Each **worker** is a fully independent Lumina proxy that handles LLM requests for its region or team. Workers have their own database, Redis, users, keys, teams, and budgets
 
 ## Setup
 
@@ -45,7 +45,7 @@ worker_registry:
 Start the control plane:
 
 ```bash
-litellm --config cp_config.yaml --port 4000
+lumina --config cp_config.yaml --port 4000
 ```
 
 ### 2. Worker Configuration
@@ -62,10 +62,10 @@ general_settings:
 ```
 
 ```bash
-PROXY_BASE_URL=http://localhost:4001 litellm --config worker_a_config.yaml --port 4001
+PROXY_BASE_URL=http://localhost:4001 lumina --config worker_a_config.yaml --port 4001
 ```
 
-Repeat this for every worker in the registry, changing the master key, the database URL, and the port each time. A worker is an ordinary LiteLLM proxy in every other respect, so the [production deployment guide](./prod.md) applies to it unchanged
+Repeat this for every worker in the registry, changing the master key, the database URL, and the port each time. A worker is an ordinary Lumina proxy in every other respect, so the [production deployment guide](./prod.md) applies to it unchanged
 
 :::important
 Each worker must have its own `master_key` and `database_url`. The whole point of this architecture is that workers are independent
@@ -77,7 +77,7 @@ If a worker runs more than one instance behind a load balancer, configure Redis 
 
 ### 3. SSO Configuration (Optional)
 
-SSO is configured on the control plane instance the same way as a standard LiteLLM proxy. See the [SSO setup guide](./admin_ui_sso.md) for full instructions. If you use SSO, register each worker URL and the control plane URL as allowed callback URLs in your SSO provider's dashboard
+SSO is configured on the control plane instance the same way as a standard Lumina proxy. See the [SSO setup guide](./admin_ui_sso.md) for full instructions. If you use SSO, register each worker URL and the control plane URL as allowed callback URLs in your SSO provider's dashboard
 
 With the control plane and at least one worker running, open `http://localhost:4000/ui`. You should see the worker selector on the login page
 
@@ -85,7 +85,7 @@ With the control plane and at least one worker running, open `http://localhost:4
 
 ### Login Flow
 
-On load, the UI reads the control plane's `/.well-known/litellm-ui-config` endpoint, which reports `is_control_plane: true` whenever `worker_registry` is set, along with the registered workers (their IDs, names, and URLs). Because it is a control plane, the login page shows a worker selector dropdown
+On load, the UI reads the control plane's `/.well-known/lumina-ui-config` endpoint, which reports `is_control_plane: true` whenever `worker_registry` is set, along with the registered workers (their IDs, names, and URLs). Because it is a control plane, the login page shows a worker selector dropdown
 
 The user picks a worker and logs in with username/password or SSO. The UI authenticates against the selected worker by calling its `/v3/login` endpoint, which returns a single-use code, then redeems that code at the worker's `/v3/login/exchange` for a JWT. From then on it points all subsequent API calls at that worker, so keys, teams, models, and budgets are managed on the selected worker from the control plane UI
 

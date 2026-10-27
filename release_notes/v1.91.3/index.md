@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.91.3 - Responses Guardrail Coverage & OTel Exception Events"
+title: "Lumina v1.91.3 - Responses Guardrail Coverage & OTel Exception Events"
 description: "Fixes guardrails on the Responses API so text checks see user and tool output. Records failed LLM calls as OTel exception events."
 slug: "v1-91-3"
 date: 2026-07-11T15:20:47
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.91.3
+docker.lumina.ai/soventra/lumina:1.91.3
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.91.3
+pip install lumina==1.91.3
 ```
 
 </TabItem>
@@ -48,9 +48,9 @@ pip install litellm==1.91.3
 
 ### What's Changed
 
-- fix(guardrails): walk Responses-API text taxonomy in shared content helpers - [PR #32542](https://github.com/BerriAI/litellm/pull/32542)
-- feat(otel): emit the gen_ai.client.operation.exception event on failed LLM calls - [PR #32655](https://github.com/BerriAI/litellm/pull/32655)
+- fix(guardrails): walk Responses-API text taxonomy in shared content helpers - [PR #32542](https://github.com/Soventra/lumina/pull/32542)
+- feat(otel): emit the gen_ai.client.operation.exception event on failed LLM calls - [PR #32655](https://github.com/Soventra/lumina/pull/32655)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.91.2...v1.91.3
+https://github.com/Soventra/lumina/compare/v1.91.2...v1.91.3

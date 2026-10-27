@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Google Cloud Model Armor
 
-LiteLLM supports Google Cloud Model Armor guardrails via the [Model Armor API](https://cloud.google.com/security-command-center/docs/model-armor-overview). 
+Lumina supports Google Cloud Model Armor guardrails via the [Model Armor API](https://cloud.google.com/security-command-center/docs/model-armor-overview). 
 
 
 ## Supported Guardrails
@@ -12,7 +12,7 @@ LiteLLM supports Google Cloud Model Armor guardrails via the [Model Armor API](h
 - [Model Armor Templates](https://cloud.google.com/security-command-center/docs/manage-model-armor-templates) - Content sanitization and blocking based on configured templates
 
 ## Quick Start
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 
@@ -65,15 +65,15 @@ guardrails:
       default_on: true
 ```
 
-For successful Chat Completions, Responses, and Messages calls through the proxy, this mode scans logged request and response text. It records `success`, `guardrail_flagged`, or `guardrail_failed_to_respond` in `guardrail_information`. Inspect the verdict in Request Logs or the Guardrails Monitor Logs tab. Findings and Model Armor errors do not block the request or change the client response. For streaming requests, LiteLLM forwards chunks without waiting for the completed response scan.
+For successful Chat Completions, Responses, and Messages calls through the proxy, this mode scans logged request and response text. It records `success`, `guardrail_flagged`, or `guardrail_failed_to_respond` in `guardrail_information`. Inspect the verdict in Request Logs or the Guardrails Monitor Logs tab. Findings and Model Armor errors do not block the request or change the client response. For streaming requests, Lumina forwards chunks without waiting for the completed response scan.
 
 This mode has no input-only or output-only selection. Tool-call arguments and inline documents are not scanned. Use `pre_call` or `during_call` for [document and file scanning](#document-and-file-scanning).
 
-### 2. Start LiteLLM Gateway 
+### 2. Start Lumina Gateway 
 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request 
@@ -95,9 +95,9 @@ curl -i http://localhost:4000/v1/chat/completions \
 
 ## Document and File Scanning
 
-As of v1.92.0, Model Armor scans inline document attachments in addition to message text. On `pre_call` and `during_call`, LiteLLM resolves each attachment in the request messages to bytes and submits it to Model Armor's [byte API](https://cloud.google.com/security-command-center/docs/sanitize-prompts-responses) before the request reaches the LLM.
+As of v1.92.0, Model Armor scans inline document attachments in addition to message text. On `pre_call` and `during_call`, Lumina resolves each attachment in the request messages to bytes and submits it to Model Armor's [byte API](https://cloud.google.com/security-command-center/docs/sanitize-prompts-responses) before the request reaches the LLM.
 
-LiteLLM recognizes OpenAI `type: file` content blocks with inline `file_data` (a base64 data URI or raw base64) and Anthropic `type: document` blocks with an inline base64 `source`. The attachment's MIME type, declared `format`, or filename extension is mapped to a Model Armor `byteDataType`; PDF, Word, Excel, PowerPoint, CSV, and plain text documents are scanned. Inline content of types the byte API does not support, such as images, is not scanned and passes through.
+Lumina recognizes OpenAI `type: file` content blocks with inline `file_data` (a base64 data URI or raw base64) and Anthropic `type: document` blocks with an inline base64 `source`. The attachment's MIME type, declared `format`, or filename extension is mapped to a Model Armor `byteDataType`; PDF, Word, Excel, PowerPoint, CSV, and plain text documents are scanned. Inline content of types the byte API does not support, such as images, is not scanned and passes through.
 
 ```json
 {
@@ -119,7 +119,7 @@ Masking never applies to documents. Model Armor returns findings for a document 
 
 ### Attachments That Cannot Be Scanned
 
-An attachment LiteLLM recognizes as a document but cannot submit for scanning fails closed: the request is blocked with an HTTP 400 unless you set `fail_on_error: false`.
+An attachment Lumina recognizes as a document but cannot submit for scanning fails closed: the request is blocked with an HTTP 400 unless you set `fail_on_error: false`.
 
 | Case | Default (`fail_on_error: true`) | With `fail_on_error: false` |
 |------|--------------------------------|------------------------------|
@@ -134,7 +134,7 @@ Blocked requests return the reason:
 {"error": "Model Armor could not scan an attachment and blocked the request: attachment of 5242880 bytes exceeds Model Armor's 4194304 byte scan limit"}
 ```
 
-If you use `file_id`, `gs://`, or `http(s)://` attachment references (the pattern Vertex AI recommends), the bytes never reach LiteLLM, so Model Armor cannot scan them and the request is blocked by default. Set `skip_unscannable_attachments: true` to let attachments that carry no inline bytes pass through unscanned while still scanning the ones that do. Unlike `fail_on_error: false`, this leaves fail-closed behavior on real Model Armor API errors (network, quota, bad template) intact; it only affects attachments there is nothing to send.
+If you use `file_id`, `gs://`, or `http(s)://` attachment references (the pattern Vertex AI recommends), the bytes never reach Lumina, so Model Armor cannot scan them and the request is blocked by default. Set `skip_unscannable_attachments: true` to let attachments that carry no inline bytes pass through unscanned while still scanning the ones that do. Unlike `fail_on_error: false`, this leaves fail-closed behavior on real Model Armor API errors (network, quota, bad template) intact; it only affects attachments there is nothing to send.
 
 A document larger than Model Armor's 4 MB byte limit does carry bytes but exceeds what the byte API accepts, so it stays fail-closed under `fail_on_error`; `skip_unscannable_attachments` does not cover it, since that is a real document you likely want blocked rather than forwarded unscanned.
 

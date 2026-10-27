@@ -1,11 +1,11 @@
-# OpenClaw + LiteLLM Integration
+# OpenClaw + Lumina Integration
 
-[OpenClaw](https://openclaw.ai) is a self-hosted AI assistant that connects chat apps (WhatsApp, Telegram, Discord, and more) to LLM providers. By routing OpenClaw through LiteLLM Proxy, you get access to 100+ providers, cost tracking, spend limits, and automatic failover, all from a single gateway.
+[OpenClaw](https://openclaw.ai) is a self-hosted AI assistant that connects chat apps (WhatsApp, Telegram, Discord, and more) to LLM providers. By routing OpenClaw through Lumina Proxy, you get access to 100+ providers, cost tracking, spend limits, and automatic failover, all from a single gateway.
 
 ## What you'll set up
 
 ```
-Chat apps → OpenClaw Gateway → LiteLLM Proxy → LLM Providers (OpenAI, Anthropic, etc.)
+Chat apps → OpenClaw Gateway → Lumina Proxy → LLM Providers (OpenAI, Anthropic, etc.)
 ```
 
 ## Prerequisites
@@ -16,17 +16,17 @@ Chat apps → OpenClaw Gateway → LiteLLM Proxy → LLM Providers (OpenAI, Anth
 | **Python {{python_min_version}}+** | `python --version` |
 | **At least one LLM API key** | OpenAI, Anthropic, Gemini, etc. |
 
-## Step 1: Install LiteLLM Proxy
+## Step 1: Install Lumina Proxy
 
 ```bash
-uv tool install 'litellm[proxy]'
+uv tool install 'lumina[proxy]'
 ```
 
-## Step 2: Create a LiteLLM config file
+## Step 2: Create a Lumina config file
 
-Create a config file  `litellm_config.yaml` with the models you want to use. Here's an example with OpenAI:
+Create a config file  `lumina_config.yaml` with the models you want to use. Here's an example with OpenAI:
 
-```yaml title="litellm_config.yaml"
+```yaml title="lumina_config.yaml"
 model_list:
   - model_name: {{openai_large}}
     lumina_params:
@@ -40,7 +40,7 @@ general_settings:
 :::tip[Multi-provider example]
 You can add as many models as you want from different providers:
 
-```yaml title="litellm_config.yaml"
+```yaml title="lumina_config.yaml"
 model_list:
   - model_name: {{openai_large}}
     lumina_params:
@@ -61,7 +61,7 @@ general_settings:
   master_key: sk-your-secret-key
 ```
 
-See [LiteLLM proxy config docs](https://docs.litellm.ai/docs/proxy/configs) for all options.
+See [Lumina proxy config docs](https://docs.lumina.ai/docs/proxy/configs) for all options.
 :::
 
 ## Step 3: Start the proxy
@@ -69,7 +69,7 @@ See [LiteLLM proxy config docs](https://docs.litellm.ai/docs/proxy/configs) for 
 Make sure your API key(s) are available as environment variables (via `export`, `.env` file, or however you manage secrets), then start the proxy:
 
 ```bash
-litellm --config litellm_config.yaml --port 4000
+lumina --config lumina_config.yaml --port 4000
 ```
 
 ## Step 4: Install OpenClaw
@@ -85,7 +85,7 @@ On Windows, use PowerShell: `iwr -useb https://openclaw.ai/install.ps1 | iex`
 WSL2 is recommended over native Windows.
 :::
 
-## Step 5: Connect OpenClaw to LiteLLM
+## Step 5: Connect OpenClaw to Lumina
 
 Run the onboarding wizard:
 
@@ -96,22 +96,22 @@ openclaw onboard --install-daemon
 When prompted:
 
 1. Choose **QuickStart** or **Manual** as the onboarding mode (both work; Manual gives you more options for gateway settings)
-2. Select **LiteLLM** as the model/auth provider
-3. Enter your LiteLLM `master_key` from Step 2 and set the base URL to your proxy address (e.g., `http://localhost:4000`)
-4. When asked for the default model, choose **Enter model manually** and type the model name from your `litellm_config.yaml` (e.g., `litellm/{{openai_large}}`)
+2. Select **Lumina** as the model/auth provider
+3. Enter your Lumina `master_key` from Step 2 and set the base URL to your proxy address (e.g., `http://localhost:4000`)
+4. When asked for the default model, choose **Enter model manually** and type the model name from your `lumina_config.yaml` (e.g., `lumina/{{openai_large}}`)
 
 You can also set or change the model after onboarding:
 
 ```bash
-openclaw models set litellm/{{openai_large}}
+openclaw models set lumina/{{openai_large}}
 ```
 
 For scripted / CI environments, you can skip the prompts entirely:
 
 ```bash
 openclaw onboard --non-interactive --accept-risk \
-  --auth-choice litellm-api-key \
-  --litellm-api-key "sk-your-secret-key" \
+  --auth-choice lumina-api-key \
+  --lumina-api-key "sk-your-secret-key" \
   --custom-base-url "http://localhost:4000" \
   --install-daemon --skip-channels --skip-skills
 ```
@@ -142,20 +142,20 @@ openclaw models status
 
 ## Config reference
 
-After onboarding, OpenClaw stores the LiteLLM provider config in `~/.openclaw/openclaw.json`. The relevant sections are something like this:
+After onboarding, OpenClaw stores the Lumina provider config in `~/.openclaw/openclaw.json`. The relevant sections are something like this:
 
 ```json5 title="~/.openclaw/openclaw.json (excerpt)"
 {
   "models": {
     "providers": {
-      "litellm": {
+      "lumina": {
         "baseUrl": "http://localhost:4000",
         "apiKey": "sk-your-secret-key",
         "api": "openai-completions",
         "models": [
           {
             "id": "{{openai_large}}",
-            "name": "GPT-5.6 Terra via LiteLLM"
+            "name": "GPT-5.6 Terra via Lumina"
           }
         ]
       }
@@ -163,7 +163,7 @@ After onboarding, OpenClaw stores the LiteLLM provider config in `~/.openclaw/op
   },
   "agents": {
     "defaults": {
-      "model": { "primary": "litellm/{{openai_large}}" }
+      "model": { "primary": "lumina/{{openai_large}}" }
     }
   }
 }
@@ -175,7 +175,7 @@ You can edit this file directly to add more models or change the `baseUrl`. Open
 
 **Connection refused / proxy not reachable**
 
-Make sure the LiteLLM proxy is running and that the `baseUrl` in your OpenClaw config matches:
+Make sure the Lumina proxy is running and that the `baseUrl` in your OpenClaw config matches:
 
 ```bash
 curl http://localhost:4000/health -H "Authorization: Bearer sk-your-secret-key"
@@ -183,10 +183,10 @@ curl http://localhost:4000/health -H "Authorization: Bearer sk-your-secret-key"
 
 **Wrong model or "Invalid model name"**
 
-The model name in OpenClaw must match a `model_name` from your `litellm_config.yaml`. Switch the active model with:
+The model name in OpenClaw must match a `model_name` from your `lumina_config.yaml`. Switch the active model with:
 
 ```bash
-openclaw models set litellm/{{openai_large}}
+openclaw models set lumina/{{openai_large}}
 ```
 
 **Gateway pairing issues after reinstall**
@@ -201,6 +201,6 @@ openclaw gateway install
 ## References
 
 - [OpenClaw docs](https://docs.openclaw.ai)
-- [OpenClaw LiteLLM provider docs](https://docs.openclaw.ai/providers/litellm)
+- [OpenClaw Lumina provider docs](https://docs.openclaw.ai/providers/lumina)
 - [OpenClaw model providers](https://docs.openclaw.ai/concepts/model-providers)
-- [LiteLLM proxy configuration](https://docs.litellm.ai/docs/proxy/configs)
+- [Lumina proxy configuration](https://docs.lumina.ai/docs/proxy/configs)

@@ -8,13 +8,13 @@ import {GuideNav} from '@site/src/components/Moyai';
 
 <GuideNav active="architecture" />
 
-Moyai separates the lifetime of a conversation from the machine executing its current task. The web app owns identity, messages, app connections, and execution records. A sandbox runs the agent. LiteLLM handles model access and inference accounting.
+Moyai separates the lifetime of a conversation from the machine executing its current task. The web app owns identity, messages, app connections, and execution records. A sandbox runs the agent. Lumina handles model access and inference accounting.
 
-This guide describes the Modal quickstart and the Render plus Temporal layout used by the LiteLLM team. Implementation links refer to Moyai commit [`04ea562`](https://github.com/BerriAI/moyai/tree/04ea5627419c1cdcce1532667d95ba1956df8e30). Consult the upstream [deployment guide](https://github.com/BerriAI/moyai/blob/main/docs/deployment.md) before operating another revision or sandbox provider.
+This guide describes the Modal quickstart and the Render plus Temporal layout used by the Lumina team. Implementation links refer to Moyai commit [`04ea562`](https://github.com/BerriAI/moyai/tree/04ea5627419c1cdcce1532667d95ba1956df8e30). Consult the upstream [deployment guide](https://github.com/BerriAI/moyai/blob/main/docs/deployment.md) before operating another revision or sandbox provider.
 
 ## System design
 
-![Moyai architecture: users enter through Slack or a browser; the app stores session state and brokers credentials; an agent sandbox runs tools and saves filesystem checkpoints; LiteLLM routes models; Temporal optionally coordinates the worker.](./architecture.svg)
+![Moyai architecture: users enter through Slack or a browser; the app stores session state and brokers credentials; an agent sandbox runs tools and saves filesystem checkpoints; Lumina routes models; Temporal optionally coordinates the worker.](./architecture.svg)
 
 [Open the full-size diagram](./architecture.svg). Lines describe request paths, not unrestricted network permissions. The diagram shows Modal sandboxes; Moyai also has other [sandbox providers](https://github.com/BerriAI/moyai/blob/main/docs/deployment.md).
 
@@ -23,7 +23,7 @@ This guide describes the Modal quickstart and the Render plus Temporal layout us
 | Web app and broker | Authenticate users, accept messages, enforce connection policies, broker model and app calls | Chat, messages, connection records, request accounting |
 | Agent harness | Run the model/tool loop with the selected native API | Harness-specific history and public working context |
 | Sandbox | Supply the terminal, files, and browser for the agent | Files saved in provider snapshots; live processes remain on the machine |
-| LiteLLM gateway | Route model requests, hold provider keys, enforce key budgets, record inference cost | Gateway spend logs and model configuration |
+| Lumina gateway | Route model requests, hold provider keys, enforce key budgets, record inference cost | Gateway spend logs and model configuration |
 | Temporal, when enabled | Schedule the next session step, timers, and activity retries | Session IDs and small lifecycle values, not prompts, files, or credentials |
 
 ## Two deployment layouts
@@ -134,7 +134,7 @@ For executable examples of these failure boundaries, see the upstream [durabilit
 
 ## Credentials and access boundaries
 
-Provider API keys stay at LiteLLM. The Moyai app holds the gateway key and encrypted connected-app credentials. A sandbox receives a run-scoped capability for the broker; the broker checks the run and connection policy before forwarding requests.
+Provider API keys stay at Lumina. The Moyai app holds the gateway key and encrypted connected-app credentials. A sandbox receives a run-scoped capability for the broker; the broker checks the run and connection policy before forwarding requests.
 
 Enabled connected-app tools execute under the connection policy without an administrator approval step. Some operations have additional consent gates, such as editing an external PR from a saved chat. A paused or read-only connection blocks new writes. These shared connections retain the permissions of their authorizing identity. Moyai's shared workspace is intended for trusted teammates, not isolated tenants.
 
@@ -142,11 +142,11 @@ The default Modal sandbox uses container isolation; optional VM execution is a s
 
 ## Cost accounting {#cost-accounting}
 
-Moyai uses LiteLLM as the source of truth for model costs. It stores the gateway's final charge for each tracked request and sums those same charges by user, session, and model. It preserves decimal precision instead of estimating prices from token counts.
+Moyai uses Lumina as the source of truth for model costs. It stores the gateway's final charge for each tracked request and sums those same charges by user, session, and model. It preserves decimal precision instead of estimating prices from token counts.
 
 Moyai reserves a request identity before inference and attributes usage to the original user, message, session, and model. It captures final response costs for non-streaming requests and final usage costs for streams; an initial stream header is not a final bill.
 
-If a receipt is missing, background recovery can query LiteLLM's `/spend/logs/v2` using the same gateway key with the added permission. This recovers accounting without rerunning inference or changing an interrupted task's execution status. Unknown costs remain visible. Keep provider inference and hosting/storage charges distinct when evaluating the installation.
+If a receipt is missing, background recovery can query Lumina's `/spend/logs/v2` using the same gateway key with the added permission. This recovers accounting without rerunning inference or changing an interrupted task's execution status. Unknown costs remain visible. Keep provider inference and hosting/storage charges distinct when evaluating the installation.
 
 The totals cover tracked Moyai requests with recorded costs. Calls outside Moyai, gateway-internal billed attempts absent from returned costs, and unresolved receipts can leave a difference from the gateway key's total. Use the dashboard's coverage and per-request amounts when reconciling spend.
 

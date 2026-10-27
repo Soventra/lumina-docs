@@ -12,7 +12,7 @@ os.environ['PERPLEXITYAI_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['PERPLEXITYAI_API_KEY'] = ""
@@ -25,7 +25,7 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['PERPLEXITYAI_API_KEY'] = ""
@@ -45,7 +45,7 @@ Requires v1.72.6+
 
 :::info
 
-See full guide on Reasoning with LiteLLM [here](../reasoning_content)
+See full guide on Reasoning with Lumina [here](../reasoning_content)
 
 :::
 
@@ -55,7 +55,7 @@ You can set the reasoning effort by setting the `reasoning_effort` parameter.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['PERPLEXITYAI_API_KEY'] = ""
@@ -82,12 +82,12 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-Replace `anything` with your LiteLLM Proxy Virtual Key, if [setup](../proxy/virtual_keys).
+Replace `anything` with your Lumina Proxy Virtual Key, if [setup](../proxy/virtual_keys).
 
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
@@ -133,7 +133,7 @@ Presets provide optimized defaults for specific use cases. Start with a preset f
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -164,7 +164,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -190,7 +190,7 @@ Access models from OpenAI, Anthropic, Google, xAI, and other providers through P
 <TabItem value="openai" label="OpenAI">
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -209,7 +209,7 @@ print(response.output)
 <TabItem value="anthropic" label="Anthropic">
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -228,7 +228,7 @@ print(response.output)
 <TabItem value="google" label="Google">
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -247,7 +247,7 @@ print(response.output)
 <TabItem value="xai" label="xAI">
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -270,7 +270,7 @@ print(response.output)
 Enable web search capabilities to access real-time information:
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -291,7 +291,7 @@ print(response.output)
 The Agent API supports custom function tools. Pass function tools through unchanged:
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -328,7 +328,7 @@ print(response.output)
 Request JSON schema structured outputs via the `text` parameter:
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -364,7 +364,7 @@ print(response.output)
 Control the reasoning effort level for reasoning-capable models:
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -385,7 +385,7 @@ print(response.output)
 Use message arrays for multi-turn conversations with context:
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -409,7 +409,7 @@ print(response.output)
 Stream responses for real-time output:
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""
@@ -458,7 +458,7 @@ for chunk in response:
 ### Complete Example
 
 ```python
-from litellm import responses
+from lumina import responses
 import os
 
 os.environ['PERPLEXITY_API_KEY'] = ""

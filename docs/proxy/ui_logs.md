@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 # Getting Started with UI Logs
 
-View Spend, Token Usage, Key, Team Name for Each Request to LiteLLM
+View Spend, Token Usage, Key, Team Name for Each Request to Lumina
 
 
 <Image img={require('../../img/ui_request_logs.png')}/>
@@ -21,11 +21,11 @@ View Spend, Token Usage, Key, Team Name for Each Request to LiteLLM
 
 
 
-**By default LiteLLM does not track the request and response content.**
+**By default Lumina does not track the request and response content.**
 
 ## Tracking - Request / Response Content in Logs Page 
 
-If you want to view request and response content on LiteLLM Logs, you can enable it in either place:
+If you want to view request and response content on Lumina Logs, you can enable it in either place:
 
 - **From the UI (no restart):** Use [UI Spend Log Settings](./ui_spend_log_settings.md), then open Logs → Settings → enable "Store Prompts in Spend Logs" → Save. Takes effect immediately and overrides config.
 - **From config:** Add this to your `proxy_config.yaml` (requires restart):
@@ -92,7 +92,7 @@ general_settings:
 
 ## Choose which metadata fields are stored
 
-Every `LiteLLM_SpendLogs` row carries a `metadata` JSON column. Most of it is usually `model_map_information`, the model's cost map entry copied into every row (about 7 KB). Use `spend_logs_metadata_fields` to choose which top-level keys of that column are written to the database. Set exactly one of `include` or `exclude`
+Every `Lumina_SpendLogs` row carries a `metadata` JSON column. Most of it is usually `model_map_information`, the model's cost map entry copied into every row (about 7 KB). Use `spend_logs_metadata_fields` to choose which top-level keys of that column are written to the database. Set exactly one of `include` or `exclude`
 
 ```yaml
 general_settings:
@@ -110,7 +110,7 @@ general_settings:
       - cost_breakdown
 ```
 
-When the setting is unset, every key is written, which is the default. Setting both lists, setting neither, naming a key that is not a `LiteLLM_SpendLogs.metadata` field, or using a dotted path such as `usage_object.cache_read_input_tokens` stops the proxy at startup. `status` and `cold_storage_object_key` are always written and cannot be excluded. The setting can also be changed without a restart through `POST /config/field/update` with `config_type: general_settings`, which rejects the same invalid values with a 400
+When the setting is unset, every key is written, which is the default. Setting both lists, setting neither, naming a key that is not a `Lumina_SpendLogs.metadata` field, or using a dotted path such as `usage_object.cache_read_input_tokens` stops the proxy at startup. `status` and `cold_storage_object_key` are always written and cannot be excluded. The setting can also be changed without a restart through `POST /config/field/update` with `config_type: general_settings`, which rejects the same invalid values with a 400
 
 Only the stored row is filtered. Daily spend tables, budgets and logging callbacks still receive every key. The `proxy_server_request` and `response` columns are not affected; `store_prompts_in_spend_logs` keeps controlling those. Rows written before the change keep their metadata until [retention](#automatically-deleting-old-spend-logs) deletes them, and Postgres only returns the disk space after `VACUUM FULL` or `pg_repack`
 
@@ -150,4 +150,4 @@ For the full set of knobs, the default schedule, and guidance for large tables, 
 
 ## What gets logged? 
 
-[Here's a schema](https://github.com/BerriAI/litellm/blob/1cdd4065a645021aea931afb9494e7694b4ec64b/schema.prisma#L285) breakdown of what gets logged.
+[Here's a schema](https://github.com/Soventra/lumina/blob/1cdd4065a645021aea931afb9494e7694b4ec64b/schema.prisma#L285) breakdown of what gets logged.

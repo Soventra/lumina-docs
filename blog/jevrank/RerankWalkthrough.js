@@ -11,7 +11,7 @@ const steps = [
     id: 'rerank-input',
     label: 'Input',
     title: 'Send a query and documents',
-    text: 'Call LiteLLM’s rerank API with your query and candidate passages. Keep their input order: you will use these indexes to find each document in the response.',
+    text: 'Call Lumina’s rerank API with your query and candidate passages. Keep their input order: you will use these indexes to find each document in the response.',
     detail:
       'Follow index 2, the passage about cell polarity. It starts third in this recorded request.',
   },
@@ -19,7 +19,7 @@ const steps = [
     id: 'rerank-scores',
     label: 'Score',
     title: 'Score each document',
-    text: 'For TypeSafe Jev, LiteLLM asks the same relevance question for each passage. Jev returns a probability for each answer.',
+    text: 'For TypeSafe Jev, Lumina asks the same relevance question for each passage. Jev returns a probability for each answer.',
     detail:
       'Jev assigned index 2 a score of 0.39, compared with 0.14 and 0.12 for the other two passages. These independent scores do not need to sum to one.',
   },
@@ -27,7 +27,7 @@ const steps = [
     id: 'rerank-output',
     label: 'Rank',
     title: 'Return the ranked indexes',
-    text: 'LiteLLM sorts the scores from highest to lowest and returns relevance_score with the original index. You can retrieve the matching text from your input documents.',
+    text: 'Lumina sorts the scores from highest to lowest and returns relevance_score with the original index. You can retrieve the matching text from your input documents.',
     detail:
       'Index 2 now ranks first. The next two results are indexes 0 and 1. The response keeps each document’s identity after the order changes.',
   },

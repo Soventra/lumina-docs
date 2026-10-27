@@ -1,17 +1,17 @@
 {
-  "origin": "measured_via_local_litellm_sdk_and_gateway_decisions_transport",
+  "origin": "measured_via_local_lumina_sdk_and_gateway_decisions_transport",
   "started_at": "2026-10-21T03:42:10.363503+00:00",
   "finished_at": "2026-10-21T03:45:14.263801+00:00",
   "run_sha256": "715ed256f85cce3f9ef445f3178575c3820bc7711e383d3baa6eea2d932371c7",
   "implementation": {
-    "pr": "https://github.com/BerriAI/litellm/pull/47782",
+    "pr": "https://github.com/Soventra/lumina/pull/47782",
     "revision": "5aa0a8304cd5bfa095bbd07e77f6f8c367084595",
     "tracked_changes": false,
     "adapter_sha256": "26861e9a0d5791a823e541dd7fba60374d734b3b7360ddad8d50136d22207c45",
     "decisions_source_sha256": {
-      "litellm/decisions/__init__.py": "3cedcb541468a9a1470719c88216d7bf062b576eb19e451c4959c000d5e4b482",
-      "litellm/decisions/call.py": "e13243013306c045ef77deb5c8e4653f6d03eaa9a7944da10b856b602dc2fa78",
-      "litellm/decisions/main.py": "c753375fefaaecbb257a0154b12197cb854c593f59b9ab3038d65f493b375af9"
+      "lumina/decisions/__init__.py": "3cedcb541468a9a1470719c88216d7bf062b576eb19e451c4959c000d5e4b482",
+      "lumina/decisions/call.py": "e13243013306c045ef77deb5c8e4653f6d03eaa9a7944da10b856b602dc2fa78",
+      "lumina/decisions/main.py": "c753375fefaaecbb257a0154b12197cb854c593f59b9ab3038d65f493b375af9"
     }
   },
   "runner_sha256": "b8aa56ee1b46ed0ec2894f4b8652c9b4fa390ad586c0d0fcc08f5225a0b60209",
@@ -66,7 +66,7 @@
           "source": "Gateway model info, typesafe/jev-latest, inspected 2026-10-21; estimated from returned tokens, not an invoice"
         }
       },
-      "origin": "measured_via_litellm",
+      "origin": "measured_via_lumina",
       "queries_expected": 300,
       "queries_attempted": 300,
       "queries_succeeded": 300,

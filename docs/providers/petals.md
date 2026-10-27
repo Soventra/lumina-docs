@@ -1,7 +1,7 @@
 # Petals
 Petals: https://github.com/bigscience-workshop/petals
 
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/LiteLLM_Petals.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_Petals.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
@@ -15,7 +15,7 @@ uv add git+https://github.com/bigscience-workshop/petals
 Ensure you add `petals/` as a prefix for all petals LLMs. This sets the custom_llm_provider to petals
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="petals/petals-team/StableBeluga2", 

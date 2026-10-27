@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Amazon Nova is a family of foundation models built by Amazon that deliver frontier intelligence and industry-leading price performance. |
-| Provider Route on LiteLLM | `amazon_nova/` |
+| Provider Route on Lumina | `amazon_nova/` |
 | Provider Doc | [Amazon Nova ↗](https://docs.aws.amazon.com/nova/latest/userguide/what-is-nova.html) |
 | Supported OpenAI Endpoints | `/chat/completions`, `v1/responses` |
 | Other Supported Endpoints | `v1/messages`, `/generateContent` | 
@@ -26,7 +26,7 @@ export AMAZON_NOVA_API_KEY="your-api-key"
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # Set your API key
 os.environ["AMAZON_NOVA_API_KEY"] = "your-api-key"
@@ -56,7 +56,7 @@ model_list:
 ```
 ### 2. Start the proxy
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Test it
@@ -94,7 +94,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AMAZON_NOVA_API_KEY"] = "your-api-key"
 
@@ -139,7 +139,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AMAZON_NOVA_API_KEY"] = "your-api-key"
 
@@ -220,7 +220,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["AMAZON_NOVA_API_KEY"] = "your-api-key"
 

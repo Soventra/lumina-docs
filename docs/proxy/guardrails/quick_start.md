@@ -4,11 +4,11 @@ import TabItem from '@theme/TabItem';
 
 # Guardrails - Quick Start
 
-Setup Prompt Injection Detection, PII Masking on LiteLLM Proxy (AI Gateway)
+Setup Prompt Injection Detection, PII Masking on Lumina Proxy (AI Gateway)
 
 To see where guardrails and the rest of the gateway stand against the OWASP Top 10 for LLM Applications 2026, read the [OWASP LLM Top 10 mapping](../security_owasp_llm_top10).
 
-## 1. Define guardrails on your LiteLLM config.yaml
+## 1. Define guardrails on your Lumina config.yaml
 
 Set your guardrails under the `guardrails` section
 
@@ -68,7 +68,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       additional_provider_specific_params:
         plr_mask: true
@@ -240,21 +240,21 @@ Since v1.103.0, guardrails on Anthropic `/v1/messages` also scan the top-level `
 
 On `/v1/messages` the flag skips only the top-level `system` prompt. A `role: system` entry inside `messages` is client input, so guardrails scan it even with the flag set. Claude Code sends these entries mid-conversation, for example its environment details and corrections typed while a tool runs. To keep them out of a Bedrock guardrail's scan, set [`experimental_use_latest_role_message_only: true`](./bedrock#experimental-only-send-latest-user-message) on the guardrail.
 
-**Global**, in `litellm_settings`:
+**Global**, in `lumina_settings`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   skip_system_message_in_guardrail: true
 ```
 
-**Per guardrail**, under that guardrail’s `lumina_params`: set `skip_system_message_in_guardrail: true` or `false`. If omitted, the global `litellm_settings` value is used; per-guardrail `false` forces system messages to be included even when the global flag is `true`.
+**Per guardrail**, under that guardrail’s `lumina_params`: set `skip_system_message_in_guardrail: true` or `false`. If omitted, the global `lumina_settings` value is used; per-guardrail `false` forces system messages to be included even when the global flag is `true`.
 
-**Via LiteLLM UI**, when **creating** or **editing** a guardrail in the LiteLLM Admin Dashboard, set **Skip system messages in guardrail** (under Basic Info on create, or in the edit / guardrail settings flows):
+**Via Lumina UI**, when **creating** or **editing** a guardrail in the Lumina Admin Dashboard, set **Skip system messages in guardrail** (under Basic Info on create, or in the edit / guardrail settings flows):
 
 
 | UI option                             | Effect                                                                                 |
 | ------------------------------------- | -------------------------------------------------------------------------------------- |
-| **Use global default**                | Uses `litellm_settings.skip_system_message_in_guardrail` from your proxy config        |
+| **Use global default**                | Uses `lumina_settings.skip_system_message_in_guardrail` from your proxy config        |
 | **Yes — exclude from guardrail scan** | Sets per-guardrail `skip_system_message_in_guardrail: true`                            |
 | **No — always include in scan**       | Sets per-guardrail `skip_system_message_in_guardrail: false` (overrides a global skip) |
 
@@ -270,20 +270,20 @@ litellm_settings:
 
 Same idea, for `role: tool` content: stop guardrails from scanning tool call results while still sending the full `messages` list to the model.
 
-**Global** (in `litellm_settings`):
+**Global** (in `lumina_settings`):
 
 ```yaml
-litellm_settings:
+lumina_settings:
   skip_tool_message_in_guardrail: true
 ```
 
 **Per guardrail**: under that guardrail's `lumina_params`, set `skip_tool_message_in_guardrail: true` or `false`, with the same global/per-guardrail precedence as the system-message flag above.
 
-**Via LiteLLM UI**: set **Skip tool messages in guardrail** the same way, right below the system-message dropdown described above, with the same three options (**Use global default**, **Yes, exclude from guardrail scan**, **No, always include in scan**).
+**Via Lumina UI**: set **Skip tool messages in guardrail** the same way, right below the system-message dropdown described above, with the same three options (**Use global default**, **Yes, exclude from guardrail scan**, **No, always include in scan**).
 
 ### Where the skip flags apply
 
-**Where these apply:** The **unified** guardrail path (providers that implement `apply_guardrail` and run through LiteLLM’s message translation layer) on **OpenAI Chat Completions** (`/v1/chat/completions`) and **Anthropic Messages** (`/v1/messages`). Examples include Presidio, Bedrock guardrails, `litellm_content_filter`, OpenAI Moderation, Generic Guardrail API, and custom code guardrails that define `apply_guardrail`. **Lakera v2** also honors both flags, despite running via a direct hook rather than the unified path; see [Lakera AI](./lakera_ai#supported-params).
+**Where these apply:** The **unified** guardrail path (providers that implement `apply_guardrail` and run through Lumina’s message translation layer) on **OpenAI Chat Completions** (`/v1/chat/completions`) and **Anthropic Messages** (`/v1/messages`). Examples include Presidio, Bedrock guardrails, `lumina_content_filter`, OpenAI Moderation, Generic Guardrail API, and custom code guardrails that define `apply_guardrail`. **Lakera v2** also honors both flags, despite running via a direct hook rather than the unified path; see [Lakera AI](./lakera_ai#supported-params).
 
 **Where these do *not* apply:** Other guardrails that run only via direct hooks on the raw request (e.g. Aporia, DynamoAI, Javelin, Lasso, Pangea, Model Armor, Azure Content Safety hooks, Guardrails AI, AIM, Cato Networks, tool permission, MCP security). These flags also do not apply to other routes until those endpoints use the same translation layer (e.g. Responses API, embeddings, speech).
 
@@ -295,10 +295,10 @@ Need to distribute guardrail requests across multiple accounts or regions? See [
 - Weighted distribution across guardrail instances
 - Multi-region guardrail deployments
 
-## 2. Start LiteLLM Gateway
+## 2. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ## 3. Test request
@@ -398,10 +398,10 @@ curl -i http://localhost:4000/v1/chat/completions \
 
 **Expected response**
 
-Your response headers will include `x-litellm-applied-guardrails` with the guardrail applied 
+Your response headers will include `x-lumina-applied-guardrails` with the guardrail applied 
 
 ```
-x-litellm-applied-guardrails: aporia-pre-guard
+x-lumina-applied-guardrails: aporia-pre-guard
 ```
 
 ### Guardrail Policies
@@ -648,7 +648,7 @@ Monitor which guardrails were executed and whether they passed or failed. e.g. g
 
 #### Setup
 
-1. Connect LiteLLM to a [supported logging provider](../logging)
+1. Connect Lumina to a [supported logging provider](../logging)
 2. Make a request with a `guardrails` parameter
 3. Check your logging provider for the guardrail trace
 
@@ -900,7 +900,7 @@ Mode Specification
 Both `default` and tag values accept either a single string or a list of strings.
 
 ```python
-from litellm.types.guardrails import Mode
+from lumina.types.guardrails import Mode
 
 # Single default mode
 mode = Mode(
@@ -923,7 +923,7 @@ mode = Mode(
 
 ### `guardrails` Request Parameter
 
-The `guardrails` parameter can be passed to any LiteLLM Proxy endpoint (`/chat/completions`, `/completions`, `/embeddings`).
+The `guardrails` parameter can be passed to any Lumina Proxy endpoint (`/chat/completions`, `/completions`, `/embeddings`).
 
 #### Format Options
 

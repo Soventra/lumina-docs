@@ -9,15 +9,15 @@ This is deprecated, please use [Tag Based Routing](./tag_routing.md) instead
 
 Route specific customers to eu-only models.
 
-By specifying 'allowed_model_region' for a customer, LiteLLM will filter-out any models in a model group which is not in the allowed region (i.e. 'eu').
+By specifying 'allowed_model_region' for a customer, Lumina will filter-out any models in a model group which is not in the allowed region (i.e. 'eu').
 
-[**See Code**](https://github.com/BerriAI/litellm/blob/5eb12e30cc5faa73799ebc7e48fc86ebf449c879/litellm/router.py#L2938)
+[**See Code**](https://github.com/Soventra/lumina/blob/5eb12e30cc5faa73799ebc7e48fc86ebf449c879/lumina/router.py#L2938)
 
 ### 1. Create customer with region-specification
 
-Use the litellm 'end-user' object for this. 
+Use the lumina 'end-user' object for this. 
 
-End-users can be tracked / id'ed by passing the 'user' param to litellm in an openai chat completion/embedding call.
+End-users can be tracked / id'ed by passing the 'user' param to lumina in an openai chat completion/embedding call.
 
 ```bash
 curl -X POST --location 'http://0.0.0.0:4000/end_user/new' \
@@ -58,7 +58,7 @@ router_settings:
 Start the proxy
 
 ```yaml
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Test it!
@@ -84,8 +84,8 @@ curl -X POST --location 'http://localhost:4000/chat/completions' \
 Expected API Base in response headers 
 
 ```
-x-litellm-api-base: "https://my-endpoint-europe-berri-992.openai.azure.com/"
-x-litellm-model-region: "eu" # CONFIRMS REGION-BASED ROUTING WORKED
+x-lumina-api-base: "https://my-endpoint-europe-berri-992.openai.azure.com/"
+x-lumina-model-region: "eu" # CONFIRMS REGION-BASED ROUTING WORKED
 ```
 
 ### FAQ 

@@ -14,16 +14,16 @@ const config = {
   customFields: {
     inkeepApiKey: process.env.DOCS_CHAT_PROVIDER === 'internal' ? null : process.env.INKEEP_API_KEY || null,
   },
-  title: 'liteLLM',
+  title: 'Lumina',
   tagline: 'Simplify LLM API Calls',
   // SVG favicon that turns white on dark browser themes; PNG for browsers without SVG icons
-  favicon: '/img/brand/litellm-favicon.svg',
+  favicon: '/img/brand/lumina-favicon.svg',
   headTags: [
-    {tagName: 'link', attributes: {rel: 'alternate icon', type: 'image/png', href: '/img/brand/litellm-monogram-blue-192.png'}},
+    {tagName: 'link', attributes: {rel: 'alternate icon', type: 'image/png', href: '/img/brand/lumina-monogram-blue-192.png'}},
   ],
 
   // Set the production url of your site here
-  url: 'https://docs.litellm.ai/',
+  url: 'https://docs.lumina.ai/',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
@@ -42,7 +42,7 @@ const config = {
   },
   clientModules: [require.resolve('./src/clientModules/imageZoom.js'), require.resolve('./src/clientModules/gridMarks.js'), require.resolve('./src/clientModules/lensLegacyRedirect.js')],
   plugins: [
-    require('./plugins/litellm-stats'),
+    require('./plugins/lumina-stats'),
     require('./plugins/release-feed'),
     require('./plugins/llms'),
     // vega-canvas tries to load the optional node `canvas` package during SSR.
@@ -263,9 +263,9 @@ const config = {
     ],
 
     // PostHog product analytics. Same project as the Webflow marketing site
-    // (www.litellm.ai), so a visitor moving between the two domains is one
+    // (www.lumina.ai), so a visitor moving between the two domains is one
     // person and one journey: persistence keeps a first-party cookie on
-    // .litellm.ai, which every litellm.ai subdomain can read.
+    // .lumina.ai, which every lumina.ai subdomain can read.
     // Uses the official posthog-docusaurus plugin, which is production-only
     // by default (mirroring the gtag setup below) and forwards every extra
     // option below to posthog.init via JSON.stringify.
@@ -282,7 +282,7 @@ const config = {
     //
     // Kept off the docs on purpose, so this stays analytics and nothing else:
     // no session replay (no rrweb bundle downloaded, no DOM observation;
-    // replay is scoped to litellm.ai/enterprise and /pricing by URL trigger in
+    // replay is scoped to lumina.ai/enterprise and /pricing by URL trigger in
     // the project settings), no heatmap capture despite the project-level
     // opt-in (skips the mousemove listener and its periodic requests; link and
     // button clicks are already captured with their hrefs by autocapture).
@@ -337,9 +337,9 @@ const config = {
                 // Two GA4 destinations. G-K7K215ZVNC is the docs property and
                 // stays first: plugin-google-gtag uses trackingID[0] for the
                 // gtag.js loader URL and emits one gtag('config', ...) per id.
-                // G-G3LG9H6J6B is the canonical litellm.ai property, also on the
+                // G-G3LG9H6J6B is the canonical lumina.ai property, also on the
                 // Webflow marketing site, so a visitor moving between
-                // www.litellm.ai and docs.litellm.ai stays in one session.
+                // www.lumina.ai and docs.lumina.ai stays in one session.
                 trackingID: ['G-K7K215ZVNC', 'G-G3LG9H6J6B'],
                 anonymizeIP: true,
               }
@@ -412,9 +412,9 @@ const config = {
         // Shown beside the logo as a "DOCS" label (styled in logo-shape.css)
         title: 'Docs',
         logo: {
-          alt: 'LiteLLM',
-          src: '/img/brand/litellm-logo-blue.png',
-          srcDark: '/img/brand/litellm-logo-white.png',
+          alt: 'Lumina',
+          src: '/img/brand/lumina-logo-blue.png',
+          srcDark: '/img/brand/lumina-logo-white.png',
           width: 132,
           height: 25,
         },
@@ -457,7 +457,7 @@ const config = {
           { to: '/blog', label: 'Blog', position: 'left' },
           { to: '/rust-migration', label: 'Rust', position: 'left' },
           {
-            href: 'https://github.com/BerriAI/litellm',
+            href: 'https://github.com/Soventra/lumina',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository',
@@ -485,31 +485,31 @@ const config = {
               {label: 'Blog', to: '/blog'},
               {label: 'Changelog', to: '/release_notes'},
               {label: 'Agent resources', to: '/docs/agent_resources'},
-              {label: 'llms.txt', href: 'https://docs.litellm.ai/llms.txt'},
-              {label: 'Trust Center', href: 'https://trust.litellm.ai/'},
+              {label: 'llms.txt', href: 'https://docs.lumina.ai/llms.txt'},
+              {label: 'Trust Center', href: 'https://trust.lumina.ai/'},
             ],
           },
           {
             title: 'Community',
             items: [
-              {label: 'GitHub', href: 'https://github.com/BerriAI/litellm/'},
+              {label: 'GitHub', href: 'https://github.com/Soventra/lumina/'},
               {label: 'Discord', href: 'https://discord.com/invite/wuPM9dRgDw'},
-              {label: 'Slack', href: 'https://litellmossslack.slack.com/'},
-              {label: 'YouTube', href: 'https://www.youtube.com/@LiteLLMAIGateway'},
-              {label: 'X', href: 'https://twitter.com/LiteLLM'},
+              {label: 'Slack', href: 'https://luminaossslack.slack.com/'},
+              {label: 'YouTube', href: 'https://www.youtube.com/@LuminaAIGateway'},
+              {label: 'X', href: 'https://twitter.com/Lumina'},
               {label: 'LinkedIn', href: 'https://www.linkedin.com/company/berri-ai/'},
             ],
           },
           {
             title: 'Company',
             items: [
-              {label: 'litellm.ai', href: 'https://www.litellm.ai/'},
-              {label: 'Talk to sales', href: 'https://www.litellm.ai/enterprise#talk-to-sales'},
-              {label: 'Careers', href: 'https://jobs.ashbyhq.com/litellm'},
+              {label: 'lumina.ai', href: 'https://www.lumina.ai/'},
+              {label: 'Talk to sales', href: 'https://www.lumina.ai/enterprise#talk-to-sales'},
+              {label: 'Careers', href: 'https://jobs.ashbyhq.com/lumina'},
             ],
           },
         ],
-        copyright: `© ${new Date().getFullYear()} LiteLLM`,
+        copyright: `© ${new Date().getFullYear()} Lumina`,
       },
       colorMode: {
         defaultMode: 'light',

@@ -3,19 +3,19 @@ import TabItem from '@theme/TabItem';
 
 # vLLM - Batch + Files API
 
-vLLM's OpenAI-compatible server serves `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`, and `/v1/responses`, but it has no `/v1/files` or `/v1/batches` routes. LiteLLM fills that gap: for a `hosted_vllm` deployment whose server has no Files API, the proxy stores the batch input itself, runs every line through the deployment, and serves the batch status and the output files, so the OpenAI Batch API works against vLLM unchanged
+vLLM's OpenAI-compatible server serves `/v1/chat/completions`, `/v1/completions`, `/v1/embeddings`, and `/v1/responses`, but it has no `/v1/files` or `/v1/batches` routes. Lumina fills that gap: for a `hosted_vllm` deployment whose server has no Files API, the proxy stores the batch input itself, runs every line through the deployment, and serves the batch status and the output files, so the OpenAI Batch API works against vLLM unchanged
 
 | Feature | Supported |
 |---------|-----------|
-| `/v1/files` | ✅ stored by LiteLLM |
-| `/v1/batches` | ✅ run by LiteLLM |
+| `/v1/files` | ✅ stored by Lumina |
+| `/v1/batches` | ✅ run by Lumina |
 | Cost Tracking | ✅ every line is billed to the key that created the batch |
 
 This flow runs on the proxy and needs a database (`DATABASE_URL`), because the input file, the batch status, and the result files live there
 
-## When LiteLLM runs the batch itself
+## When Lumina runs the batch itself
 
-LiteLLM decides per request. A deployment qualifies when its `lumina_params.model` starts with `hosted_vllm/` and `GET {api_base}/files` on its server answers 404. Every other deployment, and a `hosted_vllm` deployment whose server does implement the Files API (for example the vLLM production-stack router), keeps the passthrough behavior: the upload and the batch are forwarded to the server and it runs the batch
+Lumina decides per request. A deployment qualifies when its `lumina_params.model` starts with `hosted_vllm/` and `GET {api_base}/files` on its server answers 404. Every other deployment, and a `hosted_vllm` deployment whose server does implement the Files API (for example the vLLM production-stack router), keeps the passthrough behavior: the upload and the batch are forwarded to the server and it runs the batch
 
 Point `api_base` at the server's `/v1` root so the probe hits the right route
 
@@ -35,15 +35,15 @@ general_settings:
   database_url: os.environ/DATABASE_URL
 ```
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Create Batch File
 
-Each line follows the OpenAI batch input shape. LiteLLM replaces `body.model` with the batch's deployment name, so what you put there does not change which server runs the line
+Each line follows the OpenAI batch input shape. Lumina replaces `body.model` with the batch's deployment name, so what you put there does not change which server runs the line
 
 ```jsonl
 {"custom_id": "request-1", "method": "POST", "url": "/v1/chat/completions", "body": {"model": "my-vllm-model", "messages": [{"role": "user", "content": "Hello!"}]}}
@@ -55,7 +55,7 @@ Every line has to name the same `url`, and it has to match the `endpoint` you gi
 ### 4. Upload File & Create Batch
 
 :::tip[Model Routing]
-The upload has to name the deployment, either with the `x-litellm-model` header, the `?model=` query parameter, or the `target_model_names` form field. Use `purpose=batch`: an upload with another purpose to a deployment LiteLLM runs batches for answers 400, because there is no server to keep the file on. The returned file id is a long base64 id, not an OpenAI-style `file-...` id; batch operations on it route to the same deployment automatically
+The upload has to name the deployment, either with the `x-lumina-model` header, the `?model=` query parameter, or the `target_model_names` form field. Use `purpose=batch`: an upload with another purpose to a deployment Lumina runs batches for answers 400, because there is no server to keep the file on. The returned file id is a long base64 id, not an OpenAI-style `file-...` id; batch operations on it route to the same deployment automatically
 :::
 
 <Tabs>
@@ -66,7 +66,7 @@ The upload has to name the deployment, either with the `x-litellm-model` header,
 ```bash
 curl http://localhost:4000/v1/files \
   -H "Authorization: Bearer $LUMINA_API_KEY" \
-  -H "x-litellm-model: my-vllm-model" \
+  -H "x-lumina-model: my-vllm-model" \
   -F purpose="batch" \
   -F file="@batch_requests.jsonl"
 ```
@@ -112,7 +112,7 @@ client = OpenAI(api_key=os.environ["LUMINA_API_KEY"], base_url="http://localhost
 input_file = client.files.create(
     file=open("batch_requests.jsonl", "rb"),
     purpose="batch",
-    extra_headers={"x-litellm-model": "my-vllm-model"},
+    extra_headers={"x-lumina-model": "my-vllm-model"},
 )
 
 batch = client.batches.create(

@@ -3,9 +3,9 @@ import TabItem from '@theme/TabItem';
 
 # Linear MCP server
 
-> Connect Linear's hosted remote MCP server through the LiteLLM MCP Gateway for issues, projects, cycles, and comments.
+> Connect Linear's hosted remote MCP server through the Lumina MCP Gateway for issues, projects, cycles, and comments.
 
-Linear hosts and manages the server centrally, so there is nothing to deploy or run yourself. LiteLLM adds centralized auth, access control by key and team, cost tracking per tool call, and one audit trail across every MCP server you expose.
+Linear hosts and manages the server centrally, so there is nothing to deploy or run yourself. Lumina adds centralized auth, access control by key and team, cost tracking per tool call, and one audit trail across every MCP server you expose.
 
 ## When should you use this server
 
@@ -42,16 +42,16 @@ Linear also exposes `https://mcp.linear.app/sse` as a deprecated fallback for cl
 
 ***
 
-## Connect via LiteLLM MCP Gateway
+## Connect via Lumina MCP Gateway
 
 :::warning[Leave the client credentials out]
 Do not set `client_id`, `client_secret`, or `token_url` on the OAuth server. Those switch it to a machine-to-machine identity shared by every caller, so issues get filed by one service account instead of the person who asked. Linear's dynamic registration makes them unnecessary. If you actually want a shared identity, use the API key tab below, which is explicit about it.
 :::
 
-### Step 1: Register the server in LiteLLM
+### Step 1: Register the server in Lumina
 
 <Tabs>
-<TabItem value="ui" label="LiteLLM UI">
+<TabItem value="ui" label="Lumina UI">
 
 Navigate to **MCP Servers**, click **+ Add New MCP Server**, and set:
 
@@ -103,7 +103,7 @@ Every caller shares this identity, so tool calls are attributed to the key's own
 
 ### Step 2: Set the proxy's public origin
 
-If LiteLLM runs behind a TLS-terminating ingress, set `PROXY_BASE_URL` to the origin users see in their address bar so the OAuth callback validates:
+If Lumina runs behind a TLS-terminating ingress, set `PROXY_BASE_URL` to the origin users see in their address bar so the OAuth callback validates:
 
 ```bash
 PROXY_BASE_URL=https://llm.example.com
@@ -124,7 +124,7 @@ The gateway serves each server at `http://localhost:4000/{server_name}/mcp`, so 
     "linear": {
       "url": "http://localhost:4000/linear_mcp/mcp",
       "headers": {
-        "x-litellm-api-key": "Bearer sk-<your-litellm-api-key>"
+        "x-lumina-api-key": "Bearer sk-<your-lumina-api-key>"
       }
     }
   }
@@ -136,20 +136,20 @@ The gateway serves each server at `http://localhost:4000/{server_name}/mcp`, so 
 
 ```bash showLineNumbers
 claude mcp add --transport http linear http://localhost:4000/linear_mcp/mcp \
-  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
+  --header "x-lumina-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
 </Tabs>
 
-The first call opens a browser for Linear sign-in. LiteLLM stores that user's token and refreshes it afterwards, so subsequent sessions connect without prompting.
+The first call opens a browser for Linear sign-in. Lumina stores that user's token and refreshes it afterwards, so subsequent sessions connect without prompting.
 
 ***
 
 ## Tools provided
 
 :::info
-Linear publishes its tool definitions at runtime through `tools/list`, so names and fields can change without notice. The **MCP Tools** tab in the LiteLLM UI is the source of truth for what your workspace exposes; it lists the live tools and lets you call one with test arguments. See Linear's [MCP documentation](https://linear.app/docs/mcp) for upstream detail.
+Linear publishes its tool definitions at runtime through `tools/list`, so names and fields can change without notice. The **MCP Tools** tab in the Lumina UI is the source of truth for what your workspace exposes; it lists the live tools and lets you call one with test arguments. See Linear's [MCP documentation](https://linear.app/docs/mcp) for upstream detail.
 :::
 
 | Area | Tools |
@@ -162,7 +162,7 @@ Linear publishes its tool definitions at runtime through `tools/list`, so names 
 | Cycles | `list_cycles` |
 | Teams | `list_teams` |
 
-Writes are limited to issues, projects, and comments; documents, cycles, teams, statuses, and labels are read-only. LiteLLM prefixes tool names with the server name, so `create_issue` is exposed to models as `linear_mcp-create_issue`; see [Tool naming](../mcp_rest_api.md#tool-naming).
+Writes are limited to issues, projects, and comments; documents, cycles, teams, statuses, and labels are read-only. Lumina prefixes tool names with the server name, so `create_issue` is exposed to models as `linear_mcp-create_issue`; see [Tool naming](../mcp_rest_api.md#tool-naming).
 
 ### Reads without writes
 
@@ -184,8 +184,8 @@ mcp_servers:
 Grant the server per key or per team with `object_permission`, and cap call volume per server with `mcp_rpm_limit`, both covered in [MCP Permission Management](../mcp_control.md).
 :::
 
-:::warning[Put the LiteLLM key in `x-litellm-api-key`]
-Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the LiteLLM API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and LiteLLM forwards your LiteLLM key to Linear, which rejects it. To diagnose, add `x-litellm-mcp-debug: true` and read the response headers: `SAME_AS_LUMINA_KEY` confirms this case, and `m2m-client-credentials` means client credentials are set and every caller shares one identity. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth) and the [MCP Troubleshooting Guide](../mcp_troubleshoot.md).
+:::warning[Put the Lumina key in `x-lumina-api-key`]
+Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the Lumina API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and Lumina forwards your Lumina key to Linear, which rejects it. To diagnose, add `x-lumina-mcp-debug: true` and read the response headers: `SAME_AS_LUMINA_KEY` confirms this case, and `m2m-client-credentials` means client credentials are set and every caller shares one identity. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth) and the [MCP Troubleshooting Guide](../mcp_troubleshoot.md).
 :::
 
 An authorized session is bound to one Linear workspace, and reconnecting alone does not switch it, so a user who needs a second workspace has to register it as a separate MCP server entry.

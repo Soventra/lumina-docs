@@ -2,7 +2,7 @@
 
 :::tip
 
-LiteLLM Follows the [cohere api request / response for the rerank api](https://cohere.com/rerank)
+Lumina Follows the [cohere api request / response for the rerank api](https://cohere.com/rerank)
 
 :::
 
@@ -18,11 +18,11 @@ LiteLLM Follows the [cohere api request / response for the rerank api](https://c
 | Guardrails | ✅                                                                                                   | Applies to input query only (not documents) |
 | Supported Providers | Cohere, Together AI, Azure AI, DeepInfra, Nvidia NIM, Infinity, Fireworks AI, VoyageAI by MongoDB, watsonx.ai | |
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 ### Quick Start 
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["COHERE_API_KEY"] = "sk-.."
@@ -47,7 +47,7 @@ print(response)
 ### Async Usage 
 
 ```python
-from litellm import arerank
+from lumina import arerank
 import os, asyncio
 
 os.environ["COHERE_API_KEY"] = "sk-.."
@@ -72,13 +72,13 @@ async def test_async_rerank():
 asyncio.run(test_async_rerank())
 ```
 
-## **LiteLLM Proxy Usage**
+## **Lumina Proxy Usage**
 
-LiteLLM provides an cohere api compatible `/rerank` endpoint for Rerank calls.
+Lumina provides an cohere api compatible `/rerank` endpoint for Rerank calls.
 
 **Setup**
 
-Add this to your litellm proxy config.yaml
+Add this to your lumina proxy config.yaml
 
 ```yaml
 model_list:
@@ -92,10 +92,10 @@ model_list:
       api_key: os.environ/COHERE_API_KEY
 ```
 
-Start litellm
+Start lumina
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -121,7 +121,7 @@ curl http://0.0.0.0:4000/rerank \
 
 ## **Supported Providers**
 
-#### See all supported models and providers at [models.litellm.ai](https://models.litellm.ai/)
+#### See all supported models and providers at [models.lumina.ai](https://models.lumina.ai/)
 
 | Provider                 | Link to Usage                                        |
 |--------------------------|------------------------------------------------------|

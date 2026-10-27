@@ -12,11 +12,11 @@ If your Generative AI platform involves various operational and architectural ov
 
 ## Setup Margins via UI
 
-This walkthrough shows how to add a provider margin and view the cost breakdown in the LiteLLM UI.
+This walkthrough shows how to add a provider margin and view the cost breakdown in the Lumina UI.
 
 ### Step 1: Navigate to Settings
 
-From the LiteLLM dashboard, click on **Settings** in the left sidebar.
+From the Lumina dashboard, click on **Settings** in the left sidebar.
 
 ![Click Settings](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-25/a9a42382-1c93-4338-8c7e-c0ebc4ee239f/ascreenshot.jpeg?tl_px=0,730&br_px=2064,1884&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=47,292)
 
@@ -124,7 +124,7 @@ You can also configure margins directly in your `config.yaml` file.
 
 ```yaml
 # Apply margins to providers
-litellm_settings:
+lumina_settings:
   cost_margin_config:
     global: 0.05            # 5% global margin on all providers
     openai: 0.10            # 10% margin for OpenAI (overrides global)
@@ -135,7 +135,7 @@ litellm_settings:
 **Step 2: Start proxy**
 
 ```bash
-litellm /path/to/config.yaml
+lumina /path/to/config.yaml
 ```
 
 The margin will be automatically applied to all cost calculations for the configured providers.
@@ -151,14 +151,14 @@ The margin will be automatically applied to all cost calculations for the config
 - Provider-specific margins override global margins
 - Margin information is tracked in cost breakdown logs
 - Margin information is returned in response headers:
-  - `x-litellm-response-cost-margin-amount` - Total margin added in USD
-  - `x-litellm-response-cost-margin-percent` - Margin percentage applied
+  - `x-lumina-response-cost-margin-amount` - Total margin added in USD
+  - `x-lumina-response-cost-margin-percent` - Margin percentage applied
 
 ## Margin Calculation Examples
 
 **Example 1: Percentage-only margin**
 ```yaml
-litellm_settings:
+lumina_settings:
   cost_margin_config:
     openai: 0.10  # 10% margin
 ```
@@ -166,7 +166,7 @@ If base cost is $1.00, final cost = $1.00 x 1.10 = $1.10
 
 **Example 2: Fixed amount only**
 ```yaml
-litellm_settings:
+lumina_settings:
   cost_margin_config:
     anthropic:
       fixed_amount: 0.001  # $0.001 per request
@@ -175,7 +175,7 @@ If base cost is $1.00, final cost = $1.00 + $0.001 = $1.001
 
 **Example 3: Global margin with provider override**
 ```yaml
-litellm_settings:
+lumina_settings:
   cost_margin_config:
     global: 0.05   # 5% global margin
     openai: 0.10   # 10% margin for OpenAI (overrides global)
@@ -193,7 +193,7 @@ Margins and discounts are calculated independently:
 
 **Example:**
 ```yaml
-litellm_settings:
+lumina_settings:
   cost_discount_config:
     openai: 0.05  # 5% discount
   cost_margin_config:
@@ -206,7 +206,7 @@ If base cost is $1.00:
 
 ## Supported Providers
 
-You can apply margins to all LiteLLM supported providers, or use `global` to apply to all providers. Common examples:
+You can apply margins to all Lumina supported providers, or use `global` to apply to all providers. Common examples:
 
 - `global` - Applies to all providers (unless provider-specific margin exists)
 - `openai` - OpenAI
@@ -216,4 +216,4 @@ You can apply margins to all LiteLLM supported providers, or use `global` to app
 - `azure` - Azure OpenAI
 - `bedrock` - AWS Bedrock
 
-See the full list of providers in the [LlmProviders](https://github.com/BerriAI/litellm/blob/main/litellm/types/utils.py) enum.
+See the full list of providers in the [LlmProviders](https://github.com/Soventra/lumina/blob/main/lumina/types/utils.py) enum.

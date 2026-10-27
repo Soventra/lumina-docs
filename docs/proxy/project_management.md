@@ -2,7 +2,7 @@
 
 <EnterpriseFeature />
 
-Projects in LiteLLM sit between teams and keys in the organizational hierarchy, enabling fine-grained access control and budget management for specific use cases or applications.
+Projects in Lumina sit between teams and keys in the organizational hierarchy, enabling fine-grained access control and budget management for specific use cases or applications.
 
 ```mermaid
 graph TD
@@ -95,13 +95,13 @@ curl http://localhost:4000/v1/chat/completions \
 --header 'Authorization: Bearer sk-W8VbscpfuyvHm5TkxRYiXA' \
 --data '{
     "model": "{{openai_large}}",
-    "messages": [{"role": "user", "content": "What is litellm?"}]
+    "messages": [{"role": "user", "content": "What is lumina?"}]
 }' | jq
 ```
 
 ### Step 4: View Project Spend in UI
 
-Navigate to the **Logs** page in the LiteLLM Admin UI. You'll see the `user_api_key_project_id` tracked in the request metadata:
+Navigate to the **Logs** page in the Lumina Admin UI. You'll see the `user_api_key_project_id` tracked in the request metadata:
 
 ![Project Spend Tracking](/img/project_spend.png)
 
@@ -227,7 +227,7 @@ curl --location 'http://0.0.0.0:4000/project/info?project_id=project-abc' \
         "{{openai_large}}": 42.30,
         "{{openai_small}}": 3.37
     },
-    "litellm_budget_table": {
+    "lumina_budget_table": {
         "budget_id": "budget-xyz",
         "max_budget": 100.0,
         "tpm_limit": 100000,

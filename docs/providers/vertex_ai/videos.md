@@ -3,12 +3,12 @@ import TabItem from '@theme/TabItem';
 
 # Vertex AI Video Generation (Veo)
 
-LiteLLM supports Vertex AI's Veo video generation models using the unified OpenAI video API surface.
+Lumina supports Vertex AI's Veo video generation models using the unified OpenAI video API surface.
 
 | Property | Details |
 |-------|-------|
 | Description | Google Cloud Vertex AI Veo video generation models |
-| Provider Route on LiteLLM | `vertex_ai/` |
+| Provider Route on Lumina | `vertex_ai/` |
 | Supported Models | `veo-2.0-generate-001`, `veo-3.0-generate-001`, `veo-3.0-fast-generate-001`, `veo-3.1-generate-preview`, `veo-3.1-fast-generate-preview`, `veo-3.1-lite-generate-001` |
 | Cost Tracking | ✅ Duration-based pricing, with 720p and 1080p tiers where Google prices them (Veo 3.1 Lite) |
 | Logging Support | ✅ Full request/response logging |
@@ -38,7 +38,7 @@ with open("/path/to/service_account.json", "r", encoding="utf-8") as f:
 ### Basic Usage
 
 ```python
-from litellm import video_generation, video_status, video_content
+from lumina import video_generation, video_status, video_content
 import json
 import os
 import time
@@ -104,7 +104,7 @@ Veo 3.1 Lite is priced per second of output at $0.05 for 720p and $0.08 for 1080
 
 ## Video Generation Parameters
 
-LiteLLM converts OpenAI-style parameters to Veo's API shape automatically:
+Lumina converts OpenAI-style parameters to Veo's API shape automatically:
 
 | OpenAI Parameter | Vertex AI Parameter | Description | Example |
 |------------------|---------------------|-------------|---------|
@@ -122,7 +122,7 @@ LiteLLM converts OpenAI-style parameters to Veo's API shape automatically:
 
 ### Size to Resolution Mapping
 
-Veo picks the output resolution from its own `resolution` parameter, not from the aspect ratio, so a `1920x1080` request that only sets `aspectRatio` still comes back as 720p. For models whose LiteLLM pricing carries a separate 1080p rate (today `veo-3.1-lite-generate-001`), LiteLLM also infers `resolution` from `size`:
+Veo picks the output resolution from its own `resolution` parameter, not from the aspect ratio, so a `1920x1080` request that only sets `aspectRatio` still comes back as 720p. For models whose Lumina pricing carries a separate 1080p rate (today `veo-3.1-lite-generate-001`), Lumina also infers `resolution` from `size`:
 
 | `size` | `aspectRatio` sent | `resolution` sent |
 |--------|--------------------|-------------------|
@@ -156,7 +156,7 @@ An 8 second Veo 3.1 Lite clip therefore costs $0.40 at `1280x720` and $0.64 at `
 ## Async Usage
 
 ```python
-from litellm import avideo_generation, avideo_status, avideo_content
+from lumina import avideo_generation, avideo_status, avideo_content
 import asyncio
 import json
 
@@ -202,7 +202,7 @@ async def workflow():
 asyncio.run(workflow())
 ```
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
 Add Veo models to your `config.yaml`:
 
@@ -234,11 +234,11 @@ curl --location 'http://0.0.0.0:4000/videos' \
 
 # Step 2: Poll status
 curl --location 'http://localhost:4000/v1/videos/{video_id}' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>'
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>'
 
 # Step 3: Download video
 curl --location 'http://localhost:4000/v1/videos/{video_id}/content' \
---header 'x-litellm-api-key: sk-<your-litellm-api-key>' \
+--header 'x-lumina-api-key: sk-<your-lumina-api-key>' \
 --output video.mp4
 ```
 
@@ -246,22 +246,22 @@ curl --location 'http://localhost:4000/v1/videos/{video_id}/content' \
 <TabItem value="python" label="Python SDK">
 
 ```python
-import litellm
+import lumina
 
-litellm.api_base = "http://0.0.0.0:4000"
-litellm.api_key = "sk-<your-litellm-api-key>"
+lumina.api_base = "http://0.0.0.0:4000"
+lumina.api_key = "sk-<your-lumina-api-key>"
 
-response = litellm.video_generation(
+response = lumina.video_generation(
     model="veo-3",
     prompt="Aerial shot over a futuristic city at sunrise",
 )
 
-status = litellm.video_status(video_id=response.id)
+status = lumina.video_status(video_id=response.id)
 while status.status not in ["completed", "failed"]:
-    status = litellm.video_status(video_id=response.id)
+    status = lumina.video_status(video_id=response.id)
 
 if status.status == "completed":
-    content = litellm.video_content(video_id=response.id)
+    content = lumina.video_content(video_id=response.id)
     with open("veo_city.mp4", "wb") as f:
         f.write(content)
 ```
@@ -271,7 +271,7 @@ if status.status == "completed":
 
 ## Cost Tracking
 
-LiteLLM records the duration returned by Veo so you can apply duration-based pricing.
+Lumina records the duration returned by Veo so you can apply duration-based pricing.
 
 ```python
 with open("/path/to/service_account.json", "r", encoding="utf-8") as f:

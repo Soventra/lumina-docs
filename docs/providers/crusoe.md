@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Crusoe Cloud provides GPU-accelerated inference for open-source large language models, optimized for performance and cost efficiency. |
-| Provider Route on LiteLLM | `crusoe/` |
+| Provider Route on Lumina | `crusoe/` |
 | Link to Provider Doc | [Crusoe Serverless Inference Documentation ↗](https://docs.crusoecloud.com/serverless-inference/available-models) |
-| Base URL | `https://api.inference.crusoecloud.com/v1` (older LiteLLM versions call a different host by default, see [Custom API Base](#custom-api-base)) |
-| Supported Operations | [`/chat/completions`](/docs/providers/crusoe#usage---litellm-python-sdk) |
+| Base URL | `https://api.inference.crusoecloud.com/v1` (older Lumina versions call a different host by default, see [Custom API Base](#custom-api-base)) |
+| Supported Operations | [`/chat/completions`](/docs/providers/crusoe#usage---lumina-python-sdk) |
 
 <br />
 <br />
@@ -39,7 +39,7 @@ import TabItem from '@theme/TabItem';
 
 Crusoe retires models often. To list the model ids your key can call, send `GET https://api.inference.crusoecloud.com/v1/models` with your Crusoe API key, and put `crusoe/` in front of each `id`. Copy ids from that endpoint rather than from Crusoe's docs pages, which spell some of them differently.
 
-LiteLLM's cost map does not have current prices for these models, so their spend logs as $0 or at an outdated price. To track spend, set `input_cost_per_token` and `output_cost_per_token` for each model you use from [Crusoe's pricing](https://www.crusoe.ai/cloud/pricing#Serverless-Inference), in the model's `lumina_params` on the proxy or as `completion()` arguments in the SDK.
+Lumina's cost map does not have current prices for these models, so their spend logs as $0 or at an outdated price. To track spend, set `input_cost_per_token` and `output_cost_per_token` for each model you use from [Crusoe's pricing](https://www.crusoe.ai/cloud/pricing#Serverless-Inference), in the model's `lumina_params` on the proxy or as `completion()` arguments in the SDK.
 
 ## Required Variables
 
@@ -47,14 +47,14 @@ LiteLLM's cost map does not have current prices for these models, so their spend
 os.environ["CRUSOE_API_KEY"] = ""  # your Crusoe API key
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Crusoe Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["CRUSOE_API_KEY"] = ""  # your Crusoe API key
 
@@ -73,8 +73,8 @@ print(response)
 
 ```python showLineNumbers title="Crusoe Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["CRUSOE_API_KEY"] = ""  # your Crusoe API key
 
@@ -95,8 +95,8 @@ for chunk in response:
 
 ```python showLineNumbers title="Crusoe Function Calling"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["CRUSOE_API_KEY"] = ""  # your Crusoe API key
 
@@ -130,7 +130,7 @@ response = completion(
 print(response)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -160,11 +160,11 @@ model_list:
 
 **Option 1: Environment variable**
 
-Older LiteLLM versions, including v1.106 and earlier, send Crusoe calls to `https://managed-inference-api-proxy.crusoecloud.com/v1` by default. That host's firewall answers some prompts with an HTTP 403 "Sorry, you have been blocked" page, for example prompts that contain file paths like `../../etc/passwd` or SQL injection strings like `' OR 1=1 --`. To see which host your version calls, send a request that succeeds and read the `x-litellm-model-api-base` response header on the proxy, or `response._hidden_params["api_base"]` in the SDK. A blocked request does not show the host. If it is the old host, set `CRUSOE_API_BASE` to `https://api.inference.crusoecloud.com/v1` as below. If your deployment restricts outbound traffic, allow the host your version calls.
+Older Lumina versions, including v1.106 and earlier, send Crusoe calls to `https://managed-inference-api-proxy.crusoecloud.com/v1` by default. That host's firewall answers some prompts with an HTTP 403 "Sorry, you have been blocked" page, for example prompts that contain file paths like `../../etc/passwd` or SQL injection strings like `' OR 1=1 --`. To see which host your version calls, send a request that succeeds and read the `x-lumina-model-api-base` response header on the proxy, or `response._hidden_params["api_base"]` in the SDK. A blocked request does not show the host. If it is the old host, set `CRUSOE_API_BASE` to `https://api.inference.crusoecloud.com/v1` as below. If your deployment restricts outbound traffic, allow the host your version calls.
 
 ```python showLineNumbers title="Custom API Base via env var"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["CRUSOE_API_BASE"] = "https://api.inference.crusoecloud.com/v1"
 os.environ["CRUSOE_API_KEY"] = ""  # your API key
@@ -178,7 +178,7 @@ response = completion(
 **Option 2: Pass directly**
 
 ```python showLineNumbers title="Custom API Base via parameter"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="crusoe/deepseek-ai/Deepseek-V4-Flash",

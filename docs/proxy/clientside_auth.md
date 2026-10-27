@@ -6,13 +6,13 @@ import Image from '@theme/IdealImage';
 
 
 ### Pass User LLM API Keys, Fallbacks
-Allow your end-users to pass their model list, api base, OpenAI API key (any LiteLLM supported provider) to make requests 
+Allow your end-users to pass their model list, api base, OpenAI API key (any Lumina supported provider) to make requests 
 
 **Note** This is not related to [virtual keys](./virtual_keys.md). This is for when you want to pass in your users actual LLM API keys. 
 
 :::info
 
-**You can pass a litellm.RouterConfig as `user_config`, See all supported params here https://github.com/BerriAI/litellm/blob/main/litellm/types/router.py **
+**You can pass a lumina.RouterConfig as `user_config`, See all supported params here https://github.com/Soventra/lumina/blob/main/lumina/types/router.py **
 
 :::
 
@@ -65,7 +65,7 @@ user_config = {
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -153,7 +153,7 @@ main();
 </Tabs>
 
 ### Pass User LLM API Keys / API Base
-Allows your users to pass in their OpenAI API key/API base (any LiteLLM supported provider) to make requests 
+Allows your users to pass in their OpenAI API key/API base (any Lumina supported provider) to make requests 
 
 Here's how to do it: 
 
@@ -166,7 +166,7 @@ model_list:
       model: "fireworks_ai/*"
       configurable_clientside_auth_params: ["api_base"]
       # OR 
-      configurable_clientside_auth_params: [{"api_base": '^https://litellm.*direct\.fireworks\.ai/v1$'}] # regex
+      configurable_clientside_auth_params: [{"api_base": '^https://lumina.*direct\.fireworks\.ai/v1$'}] # regex
 ```
 
 Specify the endpoint params you want the user to be able to configure:
@@ -186,18 +186,18 @@ Without this opt-in, or `general_settings.allow_client_side_credentials: true` p
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="{{openai_small}}", messages = [
     {
         "role": "user",
         "content": "this is a test request, write a short poem"
     }
 ], 
-    extra_body={"api_key": "my-bad-key", "api_base": "https://litellm-dev.direct.fireworks.ai/v1"}) # clientside credentials
+    extra_body={"api_key": "my-bad-key", "api_base": "https://lumina-dev.direct.fireworks.ai/v1"}) # clientside credentials
 
 print(response)
 ```
@@ -211,11 +211,11 @@ Pass in the lumina_params (E.g. api_key, api_base, etc.) via the `extra_body` pa
 ```python
 import openai
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="{{openai_small}}", messages = [
     {
         "role": "user",
@@ -262,7 +262,7 @@ main();
 
 Specify the region, project id, etc. to use for making requests to Vertex AI on the clientside.
 
-Any value passed in the Proxy's request body, will be checked by LiteLLM against the mapped openai / litellm auth params. 
+Any value passed in the Proxy's request body, will be checked by Lumina against the mapped openai / lumina auth params. 
 
 Unmapped params, will be assumed to be provider-specific params, and will be passed through to the provider in the LLM API's request body.
 
@@ -273,7 +273,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(
     model="{{openai_small}}",
     messages = [

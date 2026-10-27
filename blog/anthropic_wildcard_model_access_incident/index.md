@@ -17,13 +17,13 @@ hide_table_of_contents: false
 
 ## Summary
 
-When a new Anthropic model (e.g. `claude-sonnet-4-6`) was added to the LiteLLM model cost map and a cost map reload was triggered, requests to the new model were rejected with:
+When a new Anthropic model (e.g. `claude-sonnet-4-6`) was added to the Lumina model cost map and a cost map reload was triggered, requests to the new model were rejected with:
 
 ```
 key not allowed to access model. This key can only access models=['anthropic/*']. Tried to access claude-sonnet-4-6.
 ```
 
-The reload updated `litellm.model_cost` correctly but never re-ran `add_known_models()`, so `litellm.anthropic_models` (the in-memory set used by the wildcard resolver) remained stale. The new model was invisible to the `anthropic/*` wildcard even though the cost map knew about it.
+The reload updated `lumina.model_cost` correctly but never re-ran `add_known_models()`, so `lumina.anthropic_models` (the in-memory set used by the wildcard resolver) remained stale. The new model was invisible to the `anthropic/*` wildcard even though the cost map knew about it.
 
 - **LLM calls:** All requests to newly-added Anthropic models were blocked with a 401.
 - **Existing models:** Unaffected. Only models missing from the stale provider set were impacted.
@@ -35,7 +35,7 @@ The reload updated `litellm.model_cost` correctly but never re-ran `add_known_mo
 
 ## Background
 
-LiteLLM supports provider-level wildcard access rules. When an admin configures a key or team with `models=['anthropic/*']`, any model whose provider resolves to `anthropic` should be allowed. The resolution happens in `_model_custom_llm_provider_matches_wildcard_pattern`:
+Lumina supports provider-level wildcard access rules. When an admin configures a key or team with `models=['anthropic/*']`, any model whose provider resolves to `anthropic` should be allowed. The resolution happens in `_model_custom_llm_provider_matches_wildcard_pattern`:
 
 ```mermaid
 flowchart TD
@@ -44,7 +44,7 @@ flowchart TD
     B --> C["3. Key has models=['anthropic/*']
     → wildcard match attempted"]
     C --> D["4. get_llm_provider('claude-sonnet-4-6')
-    checks litellm.anthropic_models set"]
+    checks lumina.anthropic_models set"]
     D -->|"model IN set"| E["5a. ✅ Provider = 'anthropic'
     → 'anthropic/claude-sonnet-4-6' matches 'anthropic/*'"]
     D -->|"model NOT IN set"| F["5b. ❌ Provider unknown
@@ -58,21 +58,21 @@ flowchart TD
     style D fill:#fff3cd,stroke:#ffc107
 ```
 
-`litellm.anthropic_models` is a Python `set` populated at import time by `add_known_models()`. It is the source `get_llm_provider()` consults to map a bare model name like `claude-sonnet-4-6` to the provider string `"anthropic"`.
+`lumina.anthropic_models` is a Python `set` populated at import time by `add_known_models()`. It is the source `get_llm_provider()` consults to map a bare model name like `claude-sonnet-4-6` to the provider string `"anthropic"`.
 
 ---
 
 ## Root Cause
 
-`add_known_models()` is called **once** at module import time. Both reload paths in `proxy_server.py` updated `litellm.model_cost` with the fresh map but never called `add_known_models()` again:
+`add_known_models()` is called **once** at module import time. Both reload paths in `proxy_server.py` updated `lumina.model_cost` with the fresh map but never called `add_known_models()` again:
 
 ```python
 # Before the fix — both reload paths looked like this:
 new_model_cost_map = get_model_cost_map(url=model_cost_map_url)
-litellm.model_cost = new_model_cost_map          # ✅ cost map updated
+lumina.model_cost = new_model_cost_map          # ✅ cost map updated
 _invalidate_model_cost_lowercase_map()           # ✅ cache cleared
 # ❌ add_known_models() never called
-#    → litellm.anthropic_models still has the old set
+#    → lumina.anthropic_models still has the old set
 #    → new model not in the set
 #    → get_llm_provider() raises for the new model
 #    → wildcard match returns False
@@ -86,7 +86,7 @@ The gap existed in two places:
 **Timeline:**
 
 1. New model (`claude-sonnet-4-6`) added to `model_prices_and_context_window.json`
-2. Admin triggers cost map reload via UI → `litellm.model_cost` updated
+2. Admin triggers cost map reload via UI → `lumina.model_cost` updated
 3. Users with `anthropic/*` wildcard keys attempt requests to `claude-sonnet-4-6`
 4. `get_llm_provider('claude-sonnet-4-6')` raises → wildcard returns False → 401
 5. Admin reloads cost map again, same result (root cause not addressed)
@@ -101,9 +101,9 @@ After each reload, `add_known_models()` is called with the freshly fetched map p
 ```python
 # After the fix — both reload paths now do:
 new_model_cost_map = get_model_cost_map(url=model_cost_map_url)
-litellm.model_cost = new_model_cost_map
+lumina.model_cost = new_model_cost_map
 _invalidate_model_cost_lowercase_map()
-litellm.add_known_models(model_cost_map=new_model_cost_map)  # ✅ sets repopulated
+lumina.add_known_models(model_cost_map=new_model_cost_map)  # ✅ sets repopulated
 ```
 
 `add_known_models()` was also updated to accept an optional explicit map so callers cannot accidentally iterate a stale module-level reference:
@@ -121,7 +121,7 @@ def add_known_models(model_cost_map: Optional[Dict] = None):
         ...
 ```
 
-After the fix, the provider sets (`anthropic_models`, `open_ai_chat_completion_models`, etc.) are always consistent with `litellm.model_cost` immediately after every reload. New models become accessible via wildcard rules without any proxy restart.
+After the fix, the provider sets (`anthropic_models`, `open_ai_chat_completion_models`, etc.) are always consistent with `lumina.model_cost` immediately after every reload. New models become accessible via wildcard rules without any proxy restart.
 
 ---
 
@@ -129,10 +129,10 @@ After the fix, the provider sets (`anthropic_models`, `open_ai_chat_completion_m
 
 | # | Action | Status | Code |
 |---|---|---|---|
-| 1 | Call `add_known_models(model_cost_map=...)` in the periodic reload path | ✅ Done | [`proxy_server.py#L4393`](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/proxy_server.py#L4393) |
-| 2 | Call `add_known_models(model_cost_map=...)` in the `/reload/model_cost_map` endpoint | ✅ Done | [`proxy_server.py#L11904`](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/proxy_server.py#L11904) |
-| 3 | Update `add_known_models()` to accept an explicit map parameter | ✅ Done | [`__init__.py#L617`](https://github.com/BerriAI/litellm/blob/main/litellm/__init__.py#L617) |
-| 4 | Regression test: `add_known_models(model_cost_map=...)` populates provider sets | ✅ Done | [`test_auth_checks.py`](https://github.com/BerriAI/litellm/blob/main/tests/proxy_unit_tests/test_auth_checks.py) |
-| 5 | Regression test: `anthropic/*` wildcard grants/denies access correctly after reload | ✅ Done | [`test_auth_checks.py`](https://github.com/BerriAI/litellm/blob/main/tests/proxy_unit_tests/test_auth_checks.py) |
+| 1 | Call `add_known_models(model_cost_map=...)` in the periodic reload path | ✅ Done | [`proxy_server.py#L4393`](https://github.com/Soventra/lumina/blob/main/lumina/proxy/proxy_server.py#L4393) |
+| 2 | Call `add_known_models(model_cost_map=...)` in the `/reload/model_cost_map` endpoint | ✅ Done | [`proxy_server.py#L11904`](https://github.com/Soventra/lumina/blob/main/lumina/proxy/proxy_server.py#L11904) |
+| 3 | Update `add_known_models()` to accept an explicit map parameter | ✅ Done | [`__init__.py#L617`](https://github.com/Soventra/lumina/blob/main/lumina/__init__.py#L617) |
+| 4 | Regression test: `add_known_models(model_cost_map=...)` populates provider sets | ✅ Done | [`test_auth_checks.py`](https://github.com/Soventra/lumina/blob/main/tests/proxy_unit_tests/test_auth_checks.py) |
+| 5 | Regression test: `anthropic/*` wildcard grants/denies access correctly after reload | ✅ Done | [`test_auth_checks.py`](https://github.com/Soventra/lumina/blob/main/tests/proxy_unit_tests/test_auth_checks.py) |
 
 ---

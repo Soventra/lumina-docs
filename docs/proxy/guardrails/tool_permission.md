@@ -1,17 +1,17 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# LiteLLM Tool Permission Guardrail
+# Lumina Tool Permission Guardrail
 
-LiteLLM provides the LiteLLM Tool Permission Guardrail that lets you control which **tool calls** a model is allowed to invoke, using configurable allow/deny rules. This offers fine-grained, provider-agnostic control over tool execution (e.g., OpenAI Chat Completions `tool_calls`, Anthropic Messages `tool_use`, MCP tools).
+Lumina provides the Lumina Tool Permission Guardrail that lets you control which **tool calls** a model is allowed to invoke, using configurable allow/deny rules. This offers fine-grained, provider-agnostic control over tool execution (e.g., OpenAI Chat Completions `tool_calls`, Anthropic Messages `tool_use`, MCP tools).
 
 ## Quick Start
 
-### LiteLLM UI
+### Lumina UI
 
 #### Step 1: Select Tool Permission Guardrail
 
-Open the LiteLLM Dashboard, click **Add New Guardrail**, and choose **LiteLLM Tool Permission Guardrail**. This loads the rule builder UI.
+Open the Lumina Dashboard, click **Add New Guardrail**, and choose **Lumina Tool Permission Guardrail**. This loads the rule builder UI.
 
 #### Step 2: Define Regex Rules
 
@@ -32,7 +32,7 @@ Select **+ Restrict tool arguments** to attach regex validations to nested paths
 - Customize `violation_message_template` if you want branded error copy.
 - Save the guardrail.
 
-### LiteLLM Config.yaml Setup
+### Lumina Config.yaml Setup
 
 ```yaml
 guardrails:
@@ -86,15 +86,15 @@ guardrails:
 | Value | What happens |
 | --- | --- |
 | `block` | The request is immediately rejected. Pre-call checks raise a `400` HTTP error. Post-call checks raise `GuardrailRaisedException`, so the proxy responds with an error instead of the model output. Use when invoking the forbidden tool must halt the workflow. |
-| `rewrite` | LiteLLM silently strips disallowed tools from the payload before it reaches the model (pre-call) or rewrites the model response/tool calls after the fact. The guardrail inserts error text into `message.content`/`tool_result` entries so the client learns the tool was blocked while the rest of the completion continues. Use when you want graceful degradation instead of hard failures. |
+| `rewrite` | Lumina silently strips disallowed tools from the payload before it reaches the model (pre-call) or rewrites the model response/tool calls after the fact. The guardrail inserts error text into `message.content`/`tool_result` entries so the client learns the tool was blocked while the rest of the completion continues. Use when you want graceful degradation instead of hard failures. |
 
 ### Custom denial message
 
-Set `violation_message_template` when you want the guardrail to return a branded error (e.g., “this violates our org policy…”). LiteLLM replaces placeholders from the denied tool:
+Set `violation_message_template` when you want the guardrail to return a branded error (e.g., “this violates our org policy…”). Lumina replaces placeholders from the denied tool:
 
 - `{tool_name}` – the tool/function name (e.g., `Read`)
 - `{rule_id}` – the matching rule ID (or `None` when the default action kicks in)
-- `{default_message}` – the original LiteLLM message if you need to append it
+- `{default_message}` – the original Lumina message if you need to append it
 
 Example:
 
@@ -121,7 +121,7 @@ If a request tries to invoke `Read`, the proxy now returns “this violates our 
 ### 2. Start the Proxy
 
 ```shell
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 ## Examples

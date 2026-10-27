@@ -2,20 +2,20 @@
 
 ## The Problem
 
-As a guardrail provider, integrating with LiteLLM traditionally requires:
-- Making a PR to the LiteLLM repository
+As a guardrail provider, integrating with Lumina traditionally requires:
+- Making a PR to the Lumina repository
 - Waiting for review and merge
-- Maintaining provider-specific code in LiteLLM's codebase
+- Maintaining provider-specific code in Lumina's codebase
 - Updating the integration for changes to your API
 
 ## The Solution
 
-The **Generic Guardrail API** lets you integrate with LiteLLM **instantly** by implementing a simple API endpoint. No PR required.
+The **Generic Guardrail API** lets you integrate with Lumina **instantly** by implementing a simple API endpoint. No PR required.
 
 ### Key Benefits
 
 1. **No PR Needed** - Deploy and integrate immediately
-2. **Universal Support** - Works across ALL LiteLLM endpoints (chat, embeddings, image generation, etc.)
+2. **Universal Support** - Works across ALL Lumina endpoints (chat, embeddings, image generation, etc.)
 3. **Simple Contract** - One endpoint, three response types
 4. **Multi-Modal Support** - Handle both text and images in requests/responses
 5. **Custom Parameters** - Pass provider-specific params via config
@@ -23,7 +23,7 @@ The **Generic Guardrail API** lets you integrate with LiteLLM **instantly** by i
 
 ## Supported Endpoints
 
-The Generic Guardrail API works with the following LiteLLM endpoints:
+The Generic Guardrail API works with the following Lumina endpoints:
 
 - `/v1/chat/completions` - OpenAI Chat Completions
 - `/v1/completions` - OpenAI Text Completions
@@ -37,16 +37,16 @@ The Generic Guardrail API works with the following LiteLLM endpoints:
 
 ## How It Works
 
-1. LiteLLM extracts text and images from any request (chat messages, embeddings, image prompts, etc.)
+1. Lumina extracts text and images from any request (chat messages, embeddings, image prompts, etc.)
 2. Sends extracted content + metadata to your API endpoint
 3. Your API responds with: `BLOCKED`, `NONE`, or `GUARDRAIL_INTERVENED`
-4. LiteLLM enforces the decision and applies any modifications
+4. Lumina enforces the decision and applies any modifications
 
 ## API Contract
 
 ### Endpoint
 
-Implement `POST /beta/litellm_basic_guardrail_api`
+Implement `POST /beta/lumina_basic_guardrail_api`
 
 ### Request Format
 
@@ -84,24 +84,24 @@ Implement `POST /beta/litellm_basic_guardrail_api`
     {"role": "user", "content": "Hello"}
   ],
   "request_data": {
-    "user_api_key_hash": "hash of the litellm virtual key used",
-    "user_api_key_alias": "alias of the litellm virtual key used",
-    "user_api_key_user_id": "user id associated with the litellm virtual key used",
-    "user_api_key_user_email": "user email associated with the litellm virtual key used",
-    "user_api_key_team_id": "team id associated with the litellm virtual key used",
-    "user_api_key_team_alias": "team alias associated with the litellm virtual key used",
-    "user_api_key_end_user_id": "end user id associated with the litellm virtual key used",
-    "user_api_key_org_id": "org id associated with the litellm virtual key used"
+    "user_api_key_hash": "hash of the lumina virtual key used",
+    "user_api_key_alias": "alias of the lumina virtual key used",
+    "user_api_key_user_id": "user id associated with the lumina virtual key used",
+    "user_api_key_user_email": "user email associated with the lumina virtual key used",
+    "user_api_key_team_id": "team id associated with the lumina virtual key used",
+    "user_api_key_team_alias": "team alias associated with the lumina virtual key used",
+    "user_api_key_end_user_id": "end user id associated with the lumina virtual key used",
+    "user_api_key_org_id": "org id associated with the lumina virtual key used"
   },
   "request_headers": {  // optional: inbound request headers (allowlist). Allowed headers show their value; all others show "[present]" to indicate the header existed.
     "User-Agent": "OpenAI/Python 2.17.0",
     "Content-Type": "application/json",
     "X-Request-Id": "[present]"
   },
-  "litellm_version": "1.x.y",  // optional: LiteLLM library version running this proxy
+  "lumina_version": "1.x.y",  // optional: Lumina library version running this proxy
   "input_type": "request",  // "request" or "response"
-  "litellm_call_id": "unique_call_id",  // the call id of the individual LLM call
-  "litellm_trace_id": "trace_id",  // the trace id of the LLM call - useful if there are multiple LLM calls for the same conversation
+  "lumina_call_id": "unique_call_id",  // the call id of the individual LLM call
+  "lumina_trace_id": "trace_id",  // the trace id of the LLM call - useful if there are multiple LLM calls for the same conversation
   "additional_provider_specific_params": {
     // your custom params from config
   }
@@ -121,11 +121,11 @@ Implement `POST /beta/litellm_basic_guardrail_api`
 ```
 
 **Actions:**
-- `BLOCKED` - LiteLLM raises error and blocks request
+- `BLOCKED` - Lumina raises error and blocks request
 - `NONE` - Request proceeds unchanged  
 - `GUARDRAIL_INTERVENED` - Request proceeds with modified texts/images (provide `texts` and/or `images` fields)
 
-**Rewriting per message:** `texts` must line up one to one with the `texts` array LiteLLM sent. When your endpoint rewrites the request per chat message instead, return the rewritten rows as `structured_messages` (see [Returning rewritten messages](#returning-rewritten-messages)). On `/v1/responses` a `texts` array that counts one entry per message does not match what LiteLLM extracted, so the request is rejected with a 500 naming the guardrail rather than sent unrewritten
+**Rewriting per message:** `texts` must line up one to one with the `texts` array Lumina sent. When your endpoint rewrites the request per chat message instead, return the rewritten rows as `structured_messages` (see [Returning rewritten messages](#returning-rewritten-messages)). On `/v1/responses` a `texts` array that counts one entry per message does not match what Lumina extracted, so the request is rejected with a 500 naming the guardrail rather than sent unrewritten
 
 ## Parameters
 
@@ -231,7 +231,7 @@ The `structured_messages` parameter provides the full input in OpenAI chat compl
 
 #### Returning rewritten messages
 
-To rewrite the request per message, return `structured_messages` in the response with one row per row you received, in the same order, keeping each row's `role` and shape and changing only the content you want rewritten. LiteLLM writes the rows back onto the original request on every supported endpoint, including `/v1/responses` turns that carry `instructions` or tool items, where a per-message `texts` array cannot be placed. A row you return exactly as you received it counts as unchanged, so you can echo the rows you did not touch; when every row comes back unchanged, LiteLLM applies `texts` instead. A returned array whose length differs from the one you received replaces the conversation as a whole
+To rewrite the request per message, return `structured_messages` in the response with one row per row you received, in the same order, keeping each row's `role` and shape and changing only the content you want rewritten. Lumina writes the rows back onto the original request on every supported endpoint, including `/v1/responses` turns that carry `instructions` or tool items, where a per-message `texts` array cannot be placed. A row you return exactly as you received it counts as unchanged, so you can echo the rows you did not touch; when every row comes back unchanged, Lumina applies `texts` instead. A returned array whose length differs from the one you received replaces the conversation as a whole
 
 **Example:**
 ```json
@@ -244,12 +244,12 @@ To rewrite the request per message, return `structured_messages` in the response
 }
 ```
 
-## LiteLLM Configuration
+## Lumina Configuration
 
 Add to `config.yaml`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   guardrails:
     - guardrail_name: "my-guardrail"
       lumina_params:
@@ -271,14 +271,14 @@ With `forward_messages_as_sent: true`, `structured_messages` arrives as the clie
 
 ### Error handling: `unreachable_fallback` and `fail_on_error`
 
-Two settings control what LiteLLM does when the guardrail itself fails, rather than returning a verdict. They sit on a spectrum from strict to permissive, and they compose:
+Two settings control what Lumina does when the guardrail itself fails, rather than returning a verdict. They sit on a spectrum from strict to permissive, and they compose:
 
 - `unreachable_fallback` (default `fail_closed`) only reacts to the guardrail endpoint being **unreachable**: network errors, timeouts, or an HTTP 502/503/504 from an upstream proxy/load balancer. Set it to `fail_open` to let requests proceed in just those cases.
 - `fail_on_error` (default `true`) is the broader control. It governs **any** guardrail error, not only unreachability.
 
 | `fail_on_error` | Behavior on a guardrail error |
 | --- | --- |
-| `true` (default) | **Fail closed.** Any error blocks the request: a non-2xx response, a malformed or unparseable body, a network failure, or an internal serialization/validation error. This preserves LiteLLM's existing behavior |
+| `true` (default) | **Fail closed.** Any error blocks the request: a non-2xx response, a malformed or unparseable body, a network failure, or an internal serialization/validation error. This preserves Lumina's existing behavior |
 | `false` | **Fail open (complete).** Any guardrail error is downgraded to a critical-level log line and the request proceeds as if the guardrail were not configured |
 
 Only a valid guardrail response can act. With `fail_on_error: false`, a parsed `BLOCKED` decision still blocks; everything that is not a valid response (errors, malformed bodies, unreachable endpoints) is bypassed. This applies to both the request hook (`pre_call`) and the response hook (`post_call`); on the response path, a fail-open returns the already-generated model output, while fail-closed turns a successful generation into an error.
@@ -326,7 +326,7 @@ You can send two kinds of headers to your guardrail endpoint:
       X-API-Key: "secret"
   ```
 
-- **Dynamic headers** (`extra_headers`): A list of **header names** that are forwarded from the **client request** to your guardrail. Only headers in this list (plus a small default allowlist such as `x-litellm-*`) have their values sent; others are sent as `[present]`. Use this to pass through client-provided headers (e.g. `x-request-id`, `x-correlation-id`). Configure in `lumina_params`:
+- **Dynamic headers** (`extra_headers`): A list of **header names** that are forwarded from the **client request** to your guardrail. Only headers in this list (plus a small default allowlist such as `x-lumina-*`) have their values sent; others are sent as `[present]`. Use this to pass through client-provided headers (e.g. `x-request-id`, `x-correlation-id`). Configure in `lumina_params`:
 
   ```yaml
   lumina_params:
@@ -350,7 +350,7 @@ guardrails:
     lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
-      api_base: https://api.pillar.security/api/v1/integrations/litellm
+      api_base: https://api.pillar.security/api/v1/integrations/lumina
       api_key: os.environ/PILLAR_API_KEY
       default_on: true
       additional_provider_specific_params:
@@ -391,7 +391,7 @@ response = client.chat.completions.create(
 
 ## Implementation Example
 
-See [mock_bedrock_guardrail_server.py](https://github.com/BerriAI/litellm/blob/main/cookbook/mock_guardrail_server/mock_bedrock_guardrail_server.py) for a complete reference implementation.
+See [mock_bedrock_guardrail_server.py](https://github.com/Soventra/lumina/blob/main/cookbook/mock_guardrail_server/mock_bedrock_guardrail_server.py) for a complete reference implementation.
 
 **Minimal FastAPI example:**
 
@@ -410,8 +410,8 @@ class GuardrailRequest(BaseModel):
     structured_messages: Optional[List[Dict[str, Any]]] = None  # OpenAI messages format (for chat endpoints)
     request_data: Dict[str, Any]
     input_type: str  # "request" or "response"
-    litellm_call_id: Optional[str] = None
-    litellm_trace_id: Optional[str] = None
+    lumina_call_id: Optional[str] = None
+    lumina_trace_id: Optional[str] = None
     additional_provider_specific_params: Dict[str, Any]
 
 class GuardrailResponse(BaseModel):
@@ -421,7 +421,7 @@ class GuardrailResponse(BaseModel):
     images: Optional[List[str]] = None
     structured_messages: Optional[List[Dict[str, Any]]] = None  # rewritten OpenAI messages, one per row received
 
-@app.post("/beta/litellm_basic_guardrail_api")
+@app.post("/beta/lumina_basic_guardrail_api")
 async def apply_guardrail(request: GuardrailRequest):
     # Your guardrail logic here
     
@@ -485,11 +485,11 @@ async def apply_guardrail(request: GuardrailRequest):
 - You want instant integration without waiting for PRs
 - You maintain your own guardrail service
 - You need full control over updates and features
-- You want to support all LiteLLM endpoints automatically
+- You want to support all Lumina endpoints automatically
 
 ❌ **Make a PR when:**
-- You want deeper integration with LiteLLM internals
-- Your guardrail requires complex LiteLLM-specific logic
+- You want deeper integration with Lumina internals
+- Your guardrail requires complex Lumina-specific logic
 - You want to be featured as a built-in provider
 
 ## Questions?

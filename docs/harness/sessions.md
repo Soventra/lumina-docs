@@ -4,12 +4,12 @@ title: Sessions
 
 # Sessions
 
-A session keeps its working directory and conversation history alive between turns. `litellm.agent()` creates a session for one turn and closes it afterwards. Use `litellm.agent_session()` when you need more than one turn
+A session keeps its working directory and conversation history alive between turns. `lumina.agent()` creates a session for one turn and closes it afterwards. Use `lumina.agent_session()` when you need more than one turn
 
 ## Multi-turn
 
 ```python
-with litellm.agent_session(Harness.CODEX, sandbox=box, model="litellm_proxy/coder") as s:
+with lumina.agent_session(Harness.CODEX, sandbox=box, model="lumina_proxy/coder") as s:
     s.run("Install dev deps.")
     s.run("Run the router unit tests and summarize failures.")
     r = s.run("Fix the first failure. Keep the diff small.")
@@ -33,8 +33,8 @@ Leaving a `with` block calls `close()` unless you already called `detach()` or `
 For harnesses that support resume, `State` holds the harness, its native session id, the working directory and the model. It never holds credentials. `state.dumps()` gives you bytes to store anywhere
 
 ```python title="app.py"
-from litellm import Harness
-from litellm.harness import State
+from lumina import Harness
+from lumina.harness import State
 
 @app.post("/chat/{chat_id}")
 async def chat(chat_id: str, msg: str):
@@ -42,9 +42,9 @@ async def chat(chat_id: str, msg: str):
     box = sandbox.docker("my-agents:latest", name=f"chat-{chat_id}")
 
     if raw:
-        s = await litellm.aagent_resume(State.loads(raw), sandbox=box)
+        s = await lumina.aagent_resume(State.loads(raw), sandbox=box)
     else:
-        s = await litellm.aagent_session(Harness.CLAUDE_CODE, sandbox=box, model="litellm_proxy/coder")
+        s = await lumina.aagent_session(Harness.CLAUDE_CODE, sandbox=box, model="lumina_proxy/coder")
 
     async with s:
         r = await s.arun(msg)

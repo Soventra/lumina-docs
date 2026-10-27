@@ -57,7 +57,7 @@ const ICONS = {
   </>),
 };
 
-const HOME = {id: 'home', icon: 'home', title: 'Home', desc: 'Get started with LiteLLM', to: '/docs/'};
+const HOME = {id: 'home', icon: 'home', title: 'Home', desc: 'Get started with Lumina', to: '/docs/'};
 
 // Each column holds one or more groups. A group's `featured` items sit first,
 // in a highlighted box.
@@ -80,7 +80,7 @@ const COLUMNS = [
         {id: 'mcp', icon: 'mcp', title: 'MCP Gateway', desc: 'Give agents governed access to tools', to: '/docs/mcp'},
         {id: 'agent', icon: 'agent', title: 'Agent Gateway', desc: 'Register and invoke A2A agents', to: '/docs/a2a'},
         {id: 'sdk', icon: 'sdk', title: 'Python SDK', desc: 'Call 100+ LLMs with one interface', to: '/docs/python_sdk'},
-        {id: 'models', icon: 'models', title: 'Model Catalog', desc: 'Pricing and context windows', to: 'https://models.litellm.ai'},
+        {id: 'models', icon: 'models', title: 'Model Catalog', desc: 'Pricing and context windows', to: 'https://models.lumina.ai'},
       ],
     },
   ],
@@ -112,7 +112,7 @@ const SECTION_MATCHERS = [
   ['logs', ({pathname}) => pathname.startsWith('/docs/proxy/logging')],
   ['mcp', ({pathname}) => pathname.startsWith('/docs/mcp')],
   ['agent', ({pathname}) => pathname.startsWith('/docs/a2a')],
-  ['sdk', ({pathname, hash}) => pathname.startsWith('/docs/python_sdk') || hash === '#litellm-python-sdk'],
+  ['sdk', ({pathname, hash}) => pathname.startsWith('/docs/python_sdk') || hash === '#lumina-python-sdk'],
   ['router', ({pathname}) => pathname.startsWith('/docs/auto_router')],
   ['gateway', ({pathname}) => pathname.startsWith('/docs/proxy') || pathname.startsWith('/docs/simple_proxy')],
 ];

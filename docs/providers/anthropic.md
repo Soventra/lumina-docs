@@ -2,7 +2,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Anthropic
-LiteLLM supports all anthropic models.
+Lumina supports all anthropic models.
 
 - `claude-haiku-5-5`
 - `claude-sonnet-5`
@@ -24,7 +24,7 @@ LiteLLM supports all anthropic models.
 | Property | Details |
 |-------|-------|
 | Description | Claude is a highly performant, trustworthy, and intelligent AI platform built by Anthropic. Claude excels at tasks involving language, reasoning, analysis, coding, and more. Also available via Azure Foundry. |
-| Provider Route on LiteLLM | `anthropic/` (add this prefix to the model name, to route any requests to Anthropic - e.g. `anthropic/claude-3-5-sonnet-20240620`). For Azure Foundry deployments, use `azure_ai/claude-*` (see [Azure Anthropic documentation](../providers/azure/azure_anthropic)) |
+| Provider Route on Lumina | `anthropic/` (add this prefix to the model name, to route any requests to Anthropic - e.g. `anthropic/claude-3-5-sonnet-20240620`). For Azure Foundry deployments, use `azure_ai/claude-*` (see [Azure Anthropic documentation](../providers/azure/azure_anthropic)) |
 | Provider Doc | [Anthropic ↗](https://docs.anthropic.com/en/docs/build-with-claude/overview), [Azure Foundry Claude ↗](https://learn.microsoft.com/en-us/azure/ai-services/foundry-models/claude) |
 | API Endpoint for Provider | https://api.anthropic.com (or Azure Foundry endpoint: `https://<resource-name>.services.ai.azure.com/anthropic`) |
 | Supported Endpoints | `/chat/completions`, `/v1/messages` (passthrough) |
@@ -53,7 +53,7 @@ Check this in code, [here](../completion/input.md#translated-openai-params)
 :::info
 
 **Notes:**
-- Anthropic API fails requests when `max_tokens` are not passed. Due to this litellm passes `max_tokens=4096` when no `max_tokens` are passed.
+- Anthropic API fails requests when `max_tokens` are not passed. Due to this lumina passes `max_tokens=4096` when no `max_tokens` are passed.
 - `response_format` uses Anthropic native structured outputs on Claude Sonnet 4.5+, Opus 4.5+ and Haiku 4.5. Older models such as Opus 4.1 fall back to a forced tool call (see [Structured Outputs](#structured-outputs) section)
 - `reasoning_effort` is automatically mapped to `output_config={"effort": ...}` for Claude 4.6 and Opus 4.5 models (see [Effort Parameter](./anthropic_effort.md))
 
@@ -61,7 +61,7 @@ Check this in code, [here](../completion/input.md#translated-openai-params)
 
 ## **Structured Outputs**
 
-LiteLLM supports Anthropic's [structured outputs feature](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) for Claude Sonnet 4.5 and later, Opus 4.5 and later, and Haiku 4.5. When you use `response_format` with these models, LiteLLM automatically:
+Lumina supports Anthropic's [structured outputs feature](https://platform.claude.com/docs/en/build-with-claude/structured-outputs) for Claude Sonnet 4.5 and later, Opus 4.5 and later, and Haiku 4.5. When you use `response_format` with these models, Lumina automatically:
 - Adds the required `structured-outputs-2025-11-13` beta header
 - Transforms OpenAI's `response_format` to Anthropic's `output_format` format
 
@@ -71,15 +71,15 @@ Native structured outputs are used when the model has `supports_native_structure
 - Opus 4.5 and later (`claude-opus-4-5`, `claude-opus-4-6`, `claude-opus-4-7`, `claude-opus-4-8`, `claude-opus-5`, `claude-opus-5-5`)
 - Haiku 4.5 and 5.5 (`claude-haiku-4-5`, `claude-haiku-5-5`)
 
-Claude Opus 4.1 and older models do not have this flag, so LiteLLM never sends `output_format` for them. It instead adds a `json_tool_call` tool built from your schema and forces the model to call it
+Claude Opus 4.1 and older models do not have this flag, so Lumina never sends `output_format` for them. It instead adds a `json_tool_call` tool built from your schema and forces the model to call it
 
 ### Example Usage
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="{{anthropic}}",
@@ -107,7 +107,7 @@ print(response.choices[0].message.content)
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -122,7 +122,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -157,11 +157,11 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 </Tabs>
 
 :::info
-When using structured outputs with supported models, LiteLLM automatically:
+When using structured outputs with supported models, Lumina automatically:
 - Converts OpenAI's `response_format` to Anthropic's `output_format`
 - Adds the `anthropic-beta: structured-outputs-2025-11-13` header
 
-For models without native support, LiteLLM instead creates a `json_tool_call` tool with the schema and forces the model to use it
+For models without native support, Lumina instead creates a `json_tool_call` tool with the schema and forces the model to use it
 :::
 
 ## API Keys
@@ -192,7 +192,7 @@ response = completion(
 
 ### Custom API Base
 
-When using a custom API base for Anthropic (e.g., a proxy or custom endpoint), LiteLLM automatically appends the appropriate suffix (`/v1/messages` or `/v1/complete`) to your base URL.
+When using a custom API base for Anthropic (e.g., a proxy or custom endpoint), Lumina automatically appends the appropriate suffix (`/v1/messages` or `/v1/complete`) to your base URL.
 
 If your custom endpoint already includes the full path or doesn't follow Anthropic's standard URL structure, you can disable this automatic suffix appending:
 
@@ -219,7 +219,7 @@ For full Azure support including Azure AD authentication, use the dedicated [Azu
 As an alternative, you can use the `anthropic/` provider directly with your Azure endpoint since Azure exposes Claude using Anthropic's native API.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/{{anthropic}}",
@@ -238,7 +238,7 @@ print(response)
 
 Anthropic supports workload identity federation, so a proxy can exchange an OIDC identity token it already holds for a short-lived `sk-ant-oat01` access token instead of storing a long-lived `sk-ant-` key. This is the Anthropic equivalent of what Vertex AI and Azure already do, and it suits deployments with a no-static-secrets policy.
 
-LiteLLM mints and caches the access token for you. Configure the federation identifiers plus one identity source, and every route that reaches Anthropic uses the minted token: chat completions, `/v1/messages`, files, batches, skills, passthrough, token counting and model discovery.
+Lumina mints and caches the access token for you. Configure the federation identifiers plus one identity source, and every route that reaches Anthropic uses the minted token: chat completions, `/v1/messages`, files, batches, skills, passthrough, token counting and model discovery.
 
 ### Federation identifiers
 
@@ -257,7 +257,7 @@ Anthropic's own reference calls the last one `workspace_id`, but federation read
 
 A static credential outranks federation everywhere in the Anthropic provider. If `ANTHROPIC_API_KEY` is set, every Anthropic route uses it and nothing is federated; `ANTHROPIC_AUTH_TOKEN` comes next, and federation is the last tier. This matches the Anthropic SDK's own ordering, and it applies to files, batches and model discovery as well as to chat.
 
-So a deployment that is meant to be federated must not carry a static key. If one is set anyway, LiteLLM logs a warning naming the model whose federation is being shadowed. A blank or whitespace-only value counts as unset and falls through to federation
+So a deployment that is meant to be federated must not carry a static key. If one is set anyway, Lumina logs a warning naming the model whose federation is being shadowed. A blank or whitespace-only value counts as unset and falls through to federation
 
 ### Configuring by environment instead
 
@@ -280,7 +280,7 @@ There are four ways to supply the OIDC assertion. Two need no `anthropic_identit
 
 #### Token file (default)
 
-Reads an assertion a platform already projects onto disk, which is how Kubernetes service account tokens and most CI runners work. Set `anthropic_identity_token_file` and leave `anthropic_identity_source` unset. The path must sit under LiteLLM's OIDC file allowlist, which you extend with `LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS`. The file is re-read on each mint, so a rotated token is picked up without a restart.
+Reads an assertion a platform already projects onto disk, which is how Kubernetes service account tokens and most CI runners work. Set `anthropic_identity_token_file` and leave `anthropic_identity_source` unset. The path must sit under Lumina's OIDC file allowlist, which you extend with `LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS`. The file is re-read on each mint, so a rotated token is picked up without a restart.
 
 ```yaml
 model_list:
@@ -301,17 +301,17 @@ model_list:
       anthropic_identity_token: oidc/env/MY_WORKLOAD_TOKEN
 ```
 
-#### LiteLLM as the issuer
+#### Lumina as the issuer
 
-For deployments with no external IdP, LiteLLM signs the assertion itself with an ES256 (P-256) key. Set `anthropic_identity_source: internal_issuer` and point `anthropic_issuer_signing_key_ref` at the key rather than pasting it inline, so custody stays with your secret manager. `anthropic_issuer_ttl_seconds` defaults to 300 and cannot exceed 3600.
+For deployments with no external IdP, Lumina signs the assertion itself with an ES256 (P-256) key. Set `anthropic_identity_source: internal_issuer` and point `anthropic_issuer_signing_key_ref` at the key rather than pasting it inline, so custody stays with your secret manager. `anthropic_issuer_ttl_seconds` defaults to 300 and cannot exceed 3600.
 
 ```yaml
 credential_list:
   - credential_name: anthropic_wif
     credential_values:
       anthropic_identity_source: internal_issuer
-      anthropic_issuer_url: https://litellm.example.com
-      anthropic_issuer_subject: litellm-proxy
+      anthropic_issuer_url: https://lumina.example.com
+      anthropic_issuer_subject: lumina-proxy
       anthropic_issuer_audience: https://api.anthropic.com
       anthropic_issuer_signing_key_ref: os.environ/ANTHROPIC_WIF_SIGNING_KEY
       anthropic_issuer_ttl_seconds: 300
@@ -325,10 +325,10 @@ model_list:
   - model_name: claude-sonnet-4-5
     lumina_params:
       model: anthropic/claude-sonnet-4-5
-      litellm_credential_name: anthropic_wif
+      lumina_credential_name: anthropic_wif
 ```
 
-Anthropic needs the matching public key to verify what LiteLLM signs. Export it from the proxy and register it as the **inline** issuer JWKS on your federation rule:
+Anthropic needs the matching public key to verify what Lumina signs. Export it from the proxy and register it as the **inline** issuer JWKS on your federation rule:
 
 ```shell
 curl -s http://localhost:4000/credentials/anthropic_wif/jwks \
@@ -339,11 +339,11 @@ The endpoint is proxy-admin only and never exposes the private key, so paste the
 
 #### Keycloak
 
-For shops that already run Keycloak as the workload IdP, LiteLLM fetches the assertion with an OAuth client credentials grant. Set `anthropic_identity_source: keycloak` plus:
+For shops that already run Keycloak as the workload IdP, Lumina fetches the assertion with an OAuth client credentials grant. Set `anthropic_identity_source: keycloak` plus:
 
 ```yaml
       anthropic_keycloak_token_url: https://keycloak.example.com/realms/prod/protocol/openid-connect/token
-      anthropic_keycloak_client_id: litellm-proxy
+      anthropic_keycloak_client_id: lumina-proxy
       anthropic_keycloak_auth_method: client_secret_basic  # or client_secret_post
       anthropic_keycloak_client_secret_ref: os.environ/KEYCLOAK_CLIENT_SECRET
       anthropic_keycloak_scope: anthropic-federation
@@ -357,7 +357,7 @@ The Admin UI does not offer these fields yet, so configure federation through th
 
 ### Token lifetime and refresh
 
-LiteLLM caches the minted access token per deployment and refreshes it in the background before it expires, so a request rarely waits on an exchange. Refresh is two-tier: an advisory refresh at half the token's lifetime that happens in the background while the old token keeps serving, and a mandatory one at an eighth of the lifetime that blocks. Concurrent requests for the same deployment share a single in-flight exchange rather than each minting their own, so the number of exchanges does not scale with traffic.
+Lumina caches the minted access token per deployment and refreshes it in the background before it expires, so a request rarely waits on an exchange. Refresh is two-tier: an advisory refresh at half the token's lifetime that happens in the background while the old token keeps serving, and a mandatory one at an eighth of the lifetime that blocks. Concurrent requests for the same deployment share a single in-flight exchange rather than each minting their own, so the number of exchanges does not scale with traffic.
 
 Workers on the same host share the minted token through a small on-disk cache under the temp directory, readable only by the proxy's user, so a proxy running several uvicorn workers exchanges each assertion once rather than once per worker. `LUMINA_TOKEN_EXCHANGE_CACHE_DIR` moves that cache, and setting it to an empty string turns it off so every process mints on its own. Replicas on different hosts always mint their own token.
 
@@ -392,7 +392,7 @@ The list is read from the environment only. It is never taken from a model or cr
 Token health is emitted through the standard service-logging path: `prometheus_system` sends it to Prometheus and `otel` sends it to OpenTelemetry, using the exporter settings from the [OpenTelemetry docs](../observability/opentelemetry_integration). The services are `anthropic_wif` for the exchange itself and `anthropic_wif_cache` for cache hits and misses, giving you mint counts, mint latency, and failures broken out by cause. Enable them with:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   service_callback: ["prometheus_system", "otel"]
 ```
 
@@ -400,7 +400,7 @@ litellm_settings:
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # set env - [OPTIONAL] replace with your anthropic key
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -416,7 +416,7 @@ Just set `stream=True` when calling completion.
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -427,9 +427,9 @@ for chunk in response:
     print(chunk["choices"][0]["delta"]["content"])  # same as openai format
 ```
 
-## Usage with LiteLLM Proxy 
+## Usage with Lumina Proxy 
 
-Here's how to call Anthropic with the LiteLLM Proxy Server
+Here's how to call Anthropic with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -445,13 +445,13 @@ export ANTHROPIC_API_KEY="your-api-key"
 ```yaml
 model_list:
   - model_name: claude-4 ### RECEIVED MODEL NAME ###
-    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
-      model: {{anthropic_large}} ### MODEL NAME sent to `litellm.completion()` ###
+    lumina_params: # all params accepted by lumina.completion() - https://docs.lumina.ai/docs/completion/input
+      model: {{anthropic_large}} ### MODEL NAME sent to `lumina.completion()` ###
       api_key: "os.environ/ANTHROPIC_API_KEY" # does os.getenv("ANTHROPIC_API_KEY")
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 </TabItem>
 <TabItem value="config-all" label="config - default all Anthropic Model">
@@ -471,7 +471,7 @@ model_list:
 ```
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 Example Request for this config.yaml
@@ -498,7 +498,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="cli" label="cli">
 
 ```bash
-$ litellm --model {{anthropic_large}}
+$ lumina --model {{anthropic_large}}
 
 # Server running on http://0.0.0.0:4000
 ```
@@ -535,7 +535,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="anthropic/{{anthropic}}", messages = [
     {
         "role": "user",
@@ -559,7 +559,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "anthropic/{{anthropic}}",
     temperature=0.1
 )
@@ -569,7 +569,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -582,7 +582,7 @@ print(response)
 ## Supported Models
 
 `Model Name` Human-friendly name.  
-`Function Call` How to call the model in LiteLLM.
+`Function Call` How to call the model in Lumina.
 
 | Model Name       | Function Call                              |
 |------------------|--------------------------------------------|
@@ -612,10 +612,10 @@ Use Anthropic Prompt Caching
 
 :::note
 
-Here's what a sample Raw Request from LiteLLM for Anthropic Context Caching looks like: 
+Here's what a sample Raw Request from Lumina for Anthropic Context Caching looks like: 
 
 ```bash
-POST Request Sent from LiteLLM:
+POST Request Sent from Lumina:
 curl -X POST \
 https://api.anthropic.com/v1/messages \
 -H 'accept: application/json' -H 'anthropic-version: 2023-06-01' -H 'content-type: application/json' -H 'x-api-key: sk-...' \
@@ -657,10 +657,10 @@ This example demonstrates basic Prompt Caching usage, caching the full text of t
 
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages=[
         {
@@ -686,23 +686,23 @@ response = await litellm.acompletion(
 
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 :::info
 
-LiteLLM Proxy is OpenAI compatible
+Lumina Proxy is OpenAI compatible
 
-This is an example using the OpenAI Python SDK sending a request to LiteLLM Proxy
+This is an example using the OpenAI Python SDK sending a request to Lumina Proxy
 
-Assuming you have a model=`anthropic/{{anthropic}}` on the [litellm proxy config.yaml](#usage-with-litellm-proxy)
+Assuming you have a model=`anthropic/{{anthropic}}` on the [lumina proxy config.yaml](#usage-with-lumina-proxy)
 
 :::
 
 ```python 
 import openai
 client = openai.AsyncOpenAI(
-    api_key="anything",            # litellm proxy api key
-    base_url="http://0.0.0.0:4000" # litellm proxy base url
+    api_key="anything",            # lumina proxy api key
+    base_url="http://0.0.0.0:4000" # lumina proxy base url
 )
 
 
@@ -742,12 +742,12 @@ In this example, we demonstrate caching tool definitions.
 The cache_control parameter is placed on the final tool
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python 
-import litellm
+import lumina
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages = [{"role": "user", "content": "What's the weather like in Boston today?"}],
     tools = [
@@ -774,23 +774,23 @@ response = await litellm.acompletion(
 )
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 :::info
 
-LiteLLM Proxy is OpenAI compatible
+Lumina Proxy is OpenAI compatible
 
-This is an example using the OpenAI Python SDK sending a request to LiteLLM Proxy
+This is an example using the OpenAI Python SDK sending a request to Lumina Proxy
 
-Assuming you have a model=`anthropic/{{anthropic}}` on the [litellm proxy config.yaml](#usage-with-litellm-proxy)
+Assuming you have a model=`anthropic/{{anthropic}}` on the [lumina proxy config.yaml](#usage-with-lumina-proxy)
 
 :::
 
 ```python 
 import openai
 client = openai.AsyncOpenAI(
-    api_key="anything",            # litellm proxy api key
-    base_url="http://0.0.0.0:4000" # litellm proxy base url
+    api_key="anything",            # lumina proxy api key
+    base_url="http://0.0.0.0:4000" # lumina proxy base url
 )
 
 response = await client.chat.completions.create(
@@ -833,12 +833,12 @@ The cache_control parameter is placed on the system message to designate it as p
 The conversation history (previous messages) is included in the messages array. The final turn is marked with cache-control, for continuing in followups. The second-to-last user message is marked for caching with the cache_control parameter, so that this checkpoint can read from the previous cache.
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
 ```python 
-import litellm
+import lumina
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="anthropic/{{anthropic}}",
     messages=[
         # System Message
@@ -883,23 +883,23 @@ response = await litellm.acompletion(
 )
 ```
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 :::info
 
-LiteLLM Proxy is OpenAI compatible
+Lumina Proxy is OpenAI compatible
 
-This is an example using the OpenAI Python SDK sending a request to LiteLLM Proxy
+This is an example using the OpenAI Python SDK sending a request to Lumina Proxy
 
-Assuming you have a model=`anthropic/{{anthropic}}` on the [litellm proxy config.yaml](#usage-with-litellm-proxy)
+Assuming you have a model=`anthropic/{{anthropic}}` on the [lumina proxy config.yaml](#usage-with-lumina-proxy)
 
 :::
 
 ```python 
 import openai
 client = openai.AsyncOpenAI(
-    api_key="anything",            # litellm proxy api key
-    base_url="http://0.0.0.0:4000" # litellm proxy base url
+    api_key="anything",            # lumina proxy api key
+    base_url="http://0.0.0.0:4000" # lumina proxy base url
 )
 
 response = await client.chat.completions.create(
@@ -953,7 +953,7 @@ response = await client.chat.completions.create(
 ## **Function/Tool Calling**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -1018,7 +1018,7 @@ You can disable tool calling by setting the `tool_choice` to `"none"`.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/{{anthropic}}",
@@ -1044,12 +1044,12 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
 
-Replace `anything` with your LiteLLM Proxy Virtual Key, if [setup](../proxy/virtual_keys).
+Replace `anything` with your Lumina Proxy Virtual Key, if [setup](../proxy/virtual_keys).
 
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
@@ -1072,9 +1072,9 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 Here's how to use MCP tool calling with Anthropic:
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM SDK">
+<TabItem value="sdk" label="Lumina SDK">
 
-LiteLLM supports MCP tool calling with Anthropic in the OpenAI Responses API format.
+Lumina supports MCP tool calling with Anthropic in the OpenAI Responses API format.
 
 <Tabs>
 <TabItem value="openai_format" label="OpenAI Format">
@@ -1082,7 +1082,7 @@ LiteLLM supports MCP tool calling with Anthropic in the OpenAI Responses API for
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "sk-ant-..."
 
@@ -1107,7 +1107,7 @@ response = completion(
 
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["ANTHROPIC_API_KEY"] = "sk-ant-..."
 
@@ -1131,7 +1131,7 @@ print(response)
 </Tabs>
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -1146,7 +1146,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1195,13 +1195,13 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 Here's how to pass the result of a function call back to an anthropic model: 
 
 ```python
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["ANTHROPIC_API_KEY"] = "sk-ant.."
 
 
-litellm.set_verbose = True
+lumina.set_verbose = True
 
 ### 1ST FUNCTION CALL ###
 tools = [
@@ -1277,10 +1277,10 @@ s/o @[Shekhar Patnaik](https://www.linkedin.com/in/patnaikshekhar) for requestin
 
 ### Context Management (Beta)
 
-Anthropic’s [context editing](https://docs.claude.com/en/docs/build-with-claude/context-editing) API lets you automatically clear older tool results or thinking blocks. LiteLLM now forwards the native `context_management` payload when you call Anthropic models, and automatically attaches the required `context-management-2025-06-27` beta header.
+Anthropic’s [context editing](https://docs.claude.com/en/docs/build-with-claude/context-editing) API lets you automatically clear older tool results or thinking blocks. Lumina now forwards the native `context_management` payload when you call Anthropic models, and automatically attaches the required `context-management-2025-06-27` beta header.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/{{anthropic}}",
@@ -1306,7 +1306,7 @@ response = completion(
 <TabItem value="computer" label="Computer">
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 tools = [
     {
@@ -1341,7 +1341,7 @@ print(resp)
 <TabItem value="sdk" label="SDK">
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 tools = [{
     "type": "text_editor_20250124",
@@ -1374,7 +1374,7 @@ print(resp)
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1399,7 +1399,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 Live from v1.70.1+
 :::
 
-LiteLLM maps OpenAI's `search_context_size` param to Anthropic's `max_uses` param.
+Lumina maps OpenAI's `search_context_size` param to Anthropic's `max_uses` param.
 
 | OpenAI | Anthropic |
 | --- | --- |
@@ -1416,7 +1416,7 @@ LiteLLM maps OpenAI's `search_context_size` param to Anthropic's `max_uses` para
 <TabItem value="openai" label="OpenAI Format">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 model = "{{anthropic}}"
 messages = [{"role": "user", "content": "What's the weather like today?"}]
@@ -1441,7 +1441,7 @@ print(resp)
 <TabItem value="anthropic" label="Anthropic Format">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 tools = [{
     "type": "web_search_20250305",
@@ -1478,7 +1478,7 @@ print(resp)
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1540,7 +1540,7 @@ The Anthropic Memory tool is currently in beta.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 tools = [{
     "type": "memory_20250818",
@@ -1575,7 +1575,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1602,7 +1602,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ## Usage - Vision 
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # set env
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -1617,7 +1617,7 @@ def encode_image(image_path):
 image_path = "../proxy/cached_logo.jpg"
 # Getting the base64 string
 base64_image = encode_image(image_path)
-resp = litellm.completion(
+resp = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {
@@ -1639,7 +1639,7 @@ print(f"\nResponse: {resp}")
 
 ## Usage - Thinking / `reasoning_content`
 
-LiteLLM translates OpenAI's `reasoning_effort` to Anthropic's `thinking` parameter. [Code](https://github.com/BerriAI/litellm/blob/23051d89dd3611a81617d84277059cd88b2df511/litellm/llms/anthropic/chat/transformation.py#L298)
+Lumina translates OpenAI's `reasoning_effort` to Anthropic's `thinking` parameter. [Code](https://github.com/Soventra/lumina/blob/23051d89dd3611a81617d84277059cd88b2df511/lumina/llms/anthropic/chat/transformation.py#L298)
 
 | reasoning_effort | thinking |
 | ---------------- | -------- |
@@ -1648,7 +1648,7 @@ LiteLLM translates OpenAI's `reasoning_effort` to Anthropic's `thinking` paramet
 | "high"           | "budget_tokens": 4096 |
 
 :::note
-`reasoning_effort` maps to Anthropic's [adaptive thinking](https: //docs.claude.com/en/docs/build-with-claude/extended-thinking/adaptive-thinking) plus the `output_config.effort` parameter on Claude 4.6 and 4.7 models (including `claude-opus-4-6`, `claude-opus-4-7`, `claude-sonnet-4-6`, etc. ), **not** `budget_tokens`. In particular, LiteLLM will inject the following into the underlying Anthropic request on the OpenAI-compatible `/chat/completions` route:
+`reasoning_effort` maps to Anthropic's [adaptive thinking](https: //docs.claude.com/en/docs/build-with-claude/extended-thinking/adaptive-thinking) plus the `output_config.effort` parameter on Claude 4.6 and 4.7 models (including `claude-opus-4-6`, `claude-opus-4-7`, `claude-sonnet-4-6`, etc. ), **not** `budget_tokens`. In particular, Lumina will inject the following into the underlying Anthropic request on the OpenAI-compatible `/chat/completions` route:
 
 ```json
 {
@@ -1659,10 +1659,10 @@ LiteLLM translates OpenAI's `reasoning_effort` to Anthropic's `thinking` paramet
 
 This means **any value other than `"none"` for `reasoning_effort` will automatically turn thinking on for these models**, even though the OpenAI-compatible request body does not have a separate `thinking` field. This is intended to match Anthropic's own recommended usage: budget_tokens has been deprecated on 4.6 models and rejected entirely on Opus 4.7, where only adaptive is a supported thinking mode.
 
-You can disable thinking either by omitting `reasoning_effort` entirely or setting it to `"none"`. LiteLLM will not send a `thinking` field in that case. You can still pass the native `thinking` parameter directly if you wish to explicitly control thinking with a fixed budget on prior models:
+You can disable thinking either by omitting `reasoning_effort` entirely or setting it to `"none"`. Lumina will not send a `thinking` field in that case. You can still pass the native `thinking` parameter directly if you wish to explicitly control thinking with a fixed budget on prior models:
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 # Disable thinking on Claude 4.6/4.7
 resp = completion(
@@ -1686,7 +1686,7 @@ The Anthropic `/v1/messages` passthrough route is unaffected by this reasoning e
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 resp = completion(
     model="anthropic/{{anthropic}}",
@@ -1712,7 +1712,7 @@ resp = completion(
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -1720,7 +1720,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -1799,7 +1799,7 @@ You can also pass the `thinking` parameter to Anthropic models.
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
   model="anthropic/{{anthropic}}",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   thinking={"type": "enabled", "budget_tokens": 1024},
@@ -1829,7 +1829,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
   model="anthropic/{{anthropic_large}}",
   messages=[{"role": "user", "content": "What is the optimal strategy for solving this problem?"}],
   thinking={"type": "adaptive"},
@@ -1859,7 +1859,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
   model="anthropic/{{anthropic_large}}",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   thinking={"type": "enabled", "budget_tokens": 5000},
@@ -1885,10 +1885,10 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## **Passing Extra Headers to Anthropic API**
 
-Pass `extra_headers: dict` to `litellm.completion`
+Pass `extra_headers: dict` to `lumina.completion`
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 messages = [{"role": "user", "content": "What is Anthropic?"}]
 response = completion(
     model="claude-3-5-sonnet-20240620", 
@@ -1909,7 +1909,7 @@ The returned completion will _not_ include your "pre-fill" text, since it is par
 
 ```python keep-model-ids
 import os
-from litellm import completion
+from lumina import completion
 
 # set env - [OPTIONAL] replace with your anthropic key
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -1938,7 +1938,7 @@ If you're using Anthropic's Claude 2.1, `system` role messages are properly form
 
 ```python keep-model-ids
 import os
-from litellm import completion
+from lumina import completion
 
 # set env - [OPTIONAL] replace with your anthropic key
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
@@ -1960,7 +1960,7 @@ Human: How do I boil water?
 Assistant:
 ```
 
-Mid-conversation `system` messages, and how LiteLLM places them on each provider so preserved thinking blocks keep their binding, are covered in [Preserved Thinking Prefix Stability](./anthropic_preserved_thinking)
+Mid-conversation `system` messages, and how Lumina places them on each provider so preserved thinking blocks keep their binding, are covered in [Preserved Thinking Prefix Stability](./anthropic_preserved_thinking)
 
 ## Usage - PDF
 
@@ -1971,7 +1971,7 @@ Pass base64 encoded PDF files to Anthropic models using the `file` content type 
 
 ### **using base64**
 ```python
-from litellm import completion, supports_pdf_input
+from lumina import completion, supports_pdf_input
 import base64
 import requests
 
@@ -2023,7 +2023,7 @@ print(response.choices[0])
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2031,7 +2031,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [
@@ -2063,13 +2063,13 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 Pass `citations: {"enabled": true}` to Anthropic, to get citations on your document responses. 
 
-Note: This interface is in BETA. If you have feedback on how citations should be returned, please [tell us here](https://github.com/BerriAI/litellm/issues/7970#issuecomment-2644437943)
+Note: This interface is in BETA. If you have feedback on how citations should be returned, please [tell us here](https://github.com/Soventra/lumina/issues/7970#issuecomment-2644437943)
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 resp = completion(
     model="{{anthropic}}",
@@ -2118,7 +2118,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -2178,20 +2178,20 @@ The `file_id` obtained from Anthropic only works with Anthropic Claude models. Y
 ### Quick Start
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["ANTHROPIC_API_KEY"] = "sk-ant-..."
 
 # 1. Upload a file once
-file = litellm.create_file(
+file = lumina.create_file(
     file=open("document.pdf", "rb"),
     purpose="messages",
     custom_llm_provider="anthropic",
 )
 
 # 2. Use file_id in messages (no re-upload needed)
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[{
         "role": "user",
@@ -2207,11 +2207,11 @@ response = litellm.completion(
 
 | Operation | Function |
 |-----------|----------|
-| Upload | `litellm.create_file(file, purpose="messages", custom_llm_provider="anthropic")` |
-| List | `litellm.file_list(custom_llm_provider="anthropic")` |
-| Retrieve | `litellm.file_retrieve(file_id, custom_llm_provider="anthropic")` |
-| Delete | `litellm.file_delete(file_id, custom_llm_provider="anthropic")` |
-| Download | `litellm.file_content(file_id, custom_llm_provider="anthropic")` |
+| Upload | `lumina.create_file(file, purpose="messages", custom_llm_provider="anthropic")` |
+| List | `lumina.file_list(custom_llm_provider="anthropic")` |
+| Retrieve | `lumina.file_retrieve(file_id, custom_llm_provider="anthropic")` |
+| Delete | `lumina.file_delete(file_id, custom_llm_provider="anthropic")` |
+| Download | `lumina.file_content(file_id, custom_llm_provider="anthropic")` |
 
 :::note
 Download only works for files created by the [code execution tool](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/code-execution-tool), not uploaded files.
@@ -2232,14 +2232,14 @@ Download only works for files created by the [code execution tool](https://docs.
 
 ```python
 # Upload image
-image = litellm.create_file(
+image = lumina.create_file(
     file=open("photo.jpg", "rb"),
     purpose="messages",
     custom_llm_provider="anthropic",
 )
 
 # Use in message
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[{
         "role": "user",
@@ -2253,7 +2253,7 @@ response = litellm.completion(
 
 ## Usage - passing 'user_id' to Anthropic
 
-LiteLLM translates the OpenAI `user` param to Anthropic's `metadata[user_id]` param.
+Lumina translates the OpenAI `user` param to Anthropic's `metadata[user_id]` param.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
@@ -2281,7 +2281,7 @@ model_list:
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2289,7 +2289,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What is Anthropic?"}],
@@ -2303,7 +2303,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ## Usage - Agent Skills
 
-LiteLLM supports using Agent Skills with the API
+Lumina supports using Agent Skills with the API
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
@@ -2345,7 +2345,7 @@ model_list:
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2353,7 +2353,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://localhost:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer <YOUR-LITELLM-KEY>' \
+--header 'Authorization: Bearer <YOUR-LUMINA-KEY>' \
 --data '{
     "model": "{{anthropic}}",
     "messages": [

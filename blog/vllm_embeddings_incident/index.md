@@ -17,7 +17,7 @@ hide_table_of_contents: false
 
 ## Summary
 
-A commit ([`dbcae4a`](https://github.com/BerriAI/litellm/commit/dbcae4aca5836770d0e9cd43abab0333c3d61ab2)) intended to fix OpenAI SDK behavior broke vLLM embeddings by explicitly passing `encoding_format=None` in API requests. vLLM rejects this with error: `"unknown variant \`\`, expected float or base64"`.
+A commit ([`dbcae4a`](https://github.com/Soventra/lumina/commit/dbcae4aca5836770d0e9cd43abab0333c3d61ab2)) intended to fix OpenAI SDK behavior broke vLLM embeddings by explicitly passing `encoding_format=None` in API requests. vLLM rejects this with error: `"unknown variant \`\`, expected float or base64"`.
 
 - **vLLM embedding calls:** Complete failure - all requests rejected
 - **Other providers:** No impact - OpenAI and other providers functioned normally
@@ -36,9 +36,9 @@ The `encoding_format` parameter for embeddings specifies whether vectors should 
 
 ```mermaid
 flowchart TD
-    A["1. User calls litellm.embedding()
-    litellm/main.py"] --> B["2. Transform request for provider
-    litellm/llms/openai_like/embedding/handler.py"]
+    A["1. User calls lumina.embedding()
+    lumina/main.py"] --> B["2. Transform request for provider
+    lumina/llms/openai_like/embedding/handler.py"]
     B --> C["3. Send request to vLLM endpoint"]
     C -->|"encoding_format omitted"| D["4a. ✅ vLLM processes request"]
     C -->|"encoding_format='float' or 'base64'"| D
@@ -56,9 +56,9 @@ flowchart TD
 
 A well-intentioned fix for OpenAI SDK behavior inadvertently broke vLLM embeddings:
 
-**The Breaking Change ([`dbcae4a`](https://github.com/BerriAI/litellm/commit/dbcae4aca5836770d0e9cd43abab0333c3d61ab2)):**
+**The Breaking Change ([`dbcae4a`](https://github.com/Soventra/lumina/commit/dbcae4aca5836770d0e9cd43abab0333c3d61ab2)):**
 
-In `litellm/main.py`, the code was changed to explicitly set `encoding_format=None` instead of omitting it:
+In `lumina/main.py`, the code was changed to explicitly set `encoding_format=None` instead of omitting it:
 
 ```python
 # Added in dbcae4a
@@ -75,9 +75,9 @@ This fix worked correctly for OpenAI - explicitly passing `None` prevented the S
 
 ## The Fix
 
-Fix deployed ([`55348dd`](https://github.com/BerriAI/litellm/commit/55348dd9c51b5b028f676d25ad023b8f052fc071)). The solution filters out `None` and empty string values from `optional_params` before sending requests to OpenAI-like providers (including vLLM).
+Fix deployed ([`55348dd`](https://github.com/Soventra/lumina/commit/55348dd9c51b5b028f676d25ad023b8f052fc071)). The solution filters out `None` and empty string values from `optional_params` before sending requests to OpenAI-like providers (including vLLM).
 
-**In `litellm/llms/openai_like/embedding/handler.py`:**
+**In `lumina/llms/openai_like/embedding/handler.py`:**
 
 ```python
 # Before (broken)
@@ -91,7 +91,7 @@ data = {"model": model, "input": input, **filtered_optional_params}
 This ensures:
 - Valid values (`"float"`, `"base64"`) are preserved and sent
 - `None` and empty string values are filtered out (parameter omitted entirely)
-- OpenAI SDK no longer adds defaults because liteLLM handles the parameter upstream
+- OpenAI SDK no longer adds defaults because Lumina handles the parameter upstream
 
 ---
 
@@ -99,10 +99,10 @@ This ensures:
 
 | # | Action | Status | Code |
 |---|---|---|---|
-| 1 | Filter `None` and empty string values in OpenAI-like embedding handler | ✅ Done | [`handler.py#L108`](https://github.com/BerriAI/litellm/blob/main/litellm/llms/openai_like/embedding/handler.py#L108) |
-| 2 | Unit tests for parameter filtering (None, empty string, valid values) | ✅ Done | [`test_openai_like_embedding.py`](https://github.com/BerriAI/litellm/blob/main/tests/test_litellm/llms/openai_like/embedding/test_openai_like_embedding.py) |
-| 3 | Transformation tests for hosted_vllm embedding config | ✅ Done | [`test_hosted_vllm_embedding_transformation.py`](https://github.com/BerriAI/litellm/blob/main/tests/test_litellm/llms/hosted_vllm/embedding/test_hosted_vllm_embedding_transformation.py) |
-| 4 | E2E tests with actual vLLM endpoint | ✅ Done | [`test_hosted_vllm_embedding_e2e.py`](https://github.com/BerriAI/litellm/blob/main/tests/test_litellm/llms/hosted_vllm/embedding/test_hosted_vllm_embedding_e2e.py) |
+| 1 | Filter `None` and empty string values in OpenAI-like embedding handler | ✅ Done | [`handler.py#L108`](https://github.com/Soventra/lumina/blob/main/lumina/llms/openai_like/embedding/handler.py#L108) |
+| 2 | Unit tests for parameter filtering (None, empty string, valid values) | ✅ Done | [`test_openai_like_embedding.py`](https://github.com/Soventra/lumina/blob/main/tests/test_lumina/llms/openai_like/embedding/test_openai_like_embedding.py) |
+| 3 | Transformation tests for hosted_vllm embedding config | ✅ Done | [`test_hosted_vllm_embedding_transformation.py`](https://github.com/Soventra/lumina/blob/main/tests/test_lumina/llms/hosted_vllm/embedding/test_hosted_vllm_embedding_transformation.py) |
+| 4 | E2E tests with actual vLLM endpoint | ✅ Done | [`test_hosted_vllm_embedding_e2e.py`](https://github.com/Soventra/lumina/blob/main/tests/test_lumina/llms/hosted_vllm/embedding/test_hosted_vllm_embedding_e2e.py) |
 | 5 | Validate JSON payload structure matches vLLM expectations | ✅ Done | Tests verify exact JSON sent to endpoint |
 
 ---

@@ -1,12 +1,12 @@
 {
   "anchors": {
-    "litellm-lens": "/docs/proxy/lens#litellm-lens",
+    "lumina-lens": "/docs/proxy/lens#lumina-lens",
     "quick-start": "/docs/proxy/lens/deployment/local",
     "one-click-docker": "/docs/proxy/lens/deployment/local",
     "deploy-with-a-coding-agent": "/docs/proxy/lens/deployment/local",
     "docker-deployment": "/docs/proxy/lens/deployment/local",
     "1-deploy-clickhouse": "/docs/proxy/lens/deployment/local",
-    "2-point-litellm-at-clickhouse": "/docs/proxy/lens/deployment/local",
+    "2-point-lumina-at-clickhouse": "/docs/proxy/lens/deployment/local",
     "3-deploy-the-lens-worker": "/docs/proxy/lens/deployment/local",
     "connect-your-agent": "/docs/proxy/lens/first-trace#connect-your-agent",
     "send-your-first-trace": "/docs/proxy/lens/first-trace#send-your-first-trace",
@@ -21,7 +21,7 @@
     "configure-an-existing-proxy": "/docs/proxy/lens/deployment#configure-an-existing-proxy",
     "agent-tracing-api": "/docs/proxy/lens/api#list-runs",
     "use-the-api": "/docs/proxy/lens/api#use-the-api",
-    "upgrade-litellm-and-the-worker": "/docs/proxy/lens/deployment/upgrades"
+    "upgrade-lumina-and-the-worker": "/docs/proxy/lens/deployment/upgrades"
   },
   "frameworks": {
     "deepagents": "/docs/proxy/lens/integrations/deepagents",
@@ -48,7 +48,7 @@
     "using-compose": "/docs/proxy/lens/deployment/docker-compose",
     "using-docker": "/docs/proxy/lens/deployment/docker",
     "existing-storage-and-secrets": "/docs/proxy/lens/deployment/storage",
-    "upgrade-litellm-and-the-worker": "/docs/proxy/lens/deployment/upgrades",
+    "upgrade-lumina-and-the-worker": "/docs/proxy/lens/deployment/upgrades",
     "networking-examples": "/docs/proxy/lens/deployment/configuration#publish-trace-endpoint",
     "publish-trace-endpoint": "/docs/proxy/lens/deployment/configuration#publish-trace-endpoint",
     "dedicated-ingress": "/docs/proxy/lens/deployment/configuration#dedicated-ingress",

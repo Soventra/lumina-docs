@@ -1,6 +1,6 @@
 # Oauth 2.0 Authentication
 
-Use this if you want to use an Oauth2.0 token to make `/chat`, `/embeddings` requests to the LiteLLM Proxy
+Use this if you want to use an Oauth2.0 token to make `/chat`, `/embeddings` requests to the Lumina Proxy
 
 <EnterpriseFeature />
 
@@ -20,7 +20,7 @@ export OAUTH_USER_TEAM_ID_FIELD_NAME="team_id"
 - `OAUTH_USER_ROLE_FIELD_NAME`: Field in token info for user's role
 - `OAUTH_USER_TEAM_ID_FIELD_NAME`: Field in token info for user's team ID
 
-2. Enable on litellm config.yaml
+2. Enable on lumina config.yaml
 
 Set this on your config.yaml
 
@@ -37,7 +37,7 @@ general_settings:
   enable_oauth2_auth: true
 ```
 
-3. Use token in requests to LiteLLM 
+3. Use token in requests to Lumina 
 
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -55,16 +55,16 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 
 ## Debugging 
 
-Start the LiteLLM Proxy with [`--detailed_debug` mode and you should see more verbose logs](cli.md#--detailed_debug)
+Start the Lumina Proxy with [`--detailed_debug` mode and you should see more verbose logs](cli.md#--detailed_debug)
 
 ## Using OAuth2 + JWT Together
 
-LiteLLM supports two OAuth2 + JWT modes:
+Lumina supports two OAuth2 + JWT modes:
 
 1. **Global OAuth2 mode** (`enable_oauth2_auth: true`)  
    OAuth2 auth is enabled on LLM + info routes.
 2. **Selective JWT override mode** (`enable_oauth2_auth: false`)  
-   Only JWT-shaped tokens that match `litellm_jwtauth.routing_overrides` are routed to OAuth2 on LLM + info routes.
+   Only JWT-shaped tokens that match `lumina_jwtauth.routing_overrides` are routed to OAuth2 on LLM + info routes.
 
 For selective routing (OAuth2 only for specific JWTs), configure:
 
@@ -72,10 +72,10 @@ For selective routing (OAuth2 only for specific JWTs), configure:
 general_settings:
   enable_jwt_auth: true
   enable_oauth2_auth: false
-  litellm_jwtauth:
+  lumina_jwtauth:
     routing_overrides:
       - iss: "machine-issuer.example.com"
-        client_id: "MID_LITELLM"
+        client_id: "MID_LUMINA"
         path: "oauth2"
 ```
 

@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # /generateContent
 
-Use LiteLLM to call Google AI's generateContent endpoints for text generation, multimodal interactions, and streaming responses.
+Use Lumina to call Google AI's generateContent endpoints for text generation, multimodal interactions, and streaming responses.
 
 ## Overview 
 
@@ -20,14 +20,14 @@ Use LiteLLM to call Google AI's generateContent endpoints for text generation, m
 ## Usage 
 ---
 
-### LiteLLM Python SDK 
+### Lumina Python SDK 
 
 <Tabs>
 <TabItem value="basic" label="Basic Usage">
 
 #### Non-streaming example
 ```python showLineNumbers title="Basic Text Generation"
-from litellm.google_genai import agenerate_content
+from lumina.google_genai import agenerate_content
 from google.genai.types import ContentDict, PartDict
 import os
 
@@ -51,7 +51,7 @@ print(response)
 
 #### Streaming example
 ```python showLineNumbers title="Streaming Text Generation"
-from litellm.google_genai import agenerate_content_stream
+from lumina.google_genai import agenerate_content_stream
 from google.genai.types import ContentDict, PartDict
 import os
 
@@ -81,7 +81,7 @@ async for chunk in response:
 
 #### Sync non-streaming example
 ```python showLineNumbers title="Sync Text Generation"
-from litellm.google_genai import generate_content
+from lumina.google_genai import generate_content
 from google.genai.types import ContentDict, PartDict
 import os
 
@@ -105,7 +105,7 @@ print(response)
 
 #### Sync streaming example
 ```python showLineNumbers title="Sync Streaming Text Generation"
-from litellm.google_genai import generate_content_stream
+from lumina.google_genai import generate_content_stream
 from google.genai.types import ContentDict, PartDict
 import os
 
@@ -132,7 +132,7 @@ for chunk in response:
 </TabItem>
 </Tabs>
 
-### LiteLLM Proxy Server 
+### Lumina Proxy Server 
 
 1. Setup config.yaml
 
@@ -147,7 +147,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -155,13 +155,13 @@ litellm --config /path/to/config.yaml
 <Tabs>
 <TabItem value="gemini-proxy" label="Google GenAI SDK">
 
-```python showLineNumbers title="Google GenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Google GenAI SDK with Lumina Proxy"
 from google.genai import Client
 import os
 
-# Configure Google GenAI SDK to use LiteLLM proxy
+# Configure Google GenAI SDK to use Lumina proxy
 os.environ["GOOGLE_GEMINI_BASE_URL"] = "http://localhost:4000"
-os.environ["GEMINI_API_KEY"] = "sk-<your-litellm-api-key>"
+os.environ["GEMINI_API_KEY"] = "sk-<your-lumina-api-key>"
 
 client = Client()
 
@@ -184,7 +184,7 @@ response = client.models.generate_content(
 
 #### Generate Content
 
-```bash showLineNumbers title="generateContent via LiteLLM Proxy"
+```bash showLineNumbers title="generateContent via Lumina Proxy"
 curl -L -X POST 'http://localhost:4000/v1beta/models/gemini-flash:generateContent' \
 -H 'content-type: application/json' \
 -H "authorization: Bearer $LUMINA_API_KEY" \
@@ -207,7 +207,7 @@ curl -L -X POST 'http://localhost:4000/v1beta/models/gemini-flash:generateConten
 
 #### Stream Generate Content
 
-```bash showLineNumbers title="streamGenerateContent via LiteLLM Proxy"
+```bash showLineNumbers title="streamGenerateContent via Lumina Proxy"
 curl -L -X POST 'http://localhost:4000/v1beta/models/gemini-flash:streamGenerateContent' \
 -H 'content-type: application/json' \
 -H "authorization: Bearer $LUMINA_API_KEY" \
@@ -239,7 +239,7 @@ The `generateContent` endpoint is a drop-in for Google's [Generative Language RE
 <Tabs>
 <TabItem value="curl-native" label="curl">
 
-```bash showLineNumbers title="Native top-level fields via LiteLLM Proxy"
+```bash showLineNumbers title="Native top-level fields via Lumina Proxy"
 curl -L -X POST 'http://localhost:4000/v1beta/models/gemini-flash:generateContent' \
 -H 'content-type: application/json' \
 -H "authorization: Bearer $LUMINA_API_KEY" \
@@ -267,10 +267,10 @@ curl -L -X POST 'http://localhost:4000/v1beta/models/gemini-flash:generateConten
 
 </TabItem>
 
-<TabItem value="sdk-native" label="LiteLLM Python SDK">
+<TabItem value="sdk-native" label="Lumina Python SDK">
 
-```python showLineNumbers title="Native top-level fields via LiteLLM Python SDK"
-from litellm.google_genai import generate_content
+```python showLineNumbers title="Native top-level fields via Lumina Python SDK"
+from lumina.google_genai import generate_content
 import os
 
 # Set API key
@@ -293,4 +293,4 @@ print(response)
 
 ## Related 
 
-- [Use LiteLLM with gemini-cli](../docs/tutorials/litellm_gemini_cli)
+- [Use Lumina with gemini-cli](../docs/tutorials/lumina_gemini_cli)

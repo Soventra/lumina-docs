@@ -1,6 +1,6 @@
 # Off-Peak Pricing
 
-Some providers charge less during fixed clock windows; DeepSeek, for example, halves its rates outside its peak hours. `off_peak_pricing` on a model's pricing entry teaches LiteLLM cost tracking that schedule: while a configured window is open, spend is calculated at the off-peak rates instead of the standard ones, so tracked spend matches the provider invoice around the clock.
+Some providers charge less during fixed clock windows; DeepSeek, for example, halves its rates outside its peak hours. `off_peak_pricing` on a model's pricing entry teaches Lumina cost tracking that schedule: while a configured window is open, spend is calculated at the off-peak rates instead of the standard ones, so tracked spend matches the provider invoice around the clock.
 
 ## Daily windows
 
@@ -53,4 +53,4 @@ A request is priced by its completion time. A request that starts at the standar
 
 Malformed windows and weekday values never match, so a typo in the schedule bills at the standard rate rather than applying the discount at the wrong time. Verify a new schedule by comparing tracked spend for the same request inside and outside a window, via `/spend/logs` or the usage dashboard.
 
-`off_peak_pricing` works wherever a model pricing entry lives: deployment `model_info` as above, an entry in a [custom hosted cost map](./custom_model_cost_map#option-2-serve-your-own-cost-map), or `litellm.register_model` in the SDK. It is not a [custom pricing override](./custom_pricing), so setting it inside `lumina_params` has no effect.
+`off_peak_pricing` works wherever a model pricing entry lives: deployment `model_info` as above, an entry in a [custom hosted cost map](./custom_model_cost_map#option-2-serve-your-own-cost-map), or `lumina.register_model` in the SDK. It is not a [custom pricing override](./custom_pricing), so setting it inside `lumina_params` has no effect.

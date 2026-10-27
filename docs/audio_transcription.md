@@ -17,10 +17,10 @@ import TabItem from '@theme/TabItem';
 
 ## Quick Start
 
-### LiteLLM Python SDK
+### Lumina Python SDK
 
 ```python showLineNumbers title="Python SDK Example"
-from litellm import transcription
+from lumina import transcription
 import os 
 
 # set api keys 
@@ -32,7 +32,7 @@ response = transcription(model="whisper", file=audio_file)
 print(f"response: {response}")
 ```
 
-### LiteLLM Proxy
+### Lumina Proxy
 
 ### Add model to config 
 
@@ -82,7 +82,7 @@ general_settings:
 ### Start proxy 
 
 ```bash showLineNumbers title="Start Proxy Server"
-litellm --config /path/to/config.yaml 
+lumina --config /path/to/config.yaml 
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -105,7 +105,7 @@ curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 ```python showLineNumbers title="Test with OpenAI Python SDK"
 from openai import OpenAI
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -153,7 +153,7 @@ curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 ```python showLineNumbers title="Test with OpenAI Python SDK and Fallbacks"
 from openai import OpenAI
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -172,7 +172,7 @@ transcript = client.audio.transcriptions.create(
 ### Testing Fallbacks
 
 :::warning[Deprecated for Proxy requests]
-Starting in LiteLLM Proxy v1.85.0, `mock_testing_fallbacks` is stripped from incoming Proxy requests and has no effect. It remains supported only for direct `litellm.Router` calls in tests.
+Starting in Lumina Proxy v1.85.0, `mock_testing_fallbacks` is stripped from incoming Proxy requests and has no effect. It remains supported only for direct `lumina.Router` calls in tests.
 :::
 
 To validate audio transcription fallbacks through the Proxy, trigger an actual provider error in a non-production environment and send a normal request with the fallback configuration.

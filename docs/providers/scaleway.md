@@ -1,12 +1,12 @@
 
 # Scaleway 
-LiteLLM supports all [models available on Scaleway Generative APIs ↗](https://www.scaleway.com/en/docs/generative-apis/reference-content/supported-models/). 
+Lumina supports all [models available on Scaleway Generative APIs ↗](https://www.scaleway.com/en/docs/generative-apis/reference-content/supported-models/). 
 
-## Usage with LiteLLM Python SDK
+## Usage with Lumina Python SDK
 
 ```python
 import os
-from litellm import completion 
+from lumina import completion 
 
 os.environ["SCW_SECRET_KEY"] = "your-scaleway-secret-key"
 
@@ -15,7 +15,7 @@ response = completion(model="scaleway/qwen3-235b-a22b-instruct-2507", messages=m
 print(response)
 ```
 
-## Usage with LiteLLM Proxy 
+## Usage with Lumina Proxy 
 
 ### 1. Set Scaleway models in config.yaml
 
@@ -30,7 +30,7 @@ model_list:
 ### 2. Start proxy 
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Query proxy 
@@ -54,7 +54,7 @@ curl http://localhost:4000/chat/completions \
     ]
   }'
 ```
-`-H "Authorization: Bearer YOUR_LUMINA_MASTER_KEY" ` is only required if you have set a LiteLLM master key
+`-H "Authorization: Bearer YOUR_LUMINA_MASTER_KEY" ` is only required if you have set a Lumina master key
 
 
 ## Supported features
@@ -69,7 +69,7 @@ Scaleway's `/audio/transcriptions` endpoint is OpenAI-compatible and works with 
 
 ```python
 import os
-from litellm import transcription
+from lumina import transcription
 
 os.environ["SCW_SECRET_KEY"] = "your-scaleway-secret-key"
 

@@ -4,13 +4,13 @@ sidebar_label: "Retries & Fallbacks"
 
 # Reliability - Retries, Fallbacks
 
-LiteLLM helps prevent failed requests in 2 ways: 
+Lumina helps prevent failed requests in 2 ways: 
 - Retries
 - Fallbacks: Context Window + General
 
 ## Helper utils 
-LiteLLM supports the following functions for reliability:
-* `litellm.longer_context_model_fallback_dict`: Dictionary which has a mapping for those models which have larger equivalents  
+Lumina supports the following functions for reliability:
+* `lumina.longer_context_model_fallback_dict`: Dictionary which has a mapping for those models which have larger equivalents  
 * `num_retries`: use tenacity retries
 * `completion()` with fallbacks: switch between models/keys/api bases in case of errors. 
 
@@ -22,7 +22,7 @@ Call it in completion like this `completion(..num_retries=2)`.
 Here's a quick look at how you can use it: 
 
 ```python 
-from litellm import completion
+from lumina import completion
 
 user_message = "Hello, whats the weather in San Francisco??"
 messages = [{"content": user_message, "role": "user"}]
@@ -48,7 +48,7 @@ response = completion(
 The ids below are illustrative and kept for their context window sizes: a 4k model falling back to its 16k variant.
 
 ```python keep-model-ids
-from litellm import completion
+from lumina import completion
 
 fallback_dict = {"gpt-3.5-turbo": "gpt-3.5-turbo-16k"}
 messages = [{"content": "how does a court case get to the Supreme Court?" * 500, "role": "user"}]
@@ -63,7 +63,7 @@ LLM APIs can be unstable, completion() with fallbacks ensures you'll always get 
 #### Usage 
 To use fallback models with `completion()`, specify a list of models in the `fallbacks` parameter. 
 
-The `fallbacks` list holds the backup models. LiteLLM tries the primary model passed as `model` first and prepends it to the list itself, so you do not need to repeat it in `fallbacks`.
+The `fallbacks` list holds the backup models. Lumina tries the primary model passed as `model` first and prepends it to the list itself, so you do not need to repeat it in `fallbacks`.
 
 #### switch models 
 ```python
@@ -118,10 +118,10 @@ completion call {{openai_small}}
 
 #### How does fallbacks work
 
-When you pass `fallbacks` to `completion`, LiteLLM builds the attempt list `[model] + fallbacks` and calls each entry once, in order. The first response that comes back is returned; a failing entry is logged and the next one is tried. There is no time budget, no repeated loop over the list and no cooldown: once every entry has failed, `completion` raises an exception carrying the last error, suffixed with `All fallback attempts failed`.
+When you pass `fallbacks` to `completion`, Lumina builds the attempt list `[model] + fallbacks` and calls each entry once, in order. The first response that comes back is returned; a failing entry is logged and the next one is tried. There is no time budget, no repeated loop over the list and no cooldown: once every entry has failed, `completion` raises an exception carrying the last error, suffixed with `All fallback attempts failed`.
 
 A fallback entry can be a model name string or a dict of completion kwargs. A dict entry is merged into the call (for example a different `api_key` or `api_base`) and uses the primary `model` unless the dict sets its own `model` key.
 
-The successful response carries the `x-litellm-attempted-fallbacks` header with the number of fallbacks that were attempted before it.
+The successful response carries the `x-lumina-attempted-fallbacks` header with the number of fallbacks that were attempted before it.
 
 If you need cooldowns for failing deployments or retries with backoff, use the [Router](../routing.md), which tracks deployment health and cooldown periods; see the [proxy reliability docs](../proxy/reliability.md).

@@ -6,14 +6,14 @@ https://docs.api.nvidia.com/nim/reference/
 
 :::tip
 
-**We support ALL Nvidia NIM models, just set `model=nvidia_nim/<any-model-on-nvidia_nim>` as a prefix when sending litellm requests**
+**We support ALL Nvidia NIM models, just set `model=nvidia_nim/<any-model-on-nvidia_nim>` as a prefix when sending lumina requests**
 
 :::
 
 | Property | Details |
 |-------|-------|
-| Description | Nvidia NIM is a platform that provides a simple API for deploying and using AI models. LiteLLM supports all models from [Nvidia NIM](https://developer.nvidia.com/nim/) |
-| Provider Route on LiteLLM | `nvidia_nim/` |
+| Description | Nvidia NIM is a platform that provides a simple API for deploying and using AI models. Lumina supports all models from [Nvidia NIM](https://developer.nvidia.com/nim/) |
+| Provider Route on Lumina | `nvidia_nim/` |
 | Provider Doc | [Nvidia NIM Docs ↗](https://developer.nvidia.com/nim/) |
 | API Endpoint for Provider | https://integrate.api.nvidia.com/v1/ (chat/embeddings), https://ai.api.nvidia.com/v1/ (rerank) |
 | Supported OpenAI Endpoints | `/chat/completions`, `/completions`, `/responses`, `/embeddings`, `/rerank` |
@@ -27,7 +27,7 @@ os.environ['NVIDIA_NIM_API_BASE'] = "" # [OPTIONAL] - default is https://integra
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['NVIDIA_NIM_API_KEY'] = ""
@@ -51,7 +51,7 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['NVIDIA_NIM_API_KEY'] = ""
@@ -80,12 +80,12 @@ for chunk in response:
 ## Usage - embedding
 
 ```python
-import litellm
+import lumina
 import os
 
-response = litellm.embedding(
-    model="nvidia_nim/nvidia/nv-embedqa-e5-v5",               # add `nvidia_nim/` prefix to model so litellm knows to route to Nvidia NIM
-    input=["good morning from litellm"],
+response = lumina.embedding(
+    model="nvidia_nim/nvidia/nv-embedqa-e5-v5",               # add `nvidia_nim/` prefix to model so lumina knows to route to Nvidia NIM
+    input=["good morning from lumina"],
     encoding_format = "float", 
     user_id = "user-1234",
 
@@ -97,9 +97,9 @@ print(response)
 ```
 
 
-## **Usage - LiteLLM Proxy Server**
+## **Usage - Lumina Proxy Server**
 
-Here's how to call an Nvidia NIM Endpoint with the LiteLLM Proxy Server
+Here's how to call an Nvidia NIM Endpoint with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -116,10 +116,10 @@ Here's how to call an Nvidia NIM Endpoint with the LiteLLM Proxy Server
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -128,8 +128,8 @@ Here's how to call an Nvidia NIM Endpoint with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(

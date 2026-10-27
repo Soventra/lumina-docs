@@ -1,12 +1,12 @@
 # Splunk Observability Cloud
 
-Send LiteLLM traces to [Splunk Observability Cloud](https://www.splunk.com/en_us/products/observability-cloud.html) using the built-in **`otel`** callback and standard OpenTelemetry OTLP environment variables.
+Send Lumina traces to [Splunk Observability Cloud](https://www.splunk.com/en_us/products/observability-cloud.html) using the built-in **`otel`** callback and standard OpenTelemetry OTLP environment variables.
 
-LiteLLM uses the same OpenTelemetry path as the [OpenTelemetry integration](./opentelemetry_integration.md). Splunk’s OTLP/HTTP trace ingest URL uses **`/v2/trace/otlp`** (not **`/v1/traces`**); LiteLLM normalizes generic collector URLs but **preserves** Splunk-style `/v2/trace/otlp` endpoints so spans reach Splunk correctly.
+Lumina uses the same OpenTelemetry path as the [OpenTelemetry integration](./opentelemetry_integration.md). Splunk’s OTLP/HTTP trace ingest URL uses **`/v2/trace/otlp`** (not **`/v1/traces`**); Lumina normalizes generic collector URLs but **preserves** Splunk-style `/v2/trace/otlp` endpoints so spans reach Splunk correctly.
 
 ## Video walkthrough
 
-<iframe width="840" height="500" src="https://www.loom.com/embed/9dc21b753bbe4f6fb3c1b44c06e39c20" frameBorder="0" allowFullScreen title="LiteLLM Splunk Observability Cloud OTEL demo"></iframe>
+<iframe width="840" height="500" src="https://www.loom.com/embed/9dc21b753bbe4f6fb3c1b44c06e39c20" frameBorder="0" allowFullScreen title="Lumina Splunk Observability Cloud OTEL demo"></iframe>
 
 Or [watch on Loom](https://www.loom.com/share/9dc21b753bbe4f6fb3c1b44c06e39c20).
 
@@ -15,14 +15,14 @@ Or [watch on Loom](https://www.loom.com/share/9dc21b753bbe4f6fb3c1b44c06e39c20).
 1. Splunk Observability Cloud account and an **ingest access token** (used as `X-SF-Token`).
 2. Your **realm** (for example `eu1`, `us0`) from the Splunk Observability Cloud UI or docs.
 
-## LiteLLM Proxy
+## Lumina Proxy
 
 Same flow as integrations like [Datadog Logs](./datadog#datadog-logs): configure **`config.yaml`**, then set environment variables, then start the proxy.
 
 **Step 1:** In `config.yaml`, enable the OpenTelemetry callback:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 ```
 
@@ -43,20 +43,20 @@ You can load them from the process environment, a `.env` file, or the proxy **`e
 OTEL_EXPORTER_OTLP_ENDPOINT="https://ingest.eu1.observability.splunkcloud.com/v2/trace/otlp"
 OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 OTEL_EXPORTER_OTLP_HEADERS="X-SF-Token=<your-ingest-access-token>"
-OTEL_SERVICE_NAME="litellm-proxy"
+OTEL_SERVICE_NAME="lumina-proxy"
 ```
 
 **Step 3:** Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ## Verify traces
 
 1. In Splunk Observability Cloud, open **APM** / **Traces** (product names may vary by version).
-2. Filter by service name (`OTEL_SERVICE_NAME`, default `litellm` if unset).
-3. Optionally set `OTEL_DEBUG=True` in LiteLLM’s environment to surface exporter issues in logs (see [OpenTelemetry troubleshooting](/docs/observability/opentelemetry_integration#not-seeing-traces-land-on-integration)).
+2. Filter by service name (`OTEL_SERVICE_NAME`, default `lumina` if unset).
+3. Optionally set `OTEL_DEBUG=True` in Lumina’s environment to surface exporter issues in logs (see [OpenTelemetry troubleshooting](/docs/observability/opentelemetry_integration#not-seeing-traces-land-on-integration)).
 
 ## See also
 

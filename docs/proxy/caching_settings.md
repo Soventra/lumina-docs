@@ -1,11 +1,11 @@
 ---
 title: Cache Settings
-description: Every cache_params setting the LiteLLM proxy accepts in config.yaml.
+description: Every cache_params setting the Lumina proxy accepts in config.yaml.
 ---
 
 # Cache Settings
 
-Every cache option lives under `litellm_settings.cache_params` in the proxy `config.yaml`. Which
+Every cache option lives under `lumina_settings.cache_params` in the proxy `config.yaml`. Which
 keys apply depends on `type`.
 
 ## Set Cache Params on config.yaml
@@ -19,9 +19,9 @@ model_list:
     lumina_params:
       model: text-embedding-ada-002
 
-litellm_settings:
+lumina_settings:
   set_verbose: True
-  cache: True # set cache responses to True, litellm defaults to using a redis cache
+  cache: True # set cache responses to True, lumina defaults to using a redis cache
   cache_params: # cache_params are optional
     type: "redis" # The type of cache to initialize. Can be "local", "redis", "s3", or "gcs". Defaults to "local".
     host: "localhost" # The host address for the Redis cache. Required if type is "redis".
@@ -48,7 +48,7 @@ cache_params:
   # Type of cache (options: "local", "redis", "s3", "gcs")
   type: s3
 
-  # List of litellm call types to cache for
+  # List of lumina call types to cache for
   # Options: "completion", "acompletion", "embedding", "aembedding"
   supported_call_types:
     ["acompletion", "atext_completion", "aembedding", "atranscription", "aresponses"]

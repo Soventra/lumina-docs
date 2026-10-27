@@ -2,15 +2,15 @@
 
 ## The Problem
 
-As a prompt management provider, integrating with LiteLLM traditionally requires:
-- Making a PR to the LiteLLM repository
+As a prompt management provider, integrating with Lumina traditionally requires:
+- Making a PR to the Lumina repository
 - Waiting for review and merge
-- Maintaining provider-specific code in LiteLLM's codebase
+- Maintaining provider-specific code in Lumina's codebase
 - Updating the integration for changes to your API
 
 ## The Solution
 
-The **Generic Prompt Management API** lets you integrate with LiteLLM **instantly** by implementing a simple API endpoint. No PR required.
+The **Generic Prompt Management API** lets you integrate with Lumina **instantly** by implementing a simple API endpoint. No PR required.
 
 ### Key Benefits
 
@@ -23,7 +23,7 @@ The **Generic Prompt Management API** lets you integrate with LiteLLM **instantl
 
 ## Get Started in 3 Steps
 
-### Step 1: Configure LiteLLM
+### Step 1: Configure Lumina
 
 Add to your `config.yaml`:
 
@@ -44,7 +44,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-@app.get("/beta/litellm_prompt_management")
+@app.get("/beta/lumina_prompt_management")
 async def get_prompt(prompt_id: str):
     return {
         "prompt_id": prompt_id,
@@ -60,7 +60,7 @@ async def get_prompt(prompt_id: str):
 ### Step 3: Use in Your App
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="{{openai_large}}",
@@ -70,20 +70,20 @@ response = completion(
 )
 ```
 
-That's it! LiteLLM fetches your prompt, applies variables, and makes the request
+That's it! Lumina fetches your prompt, applies variables, and makes the request
 
 ## API Contract
 
 ### Endpoint
 
-Implement `GET /beta/litellm_prompt_management`
+Implement `GET /beta/lumina_prompt_management`
 
 ### Request Format
 
 Your endpoint will receive a GET request with query parameters:
 
 ```
-GET /beta/litellm_prompt_management?prompt_id={prompt_id}&{custom_params}
+GET /beta/lumina_prompt_management?prompt_id={prompt_id}&{custom_params}
 ```
 
 **Query Parameters:**
@@ -92,7 +92,7 @@ GET /beta/litellm_prompt_management?prompt_id={prompt_id}&{custom_params}
 
 **Example:**
 ```
-GET /beta/litellm_prompt_management?prompt_id=hello-world-prompt-2bac&project_name=litellm&slug=hello-world-prompt-2bac
+GET /beta/lumina_prompt_management?prompt_id=hello-world-prompt-2bac&project_name=lumina&slug=hello-world-prompt-2bac
 ```
 
 ### Response Format
@@ -125,7 +125,7 @@ GET /beta/litellm_prompt_management?prompt_id=hello-world-prompt-2bac&project_na
 - `prompt_template_model` (string, optional): Model to use for this prompt (overrides client model unless `ignore_prompt_manager_model: true`)
 - `prompt_template_optional_params` (object, optional): Additional parameters like temperature, max_tokens, etc. (merged with client params unless `ignore_prompt_manager_optional_params: true`)
 
-## LiteLLM Configuration
+## Lumina Configuration
 
 Add to `config.yaml`:
 
@@ -141,7 +141,7 @@ prompts:
     lumina_params:
       prompt_integration: "generic_prompt_management"
       provider_specific_query_params:
-        project_name: litellm
+        project_name: lumina
         slug: hello-world-prompt-2bac
       api_base: http://localhost:8080
       api_key: os.environ/YOUR_PROMPT_API_KEY  # optional
@@ -160,12 +160,12 @@ prompts:
 
 ## Usage
 
-### Using with LiteLLM SDK
+### Using with Lumina SDK
 
 **Basic usage with prompt ID:**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="{{openai_large}}",
@@ -190,12 +190,12 @@ response = completion(
 
 The prompt template will have `{domain}` replaced with "data science" and `{task}` replaced with "analyzing customer churn".
 
-### Using with LiteLLM Proxy
+### Using with Lumina Proxy
 
 **1. Start the proxy with your config:**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **2. Make requests with prompt_id:**
@@ -224,7 +224,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://0.0.0.0:4000",
-    api_key="sk-<your-litellm-api-key>"
+    api_key="sk-<your-lumina-api-key>"
 )
 
 response = client.chat.completions.create(
@@ -244,7 +244,7 @@ response = client.chat.completions.create(
 
 ## Implementation Example
 
-See [mock_prompt_management_server.py](https://github.com/BerriAI/litellm/blob/main/cookbook/mock_prompt_management_server/mock_prompt_management_server.py) for a complete reference implementation with multiple example prompts, authentication, and convenience endpoints.
+See [mock_prompt_management_server.py](https://github.com/Soventra/lumina/blob/main/cookbook/mock_prompt_management_server/mock_prompt_management_server.py) for a complete reference implementation with multiple example prompts, authentication, and convenience endpoints.
 
 **Minimal FastAPI example:**
 
@@ -301,7 +301,7 @@ class PromptResponse(BaseModel):
     prompt_template_model: Optional[str] = None
     prompt_template_optional_params: Optional[Dict[str, Any]] = None
 
-@app.get("/beta/litellm_prompt_management", response_model=PromptResponse)
+@app.get("/beta/lumina_prompt_management", response_model=PromptResponse)
 async def get_prompt(
     prompt_id: str,
     authorization: Optional[str] = Header(None),
@@ -390,7 +390,7 @@ python prompt_server.py
 
 4. Test the endpoint:
 ```bash
-curl "http://localhost:8080/beta/litellm_prompt_management?prompt_id=hello-world-prompt&project_name=litellm&slug=hello-world-prompt-2bac"
+curl "http://localhost:8080/beta/lumina_prompt_management?prompt_id=hello-world-prompt&project_name=lumina&slug=hello-world-prompt-2bac"
 ```
 
 Expected response:
@@ -419,7 +419,7 @@ Expected response:
 
 ### Variable Substitution
 
-LiteLLM automatically substitutes variables in your prompt templates using the `{variable}` syntax. Both `{variable}` and `{{variable}}` formats are supported.
+Lumina automatically substitutes variables in your prompt templates using the `{variable}` syntax. Both `{variable}` and `{{variable}}` formats are supported.
 
 **Example prompt template:**
 ```json
@@ -452,7 +452,7 @@ completion(
 
 ### Caching
 
-LiteLLM automatically caches fetched prompts in memory. The cache key includes:
+Lumina automatically caches fetched prompts in memory. The cache key includes:
 - `prompt_id`
 - `prompt_label` (if provided)
 - `prompt_version` (if provided)
@@ -470,7 +470,7 @@ prompts:
       api_base: http://localhost:8080
 ```
 
-If your API returns `"prompt_template_model": "{{openai_large}}"`, LiteLLM will use `{{openai_large}}` regardless of what the client specified.
+If your API returns `"prompt_template_model": "{{openai_large}}"`, Lumina will use `{{openai_large}}` regardless of what the client specified.
 
 **With `ignore_prompt_manager_model: true`:**
 ```yaml
@@ -482,7 +482,7 @@ prompts:
       ignore_prompt_manager_model: true
 ```
 
-LiteLLM will use the model specified by the client, ignoring the prompt's model.
+Lumina will use the model specified by the client, ignoring the prompt's model.
 
 ### Parameter Merging Behavior
 
@@ -538,8 +538,8 @@ Only client params are used:
 - You want custom prompt storage and versioning logic
 
 ❌ **Make a PR when:**
-- You want deeper integration with LiteLLM internals
-- Your integration requires complex LiteLLM-specific logic
+- You want deeper integration with Lumina internals
+- Your integration requires complex Lumina-specific logic
 - You want to be featured as a built-in provider
 - You're building a reusable integration for the community
 
@@ -547,7 +547,7 @@ Only client params are used:
 
 ### Prompt not found
 - Verify the `prompt_id` matches exactly (case-sensitive)
-- Check that your API endpoint is accessible from LiteLLM
+- Check that your API endpoint is accessible from Lumina
 - Verify authentication if using `api_key`
 
 ### Variables not substituted
@@ -572,5 +572,5 @@ This is a **beta API**. We're actively improving it based on feedback. Open an i
 
 - [Prompt Management Overview](../proxy/prompt_management.md)
 - [Generic Guardrail API](./generic_guardrail_api.md)
-- [LiteLLM Proxy Setup](../proxy/quick_start.md)
+- [Lumina Proxy Setup](../proxy/quick_start.md)
 

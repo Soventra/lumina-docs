@@ -1,6 +1,6 @@
 ---
 title: "Lens containers"
-description: "Run the independent Lens container with ClickHouse and optionally connect LiteLLM."
+description: "Run the independent Lens container with ClickHouse and optionally connect Lumina."
 slug: "/proxy/lens/deployment/docker"
 ---
 
@@ -16,9 +16,9 @@ Supply `LENS_ADMIN_TOKEN`, the correct `LENS_PUBLIC_URL`, and its ClickHouse con
 
 Preserve the shipped non-root user, read-only filesystem, bounded temporary space, dropped capabilities and sandbox settings. Use native Linux with the capabilities required by the [calculation sandbox](https://github.com/BerriAI/lens/blob/main/docs/sandbox.md) for investigations
 
-## Connect an existing gateway {#1-configure-litellm}
+## Connect an existing gateway {#1-configure-lumina}
 
-A compatible LiteLLM gateway can connect to the running Lens service at a reachable HTTP or HTTPS address. Use the credentials and URL settings in [Add Lens to LiteLLM](./litellm.md), supplied through your existing container environment and recreation command. Keep both containers on a persistent user-defined network or use another reachable private address
+A compatible Lumina gateway can connect to the running Lens service at a reachable HTTP or HTTPS address. Use the credentials and URL settings in [Add Lens to Lumina](./lumina.md), supplied through your existing container environment and recreation command. Keep both containers on a persistent user-defined network or use another reachable private address
 
 Lens's public address serves agents and browsers. Its service and signing credentials authenticate the gateway connection; agent tracing keys and model credentials stay separate. Existing gateway-hosted Lens metadata needs the [documented migration](https://github.com/BerriAI/lens/blob/main/docs/migration.md) before the new runtime takes ownership
 

@@ -7,7 +7,7 @@ authors:
   - misbah
   - mateo
   - kerry
-description: "Day 0 support for Grok 4.7 on LiteLLM, at the same price as Grok 4.6."
+description: "Day 0 support for Grok 4.7 on Lumina, at the same price as Grok 4.6."
 card_title: "Grok 4.7"
 card_summary: "SpaceXAI's update to Grok 4.6 at the same price and limits, better at checking its own work and long context."
 tags: [xai, grok, grok-4.7, day 0 support]
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Grok 4.7](./hero.png)
+![Lumina x Grok 4.7](./hero.png)
 
-LiteLLM supports `grok-4.7` on day 0, on `/chat/completions` and `/responses`. It keeps Grok 4.6's prices, limits and capabilities.
+Lumina supports `grok-4.7` on day 0, on `/chat/completions` and `/responses`. It keeps Grok 4.6's prices, limits and capabilities.
 
 {/* truncate */}
 
@@ -35,7 +35,7 @@ Per 1M tokens: $2.00 input, $0.50 cached, $6.00 output, identical to Grok 4.6. E
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="xai/grok-4.7",
@@ -65,8 +65,8 @@ model_list:
 </TabItem>
 </Tabs>
 
-Pricing landed in [PR #42264](https://github.com/BerriAI/litellm/pull/42264). Hit **Reload Model Cost Map** in the Admin UI, or `POST /reload/model_cost_map`, to pick it up without a redeploy on `v1.76.0` and above.
+Pricing landed in [PR #42264](https://github.com/Soventra/lumina/pull/42264). Hit **Reload Model Cost Map** in the Admin UI, or `POST /reload/model_cost_map`, to pick it up without a redeploy on `v1.76.0` and above.
 
 ## Feedback
 
-Running Grok 4.7 through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #42287](https://github.com/BerriAI/litellm/discussions/42287).
+Running Grok 4.7 through Lumina and hitting something unexpected? Share it on [GitHub discussion #42287](https://github.com/Soventra/lumina/discussions/42287).

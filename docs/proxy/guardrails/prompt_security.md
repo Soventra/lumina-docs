@@ -8,7 +8,7 @@ Use [Prompt Security](https://prompt.security/) to protect your LLM applications
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml 
+### 1. Define Guardrails on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section:
 
@@ -48,10 +48,10 @@ export PROMPT_SECURITY_USER="optional-user-id"  # Optional: for user tracking
 export PROMPT_SECURITY_SYSTEM_PROMPT="optional-system-prompt"  # Optional: for context
 ```
 
-### 3. Start LiteLLM Gateway 
+### 3. Start Lumina Gateway 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 4. Test request 
@@ -438,7 +438,7 @@ guardrails:
 You can also configure guardrails programmatically:
 
 ```python
-from litellm.proxy.guardrails.guardrail_hooks.prompt_security import PromptSecurityGuardrail
+from lumina.proxy.guardrails.guardrail_hooks.prompt_security import PromptSecurityGuardrail
 
 guardrail = PromptSecurityGuardrail(
     api_key="your-api-key",

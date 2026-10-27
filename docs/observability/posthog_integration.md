@@ -4,9 +4,9 @@
 
 PostHog is an open-source product analytics platform that helps you track and analyze how users interact with your product. For LLM applications, PostHog provides specialized AI features to track model usage, performance, and user interactions with your AI features.
 
-## Usage with LiteLLM Proxy (LLM Gateway)
+## Usage with Lumina Proxy (LLM Gateway)
 
-**Step 1**: Create a `config.yaml` file and set `litellm_settings`: `success_callback`
+**Step 1**: Create a `config.yaml` file and set `lumina_settings`: `success_callback`
 
 ```yaml
 model_list:
@@ -14,7 +14,7 @@ model_list:
     lumina_params:
       model: {{openai_small}}
 
-litellm_settings:
+lumina_settings:
   success_callback: ["posthog"]
   failure_callback: ["posthog"]
 ```
@@ -32,7 +32,7 @@ export POSTHOG_API_URL="https://app.posthog.com" # optional
 Start proxy
 
 ```shell
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -75,18 +75,18 @@ curl -X POST 'http://localhost:4000/team/{team_id}/callback' \
 
 Now all requests from that team will be logged to their specific PostHog project.
 
-## Usage with LiteLLM Python SDK
+## Usage with Lumina Python SDK
 
 ### Quick Start
 
 Use just 2 lines of code, to instantly log your responses **across all providers** with PostHog:
 
 ```python
-litellm.success_callback = ["posthog"]
-litellm.failure_callback = ["posthog"] # logs errors to posthog
+lumina.success_callback = ["posthog"]
+lumina.failure_callback = ["posthog"] # logs errors to posthog
 ```
 ```python
-import litellm
+import lumina
 import os
 
 # from PostHog
@@ -97,11 +97,11 @@ os.environ["POSTHOG_API_URL"] = "" # optional
 # LLM API Keys
 os.environ['OPENAI_API_KEY']=""
 
-# set posthog as a callback, litellm will send the data to posthog
-litellm.success_callback = ["posthog"]
+# set posthog as a callback, lumina will send the data to posthog
+lumina.success_callback = ["posthog"]
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_small}}",
     messages=[
         {"role": "user", "content": "Hi - i'm openai"}
@@ -118,14 +118,14 @@ response = litellm.completion(
 
 Pass `user_id` in `metadata` to associate events with specific users in PostHog:
 
-**With LiteLLM Python SDK:**
+**With Lumina Python SDK:**
 
 ```python
-import litellm
+import lumina
 
-litellm.success_callback = ["posthog"]
+lumina.success_callback = ["posthog"]
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_small}}",
     messages=[
         {"role": "user", "content": "Hello world"}
@@ -137,14 +137,14 @@ response = litellm.completion(
 )
 ```
 
-**With LiteLLM Proxy using OpenAI Python SDK:**
+**With Lumina Proxy using OpenAI Python SDK:**
 
 ```python
 import openai
 
 client = openai.OpenAI(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM Proxy API key
-    base_url="http://0.0.0.0:4000"  # Your LiteLLM Proxy URL
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina Proxy API key
+    base_url="http://0.0.0.0:4000"  # Your Lumina Proxy URL
 )
 
 response = client.chat.completions.create(
@@ -167,12 +167,12 @@ response = client.chat.completions.create(
 You can override PostHog credentials on a per-request basis:
 
 ```python
-import litellm
+import lumina
 
-litellm.success_callback = ["posthog"]
+lumina.success_callback = ["posthog"]
 
 # Use custom PostHog credentials for this specific request
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_small}}",
     messages=[
         {"role": "user", "content": "Hello world"}
@@ -192,11 +192,11 @@ This is useful when you need to:
 Use the `no-log` flag to prevent logging for specific calls:
 
 ```python
-import litellm
+import lumina
 
-litellm.success_callback = ["posthog"]
+lumina.success_callback = ["posthog"]
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_small}}",
     messages=[
         {"role": "user", "content": "This won't be logged"}
@@ -207,7 +207,7 @@ response = litellm.completion(
 
 ## What's Logged to PostHog?
 
-When LiteLLM logs to PostHog, it captures detailed information about your LLM usage:
+When Lumina logs to PostHog, it captures detailed information about your LLM usage:
 
 ### For Completion Calls
 - **Model Information**: Provider, model name, model parameters

@@ -4,7 +4,7 @@ title: "Making the AI Gateway Resilient to Redis Failures"
 date: 2026-04-11T09:00:00
 authors:
   - ishaan
-description: "How LiteLLM's production AI Gateway handles Redis degradation at scale without cascading failures — circuit breaker pattern, 0ms fast-fail, automatic recovery."
+description: "How Lumina's production AI Gateway handles Redis degradation at scale without cascading failures — circuit breaker pattern, 0ms fast-fail, automatic recovery."
 tags: [reliability, redis, infrastructure, engineering, ai-gateway]
 hide_table_of_contents: true
 ---
@@ -15,7 +15,7 @@ import { CascadeFailure, CircuitBreakerStates, CircuitBreakerFlow, IncidentTimel
 
 Enterprise AI Gateway deployments put Redis in the hot path for nearly every request: rate limiting, cache lookups, spend tracking. When Redis is healthy, the latency contribution is single-digit milliseconds, invisible to end users. When it degrades, a production AI Gateway needs to stay up regardless.
 
-Running LiteLLM at scale across 100+ pods means designing for failure modes before they appear. The easy case is Redis going fully down: fail fast, fall through to the database, continue serving requests. The hard case, the one that takes down gateways, is a *slow* Redis: still accepting connections, still responding, but timing out after 20-30 seconds per operation.
+Running Lumina at scale across 100+ pods means designing for failure modes before they appear. The easy case is Redis going fully down: fail fast, fall through to the database, continue serving requests. The hard case, the one that takes down gateways, is a *slow* Redis: still accepting connections, still responding, but timing out after 20-30 seconds per operation.
 
 {/* truncate */}
 
@@ -98,12 +98,12 @@ REDIS_CIRCUIT_BREAKER_FAILURE_THRESHOLD=5   # failures before opening
 REDIS_CIRCUIT_BREAKER_RECOVERY_TIMEOUT=60  # seconds before probe
 ```
 
-The circuit breaker ships on by default in all LiteLLM versions since `v1.82.0`. No configuration needed for most deployments.
+The circuit breaker ships on by default in all Lumina versions since `v1.82.0`. No configuration needed for most deployments.
 
 ## Key Takeaways
 
 - A slow Redis is more dangerous than a downed one: 30-second timeouts across 100+ pods overwhelm Postgres at 100× normal load
-- LiteLLM's AI Gateway uses a circuit breaker that fast-fails Redis calls at 0ms after 5 consecutive failures
+- Lumina's AI Gateway uses a circuit breaker that fast-fails Redis calls at 0ms after 5 consecutive failures
 - Three states: CLOSED (normal), OPEN (fast-fail + DB fallback), HALF-OPEN (probe recovery)
 - Auth, rate limiting, and spend tracking continue working during Redis outages
 - Resilient, production-grade behavior, enabled by default since `v1.82.0` with no configuration required
@@ -124,18 +124,18 @@ Rate limiting falls back to Postgres with bounded load. Limits remain enforced a
 
 Retry logic still waits for each timeout (30s × retries). The circuit breaker cuts the connection immediately at 0ms after the failure threshold, preventing threadpool exhaustion across all pods simultaneously. Retries make slow-Redis worse; the circuit breaker contains it.
 
-### Is this available in LiteLLM OSS?
+### Is this available in Lumina OSS?
 
-Yes. The circuit breaker ships in LiteLLM OSS (Apache 2.0) by default since `v1.82.0`. [LiteLLM Enterprise](https://litellm.ai/enterprise) adds SSO/SCIM, air-gapped deployment, 24/7 SLA support, and advanced guardrails on top of the OSS foundation.
+Yes. The circuit breaker ships in Lumina OSS (Apache 2.0) by default since `v1.82.0`. [Lumina Enterprise](https://lumina.ai/enterprise) adds SSO/SCIM, air-gapped deployment, 24/7 SLA support, and advanced guardrails on top of the OSS foundation.
 
 ---
 
 ## Conclusion
 
-Redis resilience is one layer of what makes LiteLLM a production-grade, reliable AI Gateway at scale. The circuit breaker pattern keeps infrastructure degradation contained, so the failure mode is a temporary cache miss rate bump rather than a full outage. This is how AI Gateway infrastructure should behave under pressure: degrade gracefully, recover automatically, keep serving traffic. For teams with strict uptime and compliance requirements, [LiteLLM Enterprise](https://litellm.ai/enterprise) provides the additional controls needed for regulated production environments.
+Redis resilience is one layer of what makes Lumina a production-grade, reliable AI Gateway at scale. The circuit breaker pattern keeps infrastructure degradation contained, so the failure mode is a temporary cache miss rate bump rather than a full outage. This is how AI Gateway infrastructure should behave under pressure: degrade gracefully, recover automatically, keep serving traffic. For teams with strict uptime and compliance requirements, [Lumina Enterprise](https://lumina.ai/enterprise) provides the additional controls needed for regulated production environments.
 
 ## Recommended Reading
 
-- [LiteLLM AI Gateway: full feature overview](https://docs.litellm.ai/docs/simple_proxy)
-- [Load balancing and routing across 100+ LLM providers](https://docs.litellm.ai/docs/routing)
-- [Spend tracking and budget controls](https://docs.litellm.ai/docs/proxy/cost_tracking)
+- [Lumina AI Gateway: full feature overview](https://docs.lumina.ai/docs/simple_proxy)
+- [Load balancing and routing across 100+ LLM providers](https://docs.lumina.ai/docs/routing)
+- [Spend tracking and budget controls](https://docs.lumina.ai/docs/proxy/cost_tracking)

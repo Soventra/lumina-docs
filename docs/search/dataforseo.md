@@ -13,11 +13,11 @@
    - `DATAFORSEO_LOGIN` - Your DataForSEO login/username
    - `DATAFORSEO_PASSWORD` - Your DataForSEO password
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="DataForSEO Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["DATAFORSEO_LOGIN"] = "your-login"
 os.environ["DATAFORSEO_PASSWORD"] = "your-password"
@@ -29,7 +29,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -51,7 +51,7 @@ The proxy reads `DATAFORSEO_LOGIN` and `DATAFORSEO_PASSWORD` from its environmen
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -72,7 +72,7 @@ curl http://0.0.0.0:4000/v1/search/dataforseo-search \
 
 ```python showLineNumbers title="DataForSEO Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["DATAFORSEO_LOGIN"] = "your-login"
 os.environ["DATAFORSEO_PASSWORD"] = "your-password"

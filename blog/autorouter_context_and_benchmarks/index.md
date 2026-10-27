@@ -6,24 +6,24 @@ authors:
   - tin
 description: "v1.97 adds cost and usage benchmarks for the auto router, gives the LLM classifier a window of prior turns, and turns session affinity off by default. Across 5,600 live classifier calls, prior turns raised tier agreement on referential follow-ups from 14% to 78% at under a tenth of a cent per request, with no measurable latency change."
 image: ./autorouter-v2-hero.png
-keywords: [auto router, complexity router, llm classifier, conversation context, session affinity, llm cost savings, model routing, litellm auto routing, router benchmarks]
+keywords: [auto router, complexity router, llm classifier, conversation context, session affinity, llm cost savings, model routing, lumina auto routing, router benchmarks]
 tags: [routing, complexity-router, cost, benchmarks, observability, product]
 hide_table_of_contents: false
 ---
 
-![LiteLLM Autorouter V2: routing accuracy on complex scenarios, 5.6x more accurate by reading the last N turns of the conversation before picking a model](./autorouter-v2-hero.png)
+![Lumina Autorouter V2: routing accuracy on complex scenarios, 5.6x more accurate by reading the last N turns of the conversation before picking a model](./autorouter-v2-hero.png)
 
 <br /><br />
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -222,6 +222,6 @@ model_list:
           REASONING: gpt-5.5
 ```
 
-Every response carries `x-litellm-model-name` and `x-litellm-response-cost`, so the tier for a given request can be checked before relying on any aggregate. After a day of production traffic, the routed-versus-baseline figure in Benchmarks describes a specific workload more accurately than any of the datasets used here.
+Every response carries `x-lumina-model-name` and `x-lumina-response-cost`, so the tier for a given request can be checked before relying on any aggregate. After a day of production traffic, the routed-versus-baseline figure in Benchmarks describes a specific workload more accurately than any of the datasets used here.
 
-Full docs: [Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing).
+Full docs: [Auto Routing](https://docs.lumina.ai/docs/proxy/auto_routing).

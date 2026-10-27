@@ -9,11 +9,11 @@ import TabItem from '@theme/TabItem';
 
 **Automatically fix common message formatting issues when using tool calling with `modify_params=True`**
 
-LiteLLM can automatically sanitize messages to handle common issues that occur during tool calling workflows, especially when using OpenAI-compatible clients with providers that have strict message format requirements (like Anthropic Claude).
+Lumina can automatically sanitize messages to handle common issues that occur during tool calling workflows, especially when using OpenAI-compatible clients with providers that have strict message format requirements (like Anthropic Claude).
 
 ## Overview
 
-When `litellm.modify_params = True` is enabled, LiteLLM automatically sanitizes messages to fix three common issues:
+When `lumina.modify_params = True` is enabled, Lumina automatically sanitizes messages to fix three common issues:
 
 1. **Orphaned Tool Calls** - Assistant messages with tool_calls but missing tool results
 2. **Orphaned Tool Results** - Tool messages that reference non-existent tool_call_ids
@@ -29,7 +29,7 @@ Different LLM providers have varying requirements for message formats, especiall
 - Some providers reject messages with empty content
 - OpenAI-compatible clients may not always maintain perfect message consistency
 
-Without sanitization, these issues cause API errors that interrupt your workflows. With `modify_params=True`, LiteLLM handles these edge cases automatically.
+Without sanitization, these issues cause API errors that interrupt your workflows. With `modify_params=True`, Lumina handles these edge cases automatically.
 
 ## Quick Start
 
@@ -37,13 +37,13 @@ Without sanitization, these issues cause API errors that interrupt your workflow
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
 # Enable automatic message sanitization
-litellm.modify_params = True
+lumina.modify_params = True
 
 # This will work even if messages have formatting issues
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "What's the weather in Boston?"},
@@ -56,7 +56,7 @@ response = litellm.completion(
                     "function": {"name": "get_weather", "arguments": '{"city": "Boston"}'}
                 }
             ]
-            # Missing tool result - LiteLLM will add a dummy result automatically
+            # Missing tool result - Lumina will add a dummy result automatically
         },
         {"role": "user", "content": "Thanks!"}
     ],
@@ -79,7 +79,7 @@ response = litellm.completion(
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   modify_params: true  # Enable automatic message sanitization
 
 model_list:
@@ -97,13 +97,13 @@ model_list:
 
 **Problem:** An assistant message contains `tool_calls`, but no corresponding tool result messages follow.
 
-**Solution:** LiteLLM automatically adds dummy tool result messages for any missing tool results.
+**Solution:** Lumina automatically adds dummy tool result messages for any missing tool results.
 
 **Example:**
 
 ```python
-import litellm
-litellm.modify_params = True
+import lumina
+lumina.modify_params = True
 
 # Messages with orphaned tool calls
 messages = [
@@ -122,14 +122,14 @@ messages = [
     {"role": "user", "content": "What about JavaScript?"}
 ]
 
-# LiteLLM automatically adds:
+# Lumina automatically adds:
 # {
 #     "role": "tool",
 #     "tool_call_id": "call_abc123",
 #     "content": "[System: Tool execution skipped/interrupted by user. No result provided for tool 'web_search'.]"
 # }
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages,
     tools=[...]
@@ -146,13 +146,13 @@ response = litellm.completion(
 
 **Problem:** A tool message references a `tool_call_id` that doesn't exist in any previous assistant message.
 
-**Solution:** LiteLLM automatically removes these orphaned tool result messages.
+**Solution:** Lumina automatically removes these orphaned tool result messages.
 
 **Example:**
 
 ```python
-import litellm
-litellm.modify_params = True
+import lumina
+lumina.modify_params = True
 
 # Messages with orphaned tool result
 messages = [
@@ -165,9 +165,9 @@ messages = [
     }
 ]
 
-# LiteLLM automatically removes the orphaned tool message
+# Lumina automatically removes the orphaned tool message
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages
 )
@@ -183,13 +183,13 @@ response = litellm.completion(
 
 **Problem:** User or assistant messages have empty or whitespace-only content.
 
-**Solution:** LiteLLM replaces empty content with a system placeholder message.
+**Solution:** Lumina replaces empty content with a system placeholder message.
 
 **Example:**
 
 ```python
-import litellm
-litellm.modify_params = True
+import lumina
+lumina.modify_params = True
 
 # Messages with empty content
 messages = [
@@ -197,11 +197,11 @@ messages = [
     {"role": "assistant", "content": "   "},  # Whitespace only
 ]
 
-# LiteLLM automatically replaces with:
+# Lumina automatically replaces with:
 # {"role": "user", "content": "[System: Empty message content sanitised to satisfy protocol]"}
 # {"role": "assistant", "content": "[System: Empty message content sanitised to satisfy protocol]"}
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages
 )
@@ -221,17 +221,17 @@ response = litellm.completion(
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
 # Enable for all completion calls
-litellm.modify_params = True
+lumina.modify_params = True
 ```
 
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   modify_params: true
 ```
 
@@ -247,7 +247,7 @@ export LUMINA_MODIFY_PARAMS=True
 
 ### No Per-Request Override
 
-Sanitization reads only the global `litellm.modify_params` flag, set by any of the options above. `litellm.completion()` has no `modify_params` argument, so passing `modify_params=True` on a call does not enable sanitization and is forwarded to the provider as an extra body field, which Anthropic rejects with `400 invalid_request_error: modify_params: Extra inputs are not permitted`
+Sanitization reads only the global `lumina.modify_params` flag, set by any of the options above. `lumina.completion()` has no `modify_params` argument, so passing `modify_params=True` on a call does not enable sanitization and is forwarded to the provider as an extra body field, which Anthropic rejects with `400 invalid_request_error: modify_params: Extra inputs are not permitted`
 
 ## Supported Providers
 
@@ -273,16 +273,16 @@ The message sanitization process runs **before** messages are converted to provi
 ### Code Reference
 
 The sanitization logic is implemented in:
-- `litellm/litellm_core_utils/prompt_templates/factory.py`
+- `lumina/lumina_core_utils/prompt_templates/factory.py`
 - Function: `sanitize_messages_for_tool_calling()`
 
 ### Logging
 
-When sanitization occurs, LiteLLM logs debug messages:
+When sanitization occurs, Lumina logs debug messages:
 
 ```python
-import litellm
-litellm.set_verbose = True  # Enable debug logging
+import lumina
+lumina.set_verbose = True  # Enable debug logging
 
 # You'll see logs like:
 # "_add_missing_tool_results: Found 1 orphaned tool calls. Adding dummy tool results."
@@ -296,10 +296,10 @@ litellm.set_verbose = True  # Enable debug logging
 
 ```python
 # Recommended for production
-litellm.modify_params = True
+lumina.modify_params = True
 
 # Ensures robust handling of edge cases
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages,
     tools=tools
@@ -331,15 +331,15 @@ messages = [
 Use logging to track when sanitization occurs:
 
 ```python
-import litellm
+import lumina
 import logging
 
 # Enable debug logging
-litellm.set_verbose = True
+lumina.set_verbose = True
 logging.basicConfig(level=logging.DEBUG)
 
 # Track sanitization events in your application
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=messages
 )
@@ -350,8 +350,8 @@ response = litellm.completion(
 Ensure your application handles sanitized messages correctly:
 
 ```python
-import litellm
-litellm.modify_params = True
+import lumina
+lumina.modify_params = True
 
 # Test orphaned tool calls
 test_messages = [
@@ -360,7 +360,7 @@ test_messages = [
     {"role": "user", "content": "Continue"}  # No tool result
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=test_messages,
     tools=[...]
@@ -385,18 +385,18 @@ response = litellm.completion(
 **Solution:**
 1. Verify `modify_params` is enabled:
    ```python
-   import litellm
-   print(litellm.modify_params)  # Should be True
+   import lumina
+   print(lumina.modify_params)  # Should be True
    ```
 
 2. Check if the issue is provider-specific:
    ```python
-   litellm.set_verbose = True  # Enable debug logging
+   lumina.set_verbose = True  # Enable debug logging
    ```
 
-3. Ensure you're using a recent version of LiteLLM:
+3. Ensure you're using a recent version of Lumina:
    ```bash
-   uv add --upgrade-package litellm litellm
+   uv add --upgrade-package lumina lumina
    ```
 
 ### Unexpected Dummy Tool Results

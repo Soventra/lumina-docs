@@ -1,13 +1,13 @@
 
 # Harbor
 
-[Harbor](https://github.com/laude-institute/harbor) is a framework from the creators of Terminal-Bench for evaluating and optimizing agents and language models. It uses LiteLLM to call 100+ LLM providers.
+[Harbor](https://github.com/laude-institute/harbor) is a framework from the creators of Terminal-Bench for evaluating and optimizing agents and language models. It uses Lumina to call 100+ LLM providers.
 
 ```bash
 # Install
 uv add harbor
 
-# Run a benchmark with any LiteLLM-supported model
+# Run a benchmark with any Lumina-supported model
 harbor run --dataset terminal-bench@2.0 \
    --agent claude-code \
    --model anthropic/{{anthropic_large}} \

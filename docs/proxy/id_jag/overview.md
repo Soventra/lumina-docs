@@ -7,18 +7,18 @@ sidebar_label: Overview
 
 ID-JAG ([Identity Assertion JWT Authorization Grant](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-identity-assertion-authz-grant)) lets an application access another service on a signed-in user's behalf. The identity provider (IdP) approves the exchange, and the target service's authorization server applies its own access policy before issuing an access token.
 
-LiteLLM can act as both a resource and requesting app:
+Lumina can act as both a resource and requesting app:
 
-| Guide | Use case | What LiteLLM does |
+| Guide | Use case | What Lumina does |
 |-------|----------|------------------|
-| [LiteLLM as resource app](./resource_app.md) | An application needs to run inference or access MCP tools through LiteLLM. | Accepts an ID-JAG at `POST /token` and issues a LiteLLM credential for the user. |
-| [LiteLLM as requesting app](./requesting_app.md) | An agent using LiteLLM needs access to an MCP server with a separate authorization server. | Exchanges the user's identity assertion for an ID-JAG, then redeems it for an MCP access token. |
+| [Lumina as resource app](./resource_app.md) | An application needs to run inference or access MCP tools through Lumina. | Accepts an ID-JAG at `POST /token` and issues a Lumina credential for the user. |
+| [Lumina as requesting app](./requesting_app.md) | An agent using Lumina needs access to an MCP server with a separate authorization server. | Exchanges the user's identity assertion for an ID-JAG, then redeems it for an MCP access token. |
 
 :::info When to use ID-JAG
 
 Use ID-JAG when an app needs to act on a signed-in user's behalf and you want your IdP to control which apps can request access. Both the IdP and the target service's authorization server must support ID-JAG.
 
-For direct access to LiteLLM with an existing JWT, use [JWT authentication](../token_auth.md). For other token-exchange flows with an upstream MCP server, see [OBO token exchange](../../mcp_obo_auth.md).
+For direct access to Lumina with an existing JWT, use [JWT authentication](../token_auth.md). For other token-exchange flows with an upstream MCP server, see [OBO token exchange](../../mcp_obo_auth.md).
 
 :::
 
@@ -51,7 +51,7 @@ sequenceDiagram
     API-->>Client: Response
 ```
 
-When LiteLLM is the resource app, it issues access tokens and accepts them for inference and MCP requests. When LiteLLM is the requesting app, it exchanges the user's identity assertion for an ID-JAG at the IdP, then redeems the ID-JAG for an access token at the resource authorization server before calling the MCP server.
+When Lumina is the resource app, it issues access tokens and accepts them for inference and MCP requests. When Lumina is the requesting app, it exchanges the user's identity assertion for an ID-JAG at the IdP, then redeems the ID-JAG for an access token at the resource authorization server before calling the MCP server.
 
 ## Identity provider setup
 
@@ -59,4 +59,4 @@ When LiteLLM is the resource app, it issues access tokens and accepts them for i
 
 Okta implements ID-JAG as [Cross App Access (XAA)](https://developer.okta.com/docs/concepts/xaa/). Register the requesting app as an **AI agent** and enable Cross App Access on the resource app. An administrator connects them through a **resource connection** and selects the allowed scopes.
 
-Select **Okta** under **Get started** in [LiteLLM as resource app](./resource_app.md#get-started) or [LiteLLM as requesting app](./requesting_app.md#get-started) for the full setup.
+Select **Okta** under **Get started** in [Lumina as resource app](./resource_app.md#get-started) or [Lumina as requesting app](./requesting_app.md#get-started) for the full setup.

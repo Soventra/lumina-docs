@@ -20,7 +20,7 @@ Tool search enables Claude to dynamically discover and load tools on-demand from
 
 ## Tool Search Variants
 
-LiteLLM supports both tool search variants:
+Lumina supports both tool search variants:
 
 ### 1. Regex Tool Search (`tool_search_tool_regex_20251119`)
 
@@ -41,9 +41,9 @@ Claude uses natural language queries to search for tools using the BM25 algorith
 #### Basic Example with Regex Tool Search
 
 ```python showLineNumbers title="Basic Tool Search Example"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "What is the weather in San Francisco?"}
@@ -83,9 +83,9 @@ print(response.choices[0].message.content)
 #### BM25 Tool Search Example
 
 ```python showLineNumbers title="BM25 Tool Search"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "Search for Python files containing 'authentication'"}
@@ -120,9 +120,9 @@ response = litellm.completion(
 #### Azure Anthropic Example
 
 ```python showLineNumbers title="Azure Anthropic Tool Search"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="azure_anthropic/{{anthropic}}",
     api_base="https://<your-resource>.services.ai.azure.com/anthropic",
     api_key="your-azure-api-key",
@@ -156,9 +156,9 @@ response = litellm.completion(
 #### Vertex AI Example
 
 ```python showLineNumbers title="Vertex AI Tool Search"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="vertex_ai/{{anthropic}}",
     vertex_project="your-project-id",
     vertex_location="us-central1",
@@ -178,9 +178,9 @@ response = litellm.completion(
 #### Streaming Support
 
 ```python showLineNumbers title="Streaming with Tool Search"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="anthropic/{{anthropic}}",
     messages=[
         {"role": "user", "content": "Get the weather"}
@@ -216,7 +216,7 @@ for chunk in response:
 
 ### AI Gateway Usage
 
-Tool search works automatically through the LiteLLM proxy.
+Tool search works automatically through the Lumina proxy.
 
 #### Proxy Configuration
 
@@ -234,7 +234,7 @@ model_list:
 from anthropic import Anthropic
 
 client = Anthropic(
-    api_key="your-litellm-proxy-key",
+    api_key="your-lumina-proxy-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -269,16 +269,16 @@ response = client.messages.create(
 
 ## Messages API
 
-The Messages API provides native Anthropic-style tool search support via the `litellm.anthropic.messages` interface.
+The Messages API provides native Anthropic-style tool search support via the `lumina.anthropic.messages` interface.
 
 ### SDK Usage
 
 #### Basic Example
 
 ```python showLineNumbers title="Messages API - Basic Tool Search"
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="anthropic/{{anthropic}}",
     messages=[
         {
@@ -317,9 +317,9 @@ print(response)
 #### Azure Anthropic Messages Example
 
 ```python showLineNumbers title="Azure Anthropic Messages API"
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="azure_anthropic/{{anthropic}}",
     messages=[
         {
@@ -356,9 +356,9 @@ response = await litellm.anthropic.messages.acreate(
 #### Vertex AI Messages Example
 
 ```python showLineNumbers title="Vertex AI Messages API"
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="vertex_ai/{{anthropic}}",
     messages=[
         {
@@ -395,9 +395,9 @@ response = await litellm.anthropic.messages.acreate(
 #### Bedrock Messages Example
 
 ```python showLineNumbers title="Bedrock Messages API (Invoke)"
-import litellm
+import lumina
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="bedrock/invoke/anthropic.{{anthropic_large}}",
     messages=[
         {
@@ -431,10 +431,10 @@ response = await litellm.anthropic.messages.acreate(
 #### Streaming Support
 
 ```python showLineNumbers title="Messages API - Streaming"
-import litellm
+import lumina
 import json
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="anthropic/{{anthropic}}",
     messages=[
         {
@@ -497,7 +497,7 @@ model_list:
 from anthropic import Anthropic
 
 client = Anthropic(
-    api_key="your-litellm-proxy-key",
+    api_key="your-lumina-proxy-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -539,4 +539,4 @@ print(response)
 ## Additional Resources
 
 - [Anthropic Tool Search Documentation](https://docs.anthropic.com/en/docs/build-with-claude/tool-use/tool-search)
-- [LiteLLM Tool Calling Guide](https://docs.litellm.ai/docs/completion/function_call)
+- [Lumina Tool Calling Guide](https://docs.lumina.ai/docs/completion/function_call)

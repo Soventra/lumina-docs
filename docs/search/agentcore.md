@@ -2,7 +2,7 @@
 
 [Web Search on Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/built-in-tools-web-search.html) is an AWS-managed web index exposed as an MCP tool on an AgentCore Gateway, so search traffic stays inside AWS and is billed by AWS instead of a third-party search API
 
-Unlike the other search providers, there is no API key to sign up for. You create a gateway with a `web-search` connector target, then point LiteLLM at its MCP endpoint
+Unlike the other search providers, there is no API key to sign up for. You create a gateway with a `web-search` connector target, then point Lumina at its MCP endpoint
 
 | | |
 |---|---|
@@ -15,11 +15,11 @@ Unlike the other search providers, there is no API key to sign up for. You creat
 
 The gateway URL looks like `https://<gateway-id>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="AgentCore Web Search"
 import os
-from litellm import search
+from lumina import search
 
 os.environ["AGENTCORE_GATEWAY_URL"] = "https://<gateway-id>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp"
 os.environ["AWS_ACCESS_KEY_ID"] = "your-access-key"
@@ -48,7 +48,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -63,7 +63,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -97,7 +97,7 @@ search_tools:
       search_provider: agentcore
       api_base: https://<gateway-id>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
 
-litellm_settings:
+lumina_settings:
   callbacks: ["websearch_interception"]
   websearch_interception_params:
     enabled_providers: ["bedrock"]
@@ -123,10 +123,10 @@ AgentCore caps queries at 200 characters, so longer queries are truncated
 
 ## Notes
 
-LiteLLM tracks `agentcore/search` at $0.007 per query, matching the [Web Search on AgentCore price](https://aws.amazon.com/bedrock/agentcore/pricing/) of $7 per 1,000 queries. AWS bills AgentCore Gateway API invocations separately, and LiteLLM does not track them
+Lumina tracks `agentcore/search` at $0.007 per query, matching the [Web Search on AgentCore price](https://aws.amazon.com/bedrock/agentcore/pricing/) of $7 per 1,000 queries. AWS bills AgentCore Gateway API invocations separately, and Lumina does not track them
 
 The SigV4 signing region comes from the gateway hostname. If you front the gateway with a custom hostname, set `aws_region_name` (or `AWS_REGION`, or a profile region) to the gateway's region
 
 `AGENTCORE_GATEWAY_TOKEN` is only sent when the request targets the gateway configured in `AGENTCORE_GATEWAY_URL`, so a caller-supplied `api_base` cannot exfiltrate it. Credentials also only ride https: a plain `http://` gateway URL is refused unless the host is localhost
 
-LiteLLM sends `MCP-Protocol-Version: 2025-03-26` on every request, the version a gateway with a default `protocolConfiguration` accepts. If your gateway pins `supportedVersions` to something else, set `AGENTCORE_MCP_PROTOCOL_VERSION` to match, e.g. `2025-06-18`
+Lumina sends `MCP-Protocol-Version: 2025-03-26` on every request, the version a gateway with a default `protocolConfiguration` accepts. If your gateway pins `supportedVersions` to something else, set `AGENTCORE_MCP_PROTOCOL_VERSION` to match, e.g. `2025-06-18`

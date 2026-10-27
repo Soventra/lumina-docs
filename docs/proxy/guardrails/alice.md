@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 The Alice guardrail screens prompts and model responses against policies you configure in Alice. On every call it forwards the request to Alice, which decides what in the payload is worth evaluating and answers with a verdict the guardrail enforces: allow the call, block it, replace flagged text, or record a detection and let the call through.
 
-Policies are configured per application rather than globally, so one proxy can enforce a different policy set per team or product while sharing a single project credential. Which application a call belongs to is named on the LiteLLM virtual key, described under [Naming the application](#naming-the-application).
+Policies are configured per application rather than globally, so one proxy can enforce a different policy set per team or product while sharing a single project credential. Which application a call belongs to is named on the Lumina virtual key, described under [Naming the application](#naming-the-application).
 
 ## Quick Start
 
@@ -13,7 +13,7 @@ Policies are configured per application rather than globally, so one proxy can e
 
 In the Alice platform, open **Account Settings**, then **API Keys**, and create a key for the project whose policies you want enforced.
 
-### 2. Add Alice to your LiteLLM config.yaml
+### 2. Add Alice to your Lumina config.yaml
 
 Define the guardrail under the `guardrails` section. One entry covers both directions; list both hook points in `mode` so prompts and responses are screened.
 
@@ -33,12 +33,12 @@ guardrails:
       api_key: os.environ/ALICE_API_KEY
 ```
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 ```shell
 export OPENAI_API_KEY=sk-...
 export ALICE_API_KEY=...
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Create a virtual key naming the application
@@ -119,7 +119,7 @@ A caller cannot override this. The proxy strips caller-supplied `user_api_key_*`
 
 The guardrail forwards the hook's own arguments, renaming and selecting nothing, so that what is worth evaluating stays a decision Alice makes rather than one baked into the gateway.
 
-Credentials are the single exception. `secret_fields`, `api_key`, `raw_headers`, `headers`, and `provider_specific_header` are dropped wherever they appear in the payload, at any nesting depth, because the caller's `Authorization` token lives in several of them and a guardrail endpoint is not a place to send it. LiteLLM already excludes these from its own spend logs. The removal happens on a copy; the rest of the pipeline still sees the original.
+Credentials are the single exception. `secret_fields`, `api_key`, `raw_headers`, `headers`, and `provider_specific_header` are dropped wherever they appear in the payload, at any nesting depth, because the caller's `Authorization` token lives in several of them and a guardrail endpoint is not a place to send it. Lumina already excludes these from its own spend logs. The removal happens on a copy; the rest of the pipeline still sees the original.
 
 ## Verdicts
 
@@ -143,7 +143,7 @@ A 4xx from Alice, such as a rejected credential, is not treated as unreachable. 
 
 Alice supports `pre_call`, `during_call`, and `post_call`. Use `pre_call` to screen prompts before the model is reached and `post_call` to screen completions.
 
-Streaming responses are screened on `post_call`, where blocking works but masking does not: LiteLLM's default streaming transform discards returned text rewrites, so a `MASK` verdict on a streamed response has no effect while a `BLOCK` still stops the stream. Screen prompts on `pre_call` if you need masking to apply reliably.
+Streaming responses are screened on `post_call`, where blocking works but masking does not: Lumina's default streaming transform discards returned text rewrites, so a `MASK` verdict on a streamed response has no effect while a `BLOCK` still stops the stream. Screen prompts on `pre_call` if you need masking to apply reliably.
 
 ## Further reading
 

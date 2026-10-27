@@ -1,6 +1,6 @@
 ---
 title: "Configuration and troubleshooting"
-description: "Configure standalone Lens credentials, networking and the optional LiteLLM connection."
+description: "Configure standalone Lens credentials, networking and the optional Lumina connection."
 slug: "/proxy/lens/deployment/configuration"
 ---
 
@@ -17,9 +17,9 @@ Use the [Lens installation guide](https://github.com/BerriAI/lens/blob/main/depl
 | ClickHouse credential | Let Lens initialize, read and write its storage |
 | Analysis or evaluation provider key | Let Lens call the configured provider |
 | Gateway service and signing credentials | Authenticate the optional internal connection and delegated identity |
-| LiteLLM user or model key | Access the gateway under its existing authentication and model rules |
+| Lumina user or model key | Access the gateway under its existing authentication and model rules |
 
-The standalone starter creates its admin token and database password in `deploy/lens/.env`. A standalone tracing installation needs those credentials and a tracing key. Investigations, Signals and eval judging require their corresponding provider configuration. Gateway connection secrets are needed only when connecting LiteLLM
+The standalone starter creates its admin token and database password in `deploy/lens/.env`. A standalone tracing installation needs those credentials and a tracing key. Investigations, Signals and eval judging require their corresponding provider configuration. Gateway connection secrets are needed only when connecting Lumina
 
 Keep deployment secrets private and retain them with your recovery materials. The gateway keeps its own database and encryption keys; those are separate from Lens's ClickHouse storage
 
@@ -44,10 +44,10 @@ Containers need a reachable service address. A gateway container's `127.0.0.1` p
 Inspect the existing gateway networks without changing them:
 
 ```sh
-docker inspect "<your-litellm-container>" --format '{{json .NetworkSettings.Networks}}'
+docker inspect "<your-lumina-container>" --format '{{json .NetworkSettings.Networks}}'
 ```
 
-Make any shared-network reference persistent in both Compose configurations, including the network override every time you recreate services. Use Lens's service name and port, such as `http://lens:4318`, for the private gateway URL. Follow [Add Lens to LiteLLM](./litellm.md) for the credentials and application settings
+Make any shared-network reference persistent in both Compose configurations, including the network override every time you recreate services. Use Lens's service name and port, such as `http://lens:4318`, for the private gateway URL. Follow [Add Lens to Lumina](./lumina.md) for the credentials and application settings
 
 ## Configuration reference
 
@@ -63,7 +63,7 @@ Make any shared-network reference persistent in both Compose configurations, inc
 | `CLICKHOUSE_DATABASE` | Lens | Selected database, default `lens` in standalone Lens |
 | `AGENT_TRACING_RETENTION_DAYS` | Lens | Trace retention, default 14 days |
 
-Existing gateway integrations can retain the `litellm` ClickHouse database. Preserve the actual database that holds your records. See [analysis models](https://github.com/BerriAI/lens/blob/main/docs/analysis.md) and [Signals](https://github.com/BerriAI/lens/blob/main/docs/signals.md) for server-side provider configuration
+Existing gateway integrations can retain the `lumina` ClickHouse database. Preserve the actual database that holds your records. See [analysis models](https://github.com/BerriAI/lens/blob/main/docs/analysis.md) and [Signals](https://github.com/BerriAI/lens/blob/main/docs/signals.md) for server-side provider configuration
 
 ## Availability and scaling
 

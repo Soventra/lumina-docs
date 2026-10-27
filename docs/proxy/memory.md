@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 Store user preferences and feedback so your LLM remembers them across sessions. Scoped per user and team, with built-in access control.
 
-**Requires:** LiteLLM `v1.83.10+` with PostgreSQL connected. No config changes needed.
+**Requires:** Lumina `v1.83.10+` with PostgreSQL connected. No config changes needed.
 
 ### Create
 
@@ -31,7 +31,7 @@ import httpx
 
 client = httpx.Client(
     base_url="http://localhost:4000",
-    headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+    headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
 )
 
 client.post("/v1/memory", json={
@@ -109,7 +109,7 @@ Partition memory by Slack workspace and user so each person's preferences are is
 import httpx
 
 LUMINA_BASE = "http://localhost:4000"
-LUMINA_KEY = "sk-<your-litellm-api-key>"
+LUMINA_KEY = "sk-<your-lumina-api-key>"
 
 def memory_key(team_id: str, user_id: str) -> str:
     return f"slack:{team_id}:{user_id}"

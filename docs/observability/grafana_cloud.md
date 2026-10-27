@@ -1,6 +1,6 @@
 # Grafana Cloud
 
-Send LiteLLM traces and GenAI metrics to [Grafana Cloud](https://grafana.com/products/cloud/) over OTLP
+Send Lumina traces and GenAI metrics to [Grafana Cloud](https://grafana.com/products/cloud/) over OTLP
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ Grafana Cloud authenticates OTLP with HTTP Basic auth: the username is your inst
 echo -n "<instance-id>:<access-policy-token>" | base64
 ```
 
-Point LiteLLM at the gateway:
+Point Lumina at the gateway:
 
 ```shell title=".env"
 LUMINA_OTEL_V2=true
@@ -28,7 +28,7 @@ OTEL_HEADERS="Authorization=Basic%20<base64-from-above>"
 ```
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   callbacks: ["otel"]
 
 callback_settings:
@@ -58,15 +58,15 @@ To send traces only, drop `LUMINA_OTEL_INTEGRATION_ENABLE_METRICS`
 
 Each request is one trace: the server span for the route, an `auth` span, and a `chat <model>` span carrying canonical [OpenTelemetry GenAI](https://opentelemetry.io/docs/specs/semconv/gen-ai/) attributes for model, provider, token counts, and latency
 
-![LiteLLM traces in Grafana Cloud Tempo](/img/observability/grafana_cloud_traces.png)
+![Lumina traces in Grafana Cloud Tempo](/img/observability/grafana_cloud_traces.png)
 
-![gen_ai span attributes on a LiteLLM LLM-call span](/img/observability/grafana_cloud_span_attributes.png)
+![gen_ai span attributes on a Lumina LLM-call span](/img/observability/grafana_cloud_span_attributes.png)
 
 ## Metrics
 
 Metrics arrive as OTLP histograms, queryable in Explore under their Prometheus-normalized names:
 
-| LiteLLM instrument | Queryable as |
+| Lumina instrument | Queryable as |
 |---|---|
 | `gen_ai.client.operation.duration` | `gen_ai_client_operation_duration_seconds_bucket` |
 | `gen_ai.client.token.usage` | `gen_ai_client_token_usage_bucket` |
@@ -75,26 +75,26 @@ Metrics arrive as OTLP histograms, queryable in Explore under their Prometheus-n
 | `gen_ai.server.time_per_output_token` | `gen_ai_server_time_per_output_token_seconds_bucket` |
 | `gen_ai.client.response.duration` | `gen_ai_client_response_duration_seconds_bucket` |
 
-![LiteLLM GenAI spend by model in Grafana Cloud](/img/observability/grafana_cloud_metrics.png)
+![Lumina GenAI spend by model in Grafana Cloud](/img/observability/grafana_cloud_metrics.png)
 
-![LiteLLM token throughput by model in Grafana Cloud](/img/observability/grafana_cloud_token_rate.png)
+![Lumina token throughput by model in Grafana Cloud](/img/observability/grafana_cloud_token_rate.png)
 
 ## Dashboard
 
-LiteLLM ships a dashboard for these metrics at [cookbook/litellm_proxy_server/grafana_dashboard/dashboard_genai_otel](https://github.com/BerriAI/litellm/tree/main/cookbook/litellm_proxy_server/grafana_dashboard/dashboard_genai_otel). Import the JSON from **Dashboards > New > Import** and pick your Prometheus data source
+Lumina ships a dashboard for these metrics at [cookbook/lumina_proxy_server/grafana_dashboard/dashboard_genai_otel](https://github.com/Soventra/lumina/tree/main/cookbook/lumina_proxy_server/grafana_dashboard/dashboard_genai_otel). Import the JSON from **Dashboards > New > Import** and pick your Prometheus data source
 
 Spend, tokens, request count and p95 duration as stats, then request rate, spend per hour, token throughput split by input and output, and p95 duration, time to first token, and provider generation time, all by model
 
-![LiteLLM GenAI dashboard in Grafana Cloud](/img/observability/grafana_cloud_litellm_dashboard.png)
+![Lumina GenAI dashboard in Grafana Cloud](/img/observability/grafana_cloud_lumina_dashboard.png)
 
 ## Prometheus metrics
 
-The OTLP path covers per-request GenAI telemetry. LiteLLM's operational metrics (budgets, rate limits, deployment health, spend) live on the proxy's `/metrics` endpoint and reach Grafana Cloud by scraping. Point [Grafana Alloy](https://grafana.com/docs/alloy/latest/) at the proxy:
+The OTLP path covers per-request GenAI telemetry. Lumina's operational metrics (budgets, rate limits, deployment health, spend) live on the proxy's `/metrics` endpoint and reach Grafana Cloud by scraping. Point [Grafana Alloy](https://grafana.com/docs/alloy/latest/) at the proxy:
 
 ```alloy title="config.alloy"
-prometheus.scrape "litellm" {
-  targets      = [{__address__ = "litellm-proxy:4000"}]
-  bearer_token = "<litellm-api-key>"
+prometheus.scrape "lumina" {
+  targets      = [{__address__ = "lumina-proxy:4000"}]
+  bearer_token = "<lumina-api-key>"
   forward_to   = [prometheus.remote_write.grafana_cloud.receiver]
 }
 
@@ -109,20 +109,20 @@ prometheus.remote_write "grafana_cloud" {
 }
 ```
 
-`/metrics` requires a LiteLLM API key by default, which `bearer_token` supplies; set `require_auth_for_metrics_endpoint: false` under `litellm_settings` to expose it unauthenticated. Multi-worker deployments need `PROMETHEUS_MULTIPROC_DIR` set so workers report a combined view
+`/metrics` requires a Lumina API key by default, which `bearer_token` supplies; set `require_auth_for_metrics_endpoint: false` under `lumina_settings` to expose it unauthenticated. Multi-worker deployments need `PROMETHEUS_MULTIPROC_DIR` set so workers report a combined view
 
 Bound the label sets the same way you did for OTLP:
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   prometheus_metrics_config:
     - group: "core"
       metrics:
-        - "litellm_proxy_total_requests_metric"
-        - "litellm_spend_metric"
+        - "lumina_proxy_total_requests_metric"
+        - "lumina_spend_metric"
       include_labels:
         - "model"
         - "team"
 ```
 
-See [Prometheus metrics](../proxy/prometheus) for the full metric reference and the dashboards LiteLLM maintains for them
+See [Prometheus metrics](../proxy/prometheus) for the full metric reference and the dashboards Lumina maintains for them

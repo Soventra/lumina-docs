@@ -1,12 +1,12 @@
 # Oobabooga Text Web API Tutorial
 
-### Install + Import LiteLLM 
+### Install + Import Lumina 
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import os
 ```
 

@@ -6,10 +6,10 @@ authors:
   - misbah
   - mateo
   - kerry
-description: "Day 0 support for Claude Opus 5.5 on the LiteLLM AI Gateway. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure."
+description: "Day 0 support for Claude Opus 5.5 on the Lumina AI Gateway. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure."
 card_title: "Claude Opus 5.5"
 card_summary: "20% cheaper than Opus 5 at $4 / $20 per 1M, 30% faster output, Terminal-Bench 4.0 66.4%, thinking always on."
-image: /img/litellm_claude_opus_5_5_announcement.png
+image: /img/lumina_claude_opus_5_5_announcement.png
 tags: [anthropic, claude, opus 5.5, day 0 support]
 hide_table_of_contents: false
 ---
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Claude Opus 5.5](/img/litellm_claude_opus_5_5_announcement.png)
+![Lumina x Claude Opus 5.5](/img/lumina_claude_opus_5_5_announcement.png)
 
-LiteLLM now supports [Claude Opus 5.5](https://www.anthropic.com/claude-opus-5-5) on Day 0. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure through the LiteLLM AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
+Lumina now supports [Claude Opus 5.5](https://www.anthropic.com/claude-opus-5-5) on Day 0. Use it across Anthropic, Bedrock, Gemini Enterprise Agent Platform, and Azure through the Lumina AI Gateway. Call it with the same OpenAI-compatible request you already use, and track spend, rate limits, and logging in one place.
 
 {/* truncate */}
 
@@ -38,7 +38,7 @@ Context window and max output are unchanged from Opus 5 at 1M and 128K.
 
 ## Enabling Opus 5.5
 
-Pricing landed in [PR #42489](https://github.com/BerriAI/litellm/pull/42489), and most proxies do not need to upgrade at all. On the default remote cost map, open the **Price Data** tab under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map` as a proxy admin), on any version `v1.76.0` or newer.
+Pricing landed in [PR #42489](https://github.com/Soventra/lumina/pull/42489), and most proxies do not need to upgrade at all. On the default remote cost map, open the **Price Data** tab under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map` as a proxy admin), on any version `v1.76.0` or newer.
 
 The exception is `LUMINA_LOCAL_MODEL_COST_MAP=true`, which bakes the cost map into the image and puts it out of the Reload button's reach. That path needs an image built after #42489 merged.
 
@@ -66,7 +66,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.103.0-rc.1 \
+  ghcr.io/soventra/lumina:v1.103.0-rc.1 \
   --config /app/config.yaml
 ```
 
@@ -93,7 +93,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.103.0-rc.1 \
+  ghcr.io/soventra/lumina:v1.103.0-rc.1 \
   --config /app/config.yaml
 ```
 
@@ -120,7 +120,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:v1.103.0-rc.1 \
+  ghcr.io/soventra/lumina:v1.103.0-rc.1 \
   --config /app/config.yaml
 ```
 
@@ -146,7 +146,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:v1.103.0-rc.1 \
+  ghcr.io/soventra/lumina:v1.103.0-rc.1 \
   --config /app/config.yaml
 ```
 
@@ -178,7 +178,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 Fast mode is **only supported on the Anthropic provider** (`anthropic/claude-opus-5-5`). It is not available on Bedrock, Gemini Enterprise Agent Platform, or Azure, and it cannot be combined with the Batch API.
 :::
 
-Opus 5.5 runs faster with `speed: "fast"`, billed at $8 / MTok input and $40 / MTok output, 2x the standard rate and down from the $10 / $50 on Opus 5. LiteLLM adds the `fast-mode-2026-02-01` beta header and tracks the premium in cost calculations automatically.
+Opus 5.5 runs faster with `speed: "fast"`, billed at $8 / MTok input and $40 / MTok output, 2x the standard rate and down from the $10 / $50 on Opus 5. Lumina adds the `fast-mode-2026-02-01` beta header and tracks the premium in cost calculations automatically.
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
@@ -199,7 +199,7 @@ curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ## Worth knowing
 
-**Forced tool use returns a 400.** With `drop_params` on, LiteLLM downgrades `tool_choice` to `auto` and logs a warning, so the call succeeds and the model is free not to call your tool.
+**Forced tool use returns a 400.** With `drop_params` on, Lumina downgrades `tool_choice` to `auto` and logs a warning, so the call succeeds and the model is free not to call your tool.
 
 **Thinking cannot be disabled, and the default effort is now `medium`** where Opus 5's was `high`, so a request that never set effort thinks less than it used to.
 
@@ -207,4 +207,4 @@ curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ## Feedback
 
-Running Claude Opus 5.5 through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #42494](https://github.com/BerriAI/litellm/discussions/42494).
+Running Claude Opus 5.5 through Lumina and hitting something unexpected? Share it on [GitHub discussion #42494](https://github.com/Soventra/lumina/discussions/42494).

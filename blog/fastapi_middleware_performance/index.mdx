@@ -6,20 +6,20 @@ authors:
   - krrish
   - ishaan-alt
   - ryan
-description: "How we improved LiteLLM proxy latency and throughput by replacing a single middleware base class"
+description: "How we improved Lumina proxy latency and throughput by replacing a single middleware base class"
 tags: [performance, fastapi, middleware]
 hide_table_of_contents: false
 ---
 
 import { BaseHTTPMiddlewareAnimation, PureASGIAnimation, BenchmarkVisualization } from '@site/src/components/MiddlewareDiagrams';
 
-> How we improved LiteLLM proxy latency and throughput by replacing a single, simple middleware base class
+> How we improved Lumina proxy latency and throughput by replacing a single, simple middleware base class
 
 ---
 
 ## Our Setup
 
-The LiteLLM proxy server has two middleware layers. The first is Starlette's `CORSMiddleware` (re-exported by FastAPI), which is a pure ASGI middleware. Then we have a simple BaseHTTPMiddleware called PrometheusAuthMiddleware.
+The Lumina proxy server has two middleware layers. The first is Starlette's `CORSMiddleware` (re-exported by FastAPI), which is a pure ASGI middleware. Then we have a simple BaseHTTPMiddleware called PrometheusAuthMiddleware.
 
 The job of `PrometheusAuthMiddleware` is to authenticate requests to the `/metrics` endpoint. It's not on by default, you enable it with a flag in your proxy config:
 
@@ -27,7 +27,7 @@ The job of `PrometheusAuthMiddleware` is to authenticate requests to the `/metri
 <summary>Proxy config flag</summary>
 
 ```yaml
-litellm_settings:
+lumina_settings:
     require_auth_for_metrics_endpoint: true
 ```
 
@@ -87,7 +87,7 @@ Our middleware is doing something really simple. For the vast majority of reques
 
 ## Comparing Both
 
-We replaced the `BaseHTTPMiddleware` subclass with a pure ASGI middleware. To benchmark the difference, we used Apache Bench<sup>[2](/blog/fastapi-middleware-performance#footnote-2)</sup> to compare both configurations of LiteLLM's middleware stack: the old setup (1 pure ASGI + 1 `BaseHTTPMiddleware`) against the new setup (2 pure ASGI).
+We replaced the `BaseHTTPMiddleware` subclass with a pure ASGI middleware. To benchmark the difference, we used Apache Bench<sup>[2](/blog/fastapi-middleware-performance#footnote-2)</sup> to compare both configurations of Lumina's middleware stack: the old setup (1 pure ASGI + 1 `BaseHTTPMiddleware`) against the new setup (2 pure ASGI).
 
 A minimal FastAPI app serves `GET /health` → `PlainTextResponse("ok")`. The endpoint does zero work to isolate the middleware overhead: any difference between configs is purely the cost of the middleware plumbing itself. Both middlewares are just calling the next layer. Same work, different base class.
 
@@ -183,7 +183,7 @@ class PrometheusAuthMiddleware:
             await self.app(scope, receive, send)
             return
 
-        if litellm.require_auth_for_metrics_endpoint is True:
+        if lumina.require_auth_for_metrics_endpoint is True:
             request = Request(scope, receive)
             api_key = request.headers.get("Authorization") or ""
             try:
@@ -198,9 +198,9 @@ class PrometheusAuthMiddleware:
 
 For the 99.9% of requests that aren't hitting `/metrics`, the middleware is now one dict lookup, one string check, and one function call. No objects allocated, no tasks spawned. 
 
-It's important to evaluate if the tools you're using are the right fit for the job as your software grows and handles more responsiblity. We're now putting in a static analysis check to prevent this from happening again with any newly introduced middlewares. If we find the use case is necessary then that's okay and we'll reevalute but for everything LiteLLM needs to do at the moment it's not. 
+It's important to evaluate if the tools you're using are the right fit for the job as your software grows and handles more responsiblity. We're now putting in a static analysis check to prevent this from happening again with any newly introduced middlewares. If we find the use case is necessary then that's okay and we'll reevalute but for everything Lumina needs to do at the moment it's not. 
 
-This middleware change was one part of a broader optimization effort on the LiteLLM proxy. Across all optimizations combined, we've measured about a **30% reduction in proxy overhead** over the past two weeks. 
+This middleware change was one part of a broader optimization effort on the Lumina proxy. Across all optimizations combined, we've measured about a **30% reduction in proxy overhead** over the past two weeks. 
 
 ---
 

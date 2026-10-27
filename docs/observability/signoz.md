@@ -3,18 +3,18 @@ import TabItem from '@theme/TabItem';
 
 # SigNoz
 
-Send LiteLLM traces to [SigNoz](https://signoz.io), Cloud or self-hosted, with the `signoz` callback. One endpoint field covers both deployments, and under OpenTelemetry v2 each team or virtual key can send its traces to its own SigNoz account with its own ingestion key. For the SigNoz side of the setup, including dashboards and alerts, see the [SigNoz LiteLLM observability docs](https://signoz.io/docs/litellm-observability/).
+Send Lumina traces to [SigNoz](https://signoz.io), Cloud or self-hosted, with the `signoz` callback. One endpoint field covers both deployments, and under OpenTelemetry v2 each team or virtual key can send its traces to its own SigNoz account with its own ingestion key. For the SigNoz side of the setup, including dashboards and alerts, see the [SigNoz Lumina observability docs](https://signoz.io/docs/lumina-observability/).
 
 ## Prerequisites
 
-For SigNoz Cloud you need the ingestion endpoint for your [region](https://signoz.io/docs/ingestion/signoz-cloud/overview/#endpoint) and an [ingestion key](https://signoz.io/docs/ingestion/signoz-cloud/keys/). For self-hosted SigNoz you need the URL of the SigNoz OTel Collector's OTLP HTTP port, `4318` by default, reachable from the proxy. No extra Python packages are required; the callback uses the OTLP HTTP exporter that ships with `litellm[proxy]`.
+For SigNoz Cloud you need the ingestion endpoint for your [region](https://signoz.io/docs/ingestion/signoz-cloud/overview/#endpoint) and an [ingestion key](https://signoz.io/docs/ingestion/signoz-cloud/keys/). For self-hosted SigNoz you need the URL of the SigNoz OTel Collector's OTLP HTTP port, `4318` by default, reachable from the proxy. No extra Python packages are required; the callback uses the OTLP HTTP exporter that ships with `lumina[proxy]`.
 
 ## Quick start
 
 Add `signoz` to `callbacks` and point it at your SigNoz instance. `LUMINA_OTEL_V2=true` is recommended: it gives you one trace per request covering the HTTP call, auth, guardrails, the model call and the spend write, and it is required for per-team routing. See [OpenTelemetry v2](./opentelemetry_v2) for what the v2 trace contains.
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   callbacks: ["signoz"]
 ```
 
@@ -50,7 +50,7 @@ curl -X POST 'http://localhost:4000/v1/chat/completions' \
   -d '{"model": "{{openai_small}}", "messages": [{"role": "user", "content": "What is SigNoz?"}]}'
 ```
 
-The trace appears in SigNoz under **Traces** for the service named by `OTEL_SERVICE_NAME` (default `litellm`), with a `chat <model>` span carrying the canonical `gen_ai.*` attributes for model, provider, token usage, cost and latency.
+The trace appears in SigNoz under **Traces** for the service named by `OTEL_SERVICE_NAME` (default `lumina`), with a `chat <model>` span carrying the canonical `gen_ai.*` attributes for model, provider, token usage, cost and latency.
 
 `SIGNOZ_INGESTION_ENDPOINT` is the OTLP base URL. The callback appends `/v1/traces` itself, and a value that already ends in `/v1/traces` is used as is. If the variable is unset or empty, the proxy logs an error naming `SIGNOZ_INGESTION_ENDPOINT` at startup and exports nothing; there is no default endpoint. The callback always speaks OTLP over HTTP; for OTLP gRPC use the generic `otel` callback described in [Metrics and logs](#metrics-and-logs).
 
@@ -58,7 +58,7 @@ You can also enable the callback from the Admin UI under **Settings > Logging & 
 
 ## Metrics and logs
 
-The `signoz` callback exports traces. LiteLLM's GenAI metrics and log events are not routed per vendor; they follow the proxy-wide OTLP settings, so to see them in SigNoz set the standard OpenTelemetry variables to the same destination:
+The `signoz` callback exports traces. Lumina's GenAI metrics and log events are not routed per vendor; they follow the proxy-wide OTLP settings, so to see them in SigNoz set the standard OpenTelemetry variables to the same destination:
 
 ```shell title=".env"
 LUMINA_OTEL_INTEGRATION_ENABLE_METRICS=true
@@ -76,7 +76,7 @@ Under OTel v2 a team or a virtual key can carry its own SigNoz destination, so t
 Requires `LUMINA_OTEL_V2=true`. Allowlist every tenant endpoint host first, or the proxy ignores that endpoint with a warning:
 
 ```yaml title="config.yaml"
-litellm_settings:
+lumina_settings:
   callbacks: ["signoz"]
   provider_url_destination_allowed_hosts: ["ingest.eu.signoz.cloud"]
 ```
@@ -131,9 +131,9 @@ The fields are read from the key and team the proxy resolved at auth, never from
 
 `GET /health/services?service=signoz` returns 200 when the callback is configured and a test span was queued. Because spans are batched and sent asynchronously, this confirms configuration, not delivery; a SigNoz endpoint that is down or rejecting the key still yields 200 here. To confirm delivery, send a chat completion and look for the trace in SigNoz.
 
-If spans do not arrive, set `OTEL_EXPORTER="console"` temporarily; if spans print to stdout, the problem is the endpoint or the key rather than LiteLLM. A 403 from SigNoz Cloud means the ingestion key is wrong or belongs to another region, and a 404 usually means the endpoint carries an unexpected path. In both cases the caller still gets its response; only that batch of spans is dropped, and later batches land once the destination accepts them.
+If spans do not arrive, set `OTEL_EXPORTER="console"` temporarily; if spans print to stdout, the problem is the endpoint or the key rather than Lumina. A 403 from SigNoz Cloud means the ingestion key is wrong or belongs to another region, and a 404 usually means the endpoint carries an unexpected path. In both cases the caller still gets its response; only that batch of spans is dropped, and later batches land once the destination accepts them.
 
-Spans still queued in the batch processor when the proxy receives SIGTERM can be lost. This affects every OpenTelemetry-based callback in LiteLLM, not just SigNoz, and is tracked upstream.
+Spans still queued in the batch processor when the proxy receives SIGTERM can be lost. This affects every OpenTelemetry-based callback in Lumina, not just SigNoz, and is tracked upstream.
 
 ## Without OTel v2
 
@@ -141,19 +141,19 @@ The `signoz` callback also works with `LUMINA_OTEL_V2` unset. It then uses the l
 
 ## Dashboards
 
-SigNoz publishes a [LiteLLM Proxy dashboard](https://signoz.io/docs/dashboards/dashboard-templates/litellm-proxy-dashboard/) and a [LiteLLM SDK dashboard](https://signoz.io/docs/dashboards/dashboard-templates/litellm-sdk-dashboard/) with import instructions.
+SigNoz publishes a [Lumina Proxy dashboard](https://signoz.io/docs/dashboards/dashboard-templates/lumina-proxy-dashboard/) and a [Lumina SDK dashboard](https://signoz.io/docs/dashboards/dashboard-templates/lumina-sdk-dashboard/) with import instructions.
 
-![LiteLLM Proxy Dashboard Template](/img/observability/signoz_proxy_dashboard.webp)
+![Lumina Proxy Dashboard Template](/img/observability/signoz_proxy_dashboard.webp)
 
-## LiteLLM SDK
+## Lumina SDK
 
-The `signoz` callback is available in the SDK as well. Set the same environment variables and enable it before any LiteLLM call:
+The `signoz` callback is available in the SDK as well. Set the same environment variables and enable it before any Lumina call:
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
-litellm.callbacks = ["signoz"]
+lumina.callbacks = ["signoz"]
 
 response = completion(
   model="openai/{{openai_large}}",
@@ -178,7 +178,7 @@ uv add \
   opentelemetry-exporter-otlp \
   httpx \
   opentelemetry-instrumentation-httpx \
-  litellm
+  lumina
 ```
 
 **Step 2:** Install the instrumentations for what is already in your environment.
@@ -187,12 +187,12 @@ uv add \
 opentelemetry-bootstrap --action=install
 ```
 
-**Step 3:** Enable the LiteLLM callback in your code before any LiteLLM call.
+**Step 3:** Enable the Lumina callback in your code before any Lumina call.
 
 ```python
-import litellm
+import lumina
 
-litellm.callbacks = ["otel"]
+lumina.callbacks = ["otel"]
 ```
 
 **Step 4:** Run the application under the auto-instrumentation agent.
@@ -211,7 +211,7 @@ OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=openai \
 opentelemetry-instrument <your_run_command>
 ```
 
-OTLP gRPC requires `grpcio`; install it with `uv add "litellm[grpc]"`. `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=openai` turns off the OpenAI instrumentor so that LLM calls are traced once, by LiteLLM, rather than twice. Replace `<service_name>`, `<region>`, `<your_ingestion_key>` and `<your_run_command>` (for example `python main.py`) with your values. For self-hosted SigNoz, change the endpoint and drop the headers variable as described in [Cloud to Self-Hosted](https://signoz.io/docs/ingestion/cloud-vs-self-hosted/#cloud-to-self-hosted).
+OTLP gRPC requires `grpcio`; install it with `uv add "lumina[grpc]"`. `OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=openai` turns off the OpenAI instrumentor so that LLM calls are traced once, by Lumina, rather than twice. Replace `<service_name>`, `<region>`, `<your_ingestion_key>` and `<your_run_command>` (for example `python main.py`) with your values. For self-hosted SigNoz, change the endpoint and drop the headers variable as described in [Cloud to Self-Hosted](https://signoz.io/docs/ingestion/cloud-vs-self-hosted/#cloud-to-self-hosted).
 
 </TabItem>
 
@@ -228,7 +228,7 @@ uv add \
   opentelemetry-exporter-otlp \
   opentelemetry-instrumentation-httpx \
   opentelemetry-instrumentation-system-metrics \
-  litellm
+  lumina
 ```
 
 **Step 2:** Set up the tracer provider.
@@ -307,13 +307,13 @@ HTTPXClientInstrumentor().instrument()
 
 `OTEL_EXPORTER_METRICS_ENDPOINT` is `https://ingest.<region>.signoz.cloud:443/v1/metrics`. `SystemMetricsInstrumentor` provides CPU and memory metrics and `HTTPXClientInstrumentor` provides outbound HTTP request metrics such as duration. For custom metrics see [Python Custom Metrics](https://signoz.io/opentelemetry/python-custom-metrics/).
 
-**Step 5:** Enable the LiteLLM callback and run.
+**Step 5:** Enable the Lumina callback and run.
 
 ```python
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
-litellm.callbacks = ["otel"]
+lumina.callbacks = ["otel"]
 
 response = completion(
   model="openai/{{openai_large}}",
@@ -329,8 +329,8 @@ For self-hosted SigNoz, change the endpoints and drop the header as described in
 
 Traces, logs and metrics from the SDK show up under the matching tabs in SigNoz, and the **Related Logs** button on a trace opens the logs correlated with it.
 
-![LiteLLM SDK Detailed Trace View](/img/observability/signoz_sdk_detailed_traces.webp)
+![Lumina SDK Detailed Trace View](/img/observability/signoz_sdk_detailed_traces.webp)
 
 ## Support
 
-For help with the SigNoz side, use the [SigNoz community Slack](https://signoz.io/slack) or [SigNoz support](https://signoz.io/support/). For the LiteLLM callback, open an issue at [BerriAI/litellm](https://github.com/BerriAI/litellm/issues).
+For help with the SigNoz side, use the [SigNoz community Slack](https://signoz.io/slack) or [SigNoz support](https://signoz.io/support/). For the Lumina callback, open an issue at [Soventra/lumina](https://github.com/Soventra/lumina/issues).

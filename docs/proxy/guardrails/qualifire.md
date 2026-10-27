@@ -8,11 +8,11 @@ Use [Qualifire](https://qualifire.ai) to evaluate LLM outputs for quality, safet
 
 ## Quick Start
 
-### 1. Define Guardrails on your LiteLLM config.yaml
+### 1. Define Guardrails on your Lumina config.yaml
 
 Define your guardrails under the `guardrails` section:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
@@ -55,10 +55,10 @@ guardrails:
 - `post_call` Run **after** LLM call, on **input & output**
 - `during_call` Run **during** LLM call, on **input**. Same as `pre_call` but runs in parallel as LLM call. Response not returned until guardrail check completes
 
-### 2. Start LiteLLM Gateway
+### 2. Start Lumina Gateway
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ### 3. Test request
@@ -126,7 +126,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 
 You can use evaluations pre-configured in the [Qualifire Dashboard](https://app.qualifire.ai) by specifying the `evaluation_id`:
 
-```yaml showLineNumbers title="litellm config.yaml"
+```yaml showLineNumbers title="lumina config.yaml"
 guardrails:
   - guardrail_name: "qualifire-eval"
     lumina_params:
@@ -136,7 +136,7 @@ guardrails:
       evaluation_id: eval_abc123 # Your evaluation ID from Qualifire dashboard
 ```
 
-When `evaluation_id` is provided, LiteLLM will use the invoke evaluation API endpoint instead of the evaluate endpoint, running the pre-configured evaluation from your dashboard.
+When `evaluation_id` is provided, Lumina will use the invoke evaluation API endpoint instead of the evaluate endpoint, running the pre-configured evaluation from your dashboard.
 
 ## Available Checks
 

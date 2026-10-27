@@ -1,6 +1,6 @@
 ---
 slug: cleaner-release-versions
-title: "LiteLLM release versioning is changing: standard names, MINOR for weekly, PATCH for hotfixes"
+title: "Lumina release versioning is changing: standard names, MINOR for weekly, PATCH for hotfixes"
 date: 2026-04-28
 authors:
   - yuneng
@@ -12,20 +12,20 @@ hide_table_of_contents: false
 *Last Updated: July 2026*
 
 :::warning[`main-stable` is deprecated; migrate to `:latest`]
-The legacy `main-stable` Docker tag still advances each week so existing deployments keep working. We're targeting **September 1, 2026** to stop publishing it, though that date is still being finalized through an [open deprecation discussion](https://github.com/BerriAI/litellm/discussions/32090) and may change based on feedback. Going forward, **`:latest`** is the canonical rolling pointer to the newest stable image; it advances automatically when each stable ships and matches the standard Docker convention.
+The legacy `main-stable` Docker tag still advances each week so existing deployments keep working. We're targeting **September 1, 2026** to stop publishing it, though that date is still being finalized through an [open deprecation discussion](https://github.com/Soventra/lumina/discussions/32090) and may change based on feedback. Going forward, **`:latest`** is the canonical rolling pointer to the newest stable image; it advances automatically when each stable ships and matches the standard Docker convention.
 
 `main-stable` carries over from the previous naming scheme and doesn't fit modern conventions: it mixes "main" (typically a development branch) with "stable" (a release channel), and has no PyPI counterpart.
 
 **Migration:**
 
-- **Rolling stable (Docker)** → `ghcr.io/berriai/litellm:latest`
-- **Reproducible pin (Docker)** → `ghcr.io/berriai/litellm:1.84.0`
-- **Reproducible pin (PyPI)** → `pip install litellm==1.84.0`
+- **Rolling stable (Docker)** → `ghcr.io/soventra/lumina:latest`
+- **Reproducible pin (Docker)** → `ghcr.io/soventra/lumina:1.84.0`
+- **Reproducible pin (PyPI)** → `pip install lumina==1.84.0`
 
 This banner will be updated as the timeline is confirmed.
 :::
 
-LiteLLM release version names are changing. Two pain points have been driving this:
+Lumina release version names are changing. Two pain points have been driving this:
 
 **1. The `-stable` and `-nightly` suffixes aren't standard.**
 
@@ -43,7 +43,7 @@ Starting with **`1.84.0`**:
 
 - **Drop the suffix.** Stable releases are plain PEP 440 / SemVer 2.0: `1.84.0`. Pre-releases use the standard PEP 440 (`1.84.0rc1`, `1.84.0.dev42`) and SemVer (`1.84.0-rc.1`, `1.84.0-dev.42`) shapes for PyPI and Docker respectively.
 - **MINOR bumps weekly.** Each scheduled stable bumps the MINOR component: `1.84.0` -> `1.85.0` -> `1.86.0`.
-- **PATCH is reserved for hotfixes.** When `1.84.0` needs a fix, it becomes `1.84.1`. Cleanly installs everywhere - `pip install litellm==1.84.1`, `docker pull ghcr.io/berriai/litellm:1.84.1`.
+- **PATCH is reserved for hotfixes.** When `1.84.0` needs a fix, it becomes `1.84.1`. Cleanly installs everywhere - `pip install lumina==1.84.1`, `docker pull ghcr.io/soventra/lumina:1.84.1`.
 
 ## Side-by-side
 
@@ -66,7 +66,7 @@ If a maintenance patch is needed on a pre-cutover release line (e.g. a fix on `1
 
 ## A few things worth knowing
 
-- **The `v` prefix is optional on Docker tags.** Every Docker tag going forward is published in both bare and `v`-prefixed form; `ghcr.io/berriai/litellm:1.84.0` and `ghcr.io/berriai/litellm:v1.84.0` resolve to the same image (same `sha256` digest), and the same applies to release-candidate and dev/nightly tags. Existing pins that include the `v` prefix keep working without change. PyPI versions remain the bare PEP 440 form: `pip install litellm==1.84.0` (not `==v1.84.0`).
-- **`litellm-dev`** - there's a separate `litellm-dev` PyPI package and `*-dev` Docker image family for ad-hoc and one-off builds (e.g. testing a fix before it lands in a release). **Not for production use.** Anything pinned to the standard `litellm` package or `ghcr.io/berriai/litellm:*` Docker tags will never accidentally pick up a `litellm-dev` build.
+- **The `v` prefix is optional on Docker tags.** Every Docker tag going forward is published in both bare and `v`-prefixed form; `ghcr.io/soventra/lumina:1.84.0` and `ghcr.io/soventra/lumina:v1.84.0` resolve to the same image (same `sha256` digest), and the same applies to release-candidate and dev/nightly tags. Existing pins that include the `v` prefix keep working without change. PyPI versions remain the bare PEP 440 form: `pip install lumina==1.84.0` (not `==v1.84.0`).
+- **`lumina-dev`** - there's a separate `lumina-dev` PyPI package and `*-dev` Docker image family for ad-hoc and one-off builds (e.g. testing a fix before it lands in a release). **Not for production use.** Anything pinned to the standard `lumina` package or `ghcr.io/soventra/lumina:*` Docker tags will never accidentally pick up a `lumina-dev` build.
 - **`:latest` Docker tag** points to the most recent stable release on each registry, advancing automatically when a new stable ships. For production deployments we still recommend pinning to a content tag (e.g. `:1.84.0`) so deploys are reproducible.
 - **Image signing** ([cosign verify](/blog/ci-cd-v2-improvements#verify-docker-image-signatures)) and verification commands continue to work unchanged with the new tag shapes.

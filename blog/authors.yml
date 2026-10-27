@@ -1,18 +1,18 @@
-litellm:
-  name: LiteLLM Team
-  title: LiteLLM Core Team
-  url: https://github.com/BerriAI/litellm
+lumina:
+  name: Lumina Team
+  title: Lumina Core Team
+  url: https://github.com/Soventra/lumina
   image_url: https://github.com/BerriAI.png
 
 joshua:
   name: Joshua Valluru
-  title: SWE, LiteLLM
+  title: SWE, Lumina
   url: https://github.com/joshua-berri
   image_url: https://github.com/joshua-berri.png
 
 yujonglee:
   name: Yujong Lee
-  title: Senior SWE, LiteLLM
+  title: Senior SWE, Lumina
   url: https://www.linkedin.com/in/yujong1ee/
   email: yujong@berri.ai
   socials:
@@ -21,67 +21,67 @@ yujonglee:
 
 sameer:
   name: Sameer Kankute
-  title: SWE @ LiteLLM (LLM Translation)
+  title: SWE @ Lumina (LLM Translation)
   url: https://www.linkedin.com/in/sameer-kankute/
   image_url: https://pbs.twimg.com/profile_images/2001352686994907136/ONgNuSk5_400x400.jpg
 
 krrish:
   name: Krrish Dholakia
-  title: CEO, LiteLLM
+  title: CEO, Lumina
   url: https://www.linkedin.com/in/krish-d/
   image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
 
 ishaan:
   name: Ishaan Jaffer
-  title: CTO, LiteLLM
+  title: CTO, Lumina
   url: https://www.linkedin.com/in/reffajnaahsi/
   image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
 
 # Alias for typo in name
 ishaan-alt:
   name: Ishaan Jaffer
-  title: CTO, LiteLLM
+  title: CTO, Lumina
   url: https://www.linkedin.com/in/reffajnaahsi/
   image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
 
 ryan:
   name: Ryan Crabbe
-  title: Performance Engineer, LiteLLM
+  title: Performance Engineer, Lumina
   url: https://www.linkedin.com/in/ryan-crabbe-0b9687214
   image_url: https://media.licdn.com/dms/image/v2/D5603AQHt1t9Z4BJ6Gw/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1724453682340?e=1772064000&v=beta&t=VXdmr13rsNB05wyA2F1TENOB5UuDHUZ0FCHTolNyR5M
 
 alexsander:
   name: Alexsander Hamir
-  title: Performance Engineer, LiteLLM
+  title: Performance Engineer, Lumina
   url: https://www.linkedin.com/in/alexsander-baptista/
   image_url: https://github.com/AlexsanderHamir.png
 
 yuneng:
   name: Yuneng Jiang
-  title: Senior SWE @ LiteLLM
+  title: Senior SWE @ Lumina
   url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
   image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 
 mateo:
   name: Mateo Wang
-  title: AI Engineer, LiteLLM
+  title: AI Engineer, Lumina
   url: https://www.linkedin.com/in/mateo-wang
   image_url: /img/mateo.jpeg
 
 oliver:
   name: Oliver Jensen
-  title: Director of Security, LiteLLM
+  title: Director of Security, Lumina
   image_url: /img/authors/oliver.png
 
 misbah:
   name: Misbah Syed
-  title: DevRel Engineer, LiteLLM
+  title: DevRel Engineer, Lumina
   url: https://github.com/misbahsy
   image_url: https://avatars.githubusercontent.com/u/35427888?v=4
 
 tin:
   name: Tin Lo
-  title: AI Product Engineer, LiteLLM
+  title: AI Product Engineer, Lumina
   url: https://www.linkedin.com/in/tinchi-lo/
   image_url: /img/authors/tin.png
 
@@ -92,7 +92,7 @@ mubashir:
 
 yassin:
   name: Yassin Kortam
-  title: Senior SWE @ LiteLLM
+  title: Senior SWE @ Lumina
   url: https://www.linkedin.com/in/yassink/
   image_url: /img/yassin.jpg
 
@@ -104,20 +104,20 @@ varoon:
 
 moe:
   name: Moe Khalil
-  title: AI Product Engineer, LiteLLM
+  title: AI Product Engineer, Lumina
   url: https://www.linkedin.com/in/moe-khalil-73a2371a1/
   image_url: /img/authors/moe.jpg
 
 kerry:
   name: Kerry Lu
-  title: Rust Engineer, LiteLLM
+  title: Rust Engineer, Lumina
   url: https://github.com/kerry-berri
   image_url: https://github.com/kerry-berri.png
 
 gabriele:
   name: Gabriele Michelli
-  title: LiteLLM
-  url: https://github.com/BerriAI/litellm
+  title: Lumina
+  url: https://github.com/Soventra/lumina
 
 # Pfizer AI Platform Engineering (guest authors)
 aleksandr-liadov:
@@ -147,6 +147,6 @@ alexey-reznichenko:
 
 nate:
   name: Nate Armstrong
-  title: Lead Rust Engineer, LiteLLM
+  title: Lead Rust Engineer, Lumina
   url: https://www.linkedin.com/in/naterarmstrong/
   image_url: /img/authors/nate.jpeg

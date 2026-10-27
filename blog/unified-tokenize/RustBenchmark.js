@@ -3,7 +3,7 @@ import benchmark from "./results.json";
 import styles from "./benchmark.module.css";
 
 const source =
-  "https://github.com/BerriAI/litellm-docs/blob/main/blog/unified-tokenize/benchmark.py";
+  "https://github.com/Soventra/lumina-docs/blob/main/blog/unified-tokenize/benchmark.py";
 
 export default function RustBenchmark() {
   const [selected, setSelected] = useState(0);
@@ -166,7 +166,7 @@ export default function RustBenchmark() {
             {benchmark.environment.machine}, {benchmark.environment.os}, Python{" "}
             {benchmark.environment.python}. Optimized Rust release build at{" "}
             <a
-              href={`https://github.com/BerriAI/litellm/commit/${benchmark.environment.implementation_commit}`}
+              href={`https://github.com/Soventra/lumina/commit/${benchmark.environment.implementation_commit}`}
             >
               {benchmark.environment.implementation_commit.slice(0, 7)}
             </a>
@@ -181,7 +181,7 @@ export default function RustBenchmark() {
             latency percentiles. Workers start their next call after the
             previous call completes.
           </p>
-          <a href="https://github.com/BerriAI/litellm-docs/blob/main/blog/unified-tokenize/results.json">
+          <a href="https://github.com/Soventra/lumina-docs/blob/main/blog/unified-tokenize/results.json">
             Read the raw measurements <span aria-hidden="true">↗</span>
           </a>
         </details>

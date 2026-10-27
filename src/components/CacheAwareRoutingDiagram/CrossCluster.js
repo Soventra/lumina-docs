@@ -15,7 +15,7 @@ export default function CrossClusterRoutingDiagram() {
         <svg className={styles.diagram} viewBox="0 0 760 650" role="img" aria-labelledby={`${id}-title ${id}-description`}>
           <title id={`${id}-title`}>Two-tier cache-aware routing across GPU clusters</title>
           <desc id={`${id}-description`}>
-            A top-level LiteLLM instance C uses session affinity to select LiteLLM
+            A top-level Lumina instance C uses session affinity to select Lumina
             A or B in separate GPU clusters. The selected instance discovers its
             local pods and uses the forwarded session ID to select a stable pod.
             The highlighted example routes conversation-123 through C to A to
@@ -35,7 +35,7 @@ export default function CrossClusterRoutingDiagram() {
           <path d="M 380 66 V 104" className={styles.session} markerEnd={arrow('session')} />
 
           <rect x="230" y="110" width="300" height="76" rx="12" className={styles.gateway} />
-          <text x="380" y="141" textAnchor="middle" className={styles.title}>Top-level LiteLLM C</text>
+          <text x="380" y="141" textAnchor="middle" className={styles.title}>Top-level Lumina C</text>
           <text x="380" y="165" textAnchor="middle" className={styles.subtitle}>Session affinity selects A or B</text>
 
           {[16, 392].map((x) => (
@@ -57,7 +57,7 @@ export default function CrossClusterRoutingDiagram() {
                 <text x={x + 54} y="282" className={styles.clusterLabel}>GPU cluster {name}</text>
 
                 <rect x={x + 48} y="306" width="256" height="70" rx="12" className={selected ? styles.gateway : styles.card} />
-                <text x={center} y="334" textAnchor="middle" className={styles.title}>LiteLLM {name}</text>
+                <text x={center} y="334" textAnchor="middle" className={styles.title}>Lumina {name}</text>
                 <text x={center} y="357" textAnchor="middle" className={styles.subtitle}>Local pod discovery + affinity</text>
 
                 <path d={`M ${center} 412 V 382`} className={styles.discovery} markerEnd={arrow('discovery')} />

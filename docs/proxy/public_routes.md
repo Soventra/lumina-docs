@@ -24,7 +24,7 @@ Allow specific routes to be accessed without authentication:
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
-  public_routes: ["LiteLLMRoutes.public_routes", "/spend/calculate"]
+  public_routes: ["LuminaRoutes.public_routes", "/spend/calculate"]
 ```
 
 ### Restrict Routes to Admin Only
@@ -47,7 +47,7 @@ general_settings:
   allowed_routes: ["/chat/completions", "/embeddings"]
 ```
 
-`allowed_routes` is an exact-match list checked before the public route check, so route group names like `LiteLLMRoutes.public_routes` and wildcards are not expanded here. Any route not listed that goes through authentication, for example `/routes` or `/models`, returns `403 Route ... not allowed`. Unauthenticated endpoints such as `/health/liveliness` and `/health/readiness` are unaffected by `allowed_routes` and stay reachable. List every authenticated route that must stay reachable.
+`allowed_routes` is an exact-match list checked before the public route check, so route group names like `LuminaRoutes.public_routes` and wildcards are not expanded here. Any route not listed that goes through authentication, for example `/routes` or `/models`, returns `403 Route ... not allowed`. Unauthenticated endpoints such as `/health/liveliness` and `/health/readiness` are unaffected by `allowed_routes` and stay reachable. List every authenticated route that must stay reachable.
 
 ## Usage Examples
 
@@ -56,12 +56,12 @@ general_settings:
 ```yaml
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
-  public_routes: ["LiteLLMRoutes.public_routes", "/spend/calculate"]
+  public_routes: ["LuminaRoutes.public_routes", "/spend/calculate"]
   admin_only_routes: ["/key/generate"]
   allowed_routes: ["/chat/completions", "/spend/calculate"]
 ```
 
-`LiteLLMRoutes.public_routes` in `public_routes` refers to the default public routes on LiteLLM, which stay public without being listed. [View the source](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/_types.py). It is not expanded in `allowed_routes`.
+`LuminaRoutes.public_routes` in `public_routes` refers to the default public routes on Lumina, which stay public without being listed. [View the source](https://github.com/Soventra/lumina/blob/main/lumina/proxy/_types.py). It is not expanded in `allowed_routes`.
 
 ### Testing
 
@@ -142,7 +142,7 @@ curl --location 'http://0.0.0.0:4000/embeddings' \
 -H "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
 "model": "text-embedding-ada-002",
-"input": ["write a litellm poem"]
+"input": ["write a lumina poem"]
 }'
 ```
 
@@ -182,7 +182,7 @@ Use wildcard patterns to match multiple routes at once.
 general_settings:
   master_key: os.environ/LUMINA_MASTER_KEY
   public_routes:
-    - "LiteLLMRoutes.public_routes"
+    - "LuminaRoutes.public_routes"
     - "/api/v1/*"      # All routes under /api/v1/
     - "/health/*"       # All health check routes
 ```

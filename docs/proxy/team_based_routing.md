@@ -37,7 +37,7 @@ general_settings:
 Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### Create Team with Model Alias

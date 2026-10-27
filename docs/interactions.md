@@ -8,19 +8,19 @@ import TabItem from '@theme/TabItem';
 | Logging | ✅ | Works across all integrations |
 | Streaming | ✅ | |
 | Loadbalancing | ✅ | Between supported models |
-| Supported LLM providers | **All LiteLLM supported CHAT COMPLETION providers** | `openai`, `anthropic`, `bedrock`, `vertex_ai`, `gemini`, `azure`, `azure_ai` etc. |
+| Supported LLM providers | **All Lumina supported CHAT COMPLETION providers** | `openai`, `anthropic`, `bedrock`, `vertex_ai`, `gemini`, `azure`, `azure_ai` etc. |
 
-## **LiteLLM Python SDK Usage**
+## **Lumina Python SDK Usage**
 
 ### Quick Start
 
 ```python showLineNumbers title="Create Interaction"
-import litellm
+import lumina
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
 
-response = litellm.interactions.create(
+response = lumina.interactions.create(
     model="gemini/{{gemini_flash}}",
     input="Tell me a short joke about programming."
 )
@@ -31,14 +31,14 @@ print(response.outputs[-1].text)
 ### Async Usage
 
 ```python showLineNumbers title="Async Create Interaction"
-import litellm
+import lumina
 import os
 import asyncio
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
 
 async def main():
-    response = await litellm.interactions.acreate(
+    response = await lumina.interactions.acreate(
         model="gemini/{{gemini_flash}}",
         input="Tell me a short joke about programming."
     )
@@ -50,12 +50,12 @@ asyncio.run(main())
 ### Streaming
 
 ```python showLineNumbers title="Streaming Interaction"
-import litellm
+import lumina
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
 
-response = litellm.interactions.create(
+response = lumina.interactions.create(
     model="gemini/{{gemini_flash}}",
     input="Write a 3 paragraph story about a robot.",
     stream=True
@@ -65,11 +65,11 @@ for chunk in response:
     print(chunk)
 ```
 
-## **LiteLLM AI Gateway (Proxy) Usage**
+## **Lumina AI Gateway (Proxy) Usage**
 
 ### Setup
 
-Add this to your litellm proxy config.yaml:
+Add this to your lumina proxy config.yaml:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -79,10 +79,10 @@ model_list:
       api_key: os.environ/GEMINI_API_KEY
 ```
 
-Start litellm:
+Start lumina:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -126,14 +126,14 @@ curl "http://localhost:4000/v1beta/interactions/{interaction_id}" \
 
 <TabItem value="google-sdk" label="Google GenAI SDK">
 
-Point the Google GenAI SDK to LiteLLM Proxy:
+Point the Google GenAI SDK to Lumina Proxy:
 
-```python showLineNumbers title="Google GenAI SDK with LiteLLM Proxy"
+```python showLineNumbers title="Google GenAI SDK with Lumina Proxy"
 from google import genai
 
-# Point SDK to LiteLLM Proxy
+# Point SDK to Lumina Proxy
 client = genai.Client(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM API key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina API key
     http_options={"base_url": "http://localhost:4000"},
 )
 
@@ -152,7 +152,7 @@ print(interaction.outputs[-1].text)
 from google import genai
 
 client = genai.Client(
-    api_key="sk-<your-litellm-api-key>",  # Your LiteLLM API key
+    api_key="sk-<your-lumina-api-key>",  # Your Lumina API key
     http_options={"base_url": "http://localhost:4000"},
 )
 
@@ -207,19 +207,19 @@ for chunk in client.interactions.create_stream(
 
 ## **Calling non-Interactions API endpoints (`/interactions` to `/responses` Bridge)**
 
-LiteLLM allows you to call non-Interactions API models via a bridge to LiteLLM's `/responses` endpoint. This is useful for calling OpenAI, Anthropic, and other providers that don't natively support the Interactions API.
+Lumina allows you to call non-Interactions API models via a bridge to Lumina's `/responses` endpoint. This is useful for calling OpenAI, Anthropic, and other providers that don't natively support the Interactions API.
 
 #### Python SDK Usage
 
 ```python showLineNumbers title="SDK Usage"
-import litellm
+import lumina
 import os
 
 # Set API key
 os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
 
 # Non-streaming interaction
-response = litellm.interactions.create(
+response = lumina.interactions.create(
     model="{{openai_large}}",
     input="Tell me a short joke about programming."
 )
@@ -227,7 +227,7 @@ response = litellm.interactions.create(
 print(response.outputs[-1].text)
 ```
 
-#### LiteLLM Proxy Usage
+#### Lumina Proxy Usage
 
 **Setup Config:**
 
@@ -241,8 +241,8 @@ model_list:
 
 **Start Proxy:**
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config /path/to/config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -264,4 +264,4 @@ curl http://localhost:4000/v1beta/interactions \
 | Provider | Link to Usage |
 |----------|---------------|
 | Google AI Studio | [Usage](#quick-start) |
-| All other LiteLLM providers | [Bridge Usage](#calling-non-interactions-api-endpoints-interactions-to-responses-bridge) |
+| All other Lumina providers | [Bridge Usage](#calling-non-interactions-api-endpoints-interactions-to-responses-bridge) |

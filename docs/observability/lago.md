@@ -14,7 +14,7 @@ Use just 1 lines of code, to instantly log your responses **across all providers
 Get your Lago [API Key](https://docs.getlago.com/guide/self-hosted/docker#find-your-api-key)
 
 ```python
-litellm.callbacks = ["lago"] # logs cost + usage of successful calls to lago
+lumina.callbacks = ["lago"] # logs cost + usage of successful calls to lago
 ```
 
 
@@ -23,7 +23,7 @@ litellm.callbacks = ["lago"] # logs cost + usage of successful calls to lago
 
 ```python
 # uv add lago 
-import litellm
+import lumina
 import os
 
 os.environ["LAGO_API_BASE"] = "" # http://0.0.0.0:3000
@@ -34,11 +34,11 @@ os.environ["LAGO_API_CHARGE_BY"] = "user_id" # the default, end_user_id, is only
 # LLM API Keys
 os.environ['OPENAI_API_KEY']=""
 
-# set lago as a callback, litellm will send the data to lago
-litellm.success_callback = ["lago"] 
+# set lago as a callback, lumina will send the data to lago
+lumina.success_callback = ["lago"] 
  
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_small}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -59,14 +59,14 @@ model_list:
     model: openai/my-fake-model
   model_name: fake-openai-endpoint
 
-litellm_settings:
+lumina_settings:
   callbacks: ["lago"] # KEY CHANGE
 ```
 
 2. Start Proxy
 
 ```
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -99,7 +99,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="{{openai_small}}", messages = [
     {
         "role": "user",
@@ -138,7 +138,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -155,7 +155,7 @@ print(response)
 
 ## Advanced - Lagos Logging object 
 
-This is what LiteLLM will log to Lagos
+This is what Lumina will log to Lagos
 
 ```
 {
@@ -165,7 +165,7 @@ This is what LiteLLM will log to Lagos
       "code": os.getenv("LAGO_API_EVENT_CODE"), 
       "properties": {
           "model": <string>,
-          "response_cost": <number>, # LITELLM CALCULATED RESPONSE COST - https://github.com/BerriAI/litellm/blob/d43f75150a65f91f60dc2c0c9462ce3ffc713c1f/litellm/utils.py#L1473
+          "response_cost": <number>, # LUMINA CALCULATED RESPONSE COST - https://github.com/Soventra/lumina/blob/d43f75150a65f91f60dc2c0c9462ce3ffc713c1f/lumina/utils.py#L1473
           "prompt_tokens": <number>,
           "completion_tokens": <number>,
           "total_tokens": <number>

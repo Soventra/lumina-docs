@@ -45,7 +45,7 @@ async function renderSocialCard({title, section = 'Documentation'}) {
 
   const [{layer: titleLayer, size}, logo] = await Promise.all([
     fitTitle(cleanTitle),
-    sharp(path.join(assets, 'litellm-logo-blue.svg')).resize({width: 304}).png().toBuffer(),
+    sharp(path.join(assets, 'lumina-logo-blue.svg')).resize({width: 304}).png().toBuffer(),
   ]);
   const sectionLayer = cleanSection ? await textLayer(cleanSection, 34, muted, {bold: true, wrap: 'none'}) : null;
   if (sectionLayer && sectionLayer.info.width > 1040) throw new Error('The section is too wide to fit.');

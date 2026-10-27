@@ -103,7 +103,7 @@ When you add a new model or MCP server to a group, every key and team attached t
 
 ## Access Group vs. Model Access Groups
 
-LiteLLM has two related concepts:
+Lumina has two related concepts:
 
 | Feature    | **Access Groups** (this page)                                           | **Model Access Groups**                                 |
 | ---------- | ----------------------------------------------------------------------- | ------------------------------------------------------- |

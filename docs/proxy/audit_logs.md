@@ -13,7 +13,7 @@ import Image from '@theme/IdealImage';
 
 As a Proxy Admin, you can check if and when a entity (key, team, user, model) was created, updated, deleted, or regenerated, along with who performed the action. This is useful for auditing and compliance.
 
-LiteLLM tracks changes to the following entities and actions:
+Lumina tracks changes to the following entities and actions:
 
 - **Entities:** Keys, Teams, Users, Models
 - **Actions:** Create, Update, Delete, Regenerate
@@ -23,16 +23,16 @@ LiteLLM tracks changes to the following entities and actions:
 ## Usage
 
 ### 1. Switch on audit Logs 
-With an enterprise license, audit logs are on by default, so there is nothing to configure. On other plans, or if you want to be explicit, add `store_audit_logs` to your litellm config.yaml and then start the proxy
+With an enterprise license, audit logs are on by default, so there is nothing to configure. On other plans, or if you want to be explicit, add `store_audit_logs` to your lumina config.yaml and then start the proxy
 ```shell
-litellm_settings:
+lumina_settings:
   store_audit_logs: true
 ```
 
 To turn audit logs off on an enterprise license, set it explicitly to `false`, which takes precedence over the default. `LUMINA_STORE_AUDIT_LOGS` works the same way as the config setting and is read when the config leaves `store_audit_logs` unset
 
 ```shell
-litellm_settings:
+lumina_settings:
   store_audit_logs: false
 ```
 
@@ -49,9 +49,9 @@ curl -X POST 'http://0.0.0.0:4000/key/delete' \
     }'
 ```
 
-### 3. View the audit log on LiteLLM UI
+### 3. View the audit log on Lumina UI
 
-On the LiteLLM UI, navigate to Logs -> Audit Logs. You should see the audit log for the key deletion.
+On the Lumina UI, navigate to Logs -> Audit Logs. You should see the audit log for the key deletion.
 
 <Image 
   img={require('../../img/key_delete.png')}
@@ -65,10 +65,10 @@ You can export audit logs to an external storage backend (e.g. S3) in addition t
 
 ### S3 Example
 
-Add `audit_log_callbacks` and `s3_callback_params` to your `litellm_settings`:
+Add `audit_log_callbacks` and `s3_callback_params` to your `lumina_settings`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   store_audit_logs: true
   audit_log_callbacks: ["s3_v2"]
   s3_callback_params:
@@ -76,7 +76,7 @@ litellm_settings:
     s3_region_name: us-west-2                # AWS Region
     s3_aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
     s3_aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
-    s3_path: litellm-audit                   # [OPTIONAL] prefix path in the bucket
+    s3_path: lumina-audit                   # [OPTIONAL] prefix path in the bucket
 ```
 
 Audit logs are written as JSON files to:
@@ -98,7 +98,7 @@ s3://<bucket>/<s3_path>/audit_logs/<YYYY-MM-DD>/<HH-MM-SS>_<audit-log-id>.json
 If you also send normal request/response logs to S3 via `callbacks: ["s3_v2"]`, by default both streams share `s3_callback_params` and land in the same bucket. To send audit logs to a different bucket (e.g. a compliance-only bucket with stricter access controls or longer retention), add an `s3_audit_callback_params` block. It accepts the same fields as `s3_callback_params` and only applies to audit logs.
 
 ```yaml
-litellm_settings:
+lumina_settings:
   store_audit_logs: true
   callbacks: ["s3_v2"]                       # normal request logs
   audit_log_callbacks: ["s3_v2"]             # audit logs
@@ -108,14 +108,14 @@ litellm_settings:
     s3_region_name: us-west-2
     s3_aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
     s3_aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
-    s3_path: litellm-logs
+    s3_path: lumina-logs
 
   s3_audit_callback_params:                  # used for audit logs only
     s3_bucket_name: my-audit-logs-bucket
     s3_region_name: us-east-1                # different region OK
     s3_aws_access_key_id: os.environ/AWS_AUDIT_ACCESS_KEY_ID  # different creds OK
     s3_aws_secret_access_key: os.environ/AWS_AUDIT_SECRET_ACCESS_KEY
-    s3_path: litellm-audit
+    s3_path: lumina-audit
 ```
 
 ## Advanced
@@ -126,13 +126,13 @@ Call management endpoints on behalf of a user, and have the audit log attribute 
 
 :::warning[Opt in required since v1.84.0]
 
-Before v1.84.0 the `LiteLLM-Changed-By` header was honored unconditionally, which let any caller rewrite audit attribution. Since v1.84.0 the proxy ignores the header unless the calling key, or its team, has `allow_litellm_changed_by_header: true` in its metadata; without the opt in, `changed_by` falls back to the calling key's `user_id`. The master key cannot opt in because it has no stored metadata, so send the header with an admin virtual key
+Before v1.84.0 the `Lumina-Changed-By` header was honored unconditionally, which let any caller rewrite audit attribution. Since v1.84.0 the proxy ignores the header unless the calling key, or its team, has `allow_lumina_changed_by_header: true` in its metadata; without the opt in, `changed_by` falls back to the calling key's `user_id`. The master key cannot opt in because it has no stored metadata, so send the header with an admin virtual key
 
 :::
 
 #### 1. Allow your admin key to set the header
 
-Set `allow_litellm_changed_by_header: true` in the metadata of the admin virtual key that will send the header. Setting it on the key's team metadata instead opts in every key on that team
+Set `allow_lumina_changed_by_header: true` in the metadata of the admin virtual key that will send the header. Setting it on the key's team metadata instead opts in every key on that team
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/update' \
@@ -140,23 +140,23 @@ curl -X POST 'http://0.0.0.0:4000/key/update' \
     -H 'Content-Type: application/json' \
     -d '{
         "key": "sk-my-admin-key",
-        "metadata": {"allow_litellm_changed_by_header": true}
+        "metadata": {"allow_lumina_changed_by_header": true}
     }'
 ```
 
-#### 2. Set `LiteLLM-Changed-By` in request headers
+#### 2. Set `Lumina-Changed-By` in request headers
 
-Set the 'user_id' in request headers, when calling a management endpoint. [View Full List](https://docs.litellm.ai/api-reference/#/team%20management).
+Set the 'user_id' in request headers, when calling a management endpoint. [View Full List](https://docs.lumina.ai/api-reference/#/team%20management).
 
 - Update Team budget with the opted-in admin key. 
 - Attribute change to 'krrish@berri.ai'. 
 
-**Key change:** Passing `-H 'LiteLLM-Changed-By: krrish@berri.ai'`
+**Key change:** Passing `-H 'Lumina-Changed-By: krrish@berri.ai'`
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/team/update' \
     -H 'Authorization: Bearer sk-my-admin-key' \
-    -H 'LiteLLM-Changed-By: krrish@berri.ai' \
+    -H 'Lumina-Changed-By: krrish@berri.ai' \
     -H 'Content-Type: application/json' \
     -d '{
         "team_id" : "8bf18b11-7f52-4717-8e1f-7c65f9d01e52",
@@ -173,7 +173,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
    "changed_by": "krrish@berri.ai", # CHANGED BY
    "changed_by_api_key": "example-api-key-123",
    "action": "updated",
-   "table_name": "LiteLLM_TeamTable",
+   "table_name": "Lumina_TeamTable",
    "object_id": "8bf18b11-7f52-4717-8e1f-7c65f9d01e52",
    "before_value": {
      "spend": 0,
@@ -199,7 +199,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
 
 ### `changed_by`
 - **Type:** `String`
-- **Description:** The `user_id` that performed the audited action. If the `LiteLLM-Changed-By` header is passed and the calling key or its team has `allow_litellm_changed_by_header: true` in its metadata, then `changed_by=<value passed for LiteLLM-Changed-By header>`
+- **Description:** The `user_id` that performed the audited action. If the `Lumina-Changed-By` header is passed and the calling key or its team has `allow_lumina_changed_by_header: true` in its metadata, then `changed_by=<value passed for Lumina-Changed-By header>`
 
 ### `changed_by_api_key`
 - **Type:** `String`
@@ -211,7 +211,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
 
 ### `table_name`
 - **Type:** `String`
-- **Description:** This field stores the name of the table that was affected by the audited action. It can be one of the following values: `LiteLLM_TeamTable`, `LiteLLM_UserTable`, `LiteLLM_VerificationToken`
+- **Description:** This field stores the name of the table that was affected by the audited action. It can be one of the following values: `Lumina_TeamTable`, `Lumina_UserTable`, `Lumina_VerificationToken`
 
 
 ### `object_id`

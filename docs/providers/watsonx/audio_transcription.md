@@ -5,18 +5,18 @@
 | Property | Details |
 |----------|---------|
 | Description | WatsonX audio transcription using Whisper models for speech-to-text |
-| Provider Route on LiteLLM | `watsonx/` |
+| Provider Route on Lumina | `watsonx/` |
 | Supported Operations | `/v1/audio/transcriptions` |
 | Link to Provider Doc | [IBM WatsonX.ai ↗](https://www.ibm.com/watsonx) |
 
 ## Quick Start
 
-### **LiteLLM SDK**
+### **Lumina SDK**
 
 ```python showLineNumbers title="transcription.py"
-import litellm
+import lumina
 
-response = litellm.transcription(
+response = lumina.transcription(
     model="watsonx/whisper-large-v3-turbo",
     file=open("audio.mp3", "rb"),
     api_base="https://us-south.ml.cloud.ibm.com",
@@ -26,7 +26,7 @@ response = litellm.transcription(
 print(response.text)
 ```
 
-### **LiteLLM Proxy**
+### **Lumina Proxy**
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:

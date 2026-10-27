@@ -9,7 +9,7 @@ Run model-generated code inside an isolated sandbox and get its output back. The
 |---------|-----------|
 | Supported Providers | `e2b`, `opensandbox` |
 | Cost Tracking | Passthrough (sandbox billing stays with the provider) |
-| Logging | Via the standard `@client` logging path used by `litellm.asearch` |
+| Logging | Via the standard `@client` logging path used by `lumina.asearch` |
 | Proxy Endpoint | Via the code interpreter interceptor on `/v1/responses` and `/v1/chat/completions` (see below); no standalone `/v1/sandbox` yet |
 
 :::tip
@@ -20,19 +20,19 @@ Run model-generated code inside an isolated sandbox and get its output back. The
 
 ## Code interpreter interceptor
 
-Route OpenAI's `code_interpreter` tool to your sandbox instead of OpenAI's container. Works on both `/v1/responses` and `/v1/chat/completions`; client requests stay plain OpenAI shape. On the chat path the native `{"type": "code_interpreter"}` tool is rewritten into a `litellm_code_execution` function tool, LiteLLM runs the generated code in your sandbox, appends the result as a `role: tool` message, and continues the loop until a final answer.
+Route OpenAI's `code_interpreter` tool to your sandbox instead of OpenAI's container. Works on both `/v1/responses` and `/v1/chat/completions`; client requests stay plain OpenAI shape. On the chat path the native `{"type": "code_interpreter"}` tool is rewritten into a `lumina_code_execution` function tool, Lumina runs the generated code in your sandbox, appends the result as a `role: tool` message, and continues the loop until a final answer.
 
 ### SDK
 
-Register the sandbox tool, install the interceptor as a callback, call `litellm.aresponses` (or `litellm.acompletion`) with the `code_interpreter` tool unchanged.
+Register the sandbox tool, install the interceptor as a callback, call `lumina.aresponses` (or `lumina.acompletion`) with the `code_interpreter` tool unchanged.
 
 <Tabs>
 <TabItem value="responses" label="Responses API">
 
 ```python showLineNumbers title="sandbox_interceptor.py"
-import os, litellm
-from litellm.sandbox.sandbox_tools import register_sandbox_tools
-from litellm.integrations.code_interpreter_interception.handler import (
+import os, lumina
+from lumina.sandbox.sandbox_tools import register_sandbox_tools
+from lumina.integrations.code_interpreter_interception.handler import (
     CodeInterpreterInterceptionLogger,
 )
 
@@ -49,13 +49,13 @@ register_sandbox_tools([
     }
 ])
 
-litellm.callbacks = [
+lumina.callbacks = [
     CodeInterpreterInterceptionLogger(
         sandbox_tool_name="my-e2b",
     )
 ]
 
-response = await litellm.aresponses(
+response = await lumina.aresponses(
     model="openai/{{openai_large}}",
     tools=[{"type": "code_interpreter", "container": {"type": "auto"}}],
     input="Product of first 6 primes. Just the number.",
@@ -67,9 +67,9 @@ print(response.output_text)
 <TabItem value="chat" label="Chat Completions">
 
 ```python showLineNumbers title="sandbox_interceptor_chat.py"
-import os, litellm
-from litellm.sandbox.sandbox_tools import register_sandbox_tools
-from litellm.integrations.code_interpreter_interception.handler import (
+import os, lumina
+from lumina.sandbox.sandbox_tools import register_sandbox_tools
+from lumina.integrations.code_interpreter_interception.handler import (
     CodeInterpreterInterceptionLogger,
 )
 
@@ -86,13 +86,13 @@ register_sandbox_tools([
     }
 ])
 
-litellm.callbacks = [
+lumina.callbacks = [
     CodeInterpreterInterceptionLogger(
         sandbox_tool_name="my-e2b",
     )
 ]
 
-response = await litellm.acompletion(
+response = await lumina.acompletion(
     model="openai/{{openai_small}}",
     messages=[{"role": "user", "content": "Product of first 6 primes. Just the number."}],
     tools=[{"type": "code_interpreter", "container": {"type": "auto"}}],
@@ -101,7 +101,7 @@ response = await litellm.acompletion(
 print(response.choices[0].message.content)
 ```
 
-`max_agentic_loops` caps how many sandbox round-trips LiteLLM will run before returning whatever the model has produced; the loop also short-circuits on repeated tool-call fingerprints. Defaults are conservative, raise it if your task needs deeper chained execution.
+`max_agentic_loops` caps how many sandbox round-trips Lumina will run before returning whatever the model has produced; the loop also short-circuits on repeated tool-call fingerprints. Defaults are conservative, raise it if your task needs deeper chained execution.
 
 </TabItem>
 </Tabs>
@@ -130,7 +130,7 @@ sandbox_tools:
       sandbox_provider: e2b
       api_key: os.environ/E2B_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["code_interpreter_interception"]
   code_interpreter_interception_params:
     sandbox_tool_name: my-e2b
@@ -139,7 +139,7 @@ litellm_settings:
 #### 3. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 #### 4. Call the proxy
@@ -164,7 +164,7 @@ curl -s "http://localhost:4000/v1/responses" \
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000/v1")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000/v1")
 
 response = client.responses.create(
     model="{{openai_large}}",
@@ -196,7 +196,7 @@ curl -s "http://localhost:4000/v1/chat/completions" \
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000/v1")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000/v1")
 
 response = client.chat.completions.create(
     model="{{openai_small}}",
@@ -209,7 +209,7 @@ print(response.choices[0].message.content)
 </TabItem>
 </Tabs>
 
-On the Responses path the result contains a `code_interpreter_call` item with a `cntr_*` `container_id` wrapping the sandbox id. On the Chat Completions path the tool call shows up as a `litellm_code_execution` function call with the executed code, followed by a `role: tool` message holding the stdout; the model's final answer arrives in the next assistant message.
+On the Responses path the result contains a `code_interpreter_call` item with a `cntr_*` `container_id` wrapping the sandbox id. On the Chat Completions path the tool call shows up as a `lumina_code_execution` function call with the executed code, followed by a `role: tool` message holding the stdout; the model's final answer arrives in the next assistant message.
 
 To run against OpenSandbox instead of e2b, swap the `sandbox_tools` entry:
 
@@ -259,7 +259,7 @@ curl -s "http://localhost:4000/v1/responses" \
 ```python
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000/v1")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000/v1")
 
 client.responses.create(
     model="{{openai_large}}",
@@ -296,12 +296,12 @@ If you want to drive the sandbox yourself, without a model in the loop, the same
 The fastest path is `acode_interpreter_tool`. It creates a sandbox, runs the code, then deletes the sandbox in a `finally` block so a raised exception still cleans up.
 
 ```python showLineNumbers title="Ephemeral code execution"
-import asyncio, os, litellm
+import asyncio, os, lumina
 
 os.environ["E2B_API_KEY"] = "e2b_..."
 
 async def main():
-    result = await litellm.acode_interpreter_tool(
+    result = await lumina.acode_interpreter_tool(
         provider="e2b",
         code="print(sum(range(10)))",
     )
@@ -314,7 +314,7 @@ asyncio.run(main())
 If the code raises inside the sandbox, the error surfaces in `result.error` rather than as a Python exception, so a sandbox-level `ZeroDivisionError` does not crash the caller:
 
 ```python
-result = await litellm.acode_interpreter_tool(provider="e2b", code="1/0")
+result = await lumina.acode_interpreter_tool(provider="e2b", code="1/0")
 result.error["name"]       # 'ZeroDivisionError'
 result.error["value"]      # 'division by zero'
 result.error["traceback"]  # full traceback string
@@ -322,27 +322,27 @@ result.error["traceback"]  # full traceback string
 
 ### Low-level lifecycle
 
-When you want to reuse a sandbox across multiple `arun_code` calls, drive the lifecycle yourself with `acreate_sandbox`, `arun_code`, and `adelete_sandbox`. The low-level names are sandbox-scoped on purpose so they do not collide with the existing OpenAI Containers API (`litellm.create_container`), which is unrelated and stays untouched.
+When you want to reuse a sandbox across multiple `arun_code` calls, drive the lifecycle yourself with `acreate_sandbox`, `arun_code`, and `adelete_sandbox`. The low-level names are sandbox-scoped on purpose so they do not collide with the existing OpenAI Containers API (`lumina.create_container`), which is unrelated and stays untouched.
 
 ```python showLineNumbers title="Manual sandbox lifecycle"
-import asyncio, os, litellm
+import asyncio, os, lumina
 
 os.environ["E2B_API_KEY"] = "e2b_..."
 
 async def main():
-    container = await litellm.acreate_sandbox(provider="e2b")
+    container = await lumina.acreate_sandbox(provider="e2b")
     try:
-        first = await litellm.arun_code(
+        first = await lumina.arun_code(
             provider="e2b", container=container, code="x = 6 * 7\nprint(x)",
         )
         print(first.stdout)   # '42\n'
 
-        second = await litellm.arun_code(
+        second = await lumina.arun_code(
             provider="e2b", container=container, code="print(x + 1)",
         )
         print(second.stdout)  # '43\n' (state persists inside the container)
     finally:
-        await litellm.adelete_sandbox(provider="e2b", container=container)
+        await lumina.adelete_sandbox(provider="e2b", container=container)
 
 asyncio.run(main())
 ```
@@ -390,7 +390,7 @@ The return shape is a thin pydantic model that preserves whatever the sandbox em
 Set `E2B_API_KEY` (or pass `api_key=...` per call). Defaults: template `code-interpreter-v1`, sandbox timeout 300s, internet access on. Override `template` to use any custom e2b template you have published.
 
 ```python
-result = await litellm.acode_interpreter_tool(
+result = await lumina.acode_interpreter_tool(
     provider="e2b",
     code="...",
     template="my-org/custom-template",
@@ -405,16 +405,16 @@ Behind the scenes the call goes directly to e2b's REST API: `POST api.e2b.app/sa
 Use [OpenSandbox](https://github.com/opensandboxai/opensandbox) for self-hosted code execution. Set `OPEN_SANDBOX_API_BASE` (or pass `api_base=...` per call) to point at your server; there is no localhost fallback. `OPEN_SANDBOX_API_KEY` is optional, leave it empty for a local no-auth server. Sandboxes are created with egress denied by default; pass `allow_internet_access=True` or an explicit `network_policy` to open it up.
 
 ```python
-import os, litellm
+import os, lumina
 
 os.environ["OPEN_SANDBOX_API_BASE"] = "http://127.0.0.1:8080/v1"
 os.environ["OPEN_SANDBOX_API_KEY"] = ""  # optional for local no-auth servers
 
-result = await litellm.acode_interpreter_tool(
+result = await lumina.acode_interpreter_tool(
     provider="opensandbox",
     code="print(sum(range(10)))",
 )
 print(result.stdout)  # '45\n'
 ```
 
-The provider drives OpenSandbox's REST lifecycle directly: `POST /v1/sandboxes` to create, resolves the per-sandbox execd endpoint, streams `/code` SSE into a `CodeExecutionResult`, then `DELETE /v1/sandboxes/{id}` to tear down. Other defaults (template, entrypoint, language, polling interval, execd port, default network policy, output cap) live as literals in `litellm/constants.py`.
+The provider drives OpenSandbox's REST lifecycle directly: `POST /v1/sandboxes` to create, resolves the per-sandbox execd endpoint, streams `/code` SSE into a `CodeExecutionResult`, then `DELETE /v1/sandboxes/{id}` to tear down. Other defaults (template, entrypoint, language, polling interval, execd port, default network policy, output cap) live as literals in `lumina/constants.py`.

@@ -48,7 +48,7 @@ function BenchmarkStory() {
       <div className={styles.staticCopy}>
         <h2>Our SciFact benchmark</h2>
         <p>
-          We ran 6,000 document decisions through LiteLLM with Jev 1.13.0. On
+          We ran 6,000 document decisions through Lumina with Jev 1.13.0. On
           the same BM25 candidates, nDCG@10 improved from{' '}
           <strong>0.686 to 0.768</strong>, at an estimated{' '}
           <strong>$0.575 per 1,000 queries</strong>.
@@ -221,7 +221,7 @@ function MethodExplanation() {
           scale.
         </p>
         <p>
-          Provider errors and refusals fail the request. LiteLLM sends the full
+          Provider errors and refusals fail the request. Lumina sends the full
           input and returns an error if it exceeds provider limits. Perplexity
           accepts 2 to 255 documents in one choice question. TypeSafe assesses
           documents in parallel; the rerank response reports their combined
@@ -235,12 +235,12 @@ function MethodExplanation() {
 const configs = {
   perplexity: `model_list:
   - model_name: jevrank-flash
-    litellm_params:
+    lumina_params:
       model: perplexity/pplx-decider-flash-v1.2
       api_key: os.environ/PERPLEXITY_API_KEY`,
   typesafe: `model_list:
   - model_name: jevrank
-    litellm_params:
+    lumina_params:
       model: typesafe/jev-1.14.0
       api_key: os.environ/TYPESAFE_API_KEY`,
 };
@@ -257,7 +257,7 @@ function Setup() {
     provider === 'perplexity' ? 'PERPLEXITY_API_KEY' : 'TYPESAFE_API_KEY';
   const sdk = `import os
 
-from litellm import rerank
+from lumina import rerank
 
 result = rerank(
     model="${model}",
@@ -271,8 +271,8 @@ result = rerank(
 )
 
 print(result.results)`;
-  const request = `curl "$LITELLM_BASE_URL/rerank" \\
-  -H "Authorization: Bearer $LITELLM_API_KEY" \\
+  const request = `curl "$LUMINA_BASE_URL/rerank" \\
+  -H "Authorization: Bearer $LUMINA_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
     "model": "${alias}",
@@ -292,7 +292,7 @@ print(result.results)`;
         </div>
         <a
           className={styles.textLink}
-          href="https://github.com/BerriAI/litellm/pull/47782"
+          href="https://github.com/Soventra/lumina/pull/47782"
         >
           Preview PR ↗
         </a>
@@ -301,7 +301,7 @@ print(result.results)`;
         Use JevRank through your AI Gateway or call it from Python. These
         examples require the preview branch; no released version includes the
         adapter yet. For this preview, set{' '}
-        <code>LITELLM_LOCAL_MODEL_COST_MAP=True</code> to load the branch’s
+        <code>LUMINA_LOCAL_MODEL_COST_MAP=True</code> to load the branch’s
         model catalog.
       </p>
       <div
@@ -350,7 +350,7 @@ print(result.results)`;
             <p className={styles.usageInstructions}>
               Set <code>{providerKey}</code> in your gateway environment. Add
               this deployment, then send a rerank request with your gateway URL
-              and LiteLLM key.
+              and Lumina key.
             </p>
             <div className={styles.codeGrid}>
               <div>
@@ -362,7 +362,7 @@ print(result.results)`;
                 </CodeBlock>
                 <p className={styles.codeFootnote}>
                   Start the gateway with{' '}
-                  <code>litellm --config config.yaml --port 4000</code>.
+                  <code>lumina --config config.yaml --port 4000</code>.
                 </p>
               </div>
               <div>
@@ -371,8 +371,8 @@ print(result.results)`;
                   {request}
                 </CodeBlock>
                 <p className={styles.codeFootnote}>
-                  Set <code>LITELLM_BASE_URL</code> to your gateway URL and{' '}
-                  <code>LITELLM_API_KEY</code> to your gateway key.
+                  Set <code>LUMINA_BASE_URL</code> to your gateway URL and{' '}
+                  <code>LUMINA_API_KEY</code> to your gateway key.
                 </p>
               </div>
             </div>
@@ -405,11 +405,11 @@ export default function JevRankLaunch() {
       <header className={styles.launchHero}>
         <div className={styles.launchInner}>
           <div className={styles.launchTop}>
-            <Link to="/blog" aria-label="Back to the LiteLLM blog">
+            <Link to="/blog" aria-label="Back to the Lumina blog">
               <img
-                src="/img/brand/litellm-logo-white.png"
+                src="/img/brand/lumina-logo-white.png"
                 width="136"
-                alt="LiteLLM"
+                alt="Lumina"
               />
             </Link>
             <span>PREVIEW / OCTOBER 2026</span>
@@ -423,7 +423,7 @@ export default function JevRankLaunch() {
           </div>
           <p className={styles.launchIntro}>
             Turn Perplexity and TypeSafe decision models into rerankers. Keep
-            your query, your documents and your LiteLLM endpoint.
+            your query, your documents and your Lumina endpoint.
           </p>
           <p className={styles.researchCredit}>
             JevRank builds on the decision-model reranking research of Jakob
@@ -460,11 +460,11 @@ export default function JevRankLaunch() {
         <h2 id="methodology-title">Benchmark methodology</h2>
         <div className={styles.methodologyGrid}>
           <div>
-            <h3>LiteLLM run</h3>
+            <h3>Lumina run</h3>
             <p>
               We ran all 300 SciFact test queries with 20 fixed BM25 candidates
               per query through SDK{' '}
-              <a href="https://github.com/BerriAI/litellm/commit/5aa0a8304c">
+              <a href="https://github.com/Soventra/lumina/commit/5aa0a8304c">
                 commit 5aa0a8304c
               </a>
               . All 6,000 judgments completed with returned version{' '}
@@ -511,14 +511,14 @@ export default function JevRankLaunch() {
       </section>
       <footer className={styles.articleFooter}>
         <div className={styles.footerBrand}>
-          JevRank <span>by LiteLLM</span>
+          JevRank <span>by Lumina</span>
         </div>
         <p>
           Try JevRank on your own queries and compare it with your current
           reranker.
         </p>
         <a
-          href="https://github.com/BerriAI/litellm/pull/47782"
+          href="https://github.com/Soventra/lumina/pull/47782"
           className={styles.primaryAction}
         >
           Review the implementation ↗

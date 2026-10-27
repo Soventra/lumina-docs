@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # MCP Tool Search
 
-Swap the full MCP catalog for a fixed set of virtual tools (`mcp_tool_search`, `mcp_tool_call`, `agent_search`, `skill_search`) so a key with hundreds of tools available only ever exposes four on `tools/list`. The LLM searches by keyword by default, or by meaning once an embedding model is configured (see [Ranking](#ranking)), gets back the ranked matches, then calls the discovered tool by name. For clients that should never receive full tool schemas up front, [`/mcp/proxy`](#schema-discovery-endpoint-mcpproxy) serves a separate three-tool surface that searches, fetches one schema, and calls by opaque ID. `agent_search` does the same for the [A2A agent registry](./a2a.md#search-the-registry) and `skill_search` for the [LiteLLM-hosted skill registry](./skills.md#semantic-search-over-litellm-hosted-skills), both ranked by embeddings instead of keywords.
+Swap the full MCP catalog for a fixed set of virtual tools (`mcp_tool_search`, `mcp_tool_call`, `agent_search`, `skill_search`) so a key with hundreds of tools available only ever exposes four on `tools/list`. The LLM searches by keyword by default, or by meaning once an embedding model is configured (see [Ranking](#ranking)), gets back the ranked matches, then calls the discovered tool by name. For clients that should never receive full tool schemas up front, [`/mcp/proxy`](#schema-discovery-endpoint-mcpproxy) serves a separate three-tool surface that searches, fetches one schema, and calls by opaque ID. `agent_search` does the same for the [A2A agent registry](./a2a.md#search-the-registry) and `skill_search` for the [Lumina-hosted skill registry](./skills.md#semantic-search-over-lumina-hosted-skills), both ranked by embeddings instead of keywords.
 
 :::info[Related Documentation]
 - [MCP Overview](./mcp.md)
@@ -83,10 +83,10 @@ Keys without the flag get the existing behavior unchanged: `tools/list` returns 
 
 ## Enable as a default for every new key
 
-If you want every new key to opt into tool search without every caller having to remember the flag, put it under `litellm_settings.default_key_generate_params.object_permission` in `config.yaml`. Any `/key/generate` request that omits the field will have the default merged in; a request that sets a partial `object_permission` (say, only `mcp_servers`) keeps its explicit fields and only picks up the ones it left unset.
+If you want every new key to opt into tool search without every caller having to remember the flag, put it under `lumina_settings.default_key_generate_params.object_permission` in `config.yaml`. Any `/key/generate` request that omits the field will have the default merged in; a request that sets a partial `object_permission` (say, only `mcp_servers`) keeps its explicit fields and only picks up the ones it left unset.
 
 ```yaml title="config.yaml" showLineNumbers
-litellm_settings:
+lumina_settings:
   default_key_generate_params:
     object_permission:
       mcp_tool_search_enabled: true
@@ -101,14 +101,14 @@ When `mcp_tool_search_enabled: true` is set on a key's `object_permission`, both
 
 - `mcp_tool_search(query, top_k=5)` returns the ranked list of real tools that match the query.
 - `mcp_tool_call(tool_name, arguments)` executes one of the tools the LLM discovered through search.
-- `agent_search(query, top_k=5)` returns the A2A agents the key can reach, ranked by semantic similarity to the task described in `query`. It needs `litellm_settings.agent_search_embedding_model`; see [Search the registry](./a2a.md#search-the-registry).
-- `skill_search(query, top_k=5)` returns the LiteLLM-hosted skills (`custom_llm_provider=litellm_proxy`) the key can reach, ranked by semantic similarity. It needs `litellm_settings.skill_search_embedding_model`; see [Semantic Search over LiteLLM-Hosted Skills](./skills.md#semantic-search-over-litellm-hosted-skills).
+- `agent_search(query, top_k=5)` returns the A2A agents the key can reach, ranked by semantic similarity to the task described in `query`. It needs `lumina_settings.agent_search_embedding_model`; see [Search the registry](./a2a.md#search-the-registry).
+- `skill_search(query, top_k=5)` returns the Lumina-hosted skills (`custom_llm_provider=lumina_proxy`) the key can reach, ranked by semantic similarity. It needs `lumina_settings.skill_search_embedding_model`; see [Semantic Search over Lumina-Hosted Skills](./skills.md#semantic-search-over-lumina-hosted-skills).
 
 Both handlers run through the same filtered catalog and dispatch path as the normal `/tools/call` route, so search only surfaces tools the key is already allowed to see, and calls still resolve through `_get_allowed_mcp_servers` and `execute_mcp_tool`.
 
 ### Ranking
 
-`mcp_tool_search` ranks the caller's reachable tools in one of two modes, chosen by `litellm_settings.mcp_tool_search.embedding_model`. Both modes search the text `name + "\n" + description` of each tool.
+`mcp_tool_search` ranks the caller's reachable tools in one of two modes, chosen by `lumina_settings.mcp_tool_search.embedding_model`. Both modes search the text `name + "\n" + description` of each tool.
 
 **Keyword (default, `embedding_model` unset).** No embeddings and no extra dependency. The proxy lowercases the query, splits it on whitespace, and scores each tool by how many query tokens appear as a substring of its lowercased name and description. A tool that contains both `add` and `numbers` scores 2, one that contains only `add` scores 1, and tools that score 0 are dropped. The rest are sorted by score, ties keep catalog order, and the first `top_k` are returned. A query has to share a token with the tool text, so `"exchange"` finds a tool described as "Get the latest foreign exchange rates" but `"FX"` does not.
 
@@ -121,7 +121,7 @@ model_list:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   mcp_tool_search:
     embedding_model: text-embedding-3-small  # unset = keyword ranking
     top_k: 5
@@ -139,7 +139,7 @@ litellm_settings:
 
 `core_tools` is the hybrid mode. The listed tools come back first on every search and the remaining reachable tools are ranked after them, semantically or by keyword depending on `embedding_model`. A core tool the caller's key, team, or server permissions do not allow is omitted, so listing a tool here never grants access to it. An empty query returns only the core tools, which is an empty list when `core_tools` is unset.
 
-The embedded text is the whole tool name plus description, so a tool whose text is longer than the embedding model's input limit (8192 tokens for OpenAI `text-embedding-3-*`) cannot be embedded. On builds that include [PR #43554](https://github.com/BerriAI/litellm/pull/43554) (v1.107.0-dev.2 and later) that tool is left out of semantic results, the rest of the catalog is still ranked, and the proxy skips re-embedding it for an hour. On earlier builds one oversized tool makes every semantic search fail with the embedding provider's input-too-long error. The workaround there is to hide that tool with `disallowed_tools` on its MCP server, or to leave `embedding_model` unset.
+The embedded text is the whole tool name plus description, so a tool whose text is longer than the embedding model's input limit (8192 tokens for OpenAI `text-embedding-3-*`) cannot be embedded. On builds that include [PR #43554](https://github.com/Soventra/lumina/pull/43554) (v1.107.0-dev.2 and later) that tool is left out of semantic results, the rest of the catalog is still ranked, and the proxy skips re-embedding it for an hour. On earlier builds one oversized tool makes every semantic search fail with the embedding provider's input-too-long error. The workaround there is to hide that tool with `disallowed_tools` on its MCP server, or to leave `embedding_model` unset.
 
 An invalid `mcp_tool_search` block (for example `top_k: 0`) does not stop the proxy from starting. Each search returns the validation error as an error result until the block is fixed.
 
@@ -155,7 +155,7 @@ These settings can also be changed at runtime from the Admin UI under MCP Server
 | `get_tool_schema` | `tool_id` | The tool's `tool_id`, `name`, `description`, `inputSchema`, and `outputSchema` when the upstream server declares one. |
 | `call_tool` | `tool_id`, `arguments` | The upstream tool result, after `arguments` is validated against the tool's `inputSchema`. |
 
-`search_tools` uses the same ranking and the same `litellm_settings.mcp_tool_search` block as `mcp_tool_search`, including `embedding_model`, `similarity_threshold`, and `core_tools`. It always asks for 5 results, so the effective limit is the smaller of 5 and `top_k`. A `tool_id` is an opaque 32-character hash of the owning MCP server and tool name. It stays stable for a given server and tool, and it only resolves for keys that can reach that tool, so an unknown or unauthorized ID returns `Unknown or unauthorized tool_id`. `call_tool` rejects arguments that fail schema validation with an `Invalid arguments: ...` error before contacting the upstream server, then dispatches through the same permission checks and `execute_mcp_tool` path as a direct `tools/call`.
+`search_tools` uses the same ranking and the same `lumina_settings.mcp_tool_search` block as `mcp_tool_search`, including `embedding_model`, `similarity_threshold`, and `core_tools`. It always asks for 5 results, so the effective limit is the smaller of 5 and `top_k`. A `tool_id` is an opaque 32-character hash of the owning MCP server and tool name. It stays stable for a given server and tool, and it only resolves for keys that can reach that tool, so an unknown or unauthorized ID returns `Unknown or unauthorized tool_id`. `call_tool` rejects arguments that fail schema validation with an `Invalid arguments: ...` error before contacting the upstream server, then dispatches through the same permission checks and `execute_mcp_tool` path as a direct `tools/call`.
 
 The endpoint only serves tools. Prompts and resources are not advertised in `initialize`, their methods return `METHOD_NOT_FOUND` with `Operation unavailable on /mcp/proxy`, and calling any tool other than the three meta-tools returns an error result.
 
@@ -178,7 +178,7 @@ async with streamablehttp_client(
 
 ## Prerequisites
 
-Requires LiteLLM v1.92.x or later. Semantic ranking, `similarity_threshold`, and `core_tools` require v1.102.0 or later plus an embedding model in `model_list`, and `/mcp/proxy` requires v1.102.0 or later. Neither needs an extra Python dependency.
+Requires Lumina v1.92.x or later. Semantic ranking, `similarity_threshold`, and `core_tools` require v1.102.0 or later plus an embedding model in `model_list`, and `/mcp/proxy` requires v1.102.0 or later. Neither needs an extra Python dependency.
 
 ## Access control
 

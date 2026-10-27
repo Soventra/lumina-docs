@@ -10,11 +10,11 @@ SearXNG is a free, open-source metasearch engine that aggregates results from mu
 
 **Note:** SearXNG returns a fixed number of results per page (~20 by default) and does not support limiting results via the API. The `max_results` parameter is not directly supported by SearXNG.
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ```python showLineNumbers title="SearXNG Search"
 import os
-from litellm import search
+from lumina import search
 
 # Set your SearXNG instance URL (REQUIRED)
 os.environ["SEARXNG_API_BASE"] = "https://serxng-deployment-production.up.railway.app"
@@ -26,7 +26,7 @@ response = search(
 )
 ```
 
-## LiteLLM AI Gateway
+## Lumina AI Gateway
 
 ### 1. Setup config.yaml
 
@@ -47,7 +47,7 @@ search_tools:
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -68,7 +68,7 @@ curl http://0.0.0.0:4000/v1/search/searxng-search \
 
 ```python showLineNumbers title="SearXNG Search with Provider-specific Parameters"
 import os
-from litellm import search
+from lumina import search
 
 # REQUIRED: Set your SearXNG instance URL
 os.environ["SEARXNG_API_BASE"] = "https://serxng-deployment-production.up.railway.app"
@@ -162,7 +162,7 @@ docker run -d -p 8080:8080 \
   -e SEARXNG_BASE_URL=http://localhost:8080 \
   searxng/searxng
 
-# Then configure LiteLLM to use your instance
+# Then configure Lumina to use your instance
 export SEARXNG_API_BASE=http://localhost:8080
 ```
 
@@ -259,7 +259,7 @@ page2 = search(
 
 ## Response Format
 
-SearXNG returns results in the standard LiteLLM search format:
+SearXNG returns results in the standard Lumina search format:
 
 ```json
 {
@@ -280,7 +280,7 @@ SearXNG returns results in the standard LiteLLM search format:
 
 ### Test Your Instance First
 
-If LiteLLM with searxng search provider is not working, test your SearXNG instance directly with curl:
+If Lumina with searxng search provider is not working, test your SearXNG instance directly with curl:
 
 ```bash
 # Test if JSON API is working

@@ -15,7 +15,7 @@ curl -L -X POST 'http://0.0.0.0:4000/model/new' \
 -H 'Authorization: Bearer sk-******2ql3-sm28WU0tTAmA' \
 -H 'Content-Type: application/json' \
 -d '{
-  "model_name": "my-team-model", # Call LiteLLM with this model name
+  "model_name": "my-team-model", # Call Lumina with this model name
   "lumina_params": {
     "model": "openai/{{openai_large}}",
     "custom_llm_provider": "openai",
@@ -67,7 +67,7 @@ curl -L -X GET 'http://localhost:4000/team/info?team_id=e59e2671-a064-436a-a0fa-
     "team_id": "e59e2671-a064-436a-a0fa-16ae96e5a0a1",
     "team_info": {
         ...,
-        "litellm_model_table": {
+        "lumina_model_table": {
             "model_aliases": {
                 "my-team-model": # public model name
                     "model_name_e59e2671-a064-436a-a0fa-16ae96e5a0a1_e81c9286-2195-4bd9-81e1-cf393788a1a0" # internally generated model name (used to ensure uniqueness)

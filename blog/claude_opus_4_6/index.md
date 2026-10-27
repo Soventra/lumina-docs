@@ -6,7 +6,7 @@ authors:
   - sameer
   - ishaan-alt
   - krrish
-description: "Day 0 support for Claude Opus 4.6 on LiteLLM AI Gateway - use across Anthropic, Azure, Vertex AI, and Bedrock."
+description: "Day 0 support for Claude Opus 4.6 on Lumina AI Gateway - use across Anthropic, Azure, Vertex AI, and Bedrock."
 tags: [anthropic, claude, opus 4.6]
 hide_table_of_contents: false
 ---
@@ -14,20 +14,20 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-LiteLLM now supports Claude Opus 4.6 on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the LiteLLM AI Gateway.
+Lumina now supports Claude Opus 4.6 on Day 0. Use it across Anthropic, Azure, Vertex AI, and Bedrock through the Lumina AI Gateway.
 
 {/* truncate */}
 
 ## Docker Image
 
 ```bash
-docker pull ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.80.0-stable.opus-4-6
+docker pull ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.80.0-stable.opus-4-6
 ```
 
 ## Usage - Anthropic
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -46,7 +46,7 @@ docker run -d \
   -p 4000:4000 \
   -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.80.0-stable.opus-4-6 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.80.0-stable.opus-4-6 \
   --config /app/config.yaml
 ```
 
@@ -73,7 +73,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Azure
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -94,7 +94,7 @@ docker run -d \
   -e AZURE_AI_API_KEY=$AZURE_AI_API_KEY \
   -e AZURE_AI_API_BASE=$AZURE_AI_API_BASE \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.80.0-stable.opus-4-6 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.80.0-stable.opus-4-6 \
   --config /app/config.yaml
 ```
 
@@ -121,7 +121,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Vertex AI
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -143,7 +143,7 @@ docker run -d \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/credentials.json \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/credentials.json:/app/credentials.json \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.80.0-stable.opus-4-6 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.80.0-stable.opus-4-6 \
   --config /app/config.yaml
 ```
 
@@ -170,7 +170,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ## Usage - Bedrock
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -192,7 +192,7 @@ docker run -d \
   -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
   -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.80.0-stable.opus-4-6 \
+  ghcr.io/soventra/lumina:lumina_stable_release_branch-v1.80.0-stable.opus-4-6 \
   --config /app/config.yaml
 ```
 
@@ -223,7 +223,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <Tabs>
 <TabItem value="completions" label="/chat/completions">
 
-Litellm supports enabling compaction for the new claude-opus-4-6.
+Lumina supports enabling compaction for the new claude-opus-4-6.
 
 **Enabling Compaction**
 
@@ -251,12 +251,12 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
   "max_tokens": 100
 }'
 ```
-All the parameters supported for context_management by anthropic are supported and can be directly added. Litellm automatically adds the `compact-2026-01-12` beta header in the request.
+All the parameters supported for context_management by anthropic are supported and can be directly added. Lumina automatically adds the `compact-2026-01-12` beta header in the request.
 
 </TabItem>
 <TabItem value="messages" label="/v1/messages">
 
-Enable compaction to reduce context size while preserving key information. LiteLLM automatically adds the `compact-2026-01-12` beta header when compaction is enabled.
+Enable compaction to reduce context size while preserving key information. Lumina automatically adds the `compact-2026-01-12` beta header when compaction is enabled.
 
 :::info
 **Provider Support:** Compaction is supported on Anthropic, Azure AI, and Vertex AI. It is **not supported** on Bedrock (Invoke or Converse APIs).
@@ -389,7 +389,7 @@ When using `reasoning_effort` with Claude Opus 4.6, all values (`low`, `medium`,
 <Tabs>
 <TabItem value="completions" label="/chat/completions">
 
-LiteLLM supports adaptive thinking through the `reasoning_effort` parameter:
+Lumina supports adaptive thinking through the `reasoning_effort` parameter:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
@@ -437,9 +437,9 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 Use the `thinking` parameter directly for adaptive thinking via the SDK:
 
 ```python
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
   model="anthropic/claude-opus-4-6",
   messages=[{"role": "user", "content": "Solve this complex problem: What is the optimal strategy for..."}],
   thinking={"type": "adaptive"},
@@ -505,7 +505,7 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 
 ### 1M Token Context (Beta)
 
-Opus 4.6 supports 1M token context. Premium pricing applies for prompts exceeding 200k tokens ($10/$37.50 per million input/output tokens). LiteLLM supports cost calculations for 1M token contexts.
+Opus 4.6 supports 1M token context. Premium pricing applies for prompts exceeding 200k tokens ($10/$37.50 per million input/output tokens). Lumina supports cost calculations for 1M token contexts.
 
 <Tabs>
 <TabItem value="completions" label="/chat/completions">
@@ -580,7 +580,7 @@ You can combine multiple beta headers by separating them with commas:
 
 ### US-Only Inference
 
-Available at 1.1× token pricing. LiteLLM automatically tracks costs for US-only inference.
+Available at 1.1× token pricing. Lumina automatically tracks costs for US-only inference.
 
 <Tabs>
 <TabItem value="completions" label="/chat/completions">
@@ -603,7 +603,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 }'
 ```
 
-LiteLLM will automatically apply the 1.1× pricing multiplier for US-only inference in cost tracking.
+Lumina will automatically apply the 1.1× pricing multiplier for US-only inference in cost tracking.
 
 </TabItem>
 <TabItem value="messages" label="/v1/messages">
@@ -627,7 +627,7 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 }'
 ```
 
-LiteLLM will automatically apply the 1.1× pricing multiplier for US-only inference in cost tracking.
+Lumina will automatically apply the 1.1× pricing multiplier for US-only inference in cost tracking.
 
 </TabItem>
 </Tabs>
@@ -668,7 +668,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 import openai
 
 client = openai.OpenAI(
-    api_key="your-litellm-key",
+    api_key="your-lumina-key",
     base_url="http://0.0.0.0:4000"
 )
 
@@ -680,10 +680,10 @@ response = client.chat.completions.create(
 )
 ```
 
-**Using LiteLLM SDK:**
+**Using Lumina SDK:**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="anthropic/claude-opus-4-6",
@@ -693,7 +693,7 @@ response = completion(
 )
 ```
 
-LiteLLM automatically tracks the higher costs for fast mode in usage and cost calculations.
+Lumina automatically tracks the higher costs for fast mode in usage and cost calculations.
 
 </TabItem>
 <TabItem value="messages" label="/v1/messages">
@@ -715,7 +715,7 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 }'
 ```
 
-LiteLLM automatically:
+Lumina automatically:
 - Adds the `fast-mode-2026-02-01` beta header
 - Tracks the 6× premium pricing in cost calculations
 

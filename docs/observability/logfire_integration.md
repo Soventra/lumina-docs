@@ -8,7 +8,7 @@ Detailed production traces and a granular view on quality, cost and latency
 <Image img={require('../../img/logfire.png')} />
 
 :::info
-We want to learn how we can make the callbacks better! Meet the LiteLLM [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version) or
+We want to learn how we can make the callbacks better! Meet the Lumina [founders](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version) or
 join our [discord](https://discord.gg/wuPM9dRgDw)
 :::
 
@@ -17,7 +17,7 @@ join our [discord](https://discord.gg/wuPM9dRgDw)
 Ensure you have installed the following packages to use this integration
 
 ```shell
-uv add litellm
+uv add lumina
 
 uv add opentelemetry-api==1.25.0
 uv add opentelemetry-sdk==1.25.0
@@ -29,12 +29,12 @@ uv add opentelemetry-exporter-otlp==1.25.0
 Get your Logfire token from [Logfire](https://logfire.pydantic.dev/)
 
 ```python
-litellm.callbacks = ["logfire"]
+lumina.callbacks = ["logfire"]
 ```
 
 ```python
 # uv add logfire
-import litellm
+import lumina
 import os
 
 # from https://logfire.pydantic.dev/
@@ -47,11 +47,11 @@ os.environ["LOGFIRE_BASE_URL"] = ""
 # LLM API Keys
 os.environ['OPENAI_API_KEY']=""
 
-# set logfire as a callback, litellm will send the data to logfire
-litellm.success_callback = ["logfire"]
+# set logfire as a callback, lumina will send the data to logfire
+lumina.success_callback = ["logfire"]
 
 # openai call
-response = litellm.completion(
+response = lumina.completion(
   model="{{openai_small}}",
   messages=[
     {"role": "user", "content": "Hi - i'm openai"}
@@ -61,6 +61,6 @@ response = litellm.completion(
 
 ## Support & Talk to Founders
 
-- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-litellm-hosted-version)
+- [Schedule Demo](https://calendly.com/d/4mp-gd3-k5k/berriai-1-1-onboarding-lumina-hosted-version)
 - [Community Discord](https://discord.gg/wuPM9dRgDw)
 - Our emails ishaan@berri.ai / krrish@berri.ai

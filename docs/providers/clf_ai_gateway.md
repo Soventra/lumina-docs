@@ -21,12 +21,12 @@ os.environ["CLF_AI_GATEWAY_API_KEY"] = "sk-gw-..."
 os.environ["CLF_AI_GATEWAY_API_BASE"] = "https://api.clfaigateway.dev/v1"  # optional, this is the default
 ```
 
-`CLF_AI_GATEWAY_API_BASE` only needs to be set when you are pointing LiteLLM at a different endpoint. Leaving it unset uses `https://api.clfaigateway.dev/v1`
+`CLF_AI_GATEWAY_API_BASE` only needs to be set when you are pointing Lumina at a different endpoint. Leaving it unset uses `https://api.clfaigateway.dev/v1`
 
 ## Sample Usage
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["CLF_AI_GATEWAY_API_KEY"] = "sk-gw-..."
@@ -41,7 +41,7 @@ print(response)
 ## Sample Usage - Streaming
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["CLF_AI_GATEWAY_API_KEY"] = "sk-gw-..."
@@ -58,10 +58,10 @@ for chunk in response:
 
 ## Reasoning
 
-Every model on the gateway is a reasoning model, so `reasoning_effort` is accepted on all of them. The levels each model takes differ, and LiteLLM reads them from the model map rather than assuming a single set
+Every model on the gateway is a reasoning model, so `reasoning_effort` is accepted on all of them. The levels each model takes differ, and Lumina reads them from the model map rather than assuming a single set
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["CLF_AI_GATEWAY_API_KEY"] = "sk-gw-..."
@@ -76,7 +76,7 @@ print(response)
 
 Reasoning tokens are counted inside `completion_tokens`, so they are billed at the output price rather than separately
 
-## Usage with LiteLLM Proxy Server
+## Usage with Lumina Proxy Server
 
 1. Add the model to your config.yaml
 
@@ -91,7 +91,7 @@ Reasoning tokens are counted inside `completion_tokens`, so they are billed at t
 2. Start the proxy
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
 3. Send a request
@@ -104,7 +104,7 @@ Reasoning tokens are counted inside `completion_tokens`, so they are billed at t
   import openai
 
   client = openai.OpenAI(
-      api_key="litellm-proxy-key",
+      api_key="lumina-proxy-key",
       base_url="http://0.0.0.0:4000",
   )
 
@@ -121,7 +121,7 @@ Reasoning tokens are counted inside `completion_tokens`, so they are billed at t
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header 'Authorization: Bearer litellm-proxy-key' \
+      --header 'Authorization: Bearer lumina-proxy-key' \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",
@@ -177,4 +177,4 @@ All of these support tool calling, JSON mode, and reasoning
 
 ## Prompt Caching
 
-The gateway caches recognized prompt prefixes automatically. Cached input tokens come back in `prompt_tokens_details.cached_tokens` and are billed at the model's cached input price, which LiteLLM reads from the model map for cost tracking
+The gateway caches recognized prompt prefixes automatically. Cached input tokens come back in `prompt_tokens_details.cached_tokens` and are billed at the model's cached input price, which Lumina reads from the model map for cost tracking

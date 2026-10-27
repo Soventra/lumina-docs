@@ -8,9 +8,9 @@ View deleted API keys and teams along with their spend and budget information at
 
 ## Overview
 
-The Deleted Keys & Teams feature provides an audit trail for deleted entities in your LiteLLM proxy. This feature was implemented to easily allow audits of which key or team was deleted along with the spend/budget at the time of deletion.
+The Deleted Keys & Teams feature provides an audit trail for deleted entities in your Lumina proxy. This feature was implemented to easily allow audits of which key or team was deleted along with the spend/budget at the time of deletion.
 
-When a key or team is deleted, LiteLLM automatically captures:
+When a key or team is deleted, Lumina automatically captures:
 
 - **Deletion timestamp** - When the entity was deleted
 - **Deleted by** - Who performed the deletion action
@@ -24,7 +24,7 @@ This information is preserved even after deletion, allowing you to maintain accu
 
 ### Step 1: Navigate to API Keys Page
 
-Navigate to the API Keys page in the LiteLLM UI:
+Navigate to the API Keys page in the Lumina UI:
 
 ```
 http://localhost:4000/ui/?login=success&page=api-keys

@@ -3,14 +3,14 @@ import TabItem from '@theme/TabItem';
 
 # Vantage
 
-LiteLLM can export proxy spend data to [Vantage](https://vantage.sh) as [FOCUS 1.2](https://focus.finops.org/) formatted cost reports. This lets you visualize LLM spend alongside your cloud infrastructure costs in the Vantage dashboard.
+Lumina can export proxy spend data to [Vantage](https://vantage.sh) as [FOCUS 1.2](https://focus.finops.org/) formatted cost reports. This lets you visualize LLM spend alongside your cloud infrastructure costs in the Vantage dashboard.
 
 ## Overview
 
 | Property | Details |
 |----------|---------|
-| Destination | Export LiteLLM usage data to Vantage Custom Provider |
-| Data format | FOCUS CSV (automatically transformed from LiteLLM spend data) |
+| Destination | Export Lumina usage data to Vantage Custom Provider |
+| Data format | FOCUS CSV (automatically transformed from Lumina spend data) |
 | Supported operations | Manual export, automatic scheduled export (hourly/daily/interval) |
 | Authentication | Vantage API key + Custom Provider token |
 
@@ -90,14 +90,14 @@ model_list:
       model: openai/{{openai_large}}
       api_key: sk-your-key
 
-litellm_settings:
+lumina_settings:
   callbacks: ["vantage"]
 ```
 
 ```bash
 export VANTAGE_API_KEY="vntg_tkn_..."
 export VANTAGE_INTEGRATION_TOKEN="accss_crdntl_..."
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 The proxy registers a background job that exports data on the configured schedule.
@@ -117,9 +117,9 @@ All endpoints require admin authentication.
 
 ## FOCUS Field Mapping
 
-LiteLLM spend data is transformed into the FOCUS 1.2 schema:
+Lumina spend data is transformed into the FOCUS 1.2 schema:
 
-| LiteLLM Field | FOCUS Column | Description |
+| Lumina Field | FOCUS Column | Description |
 |---------------|-------------|-------------|
 | `spend` | BilledCost, EffectiveCost | Cost of the usage |
 | `model` | ChargeDescription, ResourceId | Model identifier |
@@ -136,7 +136,7 @@ Additional metadata (`user_id`, `user_email`, `model`, `model_group`, etc.) is a
 
 ## Upload Limits
 
-Vantage enforces per-upload limits. LiteLLM handles these automatically:
+Vantage enforces per-upload limits. Lumina handles these automatically:
 
 - **10,000 rows** per upload; large exports are split into batches
 - **2 MB** per upload; oversized batches are further split by size

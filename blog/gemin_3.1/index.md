@@ -1,14 +1,14 @@
 ---
 slug: gemini_3_1_pro
-title: "DAY 0 Support: Gemini 3.1 Pro on LiteLLM"
+title: "DAY 0 Support: Gemini 3.1 Pro on Lumina"
 date: 2026-02-19T10:00:00
 authors:
   - sameer
   - krrish
   - ishaan-alt
-description: "Guide to using Gemini 3.1 Pro on LiteLLM Proxy and SDK with day 0 support."
+description: "Guide to using Gemini 3.1 Pro on Lumina Proxy and SDK with day 0 support."
 card_title: "Gemini 3.1 Pro"
-card_summary: "Gemini 3.1 Pro adds MINIMAL and MEDIUM thinking levels, mapped from reasoning_effort by LiteLLM."
+card_summary: "Gemini 3.1 Pro adds MINIMAL and MEDIUM thinking levels, mapped from reasoning_effort by Lumina."
 tags: [gemini, day 0 support, llms]
 hide_table_of_contents: false
 ---
@@ -19,7 +19,7 @@ import TabItem from '@theme/TabItem';
 
 # Gemini 3.1 Pro Day 0 Support 
 
-LiteLLM now supports `gemini-3.1-pro-preview` and all the new API changes along with it.
+Lumina now supports `gemini-3.1-pro-preview` and all the new API changes along with it.
 
 {/* truncate */}
 
@@ -28,19 +28,19 @@ LiteLLM now supports `gemini-3.1-pro-preview` and all the new API changes along 
 <Tabs>
 <TabItem value="docker" label="Docker">
 
-``` showLineNumbers title="docker run litellm"
+``` showLineNumbers title="docker run lumina"
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-ghcr.io/berriai/litellm:main-v1.81.9-stable.gemini.3.1-pro
+ghcr.io/soventra/lumina:main-v1.81.9-stable.gemini.3.1-pro
 ```
 
 </TabItem>
 
 <TabItem value="pip" label="Pip">
 
-``` showLineNumbers title="pip install litellm"
-pip install litellm==v1.81.9-stable.gemini.3.1-pro
+``` showLineNumbers title="pip install lumina"
+pip install lumina==v1.81.9-stable.gemini.3.1-pro
 ```
 
 </TabItem>
@@ -52,12 +52,12 @@ pip install litellm==v1.81.9-stable.gemini.3.1-pro
 
 Gemini 3.1 Pro introduces support for **medium** thinking level
 
-LiteLLM automatically maps the OpenAI `reasoning_effort` parameter to Gemini's `thinkingLevel`, so you can use familiar `reasoning_effort` values (`minimal`, `low`, `medium`, `high`) without changing your code!
+Lumina automatically maps the OpenAI `reasoning_effort` parameter to Gemini's `thinkingLevel`, so you can use familiar `reasoning_effort` values (`minimal`, `low`, `medium`, `high`) without changing your code!
 
 ---
 ## Supported Endpoints
 
-LiteLLM provides **full end-to-end support** for Gemini 3.1 Pro on:
+Lumina provides **full end-to-end support** for Gemini 3.1 Pro on:
 
 - ✅ `/v1/chat/completions` - OpenAI-compatible chat completions endpoint
 - ✅ `/v1/responses` - OpenAI Responses API endpoint (streaming and non-streaming)
@@ -79,7 +79,7 @@ All endpoints support:
 **Basic Usage with MEDIUM thinking (NEW)**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # No need to make any changes to your code as we map openai reasoning param to thinkingLevel
 response = completion(
@@ -111,7 +111,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Call with MEDIUM thinking**
@@ -119,7 +119,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gemini-3.1-pro-preview",
     "messages": [{"role": "user", "content": "Complex reasoning task"}],

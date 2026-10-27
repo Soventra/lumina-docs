@@ -6,7 +6,7 @@ import TabItem from '@theme/TabItem';
 
 <Image img={require('../../img/sentinel.png')} />
 
-LiteLLM supports logging to Azure Sentinel via the Azure Monitor Logs Ingestion API. Azure Sentinel uses Log Analytics workspaces for data storage, so logs sent to the workspace will be available in Sentinel for security monitoring and analysis.
+Lumina supports logging to Azure Sentinel via the Azure Monitor Logs Ingestion API. Azure Sentinel uses Log Analytics workspaces for data storage, so logs sent to the workspace will be available in Sentinel for security monitoring and analysis.
 
 ## Azure Sentinel Integration
 
@@ -17,16 +17,16 @@ LiteLLM supports logging to Azure Sentinel via the Azure Monitor Logs Ingestion 
 | **Product Link** | [Azure Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/overview) |
 | **API Reference** | [Logs Ingestion API](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/logs-ingestion-api-overview) |
 
-We will use the `--config` to set `litellm.callbacks = ["azure_sentinel"]` this will log all successful and failed LLM calls to Azure Sentinel.
+We will use the `--config` to set `lumina.callbacks = ["azure_sentinel"]` this will log all successful and failed LLM calls to Azure Sentinel.
 
-**Step 1**: Create a `config.yaml` file and set `litellm_settings`: `callbacks`
+**Step 1**: Create a `config.yaml` file and set `lumina_settings`: `callbacks`
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
     lumina_params:
       model: {{openai_small}}
-litellm_settings:
+lumina_settings:
   callbacks: ["azure_sentinel"] # logs llm success + failure logs to Azure Sentinel
 ```
 
@@ -35,7 +35,7 @@ litellm_settings:
 Before using the Logs Ingestion API, you need to set up the following in Azure:
 
 1. **Create a Log Analytics Workspace** (if you don't have one)
-2. **Create a Custom Table** in your Log Analytics workspace (e.g., `LiteLLM_CL`)
+2. **Create a Custom Table** in your Log Analytics workspace (e.g., `Lumina_CL`)
 3. **Create a Data Collection Rule (DCR)** with:
    - Stream declaration matching your data structure
    - Transformation to map data to your custom table
@@ -54,7 +54,7 @@ Set the following environment variables with your Azure credentials:
 ```shell showLineNumbers title="Environment Variables"
 # Required: Data Collection Rule (DCR) configuration
 AZURE_SENTINEL_DCR_IMMUTABLE_ID="dcr-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # DCR Immutable ID from Azure portal
-AZURE_SENTINEL_STREAM_NAME="Custom-LiteLLM_CL_CL"                    # Stream name from your DCR
+AZURE_SENTINEL_STREAM_NAME="Custom-Lumina_CL_CL"                    # Stream name from your DCR
 AZURE_SENTINEL_ENDPOINT="https://your-dcr-endpoint.eastus-1.ingest.monitor.azure.com"  # DCR logs ingestion endpoint (NOT the DCE endpoint)
 
 # Required: OAuth2 Authentication (App Registration)
@@ -71,7 +71,7 @@ AZURE_SENTINEL_CLIENT_SECRET="your-client-secret"                    # Client se
 Start proxy
 
 ```shell showLineNumbers title="Start Proxy"
-litellm --config config.yaml --debug
+lumina --config config.yaml --debug
 ```
 
 Test Request
@@ -96,11 +96,11 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 **Step 5**: View logs in Azure Sentinel
 
 1. Navigate to your Azure Sentinel workspace in the Azure portal
-2. Go to "Logs" and query your custom table (e.g., `LiteLLM_CL`)
+2. Go to "Logs" and query your custom table (e.g., `Lumina_CL`)
 3. Run a query like:
 
 ```kusto showLineNumbers title="KQL Query"
-LiteLLM_CL
+Lumina_CL
 | where TimeGenerated > ago(1h)
 | project TimeGenerated, model, status, total_tokens, response_cost
 | order by TimeGenerated desc
@@ -116,7 +116,7 @@ You should see following logs in Azure Workspace.
 |---------------------|-------------|---------------|----------|
 | `AZURE_SENTINEL_DCR_IMMUTABLE_ID` | Data Collection Rule (DCR) Immutable ID | None | ✅ Yes |
 | `AZURE_SENTINEL_ENDPOINT` | DCR logs ingestion endpoint URL (from DCR Overview page) | None | ✅ Yes |
-| `AZURE_SENTINEL_STREAM_NAME` | Stream name from DCR (e.g., "Custom-LiteLLM_CL_CL") | "Custom-LiteLLM" | ❌ No |
+| `AZURE_SENTINEL_STREAM_NAME` | Stream name from DCR (e.g., "Custom-Lumina_CL_CL") | "Custom-Lumina" | ❌ No |
 | `AZURE_SENTINEL_TENANT_ID` | Azure Tenant ID for OAuth2 authentication | None (falls back to `AZURE_TENANT_ID`) | ✅ Yes |
 | `AZURE_SENTINEL_CLIENT_ID` | Application (client) ID for OAuth2 authentication | None (falls back to `AZURE_CLIENT_ID`) | ✅ Yes |
 | `AZURE_SENTINEL_CLIENT_SECRET` | Client secret for OAuth2 authentication | None (falls back to `AZURE_CLIENT_SECRET`) | ✅ Yes |
@@ -124,7 +124,7 @@ You should see following logs in Azure Workspace.
 
 ## Sovereign clouds
 
-Azure Government uses its own Entra authority and its own Azure Monitor audience, so pointing `AZURE_SENTINEL_ENDPOINT` at a sovereign ingestion endpoint is not enough on its own. Set the authority host and LiteLLM derives the matching audience:
+Azure Government uses its own Entra authority and its own Azure Monitor audience, so pointing `AZURE_SENTINEL_ENDPOINT` at a sovereign ingestion endpoint is not enough on its own. Set the authority host and Lumina derives the matching audience:
 
 | Cloud | Authority host | Derived audience |
 |-------|------------------------|------------------|
@@ -148,7 +148,7 @@ Logs sent to the Log Analytics workspace are automatically available in Azure Se
 
 ## Azure Sentinel Setup Guide
 
-Follow this step-by-step guide to set up Azure Sentinel with LiteLLM.
+Follow this step-by-step guide to set up Azure Sentinel with Lumina.
 
 ### Step 1: Create a Log Analytics Workspace
 
@@ -160,7 +160,7 @@ Follow this step-by-step guide to set up Azure Sentinel with LiteLLM.
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/a827ba10-a391-486a-a36a-51816c6255de/ascreenshot.jpeg?tl_px=0,0&br_px=2618,1463&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=21,106)
 
-3. Enter a name for your workspace (e.g., "litellm-sentinel-prod")
+3. Enter a name for your workspace (e.g., "lumina-sentinel-prod")
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/943458f1-fd4c-47dd-a273-ea5a04734ed9/ascreenshot.jpeg?tl_px=0,420&br_px=2618,1884&force_format=jpeg&q=100&width=1120.0)
 
@@ -188,7 +188,7 @@ Follow this step-by-step guide to set up Azure Sentinel with LiteLLM.
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/f2abc0d3-8be8-4057-9290-946d10cfd183/ascreenshot.jpeg?tl_px=0,420&br_px=2618,1884&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=264,404)
 
-2. Enter a name for the DCR (e.g., "litellm-prod")
+2. Enter a name for the DCR (e.g., "lumina-prod")
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/79bbebdc-e4d9-46ff-a270-1930619050a1/ascreenshot.jpeg?tl_px=0,8&br_px=2618,1471&force_format=jpeg&q=100&width=1120.0)
 
@@ -196,7 +196,7 @@ Follow this step-by-step guide to set up Azure Sentinel with LiteLLM.
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/f3112e9a-551e-415c-a7f9-55aad801bc8a/ascreenshot.jpeg?tl_px=0,420&br_px=2618,1884&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=332,480)
 
-4. Upload the sample JSON file for schema (use the [example_standard_logging_payload.json](https://github.com/BerriAI/litellm/blob/main/litellm/integrations/azure_sentinel/example_standard_logging_payload.json) file)
+4. Upload the sample JSON file for schema (use the [example_standard_logging_payload.json](https://github.com/Soventra/lumina/blob/main/lumina/integrations/azure_sentinel/example_standard_logging_payload.json) file)
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/703c0762-840a-4f1f-a60f-876dc24b7a03/ascreenshot.jpeg?tl_px=0,0&br_px=2618,1463&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=518,272)
 

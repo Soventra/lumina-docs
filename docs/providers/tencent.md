@@ -16,14 +16,14 @@ os.environ['TENCENT_API_KEY']
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['TENCENT_API_KEY'] = ""
 response = completion(
     model="tencent/deepseek-v4-pro",
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
 )
 print(response)
@@ -31,14 +31,14 @@ print(response)
 
 ## Sample Usage - Streaming
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['TENCENT_API_KEY'] = ""
 response = completion(
     model="tencent/deepseek-v4-pro",
     messages=[
-       {"role": "user", "content": "hello from litellm"}
+       {"role": "user", "content": "hello from lumina"}
    ],
     stream=True
 )
@@ -70,7 +70,7 @@ We support ALL models available on the TokenHub international endpoint.
 
 ## Custom API Base
 
-By default, LiteLLM uses the Singapore region endpoint. You can override it with `TENCENT_API_BASE`.
+By default, Lumina uses the Singapore region endpoint. You can override it with `TENCENT_API_BASE`.
 
 ```python
 import os
@@ -80,13 +80,13 @@ os.environ['TENCENT_API_BASE'] = "https://tokenhub.tencentcloudmaas.com/v1"  # G
 
 ## Thinking / Reasoning Mode
 
-Many TokenHub models support extended thinking. LiteLLM supports both the `thinking` and `reasoning_effort` params.
+Many TokenHub models support extended thinking. Lumina supports both the `thinking` and `reasoning_effort` params.
 
 <Tabs>
 <TabItem value="thinking" label="thinking param">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['TENCENT_API_KEY'] = ""
@@ -105,7 +105,7 @@ print(resp.choices[0].message.content)
 <TabItem value="reasoning_effort" label="reasoning_effort param">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['TENCENT_API_KEY'] = ""
@@ -124,7 +124,7 @@ print(resp.choices[0].message.content)
 </Tabs>
 
 :::note
-When `reasoning_effort` is anything other than `"none"`, LiteLLM automatically maps it to `thinking={"type": "enabled"}`.
+When `reasoning_effort` is anything other than `"none"`, Lumina automatically maps it to `thinking={"type": "enabled"}`.
 :::
 
 ### Basic Usage
@@ -133,7 +133,7 @@ When `reasoning_effort` is anything other than `"none"`, LiteLLM automatically m
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['TENCENT_API_KEY'] = ""
@@ -163,7 +163,7 @@ model_list:
 2. Run proxy
 
 ```bash
-python litellm/proxy/main.py
+python lumina/proxy/main.py
 ```
 
 3. Test it!
@@ -177,7 +177,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
     "messages": [
       {
         "role": "user",
-        "content": "hello from litellm proxy"
+        "content": "hello from lumina proxy"
       }
     ]
 }'
@@ -189,7 +189,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ## Anthropic-compatible Messages API
 
-TokenHub also exposes an Anthropic-compatible Messages API. LiteLLM routes requests through this endpoint when available.
+TokenHub also exposes an Anthropic-compatible Messages API. Lumina routes requests through this endpoint when available.
 
 ```python
 os.environ['TENCENT_API_KEY'] = ""

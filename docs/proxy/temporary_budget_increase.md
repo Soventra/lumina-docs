@@ -1,11 +1,11 @@
 # Temporary Budget Increase
 
-Set a temporary budget increase for a LiteLLM Virtual Key or a team member. Use this if you get asked to increase the budget for a key or a team member temporarily.
+Set a temporary budget increase for a Lumina Virtual Key or a team member. Use this if you get asked to increase the budget for a key or a team member temporarily.
 
 
 | Hierarchy | Supported | 
 |-----------|-----------|
-| LiteLLM Virtual Key | ✅ |
+| Lumina Virtual Key | ✅ |
 | Team Member | ✅ |
 | User | ❌ |
 | Team | ❌ |
@@ -15,7 +15,7 @@ For a team member, send `temp_budget_increase` and `temp_budget_expiry` on `/tea
 
 <EnterpriseFeature feature="Temporary Budget Increase" />
 
-1. Create a LiteLLM Virtual Key with budget
+1. Create a Lumina Virtual Key with budget
 
 ```bash
 curl -L -X POST 'http://localhost:4000/key/generate' \
@@ -62,7 +62,7 @@ curl -L -X POST 'http://localhost:4000/chat/completions' \
 Expected Response Header:
 
 ```
-x-litellm-key-max-budget: 100.0000001
+x-lumina-key-max-budget: 100.0000001
 ```
 
 

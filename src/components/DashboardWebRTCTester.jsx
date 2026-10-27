@@ -15,7 +15,7 @@ export default function WebRTCTester() {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('logs');
   const [proxyUrl, setProxyUrl] = useState('http://localhost:4000');
-  const [apiKey, setApiKey] = useState('sk-<your-litellm-api-key>');
+  const [apiKey, setApiKey] = useState('sk-<your-lumina-api-key>');
   const [model, setModel] = useState('gpt-4o-realtime-preview');
   const [status, setStatus] = useState('idle');
   const [flowStep, setFlowStep] = useState(0);
@@ -180,7 +180,7 @@ export default function WebRTCTester() {
       await pc.setRemoteDescription({ type: 'answer', sdp: ans });
       setSdpAnswer(ans);
       setAnswerActive(true);
-      log('success', 'CONN', '✓ Session established — Browser ↔ LiteLLM ↔ OpenAI');
+      log('success', 'CONN', '✓ Session established — Browser ↔ Lumina ↔ OpenAI');
     } catch (e) {
       log('error', 'ERR', `calls failed: ${e.message}`);
       stopSession();
@@ -228,7 +228,7 @@ export default function WebRTCTester() {
             <div className="wrt-live-dot" />
             <div>
               <div className="wrt-toggle-title">INTERACTIVE TESTER</div>
-              <div className="wrt-toggle-sub">Browser → LiteLLM → OpenAI · WebRTC</div>
+              <div className="wrt-toggle-sub">Browser → Lumina → OpenAI · WebRTC</div>
             </div>
           </div>
           <span className={`wrt-chevron${open ? ' open' : ''}`}>▼</span>
@@ -246,7 +246,7 @@ export default function WebRTCTester() {
                 </div>
                 <div className="wrt-field">
                   <label>API Key</label>
-                  <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="sk-<your-litellm-api-key>" />
+                  <input type="password" value={apiKey} onChange={e => setApiKey(e.target.value)} placeholder="sk-<your-lumina-api-key>" />
                 </div>
                 <div className="wrt-field">
                   <label>Model</label>
@@ -261,7 +261,7 @@ export default function WebRTCTester() {
                 <div className="wrt-flow">
                   <div className={`wrt-flow-box${f(1) ? ' active' : ''}`}>Browser</div>
                   <div className={`wrt-flow-arrow${f(1) ? ' active' : ''}`}>→</div>
-                  <div className={`wrt-flow-box${f(1) ? ' active' : ''}`}>LiteLLM</div>
+                  <div className={`wrt-flow-box${f(1) ? ' active' : ''}`}>Lumina</div>
                   <div className={`wrt-flow-arrow${f(2) ? ' active' : ''}`}>→</div>
                   <div className={`wrt-flow-box${f(2) ? ' active' : ''}`}>OpenAI</div>
                 </div>

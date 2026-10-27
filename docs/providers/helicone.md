@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Helicone is an AI gateway and observability platform that provides OpenAI-compatible endpoints with advanced monitoring, caching, and analytics capabilities. |
-| Provider Route on LiteLLM | `helicone/` |
+| Provider Route on Lumina | `helicone/` |
 | Link to Provider Doc | [Helicone Documentation ↗](https://docs.helicone.ai) |
 | Base URL | `https://ai-gateway.helicone.ai/` |
-| Supported Operations | [`/chat/completions`](/docs/providers/helicone#usage---litellm-python-sdk), [`/completions`](#text-completion), `/embeddings` |
+| Supported Operations | [`/chat/completions`](/docs/providers/helicone#usage---lumina-python-sdk), [`/completions`](#text-completion), `/embeddings` |
 
 <br />
 
@@ -35,14 +35,14 @@ os.environ["HELICONE_API_KEY"] = ""  # your Helicone API key
 
 Get your Helicone API key from your [Helicone dashboard](https://helicone.ai).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Helicone Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["HELICONE_API_KEY"] = ""  # your Helicone API key
 
@@ -61,8 +61,8 @@ print(response)
 
 ```python showLineNumbers title="Helicone Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["HELICONE_API_KEY"] = ""  # your Helicone API key
 
@@ -83,8 +83,8 @@ for chunk in response:
 
 ```python showLineNumbers title="Helicone with Custom Properties"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["HELICONE_API_KEY"] = ""  # your Helicone API key
 
@@ -105,11 +105,11 @@ print(response)
 
 ```python showLineNumbers title="Helicone Text Completion"
 import os
-import litellm
+import lumina
 
 os.environ["HELICONE_API_KEY"] = ""  # your Helicone API key
 
-response = litellm.completion(
+response = lumina.completion(
     model="helicone/{{openai_small}}",  # text completion model
     prompt="Once upon a time"
 )
@@ -121,16 +121,16 @@ print(response)
 ## Retry and Fallback Mechanisms
 
 ```python
-import litellm
+import lumina
 
-litellm.api_base = "https://ai-gateway.helicone.ai/"
-litellm.headers = {
+lumina.api_base = "https://ai-gateway.helicone.ai/"
+lumina.headers = {
     "Helicone-Retry-Enabled": "true",
     "helicone-retry-num": "3",
     "helicone-retry-factor": "2",
 }
 
-response = litellm.completion(
+response = lumina.completion(
     model="helicone/{{openai_small}}/openai,{{anthropic}}/anthropic", # Try OpenAI first, then fallback to Anthropic, then continue with other models,
     messages=[{"role": "user", "content": "Hello"}]
 )
@@ -159,7 +159,7 @@ Helicone supports all standard OpenAI-compatible parameters:
 
 ## Helicone-Specific Headers
 
-Pass these as request headers with `extra_headers` to use Helicone features, or set `litellm.headers` to send them on every call. The `metadata` param is not forwarded to Helicone:
+Pass these as request headers with `extra_headers` to use Helicone features, or set `lumina.headers` to send them on every call. The `metadata` param is not forwarded to Helicone:
 
 | Header | Description |
 |--------|-------------|
@@ -173,9 +173,9 @@ Pass these as request headers with `extra_headers` to use Helicone features, or 
 Example with headers:
 
 ```python showLineNumbers title="Helicone with Custom Headers"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="helicone/{{openai_large}}",
     messages=[{"role": "user", "content": "Hello"}],
     extra_headers={
@@ -195,12 +195,12 @@ response = litellm.completion(
 Helicone acts as a gateway and supports multiple providers:
 
 ```python showLineNumbers title="Helicone with Anthropic"
-import litellm
+import lumina
 
 # Set both Helicone and Anthropic keys
 os.environ["HELICONE_API_KEY"] = "your-helicone-key"
 
-response = litellm.completion(
+response = lumina.completion(
     model="helicone/{{anthropic}}/anthropic",
     messages=[{"role": "user", "content": "Hello"}]
 )
@@ -211,9 +211,9 @@ response = litellm.completion(
 Enable caching to reduce costs and latency:
 
 ```python showLineNumbers title="Helicone Caching"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="helicone/{{openai_large}}",
     messages=[{"role": "user", "content": "What is 2+2?"}],
     extra_headers={
@@ -222,7 +222,7 @@ response = litellm.completion(
 )
 
 # Subsequent identical requests will be served from cache
-response2 = litellm.completion(
+response2 = lumina.completion(
     model="helicone/{{openai_large}}",
     messages=[{"role": "user", "content": "What is 2+2?"}],
     extra_headers={

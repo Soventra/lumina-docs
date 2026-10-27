@@ -1,17 +1,17 @@
 ---
 title: SDK Quickstart
 sidebar_label: SDK Quickstart
-description: Make your first LiteLLM SDK call, then jump to the right docs for the next feature you need.
+description: Make your first Lumina SDK call, then jump to the right docs for the next feature you need.
 ---
 
 import NavigationCards from '@site/src/components/NavigationCards';
 
-Use this path if you are integrating LiteLLM directly into application code.
+Use this path if you are integrating Lumina directly into application code.
 
-## 1. Install LiteLLM
+## 1. Install Lumina
 
 ```bash
-uv add litellm
+uv add lumina
 ```
 
 ## 2. Set Provider Credentials
@@ -29,7 +29,7 @@ If you have not picked a provider yet, browse [all supported providers](/docs/pr
 ## 3. Make Your First Call
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
@@ -164,6 +164,6 @@ to: "/docs/providers",
 
 ## When To Use Gateway Instead
 
-Use LiteLLM Gateway if you need centralized auth, virtual keys, spend tracking, shared logging, or one OpenAI-compatible endpoint for multiple apps.
+Use Lumina Gateway if you need centralized auth, virtual keys, spend tracking, shared logging, or one OpenAI-compatible endpoint for multiple apps.
 
 [Go to Gateway Quickstart →](/docs/learn/gateway_quickstart)

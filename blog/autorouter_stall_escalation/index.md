@@ -6,7 +6,7 @@ authors:
   - moe
 image: ./hero.png
 description: "The Auto-Router now reads the assistant's own recent tool calls, notices when an agentic task is stuck in a retry loop, and escalates it one tier automatically, the same bump escalation_keywords already offers."
-keywords: [auto router, complexity router, stall detection, agentic routing, model escalation, tool calling, llm gateway, litellm]
+keywords: [auto router, complexity router, stall detection, agentic routing, model escalation, tool calling, llm gateway, lumina]
 tags: [routing, complexity-router, engineering]
 hide_table_of_contents: false
 ---
@@ -17,13 +17,13 @@ hide_table_of_contents: false
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 
@@ -73,8 +73,8 @@ model_list:
 
 :::info[Try it on your traffic]
 
-Point a shadow-eval job at your busiest team, compare your current config against one with stall escalation on, and tell us what you see in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168), or
+Point a shadow-eval job at your busiest team, compare your current config against one with stall escalation on, and tell us what you see in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168), or
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 :::

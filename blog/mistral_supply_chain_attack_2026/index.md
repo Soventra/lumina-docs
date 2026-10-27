@@ -1,23 +1,23 @@
 ---
 slug: mistral-supply-chain-attack-may-2026
-title: "Security Update: Mistral AI PyPI Supply Chain Attack — LiteLLM Not Impacted"
+title: "Security Update: Mistral AI PyPI Supply Chain Attack — Lumina Not Impacted"
 date: 2026-05-12T10:00:00
 authors:
   - mubashir
-description: "On May 11, 2026, a malicious version of the mistralai PyPI package was published as part of a coordinated supply chain attack. LiteLLM is not affected — we call Mistral exclusively via httpx, never by importing the mistralai SDK."
+description: "On May 11, 2026, a malicious version of the mistralai PyPI package was published as part of a coordinated supply chain attack. Lumina is not affected — we call Mistral exclusively via httpx, never by importing the mistralai SDK."
 tags: [security, supply-chain, mistral, incident-report]
 hide_table_of_contents: false
 ---
 
 On May 11, 2026, security researchers at [Aikido Security](https://www.aikido.dev/blog/mini-shai-hulud-is-back-tanstack-compromised) discovered a coordinated supply chain attack dubbed **"Mini Shai-Hulud"** that published malicious versions of over 170 npm packages and 2 PyPI packages, including `mistralai==2.4.6`. 
 
-**LiteLLM is not impacted.** We call Mistral's API directly over HTTP via `httpx` and do not import the `mistralai` Python SDK anywhere in the codebase.
+**Lumina is not impacted.** We call Mistral's API directly over HTTP via `httpx` and do not import the `mistralai` Python SDK anywhere in the codebase.
 
 ## TLDR;
 
-- **LiteLLM does not install or import the `mistralai` package.** We call Mistral's API the same way we call every other provider (via `httpx`). The compromised package is never executed in any LiteLLM environment.
-- **No LiteLLM user credentials were at risk from this attack.** The malware runs at `import mistralai` time. Since LiteLLM never reaches that import, the payload never fires.
-- **No action is required from LiteLLM users.** If you have separately installed `mistralai==2.4.6` in the same environment for your own application code, you should follow [Mistral AI's guidance](https://docs.mistral.ai/resources/security-advisories) immediately.
+- **Lumina does not install or import the `mistralai` package.** We call Mistral's API the same way we call every other provider (via `httpx`). The compromised package is never executed in any Lumina environment.
+- **No Lumina user credentials were at risk from this attack.** The malware runs at `import mistralai` time. Since Lumina never reaches that import, the payload never fires.
+- **No action is required from Lumina users.** If you have separately installed `mistralai==2.4.6` in the same environment for your own application code, you should follow [Mistral AI's guidance](https://docs.mistral.ai/resources/security-advisories) immediately.
 
 {/* truncate */}
 
@@ -35,9 +35,9 @@ PyPI has since quarantined the entire `mistralai` project. The attack was part o
 
 ---
 
-## What to check if you use LiteLLM
+## What to check if you use Lumina
 
-No LiteLLM-specific action is needed. If you want to be thorough:
+No Lumina-specific action is needed. If you want to be thorough:
 
 1. **Confirm `mistralai` is not in your environment.**
    ```bash
@@ -55,7 +55,7 @@ No LiteLLM-specific action is needed. If you want to be thorough:
 
 ## Our broader approach to dependency security
 
-If you discover a security issue in LiteLLM, please report it through our [bug bounty program](https://github.com/BerriAI/litellm/security). We pay out for P0 (supply chain) and P1 (unauthenticated proxy access) issues.
+If you discover a security issue in Lumina, please report it through our [bug bounty program](https://github.com/Soventra/lumina/security). We pay out for P0 (supply chain) and P1 (unauthenticated proxy access) issues.
 
 ---
 

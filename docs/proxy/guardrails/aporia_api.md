@@ -31,7 +31,7 @@ Add the `Toxicity - Response` to your Post LLM API Call project
 <Image img={require('../../../img/aporia_post.png')} />
 
 
-## 2. Define Guardrails on your LiteLLM config.yaml 
+## 2. Define Guardrails on your Lumina config.yaml 
 
 - Define your guardrails under the `guardrails` section
 ```yaml
@@ -62,11 +62,11 @@ guardrails:
 - `post_call` Run **after** LLM call, on **input & output**
 - `during_call` Run **during** LLM call, on **input** Same as `pre_call` but runs in parallel as LLM call.  Response not returned until guardrail check completes
 
-## 3. Start LiteLLM Gateway 
+## 3. Start Lumina Gateway 
 
 
 ```shell
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 ```
 
 ## 4. Test request 

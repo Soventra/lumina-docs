@@ -14,8 +14,8 @@ Build a `CustomLogger` callback that intercepts a model response, fulfills tool 
 Override two methods on `CustomLogger`:
 
 ```python
-from litellm.integrations.custom_logger import CustomLogger
-from litellm.types.integrations.custom_logger import AgenticLoopPlan, AgenticLoopRequestPatch
+from lumina.integrations.custom_logger import CustomLogger
+from lumina.types.integrations.custom_logger import AgenticLoopPlan, AgenticLoopRequestPatch
 
 MY_TOOL = "my_tool"
 
@@ -62,8 +62,8 @@ For `/v1/chat/completions`, override `async_build_chat_completion_agentic_loop_p
 ## Register it
 
 ```python
-import litellm
-litellm.callbacks = [MyToolCallback()]
+import lumina
+lumina.callbacks = [MyToolCallback()]
 ```
 
 Or in `config.yaml`, pointing at an instance the module creates:
@@ -74,7 +74,7 @@ my_tool_callback = MyToolCallback()
 ```
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["my_module.my_tool_callback"]
 ```
 
@@ -101,5 +101,5 @@ The dotted path must name the instance, not the class. `callbacks: ["my_module.M
 
 ## Examples in this repo
 
-- `litellm/integrations/compression_interception/handler.py`
-- `litellm/integrations/websearch_interception/handler.py`
+- `lumina/integrations/compression_interception/handler.py`
+- `lumina/integrations/websearch_interception/handler.py`

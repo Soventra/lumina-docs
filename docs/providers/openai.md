@@ -2,10 +2,10 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # OpenAI
-LiteLLM supports OpenAI Chat + Embedding calls.
+Lumina supports OpenAI Chat + Embedding calls.
 
 :::tip
-**We recommend using `litellm.responses()` / Responses API** for the latest OpenAI models (GPT-5, gpt-5-codex, o3-mini, etc.)
+**We recommend using `lumina.responses()` / Responses API** for the latest OpenAI models (GPT-5, gpt-5-codex, o3-mini, etc.)
 :::
 
 For Fast mode on supported OpenAI models and Ultrafast on GPT-6 Astra, see [Fast & Ultrafast mode](./openai/ultrafast.md) for Admin UI setup, gateway configuration, and request examples.
@@ -20,7 +20,7 @@ os.environ["OPENAI_API_KEY"] = "your-api-key"
 ### Usage
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 
@@ -32,7 +32,7 @@ response = completion(
 ```
 
 :::info[Metadata passthrough (preview)]
-When `litellm.enable_preview_features = True`, LiteLLM forwards only the values inside `metadata` to OpenAI.
+When `lumina.enable_preview_features = True`, Lumina forwards only the values inside `metadata` to OpenAI.
 
 ```python
 completion(
@@ -43,9 +43,9 @@ completion(
 ```
 :::
 
-### Usage - LiteLLM Proxy Server
+### Usage - Lumina Proxy Server
 
-Here's how to call OpenAI models with the LiteLLM Proxy Server
+Here's how to call OpenAI models with the Lumina Proxy Server
 
 ### 1. Save key in your environment
 
@@ -86,7 +86,7 @@ model_list:
 <TabItem value="cli" label="CLI">
 
 ```bash
-$ litellm --model {{openai_small}}
+$ lumina --model {{openai_small}}
 
 # Server running on http://0.0.0.0:4000
 ```
@@ -124,7 +124,7 @@ client = openai.OpenAI(
     base_url="http://0.0.0.0:4000"
 )
 
-# request sent to model set on litellm proxy, `litellm --model`
+# request sent to model set on lumina proxy, `lumina --model`
 response = client.chat.completions.create(model="{{openai_small}}", messages = [
     {
         "role": "user",
@@ -148,7 +148,7 @@ from langchain.prompts.chat import (
 from langchain.schema import HumanMessage, SystemMessage
 
 chat = ChatOpenAI(
-    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the LiteLLM Proxy
+    openai_api_base="http://0.0.0.0:4000", # set openai_api_base to the Lumina Proxy
     model = "{{openai_small}}",
     temperature=0.1
 )
@@ -158,7 +158,7 @@ messages = [
         content="You are a helpful assistant that im using to make a test request to."
     ),
     HumanMessage(
-        content="test from litellm. tell me why it's amazing in 1 sentence"
+        content="test from lumina. tell me why it's amazing in 1 sentence"
     ),
 ]
 response = chat(messages)
@@ -302,7 +302,7 @@ OpenAI has two ways to use web search, depending on the endpoint:
 <TabItem value="sdk-completion" label="SDK - /chat/completions">
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="openai/gpt-5-search-api",
@@ -317,7 +317,7 @@ response = completion(
 <TabItem value="sdk-responses" label="SDK - /responses">
 
 ```python showLineNumbers
-from litellm import responses
+from lumina import responses
 
 response = responses(
     model="openai/{{openai_large}}",
@@ -362,7 +362,7 @@ For full details, see the [Web Search guide](../completion/web_search.md).
 #### Usage
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 
@@ -399,7 +399,7 @@ OpenAI has a new `file` message type that allows you to pass in a PDF file and h
 
 ```python
 import base64
-from litellm import completion
+from lumina import completion
 
 with open("draconomicon.pdf", "rb") as f:
     data = f.read()
@@ -448,7 +448,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it!
@@ -487,7 +487,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 | fine tuned `gpt-3.5-turbo-0613` | `response = completion(model="ft:gpt-3.5-turbo-0613", messages=messages)` |
 
 ## [BETA] Route all .completions requests to Responses API (better quality)
- When enabled, LiteLLM sends OpenAI traffic from `litellm.completion()` and the proxy `/chat/completions` endpoint through the [Responses API](https://platform.openai.com/docs/api-reference/responses) instead of Chat Completions. That path generally matches OpenAI’s latest model behavior and quality (for example, reasoning output on GPT‑5 class models).
+ When enabled, Lumina sends OpenAI traffic from `lumina.completion()` and the proxy `/chat/completions` endpoint through the [Responses API](https://platform.openai.com/docs/api-reference/responses) instead of Chat Completions. That path generally matches OpenAI’s latest model behavior and quality (for example, reasoning output on GPT‑5 class models).
 
 You can opt in globally or per request:
 
@@ -499,11 +499,11 @@ You can opt in globally or per request:
 <TabItem value="sdk-global" label="SDK - Global Flag">
 
 ```python
-import litellm
+import lumina
 
-litellm.route_all_chat_openai_to_responses = True
+lumina.route_all_chat_openai_to_responses = True
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     reasoning_effort="low",
@@ -515,7 +515,7 @@ response = litellm.completion(
 
 Set in your proxy config:
 ```yaml
-litellm_settings:
+lumina_settings:
   route_all_chat_openai_to_responses: true
 ```
 
@@ -543,8 +543,8 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <Tabs>
 <TabItem value="sdk" label="SDK">
 ```python
-response = litellm.completion(
-    model="openai/responses/{{openai_small}}", # tells litellm to call the model via the Responses API
+response = lumina.completion(
+    model="openai/responses/{{openai_small}}", # tells lumina to call the model via the Responses API
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     reasoning_effort="low",
 )
@@ -613,14 +613,14 @@ To opt-in to the `summary` feature, you can pass `reasoning_effort` as a diction
 <TabItem value="sdk" label="SDK">
 ```python
 # Option 1: String format (default - no summary)
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     reasoning_effort="high"  # Only sets effort level
 )
 
 # Option 2: Dict format (with optional summary - requires org verification)
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     reasoning_effort={"effort": "high", "summary": "auto"}  # "auto", "detailed", or "concise" (not all supported by all models)
@@ -695,12 +695,12 @@ For multi-turn conversations you need `reasoning_items`: structured blocks that 
 <TabItem value="non-streaming" label="Non-Streaming">
 
 ```python showLineNumbers title="Non-streaming: round-trip reasoning_items"
-import litellm
+import lumina
 
 messages = [{"role": "user", "content": "Solve this step by step: 2 + 2"}]
 
 # Turn 1 — get reasoning_items (encrypted_content);
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=messages,
     reasoning_effort="low",
@@ -709,7 +709,7 @@ response = litellm.completion(
 
 assistant_msg = response.choices[0].message
 
-# Turn 2 — pass reasoning_items back; LiteLLM converts to the correct Responses API format
+# Turn 2 — pass reasoning_items back; Lumina converts to the correct Responses API format
 messages.append({
     "role": "assistant",
     "content": assistant_msg.content,
@@ -717,7 +717,7 @@ messages.append({
 })
 messages.append({"role": "user", "content": "Now summarize your reasoning."})
 
-response2 = litellm.completion(
+response2 = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=messages,
     reasoning_effort="low",
@@ -731,14 +731,14 @@ response2 = litellm.completion(
 `reasoning_items` (with `encrypted_content`) arrive on the final chunk when the full response completes:
 
 ```python showLineNumbers title="Streaming: collect and round-trip reasoning_items"
-import litellm
+import lumina
 
 messages = [{"role": "user", "content": "Solve this step by step: 2 + 2"}]
 
 collected_content = []
 collected_reasoning_items = []
 
-stream = litellm.completion(
+stream = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=messages,
     stream=True,
@@ -760,7 +760,7 @@ messages.append({
 })
 messages.append({"role": "user", "content": "Continue the conversation."})
 
-response2 = litellm.completion(
+response2 = lumina.completion(
     model="openai/responses/{{openai_small}}",
     messages=messages,
     reasoning_effort="low",
@@ -787,17 +787,17 @@ The `verbosity` parameter controls the length and detail of responses from GPT-5
 <Tabs>
 <TabItem value="sdk" label="SDK">
 ```python
-import litellm
+import lumina
 
 # Low verbosity - concise responses
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Write a function to reverse a string"}],
     verbosity="low"
 )
 
 # High verbosity - detailed responses
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "Explain how neural networks work"}],
     verbosity="high"
@@ -822,18 +822,18 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ## OpenAI Chat Completion to Responses API Bridge
 
-LiteLLM offers a chat completion to Responses API bridge. This lets you use the completion interface while calling the Responses API under the hood.
+Lumina offers a chat completion to Responses API bridge. This lets you use the completion interface while calling the Responses API under the hood.
 
 This is useful when you want to use [Responses API](https://platform.openai.com/docs/api-reference/responses) specific features (like built-in tools, web search preview, or code interpreter).
 
 :::tip[gpt-5.4+ + reasoning_effort + function tools]
 
-LiteLLM drops `reasoning_effort` from `gpt-5.4` and newer (`gpt-5.4`, `gpt-5.5`, future 5.x releases) requests to `litellm.completion()` that include tools, since that combination is only supported in the Responses API.
+Lumina drops `reasoning_effort` from `gpt-5.4` and newer (`gpt-5.4`, `gpt-5.5`, future 5.x releases) requests to `lumina.completion()` that include tools, since that combination is only supported in the Responses API.
 
-If you need reasoning **and** tools together, use the responses bridge instead (LiteLLM also auto-routes these requests to `/v1/responses` when both `tools` and `reasoning_effort` are set):
+If you need reasoning **and** tools together, use the responses bridge instead (Lumina also auto-routes these requests to `/v1/responses` when both `tools` and `reasoning_effort` are set):
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_large}}",  # routes to /v1/responses
     messages=[{"role": "user", "content": "What's the weather?"}],
     tools=[...],
@@ -845,7 +845,7 @@ response = litellm.completion(
 
 ### When to use the `openai/responses/` prefix
 
-Each model has a `mode` property defined in [`model_prices_and_context_window.json`](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) that determines which API endpoint it uses by default:
+Each model has a `mode` property defined in [`model_prices_and_context_window.json`](https://github.com/Soventra/lumina/blob/main/model_prices_and_context_window.json) that determines which API endpoint it uses by default:
 
 - **`mode: responses`** - Model automatically uses the Responses API
 - **`mode: chat`** - Model defaults to the Chat Completions API
@@ -865,7 +865,7 @@ To use built-in tools like `web_search_preview` with `mode: chat` models, add th
 
 ```python
 # This will FAIL - {{openai_large}} has mode: chat, uses Chat Completions API
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_large}}",
     messages=[{"role": "user", "content": "What is the weather in Paris today?"}],
     tools=[{"type": "web_search_preview"}],  # Not supported in Chat Completions
@@ -873,7 +873,7 @@ response = litellm.completion(
 )
 
 # This will WORK - prefix forces Responses API
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_large}}",
     messages=[{"role": "user", "content": "What is the weather in Paris today?"}],
     tools=[{"type": "web_search_preview"}],  # Supported in Responses API
@@ -889,12 +889,12 @@ response = litellm.completion(
 **Using a model with `mode: responses` (automatic):**
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["OPENAI_API_KEY"] = "sk-<your-api-key>"
 
-response = litellm.completion(
+response = lumina.completion(
     model="o3-deep-research-2025-06-26",
     messages=[{"role": "user", "content": "What is the capital of France?"}],
     tools=[
@@ -908,13 +908,13 @@ print(response)
 **Using a model with `mode: chat` (requires prefix):**
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["OPENAI_API_KEY"] = "sk-<your-api-key>"
 
 # Use the openai/responses/ prefix to enable built-in tools
-response = litellm.completion(
+response = lumina.completion(
     model="openai/responses/{{openai_large}}",
     messages=[{"role": "user", "content": "What is the weather in Paris today?"}],
     tools=[
@@ -947,7 +947,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it!
@@ -973,7 +973,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ## OpenAI Audio Transcription
 
-LiteLLM supports OpenAI Audio Transcription endpoint.
+Lumina supports OpenAI Audio Transcription endpoint.
 
 Supported models:
 
@@ -987,7 +987,7 @@ Supported models:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import transcription
+from lumina import transcription
 import os 
 
 # set api keys 
@@ -1020,7 +1020,7 @@ general_settings:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it!
@@ -1043,15 +1043,15 @@ curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
 
 ### Getting OpenAI API Response Headers 
 
-Set `litellm.return_response_headers = True` to get raw response headers from OpenAI
+Set `lumina.return_response_headers = True` to get raw response headers from OpenAI
 
-You can expect to always get the `_response_headers` field from `litellm.completion()`, `litellm.embedding()` functions
+You can expect to always get the `_response_headers` field from `lumina.completion()`, `lumina.embedding()` functions
 
 <Tabs>
-<TabItem value="litellm.completion" label="litellm.completion">
+<TabItem value="lumina.completion" label="lumina.completion">
 
 ```python
-litellm.return_response_headers = True
+lumina.return_response_headers = True
 
 # /chat/completion
 response = completion(
@@ -1068,10 +1068,10 @@ print("_response_headers=", response._response_headers)
 ```
 </TabItem>
 
-<TabItem value="litellm.completion - streaming" label="litellm.completion + stream">
+<TabItem value="lumina.completion - streaming" label="lumina.completion + stream">
 
 ```python
-litellm.return_response_headers = True
+lumina.return_response_headers = True
 
 # /chat/completion
 response = completion(
@@ -1091,13 +1091,13 @@ for chunk in response:
 ```
 </TabItem>
 
-<TabItem value="litellm.embedding" label="litellm.embedding">
+<TabItem value="lumina.embedding" label="lumina.embedding">
 
 ```python
-litellm.return_response_headers = True
+lumina.return_response_headers = True
 
 # embedding
-embedding_response = litellm.embedding(
+embedding_response = lumina.embedding(
     model="text-embedding-ada-002",
     input="hello",
 )
@@ -1140,13 +1140,13 @@ Expected Response Headers from OpenAI
 ```
 
 ### Parallel Function calling
-See a detailed walthrough of parallel function calling with litellm [here](https://docs.litellm.ai/docs/completion/function_call)
+See a detailed walthrough of parallel function calling with lumina [here](https://docs.lumina.ai/docs/completion/function_call)
 ```python
-import litellm
+import lumina
 import json
 # set openai api key
 import os
-os.environ['OPENAI_API_KEY'] = "" # litellm reads OPENAI_API_KEY from .env and sends the request
+os.environ['OPENAI_API_KEY'] = "" # lumina reads OPENAI_API_KEY from .env and sends the request
 # Example dummy function hard coded to return the same weather
 # In production, this could be your backend API or an external API
 def get_current_weather(location, unit="fahrenheit"):
@@ -1182,7 +1182,7 @@ tools = [
     }
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="{{openai_small}}",
     messages=messages,
     tools=tools,
@@ -1196,7 +1196,7 @@ tool_calls = response.choices[0].message.tool_calls
 ### Setting `extra_headers` for completion calls
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 
@@ -1210,11 +1210,11 @@ response = completion(
 ### Setting Organization-ID for completion calls
 This can be set in one of the following ways:
 - Environment Variable `OPENAI_ORGANIZATION`
-- Params to `litellm.completion(model=model, organization="your-organization-id")`
-- Set as `litellm.organization="your-organization-id"`
+- Params to `lumina.completion(model=model, organization="your-organization-id")`
+- Set as `lumina.organization="your-organization-id"`
 ```python
 import os 
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = "your-api-key"
 os.environ["OPENAI_ORGANIZATION"] = "your-org-id" # OPTIONAL
@@ -1229,39 +1229,39 @@ response = completion(
 
 This is done by setting your own `httpx.Client` 
 
-- For `litellm.completion` set `litellm.client_session=httpx.Client(verify=False)`
-- For `litellm.acompletion` set `litellm.aclient_session=AsyncClient.Client(verify=False)`
+- For `lumina.completion` set `lumina.client_session=httpx.Client(verify=False)`
+- For `lumina.acompletion` set `lumina.aclient_session=AsyncClient.Client(verify=False)`
 ```python
-import litellm, httpx
+import lumina, httpx
 
 # for completion
-litellm.client_session = httpx.Client(verify=False)
-response = litellm.completion(
+lumina.client_session = httpx.Client(verify=False)
+response = lumina.completion(
     model="{{openai_small}}",
     messages=messages,
 )
 
 # for acompletion
-litellm.aclient_session = httpx.AsyncClient(verify=False)
-response = litellm.acompletion(
+lumina.aclient_session = httpx.AsyncClient(verify=False)
+response = lumina.acompletion(
     model="{{openai_small}}",
     messages=messages,
 )
 ```
 
 
-### Using OpenAI Proxy with LiteLLM
+### Using OpenAI Proxy with Lumina
 ```python
 import os 
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["OPENAI_API_KEY"] = ""
 
 # set custom api base to your proxy
-# either set .env or litellm.api_base
+# either set .env or lumina.api_base
 # os.environ["OPENAI_BASE_URL"] = "https://your_host/v1"
-litellm.api_base = "https://your_host/v1"
+lumina.api_base = "https://your_host/v1"
 
 
 messages = [{ "content": "Hello, how are you?","role": "user"}]
@@ -1294,7 +1294,7 @@ general_settings:
 2. Start Proxy
 
 ```bash
-litellm --config config.yaml --detailed_debug
+lumina --config config.yaml --detailed_debug
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -1304,7 +1304,7 @@ litellm --config config.yaml --detailed_debug
 ```python
 from openai import OpenAI
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     organization="my-special-org",
     base_url="http://0.0.0.0:4000"
 )
@@ -1315,8 +1315,8 @@ client.chat.completions.create(model="{{openai_small}}", messages=[{"role": "use
 In your logs you should see the forwarded org id
 
 ```bash
-LiteLLM:DEBUG: utils.py:255 - Request to litellm:
-LiteLLM:DEBUG: utils.py:255 - litellm.acompletion(... organization='my-special-org',)
+Lumina:DEBUG: utils.py:255 - Request to lumina:
+Lumina:DEBUG: utils.py:255 - lumina.acompletion(... organization='my-special-org',)
 ```
 
 ## GPT-5 Pro Special Notes
@@ -1341,6 +1341,6 @@ response = completion(
 
 ## Video Generation
 
-LiteLLM supports OpenAI's video generation models including Sora.
+Lumina supports OpenAI's video generation models including Sora.
 
 For detailed documentation on video generation, see [OpenAI Video Generation →](./openai/videos.md)

@@ -3,7 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # MCP Semantic Tool Filter
 
-Automatically filter MCP tools by semantic relevance. When you have many MCP tools registered, LiteLLM semantically matches the user's query against tool descriptions and sends only the most relevant tools to the LLM.
+Automatically filter MCP tools by semantic relevance. When you have many MCP tools registered, Lumina semantically matches the user's query against tool descriptions and sends only the most relevant tools to the LLM.
 
 ## How It Works
 
@@ -18,38 +18,38 @@ This approach improves context efficiency, increases reliability by reducing too
 ```mermaid
 sequenceDiagram
     participant Client
-    participant LiteLLM as LiteLLM Proxy
+    participant Lumina as Lumina Proxy
     participant SemanticFilter as Semantic Filter
     participant MCP as MCP Registry
     participant LLM as LLM Provider
 
-    Note over LiteLLM,MCP: Startup: Build Semantic Index
-    LiteLLM->>MCP: Fetch all registered MCP tools
-    MCP->>LiteLLM: Return all tools (e.g., 50 tools)
-    LiteLLM->>SemanticFilter: Build semantic router with embeddings
+    Note over Lumina,MCP: Startup: Build Semantic Index
+    Lumina->>MCP: Fetch all registered MCP tools
+    MCP->>Lumina: Return all tools (e.g., 50 tools)
+    Lumina->>SemanticFilter: Build semantic router with embeddings
     SemanticFilter->>LLM: Generate embeddings for tool descriptions
     LLM->>SemanticFilter: Return embeddings
     Note over SemanticFilter: Index ready for fast lookup
 
     Note over Client,LLM: Request: Semantic Tool Filtering
-    Client->>LiteLLM: POST /v1/responses with MCP tools
-    LiteLLM->>SemanticFilter: Expand MCP references (50 tools available)
+    Client->>Lumina: POST /v1/responses with MCP tools
+    Lumina->>SemanticFilter: Expand MCP references (50 tools available)
     SemanticFilter->>SemanticFilter: Extract user query from request
     SemanticFilter->>LLM: Generate query embedding
     LLM->>SemanticFilter: Return query embedding
     SemanticFilter->>SemanticFilter: Match query against tool embeddings
-    SemanticFilter->>LiteLLM: Return top-K tools (e.g., 3 most relevant)
-    LiteLLM->>LLM: Forward request with filtered tools (3 tools)
-    LLM->>LiteLLM: Return response
-    LiteLLM->>Client: Response with headers<br/>x-litellm-semantic-filter: 50->3<br/>x-litellm-semantic-filter-tools: tool1,tool2,tool3
+    SemanticFilter->>Lumina: Return top-K tools (e.g., 3 most relevant)
+    Lumina->>LLM: Forward request with filtered tools (3 tools)
+    LLM->>Lumina: Return response
+    Lumina->>Client: Response with headers<br/>x-lumina-semantic-filter: 50->3<br/>x-lumina-semantic-filter-tools: tool1,tool2,tool3
 ```
 
 ## Configuration
 
-Enable semantic filtering in your LiteLLM config:
+Enable semantic filtering in your Lumina config:
 
 ```yaml title="config.yaml" showLineNumbers
-litellm_settings:
+lumina_settings:
   mcp_semantic_tool_filter:
     enabled: true
     embedding_model: "text-embedding-3-small"  # Model for semantic matching
@@ -79,14 +79,14 @@ curl --location 'http://localhost:4000/v1/responses' \
     "input": [
     {
       "role": "user",
-      "content": "give me TLDR of what BerriAI/litellm repo is about",
+      "content": "give me TLDR of what Soventra/lumina repo is about",
       "type": "message"
     }
   ],
     "tools": [
         {
             "type": "mcp",
-            "server_url": "litellm_proxy",
+            "server_url": "lumina_proxy",
             "require_approval": "never"
         }
     ],
@@ -104,12 +104,12 @@ curl --location 'http://localhost:4000/v1/chat/completions' \
 --data '{
   "model": "{{openai_large}}",
   "messages": [
-    {"role": "user", "content": "Search Wikipedia for LiteLLM"}
+    {"role": "user", "content": "Search Wikipedia for Lumina"}
   ],
   "tools": [
     {
       "type": "mcp",
-      "server_url": "litellm_proxy"
+      "server_url": "lumina_proxy"
     }
   ]
 }'
@@ -123,12 +123,12 @@ curl --location 'http://localhost:4000/v1/chat/completions' \
 The semantic filter adds diagnostic headers to every response:
 
 ```
-x-litellm-semantic-filter: 10->3
-x-litellm-semantic-filter-tools: wikipedia-fetch,github-search,slack-post
+x-lumina-semantic-filter: 10->3
+x-lumina-semantic-filter-tools: wikipedia-fetch,github-search,slack-post
 ```
 
-- **`x-litellm-semantic-filter`** - Shows before→after tool count (e.g., `10->3` means 10 tools were filtered down to 3)
-- **`x-litellm-semantic-filter-tools`** - CSV list of the filtered tool names (max 150 chars, clipped with `...` if longer)
+- **`x-lumina-semantic-filter`** - Shows before→after tool count (e.g., `10->3` means 10 tools were filtered down to 3)
+- **`x-lumina-semantic-filter-tools`** - CSV list of the filtered tool names (max 150 chars, clipped with `...` if longer)
 
 These headers help you understand which tools were selected for each request and verify the filter is working correctly.
 
@@ -136,10 +136,10 @@ These headers help you understand which tools were selected for each request and
 
 If you have 50 MCP tools registered and make a request asking about Wikipedia, the semantic filter will:
 
-1. Semantically match your query `"Search Wikipedia for LiteLLM"` against all 50 tool descriptions
+1. Semantically match your query `"Search Wikipedia for Lumina"` against all 50 tool descriptions
 2. Select the top 5 most relevant tools (e.g., `wikipedia-fetch`, `wikipedia-search`, etc.)
 3. Pass only those 5 tools to the LLM
-4. Add headers showing `x-litellm-semantic-filter: 50->5`
+4. Add headers showing `x-lumina-semantic-filter: 50->5`
 
 This dramatically reduces prompt size while ensuring the LLM has access to the right tools for the task.
 
@@ -153,6 +153,6 @@ The semantic filter is optimized for production:
 
 ## Related
 
-- [MCP Overview](./mcp.md) - Learn about MCP in LiteLLM
+- [MCP Overview](./mcp.md) - Learn about MCP in Lumina
 - [MCP Permission Management](./mcp_control.md) - Control tool access by key/team
 - [Using MCP](./mcp_usage.md) - Complete MCP usage guide

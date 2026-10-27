@@ -7,7 +7,7 @@ authors:
   - misbah
   - mateo
   - kerry
-description: "Day 0 support for Gemini Nano Banana 2.1 on LiteLLM, on Google AI Studio and Gemini Enterprise Agent Platform, with image output at half Nano Banana 2's price."
+description: "Day 0 support for Gemini Nano Banana 2.1 on Lumina, on Google AI Studio and Gemini Enterprise Agent Platform, with image output at half Nano Banana 2's price."
 card_title: "Nano Banana 2.1"
 card_summary: "Gemini image model with image output at half Nano Banana 2's price: $30 / MTok image out, $1.50 text in."
 tags: [gemini, gemini enterprise agent platform, nano banana, image generation, day 0 support]
@@ -17,9 +17,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x Nano Banana 2.1](./hero.png)
+![Lumina x Nano Banana 2.1](./hero.png)
 
-LiteLLM supports `gemini-nano-banana-2.1` on day 0 on Google AI Studio (`gemini/`) and Gemini Enterprise Agent Platform, formerly Vertex AI (`vertex_ai/`), through `/v1/images/generations`, `/v1/images/edits` and `/chat/completions`. It replaces Nano Banana 2 (`gemini-3.1-flash-image`), which the Gemini API shuts down on October 29, 2026.
+Lumina supports `gemini-nano-banana-2.1` on day 0 on Google AI Studio (`gemini/`) and Gemini Enterprise Agent Platform, formerly Vertex AI (`vertex_ai/`), through `/v1/images/generations`, `/v1/images/edits` and `/chat/completions`. It replaces Nano Banana 2 (`gemini-3.1-flash-image`), which the Gemini API shuts down on October 29, 2026.
 
 {/* truncate */}
 
@@ -58,7 +58,7 @@ model_list:
 **2. Start the proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 **3. Test it**
@@ -78,9 +78,9 @@ curl http://0.0.0.0:4000/v1/images/generations \
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="gemini/gemini-nano-banana-2.1",
     prompt="A product shot of a ceramic mug on a walnut desk, soft morning light",
 )
@@ -93,4 +93,4 @@ print(response.data[0].b64_json[:64])
 
 ## Feedback
 
-Questions and feedback go in [GitHub discussion #44983](https://github.com/BerriAI/litellm/discussions/44983).
+Questions and feedback go in [GitHub discussion #44983](https://github.com/Soventra/lumina/discussions/44983).

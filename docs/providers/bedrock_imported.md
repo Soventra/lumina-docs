@@ -18,7 +18,7 @@ This is a separate route, as the chat template is different.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 response = completion(
@@ -45,7 +45,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -87,7 +87,7 @@ Use this route to call Bedrock Imported Models that follow the `llama` Invoke Re
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 response = completion(
@@ -114,7 +114,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -150,7 +150,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 response = completion(
@@ -178,7 +178,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -215,7 +215,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 response = completion(
@@ -243,7 +243,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -278,12 +278,12 @@ Use this route for Bedrock imported models that follow the **OpenAI Chat Complet
 | Provider Documentation | [Bedrock Imported Models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-customization-import-model.html) |
 | Supported Features | Vision (images), tool calling, streaming, system messages |
 
-#### LiteLLMSDK Usage
+#### LuminaSDK Usage
 
 **Basic Usage**
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="bedrock/openai/arn:aws:bedrock:us-east-1:046319184608:imported-model/0m2lasirsp6z",  # bedrock/openai/{your-model-arn}
@@ -297,7 +297,7 @@ response = completion(
 
 ```python
 import base64
-from litellm import completion
+from lumina import completion
 
 # Load and encode image
 with open("image.jpg", "rb") as f:
@@ -330,7 +330,7 @@ response = completion(
 
 ```python
 import base64
-from litellm import completion
+from lumina import completion
 
 # Load images
 with open("image1.jpg", "rb") as f:
@@ -365,7 +365,7 @@ response = completion(
 )
 ```
 
-#### LiteLLM Proxy Usage (AI Gateway)
+#### Lumina Proxy Usage (AI Gateway)
 
 **1. Add to config**
 
@@ -379,7 +379,7 @@ model_list:
 **2. Start proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -457,7 +457,7 @@ Moonshot AI's Kimi K2 Thinking model is now available on Amazon Bedrock. This mo
 <TabItem value="sdk" label="SDK">
 
 ```python title="Moonshot Kimi K2 SDK Usage" showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["AWS_ACCESS_KEY_ID"] = "your-aws-access-key"
@@ -498,8 +498,8 @@ model_list:
 
 **2. Start proxy**
 
-```bash title="Start LiteLLM Proxy" showLineNumbers
-litellm --config /path/to/config.yaml
+```bash title="Start Lumina Proxy" showLineNumbers
+lumina --config /path/to/config.yaml
 
 # RUNNING at http://0.0.0.0:4000
 ```
@@ -529,7 +529,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 #### Tool Calling Example
 
 ```python title="Kimi K2 with Tool Calling" showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["AWS_ACCESS_KEY_ID"] = "your-aws-access-key"
@@ -572,7 +572,7 @@ if response.choices[0].message.tool_calls:
 #### Streaming Example
 
 ```python title="Kimi K2 Streaming" showLineNumbers
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["AWS_ACCESS_KEY_ID"] = "your-aws-access-key"

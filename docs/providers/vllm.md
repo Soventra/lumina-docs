@@ -3,30 +3,30 @@ import TabItem from '@theme/TabItem';
 
 # VLLM
 
-LiteLLM supports all models on VLLM.
+Lumina supports all models on VLLM.
 
 | Property | Details |
 |-------|-------|
 | Description | vLLM is a fast and easy-to-use library for LLM inference and serving. [Docs](https://docs.vllm.ai/en/latest/index.html) |
-| Provider Route on LiteLLM | `hosted_vllm/` (for OpenAI compatible server), `vllm/` ([DEPRECATED] for vLLM sdk usage) |
+| Provider Route on Lumina | `hosted_vllm/` (for OpenAI compatible server), `vllm/` ([DEPRECATED] for vLLM sdk usage) |
 | Provider Doc | [vLLM ↗](https://docs.vllm.ai/en/latest/index.html) |
 | Supported Endpoints | `/chat/completions`, `/embeddings`, `/completions`, `/rerank`, `/audio/transcriptions` |
 
 
 ## Quick Start
 
-## Usage - litellm.completion (calling OpenAI compatible endpoint)
-vLLM Provides an OpenAI compatible endpoints - here's how to call it with LiteLLM 
+## Usage - lumina.completion (calling OpenAI compatible endpoint)
+vLLM Provides an OpenAI compatible endpoints - here's how to call it with Lumina 
 
-To use litellm to call a hosted vllm server add the following to your completion call
+To use lumina to call a hosted vllm server add the following to your completion call
 
 * `model="hosted_vllm/<your-vllm-model-name>"` 
 * `api_base = "your-hosted-vllm-server"`
 
 ```python
-import litellm 
+import lumina 
 
-response = litellm.completion(
+response = lumina.completion(
             model="hosted_vllm/facebook/opt-125m", # pass the vllm model name
             messages=messages,
             api_base="https://hosted-vllm-api.co",
@@ -37,9 +37,9 @@ print(response)
 ```
 
 
-## Usage -  LiteLLM Proxy Server (calling OpenAI compatible endpoint)
+## Usage -  Lumina Proxy Server (calling OpenAI compatible endpoint)
 
-Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
+Here's how to call an OpenAI-Compatible Endpoint with the Lumina Proxy Server
 
 1. Modify the config.yaml 
 
@@ -54,10 +54,10 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 2. Start the proxy 
 
   ```bash
-  $ litellm --config /path/to/config.yaml
+  $ lumina --config /path/to/config.yaml
   ```
 
-3. Send Request to LiteLLM Proxy Server
+3. Send Request to Lumina Proxy Server
 
   <Tabs>
 
@@ -66,8 +66,8 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```python
   import openai
   client = openai.OpenAI(
-      api_key="sk-<your-litellm-api-key>",             # pass litellm proxy key, if you're using virtual keys
-      base_url="http://0.0.0.0:4000" # litellm-proxy-base url
+      api_key="sk-<your-lumina-api-key>",             # pass lumina proxy key, if you're using virtual keys
+      base_url="http://0.0.0.0:4000" # lumina-proxy-base url
   )
 
   response = client.chat.completions.create(
@@ -110,7 +110,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   <TabItem value="sdk" label="SDK">
 
   ```python
-  from litellm import completion
+  from lumina import completion
 
   response = completion(
       model="hosted_vllm/gpt-oss-120b",
@@ -136,7 +136,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   2. Start the proxy
 
   ```bash
-  litellm --config /path/to/config.yaml
+  lumina --config /path/to/config.yaml
   ```
 
   3. Test it!
@@ -153,13 +153,13 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 
 ## Embeddings
 
-vLLM serves OpenAI-compatible `/v1/embeddings`. When clients omit `encoding_format`, LiteLLM defaults it for OpenAI-compatible embedding routing (request → model `lumina_params` → `LUMINA_DEFAULT_EMBEDDING_ENCODING_FORMAT` → `float`). See [Embeddings](../proxy/embedding.md#embedding-encoding-format).
+vLLM serves OpenAI-compatible `/v1/embeddings`. When clients omit `encoding_format`, Lumina defaults it for OpenAI-compatible embedding routing (request → model `lumina_params` → `LUMINA_DEFAULT_EMBEDDING_ENCODING_FORMAT` → `float`). See [Embeddings](../proxy/embedding.md#embedding-encoding-format).
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import embedding   
+from lumina import embedding   
 import os
 
 os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8000"
@@ -186,7 +186,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -211,7 +211,7 @@ curl -L -X POST 'http://0.0.0.0:4000/embeddings' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 import os
 
 os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8000"
@@ -237,7 +237,7 @@ print(response)
 ### Async Usage
 
 ```python
-from litellm import arerank
+from lumina import arerank
 import os, asyncio
 
 os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8000"
@@ -280,7 +280,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -304,14 +304,14 @@ curl -L -X POST 'http://0.0.0.0:4000/rerank' \
 }'
 ```
 
-[See OpenAI SDK/Langchain/etc. examples](../rerank.md#litellm-proxy-usage)
+[See OpenAI SDK/Langchain/etc. examples](../rerank.md#lumina-proxy-usage)
 
 </TabItem>
 </Tabs>
 
 ### Truncating long documents
 
-vLLM's `/rerank` endpoint takes its own truncation controls, and LiteLLM forwards them to `hosted_vllm` rerank models whenever they are set. Without one of them, a document longer than the reranker's context window fails with a context length error
+vLLM's `/rerank` endpoint takes its own truncation controls, and Lumina forwards them to `hosted_vllm` rerank models whenever they are set. Without one of them, a document longer than the reranker's context window fails with a context length error
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
@@ -326,7 +326,7 @@ An invalid value, such as `truncation_side: "middle"`, returns a 400 before anyt
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import rerank
+from lumina import rerank
 
 response = rerank(
     model="hosted_vllm/your-rerank-model",
@@ -359,13 +359,13 @@ curl -L -X POST 'http://0.0.0.0:4000/rerank' \
 
 ## Image Edits
 
-vLLM-Omni serves OpenAI-compatible `/v1/images/edits` for image editing models such as `Qwen/Qwen-Image-Edit-2511`. Use the `hosted_vllm/` prefix and point `api_base` at the vLLM-Omni server; extra provider fields such as `seed` or `negative_prompt` are passed through as form fields. vLLM-Omni has no `quality` or `input_fidelity` form field and takes its mask as `mask_image` (a URL string) rather than OpenAI's `mask` file, so LiteLLM rejects `mask`, `quality`, and `input_fidelity` for `hosted_vllm/` models unless `drop_params: true` is set, in which case they are dropped before the request is sent. To mask an edit, pass `mask_image` as an extra field with the mask's URL.
+vLLM-Omni serves OpenAI-compatible `/v1/images/edits` for image editing models such as `Qwen/Qwen-Image-Edit-2511`. Use the `hosted_vllm/` prefix and point `api_base` at the vLLM-Omni server; extra provider fields such as `seed` or `negative_prompt` are passed through as form fields. vLLM-Omni has no `quality` or `input_fidelity` form field and takes its mask as `mask_image` (a URL string) rather than OpenAI's `mask` file, so Lumina rejects `mask`, `quality`, and `input_fidelity` for `hosted_vllm/` models unless `drop_params: true` is set, in which case they are dropped before the request is sent. To mask an edit, pass `mask_image` as an extra field with the mask's URL.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ["HOSTED_VLLM_API_BASE"] = "http://localhost:8091"
@@ -397,7 +397,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -442,7 +442,7 @@ There are two ways to send a video url to VLLM:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages=[
     {
@@ -500,7 +500,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -551,7 +551,7 @@ There are two ways to send a video url to VLLM:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
             model="hosted_vllm/qwen", # pass the vllm model name
@@ -593,7 +593,7 @@ model_list:
 2. Start the proxy 
 
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -627,19 +627,19 @@ curl -X POST http://0.0.0.0:4000/chat/completions \
 
 ## Decisions
 
-vLLM v0.32.0 and later serve [`/v1/systemone`](https://github.com/vllm-project/vllm/pull/59299) and answer `choice`, `noul` and `score` questions as described in vLLM's [Structured Decisions](https://github.com/vllm-project/vllm/blob/v0.32.0/docs/serving/online_serving/structured_decisions.md) docs. They serve the model architectures listed in vLLM's [`READ_STRATEGIES`](https://github.com/vllm-project/vllm/blob/v0.32.0/vllm/entrypoints/generate/structured_decisions/strategies.py#L812), Qwen3 and Qwen3.5 among them. Use a `hosted_vllm/` model on LiteLLM's [`/v1/decisions` and `/v1/systemone` routes](../decisions.md), or as the [Auto Router classifier](../auto_router/decision_classifiers.md#vllm).
+vLLM v0.32.0 and later serve [`/v1/systemone`](https://github.com/vllm-project/vllm/pull/59299) and answer `choice`, `noul` and `score` questions as described in vLLM's [Structured Decisions](https://github.com/vllm-project/vllm/blob/v0.32.0/docs/serving/online_serving/structured_decisions.md) docs. They serve the model architectures listed in vLLM's [`READ_STRATEGIES`](https://github.com/vllm-project/vllm/blob/v0.32.0/vllm/entrypoints/generate/structured_decisions/strategies.py#L812), Qwen3 and Qwen3.5 among them. Use a `hosted_vllm/` model on Lumina's [`/v1/decisions` and `/v1/systemone` routes](../decisions.md), or as the [Auto Router classifier](../auto_router/decision_classifiers.md#vllm).
 
 ## (Deprecated) for packaged `vllm` installs
-### Using - `litellm.completion`
+### Using - `lumina.completion`
 
 ```
-uv add litellm vllm
+uv add lumina vllm
 ```
 ```python
-import litellm 
+import lumina 
 
-response = litellm.completion(
-            model="vllm/facebook/opt-125m", # add a vllm prefix so litellm knows the custom_llm_provider==vllm
+response = lumina.completion(
+            model="vllm/facebook/opt-125m", # add a vllm prefix so lumina knows the custom_llm_provider==vllm
             messages=messages,
             temperature=0.2,
             max_tokens=80)
@@ -651,7 +651,7 @@ print(response)
 ### Batch Completion
 
 ```python
-from litellm import batch_completion
+from lumina import batch_completion
 
 model_name = "facebook/opt-125m"
 provider = "vllm"
@@ -682,7 +682,7 @@ def default_pt(messages):
     return " ".join(message["content"] for message in messages)
 ```
 
-[Code for how prompt templates work in LiteLLM](https://github.com/BerriAI/litellm/blob/main/litellm/llms/prompt_templates/factory.py)
+[Code for how prompt templates work in Lumina](https://github.com/Soventra/lumina/blob/main/lumina/llms/prompt_templates/factory.py)
 
 
 #### Models we already have Prompt Templates for
@@ -700,7 +700,7 @@ def default_pt(messages):
 
 ```python 
 # Create your own custom prompt template works 
-litellm.register_prompt_template(
+lumina.register_prompt_template(
 	model="togethercomputer/LLaMA-2-7B-32K",
 	roles={
             "system": {
@@ -715,7 +715,7 @@ litellm.register_prompt_template(
                 "pre_message": "\n",
                 "post_message": "\n",
             }
-        } # tell LiteLLM how you want to map the openai messages to this model
+        } # tell Lumina how you want to map the openai messages to this model
 )
 
 def test_vllm_custom_model():
@@ -727,4 +727,4 @@ def test_vllm_custom_model():
 test_vllm_custom_model()
 ```
 
-[Implementation Code](https://github.com/BerriAI/litellm/blob/6b3cb1898382f2e4e80fd372308ea232868c78d1/litellm/utils.py#L1414)
+[Implementation Code](https://github.com/Soventra/lumina/blob/6b3cb1898382f2e4e80fd372308ea232868c78d1/lumina/utils.py#L1414)

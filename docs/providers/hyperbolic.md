@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Hyperbolic provides access to the latest models at a fraction of legacy cloud costs, with OpenAI-compatible APIs for LLMs, image generation, and more. |
-| Provider Route on LiteLLM | `hyperbolic/` |
+| Provider Route on Lumina | `hyperbolic/` |
 | Link to Provider Doc | [Hyperbolic Documentation ↗](https://docs.hyperbolic.xyz) |
 | Base URL | `https://api.hyperbolic.xyz/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/hyperbolic#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](/docs/providers/hyperbolic#usage---lumina-python-sdk) |
 
 <br />
 <br />
@@ -46,14 +46,14 @@ os.environ["HYPERBOLIC_API_KEY"] = ""  # your Hyperbolic API key
 
 Get your API key from [Hyperbolic dashboard](https://app.hyperbolic.ai).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Hyperbolic Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["HYPERBOLIC_API_KEY"] = ""  # your Hyperbolic API key
 
@@ -72,8 +72,8 @@ print(response)
 
 ```python showLineNumbers title="Hyperbolic Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["HYPERBOLIC_API_KEY"] = ""  # your Hyperbolic API key
 
@@ -94,8 +94,8 @@ for chunk in response:
 
 ```python showLineNumbers title="Hyperbolic Function Calling"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["HYPERBOLIC_API_KEY"] = ""  # your Hyperbolic API key
 
@@ -133,9 +133,9 @@ response = completion(
 print(response)
 ```
 
-## Usage - LiteLLM Proxy
+## Usage - Lumina Proxy
 
-Add the following to your LiteLLM Proxy configuration file:
+Add the following to your Lumina Proxy configuration file:
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -155,10 +155,10 @@ model_list:
       api_key: os.environ/HYPERBOLIC_API_KEY
 ```
 
-Start your LiteLLM Proxy server:
+Start your Lumina Proxy server:
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -207,14 +207,14 @@ for chunk in response:
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Hyperbolic via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Hyperbolic via Proxy - Lumina SDK"
+import lumina
 
-# Configure LiteLLM to use your proxy
-response = litellm.completion(
-    model="litellm_proxy/deepseek-fast",
+# Configure Lumina to use your proxy
+response = lumina.completion(
+    model="lumina_proxy/deepseek-fast",
     messages=[{"role": "user", "content": "What are the benefits of renewable energy?"}],
     api_base="http://localhost:4000",
     api_key="your-proxy-api-key"
@@ -223,12 +223,12 @@ response = litellm.completion(
 print(response.choices[0].message.content)
 ```
 
-```python showLineNumbers title="Hyperbolic via Proxy - LiteLLM SDK Streaming"
-import litellm
+```python showLineNumbers title="Hyperbolic via Proxy - Lumina SDK Streaming"
+import lumina
 
-# Configure LiteLLM to use your proxy with streaming
-response = litellm.completion(
-    model="litellm_proxy/qwen-coder",
+# Configure Lumina to use your proxy with streaming
+response = lumina.completion(
+    model="lumina_proxy/qwen-coder",
     messages=[{"role": "user", "content": "Implement a binary search algorithm"}],
     api_base="http://localhost:4000",
     api_key="your-proxy-api-key",
@@ -268,7 +268,7 @@ curl http://localhost:4000/v1/chat/completions \
 </TabItem>
 </Tabs>
 
-For more detailed information on using the LiteLLM Proxy, see the [LiteLLM Proxy documentation](../providers/litellm_proxy).
+For more detailed information on using the Lumina Proxy, see the [Lumina Proxy documentation](../providers/lumina_proxy).
 
 ## Supported OpenAI Parameters
 
@@ -299,9 +299,9 @@ Hyperbolic supports the following OpenAI-compatible parameters:
 If you're using a custom Hyperbolic deployment:
 
 ```python showLineNumbers title="Custom API Base"
-import litellm
+import lumina
 
-response = litellm.completion(
+response = lumina.completion(
     model="hyperbolic/deepseek-ai/DeepSeek-V3",
     messages=[{"role": "user", "content": "Hello"}],
     api_base="https://your-custom-hyperbolic-endpoint.com/v1",

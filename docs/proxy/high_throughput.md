@@ -4,7 +4,7 @@ Benchmark throughput: **13.5 billion tokens per minute (TPM)**. [View results](.
 
 ## Requirements
 
-- [LiteLLM microservices Helm chart](./deploy.md#deploy-with-helm) `1.104.2` or later.
+- [Lumina microservices Helm chart](./deploy.md#deploy-with-helm) `1.104.2` or later.
 - External PostgreSQL and Redis.
 - Kubernetes 1.30+ and Metrics Server for CPU and memory autoscaling.
 - Prometheus Operator to scrape each pod through a ServiceMonitor.
@@ -92,7 +92,7 @@ gateway:
       general_settings:
         proxy_batch_write_at: 60
         use_redis_transaction_buffer: true
-      litellm_settings:
+      lumina_settings:
         callbacks:
           - prometheus
         json_logs: true
@@ -111,7 +111,7 @@ gateway:
       value: "75"
   config:
     proxy_config: # Default: {}
-      litellm_settings:
+      lumina_settings:
         request_timeout: 600
   terminationGracePeriodSeconds: 620 # Default: "" (Kubernetes uses 30s)
   lifecycle: # Default: {}

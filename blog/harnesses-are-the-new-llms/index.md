@@ -25,7 +25,7 @@ But a registry alone is not enough. Anyone can build a list of agents.
 
 The harder problem is invocation. Agent runtimes expose similar primitives (agents, sessions, events, tools) but they do not expose them through the same APIs. So if you want one place to actually use these agents, not just list them, the control plane has to manage agent runtimes, schedules, memory, and sessions.
 
-This is the same pattern LiteLLM saw with models. Companies did not just need a catalog of models. They needed one interface to call them. The only change, is that the primitive is now the agent session, not the model call.
+This is the same pattern Lumina saw with models. Companies did not just need a catalog of models. They needed one interface to call them. The only change, is that the primitive is now the agent session, not the model call.
 
 ## The Stack of the Future
 
@@ -50,7 +50,7 @@ With agents, we think the stack becomes:
 
 ## Why companies will need this
 
-At LiteLLM, we are already seeing our team work across multiple agent runtimes. Some people are building on Claude Managed Agents, others are on N8N or Cursor. 
+At Lumina, we are already seeing our team work across multiple agent runtimes. Some people are building on Claude Managed Agents, others are on N8N or Cursor. 
 
 This fragmentation makes it hard for agents built on these platforms to be shareable, and everyone to benefit from the work done so far. 
 
@@ -62,9 +62,9 @@ This is also why we think the AI Gateway moves up the stack. The gateway starts 
 
 ## What we are building
 
-[LiteLLM Agent Platform](https://github.com/LiteLLM-Labs/litellm-agent-platform) is our experiment in this direction.
+[Lumina Agent Platform](https://github.com/Lumina-Labs/lumina-agent-platform) is our experiment in this direction.
 
-LiteLLM Agent Platform is a Rust-based AI Gateway and Agent Control Plane. The goal is to let teams register, invoke, observe, and govern agents across multiple runtimes.
+Lumina Agent Platform is a Rust-based AI Gateway and Agent Control Plane. The goal is to let teams register, invoke, observe, and govern agents across multiple runtimes.
 
 We are starting with coding agents because the need is obvious. They are long-running, stateful, tool-heavy, and expensive enough to require real infrastructure.
 
@@ -72,15 +72,15 @@ We are already seeing early users resonate with this pattern. Some companies wan
 
 This is the architecture we believe is coming: models become interchangeable, harnesses become specialized, runtimes become managed, and the gateway becomes the control plane for agent work.
 
-If this matches what you are seeing, we would love feedback on LiteLLM Agent Platform:
+If this matches what you are seeing, we would love feedback on Lumina Agent Platform:
 
-https://github.com/LiteLLM-Labs/litellm-agent-platform
+https://github.com/Lumina-Labs/lumina-agent-platform
 
 ## Frequently Asked Questions
 
-### Is LiteLLM building a second product?
+### Is Lumina building a second product?
 
-No. LAP is an experimental project. The goal is to learn quickly and bring the right pieces into LiteLLM over time.
+No. LAP is an experimental project. The goal is to learn quickly and bring the right pieces into Lumina over time.
 
 ### Is LAP production-ready?
 

@@ -1,27 +1,27 @@
 import { TenancyDiagram } from '@site/src/components/CloudArchitecture';
 
-# Multi-Tenant Architecture with LiteLLM
+# Multi-Tenant Architecture with Lumina
 
 ## Overview
 
-Multi-tenancy in LiteLLM means running a single proxy that serves many distinct tenants inside your own company (organizations, teams, departments) while keeping their access, spend, and usage isolated from one another. One gateway acts as the shared entry point to every LLM provider, and every request carries the tenant context that determines which models it can reach, which budget it draws from, and where its cost lands.
+Multi-tenancy in Lumina means running a single proxy that serves many distinct tenants inside your own company (organizations, teams, departments) while keeping their access, spend, and usage isolated from one another. One gateway acts as the shared entry point to every LLM provider, and every request carries the tenant context that determines which models it can reach, which budget it draws from, and where its cost lands.
 
 The design solves a few problems that show up whenever more than one group shares an LLM gateway. Cost has to be attributed to the right business unit rather than pooled. Access has to differ per tenant, since teams need different models, budgets, and rate limits. Administration has to be delegated, so a team lead can manage their own team without platform-wide admin rights. And the same architecture has to hold from a handful of users to tens of thousands without a redesign.
 
 :::info[Open Source vs. Enterprise]
-Teams and Virtual Keys are available in open source, and Teams alone can serve as your top-level tenant boundary. Organizations and Org Admins add a further layer of hierarchy on top and are an enterprise feature ([get a 30 day trial](https://www.litellm.ai/#trial)).
+Teams and Virtual Keys are available in open source, and Teams alone can serve as your top-level tenant boundary. Organizations and Org Admins add a further layer of hierarchy on top and are an enterprise feature ([get a 30 day trial](https://www.lumina.ai/#trial)).
 :::
 
 ## The Tenancy Hierarchy
 
 <TenancyDiagram />
 
-LiteLLM models tenancy as four nested levels: Organizations contain Teams, Teams contain Users, and Users and Teams own Keys. Each level is a boundary for isolation and for spend attribution.
+Lumina models tenancy as four nested levels: Organizations contain Teams, Teams contain Users, and Users and Teams own Keys. Each level is a boundary for isolation and for spend attribution.
 
-- Organizations are the top-level tenant and can hold multiple teams. [API Reference](https://docs.litellm.ai/api-reference/#/organization%20management)
-- Teams are collections of users and can hold multiple users. [API Reference](https://docs.litellm.ai/api-reference/#/team%20management)
-- Users belong to teams (possibly several at once) and can own multiple keys. [API Reference](https://docs.litellm.ai/api-reference/#/Internal%20User%20management)
-- Keys authenticate requests and belong to a user, a team, or both. [API Reference](https://docs.litellm.ai/api-reference/#/key%20management)
+- Organizations are the top-level tenant and can hold multiple teams. [API Reference](https://docs.lumina.ai/api-reference/#/organization%20management)
+- Teams are collections of users and can hold multiple users. [API Reference](https://docs.lumina.ai/api-reference/#/team%20management)
+- Users belong to teams (possibly several at once) and can own multiple keys. [API Reference](https://docs.lumina.ai/api-reference/#/Internal%20User%20management)
+- Keys authenticate requests and belong to a user, a team, or both. [API Reference](https://docs.lumina.ai/api-reference/#/key%20management)
 
 ### Organizations
 
@@ -41,7 +41,7 @@ A Virtual Key is what authenticates a request and ties it to a tenant for spend 
 
 ## Roles and Delegation
 
-Isolation only works if administration can be delegated along the same hierarchy. LiteLLM ships roles at two altitudes: platform-wide roles (`proxy_admin`, `proxy_admin_viewer`, `internal_user`) that apply everywhere, and scoped roles (`org_admin`, `team_admin`) that grant control over a single organization or team. A proxy admin creates organizations and assigns org admins, an org admin creates teams within their organization and assigns team admins, and a team admin manages their own team's members and keys without touching anything else, plus whichever team settings (rate limits, the budget, raising the budget) a proxy admin has enabled for team admins. That chain is what lets the platform onboard thousands of users without every change routing through a central admin. For the complete role matrix, per-role capabilities, and configurable team-member permissions, see [Access Control](./access_control.md), and for how internal users onboard and manage their own keys see [Internal User Self-Serve](./self_serve.md).
+Isolation only works if administration can be delegated along the same hierarchy. Lumina ships roles at two altitudes: platform-wide roles (`proxy_admin`, `proxy_admin_viewer`, `internal_user`) that apply everywhere, and scoped roles (`org_admin`, `team_admin`) that grant control over a single organization or team. A proxy admin creates organizations and assigns org admins, an org admin creates teams within their organization and assigns team admins, and a team admin manages their own team's members and keys without touching anything else, plus whichever team settings (rate limits, the budget, raising the budget) a proxy admin has enabled for team admins. That chain is what lets the platform onboard thousands of users without every change routing through a central admin. For the complete role matrix, per-role capabilities, and configurable team-member permissions, see [Access Control](./access_control.md), and for how internal users onboard and manage their own keys see [Internal User Self-Serve](./self_serve.md).
 
 ## Spend and Budgets
 

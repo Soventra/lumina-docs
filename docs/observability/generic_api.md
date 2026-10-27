@@ -1,6 +1,6 @@
 # Generic API
 
-Send LiteLLM logs to any HTTP endpoint.
+Send Lumina logs to any HTTP endpoint.
 
 ## Quick Start
 
@@ -11,7 +11,7 @@ model_list:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   callbacks: ["custom_api_name"]
 
 callback_settings:
@@ -54,7 +54,7 @@ callback_settings:
 Use built-in configurations from `generic_api_compatible_callbacks.json`:
 
 ```yaml
-litellm_settings:
+lumina_settings:
   callbacks: ["rubrik"]  # loads pre-configured settings
 
 callback_settings:
@@ -67,13 +67,13 @@ callback_settings:
 
 ## Payload Format
 
-Logs are sent as `StandardLoggingPayload` [objects](https://docs.litellm.ai/docs/proxy/logging_spec) in JSON format:
+Logs are sent as `StandardLoggingPayload` [objects](https://docs.lumina.ai/docs/proxy/logging_spec) in JSON format:
 
 ```json
 [
   {
     "id": "chatcmpl-123",
-    "call_type": "litellm.completion",
+    "call_type": "lumina.completion",
     "model": "{{openai_small}}",
     "messages": [...],
     "response": {...},

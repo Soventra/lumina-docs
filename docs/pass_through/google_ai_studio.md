@@ -11,7 +11,7 @@ Pass-through endpoints for Google AI Studio - call provider-specific endpoint, i
 |-------|-------|-------|
 | Cost Tracking | ✅ | supports all models on `/generateContent` endpoint |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ✅ | |
 
 
@@ -41,7 +41,7 @@ curl 'http://0.0.0.0:4000/gemini/v1beta/models/{{gemini_flash}}:countTokens?key=
 const { GoogleGenAI } = require("@google/genai");
 
 const ai = new GoogleGenAI({
-    apiKey: "sk-<your-api-key>", // litellm proxy API key
+    apiKey: "sk-<your-api-key>", // lumina proxy API key
     httpOptions: {
         baseUrl: "http://localhost:4000/gemini", // http://<proxy-base-url>/gemini
     },
@@ -95,10 +95,10 @@ Let's call the Gemini [`/countTokens` endpoint](https://ai.google.dev/api/tokens
 export GEMINI_API_KEY=""
 ```
 
-2. Start LiteLLM Proxy 
+2. Start Lumina Proxy 
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -134,7 +134,7 @@ Key Changes:
 
 ### **Example 1: Counting tokens**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl http://0.0.0.0:4000/gemini/v1beta/models/{{gemini_flash}}:countTokens?key=anything \
@@ -166,7 +166,7 @@ curl https://generativelanguage.googleapis.com/v1beta/models/{{gemini_flash}}:co
 
 ### **Example 2: Generate content**
 
-#### LiteLLM Proxy Call 
+#### Lumina Proxy Call 
 
 ```bash
 curl "http://0.0.0.0:4000/gemini/v1beta/models/{{gemini_flash}}:generateContent?key=anything" \
@@ -232,7 +232,7 @@ curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/{{gemini_f
 
 ## **Example 4: Video Generation with Veo**
 
-Generate videos using Google's Veo model through LiteLLM pass-through routes.
+Generate videos using Google's Veo model through Lumina pass-through routes.
 
 [**→ Complete Veo Video Generation Guide**](../proxy/veo_video_generation.md)
 
@@ -255,7 +255,7 @@ export GEMINI_API_KEY=""
 ```
 
 ```bash
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -296,7 +296,7 @@ http://0.0.0.0:4000/gemini/v1beta/models/{{gemini_flash}}:countTokens?key=sk-<vi
 
 ### Send `tags` in request headers
 
-Use this if you want `tags` to be tracked in the LiteLLM DB and on logging callbacks.
+Use this if you want `tags` to be tracked in the Lumina DB and on logging callbacks.
 
 Pass tags in request headers as a comma separated list. In the example below the following tags will be tracked
 

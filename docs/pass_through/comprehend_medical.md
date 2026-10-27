@@ -6,12 +6,12 @@ Pass-through endpoints for [Amazon Comprehend Medical](https://docs.aws.amazon.c
 |-------|-------|-------|
 | Cost Tracking | ✅ | For the sync text operations listed below |
 | Logging | ✅ | works across all integrations |
-| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
+| End-user Tracking | ❌ | [Tell us if you need this](https://github.com/Soventra/lumina/issues/new) |
 | Streaming | ❌ | Not offered by the Comprehend Medical API |
 
 Just replace `https://comprehendmedical.{aws_region_name}.amazonaws.com` with `LUMINA_PROXY_BASE_URL/comprehendmedical`
 
-LiteLLM signs the forwarded request with SigV4 using the proxy's AWS credentials, so clients only need a LiteLLM virtual key.
+Lumina signs the forwarded request with SigV4 using the proxy's AWS credentials, so clients only need a Lumina virtual key.
 
 ## Quick Start
 
@@ -26,7 +26,7 @@ export AWS_REGION_NAME="us-east-1"
 2. Start the proxy
 
 ```bash showLineNumbers
-litellm
+lumina
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -58,18 +58,18 @@ client = boto3.client(
 )
 client.meta.events.register(
     "before-send.comprehendmedical.*",
-    lambda request, **kwargs: request.headers.__setitem__("x-litellm-api-key", "sk-<your-litellm-api-key>"),
+    lambda request, **kwargs: request.headers.__setitem__("x-lumina-api-key", "sk-<your-lumina-api-key>"),
 )
 
 response = client.detect_phi(Text="John Smith was admitted on 2026-08-01.")
 print(response["Entities"])
 ```
 
-The SDK still signs the request locally with the placeholder credentials, but LiteLLM discards that signature, authenticates the call with the LiteLLM virtual key from the `x-litellm-api-key` header, and re-signs the request with the proxy's AWS credentials.
+The SDK still signs the request locally with the placeholder credentials, but Lumina discards that signature, authenticates the call with the Lumina virtual key from the `x-lumina-api-key` header, and re-signs the request with the proxy's AWS credentials.
 
 ## Cost Tracking
 
-Spend is computed from the request's `Text` length: Comprehend Medical bills per started 100-character unit with a 1-unit minimum. LiteLLM applies the first-tier on-demand price per unit for each operation:
+Spend is computed from the request's `Text` length: Comprehend Medical bills per started 100-character unit with a 1-unit minimum. Lumina applies the first-tier on-demand price per unit for each operation:
 
 | Operation | Price per unit |
 |-------|-------|

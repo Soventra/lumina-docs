@@ -1,6 +1,6 @@
 # /invoke
 
-Call Bedrock's `/invoke` endpoint through LiteLLM Proxy.
+Call Bedrock's `/invoke` endpoint through Lumina Proxy.
 
 | Feature | Supported | 
 |---------|-----------|
@@ -34,7 +34,7 @@ export AWS_SECRET_ACCESS_KEY="your-secret-key"
 ### 2. Start Proxy
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -111,12 +111,12 @@ import boto3
 import json
 import os
 
-# Set dummy AWS credentials (required by boto3, but not used by LiteLLM proxy)
+# Set dummy AWS credentials (required by boto3, but not used by Lumina proxy)
 os.environ['AWS_ACCESS_KEY_ID'] = 'dummy'
 os.environ['AWS_SECRET_ACCESS_KEY'] = 'dummy'
-os.environ['AWS_BEARER_TOKEN_BEDROCK'] = "sk-<your-litellm-api-key>"  # your litellm proxy api key
+os.environ['AWS_BEARER_TOKEN_BEDROCK'] = "sk-<your-lumina-api-key>"  # your lumina proxy api key
 
-# Point boto3 to the LiteLLM proxy
+# Point boto3 to the Lumina proxy
 bedrock_runtime = boto3.client(
     service_name='bedrock-runtime',
     region_name='us-west-2',

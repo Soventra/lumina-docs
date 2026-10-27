@@ -5,7 +5,7 @@ Prevent projects from gobbling too much tpm/rpm.
 
 **See Also:** [Request Prioritization](../scheduler.md) - Prioritize LLM API requests in high-traffic by adding them to a priority queue.
 
-Share a model's TPM/RPM capacity across keys and teams. The limiter watches how saturated the model is: while recorded usage is below a configurable saturation threshold, any key may use idle capacity; once usage crosses the threshold, each priority level is held to its reserved share. [**See Code**](https://github.com/BerriAI/litellm/blob/main/litellm/proxy/hooks/dynamic_rate_limiter_v3.py)
+Share a model's TPM/RPM capacity across keys and teams. The limiter watches how saturated the model is: while recorded usage is below a configurable saturation threshold, any key may use idle capacity; once usage crosses the threshold, each priority level is held to its reserved share. [**See Code**](https://github.com/Soventra/lumina/blob/main/lumina/proxy/hooks/dynamic_rate_limiter_v3.py)
 
 ## Quick Start Usage
 
@@ -20,7 +20,7 @@ model_list:
       mock_response: hello-world
       tpm: 60
 
-litellm_settings: 
+lumina_settings: 
   callbacks: ["dynamic_rate_limiter_v3"]
 
 general_settings:
@@ -31,7 +31,7 @@ general_settings:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -61,8 +61,8 @@ def create_key(api_key: str, base_url: str):
 
     return _response["key"]
 
-key_1 = create_key(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
-key_2 = create_key(api_key="sk-<your-litellm-api-key>", base_url="http://0.0.0.0:4000")
+key_1 = create_key(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
+key_2 = create_key(api_key="sk-<your-lumina-api-key>", base_url="http://0.0.0.0:4000")
 
 # call proxy with key 1 - works
 openai_client_1 = OpenAI(api_key=key_1, base_url="http://0.0.0.0:4000")
@@ -136,7 +136,7 @@ model_list:
       api_key: os.environ/OPENAI_API_KEY 
       rpm: 10   # Total model capacity
 
-litellm_settings:
+lumina_settings:
   callbacks: ["dynamic_rate_limiter_v3"]
   priority_reservation:
     "prod": 0.9 # 90% reserved for production (9 RPM)
@@ -177,7 +177,7 @@ general_settings:
 **Start Proxy**
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### Set priority on either a team or a key

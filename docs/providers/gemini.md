@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Google AI Studio is a fully-managed AI development platform for building and using generative AI. |
-| Provider Route on LiteLLM | `gemini/` |
+| Provider Route on Lumina | `gemini/` |
 | Provider Doc | [Google AI Studio ↗](https://aistudio.google.com/) |
 | API Endpoint for Provider | https://generativelanguage.googleapis.com |
 | Supported OpenAI Endpoints | `/chat/completions`, [`/embeddings`](../embedding/supported_embedding#gemini-ai-embedding-models), `/completions`, [`/videos`](./gemini/videos.md), [`/images/edits`](../image_edits.md) |
@@ -37,13 +37,13 @@ os.environ["GEMINI_API_KEY"] = "your-api-key"
 
 ## Sample Usage
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GEMINI_API_KEY'] = ""
 response = completion(
     model="gemini/{{gemini_flash}}", 
-    messages=[{"role": "user", "content": "write code for saying hi from LiteLLM"}]
+    messages=[{"role": "user", "content": "write code for saying hi from Lumina"}]
 )
 ```
 
@@ -70,11 +70,11 @@ response = completion(
 **Anthropic Params**
 - thinking (used to set max budget tokens across anthropic/gemini models)
 
-[**See Updated List**](https://github.com/BerriAI/litellm/blob/main/litellm/llms/gemini/chat/transformation.py#L70)
+[**See Updated List**](https://github.com/Soventra/lumina/blob/main/lumina/llms/gemini/chat/transformation.py#L70)
 
 ## Usage - Thinking / `reasoning_content`
 
-LiteLLM translates OpenAI's `reasoning_effort` to Gemini's `thinking` parameter. [Code](https://github.com/BerriAI/litellm/blob/620664921902d7a9bfb29897a7b27c1a7ef4ddfb/litellm/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py#L362)
+Lumina translates OpenAI's `reasoning_effort` to Gemini's `thinking` parameter. [Code](https://github.com/Soventra/lumina/blob/620664921902d7a9bfb29897a7b27c1a7ef4ddfb/lumina/llms/vertex_ai/gemini/vertex_and_google_ai_studio_gemini.py#L362)
 
 **Cost Optimization:** Use `reasoning_effort="none"` (OpenAI standard) for significant cost savings - up to 96% cheaper. [Google's docs](https://ai.google.dev/gemini-api/docs/openai)
 
@@ -83,11 +83,11 @@ Note: Reasoning cannot be turned off on Gemini 2.5 Pro models.
 :::
 
 :::tip[Gemini 3 Models]
-For **Gemini 3+ models** (e.g., `{{gemini_pro}}`), LiteLLM maps `reasoning_effort` to the `thinking_level` field instead of `thinking_budget` when you set it. Supported levels depend on the model: Flash-family models also support `medium`, and `minimal` up to 3.6 Flash. 3.7 and 3.8 Flash reject `minimal`, so LiteLLM sends `low` for `minimal`, `none` and `disable` on them, driven by `supports_minimal_reasoning_effort: false` on their cost-map entries. If you omit `reasoning_effort`, LiteLLM does **not** send a default `thinking_level`, so the request uses the **Gemini API defaults** (Gemini 3 Flash defaults to `high` on the API).
+For **Gemini 3+ models** (e.g., `{{gemini_pro}}`), Lumina maps `reasoning_effort` to the `thinking_level` field instead of `thinking_budget` when you set it. Supported levels depend on the model: Flash-family models also support `medium`, and `minimal` up to 3.6 Flash. 3.7 and 3.8 Flash reject `minimal`, so Lumina sends `low` for `minimal`, `none` and `disable` on them, driven by `supports_minimal_reasoning_effort: false` on their cost-map entries. If you omit `reasoning_effort`, Lumina does **not** send a default `thinking_level`, so the request uses the **Gemini API defaults** (Gemini 3 Flash defaults to `high` on the API).
 :::
 
 :::warning[Image Models]
-**Gemini image models** (e.g., `gemini-3-pro-image-preview`, `gemini-2.0-flash-exp-image-generation`) do **not** support the `thinking_level` parameter. LiteLLM automatically excludes image models from receiving thinking configuration to prevent API errors.
+**Gemini image models** (e.g., `gemini-3-pro-image-preview`, `gemini-2.0-flash-exp-image-generation`) do **not** support the `thinking_level` parameter. Lumina automatically excludes image models from receiving thinking configuration to prevent API errors.
 :::
 
 **Mapping for Gemini 2.5 and earlier models**
@@ -95,7 +95,7 @@ For **Gemini 3+ models** (e.g., `{{gemini_pro}}`), LiteLLM maps `reasoning_effor
 | reasoning_effort | thinking | Notes |
 | ---------------- | -------- | ----- |
 | "none"           | "budget_tokens": 0, "includeThoughts": false | **Recommended for cost optimization** - OpenAI-compatible, always 0 |
-| "disable"        | "budget_tokens": DEFAULT (0), "includeThoughts": false | LiteLLM-specific, configurable via env var |
+| "disable"        | "budget_tokens": DEFAULT (0), "includeThoughts": false | Lumina-specific, configurable via env var |
 | "low"            | "budget_tokens": 1024 | |
 | "medium"         | "budget_tokens": 2048 | |
 | "high"           | "budget_tokens": 4096 | |
@@ -115,7 +115,7 @@ For **Gemini 3+ models** (e.g., `{{gemini_pro}}`), LiteLLM maps `reasoning_effor
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # Cost-optimized: Use reasoning_effort="none" for best pricing
 resp = completion(
@@ -149,7 +149,7 @@ resp = completion(
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -157,7 +157,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -176,7 +176,7 @@ For Gemini 3+ models (e.g., `{{gemini_pro}}`), you can use the new `thinking_lev
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 # Use thinking_level for Gemini 3 models
 resp = completion(
@@ -200,7 +200,7 @@ resp = completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_pro}}",
     "messages": [{"role": "user", "content": "Solve this complex problem."}],
@@ -214,12 +214,12 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 :::warning
 **Temperature Recommendation for Gemini 3 Models**
 
-Leave `temperature` unset for Gemini 3 models. LiteLLM forwards only the sampling parameters you set, so an omitted `temperature` lets Google apply its own default of `1.0`. Setting `temperature < 1.0` can cause:
+Leave `temperature` unset for Gemini 3 models. Lumina forwards only the sampling parameters you set, so an omitted `temperature` lets Google apply its own default of `1.0`. Setting `temperature < 1.0` can cause:
 - Infinite loops
 - Degraded reasoning performance
 - Failure on complex tasks
 
-An explicit `temperature`, including `1.0` pinned in `lumina_params`, is still forwarded as given. Remove it if you want LiteLLM to stop sending the parameter.
+An explicit `temperature`, including `1.0` pinned in `lumina_params`, is still forwarded as given. Remove it if you want Lumina to stop sending the parameter.
 :::
 
 **Expected Response**
@@ -271,7 +271,7 @@ This is translated to Gemini's [`thinkingConfig` parameter](https://ai.google.de
 <TabItem value="sdk" label="SDK">
 
 ```python
-response = litellm.completion(
+response = lumina.completion(
   model="gemini/{{gemini_flash}}",
   messages=[{"role": "user", "content": "What is the capital of France?"}],
   thinking={"type": "enabled", "budget_tokens": 1024},
@@ -295,14 +295,14 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 </TabItem>
 </Tabs>
 
-For **Gemini 3+ models**, LiteLLM now follows provider defaults by default and does **not** force `thinkingLevel` when you pass Anthropic-style `thinking={"type":"enabled","budget_tokens":...}`.
+For **Gemini 3+ models**, Lumina now follows provider defaults by default and does **not** force `thinkingLevel` when you pass Anthropic-style `thinking={"type":"enabled","budget_tokens":...}`.
 
-If you want the legacy LiteLLM behavior (force `thinkingLevel="low"` for Pro and `thinkingLevel="minimal"` for Flash), enable:
+If you want the legacy Lumina behavior (force `thinkingLevel="low"` for Pro and `thinkingLevel="minimal"` for Flash), enable:
 
 ```python
-import litellm
+import lumina
 
-litellm.enable_gemini_default_thinking_level_low = True
+lumina.enable_gemini_default_thinking_level_low = True
 ```
 
 ### Thinking without thought summaries
@@ -313,16 +313,16 @@ Gemini returns a summary of its thinking in `reasoning_content` whenever thinkin
 <TabItem value="sdk" label="SDK">
 
 ```python
-import litellm
+import lumina
 
-litellm.gemini_include_thoughts_default = False
+lumina.gemini_include_thoughts_default = False
 ```
 
 </TabItem>
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-litellm_settings:
+lumina_settings:
   gemini_include_thoughts_default: false
 ```
 
@@ -341,36 +341,36 @@ Available from v1.107.0.
 
 ## Usage - `service_tier`
 
-LiteLLM propagates OpenAI's `service_tier` parameter to Gemini, and also extracts it from the response headers (`x-gemini-service-tier`) into `model_response.service_tier`.
+Lumina propagates OpenAI's `service_tier` parameter to Gemini, and also extracts it from the response headers (`x-gemini-service-tier`) into `model_response.service_tier`.
 
 | OpenAI `service_tier` | Gemini `service_tier` | Notes |
 | --------------------- | --------------------- | ----- |
-| `"auto"`              | `"priority"`          | LiteLLM maps OpenAI's `"auto"` to Gemini's `"priority"` tier, as `priority` will fall back on Gemini. |
+| `"auto"`              | `"priority"`          | Lumina maps OpenAI's `"auto"` to Gemini's `"priority"` tier, as `priority` will fall back on Gemini. |
 | `"flex"`              | `"flex"`              | Direct mapping. |
 | `"priority"`          | `"priority"`          | Direct mapping. |
-| `"default"`           | `"standard"`          | LiteLLM maps `"default"` to `"standard"`. |
+| `"default"`           | `"standard"`          | Lumina maps `"default"` to `"standard"`. |
 | Any other value       | Passed as-is (lowercased) | Values are case-insensitive and normalized to lowercase. |
 
-On the response, LiteLLM maps `"standard"` back to `"default"` for the Gemini API.
+On the response, Lumina maps `"standard"` back to `"default"` for the Gemini API.
 
 
 ## Long outputs
 
-On a model that ends a request with a `continuationToken`, such as Gemini 4 Argon, LiteLLM sends the request again with that token until the answer finishes or `max_tokens` is spent, so `max_tokens` can go above Google's per-request cap. [Long outputs](/blog/gemini-4-argon#long-outputs) covers how it works, the usage it reports and the timeouts it needs.
+On a model that ends a request with a `continuationToken`, such as Gemini 4 Argon, Lumina sends the request again with that token until the answer finishes or `max_tokens` is spent, so `max_tokens` can go above Google's per-request cap. [Long outputs](/blog/gemini-4-argon#long-outputs) covers how it works, the usage it reports and the timeouts it needs.
 
-A request that sends no output limit is sent once and stops at Google's own per-request limit. From v1.108.0, set the env var `LUMINA_GEMINI_DEFAULT_MAX_OUTPUT_TOKENS` to an integer to give those requests a budget. It applies to chat completion, text completion and Responses API requests through the proxy or the Python SDK, and never to `/v1/messages`, which requires `max_tokens`. LiteLLM caps the budget at the model's `max_output_tokens` in the cost map, and any output limit the request already carries wins. It is not applied to a model the cost map does not list as a chat model, such as an image model, to a model whose cost map `supported_output_modalities` leaves out text, such as a Lyria music model, to a request whose `modalities` asks for anything besides text, to a request that resumes with a `continuation_token`, or to the native `:generateContent` route. A large value makes a non-streamed request run as long as the answer, so stream long answers or raise the client's timeout. The [env var reference](/docs/proxy/config_settings#environment-variables---reference) lists every case.
+A request that sends no output limit is sent once and stops at Google's own per-request limit. From v1.108.0, set the env var `LUMINA_GEMINI_DEFAULT_MAX_OUTPUT_TOKENS` to an integer to give those requests a budget. It applies to chat completion, text completion and Responses API requests through the proxy or the Python SDK, and never to `/v1/messages`, which requires `max_tokens`. Lumina caps the budget at the model's `max_output_tokens` in the cost map, and any output limit the request already carries wins. It is not applied to a model the cost map does not list as a chat model, such as an image model, to a model whose cost map `supported_output_modalities` leaves out text, such as a Lyria music model, to a request whose `modalities` asks for anything besides text, to a request that resumes with a `continuation_token`, or to the native `:generateContent` route. A large value makes a non-streamed request run as long as the answer, so stream long answers or raise the client's timeout. The [env var reference](/docs/proxy/config_settings#environment-variables---reference) lists every case.
 
 ## Text-to-Speech (TTS) Audio Output
 
 :::info
 
-LiteLLM supports Gemini TTS models that can generate audio responses using the OpenAI-compatible `audio` parameter format.
+Lumina supports Gemini TTS models that can generate audio responses using the OpenAI-compatible `audio` parameter format.
 
 :::
 
 ### Supported Models
 
-LiteLLM supports Gemini TTS models with audio capabilities (e.g. `gemini-2.5-flash-preview-tts` and `gemini-2.5-pro-preview-tts`). For the complete list of available TTS models and voices, see the [official Gemini TTS documentation](https://ai.google.dev/gemini-api/docs/speech-generation).
+Lumina supports Gemini TTS models with audio capabilities (e.g. `gemini-2.5-flash-preview-tts` and `gemini-2.5-pro-preview-tts`). For the complete list of available TTS models and voices, see the [official Gemini TTS documentation](https://ai.google.dev/gemini-api/docs/speech-generation).
 
 ### Limitations
 
@@ -414,7 +414,7 @@ Gemini voice names and their characters come from the [Gemini speech generation 
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ['GEMINI_API_KEY'] = "your-api-key"
@@ -452,7 +452,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Make TTS request
@@ -460,7 +460,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "gemini-tts-flash",
     "messages": [{"role": "user", "content": "Say hello in a friendly voice"}],
@@ -502,7 +502,7 @@ For more information about Gemini's TTS capabilities and available voices, see t
 
 :::info
 
-LiteLLM supports `gemini-3.5-transcribe` on `/v1/audio/transcriptions` and `gemini-3.5-transcribe-live` on `/v1/realtime`. Using Vertex AI instead of an API key? See [Vertex AI Audio Transcription](./vertex_transcription.md).
+Lumina supports `gemini-3.5-transcribe` on `/v1/audio/transcriptions` and `gemini-3.5-transcribe-live` on `/v1/realtime`. Using Vertex AI instead of an API key? See [Vertex AI Audio Transcription](./vertex_transcription.md).
 
 :::
 
@@ -512,7 +512,7 @@ LiteLLM supports `gemini-3.5-transcribe` on `/v1/audio/transcriptions` and `gemi
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import transcription
+from lumina import transcription
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -544,7 +544,7 @@ model_list:
 2. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 3. Test it
@@ -563,11 +563,11 @@ curl http://0.0.0.0:4000/v1/audio/transcriptions \
 
 ### Supported Params
 
-`language`, `response_format`, and `timestamp_granularities` are supported. Requesting word timestamps also enables speaker diarization on the underlying Interactions API call. The `srt` and `vtt` response formats are synthesized by LiteLLM from Gemini's word timestamps, so `text` holds the subtitle document; when Gemini returns no timestamps, `text` falls back to the plain transcript.
+`language`, `response_format`, and `timestamp_granularities` are supported. Requesting word timestamps also enables speaker diarization on the underlying Interactions API call. The `srt` and `vtt` response formats are synthesized by Lumina from Gemini's word timestamps, so `text` holds the subtitle document; when Gemini returns no timestamps, `text` falls back to the plain transcript.
 
 ### Live Transcription over `/v1/realtime`
 
-`gemini-3.5-transcribe-live` runs over the Realtime websocket. Stream `pcm16` audio with `input_audio_buffer.append` and read transcripts from `conversation.item.input_audio_transcription.completed` events. The Gemini Live API reports no token usage for transcription sessions, so LiteLLM estimates usage (and spend) from the streamed audio duration using Google's published estimator rates.
+`gemini-3.5-transcribe-live` runs over the Realtime websocket. Stream `pcm16` audio with `input_audio_buffer.append` and read transcripts from `conversation.item.input_audio_transcription.completed` events. The Gemini Live API reports no token usage for transcription sessions, so Lumina estimates usage (and spend) from the streamed audio duration using Google's published estimator rates.
 
 ```python
 import asyncio
@@ -577,7 +577,7 @@ import websockets
 async def main():
     async with websockets.connect(
         "ws://0.0.0.0:4000/v1/realtime?model=gemini-3.5-transcribe-live",
-        additional_headers={"Authorization": "Bearer sk-<your-litellm-api-key>"},
+        additional_headers={"Authorization": "Bearer sk-<your-lumina-api-key>"},
     ) as ws:
         await ws.send(json.dumps({"type": "input_audio_buffer.append", "audio": "<base64 pcm16 audio>"}))
         async for message in ws:
@@ -590,14 +590,14 @@ asyncio.run(main())
 
 ## Passing Gemini Specific Params
 ### Response schema 
-LiteLLM supports sending `response_schema` as a param for Gemini models on Google AI Studio (e.g. `{{gemini_pro}}`). 
+Lumina supports sending `response_schema` as a param for Gemini models on Google AI Studio (e.g. `{{gemini_pro}}`). 
 
 **Response Schema**
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import json 
 import os 
 
@@ -648,7 +648,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -689,7 +689,7 @@ To validate the response_schema, set `enforce_validation: true`.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion, JSONSchemaValidationError
+from lumina import completion, JSONSchemaValidationError
 try: 
 	completion(
     model="gemini/{{gemini_pro}}", 
@@ -719,7 +719,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -754,7 +754,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 </TabItem>
 </Tabs>
 
-LiteLLM will validate the response against the schema, and raise a `JSONSchemaValidationError` if the response does not match the schema. 
+Lumina will validate the response against the schema, and raise a `JSONSchemaValidationError` if the response does not match the schema. 
 
 JSONSchemaValidationError inherits from `openai.APIError` 
 
@@ -764,7 +764,7 @@ Access the raw response with `e.raw_response`
 
 ### GenerationConfig Params 
 
-To pass additional GenerationConfig params - e.g. `topK`, just pass it in the request body of the call, and LiteLLM will pass it straight through as a key-value pair in the request body. 
+To pass additional GenerationConfig params - e.g. `topK`, just pass it in the request body of the call, and Lumina will pass it straight through as a key-value pair in the request body. 
 
 [**See Gemini GenerationConfigParams**](https://ai.google.dev/api/generate-content#v1beta.GenerationConfig)
 
@@ -772,7 +772,7 @@ To pass additional GenerationConfig params - e.g. `topK`, just pass it in the re
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import json 
 import os 
 
@@ -809,7 +809,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -839,7 +839,7 @@ To validate the response_schema, set `enforce_validation: true`.
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion, JSONSchemaValidationError
+from lumina import completion, JSONSchemaValidationError
 try: 
 	completion(
     model="gemini/{{gemini_pro}}", 
@@ -869,7 +869,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -910,7 +910,7 @@ In certain use-cases you may need to make calls to the models and pass [safety s
 ```python
 response = completion(
     model="gemini/{{gemini_flash}}", 
-    messages=[{"role": "user", "content": "write code for saying hi from LiteLLM"}],
+    messages=[{"role": "user", "content": "write code for saying hi from Lumina"}],
     safety_settings=[
         {
             "category": "HARM_CATEGORY_HARASSMENT",
@@ -935,7 +935,7 @@ response = completion(
 ## Tool Calling 
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 # set env
 os.environ["GEMINI_API_KEY"] = ".."
@@ -984,7 +984,7 @@ assert isinstance(
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = ".."
@@ -1014,7 +1014,7 @@ model_list:
 
 2. Start Proxy
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -1042,14 +1042,14 @@ When enabled, Gemini can execute Google Search server-side, use those results to
 **How it works:**
 1. You pass `include_server_side_tool_invocations=True` along with both Google Search and your function tools
 2. Gemini executes server-side tools internally and returns `toolCall`/`toolResponse` parts alongside any `functionCall` parts
-3. LiteLLM extracts the server-side invocations into `provider_specific_fields["server_side_tool_invocations"]`
-4. On subsequent turns, include the full assistant message in your conversation history; LiteLLM re-injects the server-side parts automatically
+3. Lumina extracts the server-side invocations into `provider_specific_fields["server_side_tool_invocations"]`
+4. On subsequent turns, include the full assistant message in your conversation history; Lumina re-injects the server-side parts automatically
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/{{gemini_flash}}",
@@ -1085,7 +1085,7 @@ for invocation in psf.get("server_side_tool_invocations", []):
 # For multi-turn: just append the full message to history
 messages.append(msg)
 messages.append({"role": "user", "content": "Thanks!"})
-# LiteLLM automatically re-injects the server-side parts + thought signatures
+# Lumina automatically re-injects the server-side parts + thought signatures
 response2 = completion(
     model="gemini/{{gemini_flash}}",
     messages=messages,
@@ -1108,7 +1108,7 @@ model_list:
 
 2. Start Proxy
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request
@@ -1144,7 +1144,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = ".."
@@ -1181,14 +1181,14 @@ model_list:
 
 2. Start Proxy
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [{"role": "user", "content": "Summarize this document: https://ai.google.dev/gemini-api/docs/models"}],
@@ -1205,7 +1205,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = ".."
@@ -1235,7 +1235,7 @@ model_list:
 
 2. Start Proxy
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -1262,7 +1262,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = ".."
@@ -1292,7 +1292,7 @@ model_list:
 
 2. Start Proxy
 ```bash
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -1315,10 +1315,10 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 ### Computer Use Tool
 
 <Tabs>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 import os
 
 os.environ["GEMINI_API_KEY"] = "your-api-key"
@@ -1338,7 +1338,7 @@ messages = [
         "content": [
             {
                 "type": "text",
-                "text": "Navigate to google.com and search for 'LiteLLM'"
+                "text": "Navigate to google.com and search for 'Lumina'"
             },
             {
                 "type": "image_url",
@@ -1377,7 +1377,7 @@ if response.choices[0].message.tool_calls:
             },
             {
                 "type": "input_image",
-                "image_url": "data:image/png;base64,..."  # New screenshot after action (Can send an image url as well, litellm handles the conversion)
+                "image_url": "data:image/png;base64,..."  # New screenshot after action (Can send an image url as well, lumina handles the conversion)
             }
         ]
     })
@@ -1391,7 +1391,7 @@ if response.choices[0].message.tool_calls:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="LiteLLM Proxy Server">
+<TabItem value="proxy" label="Lumina Proxy Server">
 
 1. Add model to config.yaml
 
@@ -1406,7 +1406,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Make request
@@ -1469,7 +1469,7 @@ When responding to Computer Use tool calls, include the URL and screenshot:
 
 ### Environment Mapping
 
-| LiteLLM Input | Gemini API Value |
+| Lumina Input | Gemini API Value |
 |--------------|------------------|
 | `"browser"` | `ENVIRONMENT_BROWSER` |
 | `"unspecified"` | `ENVIRONMENT_UNSPECIFIED` |
@@ -1489,8 +1489,8 @@ Thought signatures are particularly important for multi-turn function calling sc
 ### How Thought Signatures Work
 
 - **Function calls with signatures**: When Gemini returns a function call, it includes a `thought_signature` in the response
-- **Preservation**: LiteLLM automatically extracts and stores thought signatures in `provider_specific_fields` of tool calls
-- **Return in conversation history**: When you include the assistant's message with tool calls in subsequent requests, LiteLLM automatically preserves and returns the thought signatures to Gemini
+- **Preservation**: Lumina automatically extracts and stores thought signatures in `provider_specific_fields` of tool calls
+- **Return in conversation history**: When you include the assistant's message with tool calls in subsequent requests, Lumina automatically preserves and returns the thought signatures to Gemini
 - **Parallel function calls**: Only the first function call in a parallel set has a thought signature
 - **Sequential function calls**: Each function call in a multi-step sequence has its own signature
 
@@ -1502,7 +1502,7 @@ To enable thought signatures, you need to enable thinking/reasoning:
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/{{gemini_flash}}",
@@ -1532,7 +1532,7 @@ curl http://localhost:4000/v1/chat/completions \
 
 ### Multi-Turn Function Calling with Thought Signatures
 
-When building conversation history for multi-turn function calling, you must include the thought signatures from previous responses. LiteLLM handles this automatically when you append the full assistant message to your conversation history.
+When building conversation history for multi-turn function calling, you must include the thought signatures from previous responses. Lumina handles this automatically when you append the full assistant message to your conversation history.
 
 <Tabs>
 <TabItem value="sdk" label="OpenAI Client">
@@ -1541,7 +1541,7 @@ When building conversation history for multi-turn function calling, you must inc
 from openai import OpenAI
 import json
 
-client = OpenAI(api_key="sk-<your-litellm-api-key>", base_url="http://localhost:4000")
+client = OpenAI(api_key="sk-<your-lumina-api-key>", base_url="http://localhost:4000")
 
 def get_current_temperature(location: str) -> dict:
     """Gets the current weather temperature for a given location."""
@@ -1759,7 +1759,7 @@ curl --location 'http://localhost:4000/v1/chat/completions' \
 
 ### Important Notes
 
-1. **Automatic Handling**: LiteLLM automatically extracts thought signatures from Gemini responses and preserves them when you include assistant messages in conversation history. You don't need to manually extract or manage them.
+1. **Automatic Handling**: Lumina automatically extracts thought signatures from Gemini responses and preserves them when you include assistant messages in conversation history. You don't need to manually extract or manage them.
 
 2. **Parallel Function Calls**: When the model makes parallel function calls, only the first function call will have a thought signature. Subsequent parallel calls won't have signatures.
 
@@ -1769,7 +1769,7 @@ curl --location 'http://localhost:4000/v1/chat/completions' \
 
 5. **Format**: Thought signatures are stored in `provider_specific_fields.thought_signature` of tool calls in the response, and are automatically included when you append the assistant message to your conversation history.
 
-6. **Chat Completions Clients**: With chat completions clients where you cannot control whether or not the previous assistant message is included as-is (ex langchain's ChatOpenAI), LiteLLM also preserves the thought signature by appending it to the tool call id (`call_123__thought__<thought-signature>`) and extracting it back out before sending the outbound request to Gemini. 
+6. **Chat Completions Clients**: With chat completions clients where you cannot control whether or not the previous assistant message is included as-is (ex langchain's ChatOpenAI), Lumina also preserves the thought signature by appending it to the tool call id (`call_123__thought__<thought-signature>`) and extracting it back out before sending the outbound request to Gemini. 
 
 ## JSON Mode
 
@@ -1777,7 +1777,7 @@ curl --location 'http://localhost:4000/v1/chat/completions' \
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 import json 
 import os 
 
@@ -1816,7 +1816,7 @@ model_list:
 2. Start Proxy 
 
 ```
-$ litellm --config /path/to/config.yaml
+$ lumina --config /path/to/config.yaml
 ```
 
 3. Make Request!
@@ -1838,13 +1838,13 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 </TabItem>
 </Tabs>
 ## Gemini-Pro-Vision
-LiteLLM Supports the following image types passed in `url`
+Lumina Supports the following image types passed in `url`
 - Images with direct links - https://storage.googleapis.com/github-repo/img/gemini/intro/landmark3.jpg
 - Image in local storage - ./localimage.jpeg
 
 ## Media Resolution Control (Images & Videos)
 
-LiteLLM supports OpenAI's `detail` parameter for specifying the image resolution when using Gemini models. The behavior differs between Gemini versions:
+Lumina supports OpenAI's `detail` parameter for specifying the image resolution when using Gemini models. The behavior differs between Gemini versions:
 
 | Gemini Version | Resolution Control | Behavior |
 |----------------|-------------------|----------|
@@ -1864,7 +1864,7 @@ LiteLLM supports OpenAI's `detail` parameter for specifying the image resolution
 <TabItem value="images" label="Images">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [
     {
@@ -1903,7 +1903,7 @@ response = completion(
 <TabItem value="videos" label="Videos with Files">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [
     {
@@ -1937,12 +1937,12 @@ response = completion(
 :::info
 **Gemini 3+ Per-Part Resolution:** Each image or video can have its own `detail` setting, allowing mixed-resolution requests (e.g., a high-res chart alongside a low-res icon). This works with both `image_url` and `file` content types.
 
-**Gemini 2.x Global Resolution:** When multiple images have different `detail` values, LiteLLM uses the highest resolution found and applies it globally via `mediaResolution` in `generationConfig` (e.g., if one image has `"low"` and another has `"high"`, all images will use `"high"`).
+**Gemini 2.x Global Resolution:** When multiple images have different `detail` values, Lumina uses the highest resolution found and applies it globally via `mediaResolution` in `generationConfig` (e.g., if one image has `"low"` and another has `"high"`, all images will use `"high"`).
 :::
 
 ## Video Metadata Control
 
-LiteLLM supports fine-grained video processing control through the `video_metadata` field on every Gemini model (2.x and 3+). This allows you to specify frame extraction rates and time ranges for video analysis. Only the per-part `media_resolution` set via `detail` is limited to Gemini 3+
+Lumina supports fine-grained video processing control through the `video_metadata` field on every Gemini model (2.x and 3+). This allows you to specify frame extraction rates and time ranges for video analysis. Only the per-part `media_resolution` set via `detail` is limited to Gemini 3+
 
 **Supported `video_metadata` parameters:**
 
@@ -1953,7 +1953,7 @@ LiteLLM supports fine-grained video processing control through the `video_metada
 | `end_offset` | String | End time for video clip processing | `"60s"` |
 
 :::note
-**Field Name Conversion:** LiteLLM automatically converts snake_case field names to camelCase for the Gemini API:
+**Field Name Conversion:** Lumina automatically converts snake_case field names to camelCase for the Gemini API:
 - `start_offset` → `startOffset`
 - `end_offset` → `endOffset`
 - `fps` remains unchanged
@@ -1970,7 +1970,7 @@ LiteLLM supports fine-grained video processing control through the `video_metada
 <TabItem value="basic" label="Basic Video Metadata">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/{{gemini_pro}}",
@@ -2003,7 +2003,7 @@ print(response.choices[0].message.content)
 <TabItem value="combined" label="Combined with Detail">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="gemini/{{gemini_pro}}",
@@ -2049,7 +2049,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Make request
@@ -2057,7 +2057,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <YOUR-LITELLM-KEY>" \
+  -H "Authorization: Bearer <YOUR-LUMINA-KEY>" \
   -d '{
     "model": "{{gemini_pro}}",
     "messages": [
@@ -2090,7 +2090,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ## Sample Usage
 ```python
 import os
-import litellm
+import lumina
 from dotenv import load_dotenv
 
 # Load the environment variables from .env file
@@ -2119,7 +2119,7 @@ messages = [
 ]
 
 # Make the API call to Gemini model
-response = litellm.completion(
+response = lumina.completion(
     model="gemini/{{gemini_pro}}",
     messages=messages,
 )
@@ -2134,12 +2134,12 @@ print(content)
 ## gemini-robotics-er-1.5-preview Usage
 
 ```python
-from litellm import api_base
+from lumina import api_base
 from openai import OpenAI
 import os
 import base64
 
-client = OpenAI(base_url="http://0.0.0.0:4000", api_key="sk-<your-litellm-api-key>")
+client = OpenAI(base_url="http://0.0.0.0:4000", api_key="sk-<your-lumina-api-key>")
 base64_image = base64.b64encode(open("closeup-object-on-table-many-260nw-1216144471.webp", "rb").read()).decode()
 
 import json
@@ -2186,7 +2186,7 @@ except Exception as e:
 
 ### Inline Data (e.g. audio stream)
 
-LiteLLM follows the OpenAI format and accepts sending inline data as an encoded base64 string. 
+Lumina follows the OpenAI format and accepts sending inline data as an encoded base64 string. 
 
 The format to follow is 
 
@@ -2194,23 +2194,23 @@ The format to follow is
 data:<mime_type>;base64,<encoded_data>
 ```
 
-** LITELLM CALL **
+** LUMINA CALL **
 
 ```python
-import litellm
+import lumina
 from pathlib import Path
 import base64
 import os
 
 os.environ["GEMINI_API_KEY"] = "" 
 
-litellm.set_verbose = True # See Raw call
+lumina.set_verbose = True # See Raw call
 
 audio_bytes = Path("speech_vertex.mp3").read_bytes()
 encoded_data = base64.b64encode(audio_bytes).decode("utf-8")
 print("Audio Bytes = {}".format(audio_bytes))
 model = "gemini/{{gemini_flash}}"
-response = litellm.completion(
+response = lumina.completion(
     model=model,
     messages=[
         {
@@ -2255,15 +2255,15 @@ print(response.text)
 ### https:// file 
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["GEMINI_API_KEY"] = "" 
 
-litellm.set_verbose = True # See Raw call
+lumina.set_verbose = True # See Raw call
 
 model = "gemini/{{gemini_flash}}"
-response = litellm.completion(
+response = lumina.completion(
     model=model,
     messages=[
         {
@@ -2286,15 +2286,15 @@ response = litellm.completion(
 ### gs:// file 
 
 ```python
-import litellm
+import lumina
 import os
 
 os.environ["GEMINI_API_KEY"] = "" 
 
-litellm.set_verbose = True # See Raw call
+lumina.set_verbose = True # See Raw call
 
 model = "gemini/{{gemini_flash}}"
-response = litellm.completion(
+response = lumina.completion(
     model=model,
     messages=[
         {
@@ -2318,7 +2318,7 @@ response = litellm.completion(
 ## Chat Models
 :::tip
 
-**We support ALL Gemini models, just set `model=gemini/<any-model-on-gemini>` as a prefix when sending litellm requests**
+**We support ALL Gemini models, just set `model=gemini/<any-model-on-gemini>` as a prefix when sending lumina requests**
 
 :::
 | Model Name            | Function Call                                          | Required OS Variables          |
@@ -2387,7 +2387,7 @@ You can now specify a custom Time-To-Live (TTL) for your cached content using th
 
 **Notes:**
 
-- [Relevant code](https://github.com/BerriAI/litellm/blob/main/litellm/llms/vertex_ai/context_caching/vertex_ai_context_caching.py#L255)
+- [Relevant code](https://github.com/Soventra/lumina/blob/main/lumina/llms/vertex_ai/context_caching/vertex_ai_context_caching.py#L255)
 
 - Gemini Context Caching only allows 1 block of continuous messages to be cached. 
 
@@ -2418,7 +2418,7 @@ curl -X POST "https://generativelanguage.googleapis.com/v1beta/models/{{gemini_f
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 for _ in range(2): 
     resp = completion(
@@ -2455,7 +2455,7 @@ for _ in range(2):
 <TabItem value="sdk-ttl" label="SDK with Custom TTL">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 # Cache for 2 hours (7200 seconds)
 resp = completion(
@@ -2509,7 +2509,7 @@ model_list:
 2. Start proxy 
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it! 
@@ -2593,8 +2593,8 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```python 
 import openai
 client = openai.AsyncOpenAI(
-    api_key="anything",            # litellm proxy api key
-    base_url="http://0.0.0.0:4000" # litellm proxy base url
+    api_key="anything",            # lumina proxy api key
+    base_url="http://0.0.0.0:4000" # lumina proxy base url
 )
 
 
@@ -2626,8 +2626,8 @@ response = await client.chat.completions.create(
 ```python 
 import openai
 client = openai.AsyncOpenAI(
-    api_key="anything",            # litellm proxy api key
-    base_url="http://0.0.0.0:4000" # litellm proxy base url
+    api_key="anything",            # lumina proxy api key
+    base_url="http://0.0.0.0:4000" # lumina proxy base url
 )
 
 response = await client.chat.completions.create(
@@ -2666,7 +2666,7 @@ response = await client.chat.completions.create(
 <TabItem value="sdk" label="SDK">
 
 ```python
-from litellm import completion 
+from lumina import completion 
 
 response = completion(
     model="gemini/gemini-2.0-flash-exp-image-generation",
@@ -2691,7 +2691,7 @@ model_list:
 2. Start proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 3. Test it!
@@ -2726,7 +2726,7 @@ The number of image tokens depends on the output resolution:
 | 1K-2K (1024x1024 to 2048x2048) | 1,120 | $0.134 |
 | 4K (4096x4096) | 2,000 | $0.24 |
 
-LiteLLM automatically calculates costs using `output_cost_per_image_token` from the model pricing configuration.
+Lumina automatically calculates costs using `output_cost_per_image_token` from the model pricing configuration.
 
 **Example response usage:**
 ```json

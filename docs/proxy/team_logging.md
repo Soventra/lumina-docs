@@ -215,10 +215,10 @@ Every entry registered under that `callback_name` is removed, across callback ty
 
 ### Team Logging Endpoints
 
-- [`POST /team/{team_id}/callback` Add a success/failure callback to a team](https://docs.litellm.ai/api-reference/#/team%20management/add_team_callbacks_team__team_id__callback_post)
-- [`GET /team/{team_id}/callback` - Get the success/failure callbacks and variables for a team](https://docs.litellm.ai/api-reference/#/team%20management/get_team_callbacks_team__team_id__callback_get)
-- [`DELETE /team/{team_id}/callback/{callback_name}` - Remove a single callback from a team](https://docs.litellm.ai/api-reference/#/team%20management/delete_team_callback_team__team_id__callback__callback_name__delete)
-- [`POST /team/{team_id}/disable_logging` - Remove every callback from a team](https://docs.litellm.ai/api-reference/#/team%20management/disable_team_logging_team__team_id__disable_logging_post)
+- [`POST /team/{team_id}/callback` Add a success/failure callback to a team](https://docs.lumina.ai/api-reference/#/team%20management/add_team_callbacks_team__team_id__callback_post)
+- [`GET /team/{team_id}/callback` - Get the success/failure callbacks and variables for a team](https://docs.lumina.ai/api-reference/#/team%20management/get_team_callbacks_team__team_id__callback_get)
+- [`DELETE /team/{team_id}/callback/{callback_name}` - Remove a single callback from a team](https://docs.lumina.ai/api-reference/#/team%20management/delete_team_callback_team__team_id__callback__callback_name__delete)
+- [`POST /team/{team_id}/disable_logging` - Remove every callback from a team](https://docs.lumina.ai/api-reference/#/team%20management/disable_team_logging_team__team_id__disable_logging_post)
 
 
 
@@ -226,7 +226,7 @@ Every entry registered under that `callback_name` is removed, across callback ty
 
 Turn on/off logging and caching for a specific team id. 
 
-This section is team-scoped only: `litellm_settings.default_team_settings` configures callbacks for every key that belongs to a team id. There is no `config.yaml` surface for declaring individual virtual keys; per-key callbacks are provisioned through the `/key/generate` or `/key/update` API, documented in [Key Based Logging](#beta-key-based-logging).
+This section is team-scoped only: `lumina_settings.default_team_settings` configures callbacks for every key that belongs to a team id. There is no `config.yaml` surface for declaring individual virtual keys; per-key callbacks are provisioned through the `/key/generate` or `/key/update` API, documented in [Key Based Logging](#beta-key-based-logging).
 
 Because `config.yaml` is trusted operator-controlled configuration, `os.environ/...` references are supported here and are resolved from the proxy's environment at startup. The same references are rejected when sent through the management API (see [Secret handling for API-provisioned callbacks](#secret-handling-for-api-provisioned-callbacks)).
 
@@ -235,7 +235,7 @@ Because `config.yaml` is trusted operator-controlled configuration, `os.environ/
 This config would send langfuse logs to 2 different langfuse projects, based on the team id 
 
 ```yaml
-litellm_settings:
+lumina_settings:
   default_team_settings: 
     - team_id: "dbe2f686-a686-4896-864a-4c3924458709"
       success_callback: ["langfuse"]
@@ -337,7 +337,7 @@ Each key can point at a different Langfuse project: generate one key per project
 
 #### Secret handling for API-provisioned callbacks
 
-`os.environ/...` references inside API-supplied `callback_vars` are rejected (since v1.84). Resolving environment references from a request body would let any caller with key-management access read arbitrary secrets out of the proxy's environment, so the request fails with a validation error instead. Pass the resolved secret value in the request; LiteLLM encrypts `callback_vars` credentials at rest using the proxy's salt key. If you want the proxy to resolve credentials from its own environment, configure the callback in trusted `config.yaml` (globally under `litellm_settings`, or per team via [`default_team_settings`](#team-logging---configyaml)).
+`os.environ/...` references inside API-supplied `callback_vars` are rejected (since v1.84). Resolving environment references from a request body would let any caller with key-management access read arbitrary secrets out of the proxy's environment, so the request fails with a validation error instead. Pass the resolved secret value in the request; Lumina encrypts `callback_vars` credentials at rest using the proxy's salt key. If you want the proxy to resolve credentials from its own environment, configure the callback in trusted `config.yaml` (globally under `lumina_settings`, or per team via [`default_team_settings`](#team-logging---configyaml)).
 
 <iframe width="840" height="500" src="https://www.youtube.com/embed/8iF0Hvwk0YU" frameBorder="0" allowFullScreen></iframe>
 
@@ -439,7 +439,7 @@ Each key can point at a different Langfuse project: generate one key per project
 
 ---
 
-Help us improve this feature, by filing a [ticket here](https://github.com/BerriAI/litellm/issues)
+Help us improve this feature, by filing a [ticket here](https://github.com/Soventra/lumina/issues)
 
 ### Check if key callbacks are configured correctly `/key/health`
 
@@ -507,7 +507,7 @@ model_list:
   - model_name: {{openai_large}}
     lumina_params:
       model: {{openai_large}}
-litellm_settings:
+lumina_settings:
   callbacks: ["datadog"]
   turn_off_message_logging: True # Globally logging prompt / response is disabled
 ```

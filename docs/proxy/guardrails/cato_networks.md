@@ -12,7 +12,7 @@ Go to [Cato Networks CMA](https://cc.catonetworks.com/) and create a new AI Secu
 Name your guard and select the AI Gateway option.
 
 :::info
-When using LiteLLM with virtual keys, use the virtual key alias as the name of the guard to be able to set key-specific policies.
+When using Lumina with virtual keys, use the virtual key alias as the name of the guard to be able to set key-specific policies.
 
 Only the aliases of your virtual keys (and not the actual key secrets) will be sent to Cato Networks.
 :::
@@ -22,7 +22,7 @@ Only the aliases of your virtual keys (and not the actual key secrets) will be s
 Create an Engine Profile, selecting which detections to enable.
 Create a Guard Policy rule that references this Engine Profile and your Guard, then configure the action to apply.
 
-### 3. Add Cato Networks Guardrail on your LiteLLM config.yaml 
+### 3. Add Cato Networks Guardrail on your Lumina config.yaml 
 
 Define your guardrails under the `guardrails` section
 ```yaml
@@ -49,9 +49,9 @@ You can also set `CATO_API_KEY` as an environment variable.
 By default, the `api_base` is set to `https://api.aisec.catonetworks.com`. Set the correct url for your region.
 If you are using a self-hosted Outpost, you can set the `api_base` to your Outpost's URL.
 
-### 4. Start LiteLLM Gateway
+### 4. Start Lumina Gateway
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 5. Make your first request
@@ -65,7 +65,7 @@ You can adjust the request content to match different guard's policies.
 <TabItem label="Successfully blocked request" value = "blocked">
 
 :::note
-When using LiteLLM with virtual keys, an `Authorization` header with the virtual key is required.
+When using Lumina with virtual keys, an `Authorization` header with the virtual key is required.
 :::
 
 ```shell
@@ -99,7 +99,7 @@ If configured correctly, since `ishaan@berri.ai` would be detected by the Cato N
 <TabItem label="Successfully permitted request" value = "allowed">
 
 :::note
-When using LiteLLM with virtual keys, an `Authorization` header with the virtual key is required.
+When using Lumina with virtual keys, an `Authorization` header with the virtual key is required.
 :::
 
 ```shell

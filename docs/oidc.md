@@ -1,5 +1,5 @@
 # [BETA] OpenID Connect (OIDC)
-LiteLLM supports using OpenID Connect (OIDC) for authentication to upstream services . This allows you to avoid storing sensitive credentials in your configuration files.
+Lumina supports using OpenID Connect (OIDC) for authentication to upstream services . This allows you to avoid storing sensitive credentials in your configuration files.
 
 :::info
 
@@ -10,7 +10,7 @@ This feature is in Beta
 
 ## OIDC Identity Provider (IdP)
 
-LiteLLM supports the following OIDC identity providers:
+Lumina supports the following OIDC identity providers:
 
 | Provider                 | Config Name  | Custom Audiences |
 | -------------------------| ------------ | ---------------- |
@@ -34,7 +34,7 @@ Do not use the `file`, `env`, or `env_path` providers unless you know what you'r
 
 ## OIDC Connect Relying Party (RP)
 
-LiteLLM supports the following OIDC relying parties / clients:
+Lumina supports the following OIDC relying parties / clients:
 
 - Amazon Bedrock
 - Azure OpenAI
@@ -76,7 +76,7 @@ comma-separated list of absolute directories. The value replaces the
 default list, so include the defaults if you still need them:
 
 ```bash
-export LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS="/var/run/secrets,/etc/litellm/creds"
+export LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS="/var/run/secrets,/etc/lumina/creds"
 ```
 
 Paths that resolve (after following symlinks and `..`) outside the
@@ -96,7 +96,7 @@ oidc/env_path/SECRET_TOKEN
 
 :::tip
 
-If you are tempted to use oidc/env_path/AZURE_FEDERATED_TOKEN_FILE, don't do that. Instead, use `oidc/azure/`, as this will ensure continued support from LiteLLM if Azure changes their OIDC configuration and/or adds new features.
+If you are tempted to use oidc/env_path/AZURE_FEDERATED_TOKEN_FILE, don't do that. Instead, use `oidc/azure/`, as this will ensure continued support from Lumina if Azure changes their OIDC configuration and/or adds new features.
 
 :::
 
@@ -110,8 +110,8 @@ model_list:
     lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
-      aws_session_name: "litellm"
-      aws_role_name: "arn:aws:iam::YOUR_THING_HERE:role/litellm-google-demo"
+      aws_session_name: "lumina"
+      aws_role_name: "arn:aws:iam::YOUR_THING_HERE:role/lumina-google-demo"
       aws_web_identity_token: "oidc/google/https://example.com"
 ```
 
@@ -124,7 +124,7 @@ model_list:
       model: bedrock/cohere.command-r-v1:0
       aws_region_name: us-west-2
       aws_session_name: "my-test-session"
-      aws_role_name: "arn:aws:iam::335785316107:role/litellm-github-unit-tests-circleci"
+      aws_role_name: "arn:aws:iam::335785316107:role/lumina-github-unit-tests-circleci"
       aws_web_identity_token: "oidc/example-provider/"
 ```
 
@@ -174,8 +174,8 @@ Trust Relationship:
                 },
                 "ForAnyValue:StringLike": {
                     "oidc.circleci.com/org/c5a99188-154f-4f69-8da2-b442b1bf78dd:sub": [
-                        "org/c5a99188-154f-4f69-8da2-b442b1bf78dd/project/*/user/*/vcs-origin/github.com/BerriAI/litellm/vcs-ref/refs/heads/main",
-                        "org/c5a99188-154f-4f69-8da2-b442b1bf78dd/project/*/user/*/vcs-origin/github.com/BerriAI/litellm/vcs-ref/refs/heads/litellm_*"
+                        "org/c5a99188-154f-4f69-8da2-b442b1bf78dd/project/*/user/*/vcs-origin/github.com/Soventra/lumina/vcs-ref/refs/heads/main",
+                        "org/c5a99188-154f-4f69-8da2-b442b1bf78dd/project/*/user/*/vcs-origin/github.com/Soventra/lumina/vcs-ref/refs/heads/lumina_*"
                     ]
                 }
             }
@@ -184,7 +184,7 @@ Trust Relationship:
 }
 ```
 
-This trust relationship restricts CircleCI to only assume the role on the main branch and branches that start with `litellm_`.
+This trust relationship restricts CircleCI to only assume the role on the main branch and branches that start with `lumina_`.
 
 For CircleCI (v1 and v2), you also need to add your organization's OIDC provider in your AWS IAM settings. See https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-idp_oidc.html for more information.
 
@@ -291,5 +291,5 @@ model list:
       aws_region_name: "eu-central-1"
       aws_role_name: "arn:aws:iam::12345678:role/bedrock-role"
       aws_web_identity_token: "oidc/azure/api://123-456-789-9d04"
-      aws_session_name: "litellm-session"
+      aws_session_name: "lumina-session"
 ```

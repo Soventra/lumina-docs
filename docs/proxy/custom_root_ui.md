@@ -4,7 +4,7 @@ import Image from '@theme/IdealImage';
 
 # UI - Custom Root Path 
 
-Use this when you want to serve LiteLLM on a custom base url path like `https://localhost:4000/api/v1`
+Use this when you want to serve Lumina on a custom base url path like `https://localhost:4000/api/v1`
 
 :::info
 
@@ -12,7 +12,7 @@ Requires v1.72.3 or higher.
 
 :::
 
-The proxy rewrites the UI files at startup to use the custom path, so the UI directory must be writable. [Non-root images](./docker_image_security) copy the UI to `/var/lib/litellm/ui`, which the runtime user owns, so this works there out of the box. On a read-only root filesystem, point `LUMINA_UI_PATH` at a writable volume (e.g. a Kubernetes `emptyDir`), otherwise the proxy logs `Cannot apply server_root_path replacements` and the UI assets fail to load under the custom path
+The proxy rewrites the UI files at startup to use the custom path, so the UI directory must be writable. [Non-root images](./docker_image_security) copy the UI to `/var/lib/lumina/ui`, which the runtime user owns, so this works there out of the box. On a read-only root filesystem, point `LUMINA_UI_PATH` at a writable volume (e.g. a Kubernetes `emptyDir`), otherwise the proxy logs `Cannot apply server_root_path replacements` and the UI assets fail to load under the custom path
 
 ## Usage
 
@@ -27,7 +27,7 @@ export SERVER_ROOT_PATH="/api/v1"
 ### 2. Run the Proxy
 
 ```shell
-litellm proxy --config /path/to/config.yaml
+lumina proxy --config /path/to/config.yaml
 ```
 
 After running the proxy you can access it on `http://0.0.0.0:4000/api/v1/` (since we set `SERVER_ROOT_PATH="/api/v1"`)

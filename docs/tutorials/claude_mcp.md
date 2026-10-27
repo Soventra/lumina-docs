@@ -3,9 +3,9 @@ import TabItem from '@theme/TabItem';
 
 # Use Claude Code with MCPs
 
-This tutorial shows how to connect MCP servers to Claude Code via LiteLLM Proxy. For endpoint, transport, and credential selection, see the [MCP Configuration Reference](../mcp_config_reference)
+This tutorial shows how to connect MCP servers to Claude Code via Lumina Proxy. For endpoint, transport, and credential selection, see the [MCP Configuration Reference](../mcp_config_reference)
 
-Note: LiteLLM supports OAuth for MCP servers as well. [Learn more](https://docs.litellm.ai/docs/mcp#mcp-oauth)
+Note: Lumina supports OAuth for MCP servers as well. [Learn more](https://docs.lumina.ai/docs/mcp#mcp-oauth)
 
 ## Demo
 
@@ -13,7 +13,7 @@ Note: LiteLLM supports OAuth for MCP servers as well. [Learn more](https://docs.
 
 ## Connecting MCP Servers
 
-You can connect MCP servers to Claude Code via LiteLLM Proxy.
+You can connect MCP servers to Claude Code via Lumina Proxy.
 
 
 1. Add the MCP server to your `config.yaml`
@@ -55,12 +55,12 @@ mcp_servers:
 The server name under `mcp_servers:` (e.g. `atlassian_mcp`, `github_mcp`) **must match** the name used in the Claude Code URL path (`/<server_name>/mcp`). A mismatch will cause a 404 error during OAuth.
 :::
 
-2. Start LiteLLM Proxy
+2. Start Lumina Proxy
 
 Since Claude Code needs a publicly accessible URL for the OAuth callback, expose your proxy via ngrok or a similar tool.
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -76,16 +76,16 @@ ngrok http 4000
 <TabItem value="github" label="GitHub MCP">
 
 ```bash
-claude mcp add --transport http litellm-github https://your-ngrok-url.ngrok-free.dev/github_mcp/mcp \
-  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
+claude mcp add --transport http lumina-github https://your-ngrok-url.ngrok-free.dev/github_mcp/mcp \
+  --header "x-lumina-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
 <TabItem value="atlassian" label="Atlassian MCP">
 
 ```bash
-claude mcp add --transport http litellm-atlassian https://your-ngrok-url.ngrok-free.dev/atlassian_mcp/mcp \
-  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
+claude mcp add --transport http lumina-atlassian https://your-ngrok-url.ngrok-free.dev/atlassian_mcp/mcp \
+  --header "x-lumina-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -96,14 +96,14 @@ claude mcp add --transport http litellm-atlassian https://your-ngrok-url.ngrok-f
 | Parameter | Description |
 |-----------|-------------|
 | `--transport http` | Use HTTP transport for the MCP connection |
-| `litellm-atlassian` | The name for this MCP server **on Claude Code** — can be anything you choose |
-| `https://your-ngrok-url.ngrok-free.dev/atlassian_mcp/mcp` | The LiteLLM proxy URL. Format: `<PROXY_URL>/<server_name_on_litellm>/mcp`. The `atlassian_mcp` part **must match** the key under `mcp_servers:` in your LiteLLM proxy config |
-| `--header "x-litellm-api-key: Bearer $LUMINA_API_KEY"` | Your LiteLLM virtual key for authentication to the proxy |
+| `lumina-atlassian` | The name for this MCP server **on Claude Code** — can be anything you choose |
+| `https://your-ngrok-url.ngrok-free.dev/atlassian_mcp/mcp` | The Lumina proxy URL. Format: `<PROXY_URL>/<server_name_on_lumina>/mcp`. The `atlassian_mcp` part **must match** the key under `mcp_servers:` in your Lumina proxy config |
+| `--header "x-lumina-api-key: Bearer $LUMINA_API_KEY"` | Your Lumina virtual key for authentication to the proxy |
 
 You can also add the MCP server directly to your `~/.claude.json` file instead of using `claude mcp add`. [See Claude Code docs](https://docs.anthropic.com/en/docs/claude-code/mcp).
 
 :::note
-For MCP servers that require OAuth (such as Atlassian), use `x-litellm-api-key` instead of `Authorization` for the LiteLLM virtual key. The `Authorization` header is reserved for the OAuth flow.
+For MCP servers that require OAuth (such as Atlassian), use `x-lumina-api-key` instead of `Authorization` for the Lumina virtual key. The `Authorization` header is reserved for the OAuth flow.
 :::
 
 4. Authenticate via Claude Code
@@ -120,7 +120,7 @@ b. Open the MCP menu
 /mcp
 ```
 
-c. Select the MCP server (e.g. `litellm-atlassian`)
+c. Select the MCP server (e.g. `lumina-atlassian`)
 
 d. Start the OAuth flow
 
@@ -136,13 +136,13 @@ e. Once completed, you should see this success message:
 
 ## Keep MCP tools out of the context window (tool search)
 
-Claude Code normally keeps MCP tool schemas out of the context window and loads them on demand through its built-in tool search. That flow needs the `advanced-tool-use-2025-11-20` beta header on every request and `tool_reference` blocks to round-trip through the API, so since Claude Code 2.1.70 the client turns tool search off on its own whenever `ANTHROPIC_BASE_URL` points at anything other than a first-party Anthropic host. The decision happens on the client before any request is sent, which is why `/context` shows every MCP tool schema inlined (tens of thousands of tokens with a few hundred tools) as soon as Claude Code is routed through LiteLLM, and why no proxy-side setting can turn it back on.
+Claude Code normally keeps MCP tool schemas out of the context window and loads them on demand through its built-in tool search. That flow needs the `advanced-tool-use-2025-11-20` beta header on every request and `tool_reference` blocks to round-trip through the API, so since Claude Code 2.1.70 the client turns tool search off on its own whenever `ANTHROPIC_BASE_URL` points at anything other than a first-party Anthropic host. The decision happens on the client before any request is sent, which is why `/context` shows every MCP tool schema inlined (tens of thousands of tokens with a few hundred tools) as soon as Claude Code is routed through Lumina, and why no proxy-side setting can turn it back on.
 
-LiteLLM passes the beta header, `defer_loading`, and `tool_reference` blocks through unchanged on `/v1/messages` (and translates the beta to the Bedrock and Vertex AI names), so the fix lives on the Claude Code side. Tool search is controlled by the `ENABLE_TOOL_SEARCH` **environment variable**; it must be set to `true` in Claude Code's environment. There is no top-level settings key for it, so a bare `"enableToolSearch": true` in a settings file does nothing. Tell Claude Code (2.1.72 or newer) to keep tool search on:
+Lumina passes the beta header, `defer_loading`, and `tool_reference` blocks through unchanged on `/v1/messages` (and translates the beta to the Bedrock and Vertex AI names), so the fix lives on the Claude Code side. Tool search is controlled by the `ENABLE_TOOL_SEARCH` **environment variable**; it must be set to `true` in Claude Code's environment. There is no top-level settings key for it, so a bare `"enableToolSearch": true` in a settings file does nothing. Tell Claude Code (2.1.72 or newer) to keep tool search on:
 
 ```bash
 export ANTHROPIC_BASE_URL=http://0.0.0.0:4000
-export ANTHROPIC_AUTH_TOKEN=sk-<your-litellm-api-key>
+export ANTHROPIC_AUTH_TOKEN=sk-<your-lumina-api-key>
 export ENABLE_TOOL_SEARCH=true
 claude
 ```

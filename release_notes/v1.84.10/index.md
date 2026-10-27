@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.84.10 - Interrupted-Stream Cost Recovery"
+title: "Lumina v1.84.10 - Interrupted-Stream Cost Recovery"
 description: "Recovers output tokens and cost for interrupted Anthropic streams and records partial spend on the failure row."
 slug: "v1-84-10"
 date: 2026-06-24T04:00:54
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -31,14 +31,14 @@ import TabItem from '@theme/TabItem';
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.84.10
+docker.lumina.ai/soventra/lumina:1.84.10
 ```
 
 </TabItem>
 <TabItem value="pip" label="Pip">
 
 ```bash
-pip install litellm==1.84.10
+pip install lumina==1.84.10
 ```
 
 </TabItem>
@@ -48,12 +48,12 @@ pip install litellm==1.84.10
 
 ### What's Changed
 
-- fix(passthrough): recover output tokens for interrupted anthropic streams - [PR #30787](https://github.com/BerriAI/litellm/pull/30787)
-- fix(proxy): record partial spend on the failure row for interrupted streams - [PR #30788](https://github.com/BerriAI/litellm/pull/30788)
-- fix(passthrough,streaming): recover cost on interrupted and agentic Anthropic streams - [PR #31035](https://github.com/BerriAI/litellm/pull/31035)
-- fix(deps): bump osv-flagged dependencies to clear known CVEs - [PR #31122](https://github.com/BerriAI/litellm/pull/31122)
-- fix(docker): bump wolfi-base digest to patch openssl CVE-2026-34182 - [PR #31133](https://github.com/BerriAI/litellm/pull/31133)
+- fix(passthrough): recover output tokens for interrupted anthropic streams - [PR #30787](https://github.com/Soventra/lumina/pull/30787)
+- fix(proxy): record partial spend on the failure row for interrupted streams - [PR #30788](https://github.com/Soventra/lumina/pull/30788)
+- fix(passthrough,streaming): recover cost on interrupted and agentic Anthropic streams - [PR #31035](https://github.com/Soventra/lumina/pull/31035)
+- fix(deps): bump osv-flagged dependencies to clear known CVEs - [PR #31122](https://github.com/Soventra/lumina/pull/31122)
+- fix(docker): bump wolfi-base digest to patch openssl CVE-2026-34182 - [PR #31133](https://github.com/Soventra/lumina/pull/31133)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.84.9...v1.84.10
+https://github.com/Soventra/lumina/compare/v1.84.9...v1.84.10

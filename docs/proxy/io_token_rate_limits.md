@@ -27,14 +27,14 @@ router_settings:
 Start the proxy:
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 Set `itpm` / `otpm` to the values from your provider quota or model card (Service Quotas console for Bedrock Mantle, or your internal capacity plan).
 
 ## Mantle-style reservation
 
-LiteLLM follows the same reservation model as the [Bedrock Mantle endpoint](https://docs.aws.amazon.com/bedrock/latest/userguide/quotas-mantle.html): token limits are enforced **before** the upstream call, then reconciled after the response.
+Lumina follows the same reservation model as the [Bedrock Mantle endpoint](https://docs.aws.amazon.com/bedrock/latest/userguide/quotas-mantle.html): token limits are enforced **before** the upstream call, then reconciled after the response.
 
 ### Pre-call (admission)
 
@@ -52,10 +52,10 @@ Before the request is sent to the provider:
 3. **ITPM check:** reserve `estimated_input + effective_output_cap` against the deployment ITPM limit. Block with `429` if admission would exceed the limit.
 4. **OTPM check:** ensure `current_otpm + effective_output_cap` fits the OTPM limit. If OTPM would be exceeded, roll back the ITPM reservation and return `429`.
 
-This mirrors Mantle: when the client omits `max_tokens`, LiteLLM assumes the model's **maximum output capacity**, not its input context window. That is why a missing `max_tokens` on a large model can reserve a lot of ITPM/OTPM headroom.
+This mirrors Mantle: when the client omits `max_tokens`, Lumina assumes the model's **maximum output capacity**, not its input context window. That is why a missing `max_tokens` on a large model can reserve a lot of ITPM/OTPM headroom.
 
 :::tip
-Set `max_tokens` (or `max_output_tokens` on Responses) close to your expected completion size. Mantle and LiteLLM both reconcile down after the response, but a high default cap still blocks concurrent requests until the call finishes.
+Set `max_tokens` (or `max_output_tokens` on Responses) close to your expected completion size. Mantle and Lumina both reconcile down after the response, but a high default cap still blocks concurrent requests until the call finishes.
 :::
 
 ### Post-call (reconciliation)
@@ -93,7 +93,7 @@ Without an explicit `max_tokens`, the pre-call hold is much larger than the fina
 
 ## Response Headers
 
-When a model group has `itpm` or `otpm` configured, LiteLLM returns:
+When a model group has `itpm` or `otpm` configured, Lumina returns:
 
 | Header | Description |
 | --- | --- |
@@ -137,7 +137,7 @@ curl -X POST 'http://localhost:4000/project/new' \
   }'
 ```
 
-Requests made with the project's keys count against these limits. Enforcement follows the same reservation model as deployment limits: LiteLLM reserves the input estimate plus the effective output cap before the upstream call, then reconciles to actual usage after the response. No router settings are needed. The proxy's rate limiter enforces the project metadata automatically. This requires a database, since projects live in the proxy DB.
+Requests made with the project's keys count against these limits. Enforcement follows the same reservation model as deployment limits: Lumina reserves the input estimate plus the effective output cap before the upstream call, then reconciles to actual usage after the response. No router settings are needed. The proxy's rate limiter enforces the project metadata automatically. This requires a database, since projects live in the proxy DB.
 
 ### Project response headers
 
@@ -171,7 +171,7 @@ A request that would exceed a project limit is blocked with `429` before the ups
 | `tpm` | Total tokens per minute (single counter) | Legacy combined throughput limits |
 | `itpm` + `otpm` | Input and output separately | Provider docs with distinct input/output TPM (Bedrock Mantle) |
 
-Do **not** set both modes on the same deployment. If `itpm` or `otpm` is present, LiteLLM uses the ITPM/OTPM path and ignores combined TPM tracking for that deployment.
+Do **not** set both modes on the same deployment. If `itpm` or `otpm` is present, Lumina uses the ITPM/OTPM path and ignores combined TPM tracking for that deployment.
 
 ## Multi-Instance Deployment
 
@@ -189,7 +189,7 @@ router_settings:
 ## SDK Usage
 
 ```python showLineNumbers title="example.py"
-from litellm import Router
+from lumina import Router
 
 router = Router(
     model_list=[

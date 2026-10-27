@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | SCX.ai is an Australian sovereign AI platform serving open models over an OpenAI-compatible API, hosted on renewable-powered infrastructure. |
-| Provider Route on LiteLLM | `scx-ai/` |
+| Provider Route on Lumina | `scx-ai/` |
 | Link to Provider Doc | [SCX.ai Documentation ↗](https://scx.ai) |
 | Base URL | `https://api.scx.ai/v1` |
-| Supported Operations | [`/chat/completions`](#usage---litellm-python-sdk) |
+| Supported Operations | [`/chat/completions`](#usage---lumina-python-sdk) |
 
 <br />
 <br />
@@ -33,14 +33,14 @@ Both models support reasoning, function calling, JSON mode and JSON schema outpu
 os.environ["SCX_API_KEY"] = ""  # your SCX.ai API key
 ```
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="SCX.ai Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["SCX_API_KEY"] = ""  # your SCX.ai API key
 
@@ -59,8 +59,8 @@ print(response)
 
 ```python showLineNumbers title="SCX.ai Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["SCX_API_KEY"] = ""  # your SCX.ai API key
 
@@ -81,8 +81,8 @@ for chunk in response:
 
 ```python showLineNumbers title="SCX.ai Function Calling"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["SCX_API_KEY"] = ""  # your SCX.ai API key
 
@@ -120,7 +120,7 @@ print(response)
 
 ```python showLineNumbers title="SCX.ai JSON Schema Output"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["SCX_API_KEY"] = ""  # your SCX.ai API key
 
@@ -150,7 +150,7 @@ Image input is supported on `scx-ai/Qwen3.8-Max`. Images must be at least 10 pix
 
 ```python showLineNumbers title="SCX.ai Image Input"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["SCX_API_KEY"] = ""  # your SCX.ai API key
 
@@ -168,7 +168,7 @@ response = completion(
 print(response)
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -188,7 +188,7 @@ model_list:
 
 ```python showLineNumbers title="Custom API Base via env var"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["SCX_API_BASE"] = "https://custom.scx.ai/v1"
 os.environ["SCX_API_KEY"] = ""  # your API key
@@ -202,7 +202,7 @@ response = completion(
 **Option 2: Pass directly**
 
 ```python showLineNumbers title="Custom API Base via parameter"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="scx-ai/GLM-5.2",
@@ -232,4 +232,4 @@ response = completion(
 - `logprobs`
 - `top_logprobs`
 
-`max_completion_tokens` is sent upstream as `max_tokens`. SCX.ai accepts `temperature` in the range `[0.0, 2.0)` and rejects `2.0` itself, so LiteLLM clamps anything higher to `1.99`.
+`max_completion_tokens` is sent upstream as `max_tokens`. SCX.ai accepts `temperature` in the range `[0.0, 2.0)` and rejects `2.0` itself, so Lumina clamps anything higher to `1.99`.

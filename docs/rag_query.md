@@ -17,7 +17,7 @@ curl -X POST "http://localhost:4000/v1/rag/query" \
     -H "Content-Type: application/json" \
     -d '{
         "model": "{{openai_small}}",
-        "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+        "messages": [{"role": "user", "content": "What is Lumina?"}],
         "retrieval_config": {
             "vector_store_id": "vs_abc123",
             "custom_llm_provider": "openai",
@@ -50,7 +50,7 @@ The response follows the standard OpenAI chat completion format, with additional
       "index": 0,
       "message": {
         "role": "assistant",
-        "content": "LiteLLM is a unified interface for 100+ LLMs..."
+        "content": "Lumina is a unified interface for 100+ LLMs..."
       },
       "finish_reason": "stop"
     }
@@ -77,7 +77,7 @@ curl -X POST "http://localhost:4000/v1/rag/query" \
     -H "Content-Type: application/json" \
     -d '{
         "model": "{{openai_small}}",
-        "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+        "messages": [{"role": "user", "content": "What is Lumina?"}],
         "retrieval_config": {
             "vector_store_id": "vs_abc123",
             "custom_llm_provider": "openai",
@@ -101,7 +101,7 @@ curl -X POST "http://localhost:4000/v1/rag/query" \
     -H "Content-Type: application/json" \
     -d '{
         "model": "{{openai_small}}",
-        "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+        "messages": [{"role": "user", "content": "What is Lumina?"}],
         "retrieval_config": {
             "vector_store_id": "vs_abc123",
             "custom_llm_provider": "openai"
@@ -249,7 +249,7 @@ curl -X POST "http://localhost:4000/v1/rag/query" \
     -H "Content-Type: application/json" \
     -d '{
         "model": "bedrock/us.anthropic.{{anthropic}}",
-        "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+        "messages": [{"role": "user", "content": "What is Lumina?"}],
         "retrieval_config": {
             "vector_store_id": "KNOWLEDGE_BASE_ID",
             "custom_llm_provider": "bedrock",
@@ -266,7 +266,7 @@ curl -X POST "http://localhost:4000/v1/rag/query" \
     -H "Content-Type: application/json" \
     -d '{
         "model": "vertex_ai/{{gemini_pro}}",
-        "messages": [{"role": "user", "content": "What is LiteLLM?"}],
+        "messages": [{"role": "user", "content": "What is Lumina?"}],
         "retrieval_config": {
             "vector_store_id": "your-corpus-id",
             "custom_llm_provider": "vertex_ai",
@@ -277,12 +277,12 @@ curl -X POST "http://localhost:4000/v1/rag/query" \
 
 ## Python SDK
 
-```python showLineNumbers title="Using litellm.aquery()"
-import litellm
+```python showLineNumbers title="Using lumina.aquery()"
+import lumina
 
-response = await litellm.aquery(
+response = await lumina.aquery(
     model="{{openai_small}}",
-    messages=[{"role": "user", "content": "What is LiteLLM?"}],
+    messages=[{"role": "user", "content": "What is Lumina?"}],
     retrieval_config={
         "vector_store_id": "vs_abc123",
         "custom_llm_provider": "openai",

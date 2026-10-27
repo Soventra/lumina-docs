@@ -1,11 +1,11 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# CopilotKit SDK with LiteLLM
+# CopilotKit SDK with Lumina
 
-Use CopilotKit SDK with any LLM provider through LiteLLM Proxy.
+Use CopilotKit SDK with any LLM provider through Lumina Proxy.
 
-> **Note:** CopilotKit SDK integration with LiteLLM Proxy works with LiteLLM v1.81.7-nightly or higher.
+> **Note:** CopilotKit SDK integration with Lumina Proxy works with Lumina v1.81.7-nightly or higher.
 
 
 ## Quick Start
@@ -20,10 +20,10 @@ model_list:
       api_key: "os.environ/ANTHROPIC_API_KEY"
 ```
 
-### 2. Start LiteLLM Proxy
+### 2. Start Lumina Proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 3. Use CopilotKit SDK
@@ -40,7 +40,7 @@ import { NextRequest } from "next/server";
 const model = "{{anthropic}}";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || "sk-<your-litellm-api-key>",
+  apiKey: process.env.OPENAI_API_KEY || "sk-<your-lumina-api-key>",
   baseURL: process.env.OPENAI_BASE_URL || "http://localhost:4000/v1",
 });
 
@@ -89,11 +89,11 @@ curl -X POST http://localhost:3000/api/copilotkit \
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `OPENAI_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key |
-| `OPENAI_BASE_URL` | `http://localhost:4000/v1` | LiteLLM proxy URL |
+| `OPENAI_API_KEY` | `sk-<your-lumina-api-key>` | Your Lumina API key |
+| `OPENAI_BASE_URL` | `http://localhost:4000/v1` | Lumina proxy URL |
 
 
 ## Related Resources
 
 - [CopilotKit Documentation](https://docs.copilotkit.ai)
-- [LiteLLM Proxy Quick Start](../proxy/quick_start)
+- [Lumina Proxy Quick Start](../proxy/quick_start)

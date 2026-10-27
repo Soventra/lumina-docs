@@ -4,23 +4,23 @@ import TabItem from '@theme/TabItem';
 
 # Evaluate LLMs - MLflow Evals, Auto Eval
 
-## Using LiteLLM with MLflow
+## Using Lumina with MLflow
 MLflow provides an API `mlflow.evaluate()` to help evaluate your LLMs https://mlflow.org/docs/latest/llms/llm-evaluate/index.html
 
 ### Pre Requisites
 ```shell
-uv add litellm
+uv add lumina
 ```
 ```shell
 uv add mlflow
 ```
 
 
-### Step 1: Start LiteLLM Proxy on the CLI
-LiteLLM allows you to create an OpenAI compatible server for all supported LLMs. [More information on litellm proxy here](https://docs.litellm.ai/docs/simple_proxy)
+### Step 1: Start Lumina Proxy on the CLI
+Lumina allows you to create an OpenAI compatible server for all supported LLMs. [More information on lumina proxy here](https://docs.lumina.ai/docs/simple_proxy)
 
 ```shell
-$ litellm --model huggingface/bigcode/starcoder
+$ lumina --model huggingface/bigcode/starcoder
 
 #INFO: Proxy running on http://0.0.0.0:4000
 ```
@@ -36,7 +36,7 @@ $ export AWS_SECRET_ACCESS_KEY=""
 ```
 
 ```shell
-$ litellm --model bedrock/us.anthropic.{{anthropic}}
+$ lumina --model bedrock/us.anthropic.{{anthropic}}
 ```
 </TabItem>
 <TabItem value="huggingface" label="Huggingface (TGI)">
@@ -45,7 +45,7 @@ $ litellm --model bedrock/us.anthropic.{{anthropic}}
 $ export HUGGINGFACE_API_KEY=my-api-key #[OPTIONAL]
 ```
 ```shell
-$ litellm --model huggingface/<your model name> --api_base https://k58ory32yinf1ly0.us-east-1.aws.endpoints.huggingface.cloud
+$ lumina --model huggingface/<your model name> --api_base https://k58ory32yinf1ly0.us-east-1.aws.endpoints.huggingface.cloud
 ```
 
 </TabItem>
@@ -55,7 +55,7 @@ $ litellm --model huggingface/<your model name> --api_base https://k58ory32yinf1
 $ export ANTHROPIC_API_KEY=my-api-key
 ```
 ```shell
-$ litellm --model {{anthropic}}
+$ lumina --model {{anthropic}}
 ```
 
 </TabItem>
@@ -63,13 +63,13 @@ $ litellm --model {{anthropic}}
 Assuming you're running vllm locally
 
 ```shell
-$ litellm --model vllm/facebook/opt-125m
+$ lumina --model vllm/facebook/opt-125m
 ```
 </TabItem>
 <TabItem value="openai-proxy" label="OpenAI Compatible Server">
 
 ```shell
-$ litellm --model openai/<model_name> --api_base <your-api-base>
+$ lumina --model openai/<model_name> --api_base <your-api-base>
 ```
 </TabItem>
 <TabItem value="together_ai" label="TogetherAI">
@@ -78,7 +78,7 @@ $ litellm --model openai/<model_name> --api_base <your-api-base>
 $ export TOGETHERAI_API_KEY=my-api-key
 ```
 ```shell
-$ litellm --model together_ai/lmsys/vicuna-13b-v1.5-16k
+$ lumina --model together_ai/lmsys/vicuna-13b-v1.5-16k
 ```
 
 </TabItem>
@@ -89,7 +89,7 @@ $ litellm --model together_ai/lmsys/vicuna-13b-v1.5-16k
 $ export REPLICATE_API_KEY=my-api-key
 ```
 ```shell
-$ litellm \
+$ lumina \
   --model replicate/meta/llama-2-70b-chat:02e509c789964a7ea8736978a43525956ef40397be9033abf9fd2badfe68c9e3
 ```
 
@@ -98,7 +98,7 @@ $ litellm \
 <TabItem value="petals" label="Petals">
 
 ```shell
-$ litellm --model petals/meta-llama/Llama-2-70b-chat-hf
+$ lumina --model petals/meta-llama/Llama-2-70b-chat-hf
 ```
 
 </TabItem>
@@ -109,7 +109,7 @@ $ litellm --model petals/meta-llama/Llama-2-70b-chat-hf
 $ export GEMINI_API_KEY=my-gemini-key
 ```
 ```shell
-$ litellm --model gemini/gemini-2.5-flash
+$ lumina --model gemini/gemini-2.5-flash
 ```
 
 </TabItem>
@@ -121,7 +121,7 @@ $ export AZURE_API_KEY=my-api-key
 $ export AZURE_API_BASE=my-api-base
 ```
 ```
-$ litellm --model azure/my-deployment-name
+$ lumina --model azure/my-deployment-name
 ```
 
 </TabItem>
@@ -133,7 +133,7 @@ $ export AI21_API_KEY=my-api-key
 ```
 
 ```shell
-$ litellm --model j2-light
+$ lumina --model j2-light
 ```
 
 </TabItem>
@@ -145,7 +145,7 @@ $ export COHERE_API_KEY=my-api-key
 ```
 
 ```shell
-$ litellm --model command-nightly
+$ lumina --model command-nightly
 ```
 
 </TabItem>
@@ -154,7 +154,7 @@ $ litellm --model command-nightly
 
 
 ### Step 2: Run MLflow
-Before running the eval we will set `openai.api_base` to the litellm proxy from Step 1
+Before running the eval we will set `openai.api_base` to the lumina proxy from Step 1
 
 ```python
 openai.api_base = "http://0.0.0.0:4000"
@@ -220,13 +220,13 @@ See evaluation table below:
 ```
 
 
-## Using LiteLLM with AutoEval
+## Using Lumina with AutoEval
 AutoEvals is a tool for quickly and easily evaluating AI model outputs using best practices.
 https://github.com/braintrustdata/autoevals
 
 ### Pre Requisites
 ```shell
-uv add litellm
+uv add lumina
 ```
 ```shell
 uv add autoevals
@@ -243,11 +243,11 @@ See autoevals docs on the [supported evaluators](https://www.braintrustdata.com/
 # auto evals imports 
 from autoevals.llm import *
 ###################
-import litellm
+import lumina
 
-# litellm completion call
+# lumina completion call
 question = "which country has the highest population"
-response = litellm.completion(
+response = lumina.completion(
     model = "{{openai_small}}",
     messages = [
         {
@@ -260,9 +260,9 @@ print(response)
 # use the auto eval Factuality() evaluator
 evaluator = Factuality()
 result = evaluator(
-    output=response.choices[0]["message"]["content"],       # response from litellm.completion()
+    output=response.choices[0]["message"]["content"],       # response from lumina.completion()
     expected="India",                                       # expected output
-    input=question                                          # question passed to litellm.completion
+    input=question                                          # question passed to lumina.completion
 )
 
 print(result)

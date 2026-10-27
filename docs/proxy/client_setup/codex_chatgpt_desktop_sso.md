@@ -5,11 +5,11 @@ sidebar_label: SSO
 
 import CodexSSOAuth from './_codex_sso_auth.mdx';
 
-# Connect Codex in ChatGPT Desktop to LiteLLM with SSO
+# Connect Codex in ChatGPT Desktop to Lumina with SSO
 
 Codex in ChatGPT Desktop reads the same `~/.codex/config.toml` as the [Codex CLI](./codex_cli_sso.md) and runs the same authentication helper. For app onboarding, model selection, and MCP configuration, see the [desktop setup guide](./codex_chatgpt_desktop.md).
 
-These settings configure the Codex side of the app. Regular ChatGPT chats are not configured by `~/.codex/config.toml` and do not go through LiteLLM.
+These settings configure the Codex side of the app. Regular ChatGPT chats are not configured by `~/.codex/config.toml` and do not go through Lumina.
 
 ## Configure SSO authentication
 

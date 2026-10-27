@@ -27,14 +27,14 @@ Looking for how to use Code Interpreter? See the [Code Interpreter Guide](/docs/
 | `/v1/containers/{container_id}/files/{file_id}/content` | GET | Download file content |
 | `/v1/containers/{container_id}/files/{file_id}` | DELETE | Delete file |
 
-## LiteLLM Python SDK
+## Lumina Python SDK
 
 ### Upload Container File
 
 Upload files directly to a container session. This is useful when `/chat/completions` or `/responses` sends files to the container but the input file type is limited to PDF. This endpoint lets you work with other file types like CSV, Excel, Python scripts, etc.
 
 ```python showLineNumbers title="upload_container_file.py"
-from litellm import upload_container_file
+from lumina import upload_container_file
 
 # Upload a CSV file
 file = upload_container_file(
@@ -50,7 +50,7 @@ print(f"Path: {file.path}")
 **Async:**
 
 ```python showLineNumbers title="aupload_container_file.py"
-from litellm import aupload_container_file
+from lumina import aupload_container_file
 
 file = await aupload_container_file(
     container_id="cntr_123...",
@@ -71,7 +71,7 @@ file = await aupload_container_file(
 ### List Container Files
 
 ```python showLineNumbers title="list_container_files.py"
-from litellm import list_container_files
+from lumina import list_container_files
 
 files = list_container_files(
     container_id="cntr_123...",
@@ -85,7 +85,7 @@ for file in files.data:
 **Async:**
 
 ```python showLineNumbers title="alist_container_files.py"
-from litellm import alist_container_files
+from lumina import alist_container_files
 
 files = await alist_container_files(
     container_id="cntr_123...",
@@ -96,7 +96,7 @@ files = await alist_container_files(
 ### Retrieve Container File
 
 ```python showLineNumbers title="retrieve_container_file.py"
-from litellm import retrieve_container_file
+from lumina import retrieve_container_file
 
 file = retrieve_container_file(
     container_id="cntr_123...",
@@ -111,7 +111,7 @@ print(f"Size: {file.bytes} bytes")
 ### Download File Content
 
 ```python showLineNumbers title="retrieve_container_file_content.py"
-from litellm import retrieve_container_file_content
+from lumina import retrieve_container_file_content
 
 content = retrieve_container_file_content(
     container_id="cntr_123...",
@@ -127,7 +127,7 @@ with open("output.png", "wb") as f:
 ### Delete Container File
 
 ```python showLineNumbers title="delete_container_file.py"
-from litellm import delete_container_file
+from lumina import delete_container_file
 
 result = delete_container_file(
     container_id="cntr_123...",
@@ -138,7 +138,7 @@ result = delete_container_file(
 print(f"Deleted: {result.deleted}")
 ```
 
-## LiteLLM AI Gateway (Proxy)
+## Lumina AI Gateway (Proxy)
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -152,7 +152,7 @@ import TabItem from '@theme/TabItem';
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -186,7 +186,7 @@ curl "http://localhost:4000/v1/containers/cntr_123.../files" \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -218,7 +218,7 @@ curl "http://localhost:4000/v1/containers/cntr_123.../files" \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -251,7 +251,7 @@ curl "http://localhost:4000/v1/containers/cntr_123.../files/cfile_456..." \
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -285,7 +285,7 @@ curl "http://localhost:4000/v1/containers/cntr_123.../files/cfile_456.../content
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="sk-<your-litellm-api-key>",
+    api_key="sk-<your-lumina-api-key>",
     base_url="http://localhost:4000"
 )
 
@@ -384,4 +384,4 @@ For Azure, pass `custom_llm_provider="azure"` with `api_base` and `api_key` in t
 ## Related
 
 - [Containers API](/docs/containers) - Manage containers
-- [Code Interpreter Guide](/docs/guides/code_interpreter) - Using Code Interpreter with LiteLLM
+- [Code Interpreter Guide](/docs/guides/code_interpreter) - Using Code Interpreter with Lumina

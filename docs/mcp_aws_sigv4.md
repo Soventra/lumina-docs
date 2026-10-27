@@ -4,18 +4,18 @@ import Image from '@theme/IdealImage';
 
 # MCP - AWS SigV4 Auth
 
-Use AWS SigV4 authentication to connect LiteLLM to MCP servers hosted on [AWS Bedrock AgentCore](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html).
+Use AWS SigV4 authentication to connect Lumina to MCP servers hosted on [AWS Bedrock AgentCore](https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html).
 
 ## Why SigV4?
 
 AWS services authenticate requests using [Signature Version 4](https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html), a per-request signing protocol that includes the request body in the cryptographic signature. This works differently from static-header auth types (`api_key`, `bearer_token`, etc.), which send the same header on every request.
 
-LiteLLM's `aws_sigv4` auth type handles this automatically: every outgoing MCP request is signed with your AWS credentials before it's sent.
+Lumina's `aws_sigv4` auth type handles this automatically: every outgoing MCP request is signed with your AWS credentials before it's sent.
 
 ## Quick Start
 
 <Tabs>
-<TabItem value="ui" label="LiteLLM UI">
+<TabItem value="ui" label="Lumina UI">
 
 1. Navigate to **MCP Servers** and click **Add New MCP Server**
 2. Set the transport to **Streamable HTTP**
@@ -36,10 +36,10 @@ LiteLLM's `aws_sigv4` auth type handles this automatically: every outgoing MCP r
 | **AWS Access Key ID** | No | Falls back to boto3 credential chain if blank |
 | **AWS Secret Access Key** | No | Required if Access Key ID is provided |
 | **AWS Session Token** | No | Only needed for temporary STS credentials |
-| **AWS Role ARN** | No | IAM role ARN for STS AssumeRole (e.g., `arn:aws:iam::123456789012:role/MyRole`). If set, LiteLLM assumes this role before signing |
+| **AWS Role ARN** | No | IAM role ARN for STS AssumeRole (e.g., `arn:aws:iam::123456789012:role/MyRole`). If set, Lumina assumes this role before signing |
 | **AWS Session Name** | No | Session name for the AssumeRole call — appears in CloudTrail. Auto-generated if omitted |
 
-Once created, LiteLLM will sign every outgoing MCP request with SigV4. The server's tools appear automatically in the MCP Tools list.
+Once created, Lumina will sign every outgoing MCP request with SigV4. The server's tools appear automatically in the MCP Tools list.
 
 **Editing credentials:** When editing an existing SigV4 server, leave credential fields blank to keep the current values. Only fields you fill in will be updated.
 
@@ -69,7 +69,7 @@ mcp_servers:
     transport: "http"
     auth_type: "aws_sigv4"
     aws_role_name: os.environ/AWS_ROLE_ARN          # IAM role to assume (recommended)
-    aws_session_name: "litellm-prod"                 # optional — for CloudTrail auditing
+    aws_session_name: "lumina-prod"                 # optional — for CloudTrail auditing
     aws_region_name: "us-east-1"
     aws_service_name: "bedrock-agentcore"
 ```
@@ -93,7 +93,7 @@ arn%3Aaws%3Abedrock-agentcore%3Aus-east-1%3A123456789012%3Aruntime%2Fmy-mcp-serv
 ### 3. Start the proxy
 
 ```bash
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 </TabItem>
@@ -101,7 +101,7 @@ litellm --config config.yaml
 
 ## Use the MCP tools
 
-Once configured, your AgentCore MCP tools are available through LiteLLM like any other MCP server:
+Once configured, your AgentCore MCP tools are available through Lumina like any other MCP server:
 
 ```bash title="List available tools"
 curl http://localhost:4000/mcp-rest/tools/list \
@@ -133,12 +133,12 @@ See [MCP REST API](./mcp_rest_api.md) for tool naming, `server_id` formats, and 
 | `aws_region_name` | Yes | AWS region (e.g., `us-east-1`) |
 | `aws_service_name` | No | AWS service name for signing. Defaults to `bedrock-agentcore` |
 | `aws_session_token` | No | AWS session token for temporary credentials. Supports `os.environ/VAR_NAME` |
-| `aws_role_name` | No | IAM role ARN for STS AssumeRole. Supports `os.environ/VAR_NAME`. When set, LiteLLM calls `sts:AssumeRole` to get temporary credentials before signing |
+| `aws_role_name` | No | IAM role ARN for STS AssumeRole. Supports `os.environ/VAR_NAME`. When set, Lumina calls `sts:AssumeRole` to get temporary credentials before signing |
 | `aws_session_name` | No | Session name for the AssumeRole call (appears in CloudTrail). Auto-generated if omitted. Supports `os.environ/VAR_NAME` |
 
 ## How It Works
 
-LiteLLM uses an `httpx.Auth` subclass (`MCPSigV4Auth`) that hooks into the HTTP request lifecycle:
+Lumina uses an `httpx.Auth` subclass (`MCPSigV4Auth`) that hooks into the HTTP request lifecycle:
 
 1. For every outgoing MCP request, the auth handler computes a SHA-256 hash of the request body
 2. It creates a SigV4 signature using your AWS credentials, the request URL, headers, and body hash
@@ -166,7 +166,7 @@ mcp_servers:
 
 ## Using IAM Role Assumption (AssumeRole)
 
-For production environments where your LiteLLM instance authenticates via an IAM role (e.g., EKS pod role, EC2 instance profile), you can configure `aws_role_name` to have LiteLLM call `sts:AssumeRole` before signing MCP requests:
+For production environments where your Lumina instance authenticates via an IAM role (e.g., EKS pod role, EC2 instance profile), you can configure `aws_role_name` to have Lumina call `sts:AssumeRole` before signing MCP requests:
 
 ```yaml title="config.yaml with AssumeRole" showLineNumbers
 mcp_servers:
@@ -175,12 +175,12 @@ mcp_servers:
     transport: "http"
     auth_type: "aws_sigv4"
     aws_role_name: "arn:aws:iam::123456789012:role/BedrockAgentCoreRole"
-    aws_session_name: "litellm-prod"    # optional
+    aws_session_name: "lumina-prod"    # optional
     aws_region_name: "us-east-1"
     aws_service_name: "bedrock-agentcore"
 ```
 
-LiteLLM uses the ambient credentials (pod role, instance profile, or env vars) to call `sts:AssumeRole`, then signs MCP requests with the assumed role's temporary credentials.
+Lumina uses the ambient credentials (pod role, instance profile, or env vars) to call `sts:AssumeRole`, then signs MCP requests with the assumed role's temporary credentials.
 
 You can also combine `aws_role_name` with explicit access keys. The keys are then used as the source identity for the AssumeRole call:
 

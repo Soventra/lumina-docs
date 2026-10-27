@@ -3,21 +3,21 @@ import TabItem from '@theme/TabItem';
 
 # Conduct Guard
 
-The Conduct guardrail sends each prompt to your Conduct workspace before the model is called. Conduct evaluates the user text against the rules configured for the tool the guardrail is registered under and returns a verdict. Blocking verdicts (`block`, `approval`) reject the request with a 400 and the rule id. Non-blocking verdicts (`warning`, `advisory`) let the request through and are recorded as `guardrail_flagged` in LiteLLM's guardrail logs, spend logs, and the Admin UI request detail.
+The Conduct guardrail sends each prompt to your Conduct workspace before the model is called. Conduct evaluates the user text against the rules configured for the tool the guardrail is registered under and returns a verdict. Blocking verdicts (`block`, `approval`) reject the request with a 400 and the rule id. Non-blocking verdicts (`warning`, `advisory`) let the request through and are recorded as `guardrail_flagged` in Lumina's guardrail logs, spend logs, and the Admin UI request detail.
 
-The integration wraps the [`conduct-litellm-guard`](https://pypi.org/project/conduct-litellm-guard/) package, so it works on every endpoint the proxy translates into a guardrail input: `/v1/chat/completions` (including streaming), `/v1/responses`, and `/v1/messages`.
+The integration wraps the [`conduct-lumina-guard`](https://pypi.org/project/conduct-lumina-guard/) package, so it works on every endpoint the proxy translates into a guardrail input: `/v1/chat/completions` (including streaming), `/v1/responses`, and `/v1/messages`.
 
 ## Quick Start
 
 ### 1. Install the plugin and get an agent token
 
 ```shell
-pip install "conduct-litellm-guard>=0.2.5"
+pip install "conduct-lumina-guard>=0.2.5"
 ```
 
 Create an agent token in the Conduct console and note the workspace id if your tenant needs one. The token is sent as the bearer credential to the Conduct MCP endpoint at `<api_base>/mcp`.
 
-### 2. Add Conduct to your LiteLLM config.yaml
+### 2. Add Conduct to your Lumina config.yaml
 
 ```yaml title="config.yaml"
 model_list:
@@ -42,12 +42,12 @@ guardrails:
 
 The same fields are available in the Admin UI under **Guardrails > Add Guardrail > Conduct Guard**.
 
-### 3. Start LiteLLM Proxy
+### 3. Start Lumina Proxy
 
 ```shell
 export OPENAI_API_KEY=sk-...
 export CONDUCT_AGENT_TOKEN=cond_agt_...
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 ### 4. Make your first request
@@ -121,4 +121,4 @@ The plugin evaluates the user-authored text of the request: the `prompt`, user m
 ## Further reading
 
 - [Conduct](https://conductai.ai)
-- [conduct-litellm-guard on PyPI](https://pypi.org/project/conduct-litellm-guard/)
+- [conduct-lumina-guard on PyPI](https://pypi.org/project/conduct-lumina-guard/)

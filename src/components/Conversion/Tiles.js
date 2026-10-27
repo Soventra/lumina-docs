@@ -50,10 +50,10 @@ export function SalesBand({title, text, source = 'docs'}) {
   return (
     <aside className={styles.band}>
       <div className={styles.bandCopy}>
-        <p className={styles.bandTitle}>{title || 'LiteLLM for all the teams in your company'}</p>
+        <p className={styles.bandTitle}>{title || 'Lumina for all the teams in your company'}</p>
         <p className={styles.bandText}>
           {text ||
-            'Enterprise adds SSO, audit logs, admin roles for each team, and help from the LiteLLM engineers. It uses the same gateway with one license key.'}
+            'Enterprise adds SSO, audit logs, admin roles for each team, and help from the Lumina engineers. It uses the same gateway with one license key.'}
         </p>
       </div>
       <div className={styles.bandActions}>

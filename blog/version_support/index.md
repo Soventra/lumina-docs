@@ -1,21 +1,21 @@
 ---
 slug: version-support
-title: "LiteLLM version support: focusing on the four most recent stable lines"
+title: "Lumina version support: focusing on the four most recent stable lines"
 date: 2026-06-20
 authors:
   - yuneng
-description: "Starting Monday, June 29, 2026, LiteLLM actively supports the four most recent stable minor lines. Older lines reach end of life, and the window rolls forward as new stable lines ship."
+description: "Starting Monday, June 29, 2026, Lumina actively supports the four most recent stable minor lines. Older lines reach end of life, and the window rolls forward as new stable lines ship."
 tags: [release, support]
 hide_table_of_contents: false
 ---
 
-*Starting Monday, June 29, 2026, LiteLLM will only actively support the four most recent stable minor lines. Here's what's changing and what it means for you.*
+*Starting Monday, June 29, 2026, Lumina will only actively support the four most recent stable minor lines. Here's what's changing and what it means for you.*
 
 {/* truncate */}
 
 ## Why we're doing this
 
-Maintaining older lines means carrying every fix back to keep them all in parity. That overhead grows with the number of lines we keep alive, not the number of fixes we make. Our focus is ensuring the most up-to-date product offerings are stable and working for you. Because of this, LiteLLM is focusing on the four most recent stable minor lines going forward.
+Maintaining older lines means carrying every fix back to keep them all in parity. That overhead grows with the number of lines we keep alive, not the number of fixes we make. Our focus is ensuring the most up-to-date product offerings are stable and working for you. Because of this, Lumina is focusing on the four most recent stable minor lines going forward.
 
 ## How the rolling window works
 
@@ -31,4 +31,4 @@ To stay supported, pin to a line and take its patches, then move up before it ag
 
 ## How to stay current
 
-The best way to stay up to date on these changes is to bookmark our [release notes](https://docs.litellm.ai/release_notes). We update it as new versions ship, so you can see the latest stable line and the three behind it that are still supported.
+The best way to stay up to date on these changes is to bookmark our [release notes](https://docs.lumina.ai/release_notes). We update it as new versions ship, so you can see the latest stable line and the three behind it that are still supported.

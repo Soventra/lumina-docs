@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1120" height="810" viewBox="0 0 1120 810" role="img" aria-labelledby="title desc">
 <title id="title">Moyai: orchestration, execution, and access</title>
-<desc id="desc">Slack and browser requests enter the Moyai control plane. A worker coordinates an independent Modal agent sandbox. The sandbox uses a run capability to call the app broker for model and connected-app access. LiteLLM holds provider keys. The app stores session state; sandbox snapshots store files and context. Optional Temporal schedules the worker in the Render deployment.</desc>
+<desc id="desc">Slack and browser requests enter the Moyai control plane. A worker coordinates an independent Modal agent sandbox. The sandbox uses a run capability to call the app broker for model and connected-app access. Lumina holds provider keys. The app stores session state; sandbox snapshots store files and context. Optional Temporal schedules the worker in the Render deployment.</desc>
 <defs>
   <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#64647a"/></marker>
   <style>
@@ -45,7 +45,7 @@
 <path d="M428 462V523" class="wire"/>
 <path d="M891 462V523" class="wire"/>
 <rect x="38" y="529" width="256" height="120" rx="12" fill="#c4e6d8" class="box"/>
-<text x="59" y="567" class="label">LiteLLM gateway</text>
+<text x="59" y="567" class="label">Lumina gateway</text>
 <text x="59" y="598" class="small">Routing · budgets · spend</text>
 <text x="59" y="626" class="small">Provider keys stay here</text>
 <rect x="326" y="529" width="282" height="120" rx="12" fill="#fffefa" class="box"/>

@@ -4,10 +4,10 @@ import TabItem from '@theme/TabItem';
 # MongoDB - Vector Store (BETA)
 
 :::warning[BETA]
-The MongoDB vector store integration is a **BETA** feature. It supports searching existing MongoDB Vector Search indexes through the optional [LiteLLM MongoDB sidecar](https://github.com/BerriAI/litellm-mongodb). Prepare your collections, indexes, and embedded documents before connecting them to LiteLLM.
+The MongoDB vector store integration is a **BETA** feature. It supports searching existing MongoDB Vector Search indexes through the optional [Lumina MongoDB sidecar](https://github.com/Soventra/lumina-mongodb). Prepare your collections, indexes, and embedded documents before connecting them to Lumina.
 :::
 
-Use documents in MongoDB Atlas or a self-managed MongoDB deployment as context for chat completions. LiteLLM embeds the user's query, searches your index, and passes the retrieved text to your chat model. You can also search directly to retrieve documents and similarity scores without generating an answer.
+Use documents in MongoDB Atlas or a self-managed MongoDB deployment as context for chat completions. Lumina embeds the user's query, searches your index, and passes the retrieved text to your chat model. You can also search directly to retrieve documents and similarity scores without generating an answer.
 
 - [Connect your index](#connect-your-index) through the Admin UI, configuration file, or management API.
 - [Use MongoDB in chat completions](#use-mongodb-in-chat-completions) with curl or the OpenAI Python SDK.
@@ -22,46 +22,46 @@ You need:
 - **A connection string reachable from the sidecar.** The database user needs permission to search the collection and list its search indexes. Allow the sidecar host through your database's network rules.
 - **The embedding model used for your documents.** Query embeddings must use the same model and output dimensions as the stored vectors. A different model with the same dimensions can return irrelevant results without an error.
 
-Install LiteLLM normally. The MongoDB driver runs only in the separate sidecar:
+Install Lumina normally. The MongoDB driver runs only in the separate sidecar:
 
 ```bash
-pip install 'litellm[proxy]'
+pip install 'lumina[proxy]'
 ```
 
-For direct Python SDK use, install `litellm`, deploy the sidecar, then follow [Search with the Python SDK](#search-with-the-python-sdk). Neither the SDK nor the standard LiteLLM images need PyMongo. LiteLLM does not start or install the sidecar automatically.
+For direct Python SDK use, install `lumina`, deploy the sidecar, then follow [Search with the Python SDK](#search-with-the-python-sdk). Neither the SDK nor the standard Lumina images need PyMongo. Lumina does not start or install the sidecar automatically.
 
 :::note[RC configuration change]
-If you tried MongoDB in `v1.101.0-rc.1`, move `mongodb_connection_string` to the sidecar's `MONGODB_CONNECTION_STRING` environment variable. Replace it in your LiteLLM registration with `api_base` and `api_key`. Existing MongoDB data and indexes stay in place; application search and chat requests stay the same. This integration remains BETA.
+If you tried MongoDB in `v1.101.0-rc.1`, move `mongodb_connection_string` to the sidecar's `MONGODB_CONNECTION_STRING` environment variable. Replace it in your Lumina registration with `api_base` and `api_key`. Existing MongoDB data and indexes stay in place; application search and chat requests stay the same. This integration remains BETA.
 :::
 
 ### Choose your models
 
-For proxy requests, use a configured LiteLLM proxy. Registration through the UI or management API also requires a proxy database. Add your models under **Models** in the Admin UI or in your existing `model_list` configuration:
+For proxy requests, use a configured Lumina proxy. Registration through the UI or management API also requires a proxy database. Add your models under **Models** in the Admin UI or in your existing `model_list` configuration:
 
 | Model | Used for | Requirement |
 |---|---|---|
 | Embedding model | Converting each search query into a vector | Must match the model and dimensions used to embed your collection. |
-| Chat model | Generating an answer from retrieved text | A LiteLLM-supported chat model. Only needed for chat completions. |
+| Chat model | Generating an answer from retrieved text | A Lumina-supported chat model. Only needed for chat completions. |
 
 Configure credentials and any provider-specific settings on each model deployment. MongoDB does not require OpenAI: choose the embedding provider that matches your stored vectors and the chat provider you want to use. The [sample-document example](../tutorials/mongodb_vector_search.md) shows one setup using OpenAI.
 
 ## Deploy the sidecar
 
-Run one sidecar per MongoDB connection string. Multiple LiteLLM registrations can use that sidecar for databases, collections, and indexes accessible to its MongoDB user. The sidecar runs the official MongoDB driver; LiteLLM continues to generate query embeddings through your configured model and route chat requests normally.
+Run one sidecar per MongoDB connection string. Multiple Lumina registrations can use that sidecar for databases, collections, and indexes accessible to its MongoDB user. The sidecar runs the official MongoDB driver; Lumina continues to generate query embeddings through your configured model and route chat requests normally.
 
-Set `MONGODB_CONNECTION_STRING` and a strong `MONGODB_SIDECAR_API_KEY` in the sidecar's deployment secrets. Give LiteLLM the same sidecar key. Keep MongoDB credentials and TLS files in the sidecar environment.
+Set `MONGODB_CONNECTION_STRING` and a strong `MONGODB_SIDECAR_API_KEY` in the sidecar's deployment secrets. Give Lumina the same sidecar key. Keep MongoDB credentials and TLS files in the sidecar environment.
 
 <Tabs>
 <TabItem value="docker" label="Docker">
 
-For a LiteLLM proxy or SDK running on the same host:
+For a Lumina proxy or SDK running on the same host:
 
 ```bash
 docker run --rm --name mongodb-sidecar \
   -p 127.0.0.1:8080:8080 \
   -e MONGODB_CONNECTION_STRING \
   -e MONGODB_SIDECAR_API_KEY \
-  ghcr.io/berriai/litellm-mongodb:v0.1.0-beta.1
+  ghcr.io/soventra/lumina-mongodb:v0.1.0-beta.1
 ```
 
 Use `http://127.0.0.1:8080` as the Sidecar URL. Pin the release tag or digest. The image supports Linux amd64 and arm64 and runs as user `10001:10001`.
@@ -69,15 +69,15 @@ Use `http://127.0.0.1:8080` as the Sidecar URL. Pin the release tag or digest. T
 </TabItem>
 <TabItem value="compose" label="Docker Compose">
 
-Add this optional service to the Compose project running LiteLLM:
+Add this optional service to the Compose project running Lumina:
 
 ```yaml
 services:
   mongodb-sidecar:
-    image: ghcr.io/berriai/litellm-mongodb:v0.1.0-beta.1
-    network_mode: service:litellm
+    image: ghcr.io/soventra/lumina-mongodb:v0.1.0-beta.1
+    network_mode: service:lumina
     depends_on:
-      litellm:
+      lumina:
         condition: service_started
         restart: true
     environment:
@@ -86,26 +86,26 @@ services:
     restart: unless-stopped
 ```
 
-Use Docker Compose 2.17 or later. Replace `litellm` in `network_mode` and `depends_on` with the name of your existing LiteLLM service, and pass `MONGODB_SIDECAR_API_KEY` to that service. Sharing the network namespace lets LiteLLM use `http://127.0.0.1:8080` as `api_base`. No host port is needed for the sidecar in this deployment. For separate network namespaces, expose the sidecar through HTTPS instead.
+Use Docker Compose 2.17 or later. Replace `lumina` in `network_mode` and `depends_on` with the name of your existing Lumina service, and pass `MONGODB_SIDECAR_API_KEY` to that service. Sharing the network namespace lets Lumina use `http://127.0.0.1:8080` as `api_base`. No host port is needed for the sidecar in this deployment. For separate network namespaces, expose the sidecar through HTTPS instead.
 
-Restart LiteLLM through Compose so the sidecar also restarts and joins its network namespace:
-
-```bash
-docker compose restart litellm
-```
-
-After changing the LiteLLM image or container configuration, recreate both services:
+Restart Lumina through Compose so the sidecar also restarts and joins its network namespace:
 
 ```bash
-docker compose up -d --force-recreate litellm mongodb-sidecar
+docker compose restart lumina
 ```
 
-The dependency's `restart: true` applies to Compose operations; Docker's automatic restart policy and a direct `docker restart` do not restart dependent services. If LiteLLM restarts outside Compose, run `docker compose restart mongodb-sidecar` after LiteLLM starts. Otherwise the sidecar can remain attached to the previous network namespace and MongoDB searches fail. Use a separate HTTPS deployment when the services need independent restart and recovery. See Docker's [dependency restart behavior](https://docs.docker.com/reference/compose-file/services/#depends_on).
+After changing the Lumina image or container configuration, recreate both services:
+
+```bash
+docker compose up -d --force-recreate lumina mongodb-sidecar
+```
+
+The dependency's `restart: true` applies to Compose operations; Docker's automatic restart policy and a direct `docker restart` do not restart dependent services. If Lumina restarts outside Compose, run `docker compose restart mongodb-sidecar` after Lumina starts. Otherwise the sidecar can remain attached to the previous network namespace and MongoDB searches fail. Use a separate HTTPS deployment when the services need independent restart and recovery. See Docker's [dependency restart behavior](https://docs.docker.com/reference/compose-file/services/#depends_on).
 
 </TabItem>
 <TabItem value="helm" label="Kubernetes / Helm">
 
-Create a Kubernetes Secret named `mongodb-sidecar` in the LiteLLM namespace with keys `connection-string` and `api-key`. For the LiteLLM `litellm-helm` chart, add the sidecar through its existing `extraContainers` setting:
+Create a Kubernetes Secret named `mongodb-sidecar` in the Lumina namespace with keys `connection-string` and `api-key`. For the Lumina `lumina-helm` chart, add the sidecar through its existing `extraContainers` setting:
 
 ```yaml title="values-mongodb.yaml"
 extraEnvVars:
@@ -116,7 +116,7 @@ extraEnvVars:
         key: api-key
 extraContainers:
   - name: mongodb-sidecar
-    image: ghcr.io/berriai/litellm-mongodb:v0.1.0-beta.1
+    image: ghcr.io/soventra/lumina-mongodb:v0.1.0-beta.1
     ports:
       - name: mongodb-http
         containerPort: 8080
@@ -152,16 +152,16 @@ extraContainers:
 
 Merge these values with your existing chart configuration, preserving any existing extra environment variables and containers. Set the MongoDB registration's `api_base` to `http://127.0.0.1:8080`; containers in the same Pod share the network. No additional Service or mandatory chart dependency is needed.
 
-Monitor `/health/readiness` for MongoDB connectivity. A MongoDB readiness probe on a container in the LiteLLM Pod would remove the entire Pod from service during a MongoDB outage, affecting other providers. Use a separate sidecar Deployment and Service if MongoDB needs independent readiness, scaling, or availability.
+Monitor `/health/readiness` for MongoDB connectivity. A MongoDB readiness probe on a container in the Lumina Pod would remove the entire Pod from service during a MongoDB outage, affecting other providers. Use a separate sidecar Deployment and Service if MongoDB needs independent readiness, scaling, or availability.
 
 </TabItem>
 </Tabs>
 
 Each secret can alternatively be mounted read-only and referenced with `MONGODB_CONNECTION_STRING_FILE` or `MONGODB_SIDECAR_API_KEY_FILE`. Set either the value or its file variable, never both. Files must be readable by container user 10001. For MongoDB TLS, include options such as `tlsCAFile` or `tlsCertificateKeyFile` in the URI and mount the files at those paths inside the sidecar. Certificate verification remains enabled by default.
 
-LiteLLM requires HTTPS for remote sidecars. HTTP is accepted only for a literal loopback IP, such as `127.0.0.1` or `[::1]`, when both processes share a host or network namespace. This keeps the sidecar bearer key and query data off unencrypted network hops. For a separate sidecar host or Deployment, use an HTTPS reverse proxy with a certificate trusted by LiteLLM; `api_base` can include the proxy's path prefix, without `/v1`. Keep the service's HTTP port private behind that proxy.
+Lumina requires HTTPS for remote sidecars. HTTP is accepted only for a literal loopback IP, such as `127.0.0.1` or `[::1]`, when both processes share a host or network namespace. This keeps the sidecar bearer key and query data off unencrypted network hops. For a separate sidecar host or Deployment, use an HTTPS reverse proxy with a certificate trusted by Lumina; `api_base` can include the proxy's path prefix, without `/v1`. Keep the service's HTTP port private behind that proxy.
 
-Check `/health/liveness` for the HTTP process and `/health/readiness` for a bounded MongoDB ping. See the [sidecar operations guide](https://github.com/BerriAI/litellm-mongodb#operations) for timeouts, connection pooling, and releases.
+Check `/health/liveness` for the HTTP process and `/health/readiness` for a bounded MongoDB ping. See the [sidecar operations guide](https://github.com/Soventra/lumina-mongodb#operations) for timeouts, connection pooling, and releases.
 
 ## Connect your index
 
@@ -169,12 +169,12 @@ Register the existing index once, then reference it by ID in requests. Replace a
 
 | Value | Where to find it |
 |---|---|
-| `<index-name>` | The exact name of your MongoDB Vector Search index. This becomes the LiteLLM `vector_store_id`. |
+| `<index-name>` | The exact name of your MongoDB Vector Search index. This becomes the Lumina `vector_store_id`. |
 | `<database-name>` / `<collection-name>` | The database and collection containing your documents. |
 | `<vector-field>` | The vector `path` in the index definition. |
 | `<text-field>` | The document field containing readable text, such as `text` or `metadata.body`. |
-| `<embedding-model-name>` | The name of the embedding model registered on your LiteLLM proxy. |
-| `<chat-model-name>` | The name of the chat model registered on your LiteLLM proxy. |
+| `<embedding-model-name>` | The name of the embedding model registered on your Lumina proxy. |
+| `<chat-model-name>` | The name of the chat model registered on your Lumina proxy. |
 
 The index must be **READY** and queryable before searching. A registration's display name is independent of its ID. Saving a registration does not create an index, ingest documents, or verify that the connection works.
 
@@ -210,13 +210,13 @@ vector_store_registry:
       mongodb_collection: "<collection-name>"
       mongodb_text_field: "<text-field>"
       mongodb_embedding_field: "<vector-field>"
-      litellm_embedding_model: "<embedding-model-name>"
+      lumina_embedding_model: "<embedding-model-name>"
 ```
 
 Start or restart the proxy with the updated config:
 
 ```bash
-litellm --config config.yaml --port 4000
+lumina --config config.yaml --port 4000
 ```
 
 Environment variables must be available to the running proxy process. For Docker, pass them with `--env-file` or `-e`; a host's `.env` file is not automatically available inside the container.
@@ -224,7 +224,7 @@ Environment variables must be available to the running proxy process. For Docker
 </TabItem>
 <TabItem value="api" label="Management API">
 
-On a proxy configured with a database, set `LUMINA_API_KEY` to a LiteLLM key with permission to manage vector stores. Replace the proxy URL if needed:
+On a proxy configured with a database, set `LUMINA_API_KEY` to a Lumina key with permission to manage vector stores. Replace the proxy URL if needed:
 
 ```bash showLineNumbers title="Register an existing MongoDB index"
 curl -X POST 'http://localhost:4000/vector_store/new' \
@@ -241,12 +241,12 @@ curl -X POST 'http://localhost:4000/vector_store/new' \
       "mongodb_collection": "<collection-name>",
       "mongodb_text_field": "<text-field>",
       "mongodb_embedding_field": "<vector-field>",
-      "litellm_embedding_model": "<embedding-model-name>"
+      "lumina_embedding_model": "<embedding-model-name>"
     }
   }'
 ```
 
-The registration is stored in the LiteLLM database. See [Managed Vector Stores](../vector_stores/managed_vector_stores.md) for management and access controls.
+The registration is stored in the Lumina database. See [Managed Vector Stores](../vector_stores/managed_vector_stores.md) for management and access controls.
 
 </TabItem>
 </Tabs>
@@ -257,9 +257,9 @@ If the proxy started without any registered vector stores, direct search can wor
 
 ## Use MongoDB in chat completions
 
-Call `/v1/chat/completions` with a `file_search` tool referencing your registered index ID. LiteLLM retrieves the context and calls your chat model in the same request.
+Call `/v1/chat/completions` with a `file_search` tool referencing your registered index ID. Lumina retrieves the context and calls your chat model in the same request.
 
-Set `LUMINA_API_KEY` to a LiteLLM key with access to the chat model and registered vector store. Replace the proxy URL, model name, index name, and question below with your own values.
+Set `LUMINA_API_KEY` to a Lumina key with access to the chat model and registered vector store. Replace the proxy URL, model name, index name, and question below with your own values.
 
 <Tabs>
 <TabItem value="chat-curl" label="curl">
@@ -292,9 +292,9 @@ curl -X POST 'http://localhost:4000/v1/chat/completions' \
 </TabItem>
 <TabItem value="chat-python" label="OpenAI Python SDK">
 
-Point the client at your LiteLLM proxy and pass LiteLLM's `file_search` tool through `extra_body`:
+Point the client at your Lumina proxy and pass Lumina's `file_search` tool through `extra_body`:
 
-```python showLineNumbers title="Chat completions through LiteLLM"
+```python showLineNumbers title="Chat completions through Lumina"
 import os
 
 from openai import OpenAI
@@ -330,9 +330,9 @@ for page in (message.get("provider_specific_fields") or {}).get("search_results"
 </TabItem>
 </Tabs>
 
-LiteLLM embeds the final user message with the store's configured embedding model, runs MongoDB's `$vectorSearch` aggregation, and adds the retrieved text to the conversation. The chat model then generates the answer in `choices[0].message.content`.
+Lumina embeds the final user message with the store's configured embedding model, runs MongoDB's `$vectorSearch` aggregation, and adds the retrieved text to the conversation. The chat model then generates the answer in `choices[0].message.content`.
 
-`file_search` on this endpoint is handled by LiteLLM before calling the chat model. Your application does not need to execute a tool call or send a separate search request. Use the exact index name in `vector_store_ids`, not the registration's display name.
+`file_search` on this endpoint is handled by Lumina before calling the chat model. Your application does not need to execute a tool call or send a separate search request. Use the exact index name in `vector_store_ids`, not the registration's display name.
 
 ### Verify retrieval
 
@@ -342,7 +342,7 @@ A successful chat response alone does not prove that MongoDB retrieval worked: c
 
 ## Search the index directly
 
-Use direct search when you want to retrieve documents without generating a chat response. Set `LUMINA_API_KEY` to a LiteLLM key with access to the registered store.
+Use direct search when you want to retrieve documents without generating a chat response. Set `LUMINA_API_KEY` to a Lumina key with access to the registered store.
 
 ```bash showLineNumbers title="Search through the proxy"
 curl -X POST 'http://localhost:4000/v1/vector_stores/<index-name>/search' \
@@ -366,14 +366,14 @@ Results appear in the response's `data` array:
 
 ## Search with the Python SDK
 
-Pass the sidecar settings directly to `litellm.vector_stores.search`; proxy registration is not required. Set `MONGODB_SIDECAR_API_KEY` and your embedding provider's credentials in the SDK process's environment. The MongoDB URI belongs in the separately deployed sidecar.
+Pass the sidecar settings directly to `lumina.vector_stores.search`; proxy registration is not required. Set `MONGODB_SIDECAR_API_KEY` and your embedding provider's credentials in the SDK process's environment. The MongoDB URI belongs in the separately deployed sidecar.
 
 ```python showLineNumbers title="Search without a proxy"
 import os
 
-import litellm
+import lumina
 
-response = litellm.vector_stores.search(
+response = lumina.vector_stores.search(
     vector_store_id="<index-name>",
     query="<question-about-your-documents>",
     custom_llm_provider="mongodb",
@@ -383,14 +383,14 @@ response = litellm.vector_stores.search(
     mongodb_collection="<collection-name>",
     mongodb_text_field="<text-field>",
     mongodb_embedding_field="<vector-field>",
-    litellm_embedding_model="<provider>/<embedding-model>",
+    lumina_embedding_model="<provider>/<embedding-model>",
     max_num_results=3,
 )
 
 print(response)
 ```
 
-For async usage, call `await litellm.vector_stores.asearch(...)` with the same arguments. In direct SDK calls, use the provider's embedding model name. On the proxy, use the registered embedding model name.
+For async usage, call `await lumina.vector_stores.asearch(...)` with the same arguments. In direct SDK calls, use the provider's embedding model name. On the proxy, use the registered embedding model name.
 
 ## Settings reference
 
@@ -401,14 +401,14 @@ Pass these in the registered store's `lumina_params`, or as keyword arguments in
 | `vector_store_id` | Yes | Exact MongoDB Vector Search index name. |
 | `custom_llm_provider` | Yes | Set to `mongodb`. |
 | `api_base` | Yes | Sidecar HTTPS origin or reverse-proxy path prefix. HTTP is supported only for literal loopback IPs. Do not append `/v1`. |
-| `api_key` | Yes | Sidecar bearer key. Can also be supplied through `MONGODB_SIDECAR_API_KEY` in the LiteLLM environment. |
+| `api_key` | Yes | Sidecar bearer key. Can also be supplied through `MONGODB_SIDECAR_API_KEY` in the Lumina environment. |
 | `mongodb_database` | Yes | Database containing the collection. Required even if the URI contains a database name. |
 | `mongodb_collection` | Yes | Collection containing the documents and vectors. |
-| `litellm_embedding_model` | Yes | Model used to embed queries. Must match the model used for stored vectors. |
+| `lumina_embedding_model` | Yes | Model used to embed queries. Must match the model used for stored vectors. |
 | `mongodb_embedding_field` | No | Vector field covered by the index. Defaults to `embedding`. |
 | `mongodb_text_field` | No | Field containing readable text. Defaults to `text`; supports dotted paths such as `metadata.body`. |
 | `mongodb_num_candidates` | No | Number of candidates considered before returning the top results. Defaults to `max(100, 10 * max_num_results)`. An explicit value must be at least `max_num_results` and at most `10000`. Higher values can improve recall at the cost of latency. |
-| `litellm_embedding_config` | No | Additional embedding-call arguments, such as `dimensions`, `api_key`, or `api_base`. On the proxy, configure these on the embedding model deployment when possible. |
+| `lumina_embedding_config` | No | Additional embedding-call arguments, such as `dimensions`, `api_key`, or `api_base`. On the proxy, configure these on the embedding model deployment when possible. |
 
 The search `query` must be non-empty and no longer than 32,000 characters. A list of strings is joined with spaces and embedded as a single query.
 
@@ -416,8 +416,8 @@ The search `query` must be non-empty and no longer than 32,000 characters. A lis
 
 | Symptom | What to check |
 |---|---|
-| Old configuration asks for `pymongo` or `mongodb_connection_string` | Use the LiteLLM release containing the BETA sidecar adapter, deploy the sidecar, and configure `api_base` and `api_key`. |
-| HTTP 401: sidecar authentication failed | Match LiteLLM's `api_key` to the sidecar's `MONGODB_SIDECAR_API_KEY`. This is separate from your MongoDB password and LiteLLM client key. |
+| Old configuration asks for `pymongo` or `mongodb_connection_string` | Use the Lumina release containing the BETA sidecar adapter, deploy the sidecar, and configure `api_base` and `api_key`. |
+| HTTP 401: sidecar authentication failed | Match Lumina's `api_key` to the sidecar's `MONGODB_SIDECAR_API_KEY`. This is separate from your MongoDB password and Lumina client key. |
 | HTTP 400: missing or non-queryable index | Check the exact database, collection, and index name. Wait for the index to become READY and queryable. |
 | HTTP 400: dimension mismatch or vector field not indexed | Match the query embedding model and dimensions to your documents, and `mongodb_embedding_field` to the index's `path`. |
 | HTTP 400: none of the matched documents has the text field | Set `mongodb_text_field` to the field containing readable text, including its dotted path if nested. |
@@ -429,11 +429,11 @@ The search `query` must be non-empty and no longer than 32,000 characters. A lis
 | HTTP 503: connection dropped or refused | Check that the sidecar is running and its URL is reachable, then check MongoDB connectivity and TLS settings. Retry after a node restart or replica set failover. |
 | Chat returns `Invalid value: 'file_search'` after registering the first store | Wait for database sync or restart the proxy to load the registration before retrying. Confirm `vector_store_ids` contains the registered index ID. |
 
-Timeouts and dropped connections return retryable errors (`408` and `503`). After connectivity is restored, searches can resume without restarting LiteLLM.
+Timeouts and dropped connections return retryable errors (`408` and `503`). After connectivity is restored, searches can resume without restarting Lumina.
 
 ## BETA limitations
 
-- **Search only:** create collections and indexes, generate document embeddings, and ingest documents outside LiteLLM. MongoDB does not support LiteLLM's vector store creation, file management, or `/rag/ingest` APIs.
+- **Search only:** create collections and indexes, generate document embeddings, and ingest documents outside Lumina. MongoDB does not support Lumina's vector store creation, file management, or `/rag/ingest` APIs.
 - **No search filtering or query rewriting:** `filters`, `ranking_options`, and `rewrite_query` are rejected, including `rewrite_query: false`. Provider-specific `mongodb_filter` is also unsupported and rejected.
-- **No automatic embedding through MongoDB:** configure `litellm_embedding_model`; MongoDB's automated embedding integration is not used.
+- **No automatic embedding through MongoDB:** configure `lumina_embedding_model`; MongoDB's automated embedding integration is not used.
 - **First registration can take time to reach chat requests:** when a running proxy has no vector store registry yet, its first UI or API registration needs database synchronization or a restart before `file_search` works in chat completions.

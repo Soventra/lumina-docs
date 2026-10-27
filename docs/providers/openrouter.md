@@ -1,14 +1,14 @@
 # OpenRouter
-LiteLLM supports all the text / chat / vision / embedding models from [OpenRouter](https://openrouter.ai/docs)
+Lumina supports all the text / chat / vision / embedding models from [OpenRouter](https://openrouter.ai/docs)
 
-<a target="_blank" href="https://colab.research.google.com/github/BerriAI/litellm/blob/main/cookbook/LiteLLM_OpenRouter.ipynb">
+<a target="_blank" href="https://colab.research.google.com/github/Soventra/lumina/blob/main/cookbook/Lumina_OpenRouter.ipynb">
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
 </a>
 
 ## Usage
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENROUTER_API_KEY"] = ""
 os.environ["OPENROUTER_API_BASE"] = "" # [OPTIONAL] defaults to https://openrouter.ai/api/v1
@@ -27,13 +27,13 @@ For production environments, you can dynamically configure the base_url using en
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 # Configure with environment variables
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_BASE_URL = os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1")
 
-# Set environment for LiteLLM
+# Set environment for Lumina
 os.environ["OPENROUTER_API_KEY"] = OPENROUTER_API_KEY
 os.environ["OPENROUTER_API_BASE"] = OPENROUTER_BASE_URL
 
@@ -47,7 +47,7 @@ response = completion(
 This approach provides better flexibility for managing configurations across different environments (dev, staging, production) and makes it easier to switch between self-hosted and cloud endpoints.
 
 ## OpenRouter Completion Models
-LiteLLM supports ALL OpenRouter models, send `model=openrouter/<your-openrouter-model>` to send it to open router. See all openrouter models [here](https://openrouter.ai/models)
+Lumina supports ALL OpenRouter models, send `model=openrouter/<your-openrouter-model>` to send it to open router. See all openrouter models [here](https://openrouter.ai/models)
 
 | Model Name                | Function Call                                       |
 |---------------------------|-----------------------------------------------------|
@@ -63,11 +63,11 @@ LiteLLM supports ALL OpenRouter models, send `model=openrouter/<your-openrouter-
 | openrouter/meta-llama/llama-2-70b-chat | `completion('openrouter/meta-llama/llama-2-70b-chat', messages)` | `os.environ['OR_SITE_URL']`,`os.environ['OR_APP_NAME']`,`os.environ['OPENROUTER_API_KEY']` |
 
 ## Passing OpenRouter Params - transforms, models, route
-Pass `transforms`, `models`, `route`as arguments to `litellm.completion()`
+Pass `transforms`, `models`, `route`as arguments to `lumina.completion()`
 
 ```python
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["OPENROUTER_API_KEY"] = ""
 
@@ -82,21 +82,21 @@ response = completion(
 ## Embedding
 
 ```python
-from litellm import embedding
+from lumina import embedding
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
 
 response = embedding(
     model="openrouter/openai/text-embedding-3-small",
-    input=["good morning from litellm", "this is another item"],
+    input=["good morning from lumina", "this is another item"],
 )
 print(response)
 ```
 
 ## Image Generation
 
-OpenRouter supports image generation through select models like Google Gemini image generation models. LiteLLM transforms standard image generation requests to OpenRouter's chat completion format.
+OpenRouter supports image generation through select models like Google Gemini image generation models. Lumina transforms standard image generation requests to OpenRouter's chat completion format.
 
 ### Supported Parameters
 
@@ -117,7 +117,7 @@ OpenRouter supports image generation through select models like Google Gemini im
 ### Usage
 
 ```python
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
@@ -133,7 +133,7 @@ print(response)
 ### Advanced Usage with Parameters
 
 ```python
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
@@ -161,7 +161,7 @@ elif image_data.url:
 You can also pass OpenRouter-specific parameters directly using `image_config`:
 
 ```python
-from litellm import image_generation
+from lumina import image_generation
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
@@ -179,7 +179,7 @@ print(response)
 
 ### Response Format
 
-The response follows the standard LiteLLM ImageResponse format:
+The response follows the standard Lumina ImageResponse format:
 
 ```python
 {
@@ -199,7 +199,7 @@ The response follows the standard LiteLLM ImageResponse format:
 
 ### Cost Tracking
 
-OpenRouter provides cost information in the response, which LiteLLM automatically tracks:
+OpenRouter provides cost information in the response, which Lumina automatically tracks:
 
 ```python
 response = image_generation(
@@ -208,12 +208,12 @@ response = image_generation(
 )
 
 # Cost is available in the response metadata
-print(f"Request cost: ${response._hidden_params['additional_headers']['llm_provider-x-litellm-response-cost']}")
+print(f"Request cost: ${response._hidden_params['additional_headers']['llm_provider-x-lumina-response-cost']}")
 ```
 
 ## Image Edit
 
-OpenRouter supports image editing through select models like Google Gemini image models. LiteLLM routes image edit requests to OpenRouter's chat completions endpoint with the source image sent as a base64 data URL and `modalities: ["image", "text"]`.
+OpenRouter supports image editing through select models like Google Gemini image models. Lumina routes image edit requests to OpenRouter's chat completions endpoint with the source image sent as a base64 data URL and `modalities: ["image", "text"]`.
 
 ### Supported Models
 
@@ -238,7 +238,7 @@ See all available image models on [OpenRouter's model list](https://openrouter.a
 ### Usage
 
 ```python
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
@@ -256,7 +256,7 @@ print(response)
 ### Advanced Usage with Parameters
 
 ```python
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
@@ -281,7 +281,7 @@ if image_data.b64_json:
 ### Multiple Images Edit
 
 ```python
-from litellm import image_edit
+from lumina import image_edit
 import os
 
 os.environ["OPENROUTER_API_KEY"] = "your-api-key"
@@ -300,7 +300,7 @@ print(response)
 
 ## Decisions (Jev)
 
-OpenRouter serves TypeSafe's Jev decision models on its Decisions API, `POST https://openrouter.ai/api/alpha/decisions`, and rejects them on `/chat/completions`. The LiteLLM proxy reaches that API in two ways.
+OpenRouter serves TypeSafe's Jev decision models on its Decisions API, `POST https://openrouter.ai/api/alpha/decisions`, and rejects them on `/chat/completions`. The Lumina proxy reaches that API in two ways.
 
 ### Through `/v1/systemone` and `/v1/decisions`
 
@@ -325,11 +325,11 @@ curl -X POST 'http://0.0.0.0:4000/v1/systemone' \
 }'
 ```
 
-From v1.104.3, the spend is the `usage.cost` that OpenRouter returns. LiteLLM sends it back in the `x-litellm-response-cost` header and writes it to the spend logs. Earlier releases have no price for `jev-1.14`, and `v1.105.0-rc.3` and the `v1.106.0` dev builds do not read `usage.cost` either. See [Decisions](../decisions.md) for the formats and the supported features.
+From v1.104.3, the spend is the `usage.cost` that OpenRouter returns. Lumina sends it back in the `x-lumina-response-cost` header and writes it to the spend logs. Earlier releases have no price for `jev-1.14`, and `v1.105.0-rc.3` and the `v1.106.0` dev builds do not read `usage.cost` either. See [Decisions](../decisions.md) for the formats and the supported features.
 
 ### Through the `/openrouter` pass-through
 
-`/openrouter/{path}` sends the request body to OpenRouter as it is. The key it sends comes from the first OpenRouter deployment in `model_list` (an `openrouter/` model or `custom_llm_provider: openrouter`) that sets `use_in_pass_through: true` and has a key, either its `api_key` or the one in its `litellm_credential_name`, or from `OPENROUTER_API_KEY` when no deployment does. The request always goes to `OPENROUTER_API_BASE`, never to that deployment's `api_base`. Use it when you already have OpenRouter Decisions request bodies and do not need routing. It is in v1.104.0 and later, and in v1.101.1 and v1.102.1 and the later patches on those two lines, but in no v1.103 release.
+`/openrouter/{path}` sends the request body to OpenRouter as it is. The key it sends comes from the first OpenRouter deployment in `model_list` (an `openrouter/` model or `custom_llm_provider: openrouter`) that sets `use_in_pass_through: true` and has a key, either its `api_key` or the one in its `lumina_credential_name`, or from `OPENROUTER_API_KEY` when no deployment does. The request always goes to `OPENROUTER_API_BASE`, never to that deployment's `api_base`. Use it when you already have OpenRouter Decisions request bodies and do not need routing. It is in v1.104.0 and later, and in v1.101.1 and v1.102.1 and the later patches on those two lines, but in no v1.103 release.
 
 The path is relative to `https://openrouter.ai/api`, which is `OPENROUTER_API_BASE` without its trailing `/v1`. So the Decisions API is `/openrouter/alpha/decisions`. Do not add `/api` to the path, since `/openrouter/api/alpha/decisions` goes to `https://openrouter.ai/api/api/alpha/decisions` and OpenRouter answers it with a 404.
 
@@ -358,4 +358,4 @@ Response
 }
 ```
 
-LiteLLM logs each `/alpha/decisions` call under the versioned model that OpenRouter returns, for example `openrouter/typesafe/jev-1.14-20261014`. From v1.104.3, the spend is the `usage.cost` in the response, and earlier releases have no price for `jev-1.14`. The `v1.105.0` dev builds and release candidates and the `v1.106.0` dev builds do not read `usage.cost` either. Calls to other `/openrouter` paths, such as `/openrouter/v1/chat/completions`, are forwarded but record $0 spend, so budgets do not count them.
+Lumina logs each `/alpha/decisions` call under the versioned model that OpenRouter returns, for example `openrouter/typesafe/jev-1.14-20261014`. From v1.104.3, the spend is the `usage.cost` in the response, and earlier releases have no price for `jev-1.14`. The `v1.105.0` dev builds and release candidates and the `v1.106.0` dev builds do not read `usage.cost` either. Calls to other `/openrouter` paths, such as `/openrouter/v1/chat/completions`, are forwarded but record $0 spend, so budgets do not count them.

@@ -1,12 +1,12 @@
-# Using Anthropic File API with LiteLLM Proxy
+# Using Anthropic File API with Lumina Proxy
 
 ## Overview
 
-This tutorial shows how to create and analyze files with Claude-4 on Anthropic via LiteLLM Proxy.
+This tutorial shows how to create and analyze files with Claude-4 on Anthropic via Lumina Proxy.
 
 ## Prerequisites
 
-- LiteLLM Proxy running
+- Lumina Proxy running
 - Anthropic API key
 
 Add the following to your `.env` file:

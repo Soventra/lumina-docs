@@ -5,7 +5,7 @@ date: 2026-09-07T10:00:00
 authors:
   - moe
 description: "Routing each agent turn by what the agent is doing, exploring, implementing, or verifying, instead of by how hard the prompt looks. On a SWE-bench Verified subset it matched fixed Claude Opus-5 quality for 46% less, with 86% of turns never touching a frontier model."
-keywords: [auto router, subtask routing, swe-bench, agent cost, llm routing, coding agents, complexity router, litellm, phase routing]
+keywords: [auto router, subtask routing, swe-bench, agent cost, llm routing, coding agents, complexity router, lumina, phase routing]
 tags: [routing, complexity-router, cost, benchmarks, engineering]
 hide_table_of_contents: false
 image: ./hero.png
@@ -19,13 +19,13 @@ image: ./hero.png
 
 :::info[🚀 Help shape the Auto-Router]
 
-Get early access, work directly with the LiteLLM team, and influence the roadmap with your production traffic.
+Get early access, work directly with the Lumina team, and influence the roadmap with your production traffic.
 
-<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/litellm-auto-router-design-partner">Apply to Become a Design Partner</a>
+<a className="button button--primary button--lg" href="https://calendly.com/tin-berri/lumina-auto-router-design-partner">Apply to Become a Design Partner</a>
 
 <br /><br />
 
-Already testing it? Share your results in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168).
+Already testing it? Share your results in [discussion #32168](https://github.com/Soventra/lumina/discussions/32168).
 
 :::
 

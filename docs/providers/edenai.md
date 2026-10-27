@@ -8,10 +8,10 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Eden AI is an AI gateway: one API key and one bill for 1000+ LLMs from 30+ providers (OpenAI, Anthropic, Google, Mistral, DeepSeek, xAI, Amazon Bedrock, Azure and more), with the real cost of every request reported in the response. |
-| Provider Route on LiteLLM | `edenai/` |
+| Provider Route on Lumina | `edenai/` |
 | Link to Provider Doc | [Eden AI Documentation ↗](https://www.edenai.co/docs) |
 | Base URL | `https://api.edenai.run/v3` |
-| Supported Operations | [`/chat/completions`](#usage---litellm-python-sdk), [`/responses`](#usage---responses-api), [`/v1/messages`](#usage---anthropic-messages-api), [`/embeddings`](#usage---embeddings), [`/audio/transcriptions`](#usage---audio-transcription-and-speech), [`/audio/speech`](#usage---audio-transcription-and-speech), [`/images/generations`](#usage---image-generation), [`/videos`](#usage---video-generation) |
+| Supported Operations | [`/chat/completions`](#usage---lumina-python-sdk), [`/responses`](#usage---responses-api), [`/v1/messages`](#usage---anthropic-messages-api), [`/embeddings`](#usage---embeddings), [`/audio/transcriptions`](#usage---audio-transcription-and-speech), [`/audio/speech`](#usage---audio-transcription-and-speech), [`/images/generations`](#usage---image-generation), [`/videos`](#usage---video-generation) |
 
 <br />
 <br />
@@ -38,9 +38,9 @@ The EU endpoint accepts the same API key but serves only the subset of the catal
 
 ## Model Names
 
-Eden AI model ids are `provider/model`, for example `openai/gpt-mini-latest`, `anthropic/claude-sonnet-latest` or `google/gemini-3.7-flash`. Add the `edenai/` prefix and LiteLLM strips only that prefix, so `edenai/openai/gpt-mini-latest` reaches Eden AI as `openai/gpt-mini-latest`. A bare model name such as `edenai/mistral-small-latest` also works: Eden AI then picks the seller that serves the model (provider routing). Eden AI's own stable aliases, the catalog entries with an `alias_of` such as `openai/gpt-mini-latest`, only resolve with their vendor prefix. Region variants keep their suffix, as in `edenai/vertex/gemini-3.7-flash@eu`.
+Eden AI model ids are `provider/model`, for example `openai/gpt-mini-latest`, `anthropic/claude-sonnet-latest` or `google/gemini-3.7-flash`. Add the `edenai/` prefix and Lumina strips only that prefix, so `edenai/openai/gpt-mini-latest` reaches Eden AI as `openai/gpt-mini-latest`. A bare model name such as `edenai/mistral-small-latest` also works: Eden AI then picks the seller that serves the model (provider routing). Eden AI's own stable aliases, the catalog entries with an `alias_of` such as `openai/gpt-mini-latest`, only resolve with their vendor prefix. Region variants keep their suffix, as in `edenai/vertex/gemini-3.7-flash@eu`.
 
-The catalog is public at https://app.edenai.run/models. From LiteLLM, `litellm.get_valid_models(custom_llm_provider="edenai", check_provider_endpoint=True)` returns the same list with the `edenai/` prefix applied.
+The catalog is public at https://app.edenai.run/models. From Lumina, `lumina.get_valid_models(custom_llm_provider="edenai", check_provider_endpoint=True)` returns the same list with the `edenai/` prefix applied.
 
 ## Route Every Eden AI Model Through One Deployment
 
@@ -53,13 +53,13 @@ model_list:
       model: edenai/*
       api_key: os.environ/EDENAI_API_KEY
 
-litellm_settings:
+lumina_settings:
   check_provider_endpoint: true
 ```
 
 ## Cost Tracking
 
-Every Eden AI response reports the request's cost in USD, after any account discount, and LiteLLM records that number as the request's spend instead of a price map estimate. On chat completion streams the cost arrives on the final usage chunk. LiteLLM always asks Eden AI for that chunk, and forwards it to your client only when you set `stream_options={"include_usage": True}`, so streaming clients see exactly the OpenAI behavior they expect.
+Every Eden AI response reports the request's cost in USD, after any account discount, and Lumina records that number as the request's spend instead of a price map estimate. On chat completion streams the cost arrives on the final usage chunk. Lumina always asks Eden AI for that chunk, and forwards it to your client only when you set `stream_options={"include_usage": True}`, so streaming clients see exactly the OpenAI behavior they expect.
 
 | Endpoint | Non-streaming | Streaming |
 |-------|-------|-------|
@@ -72,13 +72,13 @@ Every Eden AI response reports the request's cost in USD, after any account disc
 | `/images/generations` | Eden AI's `cost` | Not streamed |
 | `/videos` | 0 on the create call, which is what Eden AI reports while the job is queued; the settled cost appears on the job's status once it completes, as `usage.provider_reported_cost_usd`. Register the model's per-second price to bill an estimate on the create call instead | Not streamed |
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="Eden AI Non-streaming Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
@@ -96,7 +96,7 @@ print(response)
 
 ```python showLineNumbers title="Eden AI Streaming Completion"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
@@ -119,7 +119,7 @@ Eden AI accepts a few fields beyond the OpenAI set. `fallbacks` lists up to thre
 
 ```python showLineNumbers title="Eden AI fallbacks and routing"
 import os
-from litellm import completion
+from lumina import completion
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
@@ -137,15 +137,15 @@ print(response)
 
 ## Usage - Responses API
 
-Eden AI serves OpenAI's Responses API at `/v3/responses` for every model in its catalog, and LiteLLM routes `litellm.responses` and the proxy's `/v1/responses` there natively rather than emulating them over chat completions. Stateful features (`previous_response_id`, `store`, retrieving or deleting a response) only work when the seller natively supports the Responses API, which today means the OpenAI models; other sellers answer statelessly.
+Eden AI serves OpenAI's Responses API at `/v3/responses` for every model in its catalog, and Lumina routes `lumina.responses` and the proxy's `/v1/responses` there natively rather than emulating them over chat completions. Stateful features (`previous_response_id`, `store`, retrieving or deleting a response) only work when the seller natively supports the Responses API, which today means the OpenAI models; other sellers answer statelessly.
 
 ```python showLineNumbers title="Eden AI Responses API"
 import os
-import litellm
+import lumina
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
-response = litellm.responses(
+response = lumina.responses(
     model="edenai/openai/gpt-mini-latest",
     input="Hello, how are you?",
     max_output_tokens=200,
@@ -153,7 +153,7 @@ response = litellm.responses(
 
 print(response.output_text)
 
-stream = litellm.responses(
+stream = lumina.responses(
     model="edenai/anthropic/claude-sonnet-latest",
     input="Write a short story about AI",
     stream=True,
@@ -167,15 +167,15 @@ for event in stream:
 
 ## Usage - Anthropic Messages API
 
-Eden AI serves Anthropic's Messages API at `/v3/v1/messages` for every model in its catalog, OpenAI and Google models included, and LiteLLM forwards `litellm.anthropic.messages` calls and the proxy's `/v1/messages` there untranslated, so `system` blocks with `cache_control`, `thinking` and tool results reach Eden AI exactly as your client sent them. Eden AI's `fallbacks` and `routing` fields cannot be sent on this route.
+Eden AI serves Anthropic's Messages API at `/v3/v1/messages` for every model in its catalog, OpenAI and Google models included, and Lumina forwards `lumina.anthropic.messages` calls and the proxy's `/v1/messages` there untranslated, so `system` blocks with `cache_control`, `thinking` and tool results reach Eden AI exactly as your client sent them. Eden AI's `fallbacks` and `routing` fields cannot be sent on this route.
 
 ```python showLineNumbers title="Eden AI Anthropic Messages API"
 import os
-import litellm
+import lumina
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
-response = await litellm.anthropic.messages.acreate(
+response = await lumina.anthropic.messages.acreate(
     model="edenai/anthropic/claude-sonnet-latest",
     max_tokens=200,
     messages=[{"role": "user", "content": "Hello, how are you?"}],
@@ -190,11 +190,11 @@ Eden AI serves OpenAI's embeddings API at `/v3/embeddings` for every embedding m
 
 ```python showLineNumbers title="Eden AI Embeddings"
 import os
-import litellm
+import lumina
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
-response = litellm.embedding(
+response = lumina.embedding(
     model="edenai/openai/text-embedding-3-small",
     input=["Hello, how are you?", "Fine, thanks"],
     dimensions=256,
@@ -210,11 +210,11 @@ Eden AI serves OpenAI's speech-to-text API at `/v3/audio/transcriptions` and tex
 
 ```python showLineNumbers title="Eden AI Audio"
 import os
-import litellm
+import lumina
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
-speech = litellm.speech(
+speech = lumina.speech(
     model="edenai/openai/tts-1",
     input="Hello, how are you?",
     voice="alloy",
@@ -223,7 +223,7 @@ speech = litellm.speech(
 speech.stream_to_file("hello.mp3")
 
 with open("hello.mp3", "rb") as audio:
-    transcript = litellm.transcription(
+    transcript = lumina.transcription(
         model="edenai/openai/whisper-1",
         file=audio,
         language="en",
@@ -239,11 +239,11 @@ Eden AI serves OpenAI's image generation API at `/v3/images/generations` for eve
 ```python showLineNumbers title="Eden AI Image Generation"
 import base64
 import os
-import litellm
+import lumina
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
-response = litellm.image_generation(
+response = lumina.image_generation(
     model="edenai/openai/gpt-image-1-mini",
     prompt="A watercolor lighthouse at dawn",
     size="1024x1024",
@@ -260,16 +260,16 @@ else:
 
 ## Usage - Video Generation
 
-Eden AI serves OpenAI's video API at `/v3/videos` for every video model in its catalog (OpenAI, Google, Amazon, MiniMax, Pixverse and more). A job is created, polled and downloaded through LiteLLM's video functions; the id LiteLLM returns routes the later calls back to Eden AI on its own. `seconds` and `size` go through as-is, a reference image goes through `input_reference` as a file or as `{"image_url": ...}` / `{"file_id": ...}`, and Eden AI's own `seed`, `provider_params`, `webhook_receiver` and `user_webhook_parameters` pass through for Eden AI to validate. OpenAI's `characters` and `user` are forwarded as well, and Eden AI answers with a 422 for them until it supports them.
+Eden AI serves OpenAI's video API at `/v3/videos` for every video model in its catalog (OpenAI, Google, Amazon, MiniMax, Pixverse and more). A job is created, polled and downloaded through Lumina's video functions; the id Lumina returns routes the later calls back to Eden AI on its own. `seconds` and `size` go through as-is, a reference image goes through `input_reference` as a file or as `{"image_url": ...}` / `{"file_id": ...}`, and Eden AI's own `seed`, `provider_params`, `webhook_receiver` and `user_webhook_parameters` pass through for Eden AI to validate. OpenAI's `characters` and `user` are forwarded as well, and Eden AI answers with a 422 for them until it supports them.
 
 ```python showLineNumbers title="Eden AI Video Generation"
 import os
 import time
-import litellm
+import lumina
 
 os.environ["EDENAI_API_KEY"] = ""  # your Eden AI API key
 
-job = litellm.video_generation(
+job = lumina.video_generation(
     model="edenai/pruna/p-video",
     prompt="A red ball rolling across a wooden table",
     seconds="4",
@@ -278,14 +278,14 @@ job = litellm.video_generation(
 
 while job.status not in ("completed", "failed"):
     time.sleep(5)
-    job = litellm.video_status(video_id=job.id)
+    job = lumina.video_status(video_id=job.id)
 
 print(job.status, job.usage)  # usage carries Eden AI's settled cost as provider_reported_cost_usd
 with open("ball.mp4", "wb") as f:
-    f.write(litellm.video_content(video_id=job.id))
+    f.write(lumina.video_content(video_id=job.id))
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
@@ -324,8 +324,8 @@ model_list:
       api_key: os.environ/EDENAI_API_KEY
 ```
 
-```bash showLineNumbers title="Start LiteLLM Proxy"
-litellm --config config.yaml
+```bash showLineNumbers title="Start Lumina Proxy"
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -351,13 +351,13 @@ print(response.choices[0].message.content)
 
 </TabItem>
 
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
-```python showLineNumbers title="Eden AI via Proxy - LiteLLM SDK"
-import litellm
+```python showLineNumbers title="Eden AI via Proxy - Lumina SDK"
+import lumina
 
-response = litellm.completion(
-    model="litellm_proxy/gpt-mini-latest",
+response = lumina.completion(
+    model="lumina_proxy/gpt-mini-latest",
     messages=[{"role": "user", "content": "Hello, how are you?"}],
     api_base="http://localhost:4000",
     api_key="your-proxy-api-key",
@@ -383,7 +383,7 @@ curl http://localhost:4000/v1/chat/completions \
 </TabItem>
 </Tabs>
 
-The proxy's `x-litellm-response-cost` response header and the spend logs carry the cost Eden AI reported for the request.
+The proxy's `x-lumina-response-cost` response header and the spend logs carry the cost Eden AI reported for the request.
 
 The same deployments serve `/v1/responses` and `/v1/messages`:
 

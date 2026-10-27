@@ -2,7 +2,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Oracle Cloud Infrastructure (OCI)
-LiteLLM supports the following models for OCI on-demand GenAI API.
+Lumina supports the following models for OCI on-demand GenAI API.
 
 Check the [OCI Models List](https://docs.oracle.com/en-us/iaas/Content/generative-ai/pretrained-models.htm) to see if the model is available for your region.
 
@@ -65,10 +65,10 @@ For model lifecycle, retirement dates, and recommended replacements, see [OCI's 
 
 ## Authentication
 
-LiteLLM supports two authentication methods for OCI:
+Lumina supports two authentication methods for OCI:
 
 ### Method 1: Manual Credentials
-Provide individual OCI credentials directly to LiteLLM. Follow the [official Oracle tutorial](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm) to create a signing key and obtain the following parameters:
+Provide individual OCI credentials directly to Lumina. Follow the [official Oracle tutorial](https://docs.oracle.com/en-us/iaas/Content/API/Concepts/apisigningkey.htm) to create a signing key and obtain the following parameters:
 
 - `user`
 - `fingerprint`
@@ -77,11 +77,11 @@ Provide individual OCI credentials directly to LiteLLM. Follow the [official Ora
 - `key_file` or `key`
 - `compartment_id`
 
-This is the default method for LiteLLM AI Gateway (LLM Proxy) access to OCI GenAI models.
+This is the default method for Lumina AI Gateway (LLM Proxy) access to OCI GenAI models.
 
 **Environment Variables**
 
-Instead of passing credentials in code, you can set the following environment variables and LiteLLM will read them automatically:
+Instead of passing credentials in code, you can set the following environment variables and Lumina will read them automatically:
 
 ```bash
 export OCI_REGION="us-chicago-1"
@@ -104,13 +104,13 @@ To use this method, install the OCI SDK:
 uv add oci
 ```
 
-This method is an alternative when using the LiteLLM SDK on Oracle Cloud Infrastructure (instances or Oracle Kubernetes Engine).
+This method is an alternative when using the Lumina SDK on Oracle Cloud Infrastructure (instances or Oracle Kubernetes Engine).
 
 ## Regions and Government Realms
 
-LiteLLM builds the inference endpoint as `https://inference.generativeai.{region}.oci.{realm_domain}`. The region is `oci_region` (or the `OCI_REGION` environment variable, defaulting to `us-ashburn-1`). The realm domain depends on which OCI realm hosts that region: `oraclecloud.com` for the commercial realm (OC1), `oraclegovcloud.com` for the US Government realms (OC2 and OC3), `oraclegovcloud.uk` for the UK Government realm (OC4), and the matching domain for every other realm the OCI SDK knows. A request in `us-luke-1` therefore goes to `https://inference.generativeai.us-luke-1.oci.oraclegovcloud.com` without any endpoint configuration.
+Lumina builds the inference endpoint as `https://inference.generativeai.{region}.oci.{realm_domain}`. The region is `oci_region` (or the `OCI_REGION` environment variable, defaulting to `us-ashburn-1`). The realm domain depends on which OCI realm hosts that region: `oraclecloud.com` for the commercial realm (OC1), `oraclegovcloud.com` for the US Government realms (OC2 and OC3), `oraclegovcloud.uk` for the UK Government realm (OC4), and the matching domain for every other realm the OCI SDK knows. A request in `us-luke-1` therefore goes to `https://inference.generativeai.us-luke-1.oci.oraclegovcloud.com` without any endpoint configuration.
 
-LiteLLM takes the realm domain from the first of these sources that answers:
+Lumina takes the realm domain from the first of these sources that answers:
 
 1. The realm key inside `oci_compartment_id`. Every OCID carries it as its third segment, so `ocid1.compartment.oc2..` selects the US Government realm and `ocid1.compartment.oc1..` the commercial realm.
 2. The region registry of the OCI Python SDK (`oci.regions`), when the `oci` package is installed.
@@ -125,7 +125,7 @@ Because the compartment OCID already names the realm, a Government deployment ne
 <TabItem value="gov-sdk" label="SDK" default>
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="oci/meta.llama-3.3-70b-instruct",
@@ -158,17 +158,17 @@ model_list:
 </TabItem>
 </Tabs>
 
-Sources 2 and 3 only matter when `oci_compartment_id` is missing or is not an OCID with a realm key LiteLLM recognizes. Metadata entries that fail validation are skipped with a warning instead of failing the request, and a region that no source describes keeps the commercial endpoint, so a Government model never changes the endpoint of the other OCI models on the same proxy.
+Sources 2 and 3 only matter when `oci_compartment_id` is missing or is not an OCID with a realm key Lumina recognizes. Metadata entries that fail validation are skipped with a warning instead of failing the request, and a region that no source describes keeps the commercial endpoint, so a Government model never changes the endpoint of the other OCI models on the same proxy.
 
 ### Overriding the endpoint with api_base
 
-Set `api_base` to send requests to an exact host, for example a realm LiteLLM does not know yet, a private endpoint, or a gateway in front of OCI. LiteLLM uses the value as given and appends the action path itself (`/20231130/actions/chat` for chat, `/20231130/actions/embedText` for embeddings). If `api_base` already ends with one of those paths, that suffix is removed first so the URL is not doubled. Requests are still signed with your OCI credentials against the host in `api_base`, and `oci_region` no longer affects the URL.
+Set `api_base` to send requests to an exact host, for example a realm Lumina does not know yet, a private endpoint, or a gateway in front of OCI. Lumina uses the value as given and appends the action path itself (`/20231130/actions/chat` for chat, `/20231130/actions/embedText` for embeddings). If `api_base` already ends with one of those paths, that suffix is removed first so the URL is not doubled. Requests are still signed with your OCI credentials against the host in `api_base`, and `oci_region` no longer affects the URL.
 
 <Tabs>
 <TabItem value="api-base-sdk" label="SDK" default>
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="oci/meta.llama-3.3-70b-instruct",
@@ -209,7 +209,7 @@ model_list:
 Input the parameters obtained from the OCI signing key creation process into the `completion` function:
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [{"role": "user", "content": "Hey! how's it going?"}]
 response = completion(
@@ -236,7 +236,7 @@ print(response)
 Use the OCI SDK `Signer` for authentication:
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.signer import Signer
 
 # Create an OCI Signer
@@ -265,7 +265,7 @@ print(response)
 The OCI SDK can automatically load credentials from `~/.oci/config`:
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.config import from_file
 from oci.signer import Signer
 
@@ -295,7 +295,7 @@ print(response)
 For applications running on OCI compute instances:
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.auth.signers import InstancePrincipalsSecurityTokenSigner
 
 # Use instance principal authentication
@@ -317,7 +317,7 @@ print(response)
 For applications running in Oracle Kubernetes Engine (OKE):
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.auth.signers import get_oke_workload_identity_resource_principal_signer
 
 # Use workload identity authentication
@@ -336,9 +336,9 @@ print(response)
 </TabItem>
 </Tabs>
 
-## LiteLLM Proxy Usage
+## Lumina Proxy Usage
 
-Here's how to call OCI GenAI through the LiteLLM Proxy Server.
+Here's how to call OCI GenAI through the Lumina Proxy Server.
 
 ### 1. Setup config.yaml
 
@@ -382,7 +382,7 @@ oci_endpoint_id: Optional[str],  # only used with DEDICATED
 ### 2. Start the proxy
 
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 ```
 
 ### 3. Test it
@@ -429,7 +429,7 @@ Just set `stream=True` when calling completion.
 <TabItem value="manual-stream" label="Manual Credentials" default>
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [{"role": "user", "content": "Hey! how's it going?"}]
 response = completion(
@@ -456,7 +456,7 @@ for chunk in response:
 <TabItem value="oci-sdk-stream" label="OCI SDK Signer">
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.signer import Signer
 
 signer = Signer(
@@ -490,7 +490,7 @@ for chunk in response:
 <TabItem value="cohere-manual" label="Manual Credentials" default>
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [{"role": "user", "content": "Explain quantum computing"}]
 response = completion(
@@ -510,7 +510,7 @@ print(response)
 <TabItem value="cohere-sdk" label="OCI SDK Signer">
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.signer import Signer
 
 signer = Signer(
@@ -542,7 +542,7 @@ OCI supports dedicated endpoints for hosting models. Use the `oci_serving_mode="
 <TabItem value="dedicated-manual" label="Manual Credentials" default>
 
 ```python
-from litellm import completion
+from lumina import completion
 
 messages = [{"role": "user", "content": "Hey! how's it going?"}]
 response = completion(
@@ -564,7 +564,7 @@ print(response)
 <TabItem value="dedicated-sdk" label="OCI SDK Signer">
 
 ```python
-from litellm import completion
+from lumina import completion
 from oci.signer import Signer
 
 signer = Signer(
@@ -615,13 +615,13 @@ response = completion(
 
 ## Usage - Function Calling / Tool Calling
 
-OCI GenAI supports OpenAI-compatible function calling. LiteLLM normalizes the request and response shape so the same code that targets OpenAI works with OCI Cohere and Generic (xAI Grok, Meta Llama, Google Gemini) models.
+OCI GenAI supports OpenAI-compatible function calling. Lumina normalizes the request and response shape so the same code that targets OpenAI works with OCI Cohere and Generic (xAI Grok, Meta Llama, Google Gemini) models.
 
 <Tabs>
 <TabItem value="tool-sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 tools = [
     {
@@ -697,14 +697,14 @@ print(response.choices[0].message.tool_calls)
 </TabItem>
 </Tabs>
 
-Tool calling works with both Cohere (`cohere.command-*`) and Generic (`xai.grok-*`, `meta.llama-*`, `google.gemini-*`) model families. LiteLLM adapts the OpenAI tool schema to each vendor's native format internally.
+Tool calling works with both Cohere (`cohere.command-*`) and Generic (`xai.grok-*`, `meta.llama-*`, `google.gemini-*`) model families. Lumina adapts the OpenAI tool schema to each vendor's native format internally.
 
 ## Usage - Vision / Multimodal
 
 OCI GenAI exposes vision-capable models that accept images alongside text. Pass images using the standard OpenAI `image_url` content block.
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="oci/meta.llama-4-maverick-17b-128e-instruct-fp8",
@@ -745,7 +745,7 @@ Both URL and base64-encoded data URIs are supported.
 
 ## Usage - Reasoning / Thinking
 
-OCI Generic-vendor models (xAI Grok reasoning variants, Google Gemini, etc.) support a reasoning step. LiteLLM exposes this via the OpenAI-compatible `reasoning_effort` parameter; accepted values are `"low"`, `"medium"`, `"high"`, and `"disable"` (mapped to OCI's `NONE`).
+OCI Generic-vendor models (xAI Grok reasoning variants, Google Gemini, etc.) support a reasoning step. Lumina exposes this via the OpenAI-compatible `reasoning_effort` parameter; accepted values are `"low"`, `"medium"`, `"high"`, and `"disable"` (mapped to OCI's `NONE`).
 
 Returned reasoning tokens are surfaced on `usage.completion_tokens_details.reasoning_tokens`, matching the OpenAI shape.
 
@@ -753,7 +753,7 @@ Returned reasoning tokens are surfaced on `usage.completion_tokens_details.reaso
 <TabItem value="reasoning-sdk" label="SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="oci/xai.grok-3-mini",
@@ -812,13 +812,13 @@ print(response.choices[0].message.content)
 
 ## Embeddings
 
-LiteLLM supports OCI Generative AI embedding models. These models use the same authentication methods described above.
+Lumina supports OCI Generative AI embedding models. These models use the same authentication methods described above.
 
 <Tabs>
 <TabItem value="embed-manual" label="Manual Credentials" default>
 
 ```python
-from litellm import embedding
+from lumina import embedding
 
 response = embedding(
     model="oci/cohere.embed-english-v3.0",
@@ -837,7 +837,7 @@ print(response)
 <TabItem value="embed-sdk" label="OCI SDK Signer">
 
 ```python
-from litellm import embedding
+from lumina import embedding
 from oci.signer import Signer
 
 signer = Signer(

@@ -21,7 +21,7 @@ You can also configure webhooks to trigger alerts for specific detection types.
 
 Get an [API token and the base URL for the AI Guard service](https://pangea.cloud/docs/ai-guard/#get-a-free-pangea-account-and-enable-the-ai-guard-service).
 
-### 2. Add Pangea to your LiteLLM config.yaml
+### 2. Add Pangea to your Lumina config.yaml
 
 Define the Pangea guardrail under the `guardrails` section of your configuration file.
 
@@ -43,7 +43,7 @@ guardrails:
       pangea_output_recipe: "pangea_llm_response_guard"  # Recipe for response processing
 ```
 
-### 4. Start LiteLLM Proxy (AI Gateway)
+### 4. Start Lumina Proxy (AI Gateway)
 
 ```bash title="Set environment variables"
 export PANGEA_AI_GUARD_TOKEN="pts_5i47n5...m2zbdt"
@@ -51,23 +51,23 @@ export OPENAI_API_KEY="sk-proj-54bgCI...jX6GMA"
 ```
 
 <Tabs>
-<TabItem label="LiteLLM CLI (Pip package)" value="litellm-cli">
+<TabItem label="Lumina CLI (Pip package)" value="lumina-cli">
 
 ```shell
-litellm --config config.yaml
+lumina --config config.yaml
 ```
 
 </TabItem>
-<TabItem label="LiteLLM Docker (Container)" value="litellm-docker">
+<TabItem label="Lumina Docker (Container)" value="lumina-docker">
 
 ```shell
 docker run --rm \
-  --name litellm-proxy \
+  --name lumina-proxy \
   -p 4000:4000 \
   -e PANGEA_AI_GUARD_TOKEN=$PANGEA_AI_GUARD_TOKEN \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  docker.litellm.ai/berriai/litellm:latest \
+  docker.lumina.ai/soventra/lumina:latest \
   --config /app/config.yaml
 ```
 
@@ -204,7 +204,7 @@ When the recipe configured in the `pangea-ai-guard-response` plugin detects PII,
 
 ### 6. Next steps
 
-- Find additional information on using Pangea AI Guard with LiteLLM in the [Pangea Integration Guide](https://pangea.cloud/docs/integration-options/api-gateways/litellm).
+- Find additional information on using Pangea AI Guard with Lumina in the [Pangea Integration Guide](https://pangea.cloud/docs/integration-options/api-gateways/lumina).
 - Adjust your Pangea AI Guard detection policies to fit your use case. See the [Pangea AI Guard Recipes](https://pangea.cloud/docs/ai-guard/recipes) documentation for details.
 - Stay informed about detections in your AI applications by enabling [AI Guard webhooks](https://pangea.cloud/docs/ai-guard/recipes#add-webhooks-to-detectors).
 - Monitor and analyze detection events in the AI Guard’s immutable [Activity Log](https://pangea.cloud/docs/ai-guard/activity-log).

@@ -5,9 +5,9 @@ sidebar_label: SSO
 
 import CodexSSOAuth from './_codex_sso_auth.mdx';
 
-# Connect Codex CLI to LiteLLM with SSO
+# Connect Codex CLI to Lumina with SSO
 
-Use your organization's LiteLLM SSO login to connect Codex CLI to the gateway. For installation, model selection, and MCP configuration, see the [Codex CLI setup guide](./codex_cli.md).
+Use your organization's Lumina SSO login to connect Codex CLI to the gateway. For installation, model selection, and MCP configuration, see the [Codex CLI setup guide](./codex_cli.md).
 
 ## Configure SSO authentication
 

@@ -4,16 +4,16 @@ Control which model groups can forward client headers to the underlying LLM prov
 
 ## Overview
 
-By default, LiteLLM does not forward client headers to LLM provider APIs for security reasons. However, you can selectively enable header forwarding for specific model groups using the `forward_client_headers_to_llm_api` setting.
+By default, Lumina does not forward client headers to LLM provider APIs for security reasons. However, you can selectively enable header forwarding for specific model groups using the `forward_client_headers_to_llm_api` setting.
 
 ## How it Works
 
-LiteLLM does **not** forward all client headers to the LLM provider. Instead, it uses an **allowlist** approach: only headers matching specific rules are forwarded. Sensitive headers (like your LiteLLM API key) are therefore never accidentally sent to upstream providers.
+Lumina does **not** forward all client headers to the LLM provider. Instead, it uses an **allowlist** approach: only headers matching specific rules are forwarded. Sensitive headers (like your Lumina API key) are therefore never accidentally sent to upstream providers.
 
 ```mermaid
 sequenceDiagram
     participant Client as Client (SDK / curl)
-    participant Proxy as LiteLLM Proxy
+    participant Proxy as Lumina Proxy
     participant Filter as Header Filter (Allowlist)
     participant LLM as LLM Provider (OpenAI, Anthropic, etc.)
 
@@ -33,7 +33,7 @@ sequenceDiagram
 
 ### Header Allowlist Rules
 
-The following rules determine which headers are forwarded (see [`_get_forwardable_headers`](https://github.com/litellm/litellm/blob/main/litellm/proxy/litellm_pre_call_utils.py) in `litellm/proxy/litellm_pre_call_utils.py`):
+The following rules determine which headers are forwarded (see [`_get_forwardable_headers`](https://github.com/lumina/lumina/blob/main/lumina/proxy/lumina_pre_call_utils.py) in `lumina/proxy/lumina_pre_call_utils.py`):
 
 | Rule | Example | Forwarded? |
 |---|---|---|
@@ -47,10 +47,10 @@ The following rules determine which headers are forwarded (see [`_get_forwardabl
 
 | Mechanism | Description | Reference |
 |---|---|---|
-| **`x-pass-` prefix** | Headers prefixed with `x-pass-` are always forwarded with the prefix stripped, regardless of settings. E.g., `x-pass-anthropic-beta: value` → `anthropic-beta: value`. Works for all pass-through endpoints. | [Source code](https://github.com/litellm/litellm/blob/main/litellm/passthrough/utils.py) |
+| **`x-pass-` prefix** | Headers prefixed with `x-pass-` are always forwarded with the prefix stripped, regardless of settings. E.g., `x-pass-anthropic-beta: value` → `anthropic-beta: value`. Works for all pass-through endpoints. | [Source code](https://github.com/lumina/lumina/blob/main/lumina/passthrough/utils.py) |
 | **`openai-organization`** | Forwarded only when `forward_openai_org_id: true` is set in `general_settings`. | [Forward OpenAI Org ID](#enable-globally) |
-| **User information headers** | When `add_user_information_to_llm_headers: true`, LiteLLM adds `x-litellm-user-id`, `x-litellm-org-id`, etc. | [User Information Headers](#user-information-headers-optional) |
-| **Vertex AI pass-through** | Uses a separate, stricter allowlist: only `anthropic-beta` and `content-type`. | [Source code](https://github.com/litellm/litellm/blob/main/litellm/constants.py) |
+| **User information headers** | When `add_user_information_to_llm_headers: true`, Lumina adds `x-lumina-user-id`, `x-lumina-org-id`, etc. | [User Information Headers](#user-information-headers-optional) |
+| **Vertex AI pass-through** | Uses a separate, stricter allowlist: only `anthropic-beta` and `content-type`. | [Source code](https://github.com/lumina/lumina/blob/main/lumina/constants.py) |
 
 ## Configuration
 
@@ -63,7 +63,7 @@ general_settings:
 
 ## Forward LLM Provider Authentication Headers
 
-**New in v1.82+**: By default, LiteLLM strips authentication headers like `x-api-key`, `x-goog-api-key`, and `api-key` from client requests for security (these are typically used to authenticate with the proxy itself). However, you can enable forwarding of these LLM provider authentication headers to allow **Bring Your Own Key (BYOK)** scenarios where clients send their own API keys to the LLM provider.
+**New in v1.82+**: By default, Lumina strips authentication headers like `x-api-key`, `x-goog-api-key`, and `api-key` from client requests for security (these are typically used to authenticate with the proxy itself). However, you can enable forwarding of these LLM provider authentication headers to allow **Bring Your Own Key (BYOK)** scenarios where clients send their own API keys to the LLM provider.
 
 ### Configuration
 
@@ -112,7 +112,7 @@ general_settings:
   forward_llm_provider_auth_headers: true  # Enable BYOK
 ```
 
-For **Claude Code**, see [Claude Code BYOK](../tutorials/claude_code_byok.md). Use `ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LUMINA_API_KEY"` to pass your LiteLLM key. A configured Anthropic API key is sent as `x-api-key` and needs `forward_llm_provider_auth_headers` above to be forwarded; `/login` instead sends an OAuth token as `Authorization: Bearer <token>`, which LiteLLM forwards regardless of this setting. From LiteLLM v1.105.0, each spend log row records which credential the upstream call used in `metadata.used_client_oauth_token` (`true` for a forwarded OAuth token, `false` for the deployment's configured key, never the token itself), filterable on the Logs page **Credential** dropdown or with `GET /spend/logs/ui?used_client_oauth_token=true`.
+For **Claude Code**, see [Claude Code BYOK](../tutorials/claude_code_byok.md). Use `ANTHROPIC_CUSTOM_HEADERS="x-lumina-api-key: $LUMINA_API_KEY"` to pass your Lumina key. A configured Anthropic API key is sent as `x-api-key` and needs `forward_llm_provider_auth_headers` above to be forwarded; `/login` instead sends an OAuth token as `Authorization: Bearer <token>`, which Lumina forwards regardless of this setting. From Lumina v1.105.0, each spend log row records which credential the upstream call used in `metadata.used_client_oauth_token` (`true` for a forwarded OAuth token, `false` for the deployment's configured key, never the token itself), filterable on the Logs page **Credential** dropdown or with `GET /spend/logs/ui?used_client_oauth_token=true`.
 
 Client request:
 ```bash
@@ -170,7 +170,7 @@ general_settings:
   forward_llm_provider_auth_headers: true
 ```
 
-Authenticate to LiteLLM with `Authorization: Bearer` or `x-litellm-api-key`, and put the user's gateway token in `x-api-key`:
+Authenticate to Lumina with `Authorization: Bearer` or `x-lumina-api-key`, and put the user's gateway token in `x-api-key`:
 
 ```bash
 curl -X POST "http://localhost:4000/v1/chat/completions" \
@@ -183,13 +183,13 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
   }'
 ```
 
-LiteLLM drops the `my-gateway/` prefix and calls `https://gateway.example.com/anthropic/v1/messages` with `"model": "claude-sonnet-4-5"` and `x-api-key: $USER_GATEWAY_TOKEN`. Requests to `/v1/messages` and `/v1/chat/completions` both reach the gateway this way. The token always goes out as `x-api-key`, so the gateway must accept that header. To list the gateway's models on `/v1/models`, see [Model Discovery](./model_discovery.md#which-key-discovery-uses)
+Lumina drops the `my-gateway/` prefix and calls `https://gateway.example.com/anthropic/v1/messages` with `"model": "claude-sonnet-4-5"` and `x-api-key: $USER_GATEWAY_TOKEN`. Requests to `/v1/messages` and `/v1/chat/completions` both reach the gateway this way. The token always goes out as `x-api-key`, so the gateway must accept that header. To list the gateway's models on `/v1/models`, see [Model Discovery](./model_discovery.md#which-key-discovery-uses)
 
 #### Which key reaches the provider
 
-A forwarded provider header takes precedence over the deployment's `api_key` for that request. When a request carries no provider key, LiteLLM falls back to the deployment's `api_key`, then to the provider's environment variable on the proxy host (for example `ANTHROPIC_API_KEY`), and the call runs on that key without any error. To require every caller to bring their own key, leave both unset; a request without one then fails with `Missing Anthropic API Key` before anything is sent to the provider
+A forwarded provider header takes precedence over the deployment's `api_key` for that request. When a request carries no provider key, Lumina falls back to the deployment's `api_key`, then to the provider's environment variable on the proxy host (for example `ANTHROPIC_API_KEY`), and the call runs on that key without any error. To require every caller to bring their own key, leave both unset; a request without one then fails with `Missing Anthropic API Key` before anything is sent to the provider
 
-Do not send the LiteLLM key in `x-api-key`. LiteLLM accepts it there as proxy authentication and then removes it, so it is not forwarded and the request falls back as described above
+Do not send the Lumina key in `x-api-key`. Lumina accepts it there as proxy authentication and then removes it, so it is not forwarded and the request falls back as described above
 
 ### Security Considerations
 
@@ -236,7 +236,7 @@ model_list:
       model: "openai/*"
       api_key: "your-api-key"
 
-litellm_settings:
+lumina_settings:
   model_group_settings:
     forward_client_headers_to_llm_api:
       - {{openai_small}}
@@ -267,7 +267,7 @@ If your team has model aliases configured, the forwarding will work with both th
 
 ## Forwarded Headers
 
-When enabled for a model group, LiteLLM forwards the following types of headers:
+When enabled for a model group, Lumina forwards the following types of headers:
 
 ### Custom Headers (x- prefix)
 - Any header starting with `x-` (except `x-stainless-*` which can cause OpenAI SDK issues)
@@ -278,10 +278,10 @@ When enabled for a model group, LiteLLM forwards the following types of headers:
 - **OpenAI**: `openai-organization` (when enabled via `forward_openai_org_id: true`)
 
 ### User Information Headers (Optional)
-When `add_user_information_to_llm_headers` is enabled, LiteLLM adds:
-- `x-litellm-user-id`
-- `x-litellm-org-id`
-- Other user metadata as `x-litellm-*` headers
+When `add_user_information_to_llm_headers` is enabled, Lumina adds:
+- `x-lumina-user-id`
+- `x-lumina-org-id`
+- Other user metadata as `x-lumina-*` headers
 
 ## Security Considerations
 
@@ -359,7 +359,7 @@ model_list:
       model: openai/{{openai_large}}
       api_key: "your-api-key"
 
-litellm_settings:
+lumina_settings:
   # Enable user info headers globally (optional)
   add_user_information_to_llm_headers: true
   
@@ -403,7 +403,7 @@ If a healthy account receives `429 No deployments available for selected model`,
 ## Related Features
 
 - [Request Headers](./request_headers.md) - Complete list of supported request headers
-- [Response Headers](./response_headers.md) - Headers returned by LiteLLM
+- [Response Headers](./response_headers.md) - Headers returned by Lumina
 - [Team Model Aliases](./team_model_add.md) - Configure model aliases for teams
 - [Model Access Control](./model_access.md) - Control which users can access which models
 

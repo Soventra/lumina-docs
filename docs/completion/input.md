@@ -4,17 +4,17 @@ import TabItem from '@theme/TabItem';
 # Input Params
 
 ## Common Params 
-LiteLLM accepts and translates the [OpenAI Chat Completion params](https://platform.openai.com/docs/api-reference/chat/create) across all providers. 
+Lumina accepts and translates the [OpenAI Chat Completion params](https://platform.openai.com/docs/api-reference/chat/create) across all providers. 
 
 ### Usage
 ```python
-import litellm
+import lumina
 
 # set env variables
 os.environ["OPENAI_API_KEY"] = "your-openai-key"
 
 ## SET MAX TOKENS - via completion() 
-response = litellm.completion(
+response = lumina.completion(
             model="{{openai_small}}",
             messages=[{ "content": "Hello, how are you?","role": "user"}],
             max_tokens=10
@@ -28,14 +28,14 @@ print(response)
 Use this function to get an up-to-date list of supported openai params for any model + provider. 
 
 ```python
-from litellm import get_supported_openai_params
+from lumina import get_supported_openai_params
 
 response = get_supported_openai_params(model="anthropic.{{anthropic}}", custom_llm_provider="bedrock")
 
 print(response) # ["max_tokens", "tools", "tool_choice", "stream"]
 ```
 
-This table is the output of `litellm.get_supported_openai_params()` for the model shown in each row. Support is model dependent within a provider (for example Bedrock Llama models do not list `tools` or `tool_choice`), so call the function for the exact model you use
+This table is the output of `lumina.get_supported_openai_params()` for the model shown in each row. Support is model dependent within a provider (for example Bedrock Llama models do not list `tools` or `tool_choice`), so call the function for the exact model you use
 
 `stream_options`, `extra_headers` and `max_retries` are not checked against this list and are accepted for every provider, and `stream_options={"include_usage": True}` returns usage on the final chunk for every provider
 
@@ -69,13 +69,13 @@ This table is the output of `litellm.get_supported_openai_params()` for the mode
 
 :::note
 
-By default, LiteLLM raises an exception if the openai param being passed in isn't supported. 
+By default, Lumina raises an exception if the openai param being passed in isn't supported. 
 
-To drop the param instead, set `litellm.drop_params = True` or `completion(..drop_params=True)`.
+To drop the param instead, set `lumina.drop_params = True` or `completion(..drop_params=True)`.
 
 This **ONLY DROPS UNSUPPORTED OPENAI PARAMS**. 
 
-LiteLLM assumes any non-openai param is provider specific and passes it in as a kwarg in the request body
+Lumina assumes any non-openai param is provider specific and passes it in as a kwarg in the request body
 
 ::: 
 
@@ -127,11 +127,11 @@ def completion(
     api_version: str | None = None,
     api_key: str | None = None,
     model_list: list | None = None,  # pass in a list of api_base,keys, etc.
-    # Optional liteLLM function params
+    # Optional Lumina function params
     thinking: AnthropicThinkingParam | None = None,
     # Session management
     shared_session: Optional["ClientSession"] = None,
-    # Per-request JSON schema validation (overrides litellm.enable_json_schema_validation)
+    # Per-request JSON schema validation (overrides lumina.enable_json_schema_validation)
     enable_json_schema_validation: bool | None = None,
     **kwargs,
 ) -> ModelResponse | CustomStreamWrapper:
@@ -157,7 +157,7 @@ def completion(
 - `tool_call_id`: *str (optional)* - Tool call that this message is responding to.
 
 
-[**See All Message Values**](https://github.com/BerriAI/litellm/blob/main/litellm/types/llms/openai.py#L664)
+[**See All Message Values**](https://github.com/Soventra/lumina/blob/main/lumina/types/llms/openai.py#L664)
 
 #### Content Types
 
@@ -165,10 +165,10 @@ def completion(
 
 | Type | Description | Docs |
 |------|-------------|------|
-| `text` | Text content | [Type Definition](https://github.com/BerriAI/litellm/blob/main/litellm/types/llms/openai.py#L598) |
+| `text` | Text content | [Type Definition](https://github.com/Soventra/lumina/blob/main/lumina/types/llms/openai.py#L598) |
 | `image_url` | Images | [Vision](./vision.md) |
 | `input_audio` | Audio input | [Audio](./audio.md) |
-| `video_url` | Video input | [Type Definition](https://github.com/BerriAI/litellm/blob/main/litellm/types/llms/openai.py#L625) |
+| `video_url` | Video input | [Type Definition](https://github.com/Soventra/lumina/blob/main/lumina/types/llms/openai.py#L625) |
 | `file` | Files | [Document Understanding](./document_understanding.md) |
 | `document` | Documents/PDFs | [Document Understanding](./document_understanding.md) |
 
@@ -215,7 +215,7 @@ messages=[{"role": "user", "content": [
 
 - `stop`: *string/ array/ null (optional)* - Up to 4 sequences where the API will stop generating further tokens.
   
-  **Note**: OpenAI supports a maximum of 4 stop sequences. If you provide more than 4, LiteLLM will automatically truncate the list to the first 4 elements. To disable this automatic truncation, set `litellm.disable_stop_sequence_limit = True`.
+  **Note**: OpenAI supports a maximum of 4 stop sequences. If you provide more than 4, Lumina will automatically truncate the list to the first 4 elements. To disable this automatic truncation, set `lumina.disable_stop_sequence_limit = True`.
 
 - `max_completion_tokens`: *integer (optional)* -  An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and reasoning tokens.
 
@@ -233,7 +233,7 @@ messages=[{"role": "user", "content": [
 
 - `tools`: *array (optional)* - A list of tools the model may call. Use this to provide a list of functions the model may generate JSON inputs for.
 
-    - `type`: *string* - The type of the tool. You can set this to `"function"` or `"mcp"` (matching the `/responses` schema) to call LiteLLM-registered MCP servers directly from `/chat/completions`.
+    - `type`: *string* - The type of the tool. You can set this to `"function"` or `"mcp"` (matching the `/responses` schema) to call Lumina-registered MCP servers directly from `/chat/completions`.
 
     - `function`: *object* - Required for function tools.
 
@@ -305,7 +305,7 @@ messages=[{"role": "user", "content": [
 - `function_call`: *string or object (optional)* - Controls how the model responds to function calls.
 
 
-#### litellm-specific params 
+#### lumina-specific params 
 
 - `api_base`: *string (optional)* - The api endpoint you want to call the model with
 
@@ -339,11 +339,11 @@ messages=[{"role": "user", "content": [
 
 - `prompt_variables`: *dict (optional)* - Values used to fill managed prompt variables when prompt-management hooks are configured. See [prompt management](../prompt_management.md).
 
-- `litellm_system_prompt`: *string (optional)* - Prepends this prompt to the first system message, or adds a system message at the start if none exists
+- `lumina_system_prompt`: *string (optional)* - Prepends this prompt to the first system message, or adds a system message at the start if none exists
 
 - `base_model`: *string (optional)* - Underlying model name used for provider-specific model and parameter configuration. See [fine-tuned models](../guides/finetuned_models.md).
 
-- `supports_system_message`: *boolean (optional)* - Set to false when the model does not accept system-role messages; LiteLLM then remaps those messages
+- `supports_system_message`: *boolean (optional)* - Set to false when the model does not accept system-role messages; Lumina then remaps those messages
 
 - `ensure_alternating_roles`: *boolean (optional)* - Adds user or assistant continuation messages where needed to alternate conversation roles. See [message sanitization](./message_sanitization.md).
 

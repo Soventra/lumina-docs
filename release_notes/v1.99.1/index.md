@@ -1,19 +1,19 @@
 ---
-title: "LiteLLM v1.99.1 - OTel Cache Token Counts"
+title: "Lumina v1.99.1 - OTel Cache Token Counts"
 description: "Fixes OpenTelemetry v2 LLM spans so they emit cache token counts for each request. Observability backends now see cache token usage per call."
 slug: "v1-99-1"
 date: 2026-09-02T14:01:25
 authors:
   - name: Krrish Dholakia
-    title: CEO, LiteLLM
+    title: CEO, Lumina
     url: https://www.linkedin.com/in/krish-d/
     image_url: https://pbs.twimg.com/profile_images/1298587542745358340/DZv3Oj-h_400x400.jpg
   - name: Ishaan Jaff
-    title: CTO, LiteLLM
+    title: CTO, Lumina
     url: https://www.linkedin.com/in/reffajnaahsi/
     image_url: https://pbs.twimg.com/profile_images/1613813310264340481/lz54oEiB_400x400.jpg
   - name: Yuneng Jiang
-    title: Senior Full Stack Engineer, LiteLLM
+    title: Senior Full Stack Engineer, Lumina
     url: https://www.linkedin.com/in/yuneng-david-jiang-455676139/
     image_url: https://avatars.githubusercontent.com/u/171294688?v=4
 hide_table_of_contents: false
@@ -21,7 +21,7 @@ hide_table_of_contents: false
 
 :::info[This is a Docker-only release]
 
-`v1.99.1` is distributed as container images. There is no PyPI package for this version, so `pip install litellm==1.99.1` will not resolve. If you install LiteLLM from PyPI, stay on `1.99.0`; the change in this release reaches you through the image.
+`v1.99.1` is distributed as container images. There is no PyPI package for this version, so `pip install lumina==1.99.1` will not resolve. If you install Lumina from PyPI, stay on `1.99.0`; the change in this release reaches you through the image.
 
 The `latest` tag does point at this release.
 
@@ -33,7 +33,7 @@ The `latest` tag does point at this release.
 docker run \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
-docker.litellm.ai/berriai/litellm:1.99.1
+docker.lumina.ai/soventra/lumina:1.99.1
 ```
 
 `v1.99.1` is a patch release on top of [`v1.99.0`](/release_notes/v1.99.0/v1-99-0). It adds cache token counts to OpenTelemetry v2 LLM spans.
@@ -46,8 +46,8 @@ This release also refreshes RestrictedPython to 8.5 in the lockfile, matching th
 
 ### What's Changed
 
-- fix(otel): emit cache token counts on OTel v2 LLM spans - [PR #38716](https://github.com/BerriAI/litellm/pull/38716)
+- fix(otel): emit cache token counts on OTel v2 LLM spans - [PR #38716](https://github.com/Soventra/lumina/pull/38716)
 
 ## Full Changelog
 
-https://github.com/BerriAI/litellm/compare/v1.99.0...v1.99.1
+https://github.com/Soventra/lumina/compare/v1.99.0...v1.99.1

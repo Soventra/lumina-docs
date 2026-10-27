@@ -7,31 +7,31 @@ import TabItem from '@theme/TabItem';
 | Property | Details |
 |-------|-------|
 | Description | Azure OpenAI Responses API |
-| `custom_llm_provider` on LiteLLM | `azure/` |
+| `custom_llm_provider` on Lumina | `azure/` |
 | Supported Operations | `/v1/responses`|
 | Azure OpenAI Responses API | [Azure OpenAI Responses API ↗](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/responses?tabs=python-secure) |
-| Cost Tracking, Logging Support | ✅ LiteLLM will log, track cost for Responses API Requests |
-| Supported OpenAI Params | ✅ All OpenAI params are supported, [See here](https://github.com/BerriAI/litellm/blob/0717369ae6969882d149933da48eeb8ab0e691bd/litellm/llms/openai/responses/transformation.py#L23) |
+| Cost Tracking, Logging Support | ✅ Lumina will log, track cost for Responses API Requests |
+| Supported OpenAI Params | ✅ All OpenAI params are supported, [See here](https://github.com/Soventra/lumina/blob/0717369ae6969882d149933da48eeb8ab0e691bd/lumina/llms/openai/responses/transformation.py#L23) |
 
 ## Usage
 
 ## Create a model response
 
 <Tabs>
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
 #### Non-streaming
 
 ```python showLineNumbers title="Azure Responses API"
-import litellm
+import lumina
 
 # Non-streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="azure/o1-pro",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100,
     api_key=os.getenv("AZURE_RESPONSES_OPENAI_API_KEY"),
-    api_base="https://litellm8397336933.openai.azure.com/",
+    api_base="https://lumina8397336933.openai.azure.com/",
     api_version="2023-03-15-preview",
 )
 
@@ -40,15 +40,15 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="Azure Responses API"
-import litellm
+import lumina
 
 # Streaming response
-response = litellm.responses(
+response = lumina.responses(
     model="azure/o1-pro",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True,
     api_key=os.getenv("AZURE_RESPONSES_OPENAI_API_KEY"),
-    api_base="https://litellm8397336933.openai.azure.com/",
+    api_base="https://lumina8397336933.openai.azure.com/",
     api_version="2023-03-15-preview",
 )
 
@@ -57,22 +57,22 @@ for event in response:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="OpenAI SDK with LiteLLM Proxy">
+<TabItem value="proxy" label="OpenAI SDK with Lumina Proxy">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="Azure Responses API"
 model_list:
   - model_name: o1-pro
     lumina_params:
       model: azure/o1-pro
       api_key: os.environ/AZURE_RESPONSES_OPENAI_API_KEY
-      api_base: https://litellm8397336933.openai.azure.com/
+      api_base: https://lumina8397336933.openai.azure.com/
       api_version: 2023-03-15-preview
 ```
 
-Start your LiteLLM proxy:
+Start your Lumina proxy:
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -126,23 +126,23 @@ for event in response:
 
 Codex models use Azure's new [/v1/preview API](https://learn.microsoft.com/en-us/azure/ai-services/openai/api-version-lifecycle?tabs=key#next-generation-api) which provides ongoing access to the latest features with no need to update `api-version` each month. 
 
-**LiteLLM will send your requests to the `/v1/preview` endpoint when you set `api_version="preview"`.**
+**Lumina will send your requests to the `/v1/preview` endpoint when you set `api_version="preview"`.**
 
 <Tabs>
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
 #### Non-streaming
 
 ```python showLineNumbers title="Azure Codex Models"
-import litellm
+import lumina
 
 # Non-streaming response with Codex models
-response = litellm.responses(
+response = lumina.responses(
     model="azure/codex-mini",
     input="Tell me a three sentence bedtime story about a unicorn.",
     max_output_tokens=100,
     api_key=os.getenv("AZURE_RESPONSES_OPENAI_API_KEY"),
-    api_base="https://litellm8397336933.openai.azure.com",
+    api_base="https://lumina8397336933.openai.azure.com",
     api_version="preview", # key difference
 )
 
@@ -151,15 +151,15 @@ print(response)
 
 #### Streaming
 ```python showLineNumbers title="Azure Codex Models"
-import litellm
+import lumina
 
 # Streaming response with Codex models
-response = litellm.responses(
+response = lumina.responses(
     model="azure/codex-mini",
     input="Tell me a three sentence bedtime story about a unicorn.",
     stream=True,
     api_key=os.getenv("AZURE_RESPONSES_OPENAI_API_KEY"),
-    api_base="https://litellm8397336933.openai.azure.com",
+    api_base="https://lumina8397336933.openai.azure.com",
     api_version="preview", # key difference
 )
 
@@ -168,22 +168,22 @@ for event in response:
 ```
 
 </TabItem>
-<TabItem value="proxy" label="OpenAI SDK with LiteLLM Proxy">
+<TabItem value="proxy" label="OpenAI SDK with Lumina Proxy">
 
-First, add this to your litellm proxy config.yaml:
+First, add this to your lumina proxy config.yaml:
 ```yaml showLineNumbers title="Azure Codex Models"
 model_list:
   - model_name: codex-mini
     lumina_params:
       model: azure/codex-mini
       api_key: os.environ/AZURE_RESPONSES_OPENAI_API_KEY
-      api_base: https://litellm8397336933.openai.azure.com
+      api_base: https://lumina8397336933.openai.azure.com
       api_version: preview # key difference
 ```
 
-Start your LiteLLM proxy:
+Start your Lumina proxy:
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
@@ -240,10 +240,10 @@ You can also call the Azure Responses API via the `/chat/completions` endpoint.
 
 
 <Tabs>
-<TabItem value="litellm-sdk" label="LiteLLM SDK">
+<TabItem value="lumina-sdk" label="Lumina SDK">
 
 ```python showLineNumbers
-from litellm import completion
+from lumina import completion
 import os 
 
 os.environ["AZURE_API_BASE"] = "https://my-azure-endpoint.openai.azure.com/"
@@ -258,7 +258,7 @@ response = completion(
 print(response)
 ```
 </TabItem>
-<TabItem value="proxy" label="OpenAI SDK with LiteLLM Proxy">
+<TabItem value="proxy" label="OpenAI SDK with Lumina Proxy">
 
 1. Setup config.yaml
 
@@ -272,9 +272,9 @@ model_list:
       api_version: 2023-03-15-preview
 ```
 
-2. Start LiteLLM proxy
+2. Start Lumina proxy
 ```bash
-litellm --config /path/to/config.yaml
+lumina --config /path/to/config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```

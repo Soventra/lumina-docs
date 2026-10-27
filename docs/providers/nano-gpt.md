@@ -5,10 +5,10 @@
 | Property | Details |
 |-------|-------|
 | Description | NanoGPT is a pay-per-prompt and subscription based AI service providing instant access to over 200+ powerful AI models with no subscriptions or registration required. |
-| Provider Route on LiteLLM | `nano-gpt/` |
+| Provider Route on Lumina | `nano-gpt/` |
 | Link to Provider Doc | [NanoGPT Website ↗](https://nano-gpt.com) |
 | Base URL | `https://nano-gpt.com/api/v1` |
-| Supported Operations | [`/chat/completions`](/docs/providers/nano-gpt#usage---litellm-python-sdk), `/completions` |
+| Supported Operations | [`/chat/completions`](/docs/providers/nano-gpt#usage---lumina-python-sdk), `/completions` |
 
 <br />
 
@@ -30,14 +30,14 @@ os.environ["NANOGPT_API_KEY"] = ""  # your NanoGPT API key
 
 Get your NanoGPT API key from [nano-gpt.com](https://nano-gpt.com).
 
-## Usage - LiteLLM Python SDK
+## Usage - Lumina Python SDK
 
 ### Non-streaming
 
 ```python showLineNumbers title="NanoGPT Non-streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["NANOGPT_API_KEY"] = ""  # your NanoGPT API key
 
@@ -56,8 +56,8 @@ print(response)
 
 ```python showLineNumbers title="NanoGPT Streaming Completion"
 import os
-import litellm
-from litellm import completion
+import lumina
+from lumina import completion
 
 os.environ["NANOGPT_API_KEY"] = ""  # your NanoGPT API key
 
@@ -78,7 +78,7 @@ for chunk in response:
 
 ```python showLineNumbers title="NanoGPT Tool Calling"
 import os
-import litellm
+import lumina
 
 os.environ["NANOGPT_API_KEY"] = ""
 
@@ -98,14 +98,14 @@ tools = [
     }
 ]
 
-response = litellm.completion(
+response = lumina.completion(
     model="nano-gpt/model-name",
     messages=[{"role": "user", "content": "What's the weather in Paris?"}],
     tools=tools
 )
 ```
 
-## Usage - LiteLLM Proxy Server
+## Usage - Lumina Proxy Server
 
 ### 1. Save key in your environment
 

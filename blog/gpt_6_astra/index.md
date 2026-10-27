@@ -2,13 +2,13 @@
 slug: gpt_6_astra
 title: "Day 0 Support: GPT-6 Astra"
 date: 2026-09-03T11:00:00
-image: /img/litellm_gpt_6_astra_announcement.png
+image: /img/lumina_gpt_6_astra_announcement.png
 authors:
   - misbah
   - mateo
   - krrish
   - ishaan-alt
-description: "Day 0 support for OpenAI's GPT-6 Astra on LiteLLM, with pricing, reasoning params, and the Responses API bridge."
+description: "Day 0 support for OpenAI's GPT-6 Astra on Lumina, with pricing, reasoning params, and the Responses API bridge."
 card_title: "GPT-6 Astra"
 card_summary: "OpenAI's GPT-6 flagship with new pricing and reasoning params, served through the Responses API bridge."
 tags: [openai, gpt-6, gpt-6-astra, completion, day 0 support]
@@ -18,9 +18,9 @@ hide_table_of_contents: false
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-![LiteLLM x GPT-6 Astra](/img/litellm_gpt_6_astra_announcement.png)
+![Lumina x GPT-6 Astra](/img/lumina_gpt_6_astra_announcement.png)
 
-LiteLLM now supports `gpt-6-astra`, OpenAI's next major model. Route traffic to it through the LiteLLM AI Gateway with the same config you use for every other OpenAI model.
+Lumina now supports `gpt-6-astra`, OpenAI's next major model. Route traffic to it through the Lumina AI Gateway with the same config you use for every other OpenAI model.
 
 {/* truncate */}
 
@@ -29,13 +29,13 @@ Astra is the first model on the GPT-6 name, and OpenAI's own [research post](htt
 :::note
 **Cost tracking works on the version you already run.** Hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the `gpt-6-astra` pricing from GitHub. This feature is available on `v1.76.0` and above.
 
-**Parameter handling needs the next release.** The GPT-5 reasoning classifier in LiteLLM matched `gpt-5*` names only, so on older versions a `gpt-6-astra` request keeps `max_tokens` and `temperature` as sent and OpenAI rejects them. The fix widening it to GPT-6 is on `main` now and ships in this Saturday's release candidate; until you upgrade, send `max_completion_tokens` yourself and leave `temperature` unset.
+**Parameter handling needs the next release.** The GPT-5 reasoning classifier in Lumina matched `gpt-5*` names only, so on older versions a `gpt-6-astra` request keeps `max_tokens` and `temperature` as sent and OpenAI rejects them. The fix widening it to GPT-6 is on `main` now and ships in this Saturday's release candidate; until you upgrade, send `max_completion_tokens` yourself and leave `temperature` unset.
 :::
 
 ## Usage
 
 <Tabs>
-<TabItem value="proxy" label="LiteLLM Proxy">
+<TabItem value="proxy" label="Lumina Proxy">
 
 **1. Setup config.yaml**
 
@@ -54,7 +54,7 @@ docker run -d \
   -p 4000:4000 \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -v $(pwd)/config.yaml:/app/config.yaml \
-  ghcr.io/berriai/litellm:main-latest \
+  ghcr.io/soventra/lumina:main-latest \
   --config /app/config.yaml
 ```
 
@@ -74,10 +74,10 @@ curl -X POST "http://0.0.0.0:4000/chat/completions" \
 ```
 
 </TabItem>
-<TabItem value="sdk" label="LiteLLM Python SDK">
+<TabItem value="sdk" label="Lumina Python SDK">
 
 ```python
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="openai/gpt-6-astra",
@@ -95,7 +95,7 @@ print(response.choices[0].message.content)
 
 ## Responses API
 
-For agentic and multi-turn workflows, use `/v1/responses` to preserve reasoning state across turns. A `litellm.completion()` call that combines function tools with active reasoning is bridged to `/v1/responses` automatically, the same way it is for GPT-5.4 and newer.
+For agentic and multi-turn workflows, use `/v1/responses` to preserve reasoning state across turns. A `lumina.completion()` call that combines function tools with active reasoning is bridged to `/v1/responses` automatically, the same way it is for GPT-5.4 and newer.
 
 ```bash
 curl -X POST "http://0.0.0.0:4000/v1/responses" \
@@ -116,7 +116,7 @@ Prices are per 1M tokens (USD), shown as short context (≤272K tokens) / long c
 |-------|-------|--------------|-------------|--------|
 | `gpt-6-astra` | $10.00 / $20.00 | $1.00 / $2.00 | $12.50 / $25.00 | $50.00 / $75.00 |
 
-The `flex` service tier is billed at half the standard rate and `priority` at double, on both the short and long context tiers, and the Batch API is billed at half the standard input and output rate. Pass `service_tier` on the request and LiteLLM picks the matching rate. Fast mode costs 2x the applicable rate for up to 2.5x the speed.
+The `flex` service tier is billed at half the standard rate and `priority` at double, on both the short and long context tiers, and the Batch API is billed at half the standard input and output rate. Pass `service_tier` on the request and Lumina picks the matching rate. Fast mode costs 2x the applicable rate for up to 2.5x the speed.
 
 ## Notes
 
@@ -126,4 +126,4 @@ The `flex` service tier is billed at half the standard rate and `priority` at do
 
 ## Feedback
 
-Running GPT-6 Astra through LiteLLM and hitting something unexpected? Share it on [GitHub discussion #39633](https://github.com/BerriAI/litellm/discussions/39633).
+Running GPT-6 Astra through Lumina and hitting something unexpected? Share it on [GitHub discussion #39633](https://github.com/Soventra/lumina/discussions/39633).

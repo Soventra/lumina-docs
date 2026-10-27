@@ -35,7 +35,7 @@ Expected Response:
 {
     "key": "sk-...",
     "budget_id": "my-test-tier",
-    "litellm_budget_table": {
+    "lumina_budget_table": {
         "budget_id": "my-test-tier",
         "rpm_limit": 0
     }
@@ -58,5 +58,5 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 ```
 
 
-## [API Reference](https://docs.litellm.ai/api-reference/#/budget%20management)
+## [API Reference](https://docs.lumina.ai/api-reference/#/budget%20management)
 

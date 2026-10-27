@@ -13,7 +13,7 @@
     "implementation_commit": "5f68bf4893f38a3c287ee83bb82aaf84f5c4f885"
   },
   "methodology": {
-    "api": "litellm.atokenize",
+    "api": "lumina.atokenize",
     "requests_per_trial": 4096,
     "warmup_requests_per_concurrency": 256,
     "trials": 3,

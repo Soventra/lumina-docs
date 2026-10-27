@@ -5,13 +5,13 @@ import TabItem from '@theme/TabItem';
 
 # GitHub Copilot
 
-Use [GitHub Copilot](https://docs.github.com/en/copilot) models through the LiteLLM gateway or the Python SDK. LiteLLM supports Chat Completions, Responses, Embeddings, and Anthropic Messages
+Use [GitHub Copilot](https://docs.github.com/en/copilot) models through the Lumina gateway or the Python SDK. Lumina supports Chat Completions, Responses, Embeddings, and Anthropic Messages
 
 On the gateway, each person connects their own GitHub account and their requests use their own Copilot plan. Your GitHub Copilot plan determines which models you can use, and each model supports specific endpoints. See [supported endpoints and models](#supported-endpoints-and-models)
 
 :::tip
 
-LiteLLM can also use Claude and ChatGPT (Codex) subscriptions. To compare the three subscriptions, refer to [Claude, Codex, and Copilot subscriptions](/docs/subscriptions).
+Lumina can also use Claude and ChatGPT (Codex) subscriptions. To compare the three subscriptions, refer to [Claude, Codex, and Copilot subscriptions](/docs/subscriptions).
 
 :::
 
@@ -21,20 +21,20 @@ An admin adds the model and a **Per-user GitHub OAuth** credential once. Each us
 
 ### 1. Admin: create the credential
 
-Open **Models + Endpoints** > **LLM Credentials** in the LiteLLM dashboard and click **Add Credential**. Select **GitHub Copilot** as the provider and enter `github-copilot` as the **Credential Name**. **Auth Type** is set to **Per-user GitHub OAuth**, which is the only auth type the gateway supports for GitHub Copilot. Click **Add Credential**
+Open **Models + Endpoints** > **LLM Credentials** in the Lumina dashboard and click **Add Credential**. Select **GitHub Copilot** as the provider and enter `github-copilot` as the **Credential Name**. **Auth Type** is set to **Per-user GitHub OAuth**, which is the only auth type the gateway supports for GitHub Copilot. Click **Add Credential**
 
-Leave **GitHub host** empty if your users sign in on github.com. If your enterprise uses GitHub Enterprise Cloud with data residency, enter your `SUBDOMAIN.ghe.com` host, for example `octocorp.ghe.com`. LiteLLM then sends sign-in to `https://SUBDOMAIN.ghe.com`, the token exchange and user lookup to `https://api.SUBDOMAIN.ghe.com`, and model requests only to `https://copilot-api.SUBDOMAIN.ghe.com`. Each credential keeps its own host, so one gateway can serve a github.com credential and a GHE.com credential side by side. GitHub Enterprise Server hosts are rejected because GitHub does not offer Copilot on GitHub Enterprise Server. Changing the host of a credential removes every user connection on it, so users connect again on the new host.
+Leave **GitHub host** empty if your users sign in on github.com. If your enterprise uses GitHub Enterprise Cloud with data residency, enter your `SUBDOMAIN.ghe.com` host, for example `octocorp.ghe.com`. Lumina then sends sign-in to `https://SUBDOMAIN.ghe.com`, the token exchange and user lookup to `https://api.SUBDOMAIN.ghe.com`, and model requests only to `https://copilot-api.SUBDOMAIN.ghe.com`. Each credential keeps its own host, so one gateway can serve a github.com credential and a GHE.com credential side by side. GitHub Enterprise Server hosts are rejected because GitHub does not offer Copilot on GitHub Enterprise Server. Changing the host of a credential removes every user connection on it, so users connect again on the new host.
 
 <div className="docs-screenshot">
-  <Image img={require('../../img/github_copilot_credential.png')} dark={require('../../img/github_copilot_credential_dark.png')} alt="Create a per-user GitHub OAuth credential in LiteLLM" width={656} height={585} />
+  <Image img={require('../../img/github_copilot_credential.png')} dark={require('../../img/github_copilot_credential_dark.png')} alt="Create a per-user GitHub OAuth credential in Lumina" width={656} height={585} />
 </div>
 
 ### 2. Admin: add the model
 
-Open **Add Model**, select **GitHub Copilot** as the provider, and pick a model under **LiteLLM Model Name(s)**, for example `github_copilot/claude-sonnet-5.5`. Under **Model Mappings**, set **Public Model Name** to the name users will request, such as `claude-copilot`. Under **Existing Credentials**, select `github-copilot`, then click **Add Model**
+Open **Add Model**, select **GitHub Copilot** as the provider, and pick a model under **Lumina Model Name(s)**, for example `github_copilot/claude-sonnet-5.5`. Under **Model Mappings**, set **Public Model Name** to the name users will request, such as `claude-copilot`. Under **Existing Credentials**, select `github-copilot`, then click **Add Model**
 
 <div className="docs-screenshot">
-  <Image img={require('../../img/github_copilot_add_model.png')} dark={require('../../img/github_copilot_add_model_dark.png')} alt="Add a GitHub Copilot model with the saved credential in LiteLLM" width={1096} height={935} />
+  <Image img={require('../../img/github_copilot_add_model.png')} dark={require('../../img/github_copilot_add_model_dark.png')} alt="Add a GitHub Copilot model with the saved credential in Lumina" width={1096} height={935} />
 </div>
 
 :::note
@@ -53,23 +53,23 @@ model_list:
   - model_name: claude-copilot
     lumina_params:
       model: github_copilot/claude-sonnet-5.5
-      litellm_credential_name: github-copilot
+      lumina_credential_name: github-copilot
 ```
 
 </details>
 
 ### 3. User: connect your GitHub account
 
-Sign in to the LiteLLM dashboard and open **Models + Endpoints** > **LLM Credentials**. Under **Your connections**, find `github-copilot` and click **Connect**
+Sign in to the Lumina dashboard and open **Models + Endpoints** > **LLM Credentials**. Under **Your connections**, find `github-copilot` and click **Connect**
 
 <div className="docs-screenshot">
-  <Image img={require('../../img/github_copilot_llm_credentials.png')} dark={require('../../img/github_copilot_llm_credentials_dark.png')} alt="Connect a GitHub account from Your connections in LiteLLM" width={1096} height={418} />
+  <Image img={require('../../img/github_copilot_llm_credentials.png')} dark={require('../../img/github_copilot_llm_credentials_dark.png')} alt="Connect a GitHub account from Your connections in Lumina" width={1096} height={418} />
 </div>
 
-LiteLLM shows a GitHub verification code. Open the link LiteLLM shows, which is https://github.com/login/device for github.com or https://SUBDOMAIN.ghe.com/login/device for a GHE.com credential, enter the code, and approve the request with the GitHub account that has your Copilot plan
+Lumina shows a GitHub verification code. Open the link Lumina shows, which is https://github.com/login/device for github.com or https://SUBDOMAIN.ghe.com/login/device for a GHE.com credential, enter the code, and approve the request with the GitHub account that has your Copilot plan
 
 <div className="docs-screenshot">
-  <Image img={require('../../img/github_copilot_connect.png')} dark={require('../../img/github_copilot_connect_dark.png')} alt="GitHub verification code and sign-in link in LiteLLM" width={504} height={338} />
+  <Image img={require('../../img/github_copilot_connect.png')} dark={require('../../img/github_copilot_connect_dark.png')} alt="GitHub verification code and sign-in link in Lumina" width={504} height={338} />
 </div>
 
 When GitHub approves the request, the status changes to **Connected** with your GitHub username. Every request you send to a model on this credential now uses your own Copilot access. If you have not connected, or GitHub later rejects your saved connection, requests return a 401 that asks you to connect again from this page
@@ -86,14 +86,14 @@ This recording runs through steps 1 to 3 in the dashboard, from creating the cre
 
 ### 4. User: send requests
 
-Point your app at the gateway and sign in the way your organization has set it up. Requests must come from the same LiteLLM user who connected GitHub. For Claude Code, set `ANTHROPIC_BASE_URL` to the gateway URL and `ANTHROPIC_MODEL` to `claude-copilot`. For apps that use the OpenAI API, set the base URL to `https://litellm.example.com/v1`, using your gateway's address, and the model to `claude-copilot`
+Point your app at the gateway and sign in the way your organization has set it up. Requests must come from the same Lumina user who connected GitHub. For Claude Code, set `ANTHROPIC_BASE_URL` to the gateway URL and `ANTHROPIC_MODEL` to `claude-copilot`. For apps that use the OpenAI API, set the base URL to `https://lumina.example.com/v1`, using your gateway's address, and the model to `claude-copilot`
 
 ```python showLineNumbers title="Send a chat request"
 from openai import OpenAI
 
 client = OpenAI(
-    base_url="https://litellm.example.com/v1",
-    api_key="<your LiteLLM sign-in token>",
+    base_url="https://lumina.example.com/v1",
+    api_key="<your Lumina sign-in token>",
 )
 
 response = client.chat.completions.create(
@@ -114,19 +114,19 @@ Use the `github_copilot/` prefix when configuring a model. Requests to the gatew
 | `/v1/responses` | `github_copilot/gpt-5.3-codex` or `github_copilot/gpt-5.5` |
 | `/v1/embeddings` | `github_copilot/text-embedding-3-small` |
 
-These examples match LiteLLM's model catalog. GitHub controls which models each account can use, so a model outside your plan returns an error from GitHub even when the gateway has it configured
+These examples match Lumina's model catalog. GitHub controls which models each account can use, so a model outside your plan returns an error from GitHub even when the gateway has it configured
 
 To serve Responses or Embeddings, add a model for that endpoint with the same `github-copilot` credential, such as `github_copilot/gpt-5.3-codex` or `github_copilot/text-embedding-3-small`
 
-## Usage with the LiteLLM Python SDK
+## Usage with the Lumina Python SDK
 
-Direct SDK calls run in your own process, outside the gateway, and sign in with one GitHub account. The first call starts GitHub's device flow in your terminal. LiteLLM saves the GitHub access token to `~/.config/litellm/github_copilot/access-token` and reuses it on later calls. The gateway never uses this sign-in. Direct SDK calls use the full model name, including the `github_copilot/` prefix
+Direct SDK calls run in your own process, outside the gateway, and sign in with one GitHub account. The first call starts GitHub's device flow in your terminal. Lumina saves the GitHub access token to `~/.config/lumina/github_copilot/access-token` and reuses it on later calls. The gateway never uses this sign-in. Direct SDK calls use the full model name, including the `github_copilot/` prefix
 
 <Tabs>
 <TabItem value="chat" label="Chat Completions">
 
 ```python showLineNumbers keep-model-ids title="Chat Completions"
-from litellm import completion
+from lumina import completion
 
 response = completion(
     model="github_copilot/claude-sonnet-5.5",
@@ -139,7 +139,7 @@ print(response.choices[0].message.content)
 <TabItem value="streaming" label="Streaming">
 
 ```python showLineNumbers keep-model-ids title="Stream a chat response"
-from litellm import completion
+from lumina import completion
 
 stream = completion(
     model="github_copilot/claude-sonnet-5.5",
@@ -158,11 +158,11 @@ for chunk in stream:
 ```python showLineNumbers keep-model-ids title="Responses"
 import asyncio
 
-import litellm
+import lumina
 
 
 async def main():
-    response = await litellm.aresponses(
+    response = await lumina.aresponses(
         model="github_copilot/gpt-5.3-codex",
         input="Write a Python hello world",
         max_output_tokens=500,
@@ -179,11 +179,11 @@ asyncio.run(main())
 ```python showLineNumbers keep-model-ids title="Anthropic Messages"
 import asyncio
 
-import litellm
+import lumina
 
 
 async def main():
-    response = await litellm.anthropic.messages.acreate(
+    response = await lumina.anthropic.messages.acreate(
         model="github_copilot/claude-sonnet-5.5",
         messages=[{"role": "user", "content": "Write a Python hello world"}],
         max_tokens=500,
@@ -198,11 +198,11 @@ asyncio.run(main())
 <TabItem value="embeddings" label="Embeddings">
 
 ```python showLineNumbers title="Embeddings"
-import litellm
+import lumina
 
-response = litellm.embedding(
+response = lumina.embedding(
     model="github_copilot/text-embedding-3-small",
-    input=["good morning from LiteLLM"],
+    input=["good morning from Lumina"],
 )
 print(response)
 ```
@@ -216,7 +216,7 @@ The token-file settings and `GITHUB_COPILOT_API_BASE` apply only to direct Pytho
 
 | Variable | Default | Purpose |
 |-------|-------|-------|
-| `GITHUB_COPILOT_TOKEN_DIR` | `~/.config/litellm/github_copilot` | SDK only. Directory for the GitHub access token and Copilot API token cache |
+| `GITHUB_COPILOT_TOKEN_DIR` | `~/.config/lumina/github_copilot` | SDK only. Directory for the GitHub access token and Copilot API token cache |
 | `GITHUB_COPILOT_ACCESS_TOKEN_FILE` | `access-token` | SDK only. Access-token file name in the token directory |
 | `GITHUB_COPILOT_API_KEY_FILE` | `api-key.json` | SDK only. Copilot API token cache file name in the token directory |
 | `GITHUB_COPILOT_CLIENT_ID` | `Iv1.b507a08c87ecfe98` | OAuth client ID for gateway and SDK sign-in |
@@ -230,11 +230,11 @@ The token-file settings and `GITHUB_COPILOT_API_BASE` apply only to direct Pytho
 <details>
 <summary>Token storage and caching</summary>
 
-On the gateway, LiteLLM encrypts each user's GitHub access token and stores it in the database. It does not store a refresh token. Disconnecting removes the stored connection.
+On the gateway, Lumina encrypts each user's GitHub access token and stores it in the database. It does not store a refresh token. Disconnecting removes the stored connection.
 
-With Redis, LiteLLM caches the encrypted credential or a record of no connection for 60 seconds. Without Redis, requests read the database.
+With Redis, Lumina caches the encrypted credential or a record of no connection for 60 seconds. Without Redis, requests read the database.
 
-Each worker caches the short-lived Copilot token in memory until 60 seconds before its expiry. If GitHub returns 401, 403, or 404 during token exchange, LiteLLM clears the cached session and asks the user to reconnect.
+Each worker caches the short-lived Copilot token in memory until 60 seconds before its expiry. If GitHub returns 401, 403, or 404 during token exchange, Lumina clears the cached session and asks the user to reconnect.
 
 Direct SDK calls read the GitHub access token from disk and exchange it for a Copilot API token, cached in `api-key.json` until it expires
 
@@ -243,9 +243,9 @@ Direct SDK calls read the GitHub access token from disk and exchange it for a Co
 <details>
 <summary>API base URL</summary>
 
-On the gateway, LiteLLM uses the API host from GitHub's token response if it uses HTTPS and the host is `githubcopilot.com` or a subdomain. Otherwise, it uses `https://api.githubcopilot.com`. The gateway does not use `GITHUB_COPILOT_API_BASE`
+On the gateway, Lumina uses the API host from GitHub's token response if it uses HTTPS and the host is `githubcopilot.com` or a subdomain. Otherwise, it uses `https://api.githubcopilot.com`. The gateway does not use `GITHUB_COPILOT_API_BASE`
 
-For direct SDK Chat Completions, Responses, and Embeddings, LiteLLM checks these values in order: the credential or deployment's `api_base`, `endpoints.api` in the token response, `GITHUB_COPILOT_API_BASE`, then `https://api.githubcopilot.com`.
+For direct SDK Chat Completions, Responses, and Embeddings, Lumina checks these values in order: the credential or deployment's `api_base`, `endpoints.api` in the token response, `GITHUB_COPILOT_API_BASE`, then `https://api.githubcopilot.com`.
 
 Anthropic Messages uses the authenticated Copilot endpoint. It ignores a caller-supplied `api_base` and `GITHUB_COPILOT_API_BASE`.
 
@@ -254,7 +254,7 @@ Anthropic Messages uses the authenticated Copilot endpoint. It ignores a caller-
 <details>
 <summary>Request headers</summary>
 
-LiteLLM adds these headers for Chat Completions, Responses, and Embeddings:
+Lumina adds these headers for Chat Completions, Responses, and Embeddings:
 
 | Header | Default |
 |-------|-------|

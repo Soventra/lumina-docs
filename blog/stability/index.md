@@ -1,7 +1,7 @@
 ---
 slug: stability
 title: "June Stability Update: We're Making Stability a First-Class Citizen at
-LiteLLM"
+Lumina"
 date: 2026-06-15T10:00:00
 authors:
   - ishaan-alt
@@ -15,9 +15,9 @@ Over the past few months, we've heard our users report more bugs and regressions
 
 {/* truncate */}
 
-We're kicking off a stability sprint for LiteLLM with one bar in mind: 0 reported regressions by our next release on August 29th. The sprint has 2 goals:
+We're kicking off a stability sprint for Lumina with one bar in mind: 0 reported regressions by our next release on August 29th. The sprint has 2 goals:
 
-- Close 20 reported bugs in core functionality - [here](https://github.com/BerriAI/litellm/issues/30484)
+- Close 20 reported bugs in core functionality - [here](https://github.com/Soventra/lumina/issues/30484)
 - Address the root cause of underlying bugs in 3 core components - MCP, Gateway, and UI
 
 ## What class of bugs are we driving down?
@@ -52,4 +52,4 @@ We're also being public about it because you deserve to know what's being fixed 
 
 ## Want us to fix something?
 
-Every item above came from real user reports. If there's a bug affecting you that isn't on this list, comment on the [GitHub issue](https://github.com/BerriAI/litellm/issues/30484). We're actively triaging!
+Every item above came from real user reports. If there's a bug affecting you that isn't on this list, comment on the [GitHub issue](https://github.com/Soventra/lumina/issues/30484). We're actively triaging!

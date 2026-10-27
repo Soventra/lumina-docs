@@ -63,7 +63,7 @@ const ROWS = [
   {
     label: 'Unified API',
     sub: 'one interface, many backends',
-    model: { name: 'LiteLLM', desc: 'one API across 100+ models', open: false },
+    model: { name: 'Lumina', desc: 'one API across 100+ models', open: false },
     agent: { name: '?', desc: 'one API across agent runtimes', open: true },
   },
   {

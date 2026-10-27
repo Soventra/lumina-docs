@@ -6,7 +6,7 @@ import Image from '@theme/IdealImage';
 
 # /v1/decisions and /v1/systemone
 
-Decision models answer typed questions about an input and return probabilities instead of text: a yes/no probability, a pick from a fixed list, a score on a scale, or on TypeSafe Jev 1.14 a box around something in an image. LiteLLM serves them on two routes that share one provider list, so any decision model in your `model_list` works on either route
+Decision models answer typed questions about an input and return probabilities instead of text: a yes/no probability, a pick from a fixed list, a score on a scale, or on TypeSafe Jev 1.14 a box around something in an image. Lumina serves them on two routes that share one provider list, so any decision model in your `model_list` works on either route
 
 | Route | Alias | Request format | Use it when |
 |-------|-------|----------------|-------------|
@@ -17,7 +17,7 @@ The [Python SDK](#sdk-usage) calls the same models without the proxy, [TypeSafe 
 
 Extraction models such as Cloudflare Clairic, which fill in typed fields like dates, numbers and lists instead of answering questions, are served on [/v1/extraction](./extraction.md).
 
-## Use decision models with the LiteLLM proxy {#proxy-setup}
+## Use decision models with the Lumina proxy {#proxy-setup}
 
 1. Add decision models to `config.yaml`
 
@@ -36,14 +36,14 @@ model_list:
 2. Start the proxy
 
 ```bash showLineNumbers
-litellm --config config.yaml
+lumina --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
 ## Availability and supported features
 
-Decision routes are available in LiteLLM `v1.104.2` and later, except the `v1.105.0` dev builds, `v1.105.0-rc.1` and `v1.105.0-rc.2`. Some providers and features need a newer release, listed below. A dev build or release candidate can still miss a provider or feature that its release has, such as vLLM, Microsoft Foundry and OpenRouter spend from `usage.cost` in `v1.105.0-rc.3` and the `v1.106.0` dev builds
+Decision routes are available in Lumina `v1.104.2` and later, except the `v1.105.0` dev builds, `v1.105.0-rc.1` and `v1.105.0-rc.2`. Some providers and features need a newer release, listed below. A dev build or release candidate can still miss a provider or feature that its release has, such as vLLM, Microsoft Foundry and OpenRouter spend from `usage.cost` in `v1.105.0-rc.3` and the `v1.106.0` dev builds
 
 | Provider or feature | Release |
 |---------------------|---------|
@@ -53,7 +53,7 @@ Decision routes are available in LiteLLM `v1.104.2` and later, except the `v1.10
 
 | Feature | Supported | Notes |
 |---------|-----------|-------|
-| Cost tracking | Yes | Returned in the `x-litellm-response-cost` header and written to spend logs. Self-hosted vLLM models have no price, so vLLM calls return no cost header. Databricks OpenJev and `ai_decide` have a zero price in the cost map, so their calls record $0 even though Databricks still bills your workspace for them |
+| Cost tracking | Yes | Returned in the `x-lumina-response-cost` header and written to spend logs. Self-hosted vLLM models have no price, so vLLM calls return no cost header. Databricks OpenJev and `ai_decide` have a zero price in the cost map, so their calls record $0 even though Databricks still bills your workspace for them |
 | Logging | Yes | Works across all integrations |
 | Virtual keys, budgets, rate limits | Yes | Normal proxy key auth |
 | Load balancing, fallbacks | Yes | Goes through the router like `/chat/completions` |
@@ -62,7 +62,7 @@ Decision routes are available in LiteLLM `v1.104.2` and later, except the `v1.10
 
 ## Supported providers
 
-| Provider | Example model | Credentials | LiteLLM endpoint | Images |
+| Provider | Example model | Credentials | Lumina endpoint | Images |
 |----------|---------------|-------------|------------------|--------|
 | [OpenAI](https://developers.openai.com/api/docs/guides/decisions) | `openai/gpt-6-luna` | `OPENAI_API_KEY`, optional `OPENAI_BASE_URL` | `/v1/decisions` | Yes |
 | [TypeSafe Jev](https://docs.typesafe.ai/api) | `typesafe/jev-latest` | `TYPESAFE_API_KEY`, optional `TYPESAFE_API_BASE` | `/v1/systemone` | With the [images header](#typesafe-images-box-questions-and-long-context) |
@@ -78,9 +78,9 @@ Decision routes are available in LiteLLM `v1.104.2` and later, except the `v1.10
 | [Laya](https://github.com/NandhaKishorM/laya) (self-hosted) | `laya/english`, `laya/multilingual` or `laya/typed-decisions` | `api_base` or `LAYA_API_BASE` required, `LAYA_API_KEY` optional | `/v1/systemone` | No |
 | [Bespoke Nimble](https://github.com/bespokelabsai/nimble) (self-hosted) | `bespoke/nimble` on Ollama, else `bespoke/nimble-latest` or `bespoke/bespokelabs/Bespoke-Nimble-9B` | `api_base` or `BESPOKE_API_BASE` required, `BESPOKE_API_KEY` optional | `/v1/systemone` | No |
 
-Some of these providers need a newer LiteLLM release than the decision routes, as listed in [Availability and supported features](#availability-and-supported-features)
+Some of these providers need a newer Lumina release than the decision routes, as listed in [Availability and supported features](#availability-and-supported-features)
 
-LiteLLM translates between the two formats, so the route you call does not limit which provider you can use. OpenAI receives OpenAI-format bodies and every other provider receives System One bodies, and the answers come back in the format of the route you called. Text parts of an OpenAI `input` are joined into the System One `state`, and System One questions are named by their keys when they go to OpenAI
+Lumina translates between the two formats, so the route you call does not limit which provider you can use. OpenAI receives OpenAI-format bodies and every other provider receives System One bodies, and the answers come back in the format of the route you called. Text parts of an OpenAI `input` are joined into the System One `state`, and System One questions are named by their keys when they go to OpenAI
 
 Cloudflare model names without an `@cf/` prefix are expanded to `@cf/cloudflare/<model>`, and the `{"result": ...}` envelope Cloudflare returns is unwrapped so the response has the same shape as the other providers. On Databricks the model is the bare serving endpoint name and `DATABRICKS_API_BASE` points at `https://<workspace-host>/serving-endpoints`, so the request goes to that endpoint's `/invocations` route. `databricks/ai_decide` instead calls the `ai_decide` AI Function at `/api/2.0/ai-functions/ai-decide` on the same workspace, which needs the `ai_decide` preview turned on and reports no token usage. On Microsoft Foundry the model is your deployment name and `AZURE_AI_API_BASE` is the resource host, `https://<resource>.services.ai.azure.com`. A project-scoped base such as `https://<resource>.services.ai.azure.com/api/projects/<project>/openai/v1` is trimmed back to the host. Azure does not let you name a deployment `Microsoft-Decision-1`, so deploy it under another name and set `base_model` so cost tracking finds the price
 
@@ -99,7 +99,7 @@ model_list:
 
 ### Self-hosted Laya and Nimble
 
-[Laya](https://github.com/NandhaKishorM/laya) and [Bespoke Nimble](https://github.com/bespokelabsai/nimble) are decision models that you host yourself. From a build containing [LiteLLM #45260](https://github.com/BerriAI/litellm/pull/45260) they are providers for `/v1/decisions` and `/v1/systemone`, and you can add them from the Admin UI under Models + Endpoints, Add Model, with Mode set to `Decisions - /v1/decisions`. Earlier builds serve them only on their own gateway routes
+[Laya](https://github.com/NandhaKishorM/laya) and [Bespoke Nimble](https://github.com/bespokelabsai/nimble) are decision models that you host yourself. From a build containing [Lumina #45260](https://github.com/Soventra/lumina/pull/45260) they are providers for `/v1/decisions` and `/v1/systemone`, and you can add them from the Admin UI under Models + Endpoints, Add Model, with Mode set to `Decisions - /v1/decisions`. Earlier builds serve them only on their own gateway routes
 
 | Model | Gateway route | Server settings |
 |-------|---------------|-----------------|
@@ -112,7 +112,7 @@ Laya, Nimble and Jev can also pick the model tier for Auto Router. For request e
 
 ## Benchmarks
 
-The [decision model benchmarks](./decisions/benchmark.md) compare every decision model that LiteLLM supports as a guardrail, as an Auto Router classifier and as an LLM judge for Lens Signals, with accuracy, cost and latency for each.
+The [decision model benchmarks](./decisions/benchmark.md) compare every decision model that Lumina supports as a guardrail, as an Auto Router classifier and as an LLM judge for Lens Signals, with accuracy, cost and latency for each.
 
 ## /v1/decisions
 
@@ -298,14 +298,14 @@ Changing `"model"` to `"clef"` sends the image to Cloudflare. Cloudflare does no
 }
 ```
 
-Before calling Cloudflare, LiteLLM downloads image URLs into data URLs and checks Clef's limits: at most 4 images per request, each a PNG, JPEG or WebP of at most 4 MiB, and 8 MiB in total. A request over a limit gets a 400 before Cloudflare is called. With `drop_params` on, images of another type are dropped instead, and the 4-image limit counts only the images that are left. Cloudflare receives the text parts joined into `state` and the images as a separate list, so the model does not see which text sat next to which image.
+Before calling Cloudflare, Lumina downloads image URLs into data URLs and checks Clef's limits: at most 4 images per request, each a PNG, JPEG or WebP of at most 4 MiB, and 8 MiB in total. A request over a limit gets a 400 before Cloudflare is called. With `drop_params` on, images of another type are dropped instead, and the 4-image limit counts only the images that are left. Cloudflare receives the text parts joined into `state` and the images as a separate list, so the model does not see which text sat next to which image.
 
 Other providers do not take images, and TypeSafe takes them only with the images header. So the same request with `"model": "jev"`, no `safety_identifier` and no images header is rejected before TypeSafe is called.
 
 ```json
 {
   "error": {
-    "message": "litellm.UnsupportedParamsError: typesafe does not support parameters: ['input_image'], for model=typesafe/jev-latest. To drop these, set `litellm.drop_params=True` or for proxy:\n\n`litellm_settings:\n drop_params: true`\n\n\nLiteLLM: model group 'jev' failed with the error above. No fallback was attempted.",
+    "message": "lumina.UnsupportedParamsError: typesafe does not support parameters: ['input_image'], for model=typesafe/jev-latest. To drop these, set `lumina.drop_params=True` or for proxy:\n\n`lumina_settings:\n drop_params: true`\n\n\nLumina: model group 'jev' failed with the error above. No fallback was attempted.",
     "type": "invalid_request_error",
     "param": null,
     "code": "400"
@@ -313,7 +313,7 @@ Other providers do not take images, and TypeSafe takes them only with the images
 }
 ```
 
-With `drop_params: true` in `litellm_settings` or on the deployment, LiteLLM drops the images and sends only the text. A request that has no text left after the drop still gets a 400.
+With `drop_params: true` in `lumina_settings` or on the deployment, Lumina drops the images and sends only the text. A request that has no text left after the drop still gets a 400.
 
 ## /v1/systemone
 
@@ -386,7 +386,7 @@ Every question has a `type` and an optional `instructions` field. Extra fields o
 | `score` | Required array of 1 to 10 levels, lowest first | `score` (0 to levels - 1), `confidence`, `legend`, `probabilities` per level |
 | `box` | None. TypeSafe `jev-1.14.0` and `jev-preview` only, with the [images header](#typesafe-images-box-questions-and-long-context) | `box` with `top`, `bottom`, `left` and `right`, `confidence` |
 
-On both routes, requests that break these rules, such as no questions at all, duplicate choice values or a `score` question with 11 levels, are rejected by LiteLLM with a 400 before any provider is called
+On both routes, requests that break these rules, such as no questions at all, duplicate choice values or a `score` question with 11 levels, are rejected by Lumina with a 400 before any provider is called
 
 ## TypeSafe images, box questions and long context
 
@@ -430,16 +430,16 @@ The box edges are fractions of the image height and width, measured from the top
 }
 ```
 
-On `/v1/decisions`, send the images as `input_image` parts with the same header. LiteLLM turns each PNG or JPEG into an asset, puts the asset's name where the image was in the text, and downloads image URLs first. A `box` question comes back as `{"type": "box", "name": ..., "box": {...}, "confidence": ...}` in its place in `answers`.
+On `/v1/decisions`, send the images as `input_image` parts with the same header. Lumina turns each PNG or JPEG into an asset, puts the asset's name where the image was in the text, and downloads image URLs first. A `box` question comes back as `{"type": "box", "name": ..., "box": {...}, "confidence": ...}` in its place in `answers`.
 
-`box` works on `jev-1.14.0` and `jev-preview`, and only with the images header, even when the request has no image. A box question to another model, `jev-1.13.0` and `jev-latest` included, or without the header gets a 400 before the provider is called, or with `drop_params` on, LiteLLM drops the question. A dropped question comes back as `{"type": "refusal"}` on `/v1/decisions` and is left out of `answers` on `/v1/systemone`. Without the images header, `assets` and `input_image` parts get the same 400 or drop on TypeSafe that they get on providers without image input, and with `drop_params` on, LiteLLM also drops any `assets` entry it cannot read and keeps the rest.
+`box` works on `jev-1.14.0` and `jev-preview`, and only with the images header, even when the request has no image. A box question to another model, `jev-1.13.0` and `jev-latest` included, or without the header gets a 400 before the provider is called, or with `drop_params` on, Lumina drops the question. A dropped question comes back as `{"type": "refusal"}` on `/v1/decisions` and is left out of `answers` on `/v1/systemone`. Without the images header, `assets` and `input_image` parts get the same 400 or drop on TypeSafe that they get on providers without image input, and with `drop_params` on, Lumina also drops any `assets` entry it cannot read and keeps the rest.
 
 In the SDK, pass the headers in `extra_headers`
 
 ```python showLineNumbers
-import litellm
+import lumina
 
-response = litellm.systemone(
+response = lumina.systemone(
     model="typesafe/jev-1.14.0",
     state={"photo": "photo-7f3a9c"},
     assets={"photo-7f3a9c": {"type": "image", "format": "png", "data_base64": "<BASE64_PNG>"}},
@@ -451,15 +451,15 @@ print(response.answers["red_square"].box)
 
 ## SDK usage
 
-The SDK has one function per request format. `litellm.decisions` takes the OpenAI Decisions shape (`input`, a `questions` list and an optional `safety_identifier`) and returns the OpenAI response, with `answers` as a list. `litellm.systemone` takes the System One shape (`state` and a `questions` mapping keyed by question name) and returns the System One response, with `answers` keyed by question name. Both work with every supported provider, so you pick the function by the request shape you write, not by the provider you call.
+The SDK has one function per request format. `lumina.decisions` takes the OpenAI Decisions shape (`input`, a `questions` list and an optional `safety_identifier`) and returns the OpenAI response, with `answers` as a list. `lumina.systemone` takes the System One shape (`state` and a `questions` mapping keyed by question name) and returns the System One response, with `answers` keyed by question name. Both work with every supported provider, so you pick the function by the request shape you write, not by the provider you call.
 
 ```python showLineNumbers title="OpenAI Decisions format" keep-model-ids
 import os
-import litellm
+import lumina
 
 os.environ["OPENAI_API_KEY"] = ""
 
-response = litellm.decisions(
+response = lumina.decisions(
     model="openai/gpt-6-luna",
     input="Customer wrote: I was charged twice for my order #4411 and want one of the charges refunded today.",
     questions=[
@@ -472,11 +472,11 @@ print(response.usage)
 
 ```python showLineNumbers title="System One format"
 import os
-import litellm
+import lumina
 
 os.environ["TYPESAFE_API_KEY"] = ""
 
-response = litellm.systemone(
+response = lumina.systemone(
     model="typesafe/jev-latest",
     state="Customer wrote: I was charged twice for my order #4411 and want one of the charges refunded today.",
     questions={
@@ -486,17 +486,17 @@ response = litellm.systemone(
 print(response.answers["is_refund_request"].noul)
 ```
 
-The async versions are `litellm.adecisions` and `litellm.asystemone` and take the same arguments.
+The async versions are `lumina.adecisions` and `lumina.asystemone` and take the same arguments.
 
 ```python showLineNumbers
 import asyncio
 import os
-import litellm
+import lumina
 
 os.environ["TYPESAFE_API_KEY"] = ""
 
 async def main():
-    response = await litellm.asystemone(
+    response = await lumina.asystemone(
         model="typesafe/jev-latest",
         state="Customer wrote: I was charged twice for my order #4411 and want one of the charges refunded today.",
         questions={
@@ -508,19 +508,19 @@ async def main():
 asyncio.run(main())
 ```
 
-All four functions also accept `safety_identifier`, `api_key`, `api_base`, `timeout`, `custom_llm_provider` and `extra_headers`. `litellm.systemone` and `litellm.asystemone` also take `images`, a list of image URLs or data URLs, and `assets`, the TypeSafe image map described in [TypeSafe images, box questions and long context](#typesafe-images-box-questions-and-long-context). Passing `images` to `litellm.decisions` raises a `BadRequestError` unless `drop_params` is on, since the OpenAI format carries images as `input_image` parts. Passing `input` to `litellm.systemone` raises a `BadRequestError` that points at `litellm.decisions`. Passing `state` to `litellm.decisions` still works for existing callers, it sends the System One format and emits a `UserWarning` that points at `litellm.systemone`. A model whose prefix is not one of the supported providers fails with a `BadRequestError` that lists the supported ones.
+All four functions also accept `safety_identifier`, `api_key`, `api_base`, `timeout`, `custom_llm_provider` and `extra_headers`. `lumina.systemone` and `lumina.asystemone` also take `images`, a list of image URLs or data URLs, and `assets`, the TypeSafe image map described in [TypeSafe images, box questions and long context](#typesafe-images-box-questions-and-long-context). Passing `images` to `lumina.decisions` raises a `BadRequestError` unless `drop_params` is on, since the OpenAI format carries images as `input_image` parts. Passing `input` to `lumina.systemone` raises a `BadRequestError` that points at `lumina.decisions`. Passing `state` to `lumina.decisions` still works for existing callers, it sends the System One format and emits a `UserWarning` that points at `lumina.systemone`. A model whose prefix is not one of the supported providers fails with a `BadRequestError` that lists the supported ones.
 
 Through the Router the same split applies: `router.decisions` and `router.adecisions` take the OpenAI shape, `router.systemone` and `router.asystemone` take the System One shape. On the proxy, `/v1/systemone` requests are logged with call type `asystemone` and `/v1/decisions` requests with `adecisions`.
 
 :::info Upgrading from v1.104.x
-In v1.104.2 through v1.104.x, `litellm.decisions` accepted both shapes and picked the format from whether you passed `input` or `state`. Those calls keep working unchanged, with a `UserWarning`. Rename `litellm.decisions(state=...)` to `litellm.systemone(state=...)` when convenient, the arguments stay the same.
+In v1.104.2 through v1.104.x, `lumina.decisions` accepted both shapes and picked the format from whether you passed `input` or `state`. Those calls keep working unchanged, with a `UserWarning`. Rename `lumina.decisions(state=...)` to `lumina.systemone(state=...)` when convenient, the arguments stay the same.
 :::
 
 ## Limits
 
-OpenAI requires `instructions` on every question and at least 2 choices or score levels. When a System One question without `instructions` goes to an OpenAI model, LiteLLM fills in a generic one such as "Which choice best fits the input?", and a noul question's `criteria` are folded into the instructions OpenAI sees. A choice with one label or a score with one level has no OpenAI equivalent, so LiteLLM rejects it with a 400 before OpenAI is called
+OpenAI requires `instructions` on every question and at least 2 choices or score levels. When a System One question without `instructions` goes to an OpenAI model, Lumina fills in a generic one such as "Which choice best fits the input?", and a noul question's `criteria` are folded into the instructions OpenAI sees. A choice with one label or a score with one level has no OpenAI equivalent, so Lumina rejects it with a 400 before OpenAI is called
 
-A choice question cannot have both a boolean value and a string with the same text, such as `true` and `"true"`, because System One providers key choices by their text. LiteLLM rejects that request with a 400
+A choice question cannot have both a boolean value and a string with the same text, such as `true` and `"true"`, because System One providers key choices by their text. Lumina rejects that request with a 400
 
 vLLM takes at most 64 questions per request, 26 options per `choice` and 10 levels per `score`, as listed in the Limits section of its [Structured Decisions](https://github.com/vllm-project/vllm/blob/v0.32.0/docs/serving/online_serving/structured_decisions.md#limits) docs
 
@@ -528,7 +528,7 @@ vLLM takes at most 64 questions per request, 26 options per `choice` and 10 leve
 
 ### Add a decision model
 
-Go to **Models + Endpoints**, open the **Add Model** tab and pick the provider, for example OpenAI. Pick the decision model under **LiteLLM Model Name(s)**, for example `gpt-6-luna`, and a **Decision model** note confirms the pick and links to the Decisions playground. Enter the provider credentials as you would for any other model, then click **Add Model**. The model then answers on `/v1/decisions` and `/v1/systemone` under its public model name. Providers that need an endpoint URL, such as Databricks and Microsoft Foundry, take it in the **API Base** field, matching the `api_base` in the [proxy setup](#proxy-setup). The optional **Mode** dropdown has a **Decisions - /v1/decisions** entry from `v1.107.0-rc.1`, named **Evaluation - /v1/decisions** in `v1.106.0`, for health checking the model over `/v1/decisions`.
+Go to **Models + Endpoints**, open the **Add Model** tab and pick the provider, for example OpenAI. Pick the decision model under **Lumina Model Name(s)**, for example `gpt-6-luna`, and a **Decision model** note confirms the pick and links to the Decisions playground. Enter the provider credentials as you would for any other model, then click **Add Model**. The model then answers on `/v1/decisions` and `/v1/systemone` under its public model name. Providers that need an endpoint URL, such as Databricks and Microsoft Foundry, take it in the **API Base** field, matching the `api_base` in the [proxy setup](#proxy-setup). The optional **Mode** dropdown has a **Decisions - /v1/decisions** entry from `v1.107.0-rc.1`, named **Evaluation - /v1/decisions** in `v1.106.0`, for health checking the model over `/v1/decisions`.
 
 <Image img={require('../img/decisions_add_model.png')} alt="Add Model with OpenAI and gpt-6-luna picked, showing the Decision model note" />
 

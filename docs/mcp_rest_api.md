@@ -7,14 +7,14 @@ Guide to call MCP tools **directly** over HTTP.
 
 Use this when you already know which tool to run. For LLM-driven tool use, see [Using your MCP](./mcp_usage.md).
 
-**Base URL:** `http://localhost:4000` (replace with your LiteLLM proxy URL)
+**Base URL:** `http://localhost:4000` (replace with your Lumina proxy URL)
 
-**Auth:** LiteLLM API key on every request:
+**Auth:** Lumina API key on every request:
 
 ```bash
 -H "Authorization: Bearer $LUMINA_API_KEY"
 # or
--H "x-litellm-api-key: sk-<your-litellm-api-key>"
+-H "x-lumina-api-key: sk-<your-lumina-api-key>"
 ```
 
 ---
@@ -33,7 +33,7 @@ These routes are separate from the JSON-RPC MCP transport at `/mcp` or `/{server
 
 ## Tool naming
 
-LiteLLM registers tools from multiple MCP servers. Tool names in requests follow one of two patterns:
+Lumina registers tools from multiple MCP servers. Tool names in requests follow one of two patterns:
 
 | Pattern | When to use | Example |
 |---------|-------------|---------|
@@ -126,11 +126,11 @@ curl -s -X POST http://localhost:4000/mcp-rest/tools/call \
   }' | jq .
 ```
 
-### Works: `x-litellm-api-key` header
+### Works: `x-lumina-api-key` header
 
 ```bash
 curl -s -X POST http://localhost:4000/mcp-rest/tools/call \
-  -H "x-litellm-api-key: sk-<your-litellm-api-key>" \
+  -H "x-lumina-api-key: sk-<your-lumina-api-key>" \
   -H "Content-Type: application/json" \
   -d '{
     "server_id": "order_status_mcp",
