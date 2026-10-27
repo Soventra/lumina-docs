@@ -1,0 +1,4 @@
+interface:
+  display_name: "LiteLLM Paper Diagrams"
+  short_description: "White and blue explanatory diagrams for LiteLLM"
+  default_prompt: "Use $litellm-paper-diagrams to illustrate this LiteLLM blog post in the approved paper schematic style."
