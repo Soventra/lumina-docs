@@ -22,7 +22,7 @@ Set provider budgets in your `proxy_config.yaml` file
 ```yaml
 model_list:
     - model_name: {{openai_small}}
-      litellm_params:
+      lumina_params:
         model: openai/{{openai_small}}
         api_key: os.environ/OPENAI_API_KEY
 
@@ -50,7 +50,7 @@ router_settings:
   redis_password: os.environ/REDIS_PASSWORD
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### Make a test request
@@ -66,7 +66,7 @@ We expect the first request to succeed, and the second request to fail since we 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -83,7 +83,7 @@ Expect this to fail since since we cross the budget for provider `openai`
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -146,7 +146,7 @@ Example Request
 ```bash
 curl -X GET http://localhost:4000/provider/budgets \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 Example Response
@@ -204,13 +204,13 @@ Set model budgets in your `proxy_config.yaml` file
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
       max_budget: 0.000000000001 # (USD)
       budget_duration: 1d # (Duration. can be 1s, 1m, 1h, 1d, 1mo)
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       max_budget: 100 # (USD)
@@ -232,7 +232,7 @@ We expect the first request to succeed, and the second request to fail since we 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -249,7 +249,7 @@ Expect this to fail since since we cross the budget for `openai/{{openai_large}}
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -263,7 +263,7 @@ Expected response on failure
 ```json
 {
     "error": {
-        "message": "No deployments available - crossed budget: Exceeded budget for deployment model_name: {{openai_large}}, litellm_params.model: openai/{{openai_large}}, model_id: dbe80f2fe2b2465f7bfa9a5e77e0f143a2eb3f7d167a8b55fb7fe31aed62587f: 0.00015250000000000002 >= 1e-12",
+        "message": "No deployments available - crossed budget: Exceeded budget for deployment model_name: {{openai_large}}, lumina_params.model: openai/{{openai_large}}, model_id: dbe80f2fe2b2465f7bfa9a5e77e0f143a2eb3f7d167a8b55fb7fe31aed62587f: 0.00015250000000000002 >= 1e-12",
         "type": "None",
         "param": "None",
         "code": "429"
@@ -288,7 +288,7 @@ Set tag budgets by setting `tag_budget_config` in your `proxy_config.yaml` file
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -314,7 +314,7 @@ We expect the first request to succeed, and the second request to fail since we 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -332,7 +332,7 @@ Expect this to fail since since we cross the budget for tag=`product:chat-bot`
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -367,7 +367,7 @@ If you are using a multi-instance setup, you will need to set the Redis host, po
 ```yaml
 model_list:
     - model_name: {{openai_small}}
-      litellm_params:
+      lumina_params:
         model: openai/{{openai_small}}
         api_key: os.environ/OPENAI_API_KEY
 
@@ -383,7 +383,7 @@ router_settings:
   redis_password: os.environ/REDIS_PASSWORD
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ## Spec for provider_budget_config

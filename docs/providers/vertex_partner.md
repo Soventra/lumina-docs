@@ -63,12 +63,12 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: anthropic-vertex
-      litellm_params:
+      lumina_params:
         model: vertex_ai/{{anthropic}}
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
     - model_name: anthropic-vertex
-      litellm_params:
+      lumina_params:
         model: vertex_ai/{{anthropic}}
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-west-1"
@@ -86,7 +86,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "anthropic-vertex", # the 'model_name' in config
@@ -129,7 +129,7 @@ resp = completion(
 
 ```yaml
 - model_name: {{anthropic}}
-  litellm_params:
+  lumina_params:
     model: vertex_ai/{{anthropic}}
     vertex_ai_project: "my-test-project"
     vertex_ai_location: "us-west-1"
@@ -269,7 +269,7 @@ print("\nModel Response", response)
 ```yaml
 model_list:
   - model_name: glm-4.7
-    litellm_params:
+    lumina_params:
       model: vertex_ai/zai-org/glm-4.7-maas
       vertex_project: "my-project"
       # vertex_location routes to "global"
@@ -287,7 +287,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "glm-4.7",
@@ -348,12 +348,12 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: anthropic-llama
-      litellm_params:
+      lumina_params:
         model: vertex_ai/meta/llama3-405b-instruct-maas
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
     - model_name: anthropic-llama
-      litellm_params:
+      lumina_params:
         model: vertex_ai/meta/llama3-405b-instruct-maas
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-west-1"
@@ -371,7 +371,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "anthropic-llama", # the 'model_name' in config
@@ -442,12 +442,12 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: vertex-mistral
-      litellm_params:
+      lumina_params:
         model: vertex_ai/mistral-large@2407
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
     - model_name: vertex-mistral
-      litellm_params:
+      lumina_params:
         model: vertex_ai/mistral-large@2407
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-west-1"
@@ -465,7 +465,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "vertex-mistral", # the 'model_name' in config
@@ -527,12 +527,12 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: vertex-codestral
-      litellm_params:
+      lumina_params:
         model: vertex_ai/codestral@2405
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
     - model_name: vertex-codestral
-      litellm_params:
+      lumina_params:
         model: vertex_ai/codestral@2405
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-west-1"
@@ -550,7 +550,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/completions' \
-      -H "Authorization: Bearer $LITELLM_API_KEY" \
+      -H "Authorization: Bearer $LUMINA_API_KEY" \
       -H 'Content-Type: application/json' \
       -d '{
             "model": "vertex-codestral", # the 'model_name' in config
@@ -608,12 +608,12 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: jamba-1.5-mini
-      litellm_params:
+      lumina_params:
         model: vertex_ai/jamba-1.5-mini@001
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
     - model_name: jamba-1.5-large
-      litellm_params:
+      lumina_params:
         model: vertex_ai/jamba-1.5-large@001
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-west-1"
@@ -631,7 +631,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "jamba-1.5-large",
@@ -694,12 +694,12 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: vertex-qwen
-      litellm_params:
+      lumina_params:
         model: vertex_ai/qwen/qwen3-coder-480b-a35b-instruct-maas
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
     - model_name: vertex-qwen
-      litellm_params:
+      lumina_params:
         model: vertex_ai/qwen/qwen3-coder-480b-a35b-instruct-maas
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-west-1"
@@ -717,7 +717,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "vertex-qwen", # the 'model_name' in config
@@ -779,7 +779,7 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: gpt-oss
-      litellm_params:
+      lumina_params:
         model: vertex_ai/openai/gpt-oss-20b-maas
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-central1"
@@ -797,7 +797,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "gpt-oss", # the 'model_name' in config
@@ -841,7 +841,7 @@ response = completion(
 ```yaml
 model_list:
 - model_name: gpt-oss
-  litellm_params:
+  lumina_params:
     model: vertex_ai/openai/gpt-oss-20b-maas
     vertex_ai_project: "my-test-project"
     vertex_ai_location: "us-central1"
@@ -916,7 +916,7 @@ print("\nModel Response", response)
 ```yaml
 model_list:
     - model_name: grok-vertex
-      litellm_params:
+      lumina_params:
         model: vertex_ai/xai/grok-4.1-fast-non-reasoning
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-central1"
@@ -934,7 +934,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "grok-vertex",

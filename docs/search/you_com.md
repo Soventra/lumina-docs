@@ -51,13 +51,13 @@ response = search(
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 search_tools:
   - search_tool_name: you-com-search
-    litellm_params:
+    lumina_params:
       search_provider: you_com
       # api_key optional - omit to use the keyless free tier
       api_key: os.environ/YOUCOM_API_KEY
@@ -75,7 +75,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test Request"
 curl http://0.0.0.0:4000/v1/search/you-com-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments",

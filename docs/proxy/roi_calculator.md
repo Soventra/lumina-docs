@@ -39,9 +39,9 @@ Set `PROXY_BASE_URL` to the gateway's public URL. Register a GitHub App with rea
 Set its setup URL to `<PROXY_BASE_URL>/roi-calculator/observed/oauth/github/installed`, enable **Redirect on update**, and leave authorization during installation disabled. Generate a private key in the app settings so GitHub allows installation, and store it securely. The gateway uses the app's client ID and a generated client secret for authorization and does not need that private key. Configure:
 
 ```bash
-LITELLM_ROI_GITHUB_CLIENT_ID=<app-client-id>
-LITELLM_ROI_GITHUB_CLIENT_SECRET=<app-client-secret>
-LITELLM_ROI_GITHUB_APP_SLUG=<app-url-slug>
+LUMINA_ROI_GITHUB_CLIENT_ID=<app-client-id>
+LUMINA_ROI_GITHUB_CLIENT_SECRET=<app-client-secret>
+LUMINA_ROI_GITHUB_APP_SLUG=<app-url-slug>
 ```
 
 For GitLab, register a confidential OAuth application with `read_api` and `read_user` scopes and this callback URL:
@@ -50,7 +50,7 @@ For GitLab, register a confidential OAuth application with `read_api` and `read_
 <PROXY_BASE_URL>/roi-calculator/observed/oauth/gitlab/callback
 ```
 
-Configure `LITELLM_ROI_GITLAB_CLIENT_ID` and `LITELLM_ROI_GITLAB_CLIENT_SECRET`. Self-hosted apps also use `LITELLM_ROI_GITHUB_URL` or `LITELLM_ROI_GITLAB_URL`, set to the provider's base URL without the API suffix. App credentials and `PROXY_BASE_URL` must be consistent across gateway workers
+Configure `LUMINA_ROI_GITLAB_CLIENT_ID` and `LUMINA_ROI_GITLAB_CLIENT_SECRET`. Self-hosted apps also use `LUMINA_ROI_GITHUB_URL` or `LUMINA_ROI_GITLAB_URL`, set to the provider's base URL without the API suffix. App credentials and `PROXY_BASE_URL` must be consistent across gateway workers
 
 Access and refresh tokens are encrypted using the gateway's configured encryption key. Authorization uses PKCE and a single-use state tied to an HTTP-only browser cookie. The gateway refreshes expiring credentials automatically
 

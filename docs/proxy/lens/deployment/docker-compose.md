@@ -15,9 +15,9 @@ Complete [steps 1–3 of Add Lens to LiteLLM](./litellm.md#1-get-the-lens-addres
 In the directory that contains your gateway's Compose file, create a private `lens-gateway.env` file with these values:
 
 ```dotenv
-LITELLM_LENS_URL=https://lens.example.com
-LITELLM_LENS_PUBLIC_URL=https://lens.example.com
-LITELLM_LENS_SERVICE_TOKEN=YOUR_SERVICE_SECRET
+LUMINA_LENS_URL=https://lens.example.com
+LUMINA_LENS_PUBLIC_URL=https://lens.example.com
+LUMINA_LENS_SERVICE_TOKEN=YOUR_SERVICE_SECRET
 LENS_GATEWAY_SECRET=YOUR_SIGNING_SECRET
 ```
 

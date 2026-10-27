@@ -36,12 +36,12 @@ source .venv-mongodb-setup/bin/activate
 pip install openai pymongo
 ```
 
-Set `MONGODB_CONNECTION_STRING` to your cluster's full URI and `LITELLM_API_KEY` to a LiteLLM key with access to the embedding model. Set `LITELLM_BASE_URL` if your proxy uses a different address:
+Set `MONGODB_CONNECTION_STRING` to your cluster's full URI and `LUMINA_API_KEY` to a LiteLLM key with access to the embedding model. Set `LUMINA_BASE_URL` if your proxy uses a different address:
 
 ```bash
 export MONGODB_CONNECTION_STRING='mongodb+srv://<database-user>:<password>@<cluster-hostname>/'
-export LITELLM_API_KEY='<litellm-api-key>'
-export LITELLM_BASE_URL='http://localhost:4000/v1'
+export LUMINA_API_KEY='<litellm-api-key>'
+export LUMINA_BASE_URL='http://localhost:4000/v1'
 ```
 
 Use the database user's credentials, which are separate from your Atlas website login. Percent-encode special characters in the username and password.
@@ -75,8 +75,8 @@ with MongoClient(os.environ["MONGODB_CONNECTION_STRING"]) as mongo:
         raise RuntimeError("Demo collection already exists. Use a fresh database for this tutorial.")
 
     with OpenAI(
-        base_url=os.environ.get("LITELLM_BASE_URL", "http://localhost:4000/v1"),
-        api_key=os.environ["LITELLM_API_KEY"],
+        base_url=os.environ.get("LUMINA_BASE_URL", "http://localhost:4000/v1"),
+        api_key=os.environ["LUMINA_API_KEY"],
     ) as client:
         embeddings = client.embeddings.create(
             model="text-embedding-3-small",
@@ -152,7 +152,7 @@ You can run the same search through the API. Use a LiteLLM key with access to th
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/vector_stores/litellm_demo_policy_idx/search' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "query": "How long can I book a projector, and which reservation code should I use?",
@@ -170,7 +170,7 @@ Use a LiteLLM key with access to both the store and the chat model:
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "gpt-4o-mini",

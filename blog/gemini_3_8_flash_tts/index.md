@@ -61,11 +61,11 @@ response.stream_to_file("welcome.wav")
 ```yaml
 model_list:
   - model_name: gemini-3.8-flash-tts
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.8-flash-tts
       api_key: os.environ/GEMINI_API_KEY
   - model_name: gemini-3.8-flash-lite-tts
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.8-flash-lite-tts
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -80,7 +80,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini-3.8-flash-tts",

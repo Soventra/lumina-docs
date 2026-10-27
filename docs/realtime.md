@@ -26,7 +26,7 @@ Supported Providers:
 ```yaml
 model_list:
   - model_name: openai-gpt-4o-realtime-audio
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-realtime-preview-2024-10-01
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -38,13 +38,13 @@ model_list:
 ```yaml
 model_list:
   - model_name: azure-gpt-4o-realtime-audio
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4o-realtime-preview
       api_key: os.environ/AZURE_SWEDEN_API_KEY
       api_base: os.environ/AZURE_SWEDEN_API_BASE
 
   - model_name: azure-gpt-realtime
-    litellm_params:
+    lumina_params:
       model: azure/gpt-realtime
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -52,7 +52,7 @@ model_list:
       mode: realtime
 
   - model_name: openai-gpt-4o-realtime-audio
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-realtime-preview-2024-10-01
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -63,7 +63,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: grok-voice-agent
-    litellm_params:
+    lumina_params:
       model: xai/grok-voice-latest
       api_key: os.environ/XAI_API_KEY
     model_info:
@@ -131,7 +131,7 @@ import os
 
 from openai import AsyncOpenAI
 
-client = AsyncOpenAI(base_url="http://0.0.0.0:4000", api_key=os.environ["LITELLM_API_KEY"])
+client = AsyncOpenAI(base_url="http://0.0.0.0:4000", api_key=os.environ["LUMINA_API_KEY"])
 
 async with client.realtime.connect(model="azure-gpt-realtime") as connection:
     await connection.session.update(
@@ -143,12 +143,12 @@ async with client.realtime.connect(model="azure-gpt-realtime") as connection:
             break
 ```
 
-To pin one protocol regardless of what the client sends, set `realtime_protocol` on the deployment or `LITELLM_AZURE_REALTIME_PROTOCOL` in the proxy's environment. The deployment setting wins over the environment variable, and both win over the client header. The realtime health check (`/health` on a `mode: realtime` deployment, and the Admin UI's Test Connect) has no client header to read, so it probes the GA endpoint unless one of those pins the protocol
+To pin one protocol regardless of what the client sends, set `realtime_protocol` on the deployment or `LUMINA_AZURE_REALTIME_PROTOCOL` in the proxy's environment. The deployment setting wins over the environment variable, and both win over the client header. The realtime health check (`/health` on a `mode: realtime` deployment, and the Admin UI's Test Connect) has no client header to read, so it probes the GA endpoint unless one of those pins the protocol
 
 ```yaml
 model_list:
   - model_name: azure-gpt-realtime
-    litellm_params:
+    lumina_params:
       model: azure/gpt-realtime
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -156,7 +156,7 @@ model_list:
 ```
 
 ```bash
-export LITELLM_AZURE_REALTIME_PROTOCOL=beta # or GA
+export LUMINA_AZURE_REALTIME_PROTOCOL=beta # or GA
 ```
 
 ## Guardrails

@@ -196,11 +196,11 @@ Marengo Embed 3.0 (`twelvelabs.marengo-embed-3-0-v1:0`, with the `us.` and `eu.`
 ```yaml
 model_list:
   - model_name: marengo-3
-    litellm_params:
+    lumina_params:
       model: bedrock/us.twelvelabs.marengo-embed-3-0-v1:0
       aws_region_name: us-east-1
   - model_name: marengo-3-async
-    litellm_params:
+    lumina_params:
       model: bedrock/async_invoke/twelvelabs.marengo-embed-3-0-v1:0
       aws_region_name: us-east-1
 ```
@@ -209,7 +209,7 @@ model_list:
 
 ```bash
 curl http://0.0.0.0:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H "Content-Type: application/json" \
   -d '{"model": "marengo-3", "input": "a dog running on the beach", "input_type": "text"}'
 ```
 
@@ -217,7 +217,7 @@ curl http://0.0.0.0:4000/v1/embeddings \
 
 ```bash
 curl http://0.0.0.0:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H "Content-Type: application/json" \
   -d '{"model": "marengo-3", "input": "<base64 image>", "input_type": "image"}'
 ```
 
@@ -225,7 +225,7 @@ curl http://0.0.0.0:4000/v1/embeddings \
 
 ```bash
 curl http://0.0.0.0:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H "Content-Type: application/json" \
   -d '{"model": "marengo-3", "input": "a duck", "input_type": "text_image", "media_source": "s3://your-bucket/duck.png"}'
 ```
 
@@ -233,7 +233,7 @@ curl http://0.0.0.0:4000/v1/embeddings \
 
 ```bash
 curl http://0.0.0.0:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H "Content-Type: application/json" \
   -d '{"model": "marengo-3", "input": "a photo of <@bird> on water", "input_type": "multi_input", "media_sources": {"bird": "<base64 image>"}}'
 ```
 
@@ -449,13 +449,13 @@ print(response)
 ```yaml
 model_list:
   - model_name: titan-embed-v1
-    litellm_params:
+    lumina_params:
       model: bedrock/amazon.titan-embed-text-v1
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: us-east-1
   - model_name: titan-embed-v2
-    litellm_params:
+    lumina_params:
       model: bedrock/amazon.titan-embed-text-v2:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY

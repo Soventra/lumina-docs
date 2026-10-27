@@ -58,13 +58,13 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: mimo-v2.6-pro
-    litellm_params:
+    lumina_params:
       model: xiaomi_mimo/mimo-v2.6-pro
       api_key: os.environ/XIAOMI_MIMO_API_KEY
       allowed_openai_params: ["thinking"]
 
   - model_name: mimo-v2.6-flash
-    litellm_params:
+    lumina_params:
       model: xiaomi_mimo/mimo-v2.6-flash
       api_key: os.environ/XIAOMI_MIMO_API_KEY
 ```

@@ -103,7 +103,7 @@ print(transcript.text)
 
 ## Calling AssemblyAI EU endpoints
 
-If you want to send your request to the AssemblyAI EU endpoint, you can do so by setting the `LITELLM_PROXY_BASE_URL` to `<your-proxy-base-url>/eu.assemblyai`
+If you want to send your request to the AssemblyAI EU endpoint, you can do so by setting the `LUMINA_PROXY_BASE_URL` to `<your-proxy-base-url>/eu.assemblyai`
 
 
 ```python
@@ -155,7 +155,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: assemblyai/*
-    litellm_params:
+    lumina_params:
       model: assemblyai/*
       api_key: os.environ/ASSEMBLYAI_API_KEY
 ```

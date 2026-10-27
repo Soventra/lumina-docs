@@ -182,7 +182,7 @@ export AZURE_AI_API_BASE="https://<resource-name>.services.ai.azure.com/anthropi
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: azure_ai/{{anthropic}}
       api_base: os.environ/AZURE_AI_API_BASE
       api_key: os.environ/AZURE_AI_API_KEY

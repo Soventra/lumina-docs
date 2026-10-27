@@ -114,7 +114,7 @@ Beyond the new entries, this release applies OpenAI's price cut to the GPT-5.6 f
 - **[Batches](../../docs/batches)**
     - Encode the public model group on background-created output file ids - [PR #35406](https://github.com/BerriAI/litellm/pull/35406)
 - **Managed files**
-    - Source the Vertex AI managed-file read bucket and credentials from per-model `litellm_params` - [PR #34847](https://github.com/BerriAI/litellm/pull/34847)
+    - Source the Vertex AI managed-file read bucket and credentials from per-model `lumina_params` - [PR #34847](https://github.com/BerriAI/litellm/pull/34847)
 - **[Passthrough](../../docs/pass_through/vertex_ai)**
     - Decide Vertex `rawPredict` passthrough streaming from the request body - [PR #34672](https://github.com/BerriAI/litellm/pull/34672)
 - **A2A**
@@ -245,7 +245,7 @@ Beyond the new entries, this release applies OpenAI's price cut to the GPT-5.6 f
     - Let the classifier see assistant turns and rate what a short reply approves - [PR #35471](https://github.com/BerriAI/litellm/pull/35471)
     - Drop the tier-rubric override and close the rubric on the window it was given - [PR #35504](https://github.com/BerriAI/litellm/pull/35504)
     - Record why the auto-router picked a tier, capture the classifier request body, and mark the auto-router's own classifier calls in spend logs - [PR #35016](https://github.com/BerriAI/litellm/pull/35016), [PR #35164](https://github.com/BerriAI/litellm/pull/35164), [PR #35300](https://github.com/BerriAI/litellm/pull/35300)
-    - Honor request-level `num_retries` over a deployment's `litellm_params` value - [PR #35483](https://github.com/BerriAI/litellm/pull/35483)
+    - Honor request-level `num_retries` over a deployment's `lumina_params` value - [PR #35483](https://github.com/BerriAI/litellm/pull/35483)
     - Serialize latency for non-chat responses in lowest-latency routing - [PR #33290](https://github.com/BerriAI/litellm/pull/33290)
 - **Connections & caching**
     - Stop an unreachable Redis from blocking every request - [PR #35273](https://github.com/BerriAI/litellm/pull/35273)

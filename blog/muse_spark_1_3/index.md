@@ -64,13 +64,13 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: muse-spark-1.3
-    litellm_params:
+    lumina_params:
       model: meta/muse-spark-1.3
       api_key: os.environ/META_API_KEY
 
   # Cheaper tier, but Meta may train on your prompts and completions
   - model_name: muse-spark-1.3-contributor
-    litellm_params:
+    lumina_params:
       model: meta/muse-spark-1.3-contributor
       api_key: os.environ/META_API_KEY
 ```

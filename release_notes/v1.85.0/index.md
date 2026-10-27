@@ -211,7 +211,7 @@ Pricing/metadata also updated for existing entries: Gemini multimodal-embedding 
     - Arize `_set_usage_outputs` handles raw OpenAI Pydantic `CompletionUsage`; remove unwanted metadata info from LangSmith - [PR #26506](https://github.com/BerriAI/litellm/pull/26506), [PR #26894](https://github.com/BerriAI/litellm/pull/26894)
 - **General**
     - Decouple S3 audit-log config via `s3_audit_callback_params` - [PR #27222](https://github.com/BerriAI/litellm/pull/27222)
-    - Set `verbose_logger` level when `LITELLM_LOG=INFO`; require a team-management role on `/team/{id}/callback`; close callback-config and observability-credential side channels; guard dynamic integration hosts - [PR #26401](https://github.com/BerriAI/litellm/pull/26401), [PR #26819](https://github.com/BerriAI/litellm/pull/26819), [PR #27081](https://github.com/BerriAI/litellm/pull/27081), [PR #26921](https://github.com/BerriAI/litellm/pull/26921)
+    - Set `verbose_logger` level when `LUMINA_LOG=INFO`; require a team-management role on `/team/{id}/callback`; close callback-config and observability-credential side channels; guard dynamic integration hosts - [PR #26401](https://github.com/BerriAI/litellm/pull/26401), [PR #26819](https://github.com/BerriAI/litellm/pull/26819), [PR #27081](https://github.com/BerriAI/litellm/pull/27081), [PR #26921](https://github.com/BerriAI/litellm/pull/26921)
 
 ### Guardrails
 

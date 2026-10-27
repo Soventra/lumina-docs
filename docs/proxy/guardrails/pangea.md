@@ -28,13 +28,13 @@ Define the Pangea guardrail under the `guardrails` section of your configuration
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pangea-ai-guard
-    litellm_params:
+    lumina_params:
       guardrail: pangea
       mode: post_call
       api_key: os.environ/PANGEA_AI_GUARD_TOKEN  # Pangea AI Guard API token

@@ -1,6 +1,6 @@
 # Usage telemetry
 
-The LiteLLM proxy can count how requests to it go, which providers it calls, and which Admin UI pages people open, then hand those counts to an HTTP endpoint you set or keep them in its own database. Every group is **off unless you turn it on**, nothing is recorded until you also pick a destination, and nothing leaves your deployment unless that destination is `http`. There is no default endpoint, so reports only ever go to the URL you set in `LITELLM_TELEMETRY_ENDPOINT`.
+The LiteLLM proxy can count how requests to it go, which providers it calls, and which Admin UI pages people open, then hand those counts to an HTTP endpoint you set or keep them in its own database. Every group is **off unless you turn it on**, nothing is recorded until you also pick a destination, and nothing leaves your deployment unless that destination is `http`. There is no default endpoint, so reports only ever go to the URL you set in `LUMINA_TELEMETRY_ENDPOINT`.
 
 Available from v1.107.0.
 
@@ -8,38 +8,38 @@ Telemetry never contains prompts, completions, API keys, user ids, team ids, mod
 
 ## Turn it on
 
-Turn groups on and pick a destination with environment variables. `LITELLM_TELEMETRY_GROUPS` makes the whole Telemetry page read-only, the destination included, so set `LITELLM_TELEMETRY_DESTINATION` with it. `LITELLM_TELEMETRY_DESTINATION` on its own locks only the destination:
+Turn groups on and pick a destination with environment variables. `LUMINA_TELEMETRY_GROUPS` makes the whole Telemetry page read-only, the destination included, so set `LUMINA_TELEMETRY_DESTINATION` with it. `LUMINA_TELEMETRY_DESTINATION` on its own locks only the destination:
 
 ```bash
-export LITELLM_TELEMETRY_GROUPS=heartbeat,request_success,token_info
-export LITELLM_TELEMETRY_DESTINATION=http   # or local_table
-export LITELLM_TELEMETRY_ENDPOINT=https://telemetry.example.com/v1/reports   # needed for http
+export LUMINA_TELEMETRY_GROUPS=heartbeat,request_success,token_info
+export LUMINA_TELEMETRY_DESTINATION=http   # or local_table
+export LUMINA_TELEMETRY_ENDPOINT=https://telemetry.example.com/v1/reports   # needed for http
 ```
 
-A proxy admin can also save groups and a destination through the API. This needs a database, and it is refused while `LITELLM_TELEMETRY_GROUPS` or `LITELLM_TELEMETRY_DISABLED` is set:
+A proxy admin can also save groups and a destination through the API. This needs a database, and it is refused while `LUMINA_TELEMETRY_GROUPS` or `LUMINA_TELEMETRY_DISABLED` is set:
 
 ```bash
 curl -s -X PUT http://localhost:4000/telemetry/settings \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" -H 'content-type: application/json' \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" -H 'content-type: application/json' \
   -d '{"groups": ["heartbeat", "request_success"], "destination": "local_table"}'
 ```
 
-The saved choice is stored in the `LiteLLM_Config` table, so it survives restarts and reaches every worker at its next report window. Each call replaces both groups and destination, so send `destination` every time unless `LITELLM_TELEMETRY_DESTINATION` is set. A call without it saves no destination, and the proxy then records nothing and logs a warning. Neither the environment variables nor the API check for an enterprise license.
+The saved choice is stored in the `LiteLLM_Config` table, so it survives restarts and reaches every worker at its next report window. Each call replaces both groups and destination, so send `destination` every time unless `LUMINA_TELEMETRY_DESTINATION` is set. A call without it saves no destination, and the proxy then records nothing and logs a warning. Neither the environment variables nor the API check for an enterprise license.
 
 A proxy admin can see what is on from **Settings > Telemetry** in the Admin UI (`/ui/telemetry`). The page has a Proxy requests tab and an Admin UI tab, describes what each group sends, says where and how often reports go, and shows the last report this worker sent or, before the first one, a sample report built from made-up traffic. The page cannot turn telemetry on. Every control that would turn on a group or set a first destination saves nothing and opens a dialog instead, or is disabled while telemetry is off. On an enterprise license it asks you to contact your LiteLLM enterprise representative, and without one it says telemetry is an enterprise feature. So the page can only turn off groups saved through the API, or switch a destination that is already set.
 
-To guarantee telemetry stays off whatever is saved through the UI or the API, set `LITELLM_TELEMETRY_DISABLED=true`. It wins over `LITELLM_TELEMETRY_GROUPS` and over the stored settings. Whenever valid `LITELLM_TELEMETRY_*` variables are set, the Admin UI shows a banner naming them (never their values).
+To guarantee telemetry stays off whatever is saved through the UI or the API, set `LUMINA_TELEMETRY_DISABLED=true`. It wins over `LUMINA_TELEMETRY_GROUPS` and over the stored settings. Whenever valid `LUMINA_TELEMETRY_*` variables are set, the Admin UI shows a banner naming them (never their values).
 
-An invalid value, such as an unknown group, a group without the one it needs, an endpoint that is not an HTTP or HTTPS URL, or `LITELLM_TELEMETRY_DESTINATION=http` without an endpoint, leaves telemetry off and the Telemetry page read-only, with no banner. The proxy still starts and logs a warning that names the variable.
+An invalid value, such as an unknown group, a group without the one it needs, an endpoint that is not an HTTP or HTTPS URL, or `LUMINA_TELEMETRY_DESTINATION=http` without an endpoint, leaves telemetry off and the Telemetry page read-only, with no banner. The proxy still starts and logs a warning that names the variable.
 
 There are two destinations, and the proxy never picks one for you:
 
 | Destination | Where reports go | Needs |
 |---|---|---|
-| `http` | Each worker POSTs one JSON report per window to `LITELLM_TELEMETRY_ENDPOINT`, and once more on shutdown. After a network error, a 5xx, 408, 409 or 429, the next report starts at the failed window and adds its counts, unless the groups or destination change first. Reports carry no id, so a receiver that stored the failed POST counts that window twice. Any other response drops that report, and the shutdown report is never retried | `LITELLM_TELEMETRY_ENDPOINT`. Without it, `LITELLM_TELEMETRY_DESTINATION=http` leaves telemetry off, and the UI cannot save `http` |
-| `local_table` | Each worker stores one report per window in the `LiteLLM_TelemetryReport` table, kept for `LITELLM_TELEMETRY_RETENTION_DAYS`. Nothing leaves the proxy, and an air-gapped install can export reports by hand (see [Export reports](#export-reports)) | A database |
+| `http` | Each worker POSTs one JSON report per window to `LUMINA_TELEMETRY_ENDPOINT`, and once more on shutdown. After a network error, a 5xx, 408, 409 or 429, the next report starts at the failed window and adds its counts, unless the groups or destination change first. Reports carry no id, so a receiver that stored the failed POST counts that window twice. Any other response drops that report, and the shutdown report is never retried | `LUMINA_TELEMETRY_ENDPOINT`. Without it, `LUMINA_TELEMETRY_DESTINATION=http` leaves telemetry off, and the UI cannot save `http` |
+| `local_table` | Each worker stores one report per window in the `LiteLLM_TelemetryReport` table, kept for `LUMINA_TELEMETRY_RETENTION_DAYS`. Nothing leaves the proxy, and an air-gapped install can export reports by hand (see [Export reports](#export-reports)) | A database |
 
-If groups are on but no destination is chosen, or the chosen one is not available, nothing is recorded and the proxy logs a warning. The Telemetry page only flags a missing destination, so a saved `http` destination whose `LITELLM_TELEMETRY_ENDPOINT` was later removed still shows there as the destination. A proxy with neither a database nor `LITELLM_TELEMETRY_ENDPOINT` records nothing and logs no warning. A destination switched from the UI takes effect at each worker's next report window, like the groups. `LITELLM_TELEMETRY_DESTINATION` wins over the saved destination.
+If groups are on but no destination is chosen, or the chosen one is not available, nothing is recorded and the proxy logs a warning. The Telemetry page only flags a missing destination, so a saved `http` destination whose `LUMINA_TELEMETRY_ENDPOINT` was later removed still shows there as the destination. A proxy with neither a database nor `LUMINA_TELEMETRY_ENDPOINT` records nothing and logs no warning. A destination switched from the UI takes effect at each worker's next report window, like the groups. `LUMINA_TELEMETRY_DESTINATION` wins over the saved destination.
 
 ## Groups
 
@@ -82,7 +82,7 @@ Provider pass-through requests are counted, but their rows have no provider, pro
 | `endpoint` | The matched route, such as `/chat/completions`, `/v1/messages`, `:generateContent`, a pass-through prefix like `/anthropic`, `/mcp` or `/a2a`. Never the raw path |
 | `handled_by_rust` | Whether the response came from the Rust gateway, read from its `x-litellm-rust: true` response header |
 | `provider` | `request_taxonomy` only. Provider of the deployment that served the request, such as `anthropic`, or `null` when no provider was called |
-| `deployment_hash` | `request_taxonomy` only. First 16 hex characters of an HMAC-SHA256 of the deployment id, keyed by a random secret the proxy creates once and keeps in `LiteLLM_Config`, so it stays the same across workers and restarts and cannot be matched across installs. A proxy without a database keys it from `LITELLM_SALT_KEY` or the master key instead, so proxies that share that key give the same hashes, and with neither each worker picks a random key on every boot. A worker that cannot read the stored secret at start uses the salt key until it restarts |
+| `deployment_hash` | `request_taxonomy` only. First 16 hex characters of an HMAC-SHA256 of the deployment id, keyed by a random secret the proxy creates once and keeps in `LiteLLM_Config`, so it stays the same across workers and restarts and cannot be matched across installs. A proxy without a database keys it from `LUMINA_SALT_KEY` or the master key instead, so proxies that share that key give the same hashes, and with neither each worker picks a random key on every boot. A worker that cannot read the stored secret at start uses the salt key until it restarts |
 | `litellm_status` | Status class the client got: `2xx`, `3xx`, `4xx`, `5xx` |
 | `provider_status` | Status class of the last provider call: `2xx` through `5xx`, `timeout` and `connection_error` when no provider response arrived, or `none` when no provider was called |
 | `litellm_cache_hit` | Whether the LiteLLM response cache answered |
@@ -109,20 +109,20 @@ When reports are kept locally, a proxy admin or admin viewer can page through th
 
 ```bash
 curl -s "http://localhost:4000/telemetry/reports?limit=500" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
-The response holds `reports` plus `next_after` and `next_after_id`. Pass those back as `after` and `after_id` to get the next page, until `next_after` is `null`. `limit` defaults to 500 and goes up to 5000. Another worker can commit a report just after a newer one was exported, so when you resume a later export, start a few windows before your last cursor and skip report ids you already have. Windows with no rows are not stored, so with only `heartbeat` on the table stays empty. Each time a worker stores a report, it deletes reports older than `LITELLM_TELEMETRY_RETENTION_DAYS` (30 by default), so after traffic stops the old reports stay until the next report is stored.
+The response holds `reports` plus `next_after` and `next_after_id`. Pass those back as `after` and `after_id` to get the next page, until `next_after` is `null`. `limit` defaults to 500 and goes up to 5000. Another worker can commit a report just after a newer one was exported, so when you resume a later export, start a few windows before your last cursor and skip report ids you already have. Windows with no rows are not stored, so with only `heartbeat` on the table stays empty. Each time a worker stores a report, it deletes reports older than `LUMINA_TELEMETRY_RETENTION_DAYS` (30 by default), so after traffic stops the old reports stay until the next report is stored.
 
 ## Settings
 
 | Environment variable | Description |
 |---|---|
-| `LITELLM_TELEMETRY_DISABLED` | `true` forces every group off, whatever is set elsewhere |
-| `LITELLM_TELEMETRY_GROUPS` | Comma-separated groups to turn on. When set, it overrides the Admin UI settings, and an empty value means off |
-| `LITELLM_TELEMETRY_DESTINATION` | `local_table` or `http`. When set, it overrides the destination saved in the Admin UI. With neither set, nothing is recorded |
-| `LITELLM_TELEMETRY_ENDPOINT` | HTTP or HTTPS URL that receives one JSON report per window when the destination is `http`. The proxy sends only `content-type` and `user-agent` headers and no auth header, so a receiver that needs a token has to read it from the URL |
-| `LITELLM_TELEMETRY_SETTLE_TIMEOUT_SECONDS` | How long a finished request waits for its provider attempts to be logged before its row is written. Default is `2` |
-| `LITELLM_TELEMETRY_RETENTION_DAYS` | How long locally kept reports are retained. Default is `30` |
+| `LUMINA_TELEMETRY_DISABLED` | `true` forces every group off, whatever is set elsewhere |
+| `LUMINA_TELEMETRY_GROUPS` | Comma-separated groups to turn on. When set, it overrides the Admin UI settings, and an empty value means off |
+| `LUMINA_TELEMETRY_DESTINATION` | `local_table` or `http`. When set, it overrides the destination saved in the Admin UI. With neither set, nothing is recorded |
+| `LUMINA_TELEMETRY_ENDPOINT` | HTTP or HTTPS URL that receives one JSON report per window when the destination is `http`. The proxy sends only `content-type` and `user-agent` headers and no auth header, so a receiver that needs a token has to read it from the URL |
+| `LUMINA_TELEMETRY_SETTLE_TIMEOUT_SECONDS` | How long a finished request waits for its provider attempts to be logged before its row is written. Default is `2` |
+| `LUMINA_TELEMETRY_RETENTION_DAYS` | How long locally kept reports are retained. Default is `30` |
 
 The old `--telemetry` CLI flag still parses but does nothing.

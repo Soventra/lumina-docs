@@ -9,7 +9,7 @@ sidebar_label: Models and routing
 
 ## Gateway mode
 
-With `model="litellm_proxy/coder"`, `coder` is a model group on the gateway. The gateway address and virtual key come from `api_base=` and `api_key=` on the call, or from `LITELLM_PROXY_API_BASE` and `LITELLM_PROXY_API_KEY`. Setting `litellm.use_litellm_proxy = True` sends every call to the gateway, even without the prefix. A gateway model with no base URL or key raises `ValueError` at call time. Load balancing, fallbacks and rate limits on the key all happen on the gateway. See [Using with LiteLLM AI Gateway](./gateway.md).
+With `model="litellm_proxy/coder"`, `coder` is a model group on the gateway. The gateway address and virtual key come from `api_base=` and `api_key=` on the call, or from `LUMINA_PROXY_API_BASE` and `LUMINA_PROXY_API_KEY`. Setting `litellm.use_litellm_proxy = True` sends every call to the gateway, even without the prefix. A gateway model with no base URL or key raises `ValueError` at call time. Load balancing, fallbacks and rate limits on the key all happen on the gateway. See [Using with LiteLLM AI Gateway](./gateway.md).
 
 ## SDK mode
 

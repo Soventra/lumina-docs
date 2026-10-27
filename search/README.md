@@ -78,13 +78,13 @@ For another host, run `npm run search:serve` with `HOST=0.0.0.0`, `PORT`, `DOCS_
 To connect an existing Lens installation, copy a dedicated key from **Lens Home → Tracing key** into this project's ignored `.env.local`. Add the tracing endpoint shown by Lens and its UI address:
 
 ```dotenv
-LITELLM_TRACING_KEY=your-dedicated-lens-tracing-key
+LUMINA_TRACING_KEY=your-dedicated-lens-tracing-key
 OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://your-lens.example.com/v1/traces
 OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 LENS_UI_URL=https://your-lens.example.com/ui/
 ```
 
-The exporter constructs `Authorization: Bearer ...` from `LITELLM_TRACING_KEY`. Keep `DOCS_AI_API_KEY` and the model gateway configuration unchanged; model and Lens admin keys cannot replace the tracing key. Lens and ClickHouse are sufficient for trace storage, with no analysis provider or gateway tracing integration required
+The exporter constructs `Authorization: Bearer ...` from `LUMINA_TRACING_KEY`. Keep `DOCS_AI_API_KEY` and the model gateway configuration unchanged; model and Lens admin keys cannot replace the tracing key. Lens and ClickHouse are sufficient for trace storage, with no analysis provider or gateway tracing integration required
 
 Restart `npm run search:serve`, then ask a question. Lens records the agent as `litellm-docs-search`. Follow-up questions share the conversation's trace, with each question's searches, passage reads, and answer nested beneath it. Select **Clear** to start a new conversation and trace. The browser carries a signed trace reference between requests, so follow-ups stay together across Vercel instances. It contains no credentials and is never passed to the model
 
@@ -198,4 +198,4 @@ The bot route does not require `DOCS_AI_PUBLIC_ENABLED` and has no public per-IP
 
 Both Vercel and `npm run search:serve` expose the route. Vercel bundles the same build-generated index and documents into its function; a warm function instance reuses that corpus across requests. The Slack worker never loads an index. Missing either bot secret returns 503; an incorrect bearer credential returns 401. An authenticated empty JSON object returns 400 without calling a model, which the worker uses as a configuration preflight.
 
-To record bot requests with a dedicated Lens ingestion key, set `DOCS_BOT_TRACING_KEY` in the docs hosting environment and redeploy. It overrides `LITELLM_TRACING_KEY` only for the authenticated bot route and uses the existing `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` and HTTP/protobuf exporter. Without the override, the bot retains the existing docs tracing configuration. The agent name remains `litellm-docs-search`; bot root spans include `docs.search.surface=slack`. Search, full-page reads, model calls, usage and complete answers use the existing instrumentation. The worker saves the signed trace reference per conversation so follow-ups join the same trace. No tracing SDK or Lens ingestion key is needed in the Slack worker.
+To record bot requests with a dedicated Lens ingestion key, set `DOCS_BOT_TRACING_KEY` in the docs hosting environment and redeploy. It overrides `LUMINA_TRACING_KEY` only for the authenticated bot route and uses the existing `OTEL_EXPORTER_OTLP_TRACES_ENDPOINT` and HTTP/protobuf exporter. Without the override, the bot retains the existing docs tracing configuration. The agent name remains `litellm-docs-search`; bot root spans include `docs.search.surface=slack`. Search, full-page reads, model calls, usage and complete answers use the existing instrumentation. The worker saves the signed trace reference per conversation so follow-ups join the same trace. No tracing SDK or Lens ingestion key is needed in the Slack worker.

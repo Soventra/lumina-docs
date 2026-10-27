@@ -202,7 +202,7 @@ LiteLLM automatically strips `advisor_tool_result` blocks from message history w
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -308,7 +308,7 @@ asyncio.run(main())
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```

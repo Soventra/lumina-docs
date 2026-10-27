@@ -15,33 +15,33 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "qualifire-guard"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "during_call"
       api_key: os.environ/QUALIFIRE_API_KEY
       prompt_injections: true
   - guardrail_name: "qualifire-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "pre_call"
       api_key: os.environ/QUALIFIRE_API_KEY
       prompt_injections: true
       pii_check: true
   - guardrail_name: "qualifire-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "post_call"
       api_key: os.environ/QUALIFIRE_API_KEY
       hallucinations_check: true
       grounding_check: true
   - guardrail_name: "qualifire-monitor"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "pre_call"
       on_flagged: "monitor" # Log violations but don't block
@@ -73,7 +73,7 @@ Expect this to fail since it contains a prompt injection attempt:
 ```shell showLineNumbers title="Curl Request"
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -109,7 +109,7 @@ Expected response on failure:
 ```shell showLineNumbers title="Curl Request"
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -129,7 +129,7 @@ You can use evaluations pre-configured in the [Qualifire Dashboard](https://app.
 ```yaml showLineNumbers title="litellm config.yaml"
 guardrails:
   - guardrail_name: "qualifire-eval"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "during_call"
       api_key: os.environ/QUALIFIRE_API_KEY
@@ -157,7 +157,7 @@ Qualifire supports the following evaluation checks:
 ```yaml
 guardrails:
   - guardrail_name: "qualifire-comprehensive"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "post_call"
       api_key: os.environ/QUALIFIRE_API_KEY
@@ -173,7 +173,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: "qualifire-assertions"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "post_call"
       api_key: os.environ/QUALIFIRE_API_KEY
@@ -188,7 +188,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: "qualifire-guard"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "during_call"
       api_key: os.environ/QUALIFIRE_API_KEY
@@ -235,7 +235,7 @@ Qualifire supports evaluating tool/function calls. When using `tool_selection_qu
 ```yaml
 guardrails:
   - guardrail_name: "qualifire-tools"
-    litellm_params:
+    lumina_params:
       guardrail: qualifire
       mode: "post_call"
       api_key: os.environ/QUALIFIRE_API_KEY

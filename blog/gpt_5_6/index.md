@@ -30,7 +30,7 @@ GPT-5.6 introduces a new naming system where the number identifies the generatio
 :::
 
 :::note
-**No Docker image upgrade needed.** GPT-5.6 routes through the existing `OpenAIGPT5Config` in LiteLLM (the version classifier already matches `gpt-5.4` and newer), so any recent version works out of the box. The GPT-5.6 pricing and metadata are also bundled starting in `v1.93.0-dev.2` for anyone running with `LITELLM_LOCAL_MODEL_COST_MAP=true`.
+**No Docker image upgrade needed.** GPT-5.6 routes through the existing `OpenAIGPT5Config` in LiteLLM (the version classifier already matches `gpt-5.4` and newer), so any recent version works out of the box. The GPT-5.6 pricing and metadata are also bundled starting in `v1.93.0-dev.2` for anyone running with `LUMINA_LOCAL_MODEL_COST_MAP=true`.
 
 For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the latest pricing from GitHub. This feature is available on `v1.76.0` and above.
 :::
@@ -45,15 +45,15 @@ For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or 
 ```yaml
 model_list:
   - model_name: gpt-5.6-sol
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6-sol
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.6-terra
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6-terra
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.6-luna
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6-luna
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -74,7 +74,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.6-sol",
     "messages": [
@@ -131,13 +131,13 @@ Point `model` at the Azure deployment name. Global deployments use the `azure/gp
 ```yaml
 model_list:
   - model_name: gpt-5.6-sol
-    litellm_params:
+    lumina_params:
       model: azure/gpt-5.6-sol
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
       api_version: os.environ/AZURE_API_VERSION
   - model_name: gpt-5.6-terra
-    litellm_params:
+    lumina_params:
       model: azure/gpt-5.6-terra
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -167,7 +167,7 @@ For agentic and multi-turn workflows, use `/v1/responses` to preserve reasoning 
 ```bash
 curl -X POST "http://0.0.0.0:4000/v1/responses" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.6-sol",
     "input": "Plan and write a Python script that scrapes a webpage and summarizes it."

@@ -182,7 +182,7 @@ export CLARIFAI_API_KEY="your-clarifai-pat"
 ```yaml
 model_list:
   - model_name: clarifai-model
-    litellm_params:
+    lumina_params:
       model: clarifai/openai.chat-completion.gpt-oss-20b
       api_key: os.environ/CLARIFAI_API_KEY
 ```

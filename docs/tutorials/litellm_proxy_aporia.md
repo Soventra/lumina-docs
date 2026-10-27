@@ -38,19 +38,19 @@ Add the `Toxicity - Response` to your Post LLM API Call project
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "aporia-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: aporia  # supported values: "aporia", "lakera"
       mode: "during_call"
       api_key: os.environ/APORIA_API_KEY_1
       api_base: os.environ/APORIA_API_BASE_1
   - guardrail_name: "aporia-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: aporia  # supported values: "aporia", "lakera"
       mode: "post_call"
       api_key: os.environ/APORIA_API_KEY_2
@@ -148,7 +148,7 @@ Use this to control what guardrails run per project. In this tutorial we only wa
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H 'Content-Type: application/json' \
     -d '{
             "guardrails": ["aporia-pre-guard", "aporia-post-guard"]
@@ -161,7 +161,7 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/update' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
         "key": "sk-jNm1Zar7XfNdZXp49Z1kSQ",

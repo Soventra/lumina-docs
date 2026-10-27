@@ -527,7 +527,7 @@ Users can now see Endpoint Activity Metrics in the UI.
     - Properly use litellm api keys - [PR #18832](https://github.com/BerriAI/litellm/pull/18832)
 - **Misc**
     - Remove double imports in main.py - [PR #18406](https://github.com/BerriAI/litellm/pull/18406)
-    - Add LITELLM_DISABLE_LAZY_LOADING env var to fix VCR cassette creation issue - [PR #18725](https://github.com/BerriAI/litellm/pull/18725)
+    - Add LUMINA_DISABLE_LAZY_LOADING env var to fix VCR cassette creation issue - [PR #18725](https://github.com/BerriAI/litellm/pull/18725)
     - Add xiaomi_mimo to LlmProviders enum to fix router support - [PR #18819](https://github.com/BerriAI/litellm/pull/18819)
     - Allow installation with current grpcio on old Python - [PR #18473](https://github.com/BerriAI/litellm/pull/18473)
     - Add Custom CA certificates to boto3 clients - [PR #18852](https://github.com/BerriAI/litellm/pull/18852)
@@ -546,7 +546,7 @@ Users can now see Endpoint Activity Metrics in the UI.
     - Fix gpt-5-mini reasoning_effort supported values - [PR #18346](https://github.com/BerriAI/litellm/pull/18346)
     - Fix PDF documentation inconsistency in Anthropic page - [PR #18816](https://github.com/BerriAI/litellm/pull/18816)
     - Update OpenRouter docs to include embedding support - [PR #18874](https://github.com/BerriAI/litellm/pull/18874)
-    - Add LITELLM_REASONING_AUTO_SUMMARY in doc - [PR #18705](https://github.com/BerriAI/litellm/pull/18705)
+    - Add LUMINA_REASONING_AUTO_SUMMARY in doc - [PR #18705](https://github.com/BerriAI/litellm/pull/18705)
 - **MCP Documentation**
     - Agentcore MCP server docs - [PR #18603](https://github.com/BerriAI/litellm/pull/18603)
     - Mention MCP prompt/resources types in overview - [PR #18669](https://github.com/BerriAI/litellm/pull/18669)

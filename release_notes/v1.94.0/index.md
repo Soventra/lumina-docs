@@ -56,7 +56,7 @@ Once a user's personal spend crossed their own budget, their team keys returned 
 
 :::danger[Breaking Changes]
 
-**`timeout`, `stream_timeout`, and `request_timeout` in `litellm_params` are now enforced on `/v1/messages` traffic.** Earlier versions silently ignored these values for Anthropic Messages API calls, which always ran with the 600s client default. They now apply, and for streaming requests `stream_timeout` caps the wait between any two chunks of the stream, not only the first token. A low value that previously had no effect, such as `stream_timeout: 30`, will now fail long-running Claude streams mid-response with `ReadTimeout: Timeout on reading data from socket`. Review these values on your Anthropic and Bedrock Claude deployments before upgrading. See [PR #33418](https://github.com/BerriAI/litellm/pull/33418).
+**`timeout`, `stream_timeout`, and `request_timeout` in `lumina_params` are now enforced on `/v1/messages` traffic.** Earlier versions silently ignored these values for Anthropic Messages API calls, which always ran with the 600s client default. They now apply, and for streaming requests `stream_timeout` caps the wait between any two chunks of the stream, not only the first token. A low value that previously had no effect, such as `stream_timeout: 30`, will now fail long-running Claude streams mid-response with `ReadTimeout: Timeout on reading data from socket`. Review these values on your Anthropic and Bedrock Claude deployments before upgrading. See [PR #33418](https://github.com/BerriAI/litellm/pull/33418).
 
 :::
 
@@ -113,7 +113,7 @@ Beyond the new entries, this release records `prompt_cache_min_tokens` on the An
     - Exclude Google Search grounding tokens from input token billing - [PR #33742](https://github.com/BerriAI/litellm/pull/33742)
     - Mark Gemini image generation models with `supports_reasoning: false` - [PR #32836](https://github.com/BerriAI/litellm/pull/32836)
 - **[Amazon Bedrock](../../docs/providers/bedrock)**
-    - Forward AWS credential kwargs into `litellm_params` so the responses bridge keeps WIF auth - [PR #32956](https://github.com/BerriAI/litellm/pull/32956)
+    - Forward AWS credential kwargs into `lumina_params` so the responses bridge keeps WIF auth - [PR #32956](https://github.com/BerriAI/litellm/pull/32956)
 - **[Fireworks AI](../../docs/providers/fireworks_ai)**
     - Bill prompt-cache hits at the `cache_read` rate - [PR #33714](https://github.com/BerriAI/litellm/pull/33714)
     - Correct the `glm-5p2` prompt-cache read price to $0.14/1M - [PR #33796](https://github.com/BerriAI/litellm/pull/33796)
@@ -306,7 +306,7 @@ Beyond the new entries, this release records `prompt_cache_min_tokens` on the An
     - Tag-aware pre-routing strategy selection for a shared `model_name` - [PR #33691](https://github.com/BerriAI/litellm/pull/33691)
     - Resolve the prompt cache minimum per model instead of a flat 1024 - [PR #33637](https://github.com/BerriAI/litellm/pull/33637)
     - Enforce context-window pre-call checks for Responses API input - [PR #33706](https://github.com/BerriAI/litellm/pull/33706)
-    - Correct the Responses API `tool_choice` shape and propagate alias `litellm_params` in the auto router - [PR #32974](https://github.com/BerriAI/litellm/pull/32974)
+    - Correct the Responses API `tool_choice` shape and propagate alias `lumina_params` in the auto router - [PR #32974](https://github.com/BerriAI/litellm/pull/32974)
     - Return an empty dict from `_classifier_call_metadata` when metadata is absent - [PR #33452](https://github.com/BerriAI/litellm/pull/33452)
     - Cast `model_info` cost values to float in `_set_model_group_info` - [PR #33556](https://github.com/BerriAI/litellm/pull/33556)
 - **Reliability**

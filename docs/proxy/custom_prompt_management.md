@@ -76,7 +76,7 @@ prompt_management = MyCustomPromptManagement()
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -169,7 +169,7 @@ print(response.content)
 ```shell
 curl -X POST http://0.0.0.0:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "hi"}],

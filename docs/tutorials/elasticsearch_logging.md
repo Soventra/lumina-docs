@@ -85,7 +85,7 @@ Create a `config.yaml` file:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -141,7 +141,7 @@ Make a test request to verify logging is working:
 ```bash
 curl -X POST "http://localhost:4000/v1/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello from LiteLLM!"}]
@@ -243,7 +243,7 @@ services:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -251,6 +251,6 @@ litellm_settings:
   callbacks: ["otel"]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   otel: true
 ```

@@ -20,13 +20,13 @@ Add both entries to your proxy's `model_list` and restart the proxy. Skip this s
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: "gpt-*"
-    litellm_params:
+    lumina_params:
       model: "chatgpt/gpt-*"
     model_info:
       mode: responses
 
   - model_name: "codex-*"
-    litellm_params:
+    lumina_params:
       model: "chatgpt/codex-*"
     model_info:
       mode: responses
@@ -41,7 +41,7 @@ In your proxy dashboard, open **Virtual Keys → + Create New Key**. Enter a nam
 Save your key in `~/.codex/.env`. Both the app and CLI read this file. Create it if needed; replace the key if it already exists.
 
 ```dotenv title="~/.codex/.env"
-LITELLM_API_KEY=sk-<your-litellm-virtual-key>
+LUMINA_API_KEY=sk-<your-litellm-virtual-key>
 ```
 
 Replace the placeholder with your key. Run `chmod 600 ~/.codex/.env` to keep the file private.
@@ -59,7 +59,7 @@ base_url = "http://localhost:4000/v1"
 wire_api = "responses"
 supports_websockets = false
 requires_openai_auth = true
-env_http_headers = { "x-litellm-api-key" = "LITELLM_API_KEY" }
+env_http_headers = { "x-litellm-api-key" = "LUMINA_API_KEY" }
 ```
 
 Replace `http://localhost:4000` with your proxy URL. Keep `env_key` unset so Codex uses your ChatGPT login.
@@ -81,14 +81,14 @@ Use the same `gpt-*` wildcard for both deployments. `order: 1` tries ChatGPT fir
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: "gpt-*"
-    litellm_params:
+    lumina_params:
       model: "chatgpt/gpt-*"
       order: 1
     model_info:
       mode: responses
 
   - model_name: "gpt-*"
-    litellm_params:
+    lumina_params:
       model: "openai/gpt-*"
       api_key: os.environ/OPENAI_API_KEY
       order: 2
@@ -96,7 +96,7 @@ model_list:
       mode: responses
 
   - model_name: "codex-*"
-    litellm_params:
+    lumina_params:
       model: "chatgpt/codex-*"
     model_info:
       mode: responses
@@ -127,7 +127,7 @@ An explicit ChatGPT workspace selection is preserved for OpenAI to validate. Gat
 In Pi, run `/login` and choose the built-in OpenAI Codex provider. Export your key in the Terminal that launches Pi:
 
 ```bash
-export LITELLM_API_KEY="sk-<your-litellm-virtual-key>"
+export LUMINA_API_KEY="sk-<your-litellm-virtual-key>"
 ```
 
 Add this override to `~/.pi/agent/models.json`:
@@ -138,7 +138,7 @@ Add this override to `~/.pi/agent/models.json`:
     "openai-codex": {
       "baseUrl": "http://localhost:4000/backend-api/codex",
       "headers": {
-        "x-litellm-api-key": "LITELLM_API_KEY"
+        "x-litellm-api-key": "LUMINA_API_KEY"
       }
     }
   }
@@ -155,7 +155,7 @@ Codex can use this native route too: change its provider's `base_url` to `http:/
 
 | Problem | Fix |
 |---|---|
-| Gateway rejects the key | Check `LITELLM_API_KEY` in `~/.codex/.env` and restart Codex. |
+| Gateway rejects the key | Check `LUMINA_API_KEY` in `~/.codex/.env` and restart Codex. |
 | Model access denied | Allow both `gpt-*` and `codex-*` on the key and choose a model your subscription supports. |
 | OpenAI rejects the login or model | Sign in again with ChatGPT and choose a model your plan supports. |
 | No request appears in LiteLLM | Check `model_provider` and `base_url`, then start a new Codex chat. |

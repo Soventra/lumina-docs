@@ -46,14 +46,14 @@ print(response)
 ```yaml showLineNumbers
 model_list:
   - model_name: sd3
-    litellm_params:
+    lumina_params:
       model: stability/sd3.5-large
       api_key: os.environ/STABILITY_API_KEY
     model_info:
       mode: image_generation
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start the proxy
@@ -69,7 +69,7 @@ litellm --config config.yaml
 ```bash showLineNumbers
 curl --location 'http://0.0.0.0:4000/v1/images/generations' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "sd3",
     "prompt": "A beautiful sunset over a calm ocean"
@@ -380,21 +380,21 @@ print(response)
 ```yaml showLineNumbers
 model_list:
   - model_name: stability-inpaint
-    litellm_params:
+    lumina_params:
       model: stability/inpaint
       api_key: os.environ/STABILITY_API_KEY
     model_info:
       mode: image_edit
 
   - model_name: stability-upscale
-    litellm_params:
+    lumina_params:
       model: stability/conservative
       api_key: os.environ/STABILITY_API_KEY
     model_info:
       mode: image_edit
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start the proxy
@@ -409,7 +409,7 @@ litellm --config config.yaml
 
 ```bash showLineNumbers
 curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F "model=stability-inpaint" \
   -F "image=@original_image.png" \
   -F "mask=@mask_image.png" \

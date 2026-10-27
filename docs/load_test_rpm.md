@@ -35,7 +35,7 @@ import os, random, uuid, time, asyncio
 model_list = [
     {
         "model_name": "fake-openai-endpoint",
-        "litellm_params": {
+        "lumina_params": {
             "model": "{{openai_small}}",
             "api_key": "my-fake-key",
             "api_base": "http://0.0.0.0:8080",
@@ -44,7 +44,7 @@ model_list = [
     },
     {
         "model_name": "fake-openai-endpoint",
-        "litellm_params": {
+        "lumina_params": {
             "model": "{{openai_small}}",
             "api_key": "my-fake-key",
             "api_base": "http://0.0.0.0:8081",
@@ -124,13 +124,13 @@ If you don't want to call a real LLM API endpoint, you can setup a fake openai s
 
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: http://0.0.0.0:8080
     api_key: my-fake-key
     model: openai/my-fake-model
     rpm: 100
   model_name: fake-openai-endpoint
-- litellm_params:
+- lumina_params:
     api_base: http://0.0.0.0:8081
     api_key: my-fake-key
     model: openai/my-fake-model-2

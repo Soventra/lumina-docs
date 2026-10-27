@@ -58,7 +58,7 @@ When the complexity router uses an LLM classifier, that classifier call is bille
 
 The 1-click Anthropic and OpenAI presets no longer depend on your deployment names lining up with what the preset expects.
 
-- Presets now resolve against your deployment's underlying provider model ID (`litellm_params.model`, plus `model_info.base_model` where set) instead of a direct string match on the name
+- Presets now resolve against your deployment's underlying provider model ID (`lumina_params.model`, plus `model_info.base_model` where set) instead of a direct string match on the name
 - Presets that resolve this way show a "Matches your deployments" hint, sort ahead of unavailable ones, and keep the config open so you see what got mapped
 
 ## Long prompts no longer fail at the routing step

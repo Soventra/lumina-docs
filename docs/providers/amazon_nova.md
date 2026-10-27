@@ -50,7 +50,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: amazon-nova-micro
-    litellm_params:
+    lumina_params:
       model: amazon_nova/nova-micro-v1
       api_key: os.environ/AMAZON_NOVA_API_KEY
 ```
@@ -245,7 +245,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: amazon-nova-pro
-    litellm_params:
+    lumina_params:
       model: amazon_nova/nova-pro-v1
       temperature: 0.8
       max_tokens: 500

@@ -86,7 +86,7 @@ export POE_API_KEY=""
 ```yaml
 model_list:
   - model_name: poe-model
-    litellm_params:
+    lumina_params:
       model: poe/model-name  # Replace with actual model name
       api_key: os.environ/POE_API_KEY
 ```

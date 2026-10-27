@@ -42,14 +42,14 @@ graph LR
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
     model_info:
       access_groups: ["beta-models"] # Model Access Group
   - model_name: fireworks-llama-v3-70b-instruct
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/models/llama-v3-70b-instruct
       api_key: "os.environ/FIREWORKS"
     model_info:
@@ -198,13 +198,13 @@ Use this to also give users access to all models, except for a few that you don'
 ```yaml showLineNumbers title="config.yaml - Wildcard Models"
 model_list:
   - model_name: openai/*
-    litellm_params:
+    lumina_params:
       model: openai/*
       api_key: os.environ/OPENAI_API_KEY
     model_info:
       access_groups: ["default-models"]
   - model_name: openai/o1-*
-    litellm_params:
+    lumina_params:
       model: openai/o1-*
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -215,7 +215,7 @@ model_list:
 
 ```bash showLineNumbers title="Generate Key for Wildcard Access Group"
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "models": ["default-models"],
@@ -281,11 +281,11 @@ First, add some models to the database:
 ```bash showLineNumbers title="Add Models to Database"
 # Add {{openai_large}} to database
 curl -X POST 'http://localhost:4000/model/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model_name": "{{openai_large}}",
-    "litellm_params": {
+    "lumina_params": {
       "model": "{{openai_large}}",
       "api_key": "os.environ/OPENAI_API_KEY"
     }
@@ -293,11 +293,11 @@ curl -X POST 'http://localhost:4000/model/new' \
 
 # Add Claude to database
 curl -X POST 'http://localhost:4000/model/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model_name": "{{anthropic}}",
-    "litellm_params": {
+    "lumina_params": {
       "model": "{{anthropic}}",
       "api_key": "os.environ/ANTHROPIC_API_KEY"
     }
@@ -310,7 +310,7 @@ Create an access group containing multiple models:
 
 ```bash showLineNumbers title="Create Access Group"
 curl -X POST 'http://localhost:4000/access_group/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "access_group": "production-models",
@@ -333,7 +333,7 @@ Check the access group details:
 
 ```bash showLineNumbers title="Get Access Group Info"
 curl -X GET 'http://localhost:4000/access_group/production-models/info' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Response:**
@@ -351,7 +351,7 @@ Create an API key that can access all models in the group:
 
 ```bash showLineNumbers title="Create Key with Access Group"
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "models": ["production-models"],
@@ -394,7 +394,7 @@ Add or remove models from the access group:
 
 ```bash showLineNumbers title="Update Access Group"
 curl -X PUT 'http://localhost:4000/access_group/production-models/update' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model_names": ["{{openai_large}}", "{{anthropic}}", "{{gemini_flash}}"]

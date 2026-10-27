@@ -42,7 +42,7 @@ $ litellm --config /path/to/config.yaml
 
 ### Custom Timeouts & Stream Timeouts (Per Model)
 
-For each model, you can set `timeout` and `stream_timeout` under `litellm_params`:
+For each model, you can set `timeout` and `stream_timeout` under `lumina_params`:
 
 - **`timeout`** → maximum time for the *complete response*.  
   Use this to cap long-running completions.
@@ -63,7 +63,7 @@ import asyncio
 
 model_list = [{
     "model_name": "{{openai_small}}",
-    "litellm_params": {
+    "lumina_params": {
         "model": "azure/chatgpt-v-2",
         "api_key": os.getenv("AZURE_API_KEY"),
         "api_version": os.getenv("AZURE_API_VERSION"),
@@ -92,7 +92,7 @@ asyncio.run(router_acompletion())
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-small-eu
       api_base: https://my-endpoint-europe-berri-992.openai.azure.com/
       api_key: <your-key>
@@ -100,7 +100,7 @@ model_list:
       stream_timeout: 0.01              # timeout for stream requests (seconds)
       max_retries: 5
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-small-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: 
@@ -123,12 +123,12 @@ $ litellm --config /path/to/config.yaml
 
 ### Per Service Tier Timeouts
 
-A deployment can give requests that ask for a specific `service_tier` their own timeout. OpenAI's `flex` tier, for example, is slower than the default tier, so a `timeout` sized for standard traffic cuts flex requests off too early. Set `timeout_by_service_tier` and `stream_timeout_by_service_tier` under `litellm_params`, keyed by tier name:
+A deployment can give requests that ask for a specific `service_tier` their own timeout. OpenAI's `flex` tier, for example, is slower than the default tier, so a `timeout` sized for standard traffic cuts flex requests off too early. Set `timeout_by_service_tier` and `stream_timeout_by_service_tier` under `lumina_params`, keyed by tier name:
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.1
       api_key: os.environ/OPENAI_API_KEY
       timeout: 610
@@ -147,12 +147,12 @@ Per attempt, LiteLLM picks the first value that is set: a timeout sent with the 
 
 `timeout` and `stream_timeout` cap how long a request is allowed to run. A separate problem is that load balancers and reverse proxies in front of the proxy often close connections that look idle, even when the client is legitimately waiting on a response. Streaming requests to models with long silent gaps before the first token, such as extended or adaptive thinking models, or otherwise slow providers, can trip these idle-connection timeouts before any content arrives.
 
-Set `keepalive_seconds` under a deployment's `litellm_params` to keep the connection alive during these gaps. Once a stream goes silent for longer than `keepalive_seconds`, the proxy sends an SSE comment frame (`: ping`) down the connection, repeating every `keepalive_seconds` until real content resumes. Comment frames are part of the SSE spec, and clients and intermediate proxies are expected to ignore them, so they don't affect the response your application sees.
+Set `keepalive_seconds` under a deployment's `lumina_params` to keep the connection alive during these gaps. Once a stream goes silent for longer than `keepalive_seconds`, the proxy sends an SSE comment frame (`: ping`) down the connection, repeating every `keepalive_seconds` until real content resumes. Comment frames are part of the SSE spec, and clients and intermediate proxies are expected to ignore them, so they don't affect the response your application sees.
 
 ```yaml
 model_list:
   - model_name: claude-opus
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
       keepalive_seconds: 15
@@ -161,7 +161,7 @@ model_list:
 ```shell
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-opus",
     "messages": [{"role": "user", "content": "Think step by step about..."}],
@@ -174,7 +174,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```yaml
 model_list:
   - model_name: claude-opus
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
       keepalive_seconds: 15
@@ -186,7 +186,7 @@ With override allowed, a request can change the deployment's default, including 
 ```shell
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-opus",
     "messages": [{"role": "user", "content": "Think step by step about..."}],
@@ -202,7 +202,7 @@ If `allow_client_keepalive_override` isn't set, that same request body is silent
 ```shell
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'x-litellm-keepalive-seconds: 1' \
   -d '{
     "model": "claude-opus",
@@ -314,7 +314,7 @@ This is currently only supported on `/chat/completions` and `/completions` endpo
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
     -H 'Content-Type: application/json' \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     --data-raw '{
         "model": "gemini/{{gemini_flash}}",
         "messages": [

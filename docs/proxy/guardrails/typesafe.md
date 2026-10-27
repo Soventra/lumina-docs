@@ -27,13 +27,13 @@ A LiteLLM build that includes the `typesafe` guardrail and a TypeSafe API key fr
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 guardrails:
   - guardrail_name: jev-compaction
-    litellm_params:
+    lumina_params:
       guardrail: typesafe
       mode: pre_call
       api_key: os.environ/TYPESAFE_API_KEY
@@ -75,7 +75,7 @@ When `default_on` is not set, compaction runs only for requests that opt in. The
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
         "guardrails": ["jev-compaction"]
@@ -100,7 +100,7 @@ Set `unreachable_fallback: fail_closed` to fail the request with a `500` and a g
 
 ## Configuration reference
 
-Top-level `litellm_params`:
+Top-level `lumina_params`:
 
 | Param                  | Type | Description                                                                                              |
 | ---------------------- | ---- | -------------------------------------------------------------------------------------------------------- |
@@ -112,7 +112,7 @@ Top-level `litellm_params`:
 | `unreachable_fallback` | str  | `fail_open` (default) forwards uncompacted on service failure; `fail_closed` returns 500.                |
 | `default_on`           | bool | Run on every request without per-call opt-in. Defaults to `false`.                                       |
 
-Nested `optional_params` (each also accepted directly under `litellm_params`; the nested value wins):
+Nested `optional_params` (each also accepted directly under `lumina_params`; the nested value wins):
 
 | Param                      | Type  | Default | Description                                                                                  |
 | -------------------------- | ----- | ------- | -------------------------------------------------------------------------------------------- |

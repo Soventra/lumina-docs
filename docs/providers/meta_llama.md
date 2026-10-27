@@ -177,12 +177,12 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: meta_llama/Llama-3.3-70B-Instruct
-    litellm_params:
+    lumina_params:
       model: meta_llama/Llama-3.3-70B-Instruct
       api_key: os.environ/LLAMA_API_KEY
 
   - model_name: meta_llama/Llama-3.3-8B-Instruct
-    litellm_params:
+    lumina_params:
       model: meta_llama/Llama-3.3-8B-Instruct
       api_key: os.environ/LLAMA_API_KEY
 ```

@@ -10,7 +10,7 @@ Configure the Vertex model in your config.yaml. `gcs_bucket_name` is the GCS buc
 ```yaml showLineNumbers title="litellm-config.yaml"
 model_list:
   - model_name: vertex-batch
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_flash}}
       vertex_project: my-project
       vertex_location: us-central1
@@ -20,7 +20,7 @@ model_list:
       mode: batch
 ```
 
-When `gcs_bucket_name` (or `bucket_name`) and `vertex_credentials` are not set on the model's `litellm_params`, LiteLLM falls back to these env vars. `GCS_BATCH_BUCKET_NAME` exists because the [`gcs_bucket` logging callback](../observability/gcs_bucket_integration) already uses `GCS_BUCKET_NAME` as the bucket it writes LLM request logs to, so setting `GCS_BUCKET_NAME` to your batch bucket would also send request logs there. `GCS_BATCH_BUCKET_NAME` is checked first for batch files and, when it is unset, `GCS_BUCKET_NAME` is used
+When `gcs_bucket_name` (or `bucket_name`) and `vertex_credentials` are not set on the model's `lumina_params`, LiteLLM falls back to these env vars. `GCS_BATCH_BUCKET_NAME` exists because the [`gcs_bucket` logging callback](../observability/gcs_bucket_integration) already uses `GCS_BUCKET_NAME` as the bucket it writes LLM request logs to, so setting `GCS_BUCKET_NAME` to your batch bucket would also send request logs there. `GCS_BATCH_BUCKET_NAME` is checked first for batch files and, when it is unset, `GCS_BUCKET_NAME` is used
 
 ```bash
 # GCS Bucket settings, used to store batch prediction files in
@@ -194,7 +194,7 @@ if retrieved_batch.status == "completed":
 ```bash showLineNumbers title="Retrieve Batch Status"
 curl --request GET \
   --url 'http://localhost:4000/batches/7814463557919047680?provider=vertex_ai' \
-  --header "Authorization: Bearer $LITELLM_API_KEY"
+  --header "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -270,7 +270,7 @@ for line in file_content.text.strip().split('\n'):
 # Note: The file ID must be URL encoded
 curl --request GET \
   --url 'http://localhost:4000/files/gs%253A%252F%252Fmy-batch-bucket%252Flitellm-vertex-files%252Fpublishers%252Fgoogle%252Fmodels%252Fgemini-2.5-flash-lite%252Fprediction-model-2025-09-19T21%253A26%253A51.569037Z%252Fpredictions.jsonl/content?provider=vertex_ai' \
-  --header "Authorization: Bearer $LITELLM_API_KEY"
+  --header "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -306,7 +306,7 @@ Native rows carry no model, so name the Vertex deployment that will run the batc
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_flash}}
       vertex_project: my-project
       vertex_location: us-central1
@@ -332,7 +332,7 @@ print(f"File uploaded with ID: {file_obj.id}")
 ```bash showLineNumbers title="Upload Native File"
 curl --request POST \
   --url http://localhost:4000/v1/files \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --form purpose=batch \
   --form target_model_names={{gemini_flash}} \
   --form passthrough=true \

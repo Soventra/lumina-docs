@@ -93,13 +93,13 @@ Creating a store does not test the connection. A wrong host, port, or index name
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: openai/text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
 vector_store_registry:
   - vector_store_name: support-knowledge-base
-    litellm_params:
+    lumina_params:
       vector_store_id: my-search-index
       custom_llm_provider: valkey
       valkey_host: my-valkey.example.com
@@ -118,13 +118,13 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Register the index"
 curl -X POST 'http://localhost:4000/vector_store/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "vector_store_id": "my-search-index",
     "custom_llm_provider": "valkey",
     "vector_store_name": "Support Knowledge Base",
-    "litellm_params": {
+    "lumina_params": {
       "valkey_host": "my-valkey.example.com",
       "valkey_port": 6379,
       "litellm_embedding_model": "openai/text-embedding-3-small"
@@ -147,7 +147,7 @@ The same search over HTTP:
 
 ```bash showLineNumbers title="Search the index"
 curl -X POST 'http://localhost:4000/v1/vector_stores/my-search-index/search' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"query": "how long does a refund take?", "max_num_results": 3}'
 ```

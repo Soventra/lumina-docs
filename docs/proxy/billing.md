@@ -25,7 +25,7 @@ Set 'lago' as a callback on your proxy config.yaml
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -34,7 +34,7 @@ litellm_settings:
   callbacks: ["lago"] # KEY CHANGE
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Add your Lago keys to the environment
@@ -56,7 +56,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl 'http://0.0.0.0:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data-raw '{"team_id": "my-unique-id"}' # Internal Team's ID
 ```

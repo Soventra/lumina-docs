@@ -52,7 +52,7 @@ Claude's prompt cache reads a cache hit for roughly 10% of the price of a fresh 
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       cache_control_injection_points:
@@ -68,12 +68,12 @@ for automatically injecting this in all requests, do this
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{anthropic}}
       # ...
 
 router_settings:
-  default_litellm_params:
+  default_lumina_params:
     cache_control_injection_points:
       - location: message
         role: system
@@ -93,7 +93,7 @@ Headroom runs as a sidecar container next to LiteLLM. Register it as a `pre_call
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: headroom-compression
-    litellm_params:
+    lumina_params:
       guardrail: headroom
       mode: pre_call
       api_base: https://your-headroom-service
@@ -136,24 +136,24 @@ Complexity router is the fastest to set up. Point Claude Code at `smart-router` 
 model_list:
   # Target models
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
 
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: {{anthropic}}
 
   - model_name: claude-opus
-    litellm_params:
+    lumina_params:
       model: {{anthropic_large}}
 
   # Complexity router
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:

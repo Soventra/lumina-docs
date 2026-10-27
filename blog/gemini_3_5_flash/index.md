@@ -222,13 +222,13 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: gemini-3.5-flash
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.5-flash
       api_key: os.environ/GEMINI_API_KEY
 
   # Or use Vertex AI
   - model_name: vertex-gemini-3.5-flash
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-3.5-flash
       vertex_project: your-project-id
       vertex_location: us-central1

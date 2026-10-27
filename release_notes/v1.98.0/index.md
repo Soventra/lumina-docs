@@ -48,7 +48,7 @@ pip install litellm==1.98.0
 
 **The Langfuse metadata blob is now sourced from the StandardLoggingPayload allowlist instead of raw request metadata.** Roughly 20 fields no longer appear on the generation, measured live at 52 keys down to 38, so any saved Langfuse filter, dashboard, or alert built on `model_group`, `model_info`, `deployment`, `deployment_model_name`, `model_group_alias`, `model_group_size`, `litellm_api_version`, `litellm_received_at`, `litellm_parent_otel_span`, `queue_time_seconds`, `attempted_retries`, `max_retries`, `agent_id`, `caller_tags`, `inherited_tags`, `global_max_parallel_requests`, `user_api_key`, or the remaining `user_api_key_*` budget and permission-id fields will stop matching. `model_group` and the deployment id are still recoverable from `hidden_params`. Direct-SDK callers passing flat custom metadata must nest it, `metadata={"metadata": {"my_key": "v"}}`, and it arrives under `requester_metadata`; proxy callers are unaffected. `debug_langfuse` now emits caller scalars rather than the raw metadata dump. See [PR #36744](https://github.com/BerriAI/litellm/pull/36744).
 
-**The Global Control Plane worker registry now requires an Enterprise license.** A proxy configured with `worker_registry` and no valid `LITELLM_LICENSE` refuses to boot instead of silently running unlicensed. Set a valid license to keep the control plane, or remove the `worker_registry` key to start without it. See [PR #36996](https://github.com/BerriAI/litellm/pull/36996).
+**The Global Control Plane worker registry now requires an Enterprise license.** A proxy configured with `worker_registry` and no valid `LUMINA_LICENSE` refuses to boot instead of silently running unlicensed. Set a valid license to keep the control plane, or remove the `worker_registry` key to start without it. See [PR #36996](https://github.com/BerriAI/litellm/pull/36996).
 
 **A `litellm_settings.callbacks` entry whose dotted path names a class now fails config load.** Those entries used to be accepted and silently inert: the proxy booted, served traffic, and never ran the hook. Point the entry at an instance or a function, for example `custom_callbacks.proxy_handler_instance`, to start again. See [PR #36858](https://github.com/BerriAI/litellm/pull/36858).
 
@@ -163,7 +163,7 @@ Beyond the new entries, this release is a large cost-map maintenance pass: 270 e
 
 - **[Amazon Bedrock](../../docs/providers/bedrock)**
     - Use the deployment's credentials for AWS requests, and resolve aliases in batch file records - [PR #36160](https://github.com/BerriAI/litellm/pull/36160), [PR #36159](https://github.com/BerriAI/litellm/pull/36159)
-    - Resolve the managed-batch output bucket on every path that reads it, and stop managed-batch `litellm_params` leaking to the provider - [PR #37047](https://github.com/BerriAI/litellm/pull/37047), [PR #37048](https://github.com/BerriAI/litellm/pull/37048)
+    - Resolve the managed-batch output bucket on every path that reads it, and stop managed-batch `lumina_params` leaking to the provider - [PR #37047](https://github.com/BerriAI/litellm/pull/37047), [PR #37048](https://github.com/BerriAI/litellm/pull/37048)
     - Drop `toolSpec.strict` for Claude Sonnet 5 on Converse - [PR #33196](https://github.com/BerriAI/litellm/pull/33196)
     - Add a text block to Converse user messages carrying documents - [PR #36499](https://github.com/BerriAI/litellm/pull/36499)
     - Send the tool-search beta header for Haiku 4.5 on Invoke `/v1/messages` - [PR #36502](https://github.com/BerriAI/litellm/pull/36502)

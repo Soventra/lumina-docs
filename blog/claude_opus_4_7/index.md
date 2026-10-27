@@ -34,7 +34,7 @@ docker pull ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.83.3-stable
 ```yaml
 model_list:
   - model_name: claude-opus-4-7
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-7
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -55,7 +55,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-7",
   "messages": [
@@ -80,7 +80,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: claude-opus-4-7
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-opus-4-7
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -103,7 +103,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-7",
   "messages": [
@@ -128,7 +128,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: claude-opus-4-7
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-opus-4-7
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: us-east5
@@ -152,7 +152,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-7",
   "messages": [
@@ -177,7 +177,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: claude-opus-4-7
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-opus-4-7
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -201,7 +201,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-7",
   "messages": [
@@ -232,7 +232,7 @@ LiteLLM supports adaptive thinking through the `reasoning_effort` parameter:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-7",
   "messages": [
@@ -252,7 +252,7 @@ Use the `thinking` parameter with `type: "adaptive"` to enable adaptive thinking
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-7",
@@ -284,7 +284,7 @@ Claude Opus 4.7 supports five effort levels: `low`, `medium`, `high` (default), 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-7",
   "messages": [
@@ -335,7 +335,7 @@ You can combine `reasoning_effort` with `output_config` for even more fine-grain
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-7",

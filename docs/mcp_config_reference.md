@@ -2,7 +2,7 @@
 
 This is the canonical decision reference for connecting to LiteLLM's MCP Gateway: which endpoint to use, which transport to configure, and how the two layers of authentication fit together. Use the linked guides for setup steps and provider-specific requirements
 
-Endpoint examples use `http://localhost:4000` as the proxy base URL; substitute your own. Set `LITELLM_API_KEY` to a key with access to the selected MCP servers. Selecting a server by URL or header narrows existing access; it does not grant access. See [MCP access grants](./mcp_grant_access) for key and team setup
+Endpoint examples use `http://localhost:4000` as the proxy base URL; substitute your own. Set `LUMINA_API_KEY` to a key with access to the selected MCP servers. Selecting a server by URL or header narrows existing access; it does not grant access. See [MCP access grants](./mcp_grant_access) for key and team setup
 
 ## Protocol version
 
@@ -17,7 +17,7 @@ Gateway and upstream authentication are configured separately. Keep their creden
 1. **Gateway authentication (client to LiteLLM).** Your LiteLLM virtual key. Send it in the `x-litellm-api-key` header (`x-litellm-api-key: Bearer <key>`). `Authorization: Bearer sk-...` also works, but for MCP traffic prefer `x-litellm-api-key` so the `Authorization` header stays free for OAuth tokens and upstream credentials. Use the dedicated header when sending a separate upstream bearer token
 2. **Upstream authentication (LiteLLM to the MCP server).** Configured per server via `auth_type` (static keys, OAuth, SigV4, and so on), or supplied per request by the client via `x-mcp-{server_alias}-{header_name}` headers. See [Upstream auth matrix](#upstream-auth-matrix)
 
-If you see your LiteLLM key arriving at the upstream MCP server (the debug headers show `SAME_AS_LITELLM_KEY`), you have put the LiteLLM key in `Authorization` on a server that forwards `Authorization` upstream. Move it to `x-litellm-api-key`. See [Debugging OAuth](./mcp_oauth#debugging-oauth)
+If you see your LiteLLM key arriving at the upstream MCP server (the debug headers show `SAME_AS_LUMINA_KEY`), you have put the LiteLLM key in `Authorization` on a server that forwards `Authorization` upstream. Move it to `x-litellm-api-key`. See [Debugging OAuth](./mcp_oauth#debugging-oauth)
 
 ## Endpoint matrix
 
@@ -41,7 +41,7 @@ A minimal direct-client request, useful as a smoke test:
 curl -s -X POST http://localhost:4000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
 
@@ -167,7 +167,7 @@ Two more ways to send upstream credentials that do not involve `auth_type`:
 
 ### Deprecated: `x-mcp-auth`
 
-The global `x-mcp-auth` header (one credential broadcast to every MCP server on the request) is deprecated. Replace it with the per-server form `x-mcp-{server_alias}-{header_name}`, which scopes each credential to one server. `x-mcp-auth` still works today (its header name can be renamed via `mcp_client_side_auth_header_name` in `general_settings` or the `LITELLM_MCP_CLIENT_SIDE_AUTH_HEADER_NAME` env var), but new setups should not use it
+The global `x-mcp-auth` header (one credential broadcast to every MCP server on the request) is deprecated. Replace it with the per-server form `x-mcp-{server_alias}-{header_name}`, which scopes each credential to one server. `x-mcp-auth` still works today (its header name can be renamed via `mcp_client_side_auth_header_name` in `general_settings` or the `LUMINA_MCP_CLIENT_SIDE_AUTH_HEADER_NAME` env var), but new setups should not use it
 
 ## Common client configs
 
@@ -192,7 +192,7 @@ LLM-driven tool use on the proxy's Responses API (note `server_url` is the liter
 ```bash title="Responses API with MCP tools" showLineNumbers
 curl -s http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "input": "Run available tools",
@@ -211,13 +211,13 @@ Scripted REST calls can reuse `deepwiki_mcp` from the HTTP example above. First 
 
 ```bash title="MCP REST API" showLineNumbers
 curl -sS http://localhost:4000/v1/mcp/server \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl -sS 'http://localhost:4000/mcp-rest/tools/list?server_id=deepwiki_mcp' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl -sS -X POST http://localhost:4000/mcp-rest/tools/call \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"server_id":"deepwiki_mcp","name":"read_wiki_structure","arguments":{"repoName":"BerriAI/litellm"}}'
 ```

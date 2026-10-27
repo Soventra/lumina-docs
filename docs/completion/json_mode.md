@@ -34,7 +34,7 @@ print(response.choices[0].message.content)
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "response_format": { "type": "json_object" },
@@ -141,7 +141,7 @@ events_list = EventsList.model_validate_json(resp.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: "{{openai_large}}"
-    litellm_params:
+    lumina_params:
       model: "{{openai_large}}"
 ```
 
@@ -190,7 +190,7 @@ math_reasoning = completion.choices[0].message.parsed
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -288,7 +288,7 @@ print("Received={}".format(resp))
 ```yaml
 model_list:
   - model_name: "{{gemini_flash}}"
-    litellm_params:
+    lumina_params:
       model: "gemini/{{gemini_flash}}"
       api_key: os.environ/GEMINI_API_KEY
 
@@ -307,7 +307,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [
@@ -397,7 +397,7 @@ response = completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [

@@ -27,7 +27,7 @@ For `/moderations` endpoint, there is **no need to specify `model` in the reques
 ```yaml
 model_list:
   - model_name: text-moderation-stable
-    litellm_params:
+    lumina_params:
       model: openai/omni-moderation-latest
 ```
 
@@ -62,7 +62,7 @@ print(response)
 ```shell
 curl --location 'http://0.0.0.0:4000/moderations' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data '{"input": "Sample text goes here", "model": "text-moderation-stable"}'
 ```
 </TabItem>

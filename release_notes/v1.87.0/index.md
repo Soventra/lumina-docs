@@ -246,7 +246,7 @@ Testing, CI & build hardening:
 - Migrate realtime + rerank tests off shut-down upstream models; replace `gpt-4o-audio-preview` with `gpt-audio-1.5`; expect `session.created` as xAI realtime initial event - [PR #28191](https://github.com/BerriAI/litellm/pull/28191), [PR #28281](https://github.com/BerriAI/litellm/pull/28281), [PR #28424](https://github.com/BerriAI/litellm/pull/28424)
 - Harden the flaky proxy callback-leak detector - [PR #28195](https://github.com/BerriAI/litellm/pull/28195)
 - E2E runner migrated to `uv`; add an "All Proxy Models" key test - [PR #28313](https://github.com/BerriAI/litellm/pull/28313)
-- UI-e2e: admin key creation with a specific proxy model; forward `LITELLM_LICENSE` to the UI e2e proxy - [PR #28365](https://github.com/BerriAI/litellm/pull/28365), [PR #28398](https://github.com/BerriAI/litellm/pull/28398)
+- UI-e2e: admin key creation with a specific proxy model; forward `LUMINA_LICENSE` to the UI e2e proxy - [PR #28365](https://github.com/BerriAI/litellm/pull/28365), [PR #28398](https://github.com/BerriAI/litellm/pull/28398)
 - Vertex AI grounding test tolerates transient 500; streaming test tolerates Vertex 429 wrapped in `MidStreamFallbackError` - [PR #28503](https://github.com/BerriAI/litellm/pull/28503), [PR #28669](https://github.com/BerriAI/litellm/pull/28669)
 - Bump black to 26.3.1 and reapply formatting; one-shot lint fix - [PR #28525](https://github.com/BerriAI/litellm/pull/28525), [PR #28639](https://github.com/BerriAI/litellm/pull/28639)
 - Allow `audio_transcription_config` in the model-prices schema - [PR #28708](https://github.com/BerriAI/litellm/pull/28708)

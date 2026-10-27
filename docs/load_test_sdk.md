@@ -26,7 +26,7 @@ client = AsyncAzureOpenAI(
 model_list = [
   {
     "model_name": "azure-canada",
-    "litellm_params": {
+    "lumina_params": {
       "model": "azure/my-azure-deployment-name", # [CHANGE THIS]
       "api_key": "my-api-key", # [CHANGE THIS]
       "api_base": "my-api-base", # [CHANGE THIS]

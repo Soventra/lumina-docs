@@ -124,15 +124,15 @@ pip install 'litellm[proxy]'
 ```yaml
 model_list:
   - model_name: scaledown-classify
-    litellm_params:
+    lumina_params:
       model: scaledown/classify
       api_key: os.environ/SCALEDOWN_API_KEY
   - model_name: scaledown-extract
-    litellm_params:
+    lumina_params:
       model: scaledown/extract
       api_key: os.environ/SCALEDOWN_API_KEY
   - model_name: scaledown-summarize
-    litellm_params:
+    lumina_params:
       model: scaledown/summarize
       api_key: os.environ/SCALEDOWN_API_KEY
 ```
@@ -140,17 +140,17 @@ model_list:
 Start the proxy in the shell where you set `SCALEDOWN_API_KEY`:
 
 ```bash
-export LITELLM_MASTER_KEY="sk-$(openssl rand -hex 32)"
-printf 'Local proxy key: %s\n' "$LITELLM_MASTER_KEY"
+export LUMINA_MASTER_KEY="sk-$(openssl rand -hex 32)"
+printf 'Local proxy key: %s\n' "$LUMINA_MASTER_KEY"
 litellm --config config.yaml --host 127.0.0.1 --port 4000
 ```
 
-In another terminal, set `LITELLM_API_KEY` to the key generated above and send a classification request:
+In another terminal, set `LUMINA_API_KEY` to the key generated above and send a classification request:
 
 ```bash
 curl http://127.0.0.1:4000/v1/chat/completions \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "scaledown-classify",
     "messages": [{"role": "user", "content": "My server has been down for three hours."}],

@@ -39,29 +39,29 @@ Create a secure configuration using environment variables:
 model_list:
   # Configure the models you want to use
   - model_name: claude-opus-4-7
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-7
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-sonnet-4-6
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-6
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-haiku-4-5-20251001
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5-20251001
       api_key: os.environ/ANTHROPIC_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Set your environment variables:
 
 ```bash
 export ANTHROPIC_API_KEY="your-anthropic-api-key"
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
 ```
 
 :::tip
@@ -82,7 +82,7 @@ Test that your proxy is working correctly:
 
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
--H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+-H "Authorization: Bearer $LUMINA_MASTER_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "claude-opus-4-7",
@@ -98,11 +98,11 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 Set a fixed LiteLLM key as `ANTHROPIC_AUTH_TOKEN`:
 
 ```bash
-export ANTHROPIC_AUTH_TOKEN="$LITELLM_KEY"
+export ANTHROPIC_AUTH_TOKEN="$LUMINA_KEY"
 ```
 
 :::tip
-`$LITELLM_KEY` can be your proxy **master key** or a **virtual key**. A master key gives Claude Code access to all proxy models. A virtual key is limited to the models that key has access to.
+`$LUMINA_KEY` can be your proxy **master key** or a **virtual key**. A master key gives Claude Code access to all proxy models. A virtual key is limited to the models that key has access to.
 :::
 
 #### Method 1: Unified Endpoint (Recommended)
@@ -220,7 +220,7 @@ Common issues and solutions:
 - Ensure your `ANTHROPIC_AUTH_TOKEN` matches your LiteLLM master key
 
 **Authentication errors:**
-- Verify your environment variables are set: `echo $LITELLM_MASTER_KEY`
+- Verify your environment variables are set: `echo $LUMINA_MASTER_KEY`
 - Check that your API keys are valid and have sufficient credits
 - Ensure the `ANTHROPIC_AUTH_TOKEN` matches your LiteLLM master key
 
@@ -250,32 +250,32 @@ Compatibility between Claude Code features and each provider (Anthropic, Bedrock
 model_list:
   # Anthropic models
   - model_name: claude-opus-4-7
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-7
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-sonnet-4-6
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-6
       api_key: os.environ/ANTHROPIC_API_KEY
 
   # AWS Bedrock (Invoke — recommended for Claude Code today, see note below)
   - model_name: claude-bedrock-opus
-    litellm_params:
+    lumina_params:
       model: bedrock/invoke/us.anthropic.claude-opus-4-7
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: us-west-2
 
   - model_name: claude-bedrock-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/invoke/us.anthropic.claude-sonnet-4-6
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: us-west-2
 
   - model_name: claude-bedrock-haiku
-    litellm_params:
+    lumina_params:
       model: bedrock/invoke/us.anthropic.claude-haiku-4-5-20251001-v1:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -283,21 +283,21 @@ model_list:
 
   # Azure Foundry
   - model_name: claude-opus-azure
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-opus-4-7
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE # https://my-resource.services.ai.azure.com/anthropic
 
   # Google Vertex AI
   - model_name: claude-opus-vertex
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-opus-4-7
       vertex_ai_project: "my-test-project"
       vertex_ai_location: "us-east5"
       vertex_credentials: os.environ/VERTEX_FILE_PATH_ENV_VAR # os.environ["VERTEX_FILE_PATH_ENV_VAR"] = "/path/to/service_account.json"
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Switch between models without code changes:

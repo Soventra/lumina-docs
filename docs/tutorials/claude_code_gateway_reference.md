@@ -27,16 +27,16 @@ Enable the gateway in `general_settings`. The `anthropic/*` wildcard matters: Cl
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: "anthropic/*"
-    litellm_params:
+    lumina_params:
       model: "anthropic/*"
       api_key: os.environ/ANTHROPIC_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
   enable_claude_code_gateway: true
 ```
@@ -52,7 +52,7 @@ litellm --config config.yaml
 
 `PROXY_BASE_URL` is the origin developers reach. The gateway builds the discovery document, the token endpoint, and the browser verification URL from it, so behind a load balancer or TLS terminator it must name the public-facing origin, not the pod. Claude Code only signs in to a gateway whose hostname resolves to private addresses (RFC 1918, link-local, CGNAT `100.64.0.0/10`, IPv6 ULA `fc00::/7`, or loopback), because a trusted gateway can push settings that run commands on developer machines. Put the proxy on an internal hostname behind TLS; the CLI pins the TLS certificate per hostname on first connect. Plain `http://` on loopback, as in the screenshots below, is accepted for local testing
 
-Two optional settings tune the flow. `LITELLM_CLI_JWT_EXPIRATION_HOURS` sets the session token's lifetime between renewals (default `24`). Claude Code renews the session token with the refresh token before it expires, so a developer stays signed in past that lifetime. A session ends when 14 days pass without a renewal, when a renewal is refused, or when the developer runs `/logout` (see [Session lifetime and sign-out](#session-lifetime-and-sign-out)). Keep it at or below `336`, since a session token that lives longer than the 14-day refresh token outlives the token that would renew it, and the developer is back to `/login` when it expires. `allow_cli_sso_verification_uri_complete: true` under `general_settings` adds `verification_uri_complete` to the device authorization response, which carries the code in the URL so a client that honors it opens the browser page with the code already filled in. It is off by default because typing the code is what ties the browser page to the terminal that started the login; see [Pre-fill the verification code](../proxy/cli_sso#pre-fill-the-verification-code)
+Two optional settings tune the flow. `LUMINA_CLI_JWT_EXPIRATION_HOURS` sets the session token's lifetime between renewals (default `24`). Claude Code renews the session token with the refresh token before it expires, so a developer stays signed in past that lifetime. A session ends when 14 days pass without a renewal, when a renewal is refused, or when the developer runs `/logout` (see [Session lifetime and sign-out](#session-lifetime-and-sign-out)). Keep it at or below `336`, since a session token that lives longer than the 14-day refresh token outlives the token that would renew it, and the developer is back to `/login` when it expires. `allow_cli_sso_verification_uri_complete: true` under `general_settings` adds `verification_uri_complete` to the device authorization response, which carries the code in the URL so a client that honors it opens the browser page with the code already filled in. It is off by default because typing the code is what ties the browser page to the terminal that started the login; see [Pre-fill the verification code](../proxy/cli_sso#pre-fill-the-verification-code)
 
 With more than one worker or replica, the browser leg and the terminal's polling can land on different processes, and the sign-in state lives in the proxy's CLI SSO cache. The record of which refresh tokens were already used or revoked lives in the proxy's cache too, and a process that never saw that record accepts a refresh token another process already rotated or revoked. Configure Redis (`REDIS_HOST`, `REDIS_PORT`, and `REDIS_PASSWORD` in the environment, or `general_settings.coordination_redis`) so that cache is shared, or run a single worker. While Redis is unreachable a renewal or a sign-out answers `503 temporarily_unavailable` rather than guessing, and Claude Code keeps using the session token it has and renews again later
 
@@ -102,7 +102,7 @@ curl -X POST http://localhost:4000/claude_code_gateway/oauth/token \
 {"error": "authorization_pending"}
 ```
 
-Once the developer has approved the code in the browser (the next section shows that leg), the same poll answers the session token with a refresh token next to it, served with `cache-control: no-store`. `expires_in` is `LITELLM_CLI_JWT_EXPIRATION_HOURS` in seconds, and `user_id` and `team_id` name the user and team the session is scoped to
+Once the developer has approved the code in the browser (the next section shows that leg), the same poll answers the session token with a refresh token next to it, served with `cache-control: no-store`. `expires_in` is `LUMINA_CLI_JWT_EXPIRATION_HOURS` in seconds, and `user_id` and `team_id` name the user and team the session is scoped to
 
 ```json
 {
@@ -183,7 +183,7 @@ From here Claude Code continues with its usual first-run prompts (security notes
 
 Claude Code stores the session token together with the refresh token. Five minutes before the session token expires (24 hours by default), it posts the refresh token to the token endpoint and stores the new session token and refresh token it gets back, so a developer who keeps using Claude Code is not sent back to the browser. Each refresh token is single-use and lives 14 days, and every renewal issues a new one, so a session ends after 14 days without a renewal, and Claude Code asks for `/login` once the session token it holds expires. Two Claude Code terminals on one machine share the stored credential but renew on their own, so the second one to renew presents the refresh token the first already rotated, is refused (one or more `400`s on `/claude_code_gateway/oauth/token` in the proxy's access log) and carries on with the credential the first terminal saved
 
-Every renewal re-reads the developer's user record and team membership in LiteLLM. Deactivating or deleting the user in LiteLLM, or removing them from the team the session was issued for, refuses the next renewal with `400 invalid_grant`, and Claude Code asks for `/login` once the current session token expires, within `LITELLM_CLI_JWT_EXPIRATION_HOURS`. A deleted user's requests to `/claude_code_gateway/v1/messages` answer `401` right away, before that session token expires. Deprovisioning a developer at the identity provider alone does not end a session in progress, because renewal checks LiteLLM's own user and team state and not the identity provider, so that session keeps renewing until 14 days pass without a renewal. Deactivate the user in LiteLLM as well to end it sooner
+Every renewal re-reads the developer's user record and team membership in LiteLLM. Deactivating or deleting the user in LiteLLM, or removing them from the team the session was issued for, refuses the next renewal with `400 invalid_grant`, and Claude Code asks for `/login` once the current session token expires, within `LUMINA_CLI_JWT_EXPIRATION_HOURS`. A deleted user's requests to `/claude_code_gateway/v1/messages` answer `401` right away, before that session token expires. Deprovisioning a developer at the identity provider alone does not end a session in progress, because renewal checks LiteLLM's own user and team state and not the identity provider, so that session keeps renewing until 14 days pass without a renewal. Deactivate the user in LiteLLM as well to end it sooner
 
 `/logout` posts the session token and the refresh token to `POST /claude_code_gateway/oauth/revoke`, the `revocation_endpoint` from the discovery document, then removes the stored credential. Revoking the refresh token ends that sign-in, since every refresh token rotated from it, whoever holds one, is refused from then on. The session token itself is self-contained and is not revoked; it stays valid until it expires
 
@@ -211,7 +211,7 @@ The endpoint is `GET /claude_code_gateway/managed/settings`, authenticated with 
 
 ```bash
 curl -s http://localhost:4000/claude_code_gateway/managed/settings \
-  -H "Authorization: Bearer $LITELLM_KEY"
+  -H "Authorization: Bearer $LUMINA_KEY"
 ```
 
 ```json
@@ -252,13 +252,13 @@ upstreams:
   - provider: anthropic
     base_url: https://litellm.internal.example.com
     auth:
-      api_key: ${LITELLM_VIRTUAL_KEY}
+      api_key: ${LUMINA_VIRTUAL_KEY}
     forward_user_identity: true
 ```
 
 ## Known limits
 
-Revocation covers the refresh token only. The session token is self-contained, so after `/logout` the session token a developer held keeps working until it expires, within `LITELLM_CLI_JWT_EXPIRATION_HOURS`
+Revocation covers the refresh token only. The session token is self-contained, so after `/logout` the session token a developer held keeps working until it expires, within `LUMINA_CLI_JWT_EXPIRATION_HOURS`
 
 A replayed refresh token is refused on its own and ends nothing else, so a copy of a refresh token that renews before the real one keeps its chain alive. The real Claude Code drops its refresh token on that refusal, which leaves `/logout` nothing to revoke, so deactivating or deleting the user in LiteLLM, or removing them from the team, is what ends that chain
 

@@ -83,7 +83,7 @@ print(completion.choices[0].message)
 ```yaml
 model_list:
     - model_name: "{{gemini_flash}}"
-      litellm_params:
+      lumina_params:
         model: gemini/{{gemini_flash}}
         api_key: os.environ/GEMINI_API_KEY
 ```
@@ -201,7 +201,7 @@ Azure Blob Storage supports all Gemini-compatible file types:
 ```yaml
 model_list:
     - model_name: "{{gemini_flash}}"
-      litellm_params:
+      lumina_params:
         model: gemini/{{gemini_flash}}
         api_key: os.environ/GEMINI_API_KEY
 ```
@@ -271,7 +271,7 @@ print(completion.choices[0].message.content)
 ```bash
 # Upload file with Azure Blob Storage
 curl -X POST "http://0.0.0.0:4000/v1/files" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F "file=@document.pdf" \
   -F "purpose=user_data" \
   -F "target_storage=azure_storage" \
@@ -280,7 +280,7 @@ curl -X POST "http://0.0.0.0:4000/v1/files" \
 
 # Use the file with Gemini
 curl -X POST "http://0.0.0.0:4000/v1/chat/completions" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{gemini_flash}}",

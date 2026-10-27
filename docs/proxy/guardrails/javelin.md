@@ -14,13 +14,13 @@ Define your guardrails under the `guardrails` section
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "javelin-prompt-injection"
-    litellm_params:
+    lumina_params:
       guardrail: javelin
       mode: "pre_call"
       api_key: os.environ/JAVELIN_API_KEY
@@ -31,7 +31,7 @@ guardrails:
         request_source: "litellm-proxy"
       application: "my-app"
   - guardrail_name: "javelin-trust-safety"
-    litellm_params:
+    lumina_params:
       guardrail: javelin
       mode: "pre_call"
       api_key: os.environ/JAVELIN_API_KEY
@@ -39,7 +39,7 @@ guardrails:
       guard_name: "trustsafety"
       api_version: "v1"
   - guardrail_name: "javelin-language-detection"
-    litellm_params:
+    lumina_params:
       guardrail: javelin
       mode: "pre_call"
       api_key: os.environ/JAVELIN_API_KEY
@@ -304,7 +304,7 @@ Detects the language of input text and can enforce language policies.
 ```yaml
 guardrails:
   - guardrail_name: "javelin-guard"
-    litellm_params:
+    lumina_params:
       guardrail: javelin
       mode: "pre_call"
       api_key: os.environ/JAVELIN_API_KEY

@@ -61,11 +61,11 @@ export OPENAI_API_KEY=""
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}                          # The `openai/` prefix will call openai.chat.completions.create
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-3.5-turbo-instruct
-    litellm_params:
+    lumina_params:
       model: text-completion-openai/gpt-3.5-turbo-instruct # The `text-completion-openai/` prefix will call openai.completions.create
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -78,7 +78,7 @@ This means requests to `{{openai_large}}`, `{{openai_small}}` will all go throug
 ```yaml
 model_list:
   - model_name: "*"             # all requests where model not in your config go to this deployment
-    litellm_params:
+    lumina_params:
       model: openai/*           # set `openai/` to use the openai route
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -200,7 +200,7 @@ Every `openai/` deployment that has no `api_key` then uses federation.
 ```yaml
 model_list:
   - model_name: gpt-5.6
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6
       openai_identity_provider_id: idp_...
       openai_service_account_id: user-...
@@ -336,13 +336,13 @@ response = responses(
 model_list:
   # Search model for /chat/completions
   - model_name: gpt-5-search-api
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5-search-api
       api_key: os.environ/OPENAI_API_KEY
 
   # Regular model for /responses with web_search_preview tool
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -440,7 +440,7 @@ print(completion.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: openai-model
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -456,7 +456,7 @@ litellm --config config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{ 
     "model": "openai-model",
     "messages": [
@@ -523,7 +523,7 @@ Then call normally, with no model prefix:
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -535,7 +535,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 </Tabs>
 
 :::note
-`route_all_chat_openai_to_responses` only applies to the `openai` provider. Azure OpenAI is unaffected. You can also set it via env var: `LITELLM_ROUTE_ALL_CHAT_OPENAI_TO_RESPONSES=true`.
+`route_all_chat_openai_to_responses` only applies to the `openai` provider. Azure OpenAI is unaffected. You can also set it via env var: `LUMINA_ROUTE_ALL_CHAT_OPENAI_TO_RESPONSES=true`.
 :::
 
 **Option A, per-request prefix:** You can also prefix individual model names with `openai/responses/` to route just that call through the Responses API.
@@ -555,7 +555,7 @@ response = litellm.completion(
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{ 
     "model": "openai/responses/{{openai_small}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -633,7 +633,7 @@ response = litellm.completion(
 # Option 1: String format (default - no summary)
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "openai/responses/{{openai_small}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -644,7 +644,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 # summary options: "auto", "detailed", or "concise" (not all supported by all models)
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "openai/responses/{{openai_small}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -809,7 +809,7 @@ response = litellm.completion(
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Write a function to reverse a string"}],
@@ -933,13 +933,13 @@ print(response)
 model_list:
   # Model with mode: responses (automatic)
   - model_name: o3-deep-research
-    litellm_params:
+    lumina_params:
       model: o3-deep-research-2025-06-26
       api_key: os.environ/OPENAI_API_KEY
 
   # Model with mode: chat (use prefix for built-in tools)
   - model_name: gpt-4o-with-tools
-    litellm_params:
+    lumina_params:
       model: openai/responses/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -955,7 +955,7 @@ litellm --config config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "gpt-4o-with-tools",
     "messages": [
@@ -1007,14 +1007,14 @@ print(f"response: {response}")
 ```yaml
 model_list:
 - model_name: gpt-4o-transcribe
-  litellm_params:
+  lumina_params:
     model: gpt-4o-transcribe
     api_key: os.environ/OPENAI_API_KEY
   model_info:
     mode: audio_transcription
     
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 2. Start the proxy
@@ -1027,7 +1027,7 @@ litellm --config config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'file=@"/Users/krrishdholakia/Downloads/gettysburg.wav"' \
 --form 'model="gpt-4o-transcribe"'
 ```
@@ -1283,7 +1283,7 @@ Forward openai Org ID's from the client to OpenAI with `forward_openai_org_id` p
 ```yaml
 model_list:
   - model_name: "{{openai_small}}"
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 

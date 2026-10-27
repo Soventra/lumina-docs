@@ -20,18 +20,18 @@ Use policies to group guardrails and control which ones run for specific teams, 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
 
 # 1. Define your guardrails
 guardrails:
   - guardrail_name: pii_masking
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: pre_call
 
   - guardrail_name: prompt_injection
-    litellm_params:
+    lumina_params:
       guardrail: lakera
       mode: pre_call
       api_key: os.environ/LAKERA_API_KEY

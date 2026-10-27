@@ -43,11 +43,11 @@ export GOOGLE_APPLICATION_CREDENTIALS="absolute/path/to/service_account.json"
 ```yaml
 model_list:
 - model_name: textembedding-gecko
-  litellm_params:
+  lumina_params:
     model: vertex_ai/textembedding-gecko
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Start proxy 
@@ -65,7 +65,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/embeddings' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"input": ["Academia.edu uses"], "model": "textembedding-gecko", "encoding_format": "base64"}'
 ```
@@ -130,7 +130,7 @@ response = embedding(model="cohere/embed-english-v3.0", input=["<base64 encoded 
 ```yaml
 model_list:
   - model_name: cohere-embed
-    litellm_params:
+    lumina_params:
       model: cohere/embed-english-v3.0
       api_key: os.environ/COHERE_API_KEY
 ```
@@ -557,7 +557,7 @@ print(response)
 
 ```bash
 curl -X POST http://localhost:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini-embedding-2-preview",
@@ -610,7 +610,7 @@ response = embedding(
 
 ```bash
 curl -X POST http://localhost:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini-embedding-2-preview",
@@ -663,7 +663,7 @@ response = embedding(
 
 ```bash
 curl -X POST http://localhost:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini-embedding-2-preview",
@@ -784,7 +784,7 @@ response = embedding(
 ```yaml
 model_list:
   - model_name: "cohere-embed"
-    litellm_params:
+    lumina_params:
       model: embed-english-v3.0
       input_type: search_document # PROVIDER-SPECIFIC PARAM
 ```

@@ -52,7 +52,7 @@ from litellm import Router
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias -> loadbalance between models with same `model_name`
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -60,7 +60,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -68,13 +68,13 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	}
 }, {
     "model_name": "{{openai_large}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/{{openai_large}}", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_base": os.getenv("AZURE_API_BASE"),
@@ -82,7 +82,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_large}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "{{openai_large}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	}
@@ -119,17 +119,17 @@ See detailed proxy loadbalancing/fallback docs [here](./proxy/reliability.md)
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_base: <your-azure-endpoint>
       api_key: <your-azure-api-key>
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-small-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: <your-azure-api-key>
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-large
       api_base: https://openai-france-1234.openai.azure.com/
       api_key: <your-azure-api-key>
@@ -146,7 +146,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_small}}",
   "messages": [
@@ -192,14 +192,14 @@ You can also set a `weight` param, to specify which model should get picked when
 ```yaml
 model_list:
     - model_name: {{openai_small}}
-      litellm_params:
+      lumina_params:
         model: azure/chatgpt-v-2
         api_key: os.environ/AZURE_API_KEY
         api_version: os.environ/AZURE_API_VERSION
         api_base: os.environ/AZURE_API_BASE
         rpm: 900 
     - model_name: {{openai_small}}
-      litellm_params:
+      lumina_params:
         model: azure/chatgpt-functioncalling
         api_key: os.environ/AZURE_API_KEY
         api_version: os.environ/AZURE_API_VERSION
@@ -215,7 +215,7 @@ import asyncio
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -224,7 +224,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -254,14 +254,14 @@ asyncio.run(router_acompletion())
 ```yaml
 model_list:
     - model_name: {{openai_small}}
-      litellm_params:
+      lumina_params:
         model: azure/chatgpt-v-2
         api_key: os.environ/AZURE_API_KEY
         api_version: os.environ/AZURE_API_VERSION
         api_base: os.environ/AZURE_API_BASE
         weight: 9
     - model_name: {{openai_small}}
-      litellm_params:
+      lumina_params:
         model: azure/chatgpt-functioncalling
         api_key: os.environ/AZURE_API_KEY
         api_version: os.environ/AZURE_API_VERSION
@@ -277,7 +277,7 @@ import asyncio
 
 model_list = [{
 	"model_name": "{{openai_small}}", # model alias 
-	"litellm_params": { 
+	"lumina_params": { 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -286,7 +286,7 @@ model_list = [{
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { 
+	"lumina_params": { 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -340,7 +340,7 @@ from litellm import Router
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -350,7 +350,7 @@ model_list = [{ # list of model deployments
 	}, 
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -360,7 +360,7 @@ model_list = [{ # list of model deployments
 	},
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 		"tpm": 100000,
@@ -388,7 +388,7 @@ print(response)
 ```yaml
 model_list:
     - model_name: {{openai_small}} # model alias 
-      litellm_params: # params for litellm completion/embedding call 
+      lumina_params: # params for litellm completion/embedding call 
         model: azure/chatgpt-v-2 # actual model name
         api_key: os.environ/AZURE_API_KEY
         api_version: os.environ/AZURE_API_VERSION
@@ -396,7 +396,7 @@ model_list:
       tpm: 100000
       rpm: 10000
     - model_name: {{openai_small}} 
-      litellm_params: # params for litellm completion/embedding call 
+      lumina_params: # params for litellm completion/embedding call 
         model: {{openai_small}} 
         api_key: os.environ/OPENAI_API_KEY
       tpm: 100000
@@ -410,7 +410,7 @@ router_settings:
   enable_pre_call_checks: true
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 **2. Start proxy**
@@ -424,7 +424,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://localhost:4000/v1/chat/completions' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_small}}", 
     "messages": [{"role": "user", "content": "Hey, how's it going?"}]
@@ -545,7 +545,7 @@ from litellm import Router
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -555,7 +555,7 @@ model_list = [{ # list of model deployments
 	"rpm": 10000,
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -565,7 +565,7 @@ model_list = [{ # list of model deployments
 	"rpm": 1000,
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	},
@@ -601,7 +601,7 @@ import asyncio
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # model alias 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-v-2", # actual model name
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -609,7 +609,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -617,7 +617,7 @@ model_list = [{ # list of model deployments
 	}
 }, {
     "model_name": "{{openai_small}}", 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	}
@@ -676,7 +676,7 @@ class CustomRoutingStrategy(CustomRoutingStrategyBase):
         print("router model list=", model_list)
         for model in model_list:
             if isinstance(model, dict):
-                if model["litellm_params"]["model"] == "openai/very-special-endpoint":
+                if model["lumina_params"]["model"] == "openai/very-special-endpoint":
                     return model
         pass
 
@@ -713,7 +713,7 @@ router = Router(
     model_list=[
         {
             "model_name": "azure-model",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "openai/very-special-endpoint",
                 "api_base": "https://exampleopenaiendpoint-production.up.railway.app/",  # If you are Krrish, this is OpenAI Endpoint3 on our Railway endpoint :)
                 "api_key": "fake-key",
@@ -722,7 +722,7 @@ router = Router(
         },
         {
             "model_name": "azure-model",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "openai/fast-endpoint",
                 "api_base": "https://exampleopenaiendpoint-production.up.railway.app/",
                 "api_key": "fake-key",
@@ -771,12 +771,12 @@ import asyncio
 model_list =  [
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {"model": "{{openai_large}}"},
+		"lumina_params": {"model": "{{openai_large}}"},
 		"model_info": {"id": "openai-gpt-4o"},
 	},
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {"model": "groq/llama3-8b-8192"},
+		"lumina_params": {"model": "groq/llama3-8b-8192"},
 		"model_info": {"id": "groq-llama"},
 	},
 ]
@@ -800,13 +800,13 @@ asyncio.run(router_acompletion())
 
 #### Using Custom Input/Output pricing
 
-Set `litellm_params["input_cost_per_token"]` and `litellm_params["output_cost_per_token"]` for using custom pricing when routing
+Set `lumina_params["input_cost_per_token"]` and `lumina_params["output_cost_per_token"]` for using custom pricing when routing
 
 ```python
 model_list = [
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {
+		"lumina_params": {
 			"model": "azure/chatgpt-v-2",
 			"input_cost_per_token": 0.00003,
 			"output_cost_per_token": 0.00003,
@@ -815,7 +815,7 @@ model_list = [
 	},
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {
+		"lumina_params": {
 			"model": "azure/chatgpt-v-1",
 			"input_cost_per_token": 0.000000001,
 			"output_cost_per_token": 0.00000001,
@@ -824,7 +824,7 @@ model_list = [
 	},
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {
+		"lumina_params": {
 			"model": "azure/chatgpt-v-5",
 			"input_cost_per_token": 10,
 			"output_cost_per_token": 12,
@@ -858,7 +858,7 @@ A group is also **callable as a model**: request `model: <group_name>` and LiteL
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{"model": "anthropic-latency", "messages": [{"role": "user", "content": "ping"}]}'
 ```
 
@@ -883,17 +883,17 @@ You can also create, edit, and delete routing groups from the dashboard. See [Ma
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
       api_version: "2024-08-01-preview"
   - model_name: cheap-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -921,9 +921,9 @@ from litellm import Router
 
 router = Router(
     model_list=[
-        {"model_name": "{{openai_large}}", "litellm_params": {"model": "openai/{{openai_large}}"}},
-        {"model_name": "{{openai_large}}", "litellm_params": {"model": "azure/{{openai_large}}", "api_base": "...", "api_key": "..."}},
-        {"model_name": "cheap-model", "litellm_params": {"model": "openai/{{openai_small}}"}},
+        {"model_name": "{{openai_large}}", "lumina_params": {"model": "openai/{{openai_large}}"}},
+        {"model_name": "{{openai_large}}", "lumina_params": {"model": "azure/{{openai_large}}", "api_base": "...", "api_key": "..."}},
+        {"model_name": "cheap-model", "lumina_params": {"model": "openai/{{openai_small}}"}},
     ],
     routing_strategy="simple-shuffle",  # fallback for ungrouped models
     routing_groups=[
@@ -976,12 +976,12 @@ Use it when the deployments behind a model group do not share state, for example
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY_EASTUS
       api_base: https://eastus.openai.azure.com
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY_WESTUS
       api_base: https://westus.openai.azure.com
@@ -996,7 +996,7 @@ Send a session id with every request of the conversation. The proxy reads it fro
 
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -H "x-litellm-session-id: 7f1c2d1e-2b5a-4a5e-9c1f-0d5a9a3f8b21" \
   -d '{"model": "{{openai_large}}", "messages": [{"role": "user", "content": "hi"}]}'
@@ -1014,11 +1014,11 @@ router = Router(
     model_list=[
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {"model": "azure/{{openai_large}}", "api_key": "...", "api_base": "https://eastus.openai.azure.com"},
+            "lumina_params": {"model": "azure/{{openai_large}}", "api_key": "...", "api_base": "https://eastus.openai.azure.com"},
         },
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {"model": "azure/{{openai_large}}", "api_key": "...", "api_base": "https://westus.openai.azure.com"},
+            "lumina_params": {"model": "azure/{{openai_large}}", "api_key": "...", "api_base": "https://westus.openai.azure.com"},
         },
     ],
     routing_strategy="simple-shuffle",                 # any strategy
@@ -1089,7 +1089,7 @@ Traffic mirroring allows you to "mimic" production traffic to a secondary (silen
 
 ### Deployment Ordering (Priority)
 
-Set `order` in `litellm_params` to prioritize deployments. Lower values = higher priority. When multiple deployments share the same `order`, the routing strategy picks among them.
+Set `order` in `lumina_params` to prioritize deployments. Lower values = higher priority. When multiple deployments share the same `order`, the routing strategy picks among them.
 
 When a request to an `order=1` deployment fails (connection error, 404, 429, etc.), the router automatically tries `order=2` deployments, then `order=3`, and so on. Each order level gets its own set of retries before escalating to the next. If all order levels are exhausted, the router falls through to any configured fallbacks.
 
@@ -1104,7 +1104,7 @@ from litellm import Router
 model_list = [
     {
         "model_name": "{{openai_large}}",
-        "litellm_params": {
+        "lumina_params": {
             "model": "azure/gpt-4-primary",
             "api_key": os.getenv("AZURE_API_KEY"),
             "order": 1,  # Highest priority
@@ -1112,7 +1112,7 @@ model_list = [
     },
     {
         "model_name": "{{openai_large}}",
-        "litellm_params": {
+        "lumina_params": {
             "model": "azure/gpt-4-fallback",
             "api_key": os.getenv("AZURE_API_KEY_2"),
             "order": 2,  # Tried when order=1 fails
@@ -1129,13 +1129,13 @@ router = Router(model_list=model_list)
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-primary
       api_key: os.environ/AZURE_API_KEY
       order: 1  # Highest priority
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-fallback
       api_key: os.environ/AZURE_API_KEY_2
       order: 2  # Tried when order=1 fails
@@ -1159,7 +1159,7 @@ from litellm import Router
 model_list = [
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {
+		"lumina_params": {
 			"model": "{{openai_small}}", 
 			"api_key": os.getenv("OPENAI_API_KEY"), 
 			"weight": 1
@@ -1167,7 +1167,7 @@ model_list = [
 	},
 	{
 		"model_name": "{{openai_small}}",
-		"litellm_params": {
+		"lumina_params": {
 			"model": "{{openai_small}}", 
 			"api_key": os.getenv("OPENAI_API_KEY"), 
 			"weight": 2 # PICK THIS DEPLOYMENT 2x MORE OFTEN THAN THE ONE ABOVE
@@ -1189,12 +1189,12 @@ print(response)
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       weight: 1
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       weight: 2 # PICK THIS DEPLOYMENT 2x MORE OFTEN THAN THE ONE ABOVE
@@ -1234,7 +1234,7 @@ from litellm import Router
 model_list = [
     {
         "model_name": "{{openai_small}}",
-        "litellm_params": {
+        "lumina_params": {
             "model": "azure/{{openai_small}}",
             "api_base": "https://eastus2.example.azure.com",
             "api_key": os.getenv("AZURE_EASTUS2_KEY"),
@@ -1243,7 +1243,7 @@ model_list = [
     },
     {
         "model_name": "{{openai_small}}",
-        "litellm_params": {
+        "lumina_params": {
             "model": "azure/{{openai_small}}",
             "api_base": "https://swedencentral.example.azure.com",
             "api_key": os.getenv("AZURE_SWEDEN_KEY"),
@@ -1270,13 +1270,13 @@ response = await router.acompletion(
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_small}}
       api_base: https://eastus2.example.azure.com
       api_key: os.environ/AZURE_EASTUS2_KEY
       weight: 1
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_small}}
       api_base: https://swedencentral.example.azure.com
       api_key: os.environ/AZURE_SWEDEN_KEY
@@ -1317,7 +1317,7 @@ from litellm import Router
 
 model_list = [{
 	"model_name": "{{openai_large}}",
-	"litellm_params": {
+	"lumina_params": {
 		"model": "azure/{{openai_large}}",
 		# ...
 		"max_parallel_requests": 10 # SET PER DEPLOYMENT
@@ -1332,12 +1332,12 @@ router = Router(model_list=model_list, default_max_parallel_requests=20) # SET D
 # deployment max parallel requests > default max parallel requests
 ```
 
-On the proxy, set `max_parallel_requests` per deployment under `litellm_params` and the default under `router_settings`:
+On the proxy, set `max_parallel_requests` per deployment under `lumina_params` and the default under `router_settings`:
 
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
       rpm: 2 # derives max_parallel_requests=2
@@ -1403,7 +1403,7 @@ Defaults:
 ```yaml
 model_list:
 - model_name: fake-openai-endpoint
-  litellm_params:
+  lumina_params:
     model: predibase/llama-3-8b-instruct
     api_key: os.environ/PREDIBASE_API_KEY
     tenant_id: os.environ/PREDIBASE_TENANT_ID
@@ -1413,7 +1413,7 @@ model_list:
     cooldown_time: 0 # disable cooldowns for this deployment
 ```
 
-`allowed_fails` must be set under `model_info`, not `litellm_params`: unlike `model_info`, `litellm_params` is copied into the actual request sent to the LLM provider, so a router-only setting placed there would leak into that request. `cooldown_time` can be set under either location (`model_info` takes priority if both are set), matching its pre-existing behavior on the router's primary failure path.
+`allowed_fails` must be set under `model_info`, not `lumina_params`: unlike `model_info`, `lumina_params` is copied into the actual request sent to the LLM provider, so a router-only setting placed there would leak into that request. `cooldown_time` can be set under either location (`model_info` takes priority if both are set), matching its pre-existing behavior on the router's primary failure path.
 
 </TabItem>
 </Tabs>
@@ -1453,27 +1453,27 @@ Cooldowns apply to individual deployments, not entire model groups. The router i
 
 #### What is a deployment?
 
-A deployment is a single entry in your `config.yaml` model list. Each deployment represents a unique configuration with its own `litellm_params`. 
+A deployment is a single entry in your `config.yaml` model list. Each deployment represents a unique configuration with its own `lumina_params`. 
 
-LiteLLM generates a unique `model_id` for each deployment by creating a deterministic hash of all the `litellm_params`. This allows the router to track and manage each deployment independently.
+LiteLLM generates a unique `model_id` for each deployment by creating a deterministic hash of all the `lumina_params`. This allows the router to track and manage each deployment independently.
 
 **Example: Multiple deployments for the same model**
 
 ```yaml showLineNumbers title="Load Balancing config.yaml"
 model_list:
   - model_name: sonnet-4              # Deployment 1
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: <our-real-key>
       
   - model_name: byok-sonnet-4         # Deployment 2  
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: <customer-managed-key>
       api_base: https://proxy.litellm.ai/api.anthropic.com
       
   - model_name: sonnet-4              # Deployment 3
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{anthropic}}
       vertex_project: my-project
 ```
@@ -1508,18 +1508,18 @@ Consider this high-availability setup with multiple providers:
 ```yaml showLineNumbers title="Load Balancing config.yaml"
 model_list:
   - model_name: sonnet-4              # Primary: Anthropic Direct
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: <anthropic-key>
       
   - model_name: byok-sonnet-4         # BYOK: Customer-managed keys
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: <customer-managed-key>
       api_base: https://proxy.litellm.ai/api.anthropic.com
       
   - model_name: sonnet-4              # Fallback: Vertex AI
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{anthropic}}
       vertex_project: my-project
 ```
@@ -1595,7 +1595,7 @@ print(f"response: {response}")
 
 1. the `x-litellm-num-retries` request header (proxy only)
 2. `num_retries` in the request body
-3. `num_retries` in a deployment's `litellm_params` in `model_list`
+3. `num_retries` in a deployment's `lumina_params` in `model_list`
 4. `num_retries` in `litellm_settings` (the router-wide default)
 
 So a caller can always raise or lower the retry count for one request, including setting it to `0` to
@@ -1605,7 +1605,7 @@ whenever the request carries none, and it overrides the global default.
 `num_retries` is not the same knob as `max_retries`. `num_retries` is LiteLLM's own retry loop, while
 `max_retries` is the provider SDK's internal retry count. For a call that goes through the router,
 LiteLLM owns retries and pins the provider client to `max_retries: 0`, so a `max_retries` in the
-request body or in `litellm_params` has no effect on a proxy request. That is deliberate: it is what
+request body or in `lumina_params` has no effect on a proxy request. That is deliberate: it is what
 stops a deployment `num_retries: N` from being applied twice and turning one request into
 `(1 + N) ** 2` upstream calls. Use `num_retries` to control how many attempts a request gets.
 
@@ -1663,7 +1663,7 @@ router = litellm.Router(
 	model_list=[
 		{
 			"model_name": "{{openai_small}}",  # openai model name
-			"litellm_params": {  # params for litellm completion/embedding call
+			"lumina_params": {  # params for litellm completion/embedding call
 				"model": "azure/chatgpt-v-2",
 				"api_key": os.getenv("AZURE_API_KEY"),
 				"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1672,7 +1672,7 @@ router = litellm.Router(
 		},
 		{
 			"model_name": "bad-model",  # openai model name
-			"litellm_params": {  # params for litellm completion/embedding call
+			"lumina_params": {  # params for litellm completion/embedding call
 				"model": "azure/chatgpt-v-2",
 				"api_key": "bad-key",
 				"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1719,7 +1719,7 @@ router_settings:
 ```yaml
 model_list:
 - model_name: {{openai_large}}
-  litellm_params:
+  lumina_params:
     model: openai/{{openai_large}}
     api_key: os.environ/OPENAI_API_KEY
   model_info:
@@ -1797,7 +1797,7 @@ For 'eu-region' filtering, Set 'region_name' of deployment.
 model_list = [
             {
                 "model_name": "{{openai_small}}", # model group name
-                "litellm_params": {  # params for litellm completion/embedding call
+                "lumina_params": {  # params for litellm completion/embedding call
                     "model": "azure/chatgpt-v-2",
                     "api_key": os.getenv("AZURE_API_KEY"),
                     "api_version": os.getenv("AZURE_API_VERSION"),
@@ -1808,14 +1808,14 @@ model_list = [
             },
             {
                 "model_name": "{{openai_small}}", # model group name
-                "litellm_params": {  # params for litellm completion/embedding call
+                "lumina_params": {  # params for litellm completion/embedding call
                     "model": "{{openai_small}}",
                     "api_key": os.getenv("OPENAI_API_KEY"),
                 },
             },
 			{
 				"model_name": "{{gemini_pro}}",
-				"litellm_params": {
+				"lumina_params": {
 					"model": "vertex_ai/{{gemini_pro}}", 
 					"vertex_project": "adroit-crow-1234",
 					"vertex_location": "us-east1" # AUTOMATICALLY INFERS 'region_name'
@@ -1847,7 +1847,7 @@ import os
 model_list = [
 	{
 		"model_name": "gpt-3.5-turbo",  # model group name
-		"litellm_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for litellm completion/embedding call
 			"model": "azure/chatgpt-v-2",
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1860,7 +1860,7 @@ model_list = [
 	},
 	{
 		"model_name": "gpt-3.5-turbo",  # model group name
-		"litellm_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for litellm completion/embedding call
 			"model": "gpt-3.5-turbo-1106",
 			"api_key": os.getenv("OPENAI_API_KEY"),
 		},
@@ -1897,7 +1897,7 @@ import os
 model_list = [
 	{
 		"model_name": "{{openai_small}}",  # model group name
-		"litellm_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for litellm completion/embedding call
 			"model": "azure/chatgpt-v-2",
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1910,7 +1910,7 @@ model_list = [
 	},
 	{
 		"model_name": "{{openai_small}}",  # model group name
-		"litellm_params": {  # params for litellm completion/embedding call
+		"lumina_params": {  # params for litellm completion/embedding call
 			"model": "{{openai_small}}",
 			"api_key": os.getenv("OPENAI_API_KEY"),
 		},
@@ -1964,14 +1964,14 @@ async def test_acompletion_caching_on_router_caching_groups():
 		model_list = [
 			{
 				"model_name": "openai-gpt-4o-mini",
-				"litellm_params": {
+				"lumina_params": {
 					"model": "{{openai_small}}",
 					"api_key": os.getenv("OPENAI_API_KEY"),
 				},
 			},
 			{
 				"model_name": "azure-gpt-4o-mini",
-				"litellm_params": {
+				"lumina_params": {
 					"model": "azure/chatgpt-v-2",
 					"api_key": os.getenv("AZURE_API_KEY"),
 					"api_base": os.getenv("AZURE_API_BASE"),
@@ -2022,7 +2022,7 @@ router = Router(
 	model_list=[
 		{
 			"model_name": "{{openai_small}}",
-			"litellm_params": {
+			"lumina_params": {
 				"model": "{{openai_small}}",
 				"api_key": "bad_key",
 			},
@@ -2067,7 +2067,7 @@ from litellm import Router
 model_list = [
 	{ # list of model deployments 
 		"model_name": "{{openai_small}}", # model alias 
-		"litellm_params": { # params for litellm completion/embedding call 
+		"lumina_params": { # params for litellm completion/embedding call 
 			"model": "azure/chatgpt-v-2", # actual model name
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
@@ -2079,7 +2079,7 @@ model_list = [
 	}, 
 	{
 		"model_name": "{{openai_large}}", 
-		"litellm_params": { # params for litellm completion/embedding call 
+		"lumina_params": { # params for litellm completion/embedding call 
 			"model": "azure/chatgpt-functioncalling", 
 			"api_key": os.getenv("AZURE_API_KEY"),
 			"api_version": os.getenv("AZURE_API_VERSION"),
@@ -2130,7 +2130,7 @@ from litellm import Router
 fallback_dict = {"gpt-4o-mini": "gpt-4.1"}
 
 router = Router(model_list=model_list, 
-                default_litellm_params={"context_window_fallback_dict": fallback_dict})
+                default_lumina_params={"context_window_fallback_dict": fallback_dict})
 
 user_message = "Hello, whats the weather in San Francisco??"
 messages = [{"content": user_message, "role": "user"}]
@@ -2155,10 +2155,10 @@ class MyCustomHandler(CustomLogger):
 	def log_success_event(self, kwargs, response_obj, start_time, end_time): 
 		print(f"On Success")
 		print("kwargs=", kwargs)
-		litellm_params= kwargs.get("litellm_params")
-		api_key = litellm_params.get("api_key")
-		api_base = litellm_params.get("api_base")
-		custom_llm_provider= litellm_params.get("custom_llm_provider")
+		lumina_params= kwargs.get("lumina_params")
+		api_key = lumina_params.get("api_key")
+		api_base = lumina_params.get("api_base")
+		custom_llm_provider= lumina_params.get("custom_llm_provider")
 		response_cost = kwargs.get("response_cost")
 
 		# print the values

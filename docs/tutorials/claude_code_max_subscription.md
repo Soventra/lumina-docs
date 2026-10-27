@@ -46,11 +46,11 @@ Create a `config.yaml` that routes every Claude model to Anthropic:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: "anthropic/*"
-    litellm_params:
+    lumina_params:
       model: "anthropic/*"
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 ```
 
@@ -67,7 +67,7 @@ A deployment without an `api_key` serves only subscription users: a request that
 ## Step 2: Start LiteLLM Proxy
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
-export LITELLM_MASTER_KEY="sk-<a-long-random-key>"
+export LUMINA_MASTER_KEY="sk-<a-long-random-key>"
 export DATABASE_URL="postgresql://<user>:<password>@<host>:5432/<database>"
 litellm --config /path/to/config.yaml
 
@@ -286,15 +286,15 @@ The subscription token is forwarded without this setting. If you also want other
 ```yaml showLineNumbers title="config.yaml - Per-Model Header Forwarding"
 model_list:
   - model_name: anthropic-claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
 
   - model_name: {{anthropic_large}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 
 litellm_settings:
   model_group_settings:
@@ -309,7 +309,7 @@ Set up per-user budgets while using Claude subscriptions (cost is tracked at API
 
 ```bash showLineNumbers title="Create Virtual Key with Budget"
 curl -X POST "http://localhost:4000/key/generate" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "key_alias": "developer-1",
@@ -328,7 +328,7 @@ Filter the Logs page at `http://localhost:4000/ui/?page=logs` with the **Credent
 
 ```bash showLineNumbers title="List Seat-Billed Requests"
 curl "http://localhost:4000/spend/logs/ui?used_client_oauth_token=true" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 Pass `used_client_oauth_token=false` for the requests the configured key paid for

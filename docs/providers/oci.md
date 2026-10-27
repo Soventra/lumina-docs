@@ -145,7 +145,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: oci-gov-llama
-    litellm_params:
+    lumina_params:
       model: oci/meta.llama-3.3-70b-instruct
       oci_region: us-luke-1
       oci_user: os.environ/OCI_USER
@@ -188,7 +188,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: oci-gov-llama
-    litellm_params:
+    lumina_params:
       model: oci/meta.llama-3.3-70b-instruct
       api_base: https://inference.generativeai.us-gov-ashburn-1.oci.oraclegovcloud.com
       oci_user: os.environ/OCI_USER
@@ -345,7 +345,7 @@ Here's how to call OCI GenAI through the LiteLLM Proxy Server.
 ```yaml
 model_list:
   - model_name: oci-grok-4
-    litellm_params:
+    lumina_params:
       model: oci/xai.grok-4
       oci_region: os.environ/OCI_REGION
       oci_user: os.environ/OCI_USER
@@ -355,7 +355,7 @@ model_list:
       oci_compartment_id: os.environ/OCI_COMPARTMENT_ID
 
   - model_name: oci-cohere-command
-    litellm_params:
+    lumina_params:
       model: oci/cohere.command-latest
       oci_region: os.environ/OCI_REGION
       oci_user: os.environ/OCI_USER

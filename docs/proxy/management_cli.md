@@ -43,8 +43,8 @@ Codex, OpenCode) with their LLM traffic routed through the proxy.
 2. **Set up environment variables**
 
    ```bash
-   export LITELLM_PROXY_URL=http://localhost:4000
-   export LITELLM_PROXY_API_KEY=sk-your-key
+   export LUMINA_PROXY_URL=http://localhost:4000
+   export LUMINA_PROXY_API_KEY=sk-your-key
    ```
 
    *(Replace with your actual proxy URL and API key)*
@@ -95,7 +95,7 @@ EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
 1. **Set up the proxy URL**
 
    ```bash
-   export LITELLM_PROXY_URL=http://localhost:4000
+   export LUMINA_PROXY_URL=http://localhost:4000
    ```
 
    *(Replace with your actual proxy URL)*
@@ -135,7 +135,7 @@ lite claude --resume
 lite codex exec "summarize the repo"
 ```
 
-Each command resolves your LiteLLM key (logging in via SSO when none is stored and you are at a terminal; otherwise it reads `LITELLM_PROXY_API_KEY` or `--api-key`), checks the key against the proxy so bad credentials fail right away instead of deep inside the agent, exports the environment variables the agent reads, then replaces itself with the agent process.
+Each command resolves your LiteLLM key (logging in via SSO when none is stored and you are at a terminal; otherwise it reads `LUMINA_PROXY_API_KEY` or `--api-key`), checks the key against the proxy so bad credentials fail right away instead of deep inside the agent, exports the environment variables the agent reads, then replaces itself with the agent process.
 
 The variables are chosen per agent. Claude Code gets `ANTHROPIC_BASE_URL` (the proxy root, so it appends `/v1/messages`) and `ANTHROPIC_AUTH_TOKEN`, with any stray `ANTHROPIC_API_KEY` cleared so the proxy token wins. Codex and OpenCode get `OPENAI_BASE_URL` (the proxy plus `/v1`) and `OPENAI_API_KEY`. Codex ignores `OPENAI_BASE_URL`, so it is additionally pointed at the proxy through a custom provider passed as `-c` config overrides (HTTP/SSE Responses transport, since the proxy does not speak the Responses WebSocket protocol).
 
@@ -151,11 +151,11 @@ To pin the model, pass the agent's own model flag (`lite claude --model my-proxy
 
 The token minted by `lite login` is a short-lived, per-session agent credential, not a managed virtual key. It is scoped to the user and team you authenticated as, inherits that user's and team's models and budgets, and is enforced on the proxy exactly like a virtual key on the same team (guardrails, routing, logging, spend). Spend is tracked against the shared team and user budgets, so running several agents (or logging in more than once) does not give each session its own budget; they all draw down the same team and user allowance, and there is no separate per-session cap.
 
-The credential is short-lived by design (default 24h, configurable via `LITELLM_CLI_JWT_EXPIRATION_HOURS`); run `lite login` again to refresh it, which also re-reads your latest team and user settings. It does not appear in the Keys UI and cannot be rotated or revoked mid-session, and `lite claude`, `lite codex`, and `lite opencode` work with it on a default deployment. If you need a long-lived, rotatable key that shows up in the Keys UI, create a dedicated virtual key in the dashboard and pass it via `--api-key` or `LITELLM_PROXY_API_KEY` instead.
+The credential is short-lived by design (default 24h, configurable via `LUMINA_CLI_JWT_EXPIRATION_HOURS`); run `lite login` again to refresh it, which also re-reads your latest team and user settings. It does not appear in the Keys UI and cannot be rotated or revoked mid-session, and `lite claude`, `lite codex`, and `lite opencode` work with it on a default deployment. If you need a long-lived, rotatable key that shows up in the Keys UI, create a dedicated virtual key in the dashboard and pass it via `--api-key` or `LUMINA_PROXY_API_KEY` instead.
 
 `lite login` keeps the credential in your OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `litellm-cli` and the account `credential`. Only the non-secret half lands in `~/.litellm/token.json`: the gateway URL, your user id, email, and role, the auth header name, and the sign-in timestamp. That file is created `0600` inside a `0700` directory. Reaching the keychain needs the `keyring` package, which ships with the `cli` extra, so install with `pip install 'litellm[cli]'` rather than a bare `pip install litellm` or `pip install 'litellm[proxy]'` if you want keychain storage. Code that reads the credential back through `litellm.get_litellm_gateway_api_key()` needs `keyring` for the same reason: without it the call cannot see a keychain entry and returns `None`, even though `lite login` stored one
 
-A machine with no keychain, a headless Linux box for example, keeps the credential in that same owner-only file instead, and so do installs missing `keyring` and shells that set `LITELLM_CLI_DISABLE_KEYRING` to `1`, `true`, `yes`, or `on`, which turns keychain storage off entirely. `lite login` prints where the credential ended up either way. A credential written into `token.json` in plaintext by an older `lite` still authenticates: the next command that reads it moves it into the keychain and takes it out of the file
+A machine with no keychain, a headless Linux box for example, keeps the credential in that same owner-only file instead, and so do installs missing `keyring` and shells that set `LUMINA_CLI_DISABLE_KEYRING` to `1`, `true`, `yes`, or `on`, which turns keychain storage off entirely. `lite login` prints where the credential ended up either way. A credential written into `token.json` in plaintext by an older `lite` still authenticates: the next command that reads it moves it into the keychain and takes it out of the file
 
 A credential from `lite login --pkce` also comes with a refresh token: the CLI renews the key on its next use, `lite auth print-token` hands the current key to other tools, and `lite logout` revokes the refresh token on the proxy. Each renewed key goes to the keychain like the one before it, and so does the refresh token that bought it. See [Browser sign-in with PKCE](./cli_sso#browser-sign-in-with-pkce)
 
@@ -307,8 +307,8 @@ lite logout             # clear the keychain entry and the token file, and revok
 
 ## Environment Variables
 
-- `LITELLM_PROXY_URL`: Base URL of the proxy server
-- `LITELLM_PROXY_API_KEY`: API key for authentication
+- `LUMINA_PROXY_URL`: Base URL of the proxy server
+- `LUMINA_PROXY_API_KEY`: API key for authentication
 
 ## Examples
 

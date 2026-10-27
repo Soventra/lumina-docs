@@ -36,7 +36,7 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: custom-infinity-rerank
-    litellm_params:
+    lumina_params:
       model: infinity/rerank
       api_base: https://localhost:8080
       api_key: os.environ/INFINITY_API_KEY
@@ -56,7 +56,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "custom-infinity-rerank",
@@ -100,7 +100,7 @@ response = rerank(
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "custom-infinity-rerank",
@@ -148,7 +148,7 @@ response = rerank(
 ```yaml
 model_list:
   - model_name: custom-infinity-rerank
-    litellm_params:
+    lumina_params:
       model: infinity/rerank
       api_base: https://localhost:8080
       raw_scores: True # EITHER SET PROVIDER-SPECIFIC PARAMS HERE OR IN REQUEST BODY
@@ -166,7 +166,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "custom-infinity-rerank",
@@ -196,7 +196,7 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: custom-infinity-embedding
-    litellm_params:
+    lumina_params:
       model: infinity/provider/custom-embedding-v1
       api_base: http://localhost:8080
       api_key: os.environ/INFINITY_API_KEY
@@ -206,7 +206,7 @@ model_list:
 
 ```bash
 curl http://0.0.0.0:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "custom-infinity-embedding",
@@ -248,7 +248,7 @@ print(response.data[0]['embedding'])
 
 ```bash
 curl http://0.0.0.0:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "custom-infinity-embedding",
@@ -268,8 +268,8 @@ curl http://0.0.0.0:4000/embeddings \
 from openai import OpenAI
 
 client = OpenAI(
-  api_key="<LITELLM_MASTER_KEY>",
-  base_url="<LITELLM_URL>"
+  api_key="<LUMINA_MASTER_KEY>",
+  base_url="<LUMINA_URL>"
 )
 
 response = client.embeddings.create(
@@ -287,7 +287,7 @@ print(response.data[0].embedding)
 
 ```bash
 curl http://0.0.0.0:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "bge-small",

@@ -24,13 +24,13 @@ response = search(
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 search_tools:
   - search_tool_name: exa-search
-    litellm_params:
+    lumina_params:
       search_provider: exa_ai
       api_key: os.environ/EXA_API_KEY
 ```
@@ -47,7 +47,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test Request"
 curl http://0.0.0.0:4000/v1/search/exa-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments",
@@ -110,7 +110,7 @@ print(response.provider_metadata["costDollars"])
 
 ```bash showLineNumbers title="Same request through the AI Gateway"
 curl http://0.0.0.0:4000/v1/search/exa-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "regional bank net interest margin outlook",

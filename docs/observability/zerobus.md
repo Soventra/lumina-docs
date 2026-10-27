@@ -31,8 +31,8 @@ Get your gateway's HTTPS base URL and a [virtual key](https://docs.litellm.ai/do
 In the environment where you will send the verification request, set your deployment URL and virtual key:
 
 ```bash
-export LITELLM_BASE_URL="https://litellm.example.com"
-export LITELLM_API_KEY="<your-litellm-virtual-key>"
+export LUMINA_BASE_URL="https://litellm.example.com"
+export LUMINA_API_KEY="<your-litellm-virtual-key>"
 ```
 
 Replace the example domain with your deployed gateway URL, without a trailing slash or `/v1` suffix. Note an existing model alias that this key can access; you will use it in step 6. The virtual key authenticates requests to LiteLLM. The Databricks service principal created below authenticates log delivery from the gateway to Databricks.
@@ -217,8 +217,8 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    api_key=os.environ["LITELLM_API_KEY"],
-    base_url=f'{os.environ["LITELLM_BASE_URL"]}/v1',
+    api_key=os.environ["LUMINA_API_KEY"],
+    base_url=f'{os.environ["LUMINA_BASE_URL"]}/v1',
 )
 
 response = client.chat.completions.create(
@@ -234,7 +234,7 @@ print("Response ID:", response.id)
 print("Assistant:", response.choices[0].message.content)
 ```
 
-Run it from the environment where you set `LITELLM_BASE_URL` and `LITELLM_API_KEY`:
+Run it from the environment where you set `LUMINA_BASE_URL` and `LUMINA_API_KEY`:
 
 ```bash
 python3 zerobus_request.py
@@ -255,8 +255,8 @@ Save the following as `zerobus-request.mjs`:
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: process.env.LITELLM_API_KEY,
-  baseURL: `${process.env.LITELLM_BASE_URL}/v1`,
+  apiKey: process.env.LUMINA_API_KEY,
+  baseURL: `${process.env.LUMINA_BASE_URL}/v1`,
 });
 
 const response = await client.chat.completions.create({
@@ -272,7 +272,7 @@ console.log("Response ID:", response.id);
 console.log("Assistant:", response.choices[0].message.content);
 ```
 
-Run it from the environment where you set `LITELLM_BASE_URL` and `LITELLM_API_KEY`:
+Run it from the environment where you set `LUMINA_BASE_URL` and `LUMINA_API_KEY`:
 
 ```bash
 node zerobus-request.mjs
@@ -281,12 +281,12 @@ node zerobus-request.mjs
 </TabItem>
 <TabItem value="curl" label="cURL">
 
-This example uses cURL to send the request and `jq` to print the response ID and assistant message. Run it from the environment where you set `LITELLM_BASE_URL` and `LITELLM_API_KEY`:
+This example uses cURL to send the request and `jq` to print the response ID and assistant message. Run it from the environment where you set `LUMINA_BASE_URL` and `LUMINA_API_KEY`:
 
 ```bash
 curl --fail-with-body --silent --show-error \
-  "${LITELLM_BASE_URL}/v1/chat/completions" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}" \
+  "${LUMINA_BASE_URL}/v1/chat/completions" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "your-model-alias",
@@ -413,7 +413,7 @@ LiteLLM acquires OAuth tokens automatically and refreshes them before expiry. Wh
 
 ## Troubleshooting
 
-Inspect your deployed gateway's container or service logs for `zerobus:` messages and `CustomLogger` batch flush messages. If more detail is needed, temporarily set `LITELLM_LOG=DEBUG` in the gateway deployment and apply the change through your normal rollout process. Restore the previous log level after diagnosing the integration because debug logs can contain request details.
+Inspect your deployed gateway's container or service logs for `zerobus:` messages and `CustomLogger` batch flush messages. If more detail is needed, temporarily set `LUMINA_LOG=DEBUG` in the gateway deployment and apply the change through your normal rollout process. Restore the previous log level after diagnosing the integration because debug logs can contain request details.
 
 | Symptom | What to check |
 | --- | --- |

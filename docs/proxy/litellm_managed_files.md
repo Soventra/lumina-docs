@@ -23,17 +23,17 @@ import Image from '@theme/IdealImage';
 ```yaml
 model_list:
     - model_name: "{{gemini_flash}}"
-      litellm_params:
+      lumina_params:
         model: vertex_ai/{{gemini_flash}}
         vertex_project: my-project-id
         vertex_location: us-central1
     - model_name: "gpt-4o-mini-openai"
-      litellm_params:
+      lumina_params:
         model: {{openai_small}}
         api_key: os.environ/OPENAI_API_KEY
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY  # alternatively use the env var - LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY  # alternatively use the env var - LUMINA_MASTER_KEY
   database_url: "postgresql://<user>:<password>@<host>:<port>/<dbname>" # alternatively use the env var - DATABASE_URL
 
 litellm_settings:
@@ -244,12 +244,12 @@ Prevent users from seeing files they don't have access to on `list` and `retriev
 ```yaml
 model_list:
     - model_name: "gpt-4o-mini-openai"
-      litellm_params:
+      lumina_params:
         model: {{openai_small}}
         api_key: os.environ/OPENAI_API_KEY
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY  # alternatively use the env var - LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY  # alternatively use the env var - LUMINA_MASTER_KEY
   database_url: "postgresql://<user>:<password>@<host>:<port>/<dbname>" # alternatively use the env var - DATABASE_URL
 ```
 
@@ -265,7 +265,7 @@ Let's create a user with the id `user_123`.
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/user/new' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"models": ["gpt-4o-mini-openai"], "user_id": "user_123"}'
 ```

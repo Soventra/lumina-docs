@@ -44,18 +44,18 @@ response = search(
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 search_tools:
   - search_tool_name: google-search
-    litellm_params:
+    lumina_params:
       search_provider: google_pse
       api_key: os.environ/GOOGLE_PSE_API_KEY
 ```
 
-The search engine id (`cx`) is read only from the `GOOGLE_PSE_ENGINE_ID` environment variable of the proxy process, so export it before starting the proxy. A `search_engine_id` key in the search tool's `litellm_params` is not used as `cx`
+The search engine id (`cx`) is read only from the `GOOGLE_PSE_ENGINE_ID` environment variable of the proxy process, so export it before starting the proxy. A `search_engine_id` key in the search tool's `lumina_params` is not used as `cx`
 
 ```bash
 export GOOGLE_PSE_API_KEY="AIza..."
@@ -74,7 +74,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test Request"
 curl http://0.0.0.0:4000/v1/search/google-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments",

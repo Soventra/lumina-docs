@@ -67,7 +67,7 @@ curl -s -D - http://localhost:4000/v1/chat/completions \
 
 ### Detailed Timing Breakdown (opt-in)
 
-Set `LITELLM_DETAILED_TIMING=true` to get per-phase timing in response headers:
+Set `LUMINA_DETAILED_TIMING=true` to get per-phase timing in response headers:
 
 | Header | What it measures |
 |--------|-----------------|
@@ -78,7 +78,7 @@ Set `LITELLM_DETAILED_TIMING=true` to get per-phase timing in response headers:
 
 ```bash
 # Enable detailed timing
-export LITELLM_DETAILED_TIMING=true
+export LUMINA_DETAILED_TIMING=true
 ```
 
 ## Large Payload Overhead
@@ -87,12 +87,12 @@ When sending large payloads (>1MB, e.g. base64-encoded images/PDFs), three thing
 
 ### 1. DEBUG Logging (most common)
 
-When `LITELLM_LOG=DEBUG` or `set_verbose=True` is enabled, every request payload is serialized with `json.dumps(indent=4)` synchronously. For a 2MB+ payload, this alone can take **2-5 seconds**.
+When `LUMINA_LOG=DEBUG` or `set_verbose=True` is enabled, every request payload is serialized with `json.dumps(indent=4)` synchronously. For a 2MB+ payload, this alone can take **2-5 seconds**.
 
 **Fix:** Don't use DEBUG logging in production. Use `INFO` level instead:
 
 ```bash
-export LITELLM_LOG=INFO
+export LUMINA_LOG=INFO
 ```
 
 If you need DEBUG logging but have large payloads, you can increase the size threshold for full payload logging:
@@ -130,7 +130,7 @@ export MAX_STRING_LENGTH_STDOUT_LOG=4096
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LITELLM_DETAILED_TIMING` | `false` | Enable per-phase timing headers |
+| `LUMINA_DETAILED_TIMING` | `false` | Enable per-phase timing headers |
 | `MAX_PAYLOAD_SIZE_FOR_DEBUG_LOG` | `102400` | Max payload bytes for full DEBUG serialization |
 | `MAX_BASE64_LENGTH_FOR_LOGGING` | `64` | Max base64 chars before truncation in logging |
 | `MAX_BASE64_LENGTH_STDOUT_LOG` | `4096` | Max base64 chars in a stdout log line before the run collapses to a size placeholder |

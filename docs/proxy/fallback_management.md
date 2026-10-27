@@ -51,7 +51,7 @@ Create or update fallbacks for a specific model.
 **Example using cURL:**
 ```bash
 curl -X POST "http://localhost:4000/fallback" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_small}}",
@@ -100,7 +100,7 @@ Get fallback configuration for a specific model.
 **Example using cURL:**
 ```bash
 curl -X GET "http://localhost:4000/fallback/{{openai_small}}?fallback_type=general" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Example using Python:**
@@ -136,7 +136,7 @@ Delete fallback configuration for a specific model.
 **Example using cURL:**
 ```bash
 curl -X DELETE "http://localhost:4000/fallback/{{openai_small}}?fallback_type=general" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Example using Python:**
@@ -163,7 +163,7 @@ To validate the fallback through the Proxy, make the primary deployment unavaila
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_small}}",
   "messages": [

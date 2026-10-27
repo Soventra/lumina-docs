@@ -42,7 +42,7 @@ for page in response.pages:
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: vertex-ocr
-    litellm_params:
+    lumina_params:
       model: vertex_ai/mistral-ocr-2505
       vertex_project: os.environ/VERTEXAI_PROJECT
       vertex_location: os.environ/VERTEXAI_LOCATION

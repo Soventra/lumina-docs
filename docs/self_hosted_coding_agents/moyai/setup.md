@@ -64,7 +64,7 @@ For a new gateway, add the model to its configuration and store the provider key
 ```yaml title="LiteLLM config.yaml"
 model_list:
   - model_name: openai/gpt-6-astra
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
 
@@ -79,8 +79,8 @@ In the LiteLLM Admin UI, open **Virtual Keys**, create a key named `moyai`, gran
 Edit `.env`:
 
 ```dotenv
-LITELLM_API_BASE=https://your-gateway.example.com/v1
-LITELLM_API_KEY=<Moyai virtual key>
+LUMINA_API_BASE=https://your-gateway.example.com/v1
+LUMINA_API_KEY=<Moyai virtual key>
 AGENT_MODEL=openai/gpt-6-astra
 AGENT_HARNESS=claude-agent-sdk
 SESSION_TITLES_ENABLED=false
@@ -100,11 +100,11 @@ A name in the model picker does not grant your key access to it. Set `AGENT_MODE
 
 ### Check the model connection {#check-the-model-connection}
 
-With your virtual key in the shell variable `LITELLM_API_KEY`, test the same protocol the walkthrough uses. This makes a small billed model request:
+With your virtual key in the shell variable `LUMINA_API_KEY`, test the same protocol the walkthrough uses. This makes a small billed model request:
 
 ```bash
 curl --fail-with-body -i 'https://your-gateway.example.com/v1/messages' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -H 'anthropic-version: 2023-06-01' \
   -d '{

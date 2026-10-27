@@ -36,7 +36,7 @@ litellm
 curl -X POST \
   "http://localhost:4000/vertex_ai/discovery/v1/projects/my-project/locations/global/collections/default_collection/dataStores/my-datastore/servingConfigs/default_config:search" \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
   -d '{
     "query": "How do I authenticate?",
     "pageSize": 10
@@ -57,7 +57,7 @@ Routes to `https://discoveryengine.googleapis.com`
 curl -X POST \
   "http://localhost:4000/vertex_ai/discovery/v1/projects/my-project/locations/global/collections/default_collection/dataStores/my-datastore/servingConfigs/default_config:search" \
   -H "Content-Type: application/json" \
-  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
   -d '{
     "query": "tutorials",
     "pageSize": 20,

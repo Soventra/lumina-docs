@@ -13,7 +13,7 @@ Create a `config.yaml` file:
 ```yaml
 model_list:
   - model_name: "bedrock-sonic"
-    litellm_params:
+    lumina_params:
       model: bedrock/amazon.nova-sonic-v1:0
       aws_region_name: us-east-1  # or your preferred region
     model_info:
@@ -33,14 +33,14 @@ import asyncio
 import websockets
 import json
 
-LITELLM_API_KEY = "sk-<your-litellm-api-key>"  # Your LiteLLM API key
-LITELLM_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
+LUMINA_API_KEY = "sk-<your-litellm-api-key>"  # Your LiteLLM API key
+LUMINA_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
 
 async def test_text_conversation():
     async with websockets.connect(
-        LITELLM_URL,
+        LUMINA_URL,
         additional_headers={
-            "Authorization": f"Bearer {LITELLM_API_KEY}"
+            "Authorization": f"Bearer {LUMINA_API_KEY}"
         }
     ) as ws:
         # Wait for session.created
@@ -96,8 +96,8 @@ import json
 import base64
 import pyaudio
 
-LITELLM_API_KEY = "sk-<your-litellm-api-key>"
-LITELLM_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
+LUMINA_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
 
 # Audio configuration
 INPUT_RATE = 16000   # Nova Sonic expects 16kHz input
@@ -127,8 +127,8 @@ async def audio_conversation():
     )
     
     async with websockets.connect(
-        LITELLM_URL,
-        additional_headers={"Authorization": f"Bearer {LITELLM_API_KEY}"}
+        LUMINA_URL,
+        additional_headers={"Authorization": f"Bearer {LUMINA_API_KEY}"}
     ) as ws:
         # Wait for session.created
         await ws.recv()
@@ -195,8 +195,8 @@ import websockets
 import json
 from datetime import datetime
 
-LITELLM_API_KEY = "sk-<your-litellm-api-key>"
-LITELLM_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
+LUMINA_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_URL = 'ws://localhost:4000/v1/realtime?model=bedrock-sonic'
 
 # Define tools
 TOOLS = [
@@ -229,8 +229,8 @@ def get_weather(location: str) -> dict:
 
 async def conversation_with_tools():
     async with websockets.connect(
-        LITELLM_URL,
-        additional_headers={"Authorization": f"Bearer {LITELLM_API_KEY}"}
+        LUMINA_URL,
+        additional_headers={"Authorization": f"Bearer {LUMINA_API_KEY}"}
     ) as ws:
         # Wait for session.created
         await ws.recv()

@@ -173,11 +173,11 @@ print(response)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: glm-5.2
-    litellm_params:
+    lumina_params:
       model: scx-ai/GLM-5.2
       api_key: os.environ/SCX_API_KEY
   - model_name: qwen3.8-max
-    litellm_params:
+    lumina_params:
       model: scx-ai/Qwen3.8-Max
       api_key: os.environ/SCX_API_KEY
 ```

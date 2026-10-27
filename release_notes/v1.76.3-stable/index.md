@@ -66,7 +66,7 @@ pip install litellm==1.76.3
   
   Set environment variable:
   ```bash
-  DEFAULT_NUM_WORKERS_LITELLM_PROXY=1
+  DEFAULT_NUM_WORKERS_LUMINA_PROXY=1
   ```
   
   Or start LiteLLM Proxy with:
@@ -83,7 +83,7 @@ pip install litellm==1.76.3
 This release includes significant performance optimizations. On our internal benchmarks we saw 1 instance get +400 RPS when using correct amount of  workers + CPU cores combination.
 
 - **+400 RPS Performance Boost** - LiteLLM Proxy now uses correct amount of CPU cores for optimal performance - [PR #14153](https://github.com/BerriAI/litellm/pull/14153)
-- **Default CPU Workers** - Changed DEFAULT_NUM_WORKERS_LITELLM_PROXY default to number of CPUs - [PR #14242](https://github.com/BerriAI/litellm/pull/14242)
+- **Default CPU Workers** - Changed DEFAULT_NUM_WORKERS_LUMINA_PROXY default to number of CPUs - [PR #14242](https://github.com/BerriAI/litellm/pull/14242)
 
 
 ---
@@ -238,7 +238,7 @@ This release includes significant performance optimizations. On our internal ben
 - **Performance**
     - LiteLLM Proxy: +400 RPS when using correct amount of CPU cores - [PR #14153](https://github.com/BerriAI/litellm/pull/14153)
     - Allow using `x-litellm-stream-timeout` header for stream timeout in requests - [PR #14147](https://github.com/BerriAI/litellm/pull/14147)
-    - Change DEFAULT_NUM_WORKERS_LITELLM_PROXY default to number CPUs - [PR #14242](https://github.com/BerriAI/litellm/pull/14242)
+    - Change DEFAULT_NUM_WORKERS_LUMINA_PROXY default to number CPUs - [PR #14242](https://github.com/BerriAI/litellm/pull/14242)
 - **Monitoring**
     - Added Prometheus missing metrics - [PR #14139](https://github.com/BerriAI/litellm/pull/14139)
 - **Timeout**

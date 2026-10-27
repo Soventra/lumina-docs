@@ -31,12 +31,12 @@ Caching can be enabled by adding the `cache` key in the `config.yaml`
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
   - model_name: openai-embedding
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
@@ -70,7 +70,7 @@ $ litellm --config /path/to/config.yaml
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "fake-openai-endpoint",
     "messages": [
@@ -97,12 +97,12 @@ The `valkey-search` module must be loaded (check with `MODULE LIST` / `FT._LIST`
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
   - model_name: openai-embedding
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
@@ -139,7 +139,7 @@ $ litellm --config /path/to/config.yaml
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "fake-openai-endpoint",
     "messages": [
@@ -160,10 +160,10 @@ Caching can be enabled by adding the `cache` key in the `config.yaml`
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
   - model_name: azure-embedding-model
-    litellm_params:
+    lumina_params:
       model: azure/azure-embedding-model
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY

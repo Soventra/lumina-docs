@@ -59,7 +59,7 @@ If the pods are crash looping and `exec` fails with `container not found`, read 
 kubectl get configmap -n <namespace> <release-name>-config -o yaml
 ```
 
-Redact `api_key`, `database_url`, `master_key`, and any other secret before sending. Also include the environment variables the container runs with that affect capacity: `NUM_WORKERS`, `MAX_REQUESTS_BEFORE_RESTART`, `MAX_REQUESTS_BEFORE_RESTART_JITTER`, `DATABASE_CONNECTION_POOL_LIMIT`, `DATABASE_CONNECTION_TIMEOUT`, `REDIS_HOST`, and `LITELLM_MODE`.
+Redact `api_key`, `database_url`, `master_key`, and any other secret before sending. Also include the environment variables the container runs with that affect capacity: `NUM_WORKERS`, `MAX_REQUESTS_BEFORE_RESTART`, `MAX_REQUESTS_BEFORE_RESTART_JITTER`, `DATABASE_CONNECTION_POOL_LIMIT`, `DATABASE_CONNECTION_TIMEOUT`, `REDIS_HOST`, and `LUMINA_MODE`.
 
 ## Node type
 

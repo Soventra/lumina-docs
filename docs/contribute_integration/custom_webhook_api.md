@@ -51,11 +51,11 @@ a. Setup config.yaml
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: anthropic-claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -78,7 +78,7 @@ c. Test it!
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_small}}",
   "messages": [

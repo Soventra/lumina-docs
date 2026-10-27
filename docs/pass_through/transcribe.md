@@ -9,7 +9,7 @@ Pass-through endpoints for the [Amazon Transcribe](https://docs.aws.amazon.com/t
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ❌ | Streaming transcription (`StartStreamTranscription`, the `transcribestreaming` HTTP/2 and WebSocket endpoint) is a separate protocol and is not covered by this pass-through |
 
-Just replace `https://transcribe.{aws_region_name}.amazonaws.com` with `LITELLM_PROXY_BASE_URL/transcribe`
+Just replace `https://transcribe.{aws_region_name}.amazonaws.com` with `LUMINA_PROXY_BASE_URL/transcribe`
 
 LiteLLM signs the forwarded request with SigV4 using the proxy's AWS credentials, so clients only need a LiteLLM virtual key.
 
@@ -41,7 +41,7 @@ litellm --config config.yaml
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/transcribe/StartTranscriptionJob' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "TranscriptionJobName": "my-job",
@@ -55,7 +55,7 @@ curl -X POST 'http://0.0.0.0:4000/transcribe/StartTranscriptionJob' \
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/transcribe/GetTranscriptionJob' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"TranscriptionJobName": "my-job"}'
 ```
@@ -64,7 +64,7 @@ The operation name in the URL is any operation of the Amazon Transcribe JSON API
 
 ## Usage with the AWS SDK (boto3)
 
-Point the SDK's `endpoint_url` at `LITELLM_PROXY_BASE_URL/transcribe` and pass your LiteLLM virtual key as the AWS access key id. The proxy reads the operation from the SDK's `X-Amz-Target` header, per the AWS JSON 1.1 protocol.
+Point the SDK's `endpoint_url` at `LUMINA_PROXY_BASE_URL/transcribe` and pass your LiteLLM virtual key as the AWS access key id. The proxy reads the operation from the SDK's `X-Amz-Target` header, per the AWS JSON 1.1 protocol.
 
 ```python showLineNumbers
 import boto3

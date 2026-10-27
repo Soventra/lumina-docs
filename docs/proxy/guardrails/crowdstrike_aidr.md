@@ -49,13 +49,13 @@ configuration file.
 ```yaml title="config.yaml - Example LiteLLM configuration with CrowdStrike AIDR guardrail"
 model_list:
   - model_name: {{openai_large}}                       # Alias used in API requests
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}              # Actual model to use
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: crowdstrike-aidr
-    litellm_params:
+    lumina_params:
       guardrail: crowdstrike_aidr
       default_on: true                       # Enable for all requests.
       mode: [pre_call, post_call]            # Scan prompts and responses. Policy actions are defined in AIDR console.
@@ -235,7 +235,7 @@ Set `fail_on_error: false` to fail open instead: connection failures, timeouts, 
 ```yaml title="config.yaml - CrowdStrike AIDR guardrail with fail open enabled"
 guardrails:
   - guardrail_name: crowdstrike-aidr
-    litellm_params:
+    lumina_params:
       guardrail: crowdstrike_aidr
       default_on: true
       mode: [pre_call, post_call]

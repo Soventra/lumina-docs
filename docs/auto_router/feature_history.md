@@ -100,7 +100,7 @@ Posts: [Route on Context Size and Modality](/blog/auto-router-more-routing-confi
 - **Operator-defined tier sets** for the LLM classifier. [#37226](https://github.com/BerriAI/litellm/pull/37226).
 - **Custom classifier plugins.** `classifier_type: custom` with a dotted path to your own `classify()`. [#37249](https://github.com/BerriAI/litellm/pull/37249).
 - **Plan-mode tier floor** for coding-agent clients. [#37230](https://github.com/BerriAI/litellm/pull/37230).
-- **Per-tier `litellm_params`** and per-model reasoning effort in the tier editor. [#37064](https://github.com/BerriAI/litellm/pull/37064), [#37673](https://github.com/BerriAI/litellm/pull/37673).
+- **Per-tier `lumina_params`** and per-model reasoning effort in the tier editor. [#37064](https://github.com/BerriAI/litellm/pull/37064), [#37673](https://github.com/BerriAI/litellm/pull/37673).
 - **Business classification rubric** preset. [#37534](https://github.com/BerriAI/litellm/pull/37534).
 - **Lite preset** (mixed provider) and heuristic scorer settings in the UI. [#37068](https://github.com/BerriAI/litellm/pull/37068), [#37216](https://github.com/BerriAI/litellm/pull/37216).
 - **Shadow evals: several keys per job, budget in dollars.** `api_key_ids` replaces `api_key_id`, `max_budget` replaces `max_turns` (breaking). [#37251](https://github.com/BerriAI/litellm/pull/37251), [#37555](https://github.com/BerriAI/litellm/pull/37555).

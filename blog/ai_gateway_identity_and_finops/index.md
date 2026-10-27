@@ -77,7 +77,7 @@ The agent can use this authenticated context for downstream authorization, attri
 Clients invoke the shared agent through the standard A2A JSON-RPC interface:
 
 ```bash
-curl -X POST "$LITELLM_BASE_URL/a2a/$AGENT_ID" \
+curl -X POST "$LUMINA_BASE_URL/a2a/$AGENT_ID" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{

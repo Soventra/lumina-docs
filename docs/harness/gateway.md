@@ -33,25 +33,25 @@ Give each kind of harness a model group that suits it. Claude Code is tuned for 
 model_list:
   # Claude, load-balanced across Anthropic and Bedrock
   - model_name: claude
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0
       aws_region_name: us-west-2
   - model_name: claude-haiku
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   # OpenAI reasoning model with native Responses API support
   - model_name: gpt
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5
       api_key: os.environ/OPENAI_API_KEY
   # a cheaper general model for OpenCode, Deep Agents and Tool Loop
   - model_name: gemini
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-pro
       api_key: os.environ/GEMINI_API_KEY
 
@@ -59,7 +59,7 @@ router_settings:
   fallbacks: [{"claude": ["gpt"]}, {"gpt": ["claude"]}]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 ```
 
@@ -73,7 +73,7 @@ The gateway exposes every group on `/v1/messages`, `/v1/responses` and `/v1/chat
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"models": ["claude", "claude-haiku", "gpt", "gemini"], "key_alias": "agents", "max_budget": 50}'
 ```
@@ -85,8 +85,8 @@ The response contains a `key` starting with `sk-`. The key can only call the gro
 Gateway calls follow the same convention as `litellm.completion`: prefix the model group with `litellm_proxy/` and set the gateway's address and key.
 
 ```bash
-export LITELLM_PROXY_API_BASE=http://localhost:4000
-export LITELLM_PROXY_API_KEY=sk-...
+export LUMINA_PROXY_API_BASE=http://localhost:4000
+export LUMINA_PROXY_API_KEY=sk-...
 ```
 
 ```python
@@ -207,11 +207,11 @@ In the gateway UI, open **Usage** and switch to the tag view. Each harness shows
 ```bash
 # daily spend and tokens for each harness tag
 curl "http://localhost:4000/tag/daily/activity?tags=claude_code,codex,opencode,deepagents,tool_loop&start_date=2026-09-01&end_date=2026-09-30" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 
 # individual requests made with the agents key
 curl "http://localhost:4000/spend/logs?api_key=sk-...&start_date=2026-09-30&end_date=2026-10-01&summarize=false" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 Each spend log row has `request_tags` set to `["harness", "codex"]` (or the matching harness) and your `metadata=` under `metadata.spend_logs_metadata`, so you can filter by a run id or a user id you passed in. `result.cost` comes from the gateway's `x-litellm-response-cost` header, so it matches what the gateway records.

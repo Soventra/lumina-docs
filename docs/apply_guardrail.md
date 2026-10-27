@@ -23,7 +23,7 @@ To use Bedrock guardrails with the apply_guardrail endpoint, configure your guar
 ```yaml
 guardrails:
   - guardrail_name: "bedrock-content-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "pre_call"
       guardrailIdentifier: "your-guardrail-id"  # Your actual Bedrock guardrail ID

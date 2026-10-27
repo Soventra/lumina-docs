@@ -90,23 +90,23 @@ Add this to your litellm proxy config.yaml
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 search_tools:
   - search_tool_name: perplexity-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITYAI_API_KEY
   
   - search_tool_name: tavily-search
-    litellm_params:
+    lumina_params:
       search_provider: tavily
       api_key: os.environ/TAVILY_API_KEY
 
   - search_tool_name: parallel-search
-    litellm_params:
+    lumina_params:
       search_provider: parallel_ai
       api_key: os.environ/PARALLEL_API_KEY
 ```
@@ -125,7 +125,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="cURL Request"
 curl http://0.0.0.0:4000/v1/search/perplexity-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments 2024",
@@ -139,7 +139,7 @@ curl http://0.0.0.0:4000/v1/search/perplexity-search \
 
 ```bash showLineNumbers title="cURL Request with search_tool_name in body"
 curl http://0.0.0.0:4000/v1/search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "search_tool_name": "perplexity-search",
@@ -155,22 +155,22 @@ Give multiple search tools the same `search_tool_name` to load balance across th
 ```yaml showLineNumbers title="config.yaml with load balancing"
 search_tools:
   - search_tool_name: my-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITYAI_API_KEY
   
   - search_tool_name: my-search
-    litellm_params:
+    lumina_params:
       search_provider: tavily
       api_key: os.environ/TAVILY_API_KEY
   
   - search_tool_name: my-search
-    litellm_params:
+    lumina_params:
       search_provider: exa_ai
       api_key: os.environ/EXA_API_KEY
 
   - search_tool_name: my-search
-    litellm_params:
+    lumina_params:
       search_provider: brave
       api_key: os.environ/BRAVE_API_KEY
 ```
@@ -179,7 +179,7 @@ Test with load balancing:
 
 ```bash
 curl http://0.0.0.0:4000/v1/search/my-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "AI developments",
@@ -189,12 +189,12 @@ curl http://0.0.0.0:4000/v1/search/my-search \
 
 ### Custom Per-Query Pricing
 
-Set `input_cost_per_query` under a search tool's `litellm_params` to charge your own price per search query. LiteLLM uses it instead of the cost map price for that tool, so `x-litellm-response-cost` and the spend logs match the rate you pay. It works for every search provider, and a tool without it keeps the provider's cost map price.
+Set `input_cost_per_query` under a search tool's `lumina_params` to charge your own price per search query. LiteLLM uses it instead of the cost map price for that tool, so `x-litellm-response-cost` and the spend logs match the rate you pay. It works for every search provider, and a tool without it keeps the provider's cost map price.
 
 ```yaml showLineNumbers title="config.yaml with a custom price"
 search_tools:
   - search_tool_name: exa-search
-    litellm_params:
+    lumina_params:
       search_provider: exa_ai
       api_key: os.environ/EXA_API_KEY
       input_cost_per_query: 0.05
@@ -210,7 +210,7 @@ Set `search_tools` under `object_permission` on a key or team to limit which sea
 
 ```bash showLineNumbers title="Grant a team one search tool"
 curl http://0.0.0.0:4000/team/new \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "team_alias": "research",
@@ -240,12 +240,12 @@ For a team key, grant the tool on both objects:
 
 ```bash showLineNumbers title="Team and key both grant the search tool"
 curl -X POST 'http://localhost:4000/team/new' \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_alias": "research", "object_permission": {"search_tools": ["tavily-search"]}}'
 
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_id": "<team_id from above>", "object_permission": {"search_tools": ["tavily-search"]}}'
 ```

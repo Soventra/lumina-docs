@@ -9,7 +9,7 @@ Only the request count is sent. Prompts, responses, virtual keys, and your licen
 
 :::info
 
-You need a `LITELLM_LICENSE` and metering credentials (`client.crt` and `client.key`) from your LiteLLM onboarding. Missing either? [Contact us](https://enterprise.litellm.ai/demo).
+You need a `LUMINA_LICENSE` and metering credentials (`client.crt` and `client.key`) from your LiteLLM onboarding. Missing either? [Contact us](https://enterprise.litellm.ai/demo).
 
 :::
 
@@ -19,17 +19,17 @@ You need a `LITELLM_LICENSE` and metering credentials (`client.crt` and `client.
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `LITELLM_BILLING_METRICS_ENDPOINT` | Yes | Collector URL. Use `https://telemetry.litellm.ai` |
-| `LITELLM_BILLING_METRICS_CLIENT_CERT` | Yes | mTLS client certificate. File path or inline PEM |
-| `LITELLM_BILLING_METRICS_CLIENT_KEY` | Yes | Private key for the certificate. File path or inline PEM |
-| `LITELLM_BILLING_METRICS_CA_CERT` | No | CA bundle for the collector. Leave unset for `telemetry.litellm.ai` |
-| `LITELLM_BILLING_METRICS_EXPORT_INTERVAL_MS` | No | Push interval in milliseconds. Default `60000` |
+| `LUMINA_BILLING_METRICS_ENDPOINT` | Yes | Collector URL. Use `https://telemetry.litellm.ai` |
+| `LUMINA_BILLING_METRICS_CLIENT_CERT` | Yes | mTLS client certificate. File path or inline PEM |
+| `LUMINA_BILLING_METRICS_CLIENT_KEY` | Yes | Private key for the certificate. File path or inline PEM |
+| `LUMINA_BILLING_METRICS_CA_CERT` | No | CA bundle for the collector. Leave unset for `telemetry.litellm.ai` |
+| `LUMINA_BILLING_METRICS_EXPORT_INTERVAL_MS` | No | Push interval in milliseconds. Default `60000` |
 
 ```bash
-export LITELLM_LICENSE="eyJ..."
-export LITELLM_BILLING_METRICS_ENDPOINT="https://telemetry.litellm.ai"
-export LITELLM_BILLING_METRICS_CLIENT_CERT="/etc/litellm/billing-mtls/client.crt"
-export LITELLM_BILLING_METRICS_CLIENT_KEY="/etc/litellm/billing-mtls/client.key"
+export LUMINA_LICENSE="eyJ..."
+export LUMINA_BILLING_METRICS_ENDPOINT="https://telemetry.litellm.ai"
+export LUMINA_BILLING_METRICS_CLIENT_CERT="/etc/litellm/billing-mtls/client.crt"
+export LUMINA_BILLING_METRICS_CLIENT_KEY="/etc/litellm/billing-mtls/client.key"
 ```
 
 The certificate variables accept a file path or the PEM content itself. Use inline PEM when your secret store injects values as environment variables and cannot mount files, for example ECS with AWS Secrets Manager or Cloud Run with Secret Manager.
@@ -38,9 +38,9 @@ You can also set these in the config file:
 
 ```yaml
 environment_variables:
-  LITELLM_BILLING_METRICS_ENDPOINT: "https://telemetry.litellm.ai"
-  LITELLM_BILLING_METRICS_CLIENT_CERT: "-----BEGIN CERTIFICATE-----\n..."
-  LITELLM_BILLING_METRICS_CLIENT_KEY: "-----BEGIN PRIVATE KEY-----\n..."
+  LUMINA_BILLING_METRICS_ENDPOINT: "https://telemetry.litellm.ai"
+  LUMINA_BILLING_METRICS_CLIENT_CERT: "-----BEGIN CERTIFICATE-----\n..."
+  LUMINA_BILLING_METRICS_CLIENT_KEY: "-----BEGIN PRIVATE KEY-----\n..."
 ```
 
 ### 2. Start the proxy
@@ -51,7 +51,7 @@ litellm --config config.yaml
 
 ### 3. Verify
 
-The line below is logged at INFO level, so it only shows when the proxy runs with `LITELLM_LOG=INFO` (or `--detailed_debug`). Send a request through the proxy, then check the logs for:
+The line below is logged at INFO level, so it only shows when the proxy runs with `LUMINA_LOG=INFO` (or `--detailed_debug`). Send a request through the proxy, then check the logs for:
 
 ```
 Enterprise billing metrics enabled: exporting to https://telemetry.litellm.ai every 60000 ms
@@ -110,10 +110,10 @@ The stack stores the certificate and key in Secrets Manager (AWS) or Secret Mana
 
 ```bash
 docker run \
-  -e LITELLM_LICENSE="eyJ..." \
-  -e LITELLM_BILLING_METRICS_ENDPOINT="https://telemetry.litellm.ai" \
-  -e LITELLM_BILLING_METRICS_CLIENT_CERT="$(cat client.crt)" \
-  -e LITELLM_BILLING_METRICS_CLIENT_KEY="$(cat client.key)" \
+  -e LUMINA_LICENSE="eyJ..." \
+  -e LUMINA_BILLING_METRICS_ENDPOINT="https://telemetry.litellm.ai" \
+  -e LUMINA_BILLING_METRICS_CLIENT_CERT="$(cat client.crt)" \
+  -e LUMINA_BILLING_METRICS_CLIENT_KEY="$(cat client.key)" \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -p 4000:4000 \
   ghcr.io/berriai/litellm:main-stable \

@@ -39,7 +39,7 @@ print(response.choices[0].message.content)
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: writer-palmyra-x5
-    litellm_params:
+    lumina_params:
       model: bedrock/us.writer.palmyra-x5-v1:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -60,7 +60,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="curl Request"
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "writer-palmyra-x5",
     "messages": [{"role": "user", "content": "Hello, how are you?"}]
@@ -133,7 +133,7 @@ response = litellm.completion(
 ```bash showLineNumbers title="Tool Calling - curl"
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "writer-palmyra-x5",
     "messages": [{"role": "user", "content": "What'\''s the weather in Boston?"}],
@@ -242,7 +242,7 @@ PDF_BASE64=$(base64 -i document.pdf)
 
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "writer-palmyra-x5",
     "messages": [{

@@ -11,7 +11,7 @@ LiteLLM provides a free hosted `fake-openai-endpoint` you can load test against.
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/

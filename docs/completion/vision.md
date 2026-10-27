@@ -53,11 +53,11 @@ response = completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}} # OpenAI {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: llava-hf          # Custom OpenAI compatible model
-    litellm_params:
+    lumina_params:
       model: openai/llava-hf/llava-v1.6-vicuna-7b-hf
       api_base: http://localhost:8000
       api_key: fake-key
@@ -138,11 +138,11 @@ assert litellm.supports_vision(model="xai/grok-2-latest") == False
 ```yaml
 model_list:
   - model_name: {{openai_large}} # OpenAI {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: llava-hf          # Custom OpenAI compatible model
-    litellm_params:
+    lumina_params:
       model: openai/llava-hf/llava-v1.6-vicuna-7b-hf
       api_base: http://localhost:8000
       api_key: fake-key
@@ -162,7 +162,7 @@ litellm --config config.yaml
 curl -X 'GET' \
   'http://localhost:4000/model_group/info' \
   -H 'accept: application/json' \
-  -H "x-api-key: $LITELLM_API_KEY"
+  -H "x-api-key: $LUMINA_API_KEY"
 ```
 
 Expected Response 
@@ -253,11 +253,11 @@ response = completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}} # OpenAI {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: llava-hf          # Custom OpenAI compatible model
-    litellm_params:
+    lumina_params:
       model: openai/llava-hf/llava-v1.6-vicuna-7b-hf
       api_base: http://localhost:8000
       api_key: fake-key

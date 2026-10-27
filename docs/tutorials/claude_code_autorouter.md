@@ -21,7 +21,7 @@ The one place a family word still costs you something is the allowlist in the ne
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: claude-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -77,8 +77,8 @@ The same split applies to any harness pointed at a router: the number it shows c
 Give Claude clients a key scoped to the router alone.
 
 ```bash
-curl -X POST $LITELLM_PROXY_URL/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+curl -X POST $LUMINA_PROXY_URL/key/generate \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"models": ["claude-auto"]}'
 ```

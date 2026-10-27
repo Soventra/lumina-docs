@@ -141,7 +141,7 @@ resp = completion(
 
 ```yaml
 - model_name: {{gemini_flash}}
-  litellm_params:
+  lumina_params:
     model: gemini/{{gemini_flash}}
     api_key: os.environ/GEMINI_API_KEY
 ```
@@ -219,7 +219,7 @@ Leave `temperature` unset for Gemini 3 models. LiteLLM forwards only the samplin
 - Degraded reasoning performance
 - Failure on complex tasks
 
-An explicit `temperature`, including `1.0` pinned in `litellm_params`, is still forwarded as given. Remove it if you want LiteLLM to stop sending the parameter.
+An explicit `temperature`, including `1.0` pinned in `lumina_params`, is still forwarded as given. Remove it if you want LiteLLM to stop sending the parameter.
 :::
 
 **Expected Response**
@@ -284,7 +284,7 @@ response = litellm.completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gemini/{{gemini_flash}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -358,7 +358,7 @@ On the response, LiteLLM maps `"standard"` back to `"default"` for the Gemini AP
 
 On a model that ends a request with a `continuationToken`, such as Gemini 4 Argon, LiteLLM sends the request again with that token until the answer finishes or `max_tokens` is spent, so `max_tokens` can go above Google's per-request cap. [Long outputs](/blog/gemini-4-argon#long-outputs) covers how it works, the usage it reports and the timeouts it needs.
 
-A request that sends no output limit is sent once and stops at Google's own per-request limit. From v1.108.0, set the env var `LITELLM_GEMINI_DEFAULT_MAX_OUTPUT_TOKENS` to an integer to give those requests a budget. It applies to chat completion, text completion and Responses API requests through the proxy or the Python SDK, and never to `/v1/messages`, which requires `max_tokens`. LiteLLM caps the budget at the model's `max_output_tokens` in the cost map, and any output limit the request already carries wins. It is not applied to a model the cost map does not list as a chat model, such as an image model, to a model whose cost map `supported_output_modalities` leaves out text, such as a Lyria music model, to a request whose `modalities` asks for anything besides text, to a request that resumes with a `continuation_token`, or to the native `:generateContent` route. A large value makes a non-streamed request run as long as the answer, so stream long answers or raise the client's timeout. The [env var reference](/docs/proxy/config_settings#environment-variables---reference) lists every case.
+A request that sends no output limit is sent once and stops at Google's own per-request limit. From v1.108.0, set the env var `LUMINA_GEMINI_DEFAULT_MAX_OUTPUT_TOKENS` to an integer to give those requests a budget. It applies to chat completion, text completion and Responses API requests through the proxy or the Python SDK, and never to `/v1/messages`, which requires `max_tokens`. LiteLLM caps the budget at the model's `max_output_tokens` in the cost map, and any output limit the request already carries wins. It is not applied to a model the cost map does not list as a chat model, such as an image model, to a model whose cost map `supported_output_modalities` leaves out text, such as a Lyria music model, to a request whose `modalities` asks for anything besides text, to a request that resumes with a `continuation_token`, or to the native `:generateContent` route. A large value makes a non-streamed request run as long as the answer, so stream long answers or raise the client's timeout. The [env var reference](/docs/proxy/config_settings#environment-variables---reference) lists every case.
 
 ## Text-to-Speech (TTS) Audio Output
 
@@ -440,11 +440,11 @@ print(response)
 ```yaml
 model_list:
   - model_name: gemini-tts-flash
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-flash-preview-tts
       api_key: os.environ/GEMINI_API_KEY
   - model_name: gemini-tts-pro
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-pro-preview-tts
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -536,7 +536,7 @@ print(response.words)  # word-level timestamps
 ```yaml
 model_list:
   - model_name: gemini-3.5-transcribe
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.5-transcribe
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -551,7 +551,7 @@ litellm --config config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/transcriptions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F file=@speech.wav \
   -F model=gemini-3.5-transcribe \
   -F response_format=verbose_json \
@@ -640,7 +640,7 @@ print(json.loads(completion.choices[0].message.content))
 ```yaml
 model_list:
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_pro}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -656,7 +656,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_pro}}",
   "messages": [
@@ -711,7 +711,7 @@ except JSONSchemaValidationError as e:
 ```yaml
 model_list:
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_pro}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -727,7 +727,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_pro}}",
   "messages": [
@@ -801,7 +801,7 @@ print(json.loads(completion.choices[0].message.content))
 ```yaml
 model_list:
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_pro}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -817,7 +817,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_pro}}",
   "messages": [
@@ -861,7 +861,7 @@ except JSONSchemaValidationError as e:
 ```yaml
 model_list:
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_pro}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -877,7 +877,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_pro}}",
   "messages": [
@@ -1007,7 +1007,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1021,7 +1021,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_flash}}",
   "messages": [{"role": "user", "content": "What is the weather in San Francisco?"}],
@@ -1101,7 +1101,7 @@ response2 = completion(
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1115,7 +1115,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_flash}}",
   "messages": [{"role": "user", "content": "What is the weather in Buenos Aires?"}],
@@ -1174,7 +1174,7 @@ print(f"Retrieval Status: {urlMetadata['urlRetrievalStatus']}")
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1228,7 +1228,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1242,7 +1242,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_flash}}",
   "messages": [{"role": "user", "content": "What is the weather in San Francisco?"}],
@@ -1285,7 +1285,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1299,7 +1299,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_flash}}",
   "messages": [{"role": "user", "content": "What is the weather in San Francisco?"}],
@@ -1398,7 +1398,7 @@ if response.choices[0].message.tool_calls:
 ```yaml
 model_list:
   - model_name: gemini-computer-use
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-computer-use-preview-10-2025
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1414,7 +1414,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-computer-use",
     "messages": [
@@ -1518,7 +1518,7 @@ response = completion(
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{gemini_flash}}",
     "messages": [{"role": "user", "content": "What'\''s the weather in Tokyo?"}],
@@ -1614,7 +1614,7 @@ print(response2.choices[0].message.content)
 # Step 1: Initial request
 curl --location 'http://localhost:4000/v1/chat/completions' \
   --header 'Content-Type: application/json' \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --data '{
     "model": "{{gemini_flash}}",
     "messages": [
@@ -1687,7 +1687,7 @@ The response will include tool calls with thought signatures in `provider_specif
 # Include the assistant message from Step 1 (with thought signatures in provider_specific_fields)
 curl --location 'http://localhost:4000/v1/chat/completions' \
   --header 'Content-Type: application/json' \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --data '{
     "model": "{{gemini_flash}}",
     "messages": [
@@ -1808,7 +1808,7 @@ print(json.loads(completion.choices[0].message.content))
 ```yaml
 model_list:
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_pro}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -1824,7 +1824,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{gemini_pro}}",
   "messages": [
@@ -2041,7 +2041,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_pro}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -2501,7 +2501,7 @@ print(resp.usage)
 ```yaml
 model_list:
     - model_name: {{gemini_pro}}
-      litellm_params:
+      lumina_params:
         model: gemini/{{gemini_pro}}
         api_key: os.environ/GEMINI_API_KEY
 ```
@@ -2683,7 +2683,7 @@ assert response.choices[0].message.content is not None # "data:image/png;base64,
 ```yaml
 model_list:
   - model_name: gemini-2.0-flash-exp-image-generation
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.0-flash-exp-image-generation
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -2699,7 +2699,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://localhost:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "gemini-2.0-flash-exp-image-generation",
     "messages": [{"role": "user", "content": "Generate an image of a cat"}],

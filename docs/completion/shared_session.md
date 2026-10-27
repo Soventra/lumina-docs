@@ -72,7 +72,7 @@ import os
 import litellm
 
 # Enable debug logging
-os.environ['LITELLM_LOG'] = 'DEBUG'
+os.environ['LUMINA_LOG'] = 'DEBUG'
 
 # You'll see logs like:
 # SHARED SESSION: acompletion called with shared_session (ID: 12345)
@@ -202,7 +202,7 @@ The shared session functionality was added to these files:
 
 ### Session Not Being Reused
 
-1. **Check debug logs**: Enable `LITELLM_LOG=DEBUG` to see session reuse messages
+1. **Check debug logs**: Enable `LUMINA_LOG=DEBUG` to see session reuse messages
 2. **Verify session is not closed**: Ensure the session is still active when making calls
 3. **Check parameter passing**: Make sure `shared_session` is passed to all `acompletion()` calls
 

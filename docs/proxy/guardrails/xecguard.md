@@ -12,13 +12,13 @@ Use [XecGuard](https://www.cycraft.com/) (CyCraft) to protect your LLM applicati
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "xecguard-guard"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "pre_call"
       api_key: os.environ/XECGUARD_API_KEY
@@ -127,7 +127,7 @@ Expected response:
 ```yaml
 guardrails:
   - guardrail_name: "xecguard-guard"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "pre_call"
       api_key: os.environ/XECGUARD_API_KEY
@@ -228,7 +228,7 @@ By default XecGuard operates in **fail-closed** mode: if the API is unreachable,
 ```yaml
 guardrails:
   - guardrail_name: "xecguard-failopen"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "pre_call"
       api_key: os.environ/XECGUARD_API_KEY
@@ -242,7 +242,7 @@ Apply one guardrail for input validation and another for output scanning + groun
 ```yaml
 guardrails:
   - guardrail_name: "xecguard-input"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "pre_call"
       api_key: os.environ/XECGUARD_API_KEY
@@ -251,7 +251,7 @@ guardrails:
         - Default_Policy_SystemPromptEnforcement
 
   - guardrail_name: "xecguard-output"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "post_call"
       api_key: os.environ/XECGUARD_API_KEY
@@ -268,7 +268,7 @@ Enable the guardrail for every request without specifying it per-call:
 ```yaml
 guardrails:
   - guardrail_name: "xecguard-guard"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "pre_call"
       api_key: os.environ/XECGUARD_API_KEY
@@ -282,7 +282,7 @@ Observe scan decisions without blocking, which helps for shadow-mode deployment 
 ```yaml
 guardrails:
   - guardrail_name: "xecguard-monitor"
-    litellm_params:
+    lumina_params:
       guardrail: xecguard
       mode: "logging_only"
       api_key: os.environ/XECGUARD_API_KEY

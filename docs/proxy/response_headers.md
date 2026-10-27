@@ -72,7 +72,7 @@ The component headers sum to the total: input + cache read + cache creation + ou
 ```yaml
 model_list:
   - model_name: my-chat-model          # clients call this
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}               # LiteLLM calls this upstream
     model_info:
       id: "7c9f2a1b3d8e4f0a2c6b5d9e1f3a7b8c"   # optional; auto-generated if omitted
@@ -80,7 +80,7 @@ model_list:
 
 | Header | Example | Notes |
 |--------|---------|-------|
-| `x-litellm-model-group` | `my-chat-model` | `model_name` / request `model`; not `litellm_params.model`. |
+| `x-litellm-model-group` | `my-chat-model` | `model_name` / request `model`; not `lumina_params.model`. |
 | `x-litellm-model-id` | `7c9f2a1b3d8e4f0a2c6b5d9e1f3a7b8c` | Which deployment row; use with `/v1/model/info?litellm_model_id=...`. |
 | Response body `model` | often `my-chat-model` | Often restamped to match the client; upstream id stays in config. |
 

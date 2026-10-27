@@ -24,9 +24,9 @@ Claude Desktop and Cowork use the same gateway settings. This guide configures t
 |---|---|
 | Inference provider | **Gateway** |
 | Credential kind | **Static API key** |
-| Gateway base URL | `<LITELLM_PROXY_BASE_URL>` (e.g. `http://localhost:4000`) |
+| Gateway base URL | `<LUMINA_PROXY_BASE_URL>` (e.g. `http://localhost:4000`) |
 | Gateway API key | Your LiteLLM [virtual key](../virtual_keys.md), auth scheme **Bearer** |
-| MCP endpoint | `<LITELLM_PROXY_BASE_URL>/mcp`, or `<LITELLM_PROXY_BASE_URL>/<server_name>/mcp` for one server |
+| MCP endpoint | `<LUMINA_PROXY_BASE_URL>/mcp`, or `<LUMINA_PROXY_BASE_URL>/<server_name>/mcp` for one server |
 | MCP auth header | `x-litellm-api-key: Bearer <virtual key>` |
 
 ## LLM setup

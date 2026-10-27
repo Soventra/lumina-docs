@@ -102,14 +102,14 @@ When you need raw content chunks or attribute updates, call the LiteLLM Proxy di
 
 ```bash
 curl -X GET "http://localhost:4000/v1/vector_stores/\{vector_store_id\}/files/\{file_id\}/content" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ### Update file attributes
 
 ```bash
 curl -X POST "http://localhost:4000/v1/vector_stores/\{vector_store_id\}/files/\{file_id\}" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
         "attributes": {

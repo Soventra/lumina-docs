@@ -21,9 +21,9 @@ These instructions configure Codex's local model provider and MCP servers. Scree
 | Setting | Value |
 |---|---|
 | Config file | `~/.codex/config.toml` (shared with the CLI) |
-| `base_url` | `<LITELLM_PROXY_BASE_URL>/v1` (e.g. `http://localhost:4000/v1`) |
+| `base_url` | `<LUMINA_PROXY_BASE_URL>/v1` (e.g. `http://localhost:4000/v1`) |
 | Provider key | Your LiteLLM [virtual key](../virtual_keys.md), read from the env var named in `env_key`, or a `lite auth print-token` command (see [Codex Desktop SSO](./codex_chatgpt_desktop_sso.md)) |
-| MCP endpoint | `<LITELLM_PROXY_BASE_URL>/<server_name>/mcp` |
+| MCP endpoint | `<LUMINA_PROXY_BASE_URL>/<server_name>/mcp` |
 | MCP auth | The same virtual key, read from the env var named in `bearer_token_env_var` |
 
 ## LLM setup
@@ -39,7 +39,7 @@ model_provider = "litellm"
 [model_providers.litellm]
 name = "LiteLLM"
 base_url = "http://localhost:4000/v1"
-env_key = "LITELLM_API_KEY"
+env_key = "LUMINA_API_KEY"
 wire_api = "responses"
 ```
 
@@ -50,16 +50,16 @@ Replace `{{anthropic}}` with a model name configured on your gateway.
 Desktop apps may not inherit variables exported in your terminal. Add your LiteLLM virtual key to `~/.codex/.env` before launching the app:
 
 ```dotenv title="~/.codex/.env"
-LITELLM_API_KEY=sk-<your-virtual-key>
+LUMINA_API_KEY=sk-<your-virtual-key>
 ```
 
-Replace the placeholder with your virtual key, keep this file private, and restart the app after changing it. An existing macOS setup using `launchctl setenv LITELLM_API_KEY <your-key>` can continue supplying the variable that way.
+Replace the placeholder with your virtual key, keep this file private, and restart the app after changing it. An existing macOS setup using `launchctl setenv LUMINA_API_KEY <your-key>` can continue supplying the variable that way.
 
 You can skip `.env` by using the [`auth` command](./codex_chatgpt_desktop_sso.md) in place of `env_key`, because the app runs the same helper
 
 ### 2. Launch Codex in ChatGPT Desktop
 
-Open the ChatGPT desktop app and select **Codex** in the mode switcher. Codex reads the `litellm` provider from `config.toml` and uses `LITELLM_API_KEY` for gateway requests. Start a new task.
+Open the ChatGPT desktop app and select **Codex** in the mode switcher. Codex reads the `litellm` provider from `config.toml` and uses `LUMINA_API_KEY` for gateway requests. Start a new task.
 
 ### 3. Verify
 
@@ -78,14 +78,14 @@ MCP is configured in the same `~/.codex/config.toml`, so the [CLI's MCP setup](.
 ```toml title="~/.codex/config.toml"
 [mcp_servers.litellm]
 url = "http://localhost:4000/my_mcp_server/mcp"
-bearer_token_env_var = "LITELLM_API_KEY"
+bearer_token_env_var = "LUMINA_API_KEY"
 ```
 
-where `my_mcp_server` matches a key under `mcp_servers:` in your gateway config and the key has access to that server. `LITELLM_API_KEY` must be available to the app as described above. Restart ChatGPT Desktop after changing the configuration or `.env` file.
+where `my_mcp_server` matches a key under `mcp_servers:` in your gateway config and the key has access to that server. `LUMINA_API_KEY` must be available to the app as described above. Restart ChatGPT Desktop after changing the configuration or `.env` file.
 
 You can inspect this entry under **Settings -> Plugins -> MCPs** in the captured version. The **Add MCP server** form also accepts the URL and **Bearer token env var** shown above.
 
-<Image img={require('../../../img/client_setup/codex_desktop_06_mcp_server_form_url_bearer_env.png')} alt="Codex MCP server form with a LiteLLM server URL and LITELLM_API_KEY bearer token environment variable" />
+<Image img={require('../../../img/client_setup/codex_desktop_06_mcp_server_form_url_bearer_env.png')} alt="Codex MCP server form with a LiteLLM server URL and LUMINA_API_KEY bearer token environment variable" />
 
 The screenshots use a gateway server named `deepwiki`; substitute your registered server name.
 

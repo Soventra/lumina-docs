@@ -36,14 +36,14 @@ print(f"response: {response}")
 ```yaml
 model_list:
 - model_name: nova-2
-  litellm_params:
+  lumina_params:
     model: deepgram/nova-2
     api_key: os.environ/DEEPGRAM_API_KEY
   model_info:
     mode: audio_transcription
     
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Start proxy 
@@ -61,7 +61,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'file=@"/Users/krrishdholakia/Downloads/gettysburg.wav"' \
 --form 'model="nova-2"'
 ```

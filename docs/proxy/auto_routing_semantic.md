@@ -64,7 +64,7 @@ router = Router(
         # Embedding models for routing
         {
             "model_name": "custom-text-embedding-model",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "text-embedding-3-large",
                 "api_key": os.getenv("OPENAI_API_KEY"),
             },
@@ -72,14 +72,14 @@ router = Router(
         # Your target models
         {
             "model_name": "litellm-gpt-4.1",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "{{openai_large}}",
             },
             "model_info": {"id": "openai-id"},
         },
         {
             "model_name": "litellm-claude-35",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "{{anthropic}}",
             },
             "model_info": {"id": "claude-id"},
@@ -87,7 +87,7 @@ router = Router(
         # Auto router configuration
         {
             "model_name": "auto_router1",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "auto_router/auto_router_1",
                 "auto_router_config_path": "router.json",
                 "auto_router_default_model": "{{openai_small}}",
@@ -209,7 +209,7 @@ print(response)
 ```shell
 curl -X POST http://localhost:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "auto_router1",
     "messages": [{"role": "user", "content": "how to code a program in python"}]

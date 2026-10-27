@@ -59,13 +59,13 @@ Track Auto Router usage without leaving your coding agent.
 - See the model that handled your last turn.
 - Compare session spend with an estimate for the most expensive model in your router's highest tier.
 - Use your existing LiteLLM API key to read your own session stats.
-- **Set it up with `lite configure`.** Use your proxy URL, set `LITELLM_PROXY_API_KEY` to your key, and replace `production-auto-router` with your router name:
+- **Set it up with `lite configure`.** Use your proxy URL, set `LUMINA_PROXY_API_KEY` to your key, and replace `production-auto-router` with your router name:
 
   ```bash
   lite configure \
     --gateway-url http://localhost:4000 \
     claude \
-    --api-key "$LITELLM_PROXY_API_KEY" \
+    --api-key "$LUMINA_PROXY_API_KEY" \
     --model production-auto-router
   ```
 
@@ -87,24 +87,24 @@ See the fix in [PR #41341](https://github.com/BerriAI/litellm/pull/41341).
 
 Use Sonnet for Simple and Medium, Opus for Complex, and Fast Opus for Reasoning. Choose proxy and CLI builds that include these updates from `main`.
 
-Set `ANTHROPIC_API_KEY`, `DATABASE_URL`, and `LITELLM_MASTER_KEY` before using this config. Use PostgreSQL for session stats and a master key starting with `sk-`.
+Set `ANTHROPIC_API_KEY`, `DATABASE_URL`, and `LUMINA_MASTER_KEY` before using this config. Use PostgreSQL for session stats and a master key starting with `sk-`.
 
 [Download config.yaml](./config.yaml).
 
 ```yaml title="config.yaml"
 model_list:
   - model_name: sonnet-standard
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: opus
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: production-auto-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         classifier_type: heuristic
@@ -118,11 +118,11 @@ model_list:
             - model_name: opus
           REASONING:
             - model_name: opus
-              litellm_params:
+              lumina_params:
                 speed: fast
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 ```
 

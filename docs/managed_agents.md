@@ -70,7 +70,7 @@ You can also pass `api_key="AIzaSy..."` to each call instead of setting the envi
 
 ```bash
 curl -X POST "http://localhost:4000/v1beta/agents" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "my-custom-slides-agent",
@@ -127,7 +127,7 @@ Async variant: `litellm.interactions.agents.acreate(...)`.
 
 ```bash
 curl -X POST "http://localhost:4000/v1beta/interactions" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "agent": "my-slides-agent",
@@ -166,7 +166,7 @@ See also: [/interactions](/docs/interactions) for the full Interactions API.
 
 ```bash
 curl "http://localhost:4000/v1beta/agents" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Response**
@@ -200,7 +200,7 @@ agents = litellm.interactions.agents.list()
 
 ```bash
 curl "http://localhost:4000/v1beta/agents/my-slides-agent" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Response**
@@ -241,7 +241,7 @@ agent = litellm.interactions.agents.get(
 
 ```bash
 curl -X DELETE "http://localhost:4000/v1beta/agents/my-slides-agent" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -264,7 +264,7 @@ litellm.interactions.agents.delete(
 
 ```bash
 curl "http://localhost:4000/v1beta/agents/my-slides-agent/versions" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 **Response**
 ```json

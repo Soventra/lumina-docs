@@ -38,7 +38,7 @@ Create `config.yaml` with one model. The `model_name` is the name your applicati
 ```yaml title="config.yaml"
 model_list:
   - model_name: my-model
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/deepseek-v4p1-flash
       api_key: os.environ/FIREWORKS_AI_API_KEY
 ```
@@ -94,12 +94,12 @@ You can add as many models as you like. In this tutorial they live in `config.ya
 ```yaml title="config.yaml"
 model_list:
   - model_name: my-model
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/deepseek-v4p1-flash
       api_key: os.environ/FIREWORKS_AI_API_KEY
 
   - model_name: my-backup
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/glm-5p3-flash
       api_key: os.environ/FIREWORKS_AI_API_KEY
 

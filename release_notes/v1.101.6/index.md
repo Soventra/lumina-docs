@@ -29,7 +29,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \

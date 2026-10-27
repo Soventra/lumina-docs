@@ -34,9 +34,9 @@ The framework examples below use LiteLLM for model calls. For a direct provider 
 For the gateway examples below, also set the model connection:
 
 ```bash
-export LITELLM_GATEWAY_URL="<your gateway base URL without a trailing slash or /v1>"
-export LITELLM_API_KEY="<your key with model access>"
-export LITELLM_MODEL="<your configured model alias>"
+export LUMINA_GATEWAY_URL="<your gateway base URL without a trailing slash or /v1>"
+export LUMINA_API_KEY="<your key with model access>"
+export LUMINA_MODEL="<your configured model alias>"
 ```
 
 Get a model key from your administrator or **Virtual Keys** in the dashboard, and copy the model alias from **Models**. The local Docker gateway uses `http://localhost:4000`. The model key and the tracing key serve different purposes.
@@ -78,9 +78,9 @@ from deepagents import create_deep_agent
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(
-    model=os.environ["LITELLM_MODEL"],
-    base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    model=os.environ["LUMINA_MODEL"],
+    base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 
 agent = create_deep_agent(name=AGENT_NAME, model=model, tools=[])
@@ -119,9 +119,9 @@ from langgraph.graph import END, START, MessagesState, StateGraph
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(
-    model=os.environ["LITELLM_MODEL"],
-    base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    model=os.environ["LUMINA_MODEL"],
+    base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 graph = StateGraph(MessagesState)
 graph.add_node("answer", lambda state: {"messages": [model.invoke(state["messages"])]})
@@ -164,9 +164,9 @@ from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
 
 model = ChatOpenAI(
-    model=os.environ["LITELLM_MODEL"],
-    base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    model=os.environ["LUMINA_MODEL"],
+    base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 
 agent = create_agent(name=AGENT_NAME, model=model, tools=[])
@@ -206,8 +206,8 @@ from agents import Agent, RunConfig, Runner
 from agents import OpenAIChatCompletionsModel
 from openai import AsyncOpenAI
 
-client = AsyncOpenAI(base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1", api_key=os.environ["LITELLM_API_KEY"])
-model = OpenAIChatCompletionsModel(model=os.environ["LITELLM_MODEL"], openai_client=client)
+client = AsyncOpenAI(base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1", api_key=os.environ["LUMINA_API_KEY"])
+model = OpenAIChatCompletionsModel(model=os.environ["LUMINA_MODEL"], openai_client=client)
 
 agent = Agent(name=AGENT_NAME, model=model)
 result = Runner.run_sync(
@@ -235,7 +235,7 @@ python -m pip install opentelemetry-distro \
 
 Save this as `agent.py`:
 
-Use an Anthropic-compatible model alias for `LITELLM_MODEL`. The SDK must be able to reach the gateway through its Anthropic API.
+Use an Anthropic-compatible model alias for `LUMINA_MODEL`. The SDK must be able to reach the gateway through its Anthropic API.
 
 ```python title="agent.py"
 import asyncio
@@ -252,8 +252,8 @@ initialize()
 from claude_agent_sdk import ClaudeAgentOptions, ResultMessage, query
 
 options = ClaudeAgentOptions(
-    model=os.environ["LITELLM_MODEL"],
-    env={"ANTHROPIC_BASE_URL": os.environ["LITELLM_GATEWAY_URL"], "ANTHROPIC_AUTH_TOKEN": os.environ["LITELLM_API_KEY"]},
+    model=os.environ["LUMINA_MODEL"],
+    env={"ANTHROPIC_BASE_URL": os.environ["LUMINA_GATEWAY_URL"], "ANTHROPIC_AUTH_TOKEN": os.environ["LUMINA_API_KEY"]},
     tools=[],
     setting_sources=[],
     max_turns=1,
@@ -301,9 +301,9 @@ from crewai import Agent, Crew, Task
 from crewai import LLM
 
 model = LLM(
-    model=f"openai/{os.environ['LITELLM_MODEL']}",
-    base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    model=f"openai/{os.environ['LUMINA_MODEL']}",
+    base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 
 agent = Agent(
@@ -349,8 +349,8 @@ from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
 model = OpenAIChatModel(
-    os.environ["LITELLM_MODEL"],
-    provider=OpenAIProvider(base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1", api_key=os.environ["LITELLM_API_KEY"]),
+    os.environ["LUMINA_MODEL"],
+    provider=OpenAIProvider(base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1", api_key=os.environ["LUMINA_API_KEY"]),
 )
 
 Agent.instrument_all()
@@ -397,9 +397,9 @@ from llama_index.core.agent.workflow import FunctionAgent
 from llama_index.llms.openai_like import OpenAILike
 
 model = OpenAILike(
-    model=os.environ["LITELLM_MODEL"],
-    api_base=f"{os.environ['LITELLM_GATEWAY_URL']}/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    model=os.environ["LUMINA_MODEL"],
+    api_base=f"{os.environ['LUMINA_GATEWAY_URL']}/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
     is_chat_model=True,
     is_function_calling_model=True,
     temperature=1,
@@ -451,9 +451,9 @@ from google.adk.runners import InMemoryRunner
 from google.adk.models.lite_llm import LiteLlm
 
 model = LiteLlm(
-    model=f"openai/{os.environ['LITELLM_MODEL']}",
-    api_base=f"{os.environ['LITELLM_GATEWAY_URL']}/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    model=f"openai/{os.environ['LUMINA_MODEL']}",
+    api_base=f"{os.environ['LUMINA_GATEWAY_URL']}/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 
 agent = Agent(name=AGENT_NAME, model=model)
@@ -496,8 +496,8 @@ from strands import Agent
 from strands.models.openai import OpenAIModel
 
 model = OpenAIModel(
-    client_args={"base_url": f"{os.environ['LITELLM_GATEWAY_URL']}/v1", "api_key": os.environ["LITELLM_API_KEY"]},
-    model_id=os.environ["LITELLM_MODEL"],
+    client_args={"base_url": f"{os.environ['LUMINA_GATEWAY_URL']}/v1", "api_key": os.environ["LUMINA_API_KEY"]},
+    model_id=os.environ["LUMINA_MODEL"],
 )
 
 agent = Agent(name=AGENT_NAME, model=model)
@@ -538,10 +538,10 @@ registerTelemetry(new OpenTelemetry());
 const AGENT_NAME = "research_agent";
 const litellm = createOpenAICompatible({
   name: "litellm",
-  baseURL: `${process.env.LITELLM_GATEWAY_URL}/v1`,
-  apiKey: process.env.LITELLM_API_KEY,
+  baseURL: `${process.env.LUMINA_GATEWAY_URL}/v1`,
+  apiKey: process.env.LUMINA_API_KEY,
 });
-const model = litellm(process.env.LITELLM_MODEL!);
+const model = litellm(process.env.LUMINA_MODEL!);
 
 try {
   const { text } = await generateText({
@@ -647,14 +647,14 @@ initialize()
 from opentelemetry import trace
 from openai import OpenAI
 
-client = OpenAI(base_url=f"{os.environ['LITELLM_GATEWAY_URL']}/v1", api_key=os.environ["LITELLM_API_KEY"])
+client = OpenAI(base_url=f"{os.environ['LUMINA_GATEWAY_URL']}/v1", api_key=os.environ["LUMINA_API_KEY"])
 
 with trace.get_tracer(__name__).start_as_current_span(AGENT_NAME) as span:
     span.set_attribute("gen_ai.agent.name", AGENT_NAME)
     span.set_attribute("openinference.span.kind", "AGENT")
     span.set_attribute("input.value", "What is an agent trace?")
     result = client.chat.completions.create(
-        model=os.environ["LITELLM_MODEL"],
+        model=os.environ["LUMINA_MODEL"],
         messages=[{"role": "user", "content": "What is an agent trace?"}],
     )
     answer = result.choices[0].message.content
@@ -674,7 +674,7 @@ python agent.py
 
 For complete projects and multi-agent examples, use the **Integrations** guides in the sidebar or the [examples repository](https://github.com/BerriAI/litellm-lens-example). Those projects use `LENS_URL` for the ingestion base URL, without `/v1/traces`; their exporters append that path. The dashboard shows framework snippets directly in the tracing setup section.
 
-For a working example, use [DeepLite](https://github.com/BerriAI/deeplite). Set `LITELLM_DEV_BASE=https://<your-lens-ingestion-host>/v1/traces` and `LITELLM_DEV_KEY=<your-lens-tracing-key>` in its `.env` file, then run the agent.
+For a working example, use [DeepLite](https://github.com/BerriAI/deeplite). Set `LUMINA_DEV_BASE=https://<your-lens-ingestion-host>/v1/traces` and `LUMINA_DEV_KEY=<your-lens-tracing-key>` in its `.env` file, then run the agent.
 
 To record personal coding sessions, follow the [Claude Code and Codex setup](./coding-agents.md).
 
@@ -694,7 +694,7 @@ Check that you can see the task, tool results, and final answer. If these are mi
 | `401` from the trace endpoint | Use a dedicated Lens tracing key. Model keys cannot upload traces. |
 | `404` or `410` from the trace endpoint | Copy the full endpoint from the dashboard. Keep `/lens-ingest` when present and include `/v1/traces` once. |
 | `429` just after creating a key | Allow up to 30 seconds for credential sync and retry. |
-| Setup asks for `LITELLM_LENS_PUBLIC_URL`, or an upload returns `503` | Ask the administrator to [check the service connection](./deployment.md#check-the-installation). |
+| Setup asks for `LUMINA_LENS_PUBLIC_URL`, or an upload returns `503` | Ask the administrator to [check the service connection](./deployment.md#check-the-installation). |
 | The model request fails | Check the gateway URL, model key, and model alias separately from the tracing settings. |
 | Traces have no input or output | Check the framework's content-capture settings in its integration guide. |
 

@@ -69,7 +69,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: {{anthropic}} # Anthropic {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```

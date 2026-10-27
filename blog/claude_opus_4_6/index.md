@@ -34,7 +34,7 @@ docker pull ghcr.io/berriai/litellm:litellm_stable_release_branch-v1.80.0-stable
 ```yaml
 model_list:
   - model_name: claude-opus-4-6
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-6
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -55,7 +55,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -80,7 +80,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: claude-opus-4-6
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-opus-4-6
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -103,7 +103,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -128,7 +128,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: claude-opus-4-6
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-opus-4-6
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: us-east5
@@ -152,7 +152,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -177,7 +177,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: claude-opus-4-6
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-opus-4-6-v1
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -201,7 +201,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -232,7 +232,7 @@ To enable compaction, add the `context_management` parameter with the `compact_2
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -264,7 +264,7 @@ Enable compaction to reduce context size while preserving key information. LiteL
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-6",
@@ -332,7 +332,7 @@ To continue the conversation with compaction, include the compaction block in th
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -394,7 +394,7 @@ LiteLLM supports adaptive thinking through the `reasoning_effort` parameter:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -414,7 +414,7 @@ Use the `thinking` parameter with `type: "adaptive"` to enable adaptive thinking
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-6",
@@ -459,7 +459,7 @@ Four effort levels available: `low`, `medium`, `high` (default), and `max`. Pass
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -483,7 +483,7 @@ Four effort levels available: `low`, `medium`, `high` (default), and `max`. Pass
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-6",
@@ -524,7 +524,7 @@ general_settings:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --header 'anthropic-beta: context-1m-2025-08-07' \
 --data '{
   "model": "claude-opus-4-6",
@@ -553,7 +553,7 @@ general_settings:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'anthropic-beta: context-1m-2025-08-07' \
 --header 'content-type: application/json' \
 --data '{
@@ -590,7 +590,7 @@ Use the `inference_geo` parameter to specify US-only inference:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -612,7 +612,7 @@ Use the `inference_geo` parameter to specify US-only inference:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-6",
@@ -648,7 +648,7 @@ Fast mode is **only supported on the Anthropic provider** (`anthropic/claude-opu
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-4-6",
   "messages": [
@@ -700,7 +700,7 @@ LiteLLM automatically tracks the higher costs for fast mode in usage and cost ca
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-4-6",

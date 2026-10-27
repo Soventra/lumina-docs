@@ -51,13 +51,13 @@ print(f"Dataset name: {response.name}")
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 vector_store_registry:
   - vector_store_name: "ragflow-knowledge-base"
-    litellm_params:
+    lumina_params:
       vector_store_id: "your-dataset-id"
       custom_llm_provider: "ragflow"
       api_key: os.environ/RAGFLOW_API_KEY
@@ -89,7 +89,7 @@ On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Stor
 ```bash
 curl http://localhost:4000/v1/vector_stores \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "name": "my-ragflow-dataset",
     "custom_llm_provider": "ragflow",
@@ -140,7 +140,7 @@ RAGFlow vector stores support configuration via environment variables:
 
 ### Parameters
 
-You can also pass these via `litellm_params`:
+You can also pass these via `lumina_params`:
 
 - `api_key` - RAGFlow API key (overrides `RAGFLOW_API_KEY` env var)
 - `api_base` - RAGFlow API base URL (overrides `RAGFLOW_API_BASE` env var)

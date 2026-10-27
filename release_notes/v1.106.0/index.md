@@ -29,7 +29,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
@@ -436,7 +436,7 @@ Counts represent new catalog identifiers compared with `v1.105.0`, including ali
 
 - Add an optional credential `display_name` and make `credential_name` immutable on `PATCH /credentials/{name}`; config-defined credentials are read-only and GET returns `source` - [PR #43148](https://github.com/BerriAI/litellm/pull/43148)
 - Keep credential edits on the credential being edited, reject names that collide with config credentials (409), and add a Source column to the credentials list - [PR #45890](https://github.com/BerriAI/litellm/pull/45890)
-- Encrypt search tool `litellm_params` at rest and cover them in master key rotation - [PR #43631](https://github.com/BerriAI/litellm/pull/43631)
+- Encrypt search tool `lumina_params` at rest and cover them in master key rotation - [PR #43631](https://github.com/BerriAI/litellm/pull/43631)
 
 ### Model management
 
@@ -592,7 +592,7 @@ Counts represent new catalog identifiers compared with `v1.105.0`, including ali
 ### Guardrails
 
 - Add the LLM Shield Proxy guardrail, which swaps PII for stand-ins before the provider call and restores the original values in the response, streaming included - [PR #42645](https://github.com/BerriAI/litellm/pull/42645)
-- Encrypt secret-named guardrail `litellm_params` at rest, re-key them on master key rotation, and reject client-sent `litellm_enc::` values with a 400 - [PR #43627](https://github.com/BerriAI/litellm/pull/43627)
+- Encrypt secret-named guardrail `lumina_params` at rest, re-key them on master key rotation, and reject client-sent `litellm_enc::` values with a 400 - [PR #43627](https://github.com/BerriAI/litellm/pull/43627)
 - Add `logging_only_scope` (`input` or `output`) and `logging_only_continue_on_input_failure` so `logging_only` guardrails can observe only requests, only responses, or keep scanning the response after a flagged request, with matching Admin UI controls - [PR #43695](https://github.com/BerriAI/litellm/pull/43695), [PR #45782](https://github.com/BerriAI/litellm/pull/45782)
 - Add a `stream_scope` guardrail setting (`streaming`, `non_streaming` or `both`, per mode) and treat Bedrock `converse-stream` and `invoke-with-response-stream` pass-through calls as streaming - [PR #43801](https://github.com/BerriAI/litellm/pull/43801)
 - Run the end-of-stream `post_call` scan on already-delivered content when a client disconnects mid-stream, so the request log carries a guardrail verdict - [PR #43839](https://github.com/BerriAI/litellm/pull/43839)
@@ -697,7 +697,7 @@ Counts represent new catalog identifiers compared with `v1.105.0`, including ali
 
 ### Admin MCP and UI
 
-- Embed the Enterprise LiteAdmin MCP at `/admin/mcp`, enabled with `LITELLM_ENABLE_ADMIN_MCP=true` - [PR #44610](https://github.com/BerriAI/litellm/pull/44610)
+- Embed the Enterprise LiteAdmin MCP at `/admin/mcp`, enabled with `LUMINA_ENABLE_ADMIN_MCP=true` - [PR #44610](https://github.com/BerriAI/litellm/pull/44610)
 - Show saved MCP submission rules in the Submitted MCPs tab, and stop saving the rules editor from wiping them - [PR #44648](https://github.com/BerriAI/litellm/pull/44648)
 
 ## Performance / Loadbalancing / Reliability improvements
@@ -710,8 +710,8 @@ Counts represent new catalog identifiers compared with `v1.105.0`, including ali
 - Honor a per-request `fallbacks`, `context_window_fallbacks` or `content_policy_fallbacks` list when a stream fails after opening, and stop `null` key and team router settings saved from the dashboard from turning off router-level fallbacks and retries - [PR #45227](https://github.com/BerriAI/litellm/pull/45227)
 - Every fallback hop drops the encrypted reasoning its target deployment cannot decrypt and keeps the summary, on Responses, chat, Anthropic messages and the mid-stream path - [PR #45393](https://github.com/BerriAI/litellm/pull/45393)
 - Price a model group from the deployments that serve it instead of following the group's own alias, so budget waivers and `GET /model_group/info` agree with routing - [PR #44732](https://github.com/BerriAI/litellm/pull/44732)
-- Required-param validation accepts values supplied by `router_settings.default_litellm_params`, so `/v1/messages` without `max_tokens` and `/rerank` without `documents` no longer return 400 when a router default covers them - [PR #44483](https://github.com/BerriAI/litellm/pull/44483)
-- Attribute each background health check result to its own `model_id`, so `GET /health/latest` no longer marks a dead host healthy when deployments share one `litellm_params.model` - [PR #44982](https://github.com/BerriAI/litellm/pull/44982)
+- Required-param validation accepts values supplied by `router_settings.default_lumina_params`, so `/v1/messages` without `max_tokens` and `/rerank` without `documents` no longer return 400 when a router default covers them - [PR #44483](https://github.com/BerriAI/litellm/pull/44483)
+- Attribute each background health check result to its own `model_id`, so `GET /health/latest` no longer marks a dead host healthy when deployments share one `lumina_params.model` - [PR #44982](https://github.com/BerriAI/litellm/pull/44982)
 - Map upstream 402 responses to `PaymentRequiredError`, a `BadRequestError` subclass, and cool down 402 deployments in multi-deployment groups - [PR #44879](https://github.com/BerriAI/litellm/pull/44879)
 - Keep the auto-router baseline's cache identity and accounting unchanged by tier overrides and duplicate callbacks - [PR #44960](https://github.com/BerriAI/litellm/pull/44960)
 - Auto Router routing preview and serving resolve the default model the same way, and serving honors `config.default_model` before inferring a tier default - [PR #44436](https://github.com/BerriAI/litellm/pull/44436)
@@ -725,10 +725,10 @@ Counts represent new catalog identifiers compared with `v1.105.0`, including ali
 - Queue daily model usage in memory and write it on the spend log flush instead of upserting once per request - [PR #44243](https://github.com/BerriAI/litellm/pull/44243)
 - Treat Postgres connection exhaustion (`53300`, Prisma `P2024`) as backpressure: requeue tool usage batches, return 503 on key lookup, skip engine reconnects, add `database_idle_in_transaction_session_timeout`, and print the per-pod connection budget at startup - [PR #44266](https://github.com/BerriAI/litellm/pull/44266)
 - Keep the original database error when the `log_db_metrics` failure hook itself raises - [PR #44383](https://github.com/BerriAI/litellm/pull/44383)
-- Log v1 migration failures at ERROR so `LITELLM_LOG=ERROR` shows the Prisma error and retry count - [PR #44202](https://github.com/BerriAI/litellm/pull/44202)
+- Log v1 migration failures at ERROR so `LUMINA_LOG=ERROR` shows the Prisma error and retry count - [PR #44202](https://github.com/BerriAI/litellm/pull/44202)
 - Exit with one clear error when `DATABASE_URL` is set but the Prisma toolchain is missing, including on the `--skip_server_startup` migration entrypoint - [PR #44207](https://github.com/BerriAI/litellm/pull/44207)
 - Include the database error text (passwords redacted) when the Lens rename check cannot reach Postgres - [PR #45341](https://github.com/BerriAI/litellm/pull/45341)
-- Add a `LITELLM_FIPS_MODE` startup gate that refuses boot unless OpenSSL enforces FIPS, refuses disabled TLS verification, and stops startup on password migration crypto failures - [PR #42700](https://github.com/BerriAI/litellm/pull/42700)
+- Add a `LUMINA_FIPS_MODE` startup gate that refuses boot unless OpenSSL enforces FIPS, refuses disabled TLS verification, and stops startup on password migration crypto failures - [PR #42700](https://github.com/BerriAI/litellm/pull/42700)
 - Answer a rejected websocket handshake on `/v1/responses` or `/v1/realtime` with one log line instead of an ASGI crash traceback - [PR #45251](https://github.com/BerriAI/litellm/pull/45251)
 - Retry a `/v1/messages` stream the provider drops before the first content chunk within the model group, using `num_retries` - [PR #44276](https://github.com/BerriAI/litellm/pull/44276)
 - Never store or serve a cached chat completion, Responses or Messages answer with no output - [PR #44709](https://github.com/BerriAI/litellm/pull/44709)

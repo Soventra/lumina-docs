@@ -16,8 +16,8 @@ import TabItem from '@theme/TabItem';
 ## Required Variables
 
 ```python
-os.environ["LITELLM_PROXY_API_KEY"] = "" # "sk-<your-litellm-api-key>" your litellm proxy api key 
-os.environ["LITELLM_PROXY_API_BASE"] = "" # "http://localhost:4000" your litellm proxy api base
+os.environ["LUMINA_PROXY_API_KEY"] = "" # "sk-<your-litellm-api-key>" your litellm proxy api key 
+os.environ["LUMINA_PROXY_API_BASE"] = "" # "http://localhost:4000" your litellm proxy api base
 ```
 
 
@@ -27,11 +27,11 @@ import os
 import litellm
 from litellm import completion
 
-os.environ["LITELLM_PROXY_API_KEY"] = ""
+os.environ["LUMINA_PROXY_API_KEY"] = ""
 
 # set custom api base to your proxy
 # either set .env or litellm.api_base
-# os.environ["LITELLM_PROXY_API_BASE"] = ""
+# os.environ["LUMINA_PROXY_API_BASE"] = ""
 litellm.api_base = "your-openai-proxy-url"
 
 
@@ -50,7 +50,7 @@ import os
 import litellm
 from litellm import completion
 
-os.environ["LITELLM_PROXY_API_KEY"] = ""
+os.environ["LUMINA_PROXY_API_KEY"] = ""
 
 messages = [{ "content": "Hello, how are you?","role": "user"}]
 
@@ -69,7 +69,7 @@ import os
 import litellm
 from litellm import completion
 
-os.environ["LITELLM_PROXY_API_KEY"] = ""
+os.environ["LUMINA_PROXY_API_KEY"] = ""
 
 messages = [{ "content": "Hello, how are you?","role": "user"}]
 
@@ -190,7 +190,7 @@ Use this when calling LiteLLM Proxy from any library / codebase already using th
 
 These flags will route all requests through your LiteLLM proxy, regardless of the model specified.
 
-When enabled, requests will use `LITELLM_PROXY_API_BASE` with `LITELLM_PROXY_API_KEY` as the authentication.
+When enabled, requests will use `LUMINA_PROXY_API_BASE` with `LUMINA_PROXY_API_KEY` as the authentication.
 
 ### Option 1: Set Globally in Code
 
@@ -208,7 +208,7 @@ response = litellm.completion(
 
 ```python
 # Control proxy usage through environment variable
-os.environ["USE_LITELLM_PROXY"] = "True"
+os.environ["USE_LUMINA_PROXY"] = "True"
 
 response = litellm.completion(
     model="vertex_ai/{{gemini_flash}}",

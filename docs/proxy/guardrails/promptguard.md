@@ -12,13 +12,13 @@ Use [PromptGuard](https://promptguard.co/) to protect your LLM applications with
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "promptguard-guard"
-    litellm_params:
+    lumina_params:
       guardrail: promptguard
       mode: "pre_call"
       api_key: os.environ/PROMPTGUARD_API_KEY
@@ -141,7 +141,7 @@ Expected response:
 ```yaml
 guardrails:
   - guardrail_name: "promptguard-guard"
-    litellm_params:
+    lumina_params:
       guardrail: promptguard
       mode: "pre_call"
       api_key: os.environ/PROMPTGUARD_API_KEY
@@ -173,7 +173,7 @@ By default PromptGuard operates in **fail-closed** mode: if the API is unreachab
 ```yaml
 guardrails:
   - guardrail_name: "promptguard-failopen"
-    litellm_params:
+    lumina_params:
       guardrail: promptguard
       mode: "pre_call"
       api_key: os.environ/PROMPTGUARD_API_KEY
@@ -187,13 +187,13 @@ Apply different configurations for input and output scanning:
 ```yaml
 guardrails:
   - guardrail_name: "promptguard-input"
-    litellm_params:
+    lumina_params:
       guardrail: promptguard
       mode: "pre_call"
       api_key: os.environ/PROMPTGUARD_API_KEY
 
   - guardrail_name: "promptguard-output"
-    litellm_params:
+    lumina_params:
       guardrail: promptguard
       mode: "post_call"
       api_key: os.environ/PROMPTGUARD_API_KEY
@@ -206,7 +206,7 @@ Enable the guardrail for every request without specifying it per-call:
 ```yaml
 guardrails:
   - guardrail_name: "promptguard-guard"
-    litellm_params:
+    lumina_params:
       guardrail: promptguard
       mode: "pre_call"
       api_key: os.environ/PROMPTGUARD_API_KEY

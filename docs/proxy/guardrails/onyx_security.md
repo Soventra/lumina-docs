@@ -18,13 +18,13 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "onyx-ai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: onyx
       mode: ["pre_call", "post_call", "during_call"] # Run at multiple stages
       default_on: true
@@ -123,7 +123,7 @@ Expected response
 ```yaml
 guardrails:
   - guardrail_name: "onyx-ai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: onyx
       mode: ["pre_call", "post_call", "during_call"] # Run at multiple stages
       api_key: os.environ/ONYX_API_KEY

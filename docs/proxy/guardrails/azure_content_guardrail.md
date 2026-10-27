@@ -20,19 +20,19 @@ Define your guardrails under the `guardrails` section
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: azure-prompt-shield
-    litellm_params:
+    lumina_params:
       guardrail: azure/prompt_shield
       mode: pre_call # only mode supported for prompt shield
       api_key: os.environ/AZURE_GUARDRAIL_API_KEY
       api_base: os.environ/AZURE_GUARDRAIL_API_BASE 
   - guardrail_name: azure-text-moderation
-    litellm_params:
+    lumina_params:
       guardrail: azure/text_moderations
       mode: [pre_call, post_call] 
       api_key: os.environ/AZURE_GUARDRAIL_API_KEY
@@ -104,7 +104,7 @@ AzureHarmCategories:
 ```yaml
 guardrails:
   - guardrail_name: azure-prompt-shield
-    litellm_params:
+    lumina_params:
       guardrail: azure/prompt_shield
       mode: pre_call
       api_key: os.environ/AZURE_CONTENT_SAFETY_API_KEY

@@ -114,13 +114,13 @@ Create a `config.yaml` file:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-pii-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"  # Run before LLM call
       presidio_score_thresholds:  # optional confidence score thresholds for detections
@@ -168,7 +168,7 @@ Let's test the PII masking with various types of sensitive data.
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -219,7 +219,7 @@ My name is <PERSON>, my email is <EMAIL_ADDRESS>, and my credit card is <CREDIT_
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -239,7 +239,7 @@ The patient name and medical record number will be automatically masked.
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -265,7 +265,7 @@ Instead of masking, you can completely block requests containing specific PII ty
 ```yaml
 guardrails:
   - guardrail_name: "presidio-block-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       pii_entities_config:
@@ -279,7 +279,7 @@ Test the blocking behavior:
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -306,7 +306,7 @@ Enable output parsing to automatically replace masked tokens in LLM responses wi
 ```yaml
 guardrails:
   - guardrail_name: "presidio-output-parse"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       output_parse_pii: true  # Enable output parsing
@@ -329,7 +329,7 @@ Configure PII detection for different languages:
 ```yaml
 guardrails:
   - guardrail_name: "presidio-spanish"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_language: "es"  # Spanish
@@ -338,7 +338,7 @@ guardrails:
         PERSON: "MASK"
         
   - guardrail_name: "presidio-german"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_language: "de"  # German
@@ -352,7 +352,7 @@ You can also override language per request:
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -370,7 +370,7 @@ Apply PII masking only to logs (not to actual LLM requests):
 ```yaml
 guardrails:
   - guardrail_name: "presidio-logging"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "logging_only"  # Only mask in logs
       pii_entities_config:
@@ -446,7 +446,7 @@ litellm.callbacks = [custom_callback]
 ```yaml
 guardrails:
   - guardrail_name: "presidio-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "during_call"  # Runs in parallel with LLM call
 ```
@@ -539,7 +539,7 @@ Configure in LiteLLM:
 ```yaml
 guardrails:
   - guardrail_name: "presidio-custom"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_ad_hoc_recognizers: "./custom_recognizers.json"
@@ -710,7 +710,7 @@ You can suppress these false positives using `presidio_score_thresholds` or `pre
 ```yaml
 guardrails:
   - guardrail_name: presidio-pii
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_analyzer_api_base: "http://localhost:5002/"

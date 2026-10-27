@@ -22,13 +22,13 @@ Create an agent token in the Conduct console and note the workspace id if your t
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: conduct-guard
-    litellm_params:
+    lumina_params:
       guardrail: conduct
       mode: pre_call
       default_on: true

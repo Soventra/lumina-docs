@@ -39,7 +39,7 @@ import TabItem from '@theme/TabItem';
 
 Crusoe retires models often. To list the model ids your key can call, send `GET https://api.inference.crusoecloud.com/v1/models` with your Crusoe API key, and put `crusoe/` in front of each `id`. Copy ids from that endpoint rather than from Crusoe's docs pages, which spell some of them differently.
 
-LiteLLM's cost map does not have current prices for these models, so their spend logs as $0 or at an outdated price. To track spend, set `input_cost_per_token` and `output_cost_per_token` for each model you use from [Crusoe's pricing](https://www.crusoe.ai/cloud/pricing#Serverless-Inference), in the model's `litellm_params` on the proxy or as `completion()` arguments in the SDK.
+LiteLLM's cost map does not have current prices for these models, so their spend logs as $0 or at an outdated price. To track spend, set `input_cost_per_token` and `output_cost_per_token` for each model you use from [Crusoe's pricing](https://www.crusoe.ai/cloud/pricing#Serverless-Inference), in the model's `lumina_params` on the proxy or as `completion()` arguments in the SDK.
 
 ## Required Variables
 
@@ -135,23 +135,23 @@ print(response)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: deepseek-v4-flash
-    litellm_params:
+    lumina_params:
       model: crusoe/deepseek-ai/Deepseek-V4-Flash
       api_key: os.environ/CRUSOE_API_KEY
   - model_name: deepseek-v4-pro
-    litellm_params:
+    lumina_params:
       model: crusoe/deepseek-ai/DeepSeek-V4-Pro
       api_key: os.environ/CRUSOE_API_KEY
   - model_name: gpt-oss-120b
-    litellm_params:
+    lumina_params:
       model: crusoe/openai/gpt-oss-120b
       api_key: os.environ/CRUSOE_API_KEY
   - model_name: qwen3.8-27b
-    litellm_params:
+    lumina_params:
       model: crusoe/Qwen/Qwen3.8-27B
       api_key: os.environ/CRUSOE_API_KEY
   - model_name: glm-5.3
-    litellm_params:
+    lumina_params:
       model: crusoe/zai-org/GLM-5.3
       api_key: os.environ/CRUSOE_API_KEY
 ```

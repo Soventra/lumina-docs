@@ -195,17 +195,17 @@ print(response)
 ```yaml
 model_list:
   - model_name: gigachat
-    litellm_params:
+    lumina_params:
       model: gigachat/GigaChat-2-Max
       api_key: "os.environ/GIGACHAT_CREDENTIALS"
       ssl_verify: false
   - model_name: gigachat-lite
-    litellm_params:
+    lumina_params:
       model: gigachat/GigaChat-2-Lite
       api_key: "os.environ/GIGACHAT_CREDENTIALS"
       ssl_verify: false
   - model_name: gigachat-embeddings
-    litellm_params:
+    lumina_params:
       model: gigachat/Embeddings
       api_key: "os.environ/GIGACHAT_CREDENTIALS"
       ssl_verify: false

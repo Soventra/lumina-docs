@@ -83,11 +83,11 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: Salesforce/Llama-Rank-V1
-    litellm_params:
+    lumina_params:
       model: together_ai/Salesforce/Llama-Rank-V1
       api_key: os.environ/TOGETHERAI_API_KEY
   - model_name: rerank-english-v3.0
-    litellm_params:
+    lumina_params:
       model: cohere/rerank-english-v3.0
       api_key: os.environ/COHERE_API_KEY
 ```
@@ -104,7 +104,7 @@ Test request
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "rerank-english-v3.0",

@@ -79,7 +79,7 @@ Templates are defined in JSON format with the following structure:
   "guardrailDefinitions": [
     {
       "guardrail_name": "example-guardrail",
-      "litellm_params": {
+      "lumina_params": {
         "guardrail": "litellm_content_filter",
         "mode": "pre_call",
         "patterns": [
@@ -152,7 +152,7 @@ Here's a complete example for a HIPAA compliance template:
   "guardrailDefinitions": [
     {
       "guardrail_name": "phi-detector",
-      "litellm_params": {
+      "lumina_params": {
         "guardrail": "litellm_content_filter",
         "mode": "pre_call",
         "patterns": [
@@ -234,7 +234,7 @@ To contribute a policy template for everyone to use:
 For air-gapped or offline deployments, set the environment variable:
 
 ```bash
-export LITELLM_LOCAL_POLICY_TEMPLATES=true
+export LUMINA_LOCAL_POLICY_TEMPLATES=true
 ```
 
 This forces the system to use the local backup (`litellm/policy_templates_backup.json`) instead of fetching from GitHub.

@@ -146,12 +146,12 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: llama-3.1
-    litellm_params:
+    lumina_params:
       model: docker_model_runner/llama-3.1
       api_base: http://localhost:22088/engines/llama.cpp
 
   - model_name: mistral-7b
-    litellm_params:
+    lumina_params:
       model: docker_model_runner/mistral-7b
       api_base: http://localhost:22088/engines/llama.cpp
 ```

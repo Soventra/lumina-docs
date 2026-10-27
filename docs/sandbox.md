@@ -42,7 +42,7 @@ os.environ["OPENAI_API_KEY"] = "sk-..."
 register_sandbox_tools([
     {
         "sandbox_tool_name": "my-e2b",
-        "litellm_params": {
+        "lumina_params": {
             "sandbox_provider": "e2b",
             "api_key": "os.environ/E2B_API_KEY",
         },
@@ -79,7 +79,7 @@ os.environ["OPENAI_API_KEY"] = "sk-..."
 register_sandbox_tools([
     {
         "sandbox_tool_name": "my-e2b",
-        "litellm_params": {
+        "lumina_params": {
             "sandbox_provider": "e2b",
             "api_key": "os.environ/E2B_API_KEY",
         },
@@ -120,13 +120,13 @@ export OPENAI_API_KEY="sk-..."
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 sandbox_tools:
   - sandbox_tool_name: my-e2b
-    litellm_params:
+    lumina_params:
       sandbox_provider: e2b
       api_key: os.environ/E2B_API_KEY
 
@@ -149,7 +149,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl -s "http://localhost:4000/v1/responses" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",
@@ -179,7 +179,7 @@ print(response.output_text)
 
 ```bash
 curl -s "http://localhost:4000/v1/chat/completions" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_small}}",
@@ -216,7 +216,7 @@ To run against OpenSandbox instead of e2b, swap the `sandbox_tools` entry:
 ```yaml
 sandbox_tools:
   - sandbox_tool_name: my-opensandbox
-    litellm_params:
+    lumina_params:
       sandbox_provider: opensandbox
       api_base: os.environ/OPEN_SANDBOX_API_BASE
       api_key: os.environ/OPEN_SANDBOX_API_KEY
@@ -232,7 +232,7 @@ By default each request spins up a fresh sandbox that gets deleted when the agen
 ```bash
 # First request: define x
 curl -s "http://localhost:4000/v1/responses" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",
@@ -243,7 +243,7 @@ curl -s "http://localhost:4000/v1/responses" \
 
 # Second request: same session_id, x is still there
 curl -s "http://localhost:4000/v1/responses" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",

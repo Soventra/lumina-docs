@@ -112,7 +112,7 @@ Add Nvidia NIM rerank models to your proxy configuration:
 ```yaml
 model_list:
   - model_name: nvidia-rerank
-    litellm_params:
+    lumina_params:
       model: nvidia_nim/nvidia/llama-3_2-nv-rerankqa-1b-v2
       api_key: os.environ/NVIDIA_NIM_API_KEY
 ```
@@ -127,7 +127,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X POST http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "nvidia-rerank",
@@ -176,14 +176,14 @@ print(response)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: nvidia-ranking
-    litellm_params:
+    lumina_params:
       model: nvidia_nim/ranking/nvidia/llama-3.2-nv-rerankqa-1b-v2
       api_key: os.environ/NVIDIA_NIM_API_KEY
 ```
 
 ```bash title="Request to LiteLLM Proxy"
 curl -X POST http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "nvidia-ranking",

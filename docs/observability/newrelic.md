@@ -114,7 +114,7 @@ uv run newrelic-admin run-program litellm
 
 #### LiteLLM container logs
 
-When the New Relic callback initializes, it writes an INFO log message confirming initialization and whether LLM content recording is enabled. If INFO log messages are not visible, set the `LITELLM_LOG=INFO` environment variable to enable them. Look for a message in this form:
+When the New Relic callback initializes, it writes an INFO log message confirming initialization and whether LLM content recording is enabled. If INFO log messages are not visible, set the `LUMINA_LOG=INFO` environment variable to enable them. Look for a message in this form:
 
 ```log
 New Relic AI Monitoring initialized for app: {app-name}, content recording: {True / False}
@@ -174,7 +174,7 @@ Each LiteLLM team can send its traces and cost metrics to its own New Relic acco
 Requires the proxy to run with:
 
 ```shell
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 ```
 
 Configure the team callback (proxy admin or org admin):
@@ -208,7 +208,7 @@ NEW_RELIC_LICENSE_KEY=<operator ingest key>
 NEW_RELIC_REGION=us
 ```
 
-With `LITELLM_OTEL_V2=true` the `newrelic` callback exports over OTLP instead of loading the Python agent; `NEW_RELIC_AI_MONITORING_RECORD_CONTENT_ENABLED=false` still disables message-content capture on the OTLP path. Note the OTLP path feeds distributed tracing, dashboards, NRQL and alerting; it does not populate the New Relic AI Monitoring product UI.
+With `LUMINA_OTEL_V2=true` the `newrelic` callback exports over OTLP instead of loading the Python agent; `NEW_RELIC_AI_MONITORING_RECORD_CONTENT_ENABLED=false` still disables message-content capture on the OTLP path. Note the OTLP path feeds distributed tracing, dashboards, NRQL and alerting; it does not populate the New Relic AI Monitoring product UI.
 
 ## Support
 

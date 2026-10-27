@@ -201,7 +201,7 @@ Add this registration to your existing proxy configuration, keeping your `model_
 ```yaml showLineNumbers title="config.yaml"
 vector_store_registry:
   - vector_store_name: "<display-name>"
-    litellm_params:
+    lumina_params:
       vector_store_id: "<index-name>"
       custom_llm_provider: mongodb
       api_base: http://127.0.0.1:8080
@@ -224,17 +224,17 @@ Environment variables must be available to the running proxy process. For Docker
 </TabItem>
 <TabItem value="api" label="Management API">
 
-On a proxy configured with a database, set `LITELLM_API_KEY` to a LiteLLM key with permission to manage vector stores. Replace the proxy URL if needed:
+On a proxy configured with a database, set `LUMINA_API_KEY` to a LiteLLM key with permission to manage vector stores. Replace the proxy URL if needed:
 
 ```bash showLineNumbers title="Register an existing MongoDB index"
 curl -X POST 'http://localhost:4000/vector_store/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "vector_store_id": "<index-name>",
     "custom_llm_provider": "mongodb",
     "vector_store_name": "<display-name>",
-    "litellm_params": {
+    "lumina_params": {
       "api_base": "http://127.0.0.1:8080",
       "api_key": "<sidecar-api-key>",
       "mongodb_database": "<database-name>",
@@ -259,14 +259,14 @@ If the proxy started without any registered vector stores, direct search can wor
 
 Call `/v1/chat/completions` with a `file_search` tool referencing your registered index ID. LiteLLM retrieves the context and calls your chat model in the same request.
 
-Set `LITELLM_API_KEY` to a LiteLLM key with access to the chat model and registered vector store. Replace the proxy URL, model name, index name, and question below with your own values.
+Set `LUMINA_API_KEY` to a LiteLLM key with access to the chat model and registered vector store. Replace the proxy URL, model name, index name, and question below with your own values.
 
 <Tabs>
 <TabItem value="chat-curl" label="curl">
 
 ```bash showLineNumbers title="Chat with your MongoDB documents"
 curl -X POST 'http://localhost:4000/v1/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "<chat-model-name>",
@@ -301,7 +301,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 
 response = client.chat.completions.create(
@@ -342,11 +342,11 @@ A successful chat response alone does not prove that MongoDB retrieval worked: c
 
 ## Search the index directly
 
-Use direct search when you want to retrieve documents without generating a chat response. Set `LITELLM_API_KEY` to a LiteLLM key with access to the registered store.
+Use direct search when you want to retrieve documents without generating a chat response. Set `LUMINA_API_KEY` to a LiteLLM key with access to the registered store.
 
 ```bash showLineNumbers title="Search through the proxy"
 curl -X POST 'http://localhost:4000/v1/vector_stores/<index-name>/search' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "query": "<question-about-your-documents>",
@@ -394,7 +394,7 @@ For async usage, call `await litellm.vector_stores.asearch(...)` with the same a
 
 ## Settings reference
 
-Pass these in the registered store's `litellm_params`, or as keyword arguments in a direct SDK search.
+Pass these in the registered store's `lumina_params`, or as keyword arguments in a direct SDK search.
 
 | Setting | Required | Description |
 |---|---|---|

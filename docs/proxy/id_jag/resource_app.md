@@ -225,7 +225,7 @@ Confidential clients can also use HTTP Basic authentication (`-u "agent-client:$
 }
 ```
 
-Save `access_token` as `LITELLM_ACCESS_TOKEN`. `scope` echoes the granted scope, which limits route access. No refresh token is issued. When the credential expires, request a fresh ID-JAG and redeem it again.
+Save `access_token` as `LUMINA_ACCESS_TOKEN`. `scope` echoes the granted scope, which limits route access. No refresh token is issued. When the credential expires, request a fresh ID-JAG and redeem it again.
 
 ### 6. Call LiteLLM
 
@@ -238,7 +238,7 @@ Replace `<your-model-name>` with a model configured on your proxy.
 
 ```bash title="Run inference" showLineNumbers
 curl -s https://litellm.example.com/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_ACCESS_TOKEN" \
+  -H "Authorization: Bearer $LUMINA_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"model":"<your-model-name>","messages":[{"role":"user","content":"Hello"}]}'
 ```
@@ -248,7 +248,7 @@ curl -s https://litellm.example.com/v1/chat/completions \
 
 ```bash title="List MCP tools" showLineNumbers
 curl -s -X POST https://litellm.example.com/mcp \
-  -H "Authorization: Bearer $LITELLM_ACCESS_TOKEN" \
+  -H "Authorization: Bearer $LUMINA_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
@@ -391,7 +391,7 @@ Confidential clients can also use HTTP Basic authentication (`-u "agent-client:$
 }
 ```
 
-Save `access_token` as `LITELLM_ACCESS_TOKEN`. `scope` echoes the granted scope, which limits route access. No refresh token is issued. When the credential expires, request a fresh ID-JAG and redeem it again.
+Save `access_token` as `LUMINA_ACCESS_TOKEN`. `scope` echoes the granted scope, which limits route access. No refresh token is issued. When the credential expires, request a fresh ID-JAG and redeem it again.
 
 ### 6. Call LiteLLM {#other-call-litellm}
 
@@ -404,7 +404,7 @@ Replace `<your-model-name>` with a model configured on your proxy.
 
 ```bash title="Run inference" showLineNumbers
 curl -s https://litellm.example.com/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_ACCESS_TOKEN" \
+  -H "Authorization: Bearer $LUMINA_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"model":"<your-model-name>","messages":[{"role":"user","content":"Hello"}]}'
 ```
@@ -414,7 +414,7 @@ curl -s https://litellm.example.com/v1/chat/completions \
 
 ```bash title="List MCP tools" showLineNumbers
 curl -s -X POST https://litellm.example.com/mcp \
-  -H "Authorization: Bearer $LITELLM_ACCESS_TOKEN" \
+  -H "Authorization: Bearer $LUMINA_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'

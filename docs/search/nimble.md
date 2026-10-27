@@ -29,13 +29,13 @@ response = search(
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gpt-5.6
-    litellm_params:
+    lumina_params:
       model: gpt-5.6
       api_key: os.environ/OPENAI_API_KEY
 
 search_tools:
   - search_tool_name: nimble-search
-    litellm_params:
+    lumina_params:
       search_provider: nimble
       api_key: os.environ/NIMBLE_API_KEY
 ```
@@ -52,7 +52,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test Request"
 curl http://0.0.0.0:4000/v1/search/nimble-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments",

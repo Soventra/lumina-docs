@@ -57,13 +57,13 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 vector_store_registry:
   - vector_store_name: "bedrock-company-docs"
-    litellm_params:
+    lumina_params:
       vector_store_id: "YOUR_KNOWLEDGE_BASE_ID"
       custom_llm_provider: "bedrock"
       vector_store_description: "Bedrock Knowledge Base for company documents"
@@ -93,7 +93,7 @@ On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Stor
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What does our company policy say about remote work?"}],
@@ -237,7 +237,7 @@ response = await litellm.acompletion(
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What are our policies?"}],
@@ -298,7 +298,7 @@ response = client.vector_stores.search(
 ```bash
 curl http://localhost:4000/v1/vector_stores/YOUR_KNOWLEDGE_BASE_ID/search \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "query": "What does our company policy say about remote work?",
     "userContext": {"userId": "alice@example.com"}
@@ -314,7 +314,7 @@ Set `user_context` on the store to apply one identity to every search against it
 ```yaml
 vector_store_registry:
   - vector_store_name: "bedrock-company-docs"
-    litellm_params:
+    lumina_params:
       vector_store_id: "YOUR_KNOWLEDGE_BASE_ID"
       custom_llm_provider: "bedrock"
       user_context:

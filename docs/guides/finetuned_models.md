@@ -55,7 +55,7 @@ response = completion(
 
 ```yaml
 - model_name: finetuned-gemini
-  litellm_params:
+  lumina_params:
     model: vertex_ai/<ENDPOINT_ID>
     vertex_project: <PROJECT_ID>
     vertex_location: <LOCATION>
@@ -68,7 +68,7 @@ response = completion(
 ```bash
 curl --location 'https://0.0.0.0:4000/v1/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: <LITELLM_KEY>' \
+--header 'Authorization: <LUMINA_KEY>' \
 --data '{"model": "finetuned-gemini" ,"messages":[{"role": "user", "content":[{"type": "text", "text": "hi"}]}]}'
 ```
 

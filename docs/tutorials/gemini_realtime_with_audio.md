@@ -9,7 +9,7 @@ Requires LiteLLM Proxy v1.70.1+
 ```yaml
 model_list:
   - model_name: "gemini-flash-live"
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.0-flash-live-001
     model_info:
       mode: realtime

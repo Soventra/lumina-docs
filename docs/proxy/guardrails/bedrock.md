@@ -17,13 +17,13 @@ Define your guardrails under the `guardrails` section
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "bedrock-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock  # supported values: "aporia", "bedrock", "lakera"
       mode: "during_call"
       guardrailIdentifier: ff6ujrregl1q      # your guardrail ID on bedrock
@@ -159,7 +159,7 @@ The 400 for an unscannable attachment names what was refused, for example `Bedro
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 guardrails:
   - guardrail_name: "bedrock-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "pre_call"
       guardrailIdentifier: ff6ujrregl1q
@@ -183,7 +183,7 @@ For latency-sensitive clients (interactive chat, coding agents), you can keep th
 ```yaml
 guardrails:
   - guardrail_name: "bedrock-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "post_call"
       guardrailIdentifier: ff6ujrregl1q
@@ -213,7 +213,7 @@ Set `contextual_grounding_from_messages: true` and post-call checks send the sys
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 guardrails:
   - guardrail_name: "bedrock-grounding"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "post_call"
       guardrailIdentifier: ff6ujrregl1q
@@ -233,7 +233,7 @@ Set `checks` instead of `guardrailIdentifier` (the two can't be combined). Your 
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 guardrails:
   - guardrail_name: "bedrock-checks"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "pre_call"
       aws_region_name: os.environ/AWS_REGION
@@ -298,13 +298,13 @@ Here's how to configure it in your config.yaml:
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   
 guardrails:
   - guardrail_name: "bedrock-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "pre_call"  # Important: must use pre_call mode for masking
       guardrailIdentifier: wf0hkdb5x07f
@@ -335,7 +335,7 @@ This helps protect sensitive information while still allowing the model to under
 
 ## Experimental: Only Send Latest User Message
 
-When you're chaining long conversations through Bedrock guardrails, you can opt into a lighter, experimental behavior by setting `experimental_use_latest_role_message_only: true` in the guardrail's `litellm_params`. When enabled, LiteLLM only sends the most recent `user` message (or assistant output during post-call checks) to Bedrock, which:
+When you're chaining long conversations through Bedrock guardrails, you can opt into a lighter, experimental behavior by setting `experimental_use_latest_role_message_only: true` in the guardrail's `lumina_params`. When enabled, LiteLLM only sends the most recent `user` message (or assistant output during post-call checks) to Bedrock, which:
 
 - prevents unintended blocks on older system/dev messages
 - keeps Bedrock payloads smaller, reducing latency and cost
@@ -346,7 +346,7 @@ Use it with Claude Code and other clients that send `role: system` entries insid
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 guardrails:
   - guardrail_name: "bedrock-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "pre_call"
       guardrailIdentifier: wf0hkdb5x07f
@@ -370,13 +370,13 @@ Add `disable_exception_on_block: true` to your guardrail configuration:
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "bedrock-guardrail"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: "post_call"
       guardrailIdentifier: ff6ujrregl1q

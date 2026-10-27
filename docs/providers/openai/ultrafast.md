@@ -120,7 +120,7 @@ Enter this JSON in **Model Info**:
 
 Click **Test Connect**. The test should send the selected upstream model and `service_tier` (`priority` for Fast, `ultrafast` for Astra Ultrafast) to OpenAI's `/v1/responses` endpoint. Resolve any credential, quota, or access errors shown by the test, then click **Add Model** to save.
 
-Under **Deployed Models**, search for the public name you configured, open its model ID, and select **Raw JSON**. Confirm that `litellm_params.service_tier` matches your chosen tier and `model_info.mode` is `"responses"`. Use a [virtual key](../../proxy/virtual_keys.md) with access to this public model name for the requests below.
+Under **Deployed Models**, search for the public name you configured, open its model ID, and select **Raw JSON**. Confirm that `lumina_params.service_tier` matches your chosen tier and `model_info.mode` is `"responses"`. Use a [virtual key](../../proxy/virtual_keys.md) with access to this public model name for the requests below.
 
 ## Set up with config.yaml
 
@@ -132,7 +132,7 @@ Add the following deployment to your gateway configuration as an alternative to 
 ```yaml title="config.yaml"
 model_list:
   - model_name: gpt-6-astra-ultrafast
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-astra
       api_key: os.environ/OPENAI_API_KEY
       service_tier: ultrafast
@@ -147,7 +147,7 @@ model_list:
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: gpt-6.1-sol-fast
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6.1-sol
       api_key: os.environ/OPENAI_API_KEY
       service_tier: priority
@@ -167,19 +167,19 @@ The `openai/` prefix selects the upstream provider. Clients call the selected de
 
 The requests below use the Astra Ultrafast alias. For the Fast deployment, use `model: "gpt-6.1-sol-fast"` and `service_tier: "priority"` instead.
 
-Set `LITELLM_BASE_URL` to your gateway URL without a trailing `/v1`, and `LITELLM_API_KEY` to a virtual key that can access the model:
+Set `LUMINA_BASE_URL` to your gateway URL without a trailing `/v1`, and `LUMINA_API_KEY` to a virtual key that can access the model:
 
 ```bash
-export LITELLM_BASE_URL="http://localhost:4000"
-export LITELLM_API_KEY="<your-litellm-virtual-key>"
+export LUMINA_BASE_URL="http://localhost:4000"
+export LUMINA_API_KEY="<your-litellm-virtual-key>"
 ```
 
 <Tabs>
 <TabItem value="curl" label="curl">
 
 ```bash
-curl "${LITELLM_BASE_URL}/v1/responses" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}" \
+curl "${LUMINA_BASE_URL}/v1/responses" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-6-astra-ultrafast",
@@ -198,8 +198,8 @@ import os
 from openai import OpenAI
 
 client = OpenAI(
-    base_url=os.environ["LITELLM_BASE_URL"].rstrip("/") + "/v1",
-    api_key=os.environ["LITELLM_API_KEY"],
+    base_url=os.environ["LUMINA_BASE_URL"].rstrip("/") + "/v1",
+    api_key=os.environ["LUMINA_API_KEY"],
 )
 
 response = client.responses.create(
@@ -239,7 +239,7 @@ For Fast mode, use `model="openai/gpt-6.1-sol"` and `service_tier="priority"`, o
 
 Use `model_info.service_tiers: ["priority"]` to offer `/fast`. For Astra or GPT-6.1 Sol, use `["priority", "ultrafast"]` to offer both `/fast` and `/ultrafast`. Codex CLI 0.159 or newer also needs `model_catalog_url` pointed at your gateway's `/v1/models` endpoint and `[features] api_key_model_discovery = true`. Follow the [Codex model catalog setup](../../proxy/client_setup/codex_cli.md#model-catalog-and-service-tiers), select your gateway model, then choose a mode.
 
-For a model where users toggle modes on and off, omit the deployment's `litellm_params.service_tier` and keep `model_info.service_tiers`. Otherwise, a client that stops sending a tier still inherits the deployment's default. Advertising a tier does not grant OpenAI access to it.
+For a model where users toggle modes on and off, omit the deployment's `lumina_params.service_tier` and keep `model_info.service_tiers`. Otherwise, a client that stops sending a tier still inherits the deployment's default. Advertising a tier does not grant OpenAI access to it.
 
 ## Verify and troubleshoot
 

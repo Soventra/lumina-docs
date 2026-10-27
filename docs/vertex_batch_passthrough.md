@@ -27,7 +27,7 @@ LiteLLM supports Vertex AI batch prediction jobs through passthrough endpoints, 
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_flash}}
       vertex_project: your-project-id
       vertex_location: us-central1

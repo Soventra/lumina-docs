@@ -39,7 +39,7 @@ GPT-6.1 Sol is an upgrade to GPT-6 Sol at the same $2 input and $10 output per 1
 ```yaml
 model_list:
   - model_name: gpt-6.1-sol
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6.1-sol
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -60,7 +60,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-6.1-sol",
     "messages": [

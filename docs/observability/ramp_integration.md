@@ -69,7 +69,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -91,7 +91,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_small}}",
   "messages": [

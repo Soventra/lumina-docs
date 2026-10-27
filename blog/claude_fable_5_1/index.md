@@ -44,7 +44,7 @@ Anthropic's [what's new page](https://platform.claude.com/docs/en/models/fable-5
 ```yaml
 model_list:
   - model_name: claude-fable-5-1
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-fable-5-1
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -55,7 +55,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: claude-fable-5-1
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/us.anthropic.claude-fable-5-1
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -70,7 +70,7 @@ Bedrock serves it through inference profiles. `us.` and `eu.` carry the 10% regi
 ```yaml
 model_list:
   - model_name: claude-fable-5-1
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-fable-5-1
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: global
@@ -84,7 +84,7 @@ Google renamed Vertex AI to Gemini Enterprise Agent Platform; the LiteLLM prefix
 ```yaml
 model_list:
   - model_name: claude-fable-5-1
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-fable-5-1
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -96,7 +96,7 @@ model_list:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-fable-5-1",
   "messages": [{"role": "user", "content": "what llm are you"}],

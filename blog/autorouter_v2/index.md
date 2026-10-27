@@ -31,7 +31,7 @@ The operational half came from [discussion #32172](https://github.com/BerriAI/li
 | Tier value             | One model per tier              | One model, random-pick pool, or Thompson-sampled pool ([#32967](https://github.com/BerriAI/litellm/pull/32967), [#32947](https://github.com/BerriAI/litellm/pull/32947)) |
 | Technical keywords     | Fixed built-in list             | `custom_technical_keywords` appends without replacing ([#32262](https://github.com/BerriAI/litellm/pull/32262))            |
 | Decision log           | "keyword rule fired"            | `cause=literal_keyword_match \| semantic_keyword_match \| complexity_scorer` ([#32943](https://github.com/BerriAI/litellm/pull/32943)) |
-| Alias `litellm_params` | Silently dropped                | Merged into outbound request ([#32974](https://github.com/BerriAI/litellm/pull/32974))                                    |
+| Alias `lumina_params` | Silently dropped                | Merged into outbound request ([#32974](https://github.com/BerriAI/litellm/pull/32974))                                    |
 | Session affinity       | Reclassified every turn         | Opt-in `session_affinity`: pin the first-turn model for the session, skip reclassification ([#33126](https://github.com/BerriAI/litellm/pull/33126)) |
 
 ## One config, all the knobs
@@ -39,7 +39,7 @@ The operational half came from [discussion #32172](https://github.com/BerriAI/li
 ```yaml
 model_list:
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       drop_params: true
       complexity_router_config:
@@ -99,7 +99,7 @@ ComplexityRouter: routing decision cause=session_affinity_pin,                  
 
 ## Fixes worth calling out
 
-`drop_params`, `cache_control_injection_points`, and any other `litellm_params` set on the auto router alias itself used to vanish when the router picked a tier. They now merge into the outbound request, without overriding anything the caller passed explicitly ([#32974](https://github.com/BerriAI/litellm/pull/32974)). Same PR fixes an Anthropic `/v1/messages` to Responses API `tool_choice` shape bug that broke Bedrock-backed complexity routers (reported in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168) by @icsy7867).
+`drop_params`, `cache_control_injection_points`, and any other `lumina_params` set on the auto router alias itself used to vanish when the router picked a tier. They now merge into the outbound request, without overriding anything the caller passed explicitly ([#32974](https://github.com/BerriAI/litellm/pull/32974)). Same PR fixes an Anthropic `/v1/messages` to Responses API `tool_choice` shape bug that broke Bedrock-backed complexity routers (reported in [discussion #32168](https://github.com/BerriAI/litellm/discussions/32168) by @icsy7867).
 
 UI got a working Test Connection per tier ([#32950](https://github.com/BerriAI/litellm/pull/32950)) and required-tier inline validation ([#32978](https://github.com/BerriAI/litellm/pull/32978)).
 

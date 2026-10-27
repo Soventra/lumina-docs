@@ -28,7 +28,7 @@ Browser                  LiteLLM Proxy              OpenAI/Azure
 ```yaml
 model_list:
   - model_name: gpt-4o-realtime
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-realtime-preview-2024-12-17
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -80,5 +80,5 @@ dc.send(JSON.stringify({ type: "session.update", session: { instructions: "..." 
 - **401 Token expired** — Get a fresh token right before creating the WebRTC offer.
 - **Which key for `/calls`?** — Encrypted token from `client_secrets`, not raw key.
 - **Pass `model`?** — No. Token encodes routing.
-- **Azure `api-version`** — Set `api_version` in `litellm_params` and correct `api_base`.
+- **Azure `api-version`** — Set `api_version` in `lumina_params` and correct `api_base`.
 - **No audio** — Grant mic; ensure `pc.ontrack` sets autoplay audio; check firewall/WebRTC; inspect console.

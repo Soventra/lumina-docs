@@ -22,7 +22,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: model-router
-    litellm_params:
+    lumina_params:
       model: azure_ai/model_router/model-router
       api_base: https://your-endpoint.cognitiveservices.azure.com/openai/deployments/model-router/chat/completions?api-version=2025-01-01-preview
       api_key: your-api-key
@@ -104,7 +104,7 @@ async for chunk in response:
 ```yaml
 model_list:
   - model_name: azure-model-router  # Public name for your users
-    litellm_params:
+    lumina_params:
       model: azure_ai/model_router/azure-model-router  # Use your deployment name
       api_base: https://your-endpoint.cognitiveservices.azure.com/openai/v1/
       api_key: os.environ/AZURE_MODEL_ROUTER_API_KEY
@@ -123,7 +123,7 @@ litellm --config config.yaml
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "azure-model-router",
     "messages": [{"role": "user", "content": "Hello!"}]
@@ -283,13 +283,13 @@ When you use Azure Model Router, LiteLLM computes **two cost components**:
 For cost tracking to work correctly:
 
 - **Use the full pattern**: `azure_ai/model_router/<deployment-name>` (e.g., `azure_ai/model_router/model-router`)
-- **Proxy config**: When using the LiteLLM proxy, set `model` in `litellm_params` to the full pattern so the request model is correctly identified as a router
+- **Proxy config**: When using the LiteLLM proxy, set `model` in `lumina_params` to the full pattern so the request model is correctly identified as a router
 
 ```yaml
 # proxy_server_config.yaml
 model_list:
   - model_name: model-router
-    litellm_params:
+    lumina_params:
       model: azure_ai/model_router/model-router  # Required for router cost detection
       api_base: https://your-endpoint.cognitiveservices.azure.com/openai/deployments/model-router/chat/completions?api-version=2025-01-01-preview
       api_key: your-api-key

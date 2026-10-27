@@ -39,30 +39,30 @@ Prices below are USD per million tokens, checked against the [published pricing]
 
 ## Gateway setup
 
-Install the proxy with `pip install 'litellm[proxy]'`. Set `ABLITERATION_API_KEY` on the gateway process, and set `LITELLM_MASTER_KEY` to a strong key for gateway clients. The provider key authenticates upstream requests. The gateway key authenticates your client to LiteLLM.
+Install the proxy with `pip install 'litellm[proxy]'`. Set `ABLITERATION_API_KEY` on the gateway process, and set `LUMINA_MASTER_KEY` to a strong key for gateway clients. The provider key authenticates upstream requests. The gateway key authenticates your client to LiteLLM.
 
 Add this deployment to your existing configuration, or save it as `config.yaml` for a new gateway.
 
 ```yaml
 model_list:
   - model_name: abliteration-chat
-    litellm_params:
+    lumina_params:
       model: abliteration/abliterated-model-large-v2
       api_key: os.environ/ABLITERATION_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ```bash
 litellm --config config.yaml --port 4000
 ```
 
-In a second terminal with `LITELLM_MASTER_KEY` set, send a request.
+In a second terminal with `LUMINA_MASTER_KEY` set, send a request.
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "abliteration-chat",

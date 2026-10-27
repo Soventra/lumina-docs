@@ -120,23 +120,23 @@ print(response.output_text)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: reka-flash-3
-    litellm_params:
+    lumina_params:
       model: reka/reka-flash-3
       api_key: os.environ/REKA_API_KEY
   - model_name: reka-edge
-    litellm_params:
+    lumina_params:
       model: reka/reka-edge-2603
       api_key: os.environ/REKA_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Start the proxy:
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
 export REKA_API_KEY="your-api-key"
-export LITELLM_MASTER_KEY="sk-local-reka"
+export LUMINA_MASTER_KEY="sk-local-reka"
 litellm --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
@@ -149,7 +149,7 @@ A deployment configured this way serves `/v1/chat/completions`, `/v1/responses`,
 
 ```bash showLineNumbers title="curl"
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "reka-flash-3",
@@ -181,7 +181,7 @@ print(response.choices[0].message.content)
 
 ```bash showLineNumbers title="curl"
 curl http://localhost:4000/v1/responses \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "reka-flash-3",
@@ -194,7 +194,7 @@ curl http://localhost:4000/v1/responses \
 
 ```bash showLineNumbers title="curl"
 curl http://localhost:4000/v1/messages \
-  -H "x-api-key: $LITELLM_MASTER_KEY" \
+  -H "x-api-key: $LUMINA_MASTER_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \
   -d '{
@@ -216,13 +216,13 @@ Reka models are not yet in LiteLLM's model cost map, so spend is not computed au
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: reka-edge
-    litellm_params:
+    lumina_params:
       model: reka/reka-edge-2603
       api_key: os.environ/REKA_API_KEY
       input_cost_per_token: 0.0000001   # $0.10 / 1M
       output_cost_per_token: 0.0000001  # $0.10 / 1M
   - model_name: glm5.3-flash
-    litellm_params:
+    lumina_params:
       model: reka/glm5.3-flash
       api_key: os.environ/REKA_API_KEY
       input_cost_per_token: 0.00000015  # $0.15 / 1M

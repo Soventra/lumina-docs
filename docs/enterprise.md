@@ -83,7 +83,7 @@ The OSS guardrail framework includes custom guardrails and Presidio for PII mask
 Deploy the Docker image, or build from the pip package, on your own infrastructure. A license key enables the features above and includes a dedicated support channel.
 
 ```env
-LITELLM_LICENSE="eyJ..."
+LUMINA_LICENSE="eyJ..."
 ```
 
 No data leaves your environment, and LiteLLM is [SOC 2 Type II](https://trust.litellm.ai/) audited. [Procurement is available through AWS and Azure Marketplace.](./data_security.md#legalcompliance-faqs)
@@ -110,7 +110,7 @@ LiteLLM supports the four most recent stable minor lines, and Enterprise and ope
 Add the license key to your environment, then restart the proxy.
 
 ```env
-LITELLM_LICENSE="eyJ..."
+LUMINA_LICENSE="eyJ..."
 ```
 
 Open `http://<your-proxy-host>:<port>/`. The API docs page should show **Enterprise Edition** in the description. If it does not, confirm the key is correct and unexpired, and that the proxy was fully restarted.

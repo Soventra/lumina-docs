@@ -14,7 +14,7 @@ Store user preferences and feedback so your LLM remembers them across sessions. 
 
 ```shell
 curl -X POST "http://localhost:4000/v1/memory" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "key": "user:preferences",
@@ -48,14 +48,14 @@ client.post("/v1/memory", json={
 
 ```shell
 curl "http://localhost:4000/v1/memory/user:preferences" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ### Update
 
 ```shell
 curl -X PUT "http://localhost:4000/v1/memory/user:preferences" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"value": "Prefers concise responses. Timezone: EST."}'
 ```
@@ -65,18 +65,18 @@ curl -X PUT "http://localhost:4000/v1/memory/user:preferences" \
 ```shell
 # All entries
 curl "http://localhost:4000/v1/memory" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 # By prefix
 curl "http://localhost:4000/v1/memory?key_prefix=user:" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ### Delete
 
 ```shell
 curl -X DELETE "http://localhost:4000/v1/memory/user:preferences" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ## Access Control
@@ -108,8 +108,8 @@ Partition memory by Slack workspace and user so each person's preferences are is
 ```python
 import httpx
 
-LITELLM_BASE = "http://localhost:4000"
-LITELLM_KEY = "sk-<your-litellm-api-key>"
+LUMINA_BASE = "http://localhost:4000"
+LUMINA_KEY = "sk-<your-litellm-api-key>"
 
 def memory_key(team_id: str, user_id: str) -> str:
     return f"slack:{team_id}:{user_id}"
@@ -119,8 +119,8 @@ async def get_preferences(team_id: str, user_id: str) -> str:
     key = memory_key(team_id, user_id)
     async with httpx.AsyncClient() as client:
         r = await client.get(
-            f"{LITELLM_BASE}/v1/memory/{key}",
-            headers={"Authorization": f"Bearer {LITELLM_KEY}"},
+            f"{LUMINA_BASE}/v1/memory/{key}",
+            headers={"Authorization": f"Bearer {LUMINA_KEY}"},
         )
     if r.status_code == 404:
         return ""
@@ -137,8 +137,8 @@ async def save_preference(team_id: str, user_id: str, note: str):
     
     async with httpx.AsyncClient() as client:
         await client.put(
-            f"{LITELLM_BASE}/v1/memory/{key}",
-            headers={"Authorization": f"Bearer {LITELLM_KEY}"},
+            f"{LUMINA_BASE}/v1/memory/{key}",
+            headers={"Authorization": f"Bearer {LUMINA_KEY}"},
             json={"value": "\n".join(bullets)},
         )
 ```
@@ -163,7 +163,7 @@ Follow these unless the current message contradicts them."""},
 
 ```shell
 curl "http://localhost:4000/v1/memory?key_prefix=slack:T024BE7LD:" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ## Metadata

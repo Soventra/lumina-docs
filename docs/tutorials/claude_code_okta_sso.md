@@ -33,17 +33,17 @@ Enable JWT auth in your proxy config:
 ```yaml
 model_list:
   - model_name: {{anthropic_large}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: true
   litellm_jwtauth:
     user_id_jwt_field: "sub"
@@ -57,9 +57,9 @@ Set the environment variables. User upsert writes to the database, so `DATABASE_
 export JWT_PUBLIC_KEY_URL="https://<your-okta-domain>/oauth2/default/v1/keys"
 export JWT_AUDIENCE="api://default"
 export DATABASE_URL="postgresql://..."
-export LITELLM_LICENSE="<your-enterprise-license>"
+export LUMINA_LICENSE="<your-enterprise-license>"
 export ANTHROPIC_API_KEY="sk-ant-..."
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"
 ```
 
 Start the proxy:

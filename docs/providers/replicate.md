@@ -40,7 +40,7 @@ response = completion(
   ```yaml
   model_list:
     - model_name: llama-3
-      litellm_params:
+      lumina_params:
         model: replicate/meta/meta-llama-3-8b-instruct
         api_key: os.environ/REPLICATE_API_KEY
   ```
@@ -89,7 +89,7 @@ response = completion(
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "llama-3",
@@ -178,7 +178,7 @@ test_replicate_custom_model()
 # Model-specific parameters
 model_list:
   - model_name: mistral-7b # model alias
-    litellm_params: # actual params for litellm.completion()
+    lumina_params: # actual params for litellm.completion()
       model: "replicate/mistralai/Mistral-7B-Instruct-v0.1" 
       api_key: os.environ/REPLICATE_API_KEY
       initial_prompt_value: "\n"
@@ -251,7 +251,7 @@ response = completion(
 ```yaml
   model_list:
     - model_name: llama-3
-      litellm_params:
+      lumina_params:
         model: replicate/meta/meta-llama-3-8b-instruct
         api_key: os.environ/REPLICATE_API_KEY
         max_tokens: 20
@@ -285,7 +285,7 @@ response = completion(
 ```yaml
   model_list:
     - model_name: llama-3
-      litellm_params:
+      lumina_params:
         model: replicate/meta/meta-llama-3-8b-instruct
         api_key: os.environ/REPLICATE_API_KEY
         min_tokens: 2

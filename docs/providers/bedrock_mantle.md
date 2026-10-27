@@ -52,7 +52,7 @@ asyncio.run(main())
 ```yaml
 model_list:
   - model_name: claude-mythos
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/anthropic.claude-mythos-preview
       aws_region_name: us-east-1
 ```
@@ -68,7 +68,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-mythos",
     "max_tokens": 1024,
@@ -109,7 +109,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: claude-mythos
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/anthropic.claude-mythos-preview
       aws_region_name: us-east-1
 ```
@@ -125,7 +125,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-mythos",
     "messages": [
@@ -174,7 +174,7 @@ asyncio.run(main())
 ```yaml
 model_list:
   - model_name: claude-sonnet-mantle
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/anthropic.{{anthropic}}
       aws_region_name: us-east-2
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
@@ -192,7 +192,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-sonnet-mantle",
     "max_tokens": 1024,
@@ -260,7 +260,7 @@ for event in response:
 ```yaml
 model_list:
   - model_name: gpt-5.5-mantle
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.{{openai_large}}
       api_key: os.environ/BEDROCK_MANTLE_API_KEY
       api_base: https://bedrock-mantle.us-east-2.api.aws/v1
@@ -277,7 +277,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gpt-5.5-mantle",
     "input": "Hello! How can you help me today?"
@@ -311,7 +311,7 @@ GPT-5.6 and newer OpenAI models on Mantle accept [explicit prompt cache breakpoi
 ```yaml
 model_list:
   - model_name: gpt-5.6-mantle
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.gpt-5.6-sol
       aws_region_name: us-east-1
       api_key: os.environ/AWS_BEARER_TOKEN_BEDROCK
@@ -322,7 +322,7 @@ model_list:
 
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-5.6-mantle",
@@ -450,13 +450,13 @@ Cost tracking uses the served region. When the price map has a row for `bedrock_
 ```yaml
 model_list:
   - model_name: grok-4.3-gov
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/xai.grok-4.3
       aws_region_name: us-gov-west-1
       aws_access_key_id: os.environ/AWS_GOV_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_GOV_SECRET_ACCESS_KEY
   - model_name: grok-4.3-gov-prefixed
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/us-gov-west-1/xai.grok-4.3
       aws_access_key_id: os.environ/AWS_GOV_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_GOV_SECRET_ACCESS_KEY
@@ -471,20 +471,20 @@ A deployment that sets `base_model` or its own `input_cost_per_token` / `output_
 ```yaml
 model_list:
   - model_name: gpt-5.5-mantle
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.{{openai_large}}
       api_key: os.environ/BEDROCK_MANTLE_API_KEY
       api_base: "https://bedrock-mantle.us-east-2.api.aws/v1"
 
   - model_name: gpt-oss-120b
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.gpt-oss-120b
       api_key: os.environ/BEDROCK_MANTLE_API_KEY
       # optional region override:
       api_base: "https://bedrock-mantle.us-east-1.api.aws/v1"
 
   - model_name: gpt-oss-20b
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.gpt-oss-20b
       api_key: os.environ/BEDROCK_MANTLE_API_KEY
 ```

@@ -9,14 +9,14 @@ Pass-through endpoints for VLLM - call provider-specific endpoint, in native for
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ✅ | |
 
-Just replace `https://my-vllm-server.com` with `LITELLM_PROXY_BASE_URL/vllm`
+Just replace `https://my-vllm-server.com` with `LUMINA_PROXY_BASE_URL/vllm`
 
 #### **Example Usage**
 
 ```bash
 curl -L -X GET 'http://0.0.0.0:4000/vllm/metrics' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 ```
 
 Supports **ALL** VLLM Endpoints (including streaming).
@@ -36,7 +36,7 @@ Works with LiteLLM v1.72.0+.
 ```yaml
 model_list:
   - model_name: "my-vllm-model"
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/vllm-1.72
       api_base: https://my-vllm-server.com
 ```
@@ -75,8 +75,8 @@ Key Changes:
 
 | **Original Endpoint**                                | **Replace With**                  |
 |------------------------------------------------------|-----------------------------------|
-| `https://my-vllm-server.com`          | `http://0.0.0.0:4000/vllm` (LITELLM_PROXY_BASE_URL="http://0.0.0.0:4000")      |
-| `bearer $VLLM_API_KEY`                                 | `bearer anything` (use `bearer LITELLM_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
+| `https://my-vllm-server.com`          | `http://0.0.0.0:4000/vllm` (LUMINA_PROXY_BASE_URL="http://0.0.0.0:4000")      |
+| `bearer $VLLM_API_KEY`                                 | `bearer anything` (use `bearer LUMINA_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
 
 
 ### **Example 1: Metrics endpoint**
@@ -86,7 +86,7 @@ Key Changes:
 ```bash
 curl -L -X GET 'http://0.0.0.0:4000/vllm/metrics' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer $LITELLM_VIRTUAL_KEY' \
+-H 'Authorization: Bearer $LUMINA_VIRTUAL_KEY' \
 ```
 
 
@@ -104,7 +104,7 @@ curl -L -X GET 'https://my-vllm-server.com/metrics' \
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/vllm/chat/completions' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer $LITELLM_VIRTUAL_KEY' \
+-H 'Authorization: Bearer $LUMINA_VIRTUAL_KEY' \
 -d '{
     "messages": [
         {
@@ -154,7 +154,7 @@ Requests whose `model` is not in your `model_list` are forwarded to the server s
 
 ```bash
 export DATABASE_URL=""
-export LITELLM_MASTER_KEY=""
+export LUMINA_MASTER_KEY=""
 export VLLM_API_BASE=""
 ```
 
@@ -168,7 +168,7 @@ litellm
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```
@@ -188,7 +188,7 @@ Expected Response
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/vllm/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
   --data '{
     "messages": [
         {

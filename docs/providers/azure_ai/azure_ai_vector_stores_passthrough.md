@@ -11,13 +11,13 @@ This is for the proxy only.
 ```yaml
 model_list:  
   - model_name: embedding-model
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-large
 
 
 vector_store_registry:
   - vector_store_name: "azure-ai-search"
-    litellm_params:
+    lumina_params:
       vector_store_id: "can-be-anything" # vector store id can be anything for the purpose of passthrough api
       custom_llm_provider: "azure_ai"
       api_key: os.environ/AZURE_SEARCH_API_KEY
@@ -48,10 +48,10 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/indexes' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{ 
     "index_name": "dall-e-4",
-    "litellm_params": {
+    "lumina_params": {
         "vector_store_index": "real-index-name-2",
         "vector_store_name": "azure-ai-search"
     }
@@ -66,7 +66,7 @@ This is a virtual index, which the developer can use to create and search vector
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "allowed_vector_store_indexes": [{"index_name": "dall-e-4", "index_permissions": ["write", "read"]}],
     "models": ["embedding-model"]

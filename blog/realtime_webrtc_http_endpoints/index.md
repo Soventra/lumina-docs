@@ -31,7 +31,7 @@ Connect to the Realtime API via WebRTC from browser/mobile clients. LiteLLM hand
 ```yaml
 model_list:
   - model_name: gpt-4o-realtime
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-realtime-preview-2024-12-17
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -105,7 +105,7 @@ A: Use the **encrypted token** from `client_secrets`, not your raw API key.
 A: No, the encrypted token already encodes all routing information including model.
 
 **Q: How do I resolve Azure `api-version` errors?**  
-A: Set the correct `api_version` in `litellm_params` (or via the `AZURE_API_VERSION` environment variable), along with the right `api_base` and deployment values.
+A: Set the correct `api_version` in `lumina_params` (or via the `AZURE_API_VERSION` environment variable), along with the right `api_base` and deployment values.
 
 **Q: What if I get no audio?**  
 A: Make sure you grant microphone permission, ensure `pc.ontrack` assigns the audio element with `autoplay` enabled, check your network/firewall for WebRTC traffic, and inspect the browser console for ICE or SDP errors.

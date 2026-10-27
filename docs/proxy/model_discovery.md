@@ -23,7 +23,7 @@ Use this to give users an accurate list of models available behind provider endp
 ```yaml
 model_list:
     - model_name: xai/*
-      litellm_params:
+      lumina_params:
         model: xai/*
         api_key: os.environ/XAI_API_KEY
 
@@ -42,7 +42,7 @@ litellm --config /path/to/config.yaml
 **3. Call `/v1/models`**
 
 ```bash
-curl -X GET "http://localhost:4000/v1/models" -H "Authorization: Bearer $LITELLM_KEY"
+curl -X GET "http://localhost:4000/v1/models" -H "Authorization: Bearer $LUMINA_KEY"
 ```
 
 Expected response
@@ -116,7 +116,7 @@ Discovery calls the provider with the wildcard deployment's own credentials: its
 ```yaml
 model_list:
   - model_name: "my-gateway/*"
-    litellm_params:
+    lumina_params:
       model: "anthropic/*"
       api_base: "https://gateway.example.com/anthropic"
       api_key: os.environ/GATEWAY_SERVICE_TOKEN # used for discovery, and as the fallback when a request has no key
@@ -137,7 +137,7 @@ A `bedrock/*` deployment lists the ids its credentials can invoke on demand in i
 ```yaml
 model_list:
   - model_name: bedrock/*
-    litellm_params:
+    lumina_params:
       model: bedrock/*
       aws_region_name: us-east-1
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
@@ -156,11 +156,11 @@ Set `model_info.discoverable: false` on a `model_list` entry to leave it out of 
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -171,10 +171,10 @@ model_list:
 With that config a regular virtual key gets only `{{anthropic}}` back from `GET /v1/models` (and `/models`, in both the OpenAI and the Anthropic response shape), from `GET /v1/model/info` (and `/model/info`), and from `GET /model_group/info`, while `POST /v1/embeddings` with `"model": "text-embedding-3-small"` works exactly as before
 
 ```bash
-curl -s http://localhost:4000/v1/models -H "Authorization: Bearer $LITELLM_KEY" | jq '.data[].id'
+curl -s http://localhost:4000/v1/models -H "Authorization: Bearer $LUMINA_KEY" | jq '.data[].id'
 # "{{anthropic}}"
 
-curl -s http://localhost:4000/v1/embeddings -H "Authorization: Bearer $LITELLM_KEY" \
+curl -s http://localhost:4000/v1/embeddings -H "Authorization: Bearer $LUMINA_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"model": "text-embedding-3-small", "input": "still callable"}' | jq '.data[0].embedding | length'
 # 1536

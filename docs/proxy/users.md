@@ -37,7 +37,7 @@ Apply a budget across all calls on the proxy
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 
 litellm_settings:
   # other litellm settings
@@ -55,7 +55,7 @@ litellm /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-    --header "Autherization: Bearer $LITELLM_API_KEY" \
+    --header "Autherization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
     "model": "{{openai_small}}",
@@ -144,7 +144,7 @@ Create a user with `user_id=ishaan`
 
 ```shell
 curl --location 'http://0.0.0.0:4000/user/new' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
         "user_id": "ishaan"
@@ -157,7 +157,7 @@ Set `max_budget_in_team` when adding a User to a team. We use the same `user_id`
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/team/member_add' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"team_id": "e8d1460f-846c-45d7-9b43-55f3cc52ac32", "max_budget_in_team": 0.000000000001, "member": {"role": "user", "user_id": "ishaan"}}'
 ```
@@ -168,7 +168,7 @@ Set `user_id=ishaan` from step 1
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/generate' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
         "user_id": "ishaan",
@@ -210,7 +210,7 @@ This gives the member their own budget. It no longer follows the team's `team_me
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/team/member_update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"team_id": "e8d1460f-846c-45d7-9b43-55f3cc52ac32", "user_id": "ishaan", "max_budget_in_team": 10}'
 ```
@@ -225,7 +225,7 @@ To raise a member's budget for a limited time, send `temp_budget_increase` toget
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/team/member_update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"team_id": "e8d1460f-846c-45d7-9b43-55f3cc52ac32", "user_id": "ishaan", "temp_budget_increase": 25, "temp_budget_expiry": "2026-11-01T00:00:00Z"}'
 ```
@@ -251,7 +251,7 @@ The icon is shown only to users who can edit the team, and only on rows where **
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/team/e8d1460f-846c-45d7-9b43-55f3cc52ac32/member/ishaan/reset_spend' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"reset_to": 0}'
 ```
@@ -653,8 +653,8 @@ User-level and key-level budgets are tracked independently. If a key has its own
 Set budgets and rate limits on agents registered with LiteLLM's [Agent Gateway](../a2a.md). You can control:
 - **Per-agent rate limits**: `tpm_limit` and `rpm_limit` on the agent itself
 - **Per-session rate limits**: `session_tpm_limit` and `session_rpm_limit` applied per session
-- **Per-session iteration cap**: `max_iterations` in agent `litellm_params`
-- **Per-session budget cap**: `max_budget_per_session` in agent `litellm_params`
+- **Per-session iteration cap**: `max_iterations` in agent `lumina_params`
+- **Per-session budget cap**: `max_budget_per_session` in agent `lumina_params`
 
 <Tabs>
 <TabItem value="agent-rate-limits" label="Agent Rate Limits">
@@ -663,7 +663,7 @@ Set `tpm_limit` and `rpm_limit` on the agent to cap total throughput across all 
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/agents' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_name": "my-research-agent",
@@ -685,7 +685,7 @@ Set `session_tpm_limit` and `session_rpm_limit` to cap throughput per individual
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/agents' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_name": "my-research-agent",
@@ -703,11 +703,11 @@ curl -X POST 'http://localhost:4000/v1/agents' \
 </TabItem>
 <TabItem value="session-budgets" label="Session Budgets">
 
-Set `max_iterations` and `max_budget_per_session` in agent `litellm_params` to cap individual sessions. Requires `require_trace_id_on_calls_by_agent` so LiteLLM can track calls per session.
+Set `max_iterations` and `max_budget_per_session` in agent `lumina_params` to cap individual sessions. Requires `require_trace_id_on_calls_by_agent` so LiteLLM can track calls per session.
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/agents' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_name": "my-research-agent",
@@ -717,7 +717,7 @@ curl -X POST 'http://localhost:4000/v1/agents' \
       "url": "http://my-agent:8080",
       "version": "1.0.0"
     },
-    "litellm_params": {
+    "lumina_params": {
       "require_trace_id_on_calls_by_agent": true,
       "max_iterations": 25,
       "max_budget_per_session": 5.00
@@ -738,7 +738,7 @@ You can also update rate limits on existing agents using `PATCH /v1/agents/{agen
 
 ```bash
 curl -X PATCH 'http://localhost:4000/v1/agents/<agent_id>' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "tpm_limit": 200000,
@@ -759,7 +759,7 @@ Use this to budget `user` passed to `/chat/completions`, **without needing to cr
 
 ```shell
 curl --location 'http://0.0.0.0:4000/budget/new' \
-        --header "Authorization: Bearer $LITELLM_API_KEY" \
+        --header "Authorization: Bearer $LUMINA_API_KEY" \
         --header 'Content-Type: application/json' \
         --data '{
         "budget_id": "default-customer-budget",
@@ -771,7 +771,7 @@ curl --location 'http://0.0.0.0:4000/budget/new' \
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 
 litellm_settings:
   max_end_user_budget_id: "default-customer-budget" # applied to any 'user' without their own budget
@@ -888,7 +888,7 @@ To mark a model as free, set both cost fields explicitly to `0` in your `config.
 ```yaml
 model_list:
   - model_name: my-free-model
-    litellm_params:
+    lumina_params:
       model: ollama/llama3
       input_cost_per_token: 0
       output_cost_per_token: 0
@@ -965,7 +965,7 @@ Set `token_rate_limit_type` in your `config.yaml`:
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   token_rate_limit_type: "output"  # Options: "input", "output", "total" (default)
 ```
 
@@ -987,7 +987,7 @@ Declare what your models actually emit with `default_estimated_output_tokens` (o
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "team_id": "my-prod-team",
@@ -1004,7 +1004,7 @@ The same two fields work on `/team/new` and `/team/update`, and both are editabl
 
 ```shell
 curl --location 'http://0.0.0.0:4000/team/update' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "team_id": "my-prod-team",
@@ -1046,7 +1046,7 @@ Use `/team/new` or `/team/update`, to persist rate limits across multiple keys f
 
 ```shell
 curl --location 'http://0.0.0.0:4000/team/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"team_id": "my-prod-team", "max_parallel_requests": 10, "tpm_limit": 20, "rpm_limit": 4}' 
 ```
@@ -1074,7 +1074,7 @@ Use `/team/new` or `/team/update` with `model_rpm_limit` and `model_tpm_limit` a
 
 ```shell
 curl --location 'http://0.0.0.0:4000/team/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "team_id": "my-prod-team",
@@ -1087,7 +1087,7 @@ curl --location 'http://0.0.0.0:4000/team/new' \
 
 ```shell
 curl --location 'http://0.0.0.0:4000/team/update' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "team_id": "my-prod-team",
@@ -1102,7 +1102,7 @@ You can also pass per-model limits via the `metadata` field:
 
 ```shell
 curl --location 'http://0.0.0.0:4000/team/update' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "team_id": "my-prod-team",
@@ -1140,7 +1140,7 @@ Use `/user/new` or `/user/update`, to persist rate limits across multiple keys f
 
 ```shell
 curl --location 'http://0.0.0.0:4000/user/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"user_id": "krrish@berri.ai", "max_parallel_requests": 10, "tpm_limit": 20, "rpm_limit": 4}' 
 ```
@@ -1164,7 +1164,7 @@ Use `/key/generate`, if you want them for just that key.
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"max_parallel_requests": 10, "tpm_limit": 20, "rpm_limit": 4}' 
 ```
@@ -1190,7 +1190,7 @@ Here `{{openai_large}}` is the `model_name` set on the [litellm config.yaml](con
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"model_rpm_limit": {"{{openai_large}}": 2}, "model_tpm_limit": {"{{openai_large}}": 1000}}' 
 ```
@@ -1242,7 +1242,7 @@ Set rate limits on agents registered with the [Agent Gateway](../a2a.md).
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/v1/agents' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"agent_name": "my-agent", "agent_card_params": {"name": "my-agent", "description": "My agent", "url": "http://my-agent:8080", "version": "1.0.0"}, "tpm_limit": 100000, "rpm_limit": 100}'
 ```
@@ -1251,12 +1251,12 @@ curl -X POST 'http://0.0.0.0:4000/v1/agents' \
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/v1/agents' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{"agent_name": "my-agent", "agent_card_params": {"name": "my-agent", "description": "My agent", "url": "http://my-agent:8080", "version": "1.0.0"}, "session_tpm_limit": 50000, "session_rpm_limit": 50}'
 ```
 
-You can also set **max_iterations** (call count cap) and **max_budget_per_session** (dollar cap) per session via `litellm_params`. See [Agent Iteration Budgets](../a2a_iteration_budgets) for details.
+You can also set **max_iterations** (call count cap) and **max_budget_per_session** (dollar cap) per session via `lumina_params`. See [Agent Iteration Budgets](../a2a_iteration_budgets) for details.
 
 </TabItem>
 <TabItem value="per-end-user" label="For customers">
@@ -1277,7 +1277,7 @@ Both are optional; a budget with neither set applies no LiteLLM TPM or RPM limit
 
 ```shell
 curl --location 'http://0.0.0.0:4000/budget/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "budget_id" : "free-tier",
@@ -1292,7 +1292,7 @@ We use `budget_id="free-tier"` from Step 1 when creating this new customers
 
 ```shell
 curl --location 'http://0.0.0.0:4000/customer/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "user_id" : "palantir",
@@ -1307,7 +1307,7 @@ Pass the `user_id` from Step 2 as `user="palantir"`
 
 ```shell
 curl --location 'http://localhost:4000/chat/completions' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
     "model": "llama3",
@@ -1338,7 +1338,7 @@ This will NOT apply if a key has a team_id (team budgets will apply then). [Tell
 ```yaml
 model_list: 
   - model_name: "{{openai_small}}"
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -1351,7 +1351,7 @@ litellm_settings:
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```
@@ -1429,7 +1429,7 @@ Difference between doing this with `/key/generate` vs. `/user/new`? If you do it
 ```yaml
 model_list:
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: azure/azure-embedding-model
       api_base: "os.environ/AZURE_API_BASE"
       api_key: "os.environ/AZURE_API_KEY"

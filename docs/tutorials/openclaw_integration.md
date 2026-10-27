@@ -29,7 +29,7 @@ Create a config file  `litellm_config.yaml` with the models you want to use. Her
 ```yaml title="litellm_config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -43,17 +43,17 @@ You can add as many models as you want from different providers:
 ```yaml title="litellm_config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: gemini-flash
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 

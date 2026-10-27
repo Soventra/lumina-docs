@@ -67,7 +67,7 @@ Here's how to call Sagemaker with the LiteLLM Proxy Server
 ```yaml
 model_list:
   - model_name: jumpstart-model
-    litellm_params:
+    lumina_params:
       model: sagemaker/jumpstart-dft-hf-textgeneration1-mp-20240815-185614
       aws_access_key_id: os.environ/CUSTOM_AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/CUSTOM_AWS_SECRET_ACCESS_KEY
@@ -193,7 +193,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: jumpstart-model
-    litellm_params:
+    lumina_params:
       model: sagemaker/jumpstart-dft-hf-textgeneration1-mp-20240815-185614
       temperature: <your-temp>
       top_p: <your-top-p>
@@ -259,7 +259,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: jumpstart-model
-    litellm_params:
+    lumina_params:
       model: sagemaker/jumpstart-dft-hf-textgeneration1-mp-20240815-185614
       aws_sagemaker_allow_zero_temp: true
 ```
@@ -320,7 +320,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: jumpstart-model
-    litellm_params:
+    lumina_params:
       model: sagemaker/jumpstart-dft-hf-textgeneration1-mp-20240815-185614
       top_k: 1 # PROVIDER-SPECIFIC PARAM
 ```
@@ -453,7 +453,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: "sagemaker-model"
-    litellm_params:
+    lumina_params:
       model: "sagemaker_chat/jumpstart-dft-hf-textgeneration1-mp-20240815-185614"
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -559,7 +559,7 @@ response = litellm.embedding(
 ```yaml
 model_list:
   - model_name: my-embeddings
-    litellm_params:
+    lumina_params:
       model: sagemaker/openai/<your-endpoint-name>
       model_id: <your-inference-component-name>
       extra_body:
@@ -572,7 +572,7 @@ model_list:
 </TabItem>
 </Tabs>
 
-Provider-specific keys in `litellm_params` are sent in the request body as-is, so keep only the ones your container accepts.
+Provider-specific keys in `lumina_params` are sent in the request body as-is, so keep only the ones your container accepts.
 
 
 
@@ -642,7 +642,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: nova-micro
-    litellm_params:
+    lumina_params:
       model: sagemaker_nova/my-nova-micro-endpoint
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY

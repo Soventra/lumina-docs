@@ -48,7 +48,7 @@ To change this value without the Admin UI, send this request with a proxy admin 
 
 ```bash
 curl -X PATCH "$PROXY_BASE_URL/update/ui_settings" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"enable_chat_ui": true}'
 ```

@@ -61,14 +61,14 @@ If both hops use the same guardrail, the proxy compresses once and reuses the re
 ```yaml title="config.yaml"
 model_list:
   - model_name: gpt-4o-mini
-    litellm_params: {model: openai/gpt-4o-mini, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4o-mini, api_key: os.environ/OPENAI_API_KEY}
   - model_name: gpt-4o
-    litellm_params: {model: openai/gpt-4o, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4o, api_key: os.environ/OPENAI_API_KEY}
   - model_name: gpt-4-turbo
-    litellm_params: {model: openai/gpt-4-turbo, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4-turbo, api_key: os.environ/OPENAI_API_KEY}
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -84,7 +84,7 @@ model_list:
 
 guardrails:
   - guardrail_name: headroom-aggressive
-    litellm_params:
+    lumina_params:
       guardrail: headroom
       mode: pre_call
       api_base: https://api.berri.ai/headroom
@@ -92,7 +92,7 @@ guardrails:
       tokens_to_retain: 200
 
   - guardrail_name: headroom-moderate
-    litellm_params:
+    lumina_params:
       guardrail: headroom
       mode: pre_call
       api_base: https://api.berri.ai/headroom

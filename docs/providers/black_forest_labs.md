@@ -160,28 +160,28 @@ print(response.data[0].url)
 ```yaml showLineNumbers title="Black Forest Labs Image Generation Configuration"
 model_list:
   - model_name: flux-pro
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-pro-1.1
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_generation
 
   - model_name: flux-ultra
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-pro-1.1-ultra
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_generation
 
   - model_name: flux-dev
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-dev
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_generation
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start LiteLLM Proxy Server
@@ -223,7 +223,7 @@ print(response.data[0].url)
 ```bash showLineNumbers title="Black Forest Labs via Proxy - cURL"
 curl -X POST 'http://localhost:4000/v1/images/generations' \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "flux-pro",
     "prompt": "A beautiful garden with colorful flowers",

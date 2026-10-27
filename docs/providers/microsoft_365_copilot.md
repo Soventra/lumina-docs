@@ -170,7 +170,7 @@ If you manage models in `config.yaml`, reference the credential you saved in ste
 ```yaml
 model_list:
   - model_name: m365-copilot
-    litellm_params:
+    lumina_params:
       model: microsoft_365_copilot/chat
       litellm_credential_name: m365-copilot-obo
 ```

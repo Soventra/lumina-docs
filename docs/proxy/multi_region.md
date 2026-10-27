@@ -25,7 +25,7 @@ The same topology runs active-active (DNS routes every client to its nearest reg
 
 A single LiteLLM Enterprise license covers all regions, as long as all regions share one database.
 
-Each proxy instance independently validates the `LITELLM_LICENSE` key it is given (offline against a signed payload, or against the license server), and nothing in the license check counts instances or regions. The quantitative limits a license carries, maximum users and maximum teams, are counted from the database. When every region shares one database, those counts exist once, so the license is enforced once, globally.
+Each proxy instance independently validates the `LUMINA_LICENSE` key it is given (offline against a signed payload, or against the license server), and nothing in the license check counts instances or regions. The quantitative limits a license carries, maximum users and maximum teams, are counted from the database. When every region shares one database, those counts exist once, so the license is enforced once, globally.
 
 The corollary: separate databases per region are separate deployments, and each needs its own license. Two databases means two sets of user and team counts, two sets of keys, and two licenses.
 
@@ -44,9 +44,9 @@ Every proxy instance in every region must share the following. If any of these d
 | Setting | Must be | Why |
 |---|---|---|
 | `DATABASE_URL` | Same database in every region | Single source of truth for keys, teams, users, spend, and license seat counts |
-| `LITELLM_MASTER_KEY` | Identical in every region | Keys are validated against the shared database; the master key must match everywhere |
-| `LITELLM_SALT_KEY` | Identical in every region, never changed after setup | Encrypts and decrypts LLM credentials stored in the database. An instance with a different salt key cannot read stored model credentials |
-| `LITELLM_LICENSE` | Same license key in every region | Each instance validates the license independently; one key activates all of them |
+| `LUMINA_MASTER_KEY` | Identical in every region | Keys are validated against the shared database; the master key must match everywhere |
+| `LUMINA_SALT_KEY` | Identical in every region, never changed after setup | Encrypts and decrypts LLM credentials stored in the database. An instance with a different salt key cannot read stored model credentials |
+| `LUMINA_LICENSE` | Same license key in every region | Each instance validates the license independently; one key activates all of them |
 | `DISABLE_SCHEMA_UPDATE` | `true` on all proxy instances | Schema migrations must run exactly once (as a job), not raced by every instance in every region |
 
 Per region, you additionally run a Redis instance and set it in that region's proxy config (`router_settings` and cache settings). Redis state is regional: rate limits and cached responses are scoped to the region that served the request.
@@ -78,9 +78,9 @@ Deploy the proxy in every region exactly as you would for a single region, with 
 
 ```bash
 DATABASE_URL="postgresql://litellm:<password>@db.us-east-1.internal:5432/litellm?sslmode=require"
-LITELLM_MASTER_KEY="sk-<same-everywhere>"
-LITELLM_SALT_KEY="sk-<same-everywhere-never-rotate>"
-LITELLM_LICENSE="<same-everywhere>"
+LUMINA_MASTER_KEY="sk-<same-everywhere>"
+LUMINA_SALT_KEY="sk-<same-everywhere-never-rotate>"
+LUMINA_LICENSE="<same-everywhere>"
 DISABLE_SCHEMA_UPDATE="true"
 REDIS_HOST="redis.us-east-1.internal"
 REDIS_PORT="6379"
@@ -93,9 +93,9 @@ REDIS_PASSWORD="<regional>"
 ```bash
 # Same database as the primary region
 DATABASE_URL="postgresql://litellm:<password>@db.us-east-1.internal:5432/litellm?sslmode=require"
-LITELLM_MASTER_KEY="sk-<same-everywhere>"
-LITELLM_SALT_KEY="sk-<same-everywhere-never-rotate>"
-LITELLM_LICENSE="<same-everywhere>"
+LUMINA_MASTER_KEY="sk-<same-everywhere>"
+LUMINA_SALT_KEY="sk-<same-everywhere-never-rotate>"
+LUMINA_LICENSE="<same-everywhere>"
 DISABLE_SCHEMA_UPDATE="true"
 # Redis stays regional
 REDIS_HOST="redis.eu-west-1.internal"
@@ -146,7 +146,7 @@ By default every instance serves both LLM traffic and admin traffic (UI and mana
 # Serves the UI and management APIs, refuses LLM traffic
 DISABLE_LLM_API_ENDPOINTS="true"
 DATABASE_URL="postgresql://...@db.us-east-1.internal:5432/litellm"
-LITELLM_MASTER_KEY="sk-<same-everywhere>"
+LUMINA_MASTER_KEY="sk-<same-everywhere>"
 ```
 
 </TabItem>
@@ -157,7 +157,7 @@ LITELLM_MASTER_KEY="sk-<same-everywhere>"
 DISABLE_ADMIN_UI="true"
 DISABLE_ADMIN_ENDPOINTS="true"
 DATABASE_URL="postgresql://...@db.us-east-1.internal:5432/litellm"
-LITELLM_MASTER_KEY="sk-<same-everywhere>"
+LUMINA_MASTER_KEY="sk-<same-everywhere>"
 ```
 
 </TabItem>

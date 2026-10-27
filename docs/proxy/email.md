@@ -109,7 +109,7 @@ By default a max budget alert fires at one threshold and goes only to the email 
 
 ```shell showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "max_budget": 100,
@@ -135,7 +135,7 @@ Teams that set `team_member_budget` cap what each member can spend inside that t
 
 ```shell showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/team/update' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "team_id": "my-team",

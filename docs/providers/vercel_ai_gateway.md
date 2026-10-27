@@ -116,17 +116,17 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gpt-4o-gateway
-    litellm_params:
+    lumina_params:
       model: vercel_ai_gateway/openai/{{openai_large}}
       api_key: os.environ/VERCEL_AI_GATEWAY_API_KEY
 
   - model_name: claude-4-sonnet-gateway
-    litellm_params:
+    lumina_params:
       model: vercel_ai_gateway/anthropic/claude-4-sonnet
       api_key: os.environ/VERCEL_AI_GATEWAY_API_KEY
 
   - model_name: text-embedding-3-small-gateway
-    litellm_params:
+    lumina_params:
       model: vercel_ai_gateway/openai/text-embedding-3-small
       api_key: os.environ/VERCEL_AI_GATEWAY_API_KEY
 ```

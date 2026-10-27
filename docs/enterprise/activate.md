@@ -1,6 +1,6 @@
 ---
 title: Activate your license
-description: Set LITELLM_LICENSE on each LiteLLM gateway instance, confirm that the gateway shows Enterprise Edition, and see which features the license key enables.
+description: Set LUMINA_LICENSE on each LiteLLM gateway instance, confirm that the gateway shows Enterprise Edition, and see which features the license key enables.
 ---
 
 import Tabs from '@theme/Tabs';
@@ -14,13 +14,13 @@ The license key is a JWT. LiteLLM gives you the key when you buy a license or st
 
 ## Set the license key
 
-Set `LITELLM_LICENSE` in the environment of each gateway instance. Then restart each instance.
+Set `LUMINA_LICENSE` in the environment of each gateway instance. Then restart each instance.
 
 <Tabs>
 <TabItem value="env" label=".env file">
 
 ```env
-LITELLM_LICENSE="eyJ..."
+LUMINA_LICENSE="eyJ..."
 ```
 
 </TabItem>
@@ -28,9 +28,9 @@ LITELLM_LICENSE="eyJ..."
 
 ```bash
 docker run \
-  -e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+  -e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
   -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
-  -e LITELLM_LICENSE="eyJ..." \
+  -e LUMINA_LICENSE="eyJ..." \
   -e STORE_MODEL_IN_DB=True \
   -p 4000:4000 \
   docker.litellm.ai/berriai/litellm:latest
@@ -43,9 +43,9 @@ Put the key in the Secret that your Deployment loads with `envFrom`:
 
 ```bash
 kubectl create secret generic litellm-secrets \
-  --from-literal=LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>" \
-  --from-literal=LITELLM_SALT_KEY="sk-<paste-a-long-random-salt>" \
-  --from-literal=LITELLM_LICENSE="eyJ..." \
+  --from-literal=LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
+  --from-literal=LUMINA_SALT_KEY="sk-<paste-a-long-random-salt>" \
+  --from-literal=LUMINA_LICENSE="eyJ..." \
   --from-literal=DATABASE_URL="postgresql://user:pass@host:5432/litellm"
 ```
 
@@ -56,7 +56,7 @@ Create a Secret and list it in `environmentSecrets` in your values file:
 
 ```bash
 kubectl create secret generic litellm-env-secret \
-  --from-literal=LITELLM_LICENSE="eyJ..."
+  --from-literal=LUMINA_LICENSE="eyJ..."
 ```
 
 ```yaml title="values.yaml"
@@ -67,7 +67,7 @@ environmentSecrets:
 </TabItem>
 </Tabs>
 
-You can also set the key as `litellm_license` in `general_settings`, or keep an encrypted key in `LITELLM_SECRET_AWS_KMS_LITELLM_LICENSE` for AWS KMS. Refer to the [configuration reference](../proxy/config_settings.md).
+You can also set the key as `litellm_license` in `general_settings`, or keep an encrypted key in `LUMINA_SECRET_AWS_KMS_LUMINA_LICENSE` for AWS KMS. Refer to the [configuration reference](../proxy/config_settings.md).
 
 If you run the gateway in more than one region, use the same key in each region. Each instance does a check of the key independently. One license covers all the regions that share one database. Refer to [Multi-region deployment](../proxy/multi_region.md#licensing-across-regions).
 

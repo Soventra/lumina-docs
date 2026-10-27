@@ -92,15 +92,15 @@ asyncio.run(async_rerank_example())
 ```yaml
 model_list:
   - model_name: bge-reranker-base
-    litellm_params:
+    lumina_params:
       model: huggingface/BAAI/bge-reranker-base
       api_key: os.environ/HF_TOKEN
   - model_name: bge-reranker-large  
-    litellm_params:
+    lumina_params:
       model: huggingface/BAAI/bge-reranker-large
       api_key: os.environ/HF_TOKEN
   - model_name: custom-reranker
-    litellm_params:
+    lumina_params:
       model: huggingface/BAAI/bge-reranker-base
       api_base: https://my-custom-hf-endpoint.com
       api_key: your-custom-api-key
@@ -126,7 +126,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://localhost:4000/rerank \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "bge-reranker-base",
     "query": "What is the capital of the United States?",

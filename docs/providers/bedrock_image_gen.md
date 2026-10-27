@@ -67,7 +67,7 @@ print(f"response: {response}")
 ```yaml
 model_list:
   - model_name: amazon.nova-canvas-v1:0
-    litellm_params:
+    lumina_params:
       model: bedrock/amazon.nova-canvas-v1:0
       aws_region_name: "us-east-1"
       aws_access_key_id: my-id # OPTIONAL - all boto3 auth params supported
@@ -87,7 +87,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer $LITELLM_VIRTUAL_KEY' \
+-H 'Authorization: Bearer $LUMINA_VIRTUAL_KEY' \
 -d '{
     "model": "amazon.nova-canvas-v1:0",
     "prompt": "A cute baby sea otter"
@@ -99,7 +99,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer $LITELLM_VIRTUAL_KEY' \
+-H 'Authorization: Bearer $LUMINA_VIRTUAL_KEY' \
 -d '{
     "model": "amazon.nova-canvas-v1:0",
     "prompt": "A cute baby sea otter",
@@ -158,7 +158,7 @@ print(f"response: {response}")
 ```yaml
 model_list:
   - model_name: nova-canvas-inference-profile
-    litellm_params:
+    lumina_params:
       model: bedrock/amazon.nova-canvas-v1:0
       model_id: arn:aws:bedrock:eu-west-1:000000000000:application-inference-profile/a0a0a0a0a0a0
       aws_region_name: "eu-west-1"

@@ -28,7 +28,7 @@ Include `/fine_tuning` in the `supported_endpoints` list. Tells developers this 
 ```yaml showLineNumbers title="litellm_config.yaml"
 model_list:
   - model_name: "gpt-4.1-openai"
-    litellm_params:
+    lumina_params:
       model: gpt-4.1
       api_key: os.environ/OPENAI_API_KEY
     model_info:

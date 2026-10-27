@@ -31,7 +31,7 @@ This page documents all command-line interface (CLI) arguments available for the
     ```
 
 ### --num_workers
-   - **Default:** `1`, or the value of the `DEFAULT_NUM_WORKERS_LITELLM_PROXY` environment variable if set
+   - **Default:** `1`, or the value of the `DEFAULT_NUM_WORKERS_LUMINA_PROXY` environment variable if set
    - The number of worker processes to spin up (uvicorn, gunicorn, or Granian `--workers`).
    - **Usage:** 
      ```shell

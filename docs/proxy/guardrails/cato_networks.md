@@ -28,13 +28,13 @@ Define your guardrails under the `guardrails` section
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: cato-protected-app
-    litellm_params:
+    lumina_params:
       guardrail: cato_networks
       mode: [pre_call, post_call] # "During_call" is also available
       api_key: os.environ/CATO_API_KEY
@@ -71,7 +71,7 @@ When using LiteLLM with virtual keys, an `Authorization` header with the virtual
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [

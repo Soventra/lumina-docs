@@ -33,7 +33,7 @@ docker pull ghcr.io/berriai/litellm:v1.81.3-stable.sonnet-4-6
 ```yaml
 model_list:
   - model_name: claude-sonnet-4-6
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-6
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -54,7 +54,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-sonnet-4-6",
   "messages": [
@@ -93,7 +93,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: claude-sonnet-4-6
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-sonnet-4-6
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -116,7 +116,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-sonnet-4-6",
   "messages": [
@@ -157,7 +157,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: claude-sonnet-4-6
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-sonnet-4-6
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: us-east5
@@ -181,7 +181,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-sonnet-4-6",
   "messages": [
@@ -222,7 +222,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: claude-sonnet-4-6
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-sonnet-4-6-v1
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -246,7 +246,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-sonnet-4-6",
   "messages": [

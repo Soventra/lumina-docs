@@ -35,7 +35,7 @@ kubectl create secret generic litellm-db \
 
 Passwords with `@`, `/`, or `%` need no escaping here; the proxy percent-encodes them.
 
-Keep the existing `litellm-secrets` Secret. The chart references the master key from it directly, and provider keys in it are mounted whole in step 4. If `LITELLM_SALT_KEY` is set in the old Deployment, keep it in the same Secret; changing it makes stored provider credentials unreadable.
+Keep the existing `litellm-secrets` Secret. The chart references the master key from it directly, and provider keys in it are mounted whole in step 4. If `LUMINA_SALT_KEY` is set in the old Deployment, keep it in the same Secret; changing it makes stored provider credentials unreadable.
 
 ## 3. Choose the chart version
 
@@ -52,7 +52,7 @@ Translate the manifests with this mapping.
 | Manifest | Chart value |
 | --- | --- |
 | `ConfigMap` `config.yaml` body | `gateway.config.proxy_config` (shared by gateway and backend) |
-| `LITELLM_MASTER_KEY` key in the Secret | `masterKey.secretName`, `masterKey.secretKey` |
+| `LUMINA_MASTER_KEY` key in the Secret | `masterKey.secretName`, `masterKey.secretKey` |
 | `DATABASE_URL` | `database.writer.host`, `.port`, `.dbname`, `.passwordSecret` (step 2) |
 | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` | `redis.host`, `redis.port`, `redis.passwordSecret` |
 | Provider keys in `envFrom.secretRef` | `gateway.envSecrets` and `backend.envSecrets` |
@@ -67,7 +67,7 @@ A manifest deployment with two replicas, provider keys in `litellm-secrets`, and
 ```yaml title="values.yaml"
 masterKey:
   secretName: litellm-secrets
-  secretKey: LITELLM_MASTER_KEY
+  secretKey: LUMINA_MASTER_KEY
 
 database:
   writer:
@@ -99,7 +99,7 @@ gateway:
     proxy_config:
       model_list:
         - model_name: gpt-4o
-          litellm_params:
+          lumina_params:
             model: openai/gpt-4o
             api_key: os.environ/OPENAI_API_KEY
       router_settings:
@@ -159,11 +159,11 @@ kubectl port-forward svc/litellm-backend 4001:4001 &
 kubectl port-forward svc/litellm-ui 3000:3000 &
 
 curl -s localhost:4000/health/readiness
-curl -s localhost:4000/v1/models -H "Authorization: Bearer $LITELLM_MASTER_KEY"
-curl -s localhost:4000/v1/chat/completions -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+curl -s localhost:4000/v1/models -H "Authorization: Bearer $LUMINA_MASTER_KEY"
+curl -s localhost:4000/v1/chat/completions -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"model":"gpt-4o","messages":[{"role":"user","content":"ping"}]}'
-curl -s localhost:4001/key/info -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+curl -s localhost:4001/key/info -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 curl -sI localhost:3000/ui/
 ```
 
@@ -220,9 +220,9 @@ The chart renders these values on the following components:
 
 | Chart value | Component and rendered configuration |
 | --- | --- |
-| `ui.backendUrl` | The UI Deployment receives `LITELLM_BACKEND_URL` only when `ingress.componentHosts` is configured. The UI serves it as `backend_url` from `/ui/litellm-runtime-config.json`. |
-| `ui.publicUrl` | The backend and gateway Deployments receive `LITELLM_CORS_ORIGINS`. The backend also receives `LITELLM_CORS_ALLOW_CREDENTIALS=true`. |
-| `backend.gatewayUrl` | The backend Deployment receives `LITELLM_GATEWAY_URL`. The backend includes it as `gateway_base_url` in UI discovery configuration. |
+| `ui.backendUrl` | The UI Deployment receives `LUMINA_BACKEND_URL` only when `ingress.componentHosts` is configured. The UI serves it as `backend_url` from `/ui/litellm-runtime-config.json`. |
+| `ui.publicUrl` | The backend and gateway Deployments receive `LUMINA_CORS_ORIGINS`. The backend also receives `LUMINA_CORS_ALLOW_CREDENTIALS=true`. |
+| `backend.gatewayUrl` | The backend Deployment receives `LUMINA_GATEWAY_URL`. The backend includes it as `gateway_base_url` in UI discovery configuration. |
 
 Set `ui.publicUrl` to the browser-facing UI origin, including its scheme and port if present, without a path. The backend needs an explicit allowed origin and credentials because login uses a credentialed request and sets a session cookie on the backend host. Keep the UI and backend hostnames under the same registrable domain so the browser treats them as same-site and can send that cookie on later credentialed requests. The gateway receives the UI origin for CORS, but the chart does not enable gateway credentials because Playground inference requests do not use `credentials: "include"`.
 
@@ -230,9 +230,9 @@ If you manage ingress and DNS yourself, route each hostname to its component Ser
 
 | Component | Environment variables |
 | --- | --- |
-| UI | `LITELLM_BACKEND_URL=https://backend.example.com` |
-| Backend | `LITELLM_GATEWAY_URL=https://gateway.example.com`, `LITELLM_CORS_ORIGINS=https://ui.example.com`, and `LITELLM_CORS_ALLOW_CREDENTIALS=true` |
-| Gateway | `LITELLM_CORS_ORIGINS=https://ui.example.com` |
+| UI | `LUMINA_BACKEND_URL=https://backend.example.com` |
+| Backend | `LUMINA_GATEWAY_URL=https://gateway.example.com`, `LUMINA_CORS_ORIGINS=https://ui.example.com`, and `LUMINA_CORS_ALLOW_CREDENTIALS=true` |
+| Gateway | `LUMINA_CORS_ORIGINS=https://ui.example.com` |
 
 In component-host mode, the chart requires all three `ingress.componentHosts` values, an empty `ingress.host`, empty `ingress.extraPaths`, and the three URLs shown above. Rendering fails with one of these messages when the configuration is incomplete or conflicting:
 

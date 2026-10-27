@@ -5,7 +5,7 @@ The `GET /daily_metrics` endpoint that this page used to describe has been remov
 ## Request Format
 ```shell
 curl -X GET "http://0.0.0.0:4000/user/daily/activity?start_date=2025-03-20&end_date=2025-03-27" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 Optional query parameters: `model`, `api_key` and `user_id` filter the results (non-admin callers must pass their own `user_id`), `page` and `page_size` (default 50, max 1000) paginate them, and `timezone` (offset in minutes from UTC) with `include_current_utc_day` control how day buckets are aligned.

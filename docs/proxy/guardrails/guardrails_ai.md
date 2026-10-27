@@ -17,13 +17,13 @@ Use Guardrails AI ([guardrailsai.com](https://www.guardrailsai.com/)) to add che
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "guardrails_ai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: guardrails_ai
       guard_name: "detect-secrets-guard"            # Guardrail AI guard name
       mode: "pre_call"
@@ -69,7 +69,7 @@ Use this to control what guardrails run per project. In this tutorial we only wa
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H 'Content-Type: application/json' \
     -d '{
             "guardrails": ["guardrails_ai-guard"]
@@ -82,7 +82,7 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/update' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
         "key": "sk-jNm1Zar7XfNdZXp49Z1kSQ",

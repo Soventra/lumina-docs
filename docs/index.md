@@ -354,7 +354,7 @@ litellm --model huggingface/bigcode/starcoder
 ```yaml title="litellm_config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/your-deployment
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY

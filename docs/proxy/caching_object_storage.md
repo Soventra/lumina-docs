@@ -16,10 +16,10 @@ hits are worth saving and a few hundred milliseconds of lookup is not a problem.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: text-embedding-ada-002
 
 litellm_settings:
@@ -47,10 +47,10 @@ $ litellm --config /path/to/config.yaml
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: text-embedding-ada-002
 
 litellm_settings:

@@ -31,7 +31,7 @@ Verify this is set correctly by
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -53,7 +53,7 @@ Expect this to fail since claude-sonnet-5 is not in the `models` for the key gen
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [
@@ -88,7 +88,7 @@ curl --location 'http://localhost:4000/team/new' \
 **2. Create a key for team**
 ```shell
 curl --location 'http://localhost:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data-raw '{"team_id": "my-unique-id"}'
 ```
@@ -226,7 +226,7 @@ Set `model_info.access_windows` on a deployment to reserve it for specific teams
 ```yaml
 model_list:
   - model_name: gpt-4o-ptu
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4o-ptu
       api_base: os.environ/AZURE_PTU_BASE
       api_key: os.environ/AZURE_PTU_KEY

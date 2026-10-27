@@ -167,28 +167,28 @@ for image in response.data:
 ```yaml showLineNumbers title="Fal AI Image Generation Configuration"
 model_list:
   - model_name: flux-ultra
-    litellm_params:
+    lumina_params:
       model: fal_ai/fal-ai/flux-pro/v1.1-ultra
       api_key: os.environ/FAL_AI_API_KEY
     model_info:
       mode: image_generation
   
   - model_name: imagen4
-    litellm_params:
+    lumina_params:
       model: fal_ai/fal-ai/imagen4/preview
       api_key: os.environ/FAL_AI_API_KEY
     model_info:
       mode: image_generation
   
   - model_name: stable-diffusion
-    litellm_params:
+    lumina_params:
       model: fal_ai/fal-ai/stable-diffusion-v35-medium
       api_key: os.environ/FAL_AI_API_KEY
     model_info:
       mode: image_generation
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start LiteLLM Proxy Server
@@ -246,7 +246,7 @@ print(response.data[0].url)
 ```bash showLineNumbers title="Generate via Proxy - cURL"
 curl --location 'http://localhost:4000/v1/images/generations' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "stable-diffusion",
     "prompt": "A serene Japanese garden with cherry blossoms",

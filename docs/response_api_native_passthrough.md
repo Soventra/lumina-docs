@@ -1,11 +1,11 @@
 # Native /v1/responses Passthrough for OpenAI-Compatible Providers
 
-A deployment whose `litellm_params.model` is prefixed `openai/` already sends `/v1/responses` natively to `{api_base}/responses`. A deployment whose provider has no Responses API config of its own, which is the case for `custom_openai/`, `openai_like/`, `baseten/` and most other OpenAI-compatible providers, bridges `/v1/responses` through `/v1/chat/completions` by default: the input is converted to messages, the chat completion is converted back into a Responses object, and Responses-only request fields are approximated or dropped. When the server serves `/responses` itself, add `/v1/responses` to `model_info.supported_endpoints` to forward the request untranslated. The opt-in is read per deployment and does not depend on the provider prefix, so it works the same for a named provider such as `baseten/` as for `custom_openai/`. Available from v1.101.0
+A deployment whose `lumina_params.model` is prefixed `openai/` already sends `/v1/responses` natively to `{api_base}/responses`. A deployment whose provider has no Responses API config of its own, which is the case for `custom_openai/`, `openai_like/`, `baseten/` and most other OpenAI-compatible providers, bridges `/v1/responses` through `/v1/chat/completions` by default: the input is converted to messages, the chat completion is converted back into a Responses object, and Responses-only request fields are approximated or dropped. When the server serves `/responses` itself, add `/v1/responses` to `model_info.supported_endpoints` to forward the request untranslated. The opt-in is read per deployment and does not depend on the provider prefix, so it works the same for a named provider such as `baseten/` as for `custom_openai/`. Available from v1.101.0
 
 ```yaml
 model_list:
   - model_name: my-open-model
-    litellm_params:
+    lumina_params:
       model: custom_openai/some-open-model
       api_base: https://inference.example.com/v1
       api_key: os.environ/EXAMPLE_API_KEY
@@ -18,7 +18,7 @@ The same line on a named OpenAI-compatible provider keeps that provider's API ba
 ```yaml
 model_list:
   - model_name: glm-5.2
-    litellm_params:
+    lumina_params:
       model: baseten/zai-org/GLM-5.2
       api_key: os.environ/BASETEN_API_KEY
     model_info:
@@ -29,7 +29,7 @@ With the opt-in, a request to the proxy's `/v1/responses` is POSTed to `{api_bas
 
 ```bash
 curl http://0.0.0.0:4000/v1/responses \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "content-type: application/json" \
   -d '{"model": "my-open-model", "input": "Say hi in three words"}'
 ```

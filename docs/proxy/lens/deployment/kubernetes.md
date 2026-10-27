@@ -51,7 +51,7 @@ Use your Kubernetes secret manager to create `lens-connection` in the **gateway 
 
 | Secret key | Value from Lens |
 | --- | --- |
-| `service-token` | `LITELLM_LENS_SERVICE_TOKEN` |
+| `service-token` | `LUMINA_LENS_SERVICE_TOKEN` |
 | `gateway-secret` | `LENS_GATEWAY_SECRET` |
 
 For a manual setup, save each value in a separate private file named `service-token` and `gateway-secret`. Do not include a trailing newline. Set your namespace and create the Secret:

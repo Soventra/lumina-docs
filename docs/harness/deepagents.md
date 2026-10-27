@@ -43,16 +43,16 @@ Deep Agents works with any model group that supports tool calling. A strong mode
 ```yaml title="config.yaml"
 model_list:
   - model_name: claude
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: gpt-mini
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5-mini
       api_key: os.environ/OPENAI_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 ```
 
@@ -60,7 +60,7 @@ Create a virtual key scoped to those groups.
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"models": ["claude", "gpt-mini"], "key_alias": "deepagents"}'
 ```
@@ -76,8 +76,8 @@ result = litellm.agent(
     "Triage the failing test and file a ticket.",
     sandbox=sandbox.local("./repo"),
     model="litellm_proxy/claude",
-    api_base="http://localhost:4000",  # or LITELLM_PROXY_API_BASE
-    api_key="sk-...",                  # or LITELLM_PROXY_API_KEY
+    api_base="http://localhost:4000",  # or LUMINA_PROXY_API_BASE
+    api_key="sk-...",                  # or LUMINA_PROXY_API_KEY
     tools=[lookup_owner, open_ticket],
     metadata={"ticket": "ENG-412"},
 )

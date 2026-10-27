@@ -78,7 +78,7 @@ Here's how to call a Sambanova model with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: sambanova/<your-model-name>  # add sambanova/ prefix to route as Sambanova provider
         api_key: api-key                 # api key to send your model
   ```
@@ -121,7 +121,7 @@ Here's how to call a Sambanova model with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",

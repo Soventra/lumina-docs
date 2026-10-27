@@ -9,7 +9,7 @@ Pass-through endpoints for [Azure AI Speech](https://learn.microsoft.com/azure/a
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ❌ | Realtime recognition uses the Speech SDK WebSocket protocol, which is not covered by this pass-through |
 
-Just replace `https://{region}.stt.speech.microsoft.com` or `https://{region}.api.cognitive.microsoft.com` with `LITELLM_PROXY_BASE_URL/azure_speech`
+Just replace `https://{region}.stt.speech.microsoft.com` or `https://{region}.api.cognitive.microsoft.com` with `LUMINA_PROXY_BASE_URL/azure_speech`
 
 LiteLLM injects the `Ocp-Apim-Subscription-Key` header from the proxy's Azure Speech credential, so clients only need a LiteLLM virtual key. A subscription key sent by the client is dropped and never reaches Azure.
 
@@ -36,7 +36,7 @@ litellm
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/azure_speech/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: audio/wav; codecs=audio/pcm; samplerate=16000' \
 --data-binary @audio.wav
 ```
@@ -49,7 +49,7 @@ curl -X POST 'http://0.0.0.0:4000/azure_speech/speech/recognition/conversation/c
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/azure_speech/speechtotext/transcriptions:transcribe?api-version=2024-11-15' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -F 'audio=@audio.wav' \
 -F 'definition={"locales":["en-US"]};type=application/json'
 ```
@@ -62,7 +62,7 @@ curl -X POST 'http://0.0.0.0:4000/azure_speech/speechtotext/transcriptions:trans
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/azure_speech/speechtotext/v3.2/transcriptions' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "displayName": "my-job",
@@ -71,7 +71,7 @@ curl -X POST 'http://0.0.0.0:4000/azure_speech/speechtotext/v3.2/transcriptions'
 }'
 
 curl 'http://0.0.0.0:4000/azure_speech/speechtotext/v3.2/transcriptions?top=10' \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ## Endpoint families and hosts

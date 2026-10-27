@@ -162,25 +162,25 @@ Add Tensormesh to your LiteLLM Proxy configuration:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: tensormesh-chat
-    litellm_params:
+    lumina_params:
       model: tensormesh/<your-model-name>
       api_key: os.environ/TENSORMESH_INFERENCE_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Start the proxy:
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
 export TENSORMESH_INFERENCE_API_KEY="your-api-key"
-export LITELLM_MASTER_KEY="sk-local-tensormesh"
+export LUMINA_MASTER_KEY="sk-local-tensormesh"
 litellm --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-Requests to LiteLLM Proxy must use the proxy key in `Authorization: Bearer $LITELLM_MASTER_KEY`. `TENSORMESH_INFERENCE_API_KEY` is only used by LiteLLM when it calls Tensormesh upstream.
+Requests to LiteLLM Proxy must use the proxy key in `Authorization: Bearer $LUMINA_MASTER_KEY`. `TENSORMESH_INFERENCE_API_KEY` is only used by LiteLLM when it calls Tensormesh upstream.
 
 For a basic startup check, use `/health/liveliness` or `/health/readiness`. The `/health` endpoint is authenticated and may run model checks.
 
@@ -210,7 +210,7 @@ print(response.choices[0].message.content)
 ```bash showLineNumbers title="Tensormesh via Proxy - cURL"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "tensormesh-chat",
     "messages": [{"role": "user", "content": "hello from litellm"}]
@@ -244,7 +244,7 @@ For HTTP clients, LiteLLM Proxy exposes the Anthropic-compatible `/v1/messages` 
 ```bash showLineNumbers title="Anthropic Messages through LiteLLM Proxy"
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "tensormesh-chat",

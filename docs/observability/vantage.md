@@ -29,7 +29,7 @@ The recommended setup uses the proxy admin endpoints. No config file changes nee
 
 ```bash
 curl -X POST http://localhost:4000/vantage/init \
-  -H "Authorization: Bearer $LITELLM_ADMIN_KEY" \
+  -H "Authorization: Bearer $LUMINA_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "api_key": "vntg_tkn_YOUR_VANTAGE_API_KEY",
@@ -43,7 +43,7 @@ Credentials are encrypted and stored in the proxy database.
 
 ```bash
 curl -X POST http://localhost:4000/vantage/dry-run \
-  -H "Authorization: Bearer $LITELLM_ADMIN_KEY" \
+  -H "Authorization: Bearer $LUMINA_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{"limit": 10}'
 ```
@@ -54,7 +54,7 @@ This returns FOCUS-transformed data without sending anything to Vantage. Use it 
 
 ```bash
 curl -X POST http://localhost:4000/vantage/export \
-  -H "Authorization: Bearer $LITELLM_ADMIN_KEY" \
+  -H "Authorization: Bearer $LUMINA_ADMIN_KEY" \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -86,7 +86,7 @@ For automatic scheduled exports, configure via environment variables and proxy c
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: sk-your-key
 

@@ -89,12 +89,12 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: qwen3-7-plus
-    litellm_params:
+    lumina_params:
       model: empiriolabs/qwen3-7-plus
       api_key: os.environ/EMPIRIOLABS_API_KEY
 
   - model_name: deepseek-v4-flash
-    litellm_params:
+    lumina_params:
       model: empiriolabs/deepseek-v4-flash
       api_key: os.environ/EMPIRIOLABS_API_KEY
 ```

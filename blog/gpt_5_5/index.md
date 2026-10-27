@@ -38,11 +38,11 @@ For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or 
 ```yaml
 model_list:
   - model_name: gpt-5.5
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.5
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.5-pro
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.5-pro
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -63,7 +63,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.5",
     "messages": [
@@ -110,7 +110,7 @@ For agentic and multi-turn workflows, use `/v1/responses` to preserve reasoning 
 ```bash
 curl -X POST "http://0.0.0.0:4000/v1/responses" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.5",
     "input": "Plan and write a Python script that scrapes a webpage and summarizes it."

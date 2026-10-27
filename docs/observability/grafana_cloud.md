@@ -19,8 +19,8 @@ echo -n "<instance-id>:<access-policy-token>" | base64
 Point LiteLLM at the gateway:
 
 ```shell title=".env"
-LITELLM_OTEL_V2=true
-LITELLM_OTEL_INTEGRATION_ENABLE_METRICS=true
+LUMINA_OTEL_V2=true
+LUMINA_OTEL_INTEGRATION_ENABLE_METRICS=true
 
 OTEL_EXPORTER="otlp_http"
 OTEL_ENDPOINT="https://otlp-gateway-prod-us-west-0.grafana.net/otlp"
@@ -52,7 +52,7 @@ Start the proxy and send a request. Traces land in Tempo, metrics in the hosted 
 
 :::
 
-To send traces only, drop `LITELLM_OTEL_INTEGRATION_ENABLE_METRICS`
+To send traces only, drop `LUMINA_OTEL_INTEGRATION_ENABLE_METRICS`
 
 ## Traces
 

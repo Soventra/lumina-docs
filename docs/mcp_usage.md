@@ -26,7 +26,7 @@ Demo Video Using Responses API with LiteLLM Proxy: [Demo video here](https://www
 ```bash title="cURL Example" showLineNumbers
 curl --location 'http://localhost:4000/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "input": [
@@ -106,7 +106,7 @@ To get the list of allowed tools when using LiteLLM MCP Gateway, you can naigate
 ```bash title="cURL Example with allowed_tools" showLineNumbers
 curl --location 'http://localhost:4000/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "input": [

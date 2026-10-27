@@ -247,7 +247,7 @@ def custom_callback(kwargs, completion_response, start_time, end_time):
     cache_hit = kwargs.get("cache_hit", False)
     
     # Access metadata you passed in
-    metadata = kwargs.get("litellm_params", {}).get("metadata", {})
+    metadata = kwargs.get("lumina_params", {}).get("metadata", {})
 ```
 
 **Key fields in kwargs:**
@@ -255,7 +255,7 @@ def custom_callback(kwargs, completion_response, start_time, end_time):
 - `messages` - Input messages  
 - `response_cost` - Calculated cost
 - `cache_hit` - Whether response was cached
-- `litellm_params.metadata` - Your custom metadata
+- `lumina_params.metadata` - Your custom metadata
 
 ## Practical Examples
 

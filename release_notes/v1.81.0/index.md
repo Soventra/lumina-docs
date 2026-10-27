@@ -78,7 +78,7 @@ Requests with image URLs exceeding 50MB will receive a helpful error message:
 ```bash
 curl -X POST 'https://your-litellm-proxy.com/chat/completions' \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gpt-4o",
     "messages": [
@@ -141,7 +141,7 @@ docker run \
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   
 # Set via environment variable
 environment_variables:
@@ -433,7 +433,7 @@ LiteLLM now provides an audit table for deleted API keys and teams directly in t
   - Add fallback endpoints support - [PR #19185](https://github.com/BerriAI/litellm/pull/19185)
   - Fix stream_timeout parameter functionality - [PR #19191](https://github.com/BerriAI/litellm/pull/19191)
   - Fix model matching priority in configuration - [PR #19012](https://github.com/BerriAI/litellm/pull/19012)
-  - Fix num_retries in litellm_params as per config - [PR #18975](https://github.com/BerriAI/litellm/pull/18975)
+  - Fix num_retries in lumina_params as per config - [PR #18975](https://github.com/BerriAI/litellm/pull/18975)
   - Handle exceptions without response parameter - [PR #18919](https://github.com/BerriAI/litellm/pull/18919)
 
 - **Infrastructure**

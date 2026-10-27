@@ -140,7 +140,7 @@ response = completion(
   ```yaml
   model_list:
     - model_name: dbrx-instruct
-      litellm_params:
+      lumina_params:
         model: databricks/databricks-dbrx-instruct
         api_key: os.environ/DATABRICKS_API_KEY
         api_base: os.environ/DATABRICKS_API_BASE
@@ -191,7 +191,7 @@ response = completion(
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "dbrx-instruct",
@@ -241,7 +241,7 @@ response = completion(
 ```yaml
   model_list:
     - model_name: llama-3
-      litellm_params:
+      lumina_params:
         model: databricks/databricks-meta-llama-3-70b-instruct
         api_key: os.environ/DATABRICKS_API_KEY
         max_tokens: 20
@@ -291,7 +291,7 @@ resp = completion(
 
 ```yaml
 - model_name: {{anthropic}}
-  litellm_params:
+  lumina_params:
     model: databricks/databricks-claude-sonnet-5
     api_key: os.environ/DATABRICKS_API_KEY
     api_base: os.environ/DATABRICKS_API_BASE
@@ -412,7 +412,7 @@ response = litellm.completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "databricks/databricks-claude-3-7-sonnet",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -456,7 +456,7 @@ Databricks serves OpenJev as the [`ai_decide` AI Function](https://docs.databric
 ```yaml title="config.yaml"
 model_list:
   - model_name: databricks-decider
-    litellm_params:
+    lumina_params:
       model: databricks/ai_decide
       api_base: os.environ/DATABRICKS_API_BASE
       api_key: os.environ/DATABRICKS_API_KEY
@@ -466,7 +466,7 @@ model_list:
 
 ```bash
 curl http://localhost:4000/v1/systemone \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "databricks-decider",
@@ -515,7 +515,7 @@ response = litellm.embedding(
 ```yaml
   model_list:
     - model_name: bge-large
-      litellm_params:
+      lumina_params:
         model: databricks/databricks-bge-large-en
         api_key: os.environ/DATABRICKS_API_KEY
         api_base: os.environ/DATABRICKS_API_BASE

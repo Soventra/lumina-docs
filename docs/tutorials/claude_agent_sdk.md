@@ -20,17 +20,17 @@ uv add claude-agent-sdk
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: bedrock-claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: "bedrock/us.anthropic.{{anthropic}}"
       aws_region_name: "us-east-1"
 
   - model_name: bedrock-claude-opus-5
-    litellm_params:
+    lumina_params:
       model: "bedrock/us.anthropic.{{anthropic_large}}"
       aws_region_name: "us-east-1"
 
   - model_name: bedrock-nova-premier
-    litellm_params:
+    lumina_params:
       model: "bedrock/amazon.nova-premier-v1:0"
       aws_region_name: "us-east-1"
 ```

@@ -272,14 +272,14 @@ Required settings for using litellm proxy
 
 | Variable | Description | 
 |----------|-------------|
-| `LITELLM_PROXY_API_KEY` | The API key for the LiteLLM proxy |
-| `LITELLM_PROXY_API_BASE` | The base URL for the LiteLLM proxy |
-| `USE_LITELLM_PROXY` or `litellm.use_litellm_proxy` | When set to True, your request will be sent to litellm proxy. |
+| `LUMINA_PROXY_API_KEY` | The API key for the LiteLLM proxy |
+| `LUMINA_PROXY_API_BASE` | The base URL for the LiteLLM proxy |
+| `USE_LUMINA_PROXY` or `litellm.use_litellm_proxy` | When set to True, your request will be sent to litellm proxy. |
 
 ```python showLineNumbers title="LiteLLM proxy integration"
 # Set your LiteLLM Proxy credentials as environment variables
-os.environ["LITELLM_PROXY_API_KEY"] = "your-litellm-proxy-api-key"
-os.environ["LITELLM_PROXY_API_BASE"] = "your-litellm-proxy-url"  # e.g., "http://localhost:4000"
+os.environ["LUMINA_PROXY_API_KEY"] = "your-litellm-proxy-api-key"
+os.environ["LUMINA_PROXY_API_BASE"] = "your-litellm-proxy-url"  # e.g., "http://localhost:4000"
 # Enable the use_litellm_proxy flag
 litellm.use_litellm_proxy = True
 

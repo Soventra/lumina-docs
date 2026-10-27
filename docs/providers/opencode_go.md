@@ -44,26 +44,26 @@ Save this as `config.yaml`:
 ```yaml keep-model-ids
 model_list:
   - model_name: go-chat
-    litellm_params:
+    lumina_params:
       model: opencode_go/glm-5.3-flash
       api_key: os.environ/OPENCODE_API_KEY
   - model_name: go-responses
-    litellm_params:
+    lumina_params:
       model: opencode_go/gpt-6-luna
       api_key: os.environ/OPENCODE_API_KEY
   - model_name: go-messages
-    litellm_params:
+    lumina_params:
       model: opencode_go/claude-haiku-5-5
       api_key: os.environ/OPENCODE_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Set your gateway key and start the server:
 
 ```bash
-export LITELLM_MASTER_KEY="your-litellm-gateway-key"
+export LUMINA_MASTER_KEY="your-litellm-gateway-key"
 litellm --config config.yaml --host 127.0.0.1 --port 4000
 ```
 
@@ -71,7 +71,7 @@ Check the connection:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -H 'x-litellm-session-id: my-conversation-1' \
   -d '{"model":"go-chat","messages":[{"role":"user","content":"Say hello."}]}'
@@ -92,7 +92,7 @@ Add this provider to your project's `opencode.json`, or merge it into your exist
       "name": "LiteLLM Go",
       "options": {
         "baseURL": "http://localhost:4000/v1",
-        "apiKey": "{env:LITELLM_MASTER_KEY}"
+        "apiKey": "{env:LUMINA_MASTER_KEY}"
       },
       "models": {
         "go-chat": {"name": "Go Chat"},
@@ -104,7 +104,7 @@ Add this provider to your project's `opencode.json`, or merge it into your exist
 }
 ```
 
-Start `opencode` from that project in a shell with `LITELLM_MASTER_KEY` set. Run `/models`, choose a model under **LiteLLM Go**, and send a message. This configuration uses Chat Completions between OpenCode and LiteLLM. LiteLLM translates the request to the selected Go model's upstream format.
+Start `opencode` from that project in a shell with `LUMINA_MASTER_KEY` set. Run `/models`, choose a model under **LiteLLM Go**, and send a message. This configuration uses Chat Completions between OpenCode and LiteLLM. LiteLLM translates the request to the selected Go model's upstream format.
 
 ## API formats and sessions
 

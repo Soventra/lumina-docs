@@ -27,13 +27,13 @@ Credentials can be set directly in the YAML config or via environment variables.
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "rubrik"
-    litellm_params:
+    lumina_params:
       guardrail: rubrik
       mode: ["pre_call", "post_call"]
       api_key: "your-rubrik-api-key"
@@ -46,7 +46,7 @@ You can also reference environment variables in the config:
 ```yaml
 guardrails:
   - guardrail_name: "rubrik"
-    litellm_params:
+    lumina_params:
       guardrail: rubrik
       mode: ["pre_call", "post_call"]
       api_key: os.environ/RUBRIK_API_KEY
@@ -69,13 +69,13 @@ With a minimal config:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "rubrik"
-    litellm_params:
+    lumina_params:
       guardrail: rubrik
       mode: ["pre_call", "post_call"]
       default_on: true
@@ -95,7 +95,7 @@ litellm --config config.yaml --port 4000
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "What is the weather in SF?"}],
@@ -124,7 +124,7 @@ curl -X POST http://localhost:4000/chat/completions \
 
 ### YAML Config Parameters
 
-These are set under `guardrails.[].litellm_params` in your `config.yaml`:
+These are set under `guardrails.[].lumina_params` in your `config.yaml`:
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|

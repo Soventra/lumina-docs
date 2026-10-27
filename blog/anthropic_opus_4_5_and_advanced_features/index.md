@@ -58,7 +58,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: claude-4 ### RECEIVED MODEL NAME ###
-    litellm_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
       model: claude-opus-4-5-20251101 ### MODEL NAME sent to `litellm.completion()` ###
       api_key: "os.environ/ANTHROPIC_API_KEY" # does os.getenv("ANTHROPIC_API_KEY")
 ```
@@ -76,7 +76,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [
@@ -93,7 +93,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "max_tokens": 1024,
@@ -148,7 +148,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: claude-4 ### RECEIVED MODEL NAME ###
-    litellm_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
       model: bedrock/us.anthropic.claude-opus-4-5-20251101-v1:0 ### MODEL NAME sent to `litellm.completion()` ###
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -168,7 +168,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [
@@ -185,7 +185,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "max_tokens": 1024,
@@ -203,7 +203,7 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 ```bash
 curl --location 'http://0.0.0.0:4000/bedrock/model/claude-4/invoke' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "max_tokens": 1024,
       "messages": [{"role": "user", "content": "Hello, how are you?"}]
@@ -214,7 +214,7 @@ curl --location 'http://0.0.0.0:4000/bedrock/model/claude-4/invoke' \
 ```bash
 curl --location 'http://0.0.0.0:4000/bedrock/model/claude-4/converse' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "messages": [{"role": "user", "content": "Hello, how are you?"}]
     }'
@@ -266,7 +266,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: claude-4 ### RECEIVED MODEL NAME ###
-    litellm_params:
+    lumina_params:
         model: vertex_ai/claude-opus-4-5@20251101
         vertex_credentials: "/path/to/service_account.json"
         vertex_project: "your-project-id"
@@ -286,7 +286,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [
@@ -303,7 +303,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "max_tokens": 1024,
@@ -364,7 +364,7 @@ export AZURE_AI_API_BASE="https://my-resource.services.ai.azure.com/anthropic"
 ```yaml
 model_list:
   - model_name: claude-4-azure
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-opus-4-1
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -381,7 +381,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
   --header 'Content-Type: application/json' \
-  --header 'Authorization: Bearer $LITELLM_KEY' \
+  --header 'Authorization: Bearer $LUMINA_KEY' \
   --data '{
     "model": "claude-4-azure",
     "messages": [
@@ -506,7 +506,7 @@ if hasattr(response.usage, 'server_tool_use'):
 ```yaml
 model_list:
   - model_name: claude-4
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-5-20251101
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -523,7 +523,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [{
@@ -718,7 +718,7 @@ print("\nFinal answer:", final_response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: claude-4
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-5-20251101
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -735,7 +735,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [{
@@ -870,7 +870,7 @@ print("Tool call:", response.choices[0].message.tool_calls[0].function.arguments
 ```yaml
 model_list:
   - model_name: claude-4
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-5-20251101
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -887,7 +887,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [{
@@ -1032,7 +1032,7 @@ print(f"Low:    {response_low.usage.completion_tokens} tokens")
 ```yaml
 model_list:
   - model_name: claude-4
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-4-5-20251101
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1048,7 +1048,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data ' {
       "model": "claude-4",
       "messages": [{

@@ -38,7 +38,7 @@ response.stream_to_file(speech_file_path)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: vertex-tts
-    litellm_params:
+    lumina_params:
       model: vertex_ai/chirp
       vertex_project: "your-project-id"
       vertex_location: "us-central1"
@@ -58,7 +58,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Chirp3 Quick Start"
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "vertex-tts",
@@ -140,7 +140,7 @@ response.stream_to_file("speech.mp3")
 
 ```bash showLineNumbers title="Chirp3 HD Voice"
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "vertex-tts",
@@ -152,7 +152,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 
 ```bash showLineNumbers title="Voice as Dict (Multilingual)"
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "vertex-tts",
@@ -242,7 +242,7 @@ response.stream_to_file("speech.mp3")
 
 ```bash showLineNumbers title="SSML Input"
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "vertex-tts",
@@ -349,7 +349,7 @@ print(response)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gemini-tts
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-2.5-flash-preview-tts
       vertex_project: "your-project-id"
       vertex_location: "us-central1"
@@ -370,7 +370,7 @@ litellm --config /path/to/config.yaml
 ```bash showLineNumbers title="Gemini TTS Request"
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-tts",
     "messages": [{"role": "user", "content": "Say hello in a friendly voice"}],

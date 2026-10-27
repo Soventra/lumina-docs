@@ -32,7 +32,7 @@ Both surfaces accept the same LiteLLM Virtual Key headers and the same identific
 
 ## 2. LiteLLM → Backend (authenticating the gateway to the agent or MCP server)
 
-This is the section where MCP and A2A diverge most. MCP has a first-class `auth_type` field on each server registration. **A2A has no `auth_type` field at all**; the outbound auth mode is inferred from what's present in `litellm_params`.
+This is the section where MCP and A2A diverge most. MCP has a first-class `auth_type` field on each server registration. **A2A has no `auth_type` field at all**; the outbound auth mode is inferred from what's present in `lumina_params`.
 
 ### MCP: `auth_type` enum
 
@@ -49,15 +49,15 @@ The MCP server's outbound `Authorization` header (or per-request SigV4 signature
 | `oauth_delegate` | LiteLLM admits the caller on `x-litellm-api-key`, then forwards the separate upstream bearer the client sends in `Authorization`. The admission key is never forwarded | [MCP OAuth Passthrough](./mcp_oauth_passthrough) |
 | `aws_sigv4` | Per-request SigV4 signature using a dedicated MCP-side credential chain | [MCP AWS SigV4](./mcp_aws_sigv4) |
 
-### A2A: auth mode inferred from `litellm_params`
+### A2A: auth mode inferred from `lumina_params`
 
-There is no `auth_type` field on an agent. The provider handler picks the auth mechanism from the contents of `litellm_params`:
+There is no `auth_type` field on an agent. The provider handler picks the auth mechanism from the contents of `lumina_params`:
 
 | Mode | When it fires | Send to backend |
 |---|---|---|
-| **Bearer / JWT** | `litellm_params.api_key` is set | `Authorization: Bearer <api_key>` |
-| **SigV4** (AgentCore only) | `litellm_params.api_key` is unset | Per-request SigV4 via the full AWS credential chain. See [Bedrock AgentCore — A2A Gateway Authentication](./providers/bedrock_agentcore#a2a-gateway-authentication). |
-| **Provider-native** | `litellm_params.custom_llm_provider` matches a non-Bedrock provider (Vertex AI Agent Engine, LangGraph, Azure AI Foundry, Pydantic AI) | The provider's normal auth path |
+| **Bearer / JWT** | `lumina_params.api_key` is set | `Authorization: Bearer <api_key>` |
+| **SigV4** (AgentCore only) | `lumina_params.api_key` is unset | Per-request SigV4 via the full AWS credential chain. See [Bedrock AgentCore — A2A Gateway Authentication](./providers/bedrock_agentcore#a2a-gateway-authentication). |
+| **Provider-native** | `lumina_params.custom_llm_provider` matches a non-Bedrock provider (Vertex AI Agent Engine, LangGraph, Azure AI Foundry, Pydantic AI) | The provider's normal auth path |
 
 The dual JWT-vs-SigV4 mode is specific to AgentCore. Other A2A providers (Vertex, LangGraph, Azure Foundry) use the provider's own credential conventions. See the relevant provider page under [Providers](./providers).
 
@@ -121,8 +121,8 @@ Both surfaces use the `object_permission` model with intersection-style resoluti
 
 | Setting | Scope | Behaviour |
 |---|---|---|
-| `require_trace_id_on_calls_to_agent: true` | Per-agent, on the agent's `litellm_params` | Reject inbound `/a2a/{agent_id}` calls missing `x-litellm-trace-id` (or `x-litellm-session-id` fallback) with **HTTP 400**. See [A2A Overview — Trace ID enforcement](./a2a#trace-id-enforcement-optional-per-agent). |
-| `require_trace_id_on_calls_by_agent: true` | Per-agent, on the agent's `litellm_params` | Reverse direction — when a key **owned by** that agent makes outbound calls, require a trace ID on those. |
+| `require_trace_id_on_calls_to_agent: true` | Per-agent, on the agent's `lumina_params` | Reject inbound `/a2a/{agent_id}` calls missing `x-litellm-trace-id` (or `x-litellm-session-id` fallback) with **HTTP 400**. See [A2A Overview — Trace ID enforcement](./a2a#trace-id-enforcement-optional-per-agent). |
+| `require_trace_id_on_calls_by_agent: true` | Per-agent, on the agent's `lumina_params` | Reverse direction — when a key **owned by** that agent makes outbound calls, require a trace ID on those. |
 
 **Sub-agent identity propagation.** When LiteLLM dispatches a downstream call as part of an A2A invocation, it forwards `X-LiteLLM-Trace-Id` and `X-LiteLLM-Agent-Id` to maintain trace continuity and spend attribution. The original virtual key and end-user identity are **not** auto-forwarded. Use `extra_headers` or the `x-a2a-{agent_name_or_id}-{header}` convention to thread identity explicitly. See [A2A Overview: Sub-agent identity propagation](./a2a#sub-agent-identity-propagation).
 

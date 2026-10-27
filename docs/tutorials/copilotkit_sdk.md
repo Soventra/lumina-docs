@@ -15,7 +15,7 @@ Use CopilotKit SDK with any LLM provider through LiteLLM Proxy.
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: "anthropic/{{anthropic}}"
       api_key: "os.environ/ANTHROPIC_API_KEY"
 ```

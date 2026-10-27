@@ -33,13 +33,13 @@ Nothing to turn on. Any guardrail that runs on `pre_call` is applied to batch up
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pii-guard
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: pre_call
       default_on: true
@@ -61,7 +61,7 @@ The response is the usual file object with one extra field, `litellm_batch_guard
 
 ```bash
 curl -sS http://localhost:4000/v1/files \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F purpose=batch \
   -F file=@batch_input.jsonl
 ```
@@ -109,6 +109,6 @@ Only guardrails that run on `pre_call` see batch records. A guardrail configured
 
 A `guardrails` key inside a record's own body is ignored when choosing what to run, so a record cannot opt out of what your key or team selected. It is preserved in the record that reaches the provider.
 
-Guardrails attached to a specific deployment through `litellm_params` are applied after routing, which batch uploads do not go through, so those are not applied to batch records.
+Guardrails attached to a specific deployment through `lumina_params` are applied after routing, which batch uploads do not go through, so those are not applied to batch records.
 
 Records are scanned in bounded batches rather than all at once, and a very large file with a network-backed guardrail will take correspondingly longer to upload. There is no cap on how many records will be scanned.

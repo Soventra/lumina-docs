@@ -50,7 +50,7 @@ pip install litellm==1.82.0
 - **`/v1/messages` → `/responses` routing** — `/v1/messages` requests are now routed to the [Responses API](../../docs/response_api) by default for OpenAI/Azure models
 
 :::danger[v1/messages routing change]
-This version starts routing `/v1/messages` requests to the `/responses` API by default. To opt out and continue using chat/completions, set `LITELLM_USE_CHAT_COMPLETIONS_URL_FOR_ANTHROPIC_MESSAGES=true` or `litellm_settings.use_chat_completions_url_for_anthropic_messages: true` in your config.
+This version starts routing `/v1/messages` requests to the `/responses` API by default. To opt out and continue using chat/completions, set `LUMINA_USE_CHAT_COMPLETIONS_URL_FOR_ANTHROPIC_MESSAGES=true` or `litellm_settings.use_chat_completions_url_for_anthropic_messages: true` in your config.
 :::
 
 ---
@@ -174,7 +174,7 @@ This version starts routing `/v1/messages` requests to the `/responses` API by d
 
 - **[Video Generation](/docs/videos)**
     - Add `variant` parameter to video content download - [PR #21955](https://github.com/BerriAI/litellm/pull/21955)
-    - Pass `api_key` from `litellm_params` to video remix handlers - [PR #21965](https://github.com/BerriAI/litellm/pull/21965)
+    - Pass `api_key` from `lumina_params` to video remix handlers - [PR #21965](https://github.com/BerriAI/litellm/pull/21965)
     - Apply custom video pricing from deployment `model_info` - [PR #21923](https://github.com/BerriAI/litellm/pull/21923)
     - Fix passing of image and parameters in videos API - [PR #22170](https://github.com/BerriAI/litellm/pull/22170)
 

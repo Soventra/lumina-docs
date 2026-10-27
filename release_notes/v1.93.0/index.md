@@ -117,7 +117,7 @@ GPT-5.6 ships priority, flex, batch, and above-272k long-context pricing tiers o
     - Honor `cache_control` ttl on message-level cache points - [PR #32538](https://github.com/BerriAI/litellm/pull/32538), [PR #32551](https://github.com/BerriAI/litellm/pull/32551)
     - Keep mid-conversation system messages in place for Claude Invoke, gated on model support - [PR #32578](https://github.com/BerriAI/litellm/pull/32578), [PR #32831](https://github.com/BerriAI/litellm/pull/32831)
     - Honor AWS auth params in the realtime handler - [PR #32275](https://github.com/BerriAI/litellm/pull/32275)
-    - Forward AWS credential kwargs into `litellm_params` so the chat -> Responses bridge keeps Web Identity Federation auth - [PR #32956](https://github.com/BerriAI/litellm/pull/32956)
+    - Forward AWS credential kwargs into `lumina_params` so the chat -> Responses bridge keeps Web Identity Federation auth - [PR #32956](https://github.com/BerriAI/litellm/pull/32956)
 - **[Google Vertex AI](../../docs/providers/vertex)**
     - Build the full request path when a custom `api_base` has no path - [PR #32367](https://github.com/BerriAI/litellm/pull/32367)
     - Return the `create_vertex_url` result directly for openai-path partner models with a custom `api_base` - [PR #32380](https://github.com/BerriAI/litellm/pull/32380)

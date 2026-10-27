@@ -20,7 +20,7 @@ For proxy setup and the full configuration reference, see [Auto Routing](../prox
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/install.sh | \
-  LITELLM_CLI_REF=main sh
+  LUMINA_CLI_REF=main sh
 ```
 
 ## 2. Point the CLI at Your Proxy
@@ -28,8 +28,8 @@ curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm/main/scripts/instal
 Set your real proxy URL and key. The autorouter forwards every request through this proxy with this key.
 
 ```bash
-export LITELLM_PROXY_URL=http://localhost:4000
-export LITELLM_PROXY_API_KEY=sk-...
+export LUMINA_PROXY_URL=http://localhost:4000
+export LUMINA_PROXY_API_KEY=sk-...
 ```
 
 ## 3. Configure the Autorouter

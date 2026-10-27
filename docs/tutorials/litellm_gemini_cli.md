@@ -94,7 +94,7 @@ Route `{{gemini_pro}}` requests to Claude Sonnet:
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -110,7 +110,7 @@ Route `{{gemini_pro}}` requests to `{{openai_large}}`:
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: openai-gpt
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -126,7 +126,7 @@ Route `{{gemini_pro}}` requests to Claude on Bedrock:
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: bedrock-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -144,11 +144,11 @@ All deployments with model_name=`anthropic-claude` will be load balanced. In thi
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: anthropic-claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY  
   - model_name: anthropic-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY

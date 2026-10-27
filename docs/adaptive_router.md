@@ -21,7 +21,7 @@ The adaptive router does this automatically. It tracks which model performs best
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
     model_info:
       input_cost_per_token: 0.000002
@@ -30,7 +30,7 @@ model_list:
         strengths: ["code_generation", "analytical_reasoning"]
 
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
     model_info:
       input_cost_per_token: 0.0000002
@@ -39,7 +39,7 @@ model_list:
         strengths: ["factual_lookup"]
 
   - model_name: my-router
-    litellm_params:
+    lumina_params:
       model: auto_router/adaptive_router
       adaptive_router_config:
         available_models: ["{{openai_large}}", "{{openai_small}}"]
@@ -53,7 +53,7 @@ Route to it by setting `model` to your adaptive router's name:
 ```bash
 curl -X POST {{baseURL}}/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "my-router",
     "messages": [

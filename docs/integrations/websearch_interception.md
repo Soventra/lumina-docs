@@ -15,7 +15,7 @@ Add to your `config.yaml`:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -30,7 +30,7 @@ litellm_settings:
 
 search_tools:
   - search_tool_name: perplexity-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITY_API_KEY
 ```
@@ -122,7 +122,7 @@ Whatever web search tool the request carries, LiteLLM replaces it with its own `
 }
 ```
 
-`query` is required and is what most search providers receive. `objective` and `search_queries` are optional: they let the model say what it is after and fan out several keyword searches in one tool call. LiteLLM forwards them only to search providers whose API takes that shape natively, which today means [Parallel AI](../search/parallel_ai.md). There the `search_queries` list becomes the provider's queries and `objective` goes alongside it, unless the search tool's `litellm_params` already sets an `objective`, which is kept over the model's. Every other search provider (Perplexity, Tavily, Exa, and the rest) keeps receiving the single `query` string, and a model that fills only `query` behaves exactly as before on every provider.
+`query` is required and is what most search providers receive. `objective` and `search_queries` are optional: they let the model say what it is after and fan out several keyword searches in one tool call. LiteLLM forwards them only to search providers whose API takes that shape natively, which today means [Parallel AI](../search/parallel_ai.md). There the `search_queries` list becomes the provider's queries and `objective` goes alongside it, unless the search tool's `lumina_params` already sets an `objective`, which is kept over the model's. Every other search provider (Perplexity, Tavily, Exa, and the rest) keeps receiving the single `query` string, and a model that fills only `query` behaves exactly as before on every provider.
 
 The optional fields are validated before they are forwarded: a blank `objective` is ignored, `search_queries` has to be an array (a bare string is ignored rather than split into characters), entries that are not non-empty strings are dropped, and only the first five queries are kept, matching Parallel's own cap.
 
@@ -251,25 +251,25 @@ See [Search Providers Documentation](../search/index.md) for detailed setup inst
 model_list:
   # OpenAI
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   # MiniMax
   - model_name: minimax
-    litellm_params:
+    lumina_params:
       model: minimax/MiniMax-M2.1
       api_key: os.environ/MINIMAX_API_KEY
 
   # Anthropic
   - model_name: claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   # Azure OpenAI
   - model_name: azure-gpt
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: https://my-azure.openai.azure.com
       api_key: os.environ/AZURE_API_KEY
@@ -286,17 +286,17 @@ litellm_settings:
 
 search_tools:
   - search_tool_name: perplexity-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITY_API_KEY
 
   - search_tool_name: tavily-search
-    litellm_params:
+    lumina_params:
       search_provider: tavily
       api_key: os.environ/TAVILY_API_KEY
 
   - search_tool_name: parallel-search
-    litellm_params:
+    lumina_params:
       search_provider: parallel_ai
       api_key: os.environ/PARALLEL_API_KEY
 ```
@@ -352,7 +352,7 @@ litellm --config config.yaml
 # Make request
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -385,12 +385,12 @@ curl http://localhost:4000/v1/chat/completions \
 ```yaml
 search_tools:
   - search_tool_name: perplexity-search  # ← This will be used if no search_tool_name specified
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITY_API_KEY
 
   - search_tool_name: tavily-search
-    litellm_params:
+    lumina_params:
       search_provider: tavily
       api_key: os.environ/TAVILY_API_KEY
 ```
@@ -409,7 +409,7 @@ search_tools:
    ```yaml
    search_tools:
      - search_tool_name: perplexity-search
-       litellm_params:
+       lumina_params:
          search_provider: perplexity
          api_key: os.environ/PERPLEXITY_API_KEY
    ```

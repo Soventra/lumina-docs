@@ -70,7 +70,7 @@ LiteLLM provides an openai-compatible `/audio/speech` endpoint for Text-to-speec
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "tts-1",
@@ -84,7 +84,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 
 ```bash
 - model_name: tts
-  litellm_params:
+  lumina_params:
     model: openai/tts-1
     api_key: os.environ/OPENAI_API_KEY
 ```
@@ -110,7 +110,7 @@ Use this when you want to limit the file size for requests sent to `audio/transc
 
 ```yaml
 - model_name: whisper
-  litellm_params:
+  lumina_params:
     model: whisper-1
     api_key: sk-*******
     max_file_size_mb: 0.00001 # max file size in MB  (Set this intentionally very small for testing)
@@ -121,7 +121,7 @@ Use this when you want to limit the file size for requests sent to `audio/transc
 Make a test Request with a valid file
 ```shell
 curl --location 'http://localhost:4000/v1/audio/transcriptions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'file=@"/Users/ishaanjaffer/Github/litellm/tests/gettysburg.wav"' \
 --form 'model="whisper"'
 ```

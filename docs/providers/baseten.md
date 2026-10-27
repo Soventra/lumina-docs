@@ -86,7 +86,7 @@ for chunk in response:
 ```yaml
 model_list:
   - model_name: baseten-model
-    litellm_params:
+    lumina_params:
       model: baseten/openai/gpt-oss-120b
       api_key: your-baseten-api-key
 ```

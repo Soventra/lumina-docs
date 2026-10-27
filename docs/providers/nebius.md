@@ -97,7 +97,7 @@ Here's how to call a Nebius AI Studio model with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: nebius/<your-model-name>  # add nebius/ prefix to use Nebius AI Studio as provider
         api_key: api-key                 # api key to send your model
   ```

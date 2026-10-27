@@ -38,18 +38,18 @@ Codex speaks the OpenAI Responses API, so it fits best on an OpenAI reasoning mo
 ```yaml title="config.yaml"
 model_list:
   - model_name: gpt
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt
-    litellm_params:
+    lumina_params:
       model: azure/gpt-5
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
       api_version: "2025-04-01-preview"
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 ```
 
@@ -57,7 +57,7 @@ Create a virtual key scoped to that group.
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"models": ["gpt"], "key_alias": "codex"}'
 ```
@@ -73,8 +73,8 @@ result = litellm.agent(
     "Upgrade pydantic to v2 and make the tests pass.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./repo": "/workspace"}),
     model="litellm_proxy/gpt",
-    api_base="http://localhost:4000",  # or LITELLM_PROXY_API_BASE
-    api_key="sk-...",                  # or LITELLM_PROXY_API_KEY
+    api_base="http://localhost:4000",  # or LUMINA_PROXY_API_BASE
+    api_key="sk-...",                  # or LUMINA_PROXY_API_KEY
     options=CodexOptions(reasoning_effort="high"),
     metadata={"ticket": "ENG-412"},
 )

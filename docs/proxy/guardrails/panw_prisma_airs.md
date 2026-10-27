@@ -35,13 +35,13 @@ Set `api_base` to the regional endpoint for your Prisma AIRS deployment profile:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "panw-prisma-airs-guardrail"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       mode: "pre_call"
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
@@ -165,14 +165,14 @@ export PANW_PRISMA_AIRS_API_BASE="https://custom-endpoint.com"
 ```yaml
 guardrails:
   - guardrail_name: "panw-strict-security"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       mode: "pre_call"
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
       profile_name: "strict-policy"
 
   - guardrail_name: "panw-permissive-security"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       mode: "post_call"
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
@@ -188,7 +188,7 @@ The actual masking behavior (what content gets masked and how) is controlled by 
 ```yaml
 guardrails:
   - guardrail_name: "panw-with-masking"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       mode: "post_call"
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
@@ -206,7 +206,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: "panw-high-availability"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
       profile_name: "production"
@@ -236,13 +236,13 @@ When fail-open is triggered, the response includes a tracking header: `X-LiteLLM
 ```yaml
 guardrails:
   - guardrail_name: "panw-custom-message"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
       violation_message_template: "Your request was blocked by our AI Security Policy."
 
   - guardrail_name: "panw-detailed-message"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
       violation_message_template: "{action_type} blocked due to {category} violation. Please contact support."
@@ -261,7 +261,7 @@ By default, LiteLLM generates a UUID for `litellm_call_id`. To provide your own:
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "x-litellm-call-id: my-custom-call-id-789" \
   -d '{
     "model": "{{openai_large}}",
@@ -294,7 +294,7 @@ With `mode: post_mcp_call`, the guardrail scans the result an MCP server returns
 ```yaml
 guardrails:
   - guardrail_name: "panw-mcp-results"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs
       mode: "post_mcp_call"
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY

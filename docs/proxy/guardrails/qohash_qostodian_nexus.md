@@ -40,7 +40,7 @@ Additional deployment options are available. [Contact Qohash](https://qohash.com
 ```yaml title="config.yaml (pre-call)"
 guardrails:
   - guardrail_name: "qostodian-nexus-pre-call"
-    litellm_params:
+    lumina_params:
       guardrail: qostodian_nexus
       api_base: http://nexus:8800
       mode: "pre_call"
@@ -52,7 +52,7 @@ guardrails:
 ```yaml title="config.yaml (post-call)"
 guardrails:
   - guardrail_name: "qostodian-nexus-post-call"
-    litellm_params:
+    lumina_params:
       guardrail: qostodian_nexus
       api_base: http://nexus:8800
       mode: "post_call"

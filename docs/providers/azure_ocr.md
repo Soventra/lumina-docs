@@ -42,7 +42,7 @@ for page in response.pages:
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-ocr
-    litellm_params:
+    lumina_params:
       model: azure_ai/mistral-document-ai-2505
       api_key: "os.environ/AZURE_AI_API_KEY"
       api_base: "os.environ/AZURE_AI_API_BASE"
@@ -180,7 +180,7 @@ print(response.usage_info.pages_processed)
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-cohere-parse
-    litellm_params:
+    lumina_params:
       model: azure_ai/Cohere-parse-v5
       api_key: "os.environ/AZURE_AI_API_KEY"
       api_base: "os.environ/AZURE_AI_API_BASE"
@@ -188,7 +188,7 @@ model_list:
 
 ```bash showLineNumbers title="Test request"
 curl http://0.0.0.0:4000/v1/ocr \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-cohere-parse",

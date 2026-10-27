@@ -11,7 +11,7 @@ Pass-through endpoint for the [TypeSafe AI](https://docs.typesafe.ai/api) System
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ❌ | Not offered by the TypeSafe API |
 
-Just replace `https://api.typesafe.ai` with `LITELLM_PROXY_BASE_URL/typesafe`
+Just replace `https://api.typesafe.ai` with `LUMINA_PROXY_BASE_URL/typesafe`
 
 LiteLLM adds the TypeSafe API key from the proxy environment, so clients only need a LiteLLM virtual key.
 
@@ -45,7 +45,7 @@ litellm
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/typesafe/v1/systemone' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "state": "Help! My payouts have been failing for 3 days.",
@@ -85,7 +85,7 @@ Any path under `/typesafe/` is forwarded, so `GET /typesafe/v1/models` lists the
 
 ## Try it in the Admin UI
 
-The Playground **Decisions** tab (Beta) sends Jev requests without curl. It calls the proxy's `/v1/systemone` route rather than this pass-through, so add a `typesafe/` model to your `model_list` first, for example `jev` from the [proxy setup](../decisions.md#proxy-setup) on the Decisions page, and set `TYPESAFE_API_KEY`. Open `LITELLM_PROXY_BASE_URL/ui/?page=llm-playground&tab=system-one`, or go to **Playground** and pick **Decisions**.
+The Playground **Decisions** tab (Beta) sends Jev requests without curl. It calls the proxy's `/v1/systemone` route rather than this pass-through, so add a `typesafe/` model to your `model_list` first, for example `jev` from the [proxy setup](../decisions.md#proxy-setup) on the Decisions page, and set `TYPESAFE_API_KEY`. Open `LUMINA_PROXY_BASE_URL/ui/?page=llm-playground&tab=system-one`, or go to **Playground** and pick **Decisions**.
 
 Pick `/v1/systemone` under **Endpoint** and your Jev model under **Model**. **Load example** fills in a request, such as **Triage a bug report**, which asks one question of each type: `area` (choice), `has_repro_steps` (yes / no) and `severity` (score). The eraser button clears the form.
 
@@ -93,7 +93,7 @@ Pick `/v1/systemone` under **Endpoint** and your Jev model under **Model**. **Lo
 
 The editor opens on the **Form** tab, so you can build a request without writing JSON. Type the text the model should read into **Input**, then fill in each question card: its **Name**, its **Answer type** (**Choice**, **Yes / no** or **Score**), its **Instructions** and its criteria. A choice takes **Options** with descriptions, a yes / no question takes **Yes means** and **No means**, and a score takes **Levels, lowest first**, numbered from 0. **Add question**, **Add option** and **Add level** add rows, and the trash buttons remove them.
 
-The **cURL** tab shows the request as a read-only curl command for the proxy's `/v1/systemone`, and it follows your edits. Once the form has no issues, **Copy cURL** copies it, and you replace `$LITELLM_API_KEY` with a virtual key. To tag the call in LiteLLM's spend logs, which the form has no input for, copy the curl and add `"metadata": {"tags": ["triage"]}` to its `-d` body.
+The **cURL** tab shows the request as a read-only curl command for the proxy's `/v1/systemone`, and it follows your edits. Once the form has no issues, **Copy cURL** copies it, and you replace `$LUMINA_API_KEY` with a virtual key. To tag the call in LiteLLM's spend logs, which the form has no input for, copy the curl and add `"metadata": {"tags": ["triage"]}` to its `-d` body.
 
 The form checks the request as you type. Problems are listed above **Send**, such as `Add the text the model should decide about.` for an empty **Input** and `Give every question a name.` for an unnamed question, and **Send** stays disabled until they are fixed. TypeSafe checks the rest when you send, so a yes / no question with no instructions and no **Yes means** or **No means** comes back as a 400.
 

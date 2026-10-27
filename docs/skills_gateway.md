@@ -34,7 +34,7 @@ Or register it through the API with an admin key:
 
 ```bash
 curl -X POST https://your-proxy/claude-code/plugins \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "grill-me",
@@ -59,7 +59,7 @@ Or the API, with `/disable` to unpublish and `/enable` to publish again:
 
 ```bash
 curl -X POST https://your-proxy/claude-code/plugins/grill-me/disable \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 ### 3. Browse the hub
@@ -103,7 +103,7 @@ A disabled skill stays out of the Skill Hub and the anonymous `marketplace.json`
 
 ```bash
 curl -X POST https://your-proxy/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"object_permission": {"skills": ["internal-runbook"]}}'
 ```

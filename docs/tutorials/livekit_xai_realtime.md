@@ -22,7 +22,7 @@ Create a config file with your xAI realtime model:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: grok-voice-agent
-    litellm_params:
+    lumina_params:
       model: xai/grok-voice-latest
       api_key: os.environ/XAI_API_KEY
     model_info:
@@ -32,7 +32,7 @@ litellm_settings:
   drop_params: True
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY  # Change this to a secure key
+  master_key: os.environ/LUMINA_MASTER_KEY  # Change this to a secure key
 ```
 
 Start the proxy:

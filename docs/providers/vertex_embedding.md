@@ -30,7 +30,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: snowflake-arctic-embed-m-long-1731622468876
-    litellm_params:
+    lumina_params:
       model: vertex_ai/<your-model-id>
       vertex_project: "adroit-crow-413218"
       vertex_location: "us-central1"
@@ -211,7 +211,7 @@ print(response)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: bge-embedding
-    litellm_params:
+    lumina_params:
       model: vertex_ai/bge/<your-endpoint-id>
       vertex_project: "your-project-id"
       vertex_location: "us-central1"
@@ -247,7 +247,7 @@ Using a Private Service Connect (PSC) endpoint
 ```yaml showLineNumbers title="config.yaml (PSC)"
 model_list:
   - model_name: bge-small-en-v1.5
-    litellm_params:
+    lumina_params:
       model: vertex_ai/bge/1234567890 
       api_base: http://10.96.32.8  # Your PSC IP
       vertex_project: my-project-id  #optional
@@ -314,7 +314,7 @@ response = embedding(
 ```yaml
 model_list:
   - model_name: vertex-gemini-embedding-2-preview
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-embedding-2-preview
       vertex_project: "your-project-id"
       vertex_location: "us-central1"
@@ -322,7 +322,7 @@ model_list:
 
 ```bash
 curl -X POST http://localhost:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "vertex-gemini-embedding-2-preview",
@@ -391,7 +391,7 @@ response = await litellm.aembedding(
 ```yaml
 model_list:
   - model_name: multimodalembedding@001
-    litellm_params:
+    lumina_params:
       model: vertex_ai/multimodalembedding@001
       vertex_project: "adroit-crow-413218"
       vertex_location: "us-central1"
@@ -523,8 +523,8 @@ from vertexai.vision_models import VideoSegmentConfig
 from google.auth.credentials import Credentials
 
 
-LITELLM_PROXY_API_KEY = "sk-<your-litellm-api-key>"
-LITELLM_PROXY_BASE = "http://0.0.0.0:4000/vertex-ai"
+LUMINA_PROXY_API_KEY = "sk-<your-litellm-api-key>"
+LUMINA_PROXY_BASE = "http://0.0.0.0:4000/vertex-ai"
 
 import datetime
 
@@ -548,12 +548,12 @@ class CredentialsWrapper(Credentials):
     def valid(self):
         return True  # Always consider the credentials as valid
 
-credentials = CredentialsWrapper(token=LITELLM_PROXY_API_KEY)
+credentials = CredentialsWrapper(token=LUMINA_PROXY_API_KEY)
 
 vertexai.init(
     project="adroit-crow-413218",
     location="us-central1",
-    api_endpoint=LITELLM_PROXY_BASE,
+    api_endpoint=LUMINA_PROXY_BASE,
     credentials = credentials,
     api_transport="rest",
    
@@ -617,7 +617,7 @@ response = await litellm.aembedding(
 ```yaml
 model_list:
   - model_name: multimodalembedding@001
-    litellm_params:
+    lumina_params:
       model: vertex_ai/multimodalembedding@001
       vertex_project: "adroit-crow-413218"
       vertex_location: "us-central1"

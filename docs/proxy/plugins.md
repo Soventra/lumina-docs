@@ -24,7 +24,7 @@ Available in v1.89.3+.
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   plugins:
     - name: my-plugin              # unique identifier, no spaces
       display_name: My Plugin      # label shown in the UI dropdown
@@ -57,14 +57,14 @@ A minimal manifest:
 }
 ```
 
-For `POST /api/plugin-auth`, the iframe forwards a `session_claim` ciphertext. The proxy never shares `LITELLM_SALT_KEY` with the plugin; instead, each plugin is provisioned with its own dedicated key, derived as `HMAC-SHA256(LITELLM_SALT_KEY, plugin_name)`. Compute it once on the proxy host and hand the result to your plugin as a secret (for example, as `PLUGIN_AUTH_KEY`):
+For `POST /api/plugin-auth`, the iframe forwards a `session_claim` ciphertext. The proxy never shares `LUMINA_SALT_KEY` with the plugin; instead, each plugin is provisioned with its own dedicated key, derived as `HMAC-SHA256(LUMINA_SALT_KEY, plugin_name)`. Compute it once on the proxy host and hand the result to your plugin as a secret (for example, as `PLUGIN_AUTH_KEY`):
 
 ```bash
 python -c 'import base64,hmac,hashlib,os; \
-print(base64.urlsafe_b64encode(hmac.new(os.environ["LITELLM_SALT_KEY"].encode(), b"my-plugin", hashlib.sha256).digest()).decode())'
+print(base64.urlsafe_b64encode(hmac.new(os.environ["LUMINA_SALT_KEY"].encode(), b"my-plugin", hashlib.sha256).digest()).decode())'
 ```
 
-A compromised plugin holding only this scoped key cannot recover `LITELLM_SALT_KEY` or decrypt any other LiteLLM secret.
+A compromised plugin holding only this scoped key cannot recover `LUMINA_SALT_KEY` or decrypt any other LiteLLM secret.
 
 Decrypt and validate the claim in the plugin:
 
@@ -137,7 +137,7 @@ No LiteLLM bearer token ever leaves the proxy. The claim only conveys the caller
 
 `GET /api/plugins` lists the registered plugins, returning `name`, `display_name`, and `url` for each. `plugin_key` is never returned; it stays server-side. The caller must be authenticated.
 
-`GET /api/plugins/auth-token?plugin_name=<name>` returns a short-lived encrypted identity claim for the named plugin. It requires `LITELLM_SALT_KEY` to be set on the proxy (responds 503 otherwise) and the plugin to be registered (404 otherwise).
+`GET /api/plugins/auth-token?plugin_name=<name>` returns a short-lived encrypted identity claim for the named plugin. It requires `LUMINA_SALT_KEY` to be set on the proxy (responds 503 otherwise) and the plugin to be registered (404 otherwise).
 
 `ANY /plugin-proxy/{name}/{path}` is the authenticated reverse proxy to the plugin backend. Access is restricted to `proxy_admin`.
 
@@ -155,4 +155,4 @@ Responses are sandboxed with `Content-Security-Policy: sandbox` and `X-Content-T
 
 ## Security checklist
 
-Before exposing a plugin to your users, confirm that `LITELLM_SALT_KEY` is set on the proxy and is never shared with the plugin, that the plugin holds only its derived `HMAC(LITELLM_SALT_KEY, plugin_name)` key (provisioned as a dedicated secret), and that `plugin_key` is a dedicated credential scoped to the plugin rather than your LiteLLM master key. The plugin's `POST /api/plugin-auth` must enforce both the claim's `plugin` audience and its `exp` (30 second TTL). The plugin should treat `x-litellm-user-id` and `x-litellm-user-role` as identity hints, not as proof of authentication, and the plugin service URL should use HTTPS in production.
+Before exposing a plugin to your users, confirm that `LUMINA_SALT_KEY` is set on the proxy and is never shared with the plugin, that the plugin holds only its derived `HMAC(LUMINA_SALT_KEY, plugin_name)` key (provisioned as a dedicated secret), and that `plugin_key` is a dedicated credential scoped to the plugin rather than your LiteLLM master key. The plugin's `POST /api/plugin-auth` must enforce both the claim's `plugin` audience and its `exp` (30 second TTL). The plugin should treat `x-litellm-user-id` and `x-litellm-user-role` as identity hints, not as proof of authentication, and the plugin service URL should use HTTPS in production.

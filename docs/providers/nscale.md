@@ -92,15 +92,15 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: nscale/meta-llama/Llama-4-Scout-17B-16E-Instruct
-    litellm_params:
+    lumina_params:
       model: nscale/meta-llama/Llama-4-Scout-17B-16E-Instruct
       api_key: os.environ/NSCALE_API_KEY
   - model_name: nscale/meta-llama/Llama-3.3-70B-Instruct
-    litellm_params:
+    lumina_params:
       model: nscale/meta-llama/Llama-3.3-70B-Instruct
       api_key: os.environ/NSCALE_API_KEY
   - model_name: nscale/stabilityai/stable-diffusion-xl-base-1.0
-    litellm_params:
+    lumina_params:
       model: nscale/stabilityai/stable-diffusion-xl-base-1.0
       api_key: os.environ/NSCALE_API_KEY
 ```

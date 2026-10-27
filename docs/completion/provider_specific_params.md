@@ -367,7 +367,7 @@ assert len(response_2_text) > len(response_1_text)
 ```yaml
 model_list:
     - model_name: llama-3-8b-instruct
-      litellm_params:
+      lumina_params:
         model: predibase/llama-3-8b-instruct
         api_key: os.environ/PREDIBASE_API_KEY
         tenant_id: os.environ/PREDIBASE_TENANT_ID
@@ -380,7 +380,7 @@ model_list:
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "llama-3-8b-instruct",
   "messages": [

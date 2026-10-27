@@ -44,14 +44,14 @@ print(response)
 ```yaml showLineNumbers
 model_list:
   - model_name: recraft-v3
-    litellm_params:
+    lumina_params:
       model: recraft/recraftv3
       api_key: os.environ/RECRAFT_API_KEY
     model_info:
       mode: image_generation
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start the proxy
@@ -67,7 +67,7 @@ litellm --config config.yaml
 ```bash showLineNumbers
 curl --location 'http://0.0.0.0:4000/v1/images/generations' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "recraft-v3",
     "prompt": "A beautiful sunset over a calm ocean",
@@ -180,14 +180,14 @@ print(response)
 ```yaml showLineNumbers
 model_list:
   - model_name: recraft-v3
-    litellm_params:
+    lumina_params:
       model: recraft/recraftv3
       api_key: os.environ/RECRAFT_API_KEY
     model_info:
       mode: image_edit
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start the proxy
@@ -202,7 +202,7 @@ litellm --config config.yaml
 
 ```bash showLineNumbers
 curl --location 'http://0.0.0.0:4000/v1/images/edits' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'model="recraft-v3"' \
 --form 'prompt="Create a studio ghibli style image that combines all the reference images. Make sure the person looks like a CTO."' \
 --form 'image=@"reference_image.png"'

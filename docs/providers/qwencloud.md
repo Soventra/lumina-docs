@@ -180,7 +180,7 @@ To serve these models on the proxy, set `mode: video_generation` on the deployme
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: wan3-video
-    litellm_params:
+    lumina_params:
       model: qwencloud/wan3.0-video
       api_key: os.environ/QWENCLOUD_API_KEY
     model_info:
@@ -190,7 +190,7 @@ model_list:
 ```bash showLineNumbers title="Video generation via Proxy - cURL"
 curl http://localhost:4000/v1/videos \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "wan3-video",
     "prompt": "A paper boat drifting down a rain-soaked city gutter",
@@ -199,10 +199,10 @@ curl http://localhost:4000/v1/videos \
   }'
 
 curl http://localhost:4000/v1/videos/$VIDEO_ID \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl http://localhost:4000/v1/videos/$VIDEO_ID/content \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -o video.mp4
 ```
 
@@ -213,11 +213,11 @@ Add the models to your LiteLLM Proxy configuration:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: qwen-max
-    litellm_params:
+    lumina_params:
       model: qwencloud/qwen-max
       api_key: os.environ/QWENCLOUD_API_KEY
   - model_name: qwen-plus-cn
-    litellm_params:
+    lumina_params:
       model: qwen_ai_platform/qwen-plus
       api_key: os.environ/QWEN_AI_PLATFORM_API_KEY
 ```
@@ -255,7 +255,7 @@ print(response.choices[0].message.content)
 ```bash showLineNumbers title="QwenCloud via Proxy - cURL"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "qwen-max",
     "messages": [{"role": "user", "content": "hello from litellm"}]

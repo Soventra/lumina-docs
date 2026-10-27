@@ -60,13 +60,13 @@ agents:
 
 `protocolVersion` can be set the same way when registering through the API.
 
-An optional `litellm_params` block carries per-agent settings such as `api_key`, `headers`, `agent_card_path`, and Microsoft Entra credentials; [Foundry agents over A2A](./providers/azure_ai_agents#foundry-agents-over-a2a) shows a full entry
+An optional `lumina_params` block carries per-agent settings such as `api_key`, `headers`, `agent_card_path`, and Microsoft Entra credentials; [Foundry agents over A2A](./providers/azure_ai_agents#foundry-agents-over-a2a) shows a full entry
 
 Config-defined agents show up in the Agents tab and in `GET /v1/agents` alongside agents created in the UI, and they survive the periodic reload from the database. Verify them with:
 
 ```shell
 curl -s http://localhost:4000/v1/agents \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 If an agent created in the UI already uses a name you then declare in `config.yaml`, the database record wins and the config entry with that name is skipped, so the name always resolves to the record you can edit. Delete the database agent and the config entry takes the name back on the next reload.
@@ -338,7 +338,7 @@ After the virtual key is authenticated, LiteLLM checks whether the calling key (
 
 #### Trace ID enforcement (optional, per-agent)
 
-An agent can require every inbound request to carry a trace ID for cross-system audit threading. Set `require_trace_id_on_calls_to_agent: true` in the agent's `litellm_params`. When set, requests missing `x-litellm-trace-id` (or `x-litellm-session-id`) are rejected with HTTP 400.
+An agent can require every inbound request to carry a trace ID for cross-system audit threading. Set `require_trace_id_on_calls_to_agent: true` in the agent's `lumina_params`. When set, requests missing `x-litellm-trace-id` (or `x-litellm-session-id`) are rejected with HTTP 400.
 
 ```bash title="Register an agent that requires inbound trace IDs" showLineNumbers
 curl -X POST http://localhost:4000/v1/agents \
@@ -347,13 +347,13 @@ curl -X POST http://localhost:4000/v1/agents \
   -d '{
     "agent_name": "audit-critical-agent",
     "agent_card_params": { ... },
-    "litellm_params": {
+    "lumina_params": {
       "require_trace_id_on_calls_to_agent": true
     }
   }'
 ```
 
-Enforcing a trace ID on **outbound** calls made by a key owned by an agent is controlled by `require_trace_id_on_calls_by_agent` on the same `litellm_params` block.
+Enforcing a trace ID on **outbound** calls made by a key owned by an agent is controlled by `require_trace_id_on_calls_by_agent` on the same `lumina_params` block.
 
 #### Sub-agent identity propagation
 
@@ -451,7 +451,7 @@ Agent JSON-RPC errors are returned in the `error` field with the same `id` as th
 
 ```bash title="Poll task after message/send"
 curl -X POST "http://localhost:4000/a2a/my-agent" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -474,7 +474,7 @@ Use the [AI Hub](./proxy/ai_hub) to make agents public and discoverable across y
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
@@ -484,7 +484,7 @@ litellm_settings:
 
 ```console title="Rank agents for a task" showLineNumbers
 $ curl -s "http://localhost:4000/v1/agents?query=translate+a+pdf+document&top_k=3" \
-    -H "Authorization: Bearer $LITELLM_KEY" | jq -c '.[] | {agent_name, search_score}'
+    -H "Authorization: Bearer $LUMINA_KEY" | jq -c '.[] | {agent_name, search_score}'
 {"agent_name":"document-translator","search_score":0.6732403392080719}
 {"agent_name":"trip-planner","search_score":0.1121043964671429}
 {"agent_name":"warehouse-sql-analyst","search_score":0.0946962275274791}

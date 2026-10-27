@@ -100,7 +100,7 @@ Add this to your config.yaml:
 ```yaml
 vector_store_registry:
   - vector_store_name: "azure-ai-search-litellm-website-knowledgebase"
-    litellm_params:
+    lumina_params:
         vector_store_id: "my-vector-index"  # Your Azure AI Search index name
         custom_llm_provider: "azure_ai"
         azure_search_service_name: "your-search-service"  # or api_base: https://your-search-service.search.windows.net
@@ -123,7 +123,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/vector_stores/my-vector-index/search' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "query": "What is the capital of France?"
 }'

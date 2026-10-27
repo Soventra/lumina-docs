@@ -79,7 +79,7 @@ This release brings model-level guardrails support to your config.yaml + UI. Thi
 ```yaml
 model_list:
   - model_name: claude-sonnet-4
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-20250514
       api_key: os.environ/ANTHROPIC_API_KEY
       api_base: https://api.anthropic.com/v1
@@ -87,7 +87,7 @@ model_list:
 
 guardrails:
   - guardrail_name: azure-text-moderation
-    litellm_params:
+    lumina_params:
       guardrail: azure/text_moderations
       mode: "post_call" 
       api_key: os.environ/AZURE_GUARDRAIL_API_KEY

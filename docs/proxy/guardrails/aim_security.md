@@ -35,13 +35,13 @@ Define your guardrails under the `guardrails` section
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: aim-protected-app
-    litellm_params:
+    lumina_params:
       guardrail: aim
       mode: [pre_call, post_call] # "During_call" is also available
       api_key: os.environ/AIM_API_KEY

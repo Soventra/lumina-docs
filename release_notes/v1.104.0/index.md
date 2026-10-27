@@ -29,7 +29,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
@@ -54,11 +54,11 @@ Customer-facing changes come first. Test, CI and internal changes are listed at 
 
 These callouts cover user-facing behavior that differs from `v1.103.0`, the previous stable release
 
-**The proxy refuses to start with an unset, empty, or publicly known master key.** A deployment with no `LITELLM_MASTER_KEY`, an empty one, or a known unsafe value stops booting after the upgrade. The startup error names where the bad key came from and prints a command that generates a secure one. If the database holds values encrypted with the old key, also set `LITELLM_MIGRATE_FROM_MASTER_KEY` so the next boot re-encrypts them. To keep the old behavior on a local sandbox, set `LITELLM_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY=true` or `general_settings.dangerously_permit_weak_or_unset_master_key: true`. See [PR #42019](https://github.com/BerriAI/litellm/pull/42019), [PR #42011](https://github.com/BerriAI/litellm/pull/42011)
+**The proxy refuses to start with an unset, empty, or publicly known master key.** A deployment with no `LUMINA_MASTER_KEY`, an empty one, or a known unsafe value stops booting after the upgrade. The startup error names where the bad key came from and prints a command that generates a secure one. If the database holds values encrypted with the old key, also set `LUMINA_MIGRATE_FROM_MASTER_KEY` so the next boot re-encrypts them. To keep the old behavior on a local sandbox, set `LUMINA_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY=true` or `general_settings.dangerously_permit_weak_or_unset_master_key: true`. See [PR #42019](https://github.com/BerriAI/litellm/pull/42019), [PR #42011](https://github.com/BerriAI/litellm/pull/42011)
 
 **An exhausted budget now returns HTTP 422 instead of 429.** Clients stop treating a spent budget as a retryable rate limit. Real rpm/tpm limits still return 429. Set `litellm_settings.budget_exceeded_status_code: 429` to keep the old status. See [PR #42097](https://github.com/BerriAI/litellm/pull/42097)
 
-**stdio MCP servers are off by default.** Existing stdio servers stay listed but never start, and new ones are rejected. Set `LITELLM_ENABLE_MCP_STDIO=true` in the proxy's environment (not `config.yaml` or the DB) and restart to keep using them. See [PR #44066](https://github.com/BerriAI/litellm/pull/44066)
+**stdio MCP servers are off by default.** Existing stdio servers stay listed but never start, and new ones are rejected. Set `LUMINA_ENABLE_MCP_STDIO=true` in the proxy's environment (not `config.yaml` or the DB) and restart to keep using them. See [PR #44066](https://github.com/BerriAI/litellm/pull/44066)
 
 **The proxy exits when database setup fails at startup** instead of serving against an outdated schema. Set `ENFORCE_PRISMA_MIGRATION_CHECK=false` to keep the old behavior. See [PR #44206](https://github.com/BerriAI/litellm/pull/44206)
 

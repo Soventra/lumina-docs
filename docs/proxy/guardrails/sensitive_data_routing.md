@@ -33,18 +33,18 @@ With `sticky_session` enabled (the default), the first time sensitive data is se
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: cloud-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: on-prem-model
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/meta-llama/Llama-3.1-8B-Instruct
       api_base: http://your-on-prem-host:8000/v1
 
 guardrails:
   - guardrail_name: "sensitive-data-routing"
-    litellm_params:
+    lumina_params:
       guardrail: sensitive_data_routing
       mode: "pre_call"
       default_on: true
@@ -78,7 +78,7 @@ litellm --config config.yaml --detailed_debug
 
 ```bash showLineNumbers
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "cloud-model",
@@ -93,7 +93,7 @@ The response `model` field reflects the cloud model.
 
 ```bash showLineNumbers
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "cloud-model",

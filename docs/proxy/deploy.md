@@ -36,13 +36,13 @@ The supporting infrastructure is identical in either mode:
 
 ```bash
 DATABASE_URL="postgresql://user:password@host:5432/litellm"
-LITELLM_MASTER_KEY="sk-..."   # admin key for the proxy
-LITELLM_SALT_KEY="sk-..."     # encrypts provider credentials stored in the DB. Set once, never change it
+LUMINA_MASTER_KEY="sk-..."   # admin key for the proxy
+LUMINA_SALT_KEY="sk-..."     # encrypts provider credentials stored in the DB. Set once, never change it
 DISABLE_SCHEMA_UPDATE="true"  # proxy instances never run migrations; the migrations job does
 STORE_MODEL_IN_DB="True"      # manage models from the Admin UI instead of config files
 ```
 
-`LITELLM_SALT_KEY` cannot be rotated after you add models: it encrypts the provider credentials stored in your database, and changing it makes them unreadable. Generate a strong random value and store both keys in your cloud's secret manager.
+`LUMINA_SALT_KEY` cannot be rotated after you add models: it encrypts the provider credentials stored in your database, and changing it makes them unreadable. Generate a strong random value and store both keys in your cloud's secret manager.
 
 Official images are published to `ghcr.io/berriai` and mirrored at `docker.litellm.ai/berriai`. Use `ghcr.io/berriai/litellm` for monolithic deployments, including those with Postgres, since it bundles the Prisma toolchain, and pin a version tag rather than `latest` or a moving tag, so rollbacks are deterministic. All images are signed; see the [Docker Image Security Guide](./docker_image_security.md) for verification and the non-root variant.
 
@@ -95,7 +95,7 @@ kubectl create secret generic litellm-db \
   --from-literal=password="<database-password>"
 
 kubectl create secret generic litellm-env \
-  --from-literal=LITELLM_SALT_KEY="sk-$(openssl rand -hex 24)" \
+  --from-literal=LUMINA_SALT_KEY="sk-$(openssl rand -hex 24)" \
   --from-literal=REDIS_PASSWORD="<redis-password>" \
   --from-literal=OPENAI_API_KEY="<provider-key>"
 ```
@@ -131,7 +131,7 @@ environmentSecrets:
 proxy_config:
   model_list:
     - model_name: {{openai_large}}
-      litellm_params:
+      lumina_params:
         model: openai/{{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
   router_settings:
@@ -330,7 +330,7 @@ data:
   config.yaml: |
       model_list:
         - model_name: {{openai_large}}
-          litellm_params:
+          lumina_params:
             model: openai/{{openai_large}}
             api_key: os.environ/OPENAI_API_KEY
 ---
@@ -406,7 +406,7 @@ spec:
 
 </details>
 
-To connect the database, add `DATABASE_URL` and `LITELLM_MASTER_KEY` to the Secret; nothing else in the manifest changes, because the image already carries the Prisma toolchain.
+To connect the database, add `DATABASE_URL` and `LUMINA_MASTER_KEY` to the Secret; nothing else in the manifest changes, because the image already carries the Prisma toolchain.
 
 ## Deploy with Terraform (AWS and GCP)
 
@@ -536,7 +536,7 @@ module "litellm" {
   proxy_config = {
     model_list = [{
       model_name = "{{openai_large}}"
-      litellm_params = {
+      lumina_params = {
         model   = "openai/{{openai_large}}"
         api_key = "os.environ/OPENAI_API_KEY"
       }
@@ -616,7 +616,7 @@ module "litellm" {
   proxy_config = {
     model_list = [{
       model_name = "{{gemini_pro}}"
-      litellm_params = { model = "vertex_ai/{{gemini_pro}}" }
+      lumina_params = { model = "vertex_ai/{{gemini_pro}}" }
     }]
   }
 }

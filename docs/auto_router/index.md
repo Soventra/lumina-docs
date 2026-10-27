@@ -50,20 +50,20 @@ Already testing it? Share your results in [discussion #32168](https://github.com
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: claude-haiku-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -77,7 +77,7 @@ model_list:
 
 ```shell
 curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{"model": "smart-router", "messages": [{"role": "user", "content": "What is 2+2?"}]}'
 ```
 

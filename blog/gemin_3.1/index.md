@@ -100,11 +100,11 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: gemini-3.1-pro-preview
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.1-pro-preview
       api_key: os.environ/GEMINI_API_KEY
   - model_name: vertex-gemini-3.1-pro-preview
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-3.1-pro-preview
 ```
 

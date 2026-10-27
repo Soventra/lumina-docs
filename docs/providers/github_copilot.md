@@ -51,7 +51,7 @@ If you manage models in `config.yaml`, create the credential in the dashboard an
 ```yaml showLineNumbers keep-model-ids title="config.yaml"
 model_list:
   - model_name: claude-copilot
-    litellm_params:
+    lumina_params:
       model: github_copilot/claude-sonnet-5.5
       litellm_credential_name: github-copilot
 ```

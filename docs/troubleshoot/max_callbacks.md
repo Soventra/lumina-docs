@@ -20,29 +20,29 @@ The default limit is **100 callbacks**.
 
 ## How to Override
 
-Set the `LITELLM_MAX_CALLBACKS` environment variable to increase the limit:
+Set the `LUMINA_MAX_CALLBACKS` environment variable to increase the limit:
 
 ```bash
 # Docker
-docker run -e LITELLM_MAX_CALLBACKS=200 ...
+docker run -e LUMINA_MAX_CALLBACKS=200 ...
 
 # Docker Compose
 environment:
-  - LITELLM_MAX_CALLBACKS=200
+  - LUMINA_MAX_CALLBACKS=200
 
 # Kubernetes
 env:
-  - name: LITELLM_MAX_CALLBACKS
+  - name: LUMINA_MAX_CALLBACKS
     value: "200"
 
 # Direct
-export LITELLM_MAX_CALLBACKS=200
+export LUMINA_MAX_CALLBACKS=200
 litellm --config config.yaml
 ```
 
 ## Recommendations
 
-1. **Start conservative** - Only increase as much as you need. If you have 150 teams with guardrails, try `LITELLM_MAX_CALLBACKS=175` to leave headroom.
+1. **Start conservative** - Only increase as much as you need. If you have 150 teams with guardrails, try `LUMINA_MAX_CALLBACKS=175` to leave headroom.
 
 2. **Monitor performance** - More callbacks means more processing per request. Watch your CPU usage and response latency after increasing the limit.
 
@@ -64,5 +64,5 @@ litellm_settings:
 Set the environment variable:
 
 ```bash
-export LITELLM_MAX_CALLBACKS=200
+export LUMINA_MAX_CALLBACKS=200
 ```

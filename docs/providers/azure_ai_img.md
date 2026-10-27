@@ -208,7 +208,7 @@ for image in response.data:
 ```yaml showLineNumbers title="Azure AI Image Generation Configuration"
 model_list:
   - model_name: azure-flux-kontext
-    litellm_params:
+    lumina_params:
       model: azure_ai/FLUX.1-Kontext-pro
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -216,7 +216,7 @@ model_list:
       mode: image_generation
   
   - model_name: azure-flux-11-pro
-    litellm_params:
+    lumina_params:
       model: azure_ai/FLUX-1.1-pro
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -224,7 +224,7 @@ model_list:
       mode: image_generation
 
   - model_name: azure-flux-2-pro
-    litellm_params:
+    lumina_params:
       model: azure_ai/flux.2-pro
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -233,7 +233,7 @@ model_list:
       mode: image_generation
 
   - model_name: azure-flux-2-flex
-    litellm_params:
+    lumina_params:
       model: azure_ai/FLUX.2-flex
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -242,7 +242,7 @@ model_list:
       mode: image_generation
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start LiteLLM Proxy Server
@@ -303,7 +303,7 @@ print(response.data[0].url)
 ```bash showLineNumbers title="Azure AI Image Generation via Proxy - cURL"
 curl --location 'http://localhost:4000/v1/images/generations' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "azure-flux-kontext",
     "prompt": "A cozy coffee shop interior with warm lighting and rustic wooden furniture",
@@ -382,7 +382,7 @@ asyncio.run(edit_image())
 
 ```bash showLineNumbers title="Image Edit via Proxy - cURL"
 curl --location 'http://localhost:4000/v1/images/edits' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'model="azure-flux-2-pro"' \
 --form 'prompt="Add sunglasses to the person"' \
 --form 'image=@"input_image.png"'

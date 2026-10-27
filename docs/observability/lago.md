@@ -53,7 +53,7 @@ response = litellm.completion(
 1. Add to Config.yaml
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: https://openai-function-calling-workers.tasslexyz.workers.dev/
     api_key: my-fake-key
     model: openai/my-fake-model

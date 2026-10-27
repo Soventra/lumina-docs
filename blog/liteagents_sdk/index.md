@@ -34,7 +34,7 @@ profile = ProfileOptions(
     model="my-model",
     model_kwargs={
         "api_base": "https://your-gateway.example/v1",
-        "api_key": os.environ["LITELLM_API_KEY"],
+        "api_key": os.environ["LUMINA_API_KEY"],
     },
 )
 
@@ -44,7 +44,7 @@ async with LiteAgentClient(options=options) as agent:
         print(message)
 ```
 
-This excerpt uses your existing `lookup_order` tool and the `LITELLM_API_KEY` environment variable. Set `model` to the alias configured on your gateway and `api_base` to its endpoint. LiteAgents sends the alias unchanged; no routing prefix is needed. Once you've installed the harness you want to try, change `harness` and run the same application.
+This excerpt uses your existing `lookup_order` tool and the `LUMINA_API_KEY` environment variable. Set `model` to the alias configured on your gateway and `api_base` to its endpoint. LiteAgents sends the alias unchanged; no routing prefix is needed. Once you've installed the harness you want to try, change `harness` and run the same application.
 
 Install only the harness integrations you plan to use. Extras such as `[deepagents]` supply that adapter's dependencies and reuse compatible packages in your Python environment. `[all]` is a convenience for trying every integration; OpenCode also needs its executable. Changing the profile selects which harness runs.
 

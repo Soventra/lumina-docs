@@ -27,9 +27,9 @@ Keep deployment secrets private and retain them with your recovery materials. Th
 
 Set `LENS_PUBLIC_URL` to the browser origin, such as `https://lens.example.com`. The starter uses it for its UI, generated tracing address and secure session cookies. Forward the standalone UI and API to Lens port 4318 with the [HTTPS server example](./server.md#3-route-https-traffic)
 
-An optional separate ingestion address uses `LITELLM_LENS_PUBLIC_URL` on Lens, or `ingestionUrl` in its Helm chart. It defaults to the Lens public URL. Retain an existing path prefix such as `/lens-ingest` and leave off `/v1/traces`; setup adds that suffix
+An optional separate ingestion address uses `LUMINA_LENS_PUBLIC_URL` on Lens, or `ingestionUrl` in its Helm chart. It defaults to the Lens public URL. Retain an existing path prefix such as `/lens-ingest` and leave off `/v1/traces`; setup adds that suffix
 
-The gateway separately uses `LITELLM_LENS_URL` for its private connection and `LITELLM_LENS_PUBLIC_URL` for the tracing address shown to users. Verify reachability from the actual gateway, browser and agent networks
+The gateway separately uses `LUMINA_LENS_URL` for its private connection and `LUMINA_LENS_PUBLIC_URL` for the tracing address shown to users. Verify reachability from the actual gateway, browser and agent networks
 
 ## Use an ingress with Helm {#dedicated-ingress}
 
@@ -55,9 +55,9 @@ Make any shared-network reference persistent in both Compose configurations, inc
 | --- | --- | --- |
 | `LENS_ADMIN_TOKEN` | Lens | Standalone administrator credential |
 | `LENS_PUBLIC_URL` | Lens | Browser origin and default ingestion address |
-| `LITELLM_LENS_PUBLIC_URL` | Lens and gateway | Address advertised for agent ingestion |
-| `LITELLM_LENS_URL` | Gateway | Private Lens API base address |
-| `LITELLM_LENS_SERVICE_TOKEN` | Lens and gateway | Shared internal service credential |
+| `LUMINA_LENS_PUBLIC_URL` | Lens and gateway | Address advertised for agent ingestion |
+| `LUMINA_LENS_URL` | Gateway | Private Lens API base address |
+| `LUMINA_LENS_SERVICE_TOKEN` | Lens and gateway | Shared internal service credential |
 | `LENS_GATEWAY_SECRET` | Lens and gateway | Shared delegated-identity signing credential |
 | `CLICKHOUSE_URL`, or host/user/password settings | Lens | ClickHouse HTTP connection |
 | `CLICKHOUSE_DATABASE` | Lens | Selected database, default `lens` in standalone Lens |

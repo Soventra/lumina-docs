@@ -28,7 +28,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
@@ -566,7 +566,7 @@ Counts represent new catalog identifiers compared with `v1.106.0`, including ali
 ### Agents and Agent-to-Agent
 
 - Add opt-in `general_settings.agent_access_default_deny` so a key with no agent grants on itself or its team can reach no agents - [PR #43979](https://github.com/BerriAI/litellm/pull/43979)
-- Add a per-agent `litellm_params.a2a_protocol_version` (`0.3` or `1.0`) that overrides the agent card's declared version, so LangGraph agents on langgraph-api 0.15 stop failing with `has no field named "kind"` - [PR #44463](https://github.com/BerriAI/litellm/pull/44463)
+- Add a per-agent `lumina_params.a2a_protocol_version` (`0.3` or `1.0`) that overrides the agent card's declared version, so LangGraph agents on langgraph-api 0.15 stop failing with `has no field named "kind"` - [PR #44463](https://github.com/BerriAI/litellm/pull/44463)
 - Add the `databricks_agent` provider so Databricks Agent Platform agents (Model Serving endpoints, the unified responses URL and Databricks Apps) work in the agent gateway with PAT or OAuth M2M auth, plus a Databricks Agent card in the Admin UI - [PR #45681](https://github.com/BerriAI/litellm/pull/45681)
 
 ### SDK
@@ -684,7 +684,7 @@ Counts represent new catalog identifiers compared with `v1.106.0`, including ali
 ### Model management
 
 - Name the replacement for a deprecating deployment with `model_info.successor_model`, shown in `GET /v1/model/deprecations` and in the daily Slack deprecation alert - [PR #41670](https://github.com/BerriAI/litellm/pull/41670)
-- Drop model capability flags such as `supports_max_reasoning_effort` from a deployment's `litellm_params` before calling the provider, and warn at load to move them to `model_info` - [PR #46647](https://github.com/BerriAI/litellm/pull/46647)
+- Drop model capability flags such as `supports_max_reasoning_effort` from a deployment's `lumina_params` before calling the provider, and warn at load to move them to `model_info` - [PR #46647](https://github.com/BerriAI/litellm/pull/46647)
 
 ### Usage and analytics
 
@@ -694,10 +694,10 @@ Counts represent new catalog identifiers compared with `v1.106.0`, including ali
 ### Proxy configuration
 
 - Refuse `POST /fallback` and `DELETE /fallback/{model}` with a 400 when `router_settings.fallbacks` is set in `config.yaml`, matching `/config/update` - [PR #45860](https://github.com/BerriAI/litellm/pull/45860)
-- Treat blank numeric environment variables as unset so the proxy no longer crash-loops at boot, and resolve blank guardrail `litellm_params` env values to the field default instead of silently dropping the guardrail - [PR #46341](https://github.com/BerriAI/litellm/pull/46341)
+- Treat blank numeric environment variables as unset so the proxy no longer crash-loops at boot, and resolve blank guardrail `lumina_params` env values to the field default instead of silently dropping the guardrail - [PR #46341](https://github.com/BerriAI/litellm/pull/46341)
 - Store list-valued audit log changes as JSON text, so changes that carry a list, such as ignoring or snoozing a deployment warning, are written to the audit log instead of failing - [PR #46555](https://github.com/BerriAI/litellm/pull/46555)
 - Keep JSON nulls as null in audit log values instead of storing the string `None`, so a cleared budget reads as an empty value while keys stay masked - [PR #46577](https://github.com/BerriAI/litellm/pull/46577)
-- Revert the `LITELLM_FIPS_MODE` startup gate and its loud password migration failure, because its FIPS probe misreports real enforcing runtimes - [PR #46740](https://github.com/BerriAI/litellm/pull/46740)
+- Revert the `LUMINA_FIPS_MODE` startup gate and its loud password migration failure, because its FIPS probe misreports real enforcing runtimes - [PR #46740](https://github.com/BerriAI/litellm/pull/46740)
 
 ### CLI and coding agents
 
@@ -769,7 +769,7 @@ Counts represent new catalog identifiers compared with `v1.106.0`, including ali
 
 #### OpenTelemetry
 
-- Return the W3C `traceresponse` header on sampled responses when `LITELLM_OTEL_V2=1`, naming the trace and the gateway's server span, which carries the response's `litellm.call_id` - [PR #42079](https://github.com/BerriAI/litellm/pull/42079)
+- Return the W3C `traceresponse` header on sampled responses when `LUMINA_OTEL_V2=1`, naming the trace and the gateway's server span, which carries the response's `litellm.call_id` - [PR #42079](https://github.com/BerriAI/litellm/pull/42079)
 - Let a team or key set `callback_vars.capture_message_content` to `no_content` or `span_only` for its own OTel v2 destination, overriding the global setting - [PR #44264](https://github.com/BerriAI/litellm/pull/44264)
 - Let a team or key set `callback_vars.excluded_services` to override the global OTel v2 excluded services for its own destination, where `none` excludes nothing - [PR #45880](https://github.com/BerriAI/litellm/pull/45880)
 
@@ -791,8 +791,8 @@ Counts represent new catalog identifiers compared with `v1.106.0`, including ali
 
 - Add opt-in telemetry in `litellm.telemetry` with a fixed allowlist of record fields and consent groups, where a group only counts when all its parent groups are on - [PR #45484](https://github.com/BerriAI/litellm/pull/45484)
 - Aggregate telemetry records into fixed-bucket histogram rows and export each window as one JSON report over HTTP, retrying on 429 and 5xx responses - [PR #45487](https://github.com/BerriAI/litellm/pull/45487)
-- Record request latency, status and provider attempts for the enabled telemetry groups, flushed every 5 minutes, with `LITELLM_TELEMETRY_DISABLED=true` turning everything off - [PR #45489](https://github.com/BerriAI/litellm/pull/45489)
-- Store telemetry reports in the `LiteLLM_TelemetryReport` table when `LITELLM_TELEMETRY_DESTINATION=local_table`, keep one instance ID across restarts and workers, and add `GET /telemetry/reports` for admins to export them - [PR #45490](https://github.com/BerriAI/litellm/pull/45490)
+- Record request latency, status and provider attempts for the enabled telemetry groups, flushed every 5 minutes, with `LUMINA_TELEMETRY_DISABLED=true` turning everything off - [PR #45489](https://github.com/BerriAI/litellm/pull/45489)
+- Store telemetry reports in the `LiteLLM_TelemetryReport` table when `LUMINA_TELEMETRY_DESTINATION=local_table`, keep one instance ID across restarts and workers, and add `GET /telemetry/reports` for admins to export them - [PR #45490](https://github.com/BerriAI/litellm/pull/45490)
 
 ## Spend Tracking, Budgets and Rate Limiting
 
@@ -1066,8 +1066,8 @@ These 218 changes touch tests, CI, contributor tooling, refactors, Rust runtime 
 - Bump the Rust workspace's `serde_with` to 3.21.0 to clear osv-scan - [PR #45498](https://github.com/BerriAI/litellm/pull/45498)
 - Type the AWS connection params in `auth-aws` - [PR #45610](https://github.com/BerriAI/litellm/pull/45610)
 - Give Messages configs typed LiteLLM params - [PR #45611](https://github.com/BerriAI/litellm/pull/45611)
-- Add native DeepSeek `/v1/messages` support to the Rust core, opted in with `LITELLM_RUST` - [PR #45614](https://github.com/BerriAI/litellm/pull/45614)
-- Add native Vertex AI Claude `/v1/messages` support to the Rust core, opted in with `LITELLM_RUST` - [PR #45626](https://github.com/BerriAI/litellm/pull/45626)
+- Add native DeepSeek `/v1/messages` support to the Rust core, opted in with `LUMINA_RUST` - [PR #45614](https://github.com/BerriAI/litellm/pull/45614)
+- Add native Vertex AI Claude `/v1/messages` support to the Rust core, opted in with `LUMINA_RUST` - [PR #45626](https://github.com/BerriAI/litellm/pull/45626)
 - Type the Vertex AI connection params in `auth-gcp` - [PR #45641](https://github.com/BerriAI/litellm/pull/45641)
 - Use one `LitellmParams` type for a config and a caller - [PR #45642](https://github.com/BerriAI/litellm/pull/45642)
 - Route Python state reads through host modules in the Rust bridge - [PR #45689](https://github.com/BerriAI/litellm/pull/45689)
@@ -1087,7 +1087,7 @@ These 218 changes touch tests, CI, contributor tooling, refactors, Rust runtime 
 - Collect `host-python` failures in a `thiserror` `Error` enum - [PR #46361](https://github.com/BerriAI/litellm/pull/46361)
 - Pin Messages and Responses callback contracts on the native path - [PR #46443](https://github.com/BerriAI/litellm/pull/46443)
 - Assert native serving through the `x-litellm-rust` response marker - [PR #46531](https://github.com/BerriAI/litellm/pull/46531)
-- Select native routes per test without `LITELLM_RUST` - [PR #46620](https://github.com/BerriAI/litellm/pull/46620)
+- Select native routes per test without `LUMINA_RUST` - [PR #46620](https://github.com/BerriAI/litellm/pull/46620)
 - Remove the `LoggerRule` concept from the Rust bridge catalog - [PR #46711](https://github.com/BerriAI/litellm/pull/46711)
 - Move the route host modules under `host/routes` - [PR #46786](https://github.com/BerriAI/litellm/pull/46786)
 - Let each route host pick the body params - [PR #46787](https://github.com/BerriAI/litellm/pull/46787)

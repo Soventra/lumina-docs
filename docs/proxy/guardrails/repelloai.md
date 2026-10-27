@@ -32,13 +32,13 @@ Policies (what to block, what to flag, thresholds) are managed entirely from the
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "repelloai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: "pre_call"
       asset_id: "your-repello-asset-id"
@@ -165,7 +165,7 @@ Flagged responses are allowed, but LiteLLM logs a warning so the policy hit is s
 ```yaml
 guardrails:
   - guardrail_name: "repelloai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: "pre_call"
       asset_id: "your-repello-asset-id"
@@ -209,7 +209,7 @@ By default the guardrail is **fail-closed**; if Argus is unreachable, the reques
 ```yaml
 guardrails:
   - guardrail_name: "repelloai-failopen"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: "pre_call"
       asset_id: "your-repello-asset-id"
@@ -226,7 +226,7 @@ Scan prompts on the way in and responses on the way out. You can use a single gu
 ```yaml
 guardrails:
   - guardrail_name: "repelloai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: ["pre_call", "post_call"]
       asset_id: "your-repello-asset-id"
@@ -238,14 +238,14 @@ Or equivalently with two entries:
 ```yaml
 guardrails:
   - guardrail_name: "repelloai-input"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: "pre_call"
       asset_id: "your-repello-asset-id"
       api_key: os.environ/ARGUS_API_KEY
 
   - guardrail_name: "repelloai-output"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: "post_call"
       asset_id: "your-repello-asset-id"
@@ -259,7 +259,7 @@ Enable the guardrail for every request without specifying it per-call:
 ```yaml
 guardrails:
   - guardrail_name: "repelloai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: repelloai
       mode: "pre_call"
       asset_id: "your-repello-asset-id"

@@ -21,7 +21,7 @@ Configure guardrails to run before MCP tool calls to validate and sanitize input
 ```yaml title="config.yaml" showLineNumbers
 guardrails:
   - guardrail_name: "mcp-input-validation"
-    litellm_params:
+    lumina_params:
       guardrail: presidio  # or other supported guardrails
       mode: "pre_mcp_call" # or during_mcp_call
       pii_entities_config:
@@ -40,7 +40,7 @@ MCP sub-calls do not inherit the parent request's `guardrails` selection, so set
 ```yaml title="config.yaml" showLineNumbers
 guardrails:
   - guardrail_name: "mcp-output-scan"
-    litellm_params:
+    lumina_params:
       guardrail: panw_prisma_airs  # or presidio, or any guardrail that implements apply_guardrail
       mode: "post_mcp_call"
       api_key: os.environ/PANW_PRISMA_AIRS_API_KEY
@@ -73,7 +73,7 @@ mcp_servers:
 
 guardrails:
   - guardrail_name: mcp-injection-filter
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: pre_mcp_call
       default_on: true
@@ -86,7 +86,7 @@ guardrails:
 
 ```bash title="List tools" showLineNumbers
 curl -s http://localhost:4000/mcp-rest/tools/list \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 A tool the upstream serves with a poisoned description is missing from `tools`, and the proxy log carries the reason:
@@ -110,7 +110,7 @@ Test your MCP guardrails with a request that includes sensitive information:
 ```bash title="Test MCP Guardrail" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [

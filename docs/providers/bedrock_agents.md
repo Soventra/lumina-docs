@@ -82,14 +82,14 @@ for chunk in response:
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration"
 model_list:
   - model_name: bedrock-agent-1
-    litellm_params:
+    lumina_params:
       model: bedrock/agent/L1RT58GYRW/MFPSBCXYTW
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: us-west-2
 
   - model_name: bedrock-agent-2  
-    litellm_params:
+    lumina_params:
       model: bedrock/agent/AGENT456/ALIAS789
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -113,7 +113,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Basic Agent Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "bedrock-agent-1",
     "messages": [
@@ -128,7 +128,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```bash showLineNumbers title="Streaming Agent Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "bedrock-agent-2",
     "messages": [
@@ -224,7 +224,7 @@ response = litellm.completion(
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration"
 model_list:
   - model_name: bedrock-agent-1
-    litellm_params:
+    lumina_params:
       model: bedrock/agent/L1RT58GYRW/MFPSBCXYTW
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY

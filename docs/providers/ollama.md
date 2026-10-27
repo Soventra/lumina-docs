@@ -145,7 +145,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: "llama3.1"             
-    litellm_params:
+    lumina_params:
       model: "ollama_chat/llama3.1"
       keep_alive: "8m" # Optional: Overrides default keep_alive, use -1 for Forever
     model_info:
@@ -163,7 +163,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "llama3.1",
   "messages": [
@@ -230,7 +230,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: "llama3.1"             
-    litellm_params:
+    lumina_params:
       model: "ollama/llama3.1"
       api_base: "http://localhost:11434"
 ```
@@ -323,7 +323,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: "deepseek-r1"             
-    litellm_params:
+    lumina_params:
       model: "ollama_chat/deepseek-r1"
       api_base: "http://localhost:11434"
 ```

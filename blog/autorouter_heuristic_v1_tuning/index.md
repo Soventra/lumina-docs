@@ -104,23 +104,23 @@ You can also start with a file-based config:
 ```yaml title="config.yaml"
 model_list:
   - model_name: claude-haiku-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-fable-5-1-high
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-fable-5-1
       api_key: os.environ/ANTHROPIC_API_KEY
       reasoning_effort: high
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         classifier_type: heuristic

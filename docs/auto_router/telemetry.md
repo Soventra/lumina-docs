@@ -32,7 +32,7 @@ Start with an existing [Auto Router configuration](./setup.md) and an OTLP colle
 Set the following in the **gateway process environment before startup**, then restart the gateway:
 
 ```bash
-export LITELLM_OTEL_V2=true
+export LUMINA_OTEL_V2=true
 export OTEL_EXPORTER=otlp_http
 export OTEL_ENDPOINT="http://otel-collector:4318"
 export OTEL_SERVICE_NAME="litellm-gateway"
@@ -46,17 +46,17 @@ The complete example below explicitly registers the generic `otel` callback. If 
 ```yaml title="config.yaml"
 model_list:
   - model_name: efficient
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: capable
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: smart-router
     model_info:
       id: smart-router-config
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: capable
       complexity_router_config:
@@ -71,10 +71,10 @@ litellm_settings:
   callbacks: ["otel"]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
-Supply `OPENAI_API_KEY` and `LITELLM_MASTER_KEY` through your deployment's secret configuration, then start the proxy:
+Supply `OPENAI_API_KEY` and `LUMINA_MASTER_KEY` through your deployment's secret configuration, then start the proxy:
 
 ```bash
 litellm --config config.yaml --port 4000
@@ -90,7 +90,7 @@ export OTEL_EXPORTER=console
 
 Clear the endpoint variables because a configured endpoint selects network export even when `OTEL_EXPORTER=console`. If you configured explicit network exporters in `callback_settings.otel`, remove those for this console-only preview as well. Console export does not send traces to Lens or another backend.
 
-These routing attributes and span events do not require `LITELLM_OTEL_INTEGRATION_ENABLE_METRICS` or `LITELLM_OTEL_INTEGRATION_ENABLE_EVENTS`.
+These routing attributes and span events do not require `LUMINA_OTEL_INTEGRATION_ENABLE_METRICS` or `LUMINA_OTEL_INTEGRATION_ENABLE_EVENTS`.
 
 ### Send traces to Lens
 
@@ -104,15 +104,15 @@ export OTEL_ENDPOINT="${LENS_GATEWAY_URL}/v1/traces"
 export OTEL_HEADERS="Authorization=Bearer ${LENS_INGEST_KEY}"
 ```
 
-Keep `LITELLM_OTEL_V2=true` and restart the source gateway after changing its exporter. If an existing collector already sends traces to another backend, add Lens as a collector destination to keep both copies. The application continues sending inference requests to the source gateway; only telemetry is forwarded to Lens. See the [Lens OpenTelemetry integration](/docs/proxy/lens/integrations/opentelemetry) for ingestion setup and examples.
+Keep `LUMINA_OTEL_V2=true` and restart the source gateway after changing its exporter. If an existing collector already sends traces to another backend, add Lens as a collector destination to keep both copies. The application continues sending inference requests to the source gateway; only telemetry is forwarded to Lens. See the [Lens OpenTelemetry integration](/docs/proxy/lens/integrations/opentelemetry) for ingestion setup and examples.
 
 ## Verify an Auto Router request
 
-Use a LiteLLM virtual key with access to `smart-router` as `LITELLM_API_KEY`:
+Use a LiteLLM virtual key with access to `smart-router` as `LUMINA_API_KEY`:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model":"smart-router","messages":[{"role":"user","content":"What is 2+2?"}]}'
 ```

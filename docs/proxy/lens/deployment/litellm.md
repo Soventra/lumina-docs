@@ -35,7 +35,7 @@ Expect HTTP 200. The gateway must also be able to reach this service. A gateway 
 
 ## 2. Create the two connection secrets
 
-If Lens already connects to a gateway, reuse its existing `LITELLM_LENS_SERVICE_TOKEN` and `LENS_GATEWAY_SECRET`. Do not rotate them as part of adding this connection.
+If Lens already connects to a gateway, reuse its existing `LUMINA_LENS_SERVICE_TOKEN` and `LENS_GATEWAY_SECRET`. Do not rotate them as part of adding this connection.
 
 For a new connection, generate two different secrets in a private terminal:
 
@@ -44,11 +44,11 @@ openssl rand -hex 32
 openssl rand -hex 32
 ```
 
-Save the first as `LITELLM_LENS_SERVICE_TOKEN` and the second as `LENS_GATEWAY_SECRET` in your secret manager. You will give both services the same pair of values.
+Save the first as `LUMINA_LENS_SERVICE_TOKEN` and the second as `LENS_GATEWAY_SECRET` in your secret manager. You will give both services the same pair of values.
 
 | Value | Purpose |
 | --- | --- |
-| `LITELLM_LENS_SERVICE_TOKEN` | Authenticates internal requests from LiteLLM to Lens |
+| `LUMINA_LENS_SERVICE_TOKEN` | Authenticates internal requests from LiteLLM to Lens |
 | `LENS_GATEWAY_SECRET` | Lets Lens verify the user identity sent by LiteLLM |
 
 These are separate from the Lens admin token, agent tracing keys, and LiteLLM model keys. Do not put their values in Git, browser code, or shared logs.
@@ -58,7 +58,7 @@ These are separate from the Lens admin token, agent tracing keys, and LiteLLM mo
 Add these environment variables to the **existing Lens service**:
 
 ```dotenv
-LITELLM_LENS_SERVICE_TOKEN=YOUR_SERVICE_SECRET
+LUMINA_LENS_SERVICE_TOKEN=YOUR_SERVICE_SECRET
 LENS_GATEWAY_SECRET=YOUR_SIGNING_SECRET
 ```
 
@@ -93,15 +93,15 @@ Repeat the readiness check from step 1 after the deployment finishes.
 Add these variables to the LiteLLM service. In a split gateway/backend deployment, supply them to both services:
 
 ```dotenv
-LITELLM_LENS_URL=https://lens.example.com
-LITELLM_LENS_PUBLIC_URL=https://lens.example.com
-LITELLM_LENS_SERVICE_TOKEN=YOUR_SERVICE_SECRET
+LUMINA_LENS_URL=https://lens.example.com
+LUMINA_LENS_PUBLIC_URL=https://lens.example.com
+LUMINA_LENS_SERVICE_TOKEN=YOUR_SERVICE_SECRET
 LENS_GATEWAY_SECRET=YOUR_SIGNING_SECRET
 ```
 
 Use your Lens URL and the same two secrets from step 2. Neither URL ends in `/ui/` or `/v1/traces`.
 
-`LITELLM_LENS_URL` is the address the gateway calls. `LITELLM_LENS_PUBLIC_URL` is the address shown to agent exporters. They can be the same HTTPS URL. If you use a private address for the first value, the second must still be reachable by your agents.
+`LUMINA_LENS_URL` is the address the gateway calls. `LUMINA_LENS_PUBLIC_URL` is the address shown to agent exporters. They can be the same HTTPS URL. If you use a private address for the first value, the second must still be reachable by your agents.
 
 Merge this block into the gateway's existing `config.yaml`. Preserve its model list and other settings:
 

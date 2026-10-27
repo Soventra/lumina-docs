@@ -25,19 +25,19 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-3.5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-3.5
       api_key: os.environ/ANTHROPIC_API_KEY
 
 guardrails:
   - guardrail_name: "lasso-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "pre_call"
       api_key: os.environ/LASSO_API_KEY
       api_base: "https://server.lasso.security/gateway/v3"
   - guardrail_name: "lasso-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "post_call"
       api_key: os.environ/LASSO_API_KEY
@@ -249,19 +249,19 @@ To enable PII masking, add the `mask: true` parameter to your guardrail configur
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-3.5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-3.5
       api_key: os.environ/ANTHROPIC_API_KEY
 
 guardrails:
   - guardrail_name: "lasso-pre-guard-with-masking"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "pre_call"
       api_key: os.environ/LASSO_API_KEY
       mask: true  # Enable PII masking
   - guardrail_name: "lasso-post-guard-with-masking"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "post_call"
       api_key: os.environ/LASSO_API_KEY
@@ -341,7 +341,7 @@ Lasso allows you to track users and conversations for better security monitoring
 ```yaml
 guardrails:
   - guardrail_name: "lasso-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "pre_call"
       api_key: os.environ/LASSO_API_KEY
@@ -356,14 +356,14 @@ You can configure both pre-call and post-call guardrails to cover both direction
 ```yaml
 guardrails:
   - guardrail_name: "lasso-input-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "pre_call"
       api_key: os.environ/LASSO_API_KEY
       lasso_user_id: os.environ/LASSO_USER_ID
       
   - guardrail_name: "lasso-output-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lasso
       mode: "post_call" 
       api_key: os.environ/LASSO_API_KEY
@@ -377,7 +377,7 @@ Lasso can also be configured using the [Generic Guardrail API](/docs/adding_prov
 ```yaml
 guardrails:
   - guardrail_name: "lasso-api-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: post_call
       api_base: https://server.lasso.security/gateway/v3

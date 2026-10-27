@@ -155,7 +155,7 @@ User: {{user_message}}
 ```yaml
 model_list:
   - model_name: my-dotprompt-model
-    litellm_params:
+    lumina_params:
       model: dotprompt/{{openai_large}}
       prompt_id: "hello"
       api_key: os.environ/OPENAI_API_KEY
@@ -186,7 +186,7 @@ litellm --config config.yaml --detailed_debug
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "my-dotprompt-model",
     "messages": [{"role": "user", "content": "IGNORED"}],

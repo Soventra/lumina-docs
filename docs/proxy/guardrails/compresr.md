@@ -41,13 +41,13 @@ All you need is a LiteLLM build that includes the `compresr` guardrail and an AP
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 guardrails:
   - guardrail_name: compresr-compression
-    litellm_params:
+    lumina_params:
       guardrail: compresr
       mode: pre_call
       api_key: os.environ/COMPRESR_API_KEY
@@ -64,7 +64,7 @@ Everything else is configured through `optional_params`. The full list is in the
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: compresr-compression
-    litellm_params:
+    lumina_params:
       guardrail: compresr
       mode: pre_call
       api_key: os.environ/COMPRESR_API_KEY
@@ -130,7 +130,7 @@ When `default_on` is not set, compression runs only for requests that opt in. Th
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
         "guardrails": ["compresr-compression"]
@@ -195,7 +195,7 @@ A platform admin can turn on compression for a whole team without any client cha
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
         "key_alias": "support-agent-alice",
@@ -272,7 +272,7 @@ Typical workloads compress 2x to 10x without quality loss. Sparse content compre
 
 ## Configuration reference
 
-Top-level `litellm_params`:
+Top-level `lumina_params`:
 
 | Param                  | Type | Description                                                                                                                    |
 | ---------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -284,7 +284,7 @@ Top-level `litellm_params`:
 | `unreachable_fallback` | str  | `fail_closed` (default) returns 502 on service failure; `fail_open` forwards the request uncompressed.                         |
 | `default_on`           | bool | Run on every request without per-call opt-in. Defaults to `false`.                                                             |
 
-Nested `optional_params` (each also accepted directly under `litellm_params`; the nested value wins):
+Nested `optional_params` (each also accepted directly under `lumina_params`; the nested value wins):
 
 | Param                      | Type  | Default | Description                                                                                                    |
 | -------------------------- | ----- | ------- | -------------------------------------------------------------------------------------------------------------- |

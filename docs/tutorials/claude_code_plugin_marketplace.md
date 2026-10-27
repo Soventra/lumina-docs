@@ -347,7 +347,7 @@ my-company-plugin/
 ```bash
 # Register your internal tools plugin
 curl -X POST http://localhost:4000/claude-code/plugins \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "internal-tools",

@@ -41,7 +41,7 @@ The primary way to check whether your models are serving is the Admin UI. Go to 
 The API equivalent is `GET /health`, which accepts any valid key. It runs a real test request against every configured model, so it costs a few tokens per model.
 
 ```shell
-curl --location 'http://0.0.0.0:4000/health' -H "Authorization: Bearer $LITELLM_API_KEY"
+curl --location 'http://0.0.0.0:4000/health' -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ```json
@@ -75,7 +75,7 @@ To exclude a model from the background loop, set `disable_background_health_chec
 ```yaml
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -114,12 +114,12 @@ The health check picks the operation to test from the model's `model_info.mode`.
 
 Bedrock Mantle serves Claude models only on the Anthropic Messages API, so a `bedrock_mantle/anthropic.claude-*` deployment with `mode` unset is probed with `anthropic_messages` instead of a chat completion. An explicit `mode` still wins
 
-For a wildcard route (`*` in `litellm_params.model`), set `health_check_model` to the concrete model the probe should call. With `mode` unset on a wildcard route, `max_tokens` is left unset on the probe request.
+For a wildcard route (`*` in `lumina_params.model`), set `health_check_model` to the concrete model the probe should call. With `mode` unset on a wildcard route, `max_tokens` is left unset on the probe request.
 
 ```yaml
 model_list:
   - model_name: azure-embedding-model
-    litellm_params:
+    lumina_params:
       model: azure/azure-embedding-model
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY

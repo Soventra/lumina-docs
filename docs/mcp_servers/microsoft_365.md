@@ -127,7 +127,7 @@ Click **Create MCP Server**. The form has no field for `per_server_oauth_discove
 
 ```bash showLineNumbers
 curl -X PUT http://localhost:4000/v1/mcp/server \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"server_id": "<server_id>", "per_server_oauth_discovery": true}'
 ```
@@ -158,7 +158,7 @@ The gateway serves each server at `http://localhost:4000/{server_name}/mcp`, so 
 
 ```bash showLineNumbers
 claude mcp add --transport http microsoft_365 http://localhost:4000/microsoft_365/mcp \
-  --header "x-litellm-api-key: Bearer $LITELLM_API_KEY"
+  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 `/mcp` inside Claude Code shows the server and starts the Entra sign-in. Claude Code caches the OAuth client it registered with the gateway, so if you turn on `per_server_oauth_discovery` after adding the server, remove it and add it again.

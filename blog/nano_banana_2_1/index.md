@@ -45,11 +45,11 @@ LiteLLM supports `gemini-nano-banana-2.1` on day 0 on Google AI Studio (`gemini/
 ```yaml
 model_list:
   - model_name: nano-banana-2.1
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-nano-banana-2.1
       api_key: os.environ/GEMINI_API_KEY
   - model_name: nano-banana-2.1-agent-platform
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-nano-banana-2.1
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: global
@@ -65,7 +65,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/v1/images/generations \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "nano-banana-2.1",

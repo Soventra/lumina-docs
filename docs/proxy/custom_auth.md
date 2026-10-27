@@ -55,7 +55,7 @@ e.g. if they're both in the same dir - `./config.yaml` and `./custom_auth.py`, t
 ```yaml 
 model_list: 
   - model_name: "openai-model"
-    litellm_params: 
+    lumina_params: 
       model: "{{openai_small}}"
 
 litellm_settings:
@@ -289,7 +289,7 @@ Key change set `mode: auto`. This will check both litellm api key auth + custom 
 ```yaml
 model_list: 
   - model_name: "openai-model"
-    litellm_params: 
+    lumina_params: 
       model: "{{openai_small}}"
       api_key: os.environ/OPENAI_API_KEY
 

@@ -63,13 +63,13 @@ Define your guardrail under the `guardrails` section.
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "vigil-guard-input"
-    litellm_params:
+    lumina_params:
       guardrail: vigil_guard
       mode: "pre_call"
       api_key: os.environ/VIGIL_GUARD_API_KEY
@@ -105,7 +105,7 @@ The blocked example assumes your Vigil Guard policy is configured to block promp
 ```shell showLineNumbers title="Curl Request"
 curl -i http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -135,7 +135,7 @@ Expected response on failure:
 ```shell showLineNumbers title="Curl Request"
 curl -i http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -177,14 +177,14 @@ Use separate guardrail entries when you want to scan user input and model output
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "vigil-guard-input"
-    litellm_params:
+    lumina_params:
       guardrail: vigil_guard
       mode: "pre_call"
       api_key: os.environ/VIGIL_GUARD_API_KEY
       api_base: os.environ/VIGIL_GUARD_URL
 
   - guardrail_name: "vigil-guard-output"
-    litellm_params:
+    lumina_params:
       guardrail: vigil_guard
       mode: "post_call"
       api_key: os.environ/VIGIL_GUARD_API_KEY
@@ -196,7 +196,7 @@ Then attach both guardrails to a request:
 ```shell showLineNumbers title="Curl Request"
 curl -i http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -213,7 +213,7 @@ Set `default_on: true` to run the guardrail without requiring clients to pass th
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "vigil-guard-input"
-    litellm_params:
+    lumina_params:
       guardrail: vigil_guard
       mode: "pre_call"
       api_key: os.environ/VIGIL_GUARD_API_KEY
@@ -230,7 +230,7 @@ Set `unreachable_fallback: fail_open` to allow requests to continue when the gua
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "vigil-guard-input"
-    litellm_params:
+    lumina_params:
       guardrail: vigil_guard
       mode: "pre_call"
       api_key: os.environ/VIGIL_GUARD_API_KEY
@@ -247,7 +247,7 @@ guardrails:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "vigil-guard-input"
-    litellm_params:
+    lumina_params:
       guardrail: vigil_guard
       mode: "pre_call"
       api_key: os.environ/VIGIL_GUARD_API_KEY

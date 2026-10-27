@@ -323,24 +323,24 @@ Here's an example LiteLLM `config.yaml` that works well with OpenCode:
 model_list:
   # OpenAI models
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
   # Anthropic models
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   # DeepSeek models
   - model_name: deepseek-chat
-    litellm_params:
+    lumina_params:
       model: deepseek/deepseek-chat
       api_key: os.environ/DEEPSEEK_API_KEY
 ```
@@ -352,7 +352,7 @@ OpenCode sends a `reasoningSummary` parameter with reasoning-capable models such
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
       additional_drop_params: ["reasoningSummary"]
@@ -394,10 +394,10 @@ model_list:
   [Enabling image and vision input](#enabling-image-and-vision-input).
 
 **`Unknown parameter: 'reasoningSummary'` error:**
-- OpenCode sends a `reasoningSummary` parameter that is not supported by the Chat Completions API. Add `additional_drop_params: ["reasoningSummary"]` to each affected model entry in your `litellm_params`:
+- OpenCode sends a `reasoningSummary` parameter that is not supported by the Chat Completions API. Add `additional_drop_params: ["reasoningSummary"]` to each affected model entry in your `lumina_params`:
   ```yaml
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
       additional_drop_params: ["reasoningSummary"]

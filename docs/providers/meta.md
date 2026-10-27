@@ -45,7 +45,7 @@ LiteLLM serves Muse Voice through the proxy's OpenAI-compatible `/v1/realtime` e
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: muse-voice-transcribe
-    litellm_params:
+    lumina_params:
       model: meta/muse-voice-transcribe-1.0
       api_key: os.environ/META_API_KEY
 ```
@@ -157,7 +157,7 @@ import os
 import websockets
 
 URL = "ws://localhost:4000/v1/realtime?model=muse-voice-transcribe&intent=transcription"
-HEADERS = {"Authorization": f'Bearer {os.environ["LITELLM_API_KEY"]}'}
+HEADERS = {"Authorization": f'Bearer {os.environ["LUMINA_API_KEY"]}'}
 
 
 def pcm_chunks(path, chunk_ms=100):
@@ -325,7 +325,7 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: muse-spark-1.1
-    litellm_params:
+    lumina_params:
       model: meta/muse-spark-1.1
       api_key: os.environ/META_API_KEY
 ```

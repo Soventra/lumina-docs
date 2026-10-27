@@ -52,7 +52,7 @@ docker pull ghcr.io/berriai/litellm:v1.81.12-stable.gpt-5.3
 ```yaml
 model_list:
   - model_name: gpt-5.3-codex
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.3-codex
 ```
 
@@ -73,7 +73,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/v1/responses" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.3-codex",
     "input": "Write a Python script that checks if a number is prime."

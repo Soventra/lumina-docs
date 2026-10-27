@@ -155,15 +155,15 @@ export LLAMAGATE_API_KEY=""
 ```yaml
 model_list:
   - model_name: llama-3.1-8b
-    litellm_params:
+    lumina_params:
       model: llamagate/llama-3.1-8b
       api_key: os.environ/LLAMAGATE_API_KEY
   - model_name: deepseek-r1
-    litellm_params:
+    lumina_params:
       model: llamagate/deepseek-r1-8b
       api_key: os.environ/LLAMAGATE_API_KEY
   - model_name: qwen-coder
-    litellm_params:
+    lumina_params:
       model: llamagate/qwen2.5-coder-7b
       api_key: os.environ/LLAMAGATE_API_KEY
 ```

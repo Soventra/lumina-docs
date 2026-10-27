@@ -13,7 +13,7 @@ This tutorial sets up Open WebUI as a company-wide chat workspace in front of Li
 For a basic single-key connection, see [Open WebUI](./openweb_ui.md) instead.
 
 :::info
-LiteLLM JWT auth is an [enterprise feature](https://www.litellm.ai/enterprise) and requires `LITELLM_LICENSE` to be set. Every step on this page was tested end to end with Open WebUI v0.12.0, Keycloak 26.4, and LiteLLM main and v1.105.0.
+LiteLLM JWT auth is an [enterprise feature](https://www.litellm.ai/enterprise) and requires `LUMINA_LICENSE` to be set. Every step on this page was tested end to end with Open WebUI v0.12.0, Keycloak 26.4, and LiteLLM main and v1.105.0.
 :::
 
 ## How it fits together
@@ -102,21 +102,21 @@ LiteLLM and Open WebUI must join the same `owui` network, and Keycloak's port mu
 
 ## Step 2. Configure LiteLLM JWT auth
 
-Set `LITELLM_LICENSE` when starting LiteLLM. Without it, JWT authentication is rejected with `JWT Auth is an enterprise only feature`.
+Set `LUMINA_LICENSE` when starting LiteLLM. Without it, JWT authentication is rejected with `JWT Auth is an enterprise only feature`.
 
 ```yaml title="config.yaml"
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-haiku
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
   enable_jwt_auth: true
   litellm_jwtauth:
@@ -138,13 +138,13 @@ litellm --config config.yaml
 ```bash
 docker run --rm --network owui -p 4000:4000 \
   -v "$PWD/config.yaml:/app/config.yaml:ro" \
-  -e LITELLM_LICENSE -e LITELLM_MASTER_KEY -e DATABASE_URL \
+  -e LUMINA_LICENSE -e LUMINA_MASTER_KEY -e DATABASE_URL \
   -e ANTHROPIC_API_KEY -e JWT_PUBLIC_KEY_URL -e JWT_AUDIENCE -e JWT_ISSUER \
   ghcr.io/berriai/litellm:v1.105.0 \
   --config /app/config.yaml
 ```
 
-`user_id_jwt_field: "email"` makes the LiteLLM user ID the readable email instead of the IdP's opaque `sub`, and `user_id_upsert` creates the user on first request. `team_ids_jwt_field: "groups"` treats every group in the token as a candidate LiteLLM team, and `enforce_team_based_model_access` only lets the request through when one of those teams allows the requested model. Without `JWT_AUDIENCE` and `JWT_ISSUER`, LiteLLM accepts any token signed by the IdP, including tokens minted for unrelated applications, so set both. The master key keeps working for admin API calls and the Admin UI. LiteLLM refuses to start only when the master key is unset, empty, or the publicly known default from the example configs; it does not check the key length. Generate a random value with `openssl rand -hex 32`. For local development only, `LITELLM_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY=true` overrides this check.
+`user_id_jwt_field: "email"` makes the LiteLLM user ID the readable email instead of the IdP's opaque `sub`, and `user_id_upsert` creates the user on first request. `team_ids_jwt_field: "groups"` treats every group in the token as a candidate LiteLLM team, and `enforce_team_based_model_access` only lets the request through when one of those teams allows the requested model. Without `JWT_AUDIENCE` and `JWT_ISSUER`, LiteLLM accepts any token signed by the IdP, including tokens minted for unrelated applications, so set both. The master key keeps working for admin API calls and the Admin UI. LiteLLM refuses to start only when the master key is unset, empty, or the publicly known default from the example configs; it does not check the key length. Generate a random value with `openssl rand -hex 32`. For local development only, `LUMINA_DANGEROUSLY_PERMIT_WEAK_OR_UNSET_MASTER_KEY=true` overrides this check.
 
 A token for the same user minted by another client without the `litellm` audience is rejected:
 
@@ -160,18 +160,18 @@ Teams must exist before a group claim can match them. Create them with the maste
 
 ```bash
 export LITELLM=https://litellm.acme.com
-export LITELLM_MASTER_KEY="<master-key>"
+export LUMINA_MASTER_KEY="<master-key>"
 
-curl -X POST "$LITELLM/organization/new" -H "Authorization: Bearer $LITELLM_MASTER_KEY" -H "Content-Type: application/json" \
+curl -X POST "$LITELLM/organization/new" -H "Authorization: Bearer $LUMINA_MASTER_KEY" -H "Content-Type: application/json" \
   -d '{"organization_id": "acme-us", "organization_alias": "Acme US", "models": ["claude-sonnet", "claude-haiku"]}'
 
-curl -X POST "$LITELLM/organization/new" -H "Authorization: Bearer $LITELLM_MASTER_KEY" -H "Content-Type: application/json" \
+curl -X POST "$LITELLM/organization/new" -H "Authorization: Bearer $LUMINA_MASTER_KEY" -H "Content-Type: application/json" \
   -d '{"organization_id": "acme-eu", "organization_alias": "Acme EU", "models": ["claude-haiku"]}'
 
-curl -X POST "$LITELLM/team/new" -H "Authorization: Bearer $LITELLM_MASTER_KEY" -H "Content-Type: application/json" \
+curl -X POST "$LITELLM/team/new" -H "Authorization: Bearer $LUMINA_MASTER_KEY" -H "Content-Type: application/json" \
   -d '{"team_id": "engineering", "team_alias": "Engineering", "organization_id": "acme-us", "models": ["claude-sonnet", "claude-haiku"], "max_budget": 100}'
 
-curl -X POST "$LITELLM/team/new" -H "Authorization: Bearer $LITELLM_MASTER_KEY" -H "Content-Type: application/json" \
+curl -X POST "$LITELLM/team/new" -H "Authorization: Bearer $LUMINA_MASTER_KEY" -H "Content-Type: application/json" \
   -d '{"team_id": "data-science", "team_alias": "Data Science", "organization_id": "acme-eu", "models": ["claude-haiku"], "max_budget": 50}'
 ```
 
@@ -290,5 +290,5 @@ Budgets, rate limits, guardrails, and logging callbacks set on a team or organiz
 | Open WebUI API-key request returns `400 Model not found` | Open WebUI API keys have no OAuth session; LiteLLM logs `401 No api key passed in` |
 | New users stuck on "account activation pending" | `DEFAULT_USER_ROLE` not set to `user` |
 | LiteLLM rejects tokens with an audience or issuer error | `JWT_AUDIENCE` or `JWT_ISSUER` does not match the decoded token from Step 1 |
-| Proxy exits at startup with `LiteLLM proxy refused to start: the master key is a publicly known default.` | Set a random `LITELLM_MASTER_KEY` |
+| Proxy exits at startup with `LiteLLM proxy refused to start: the master key is a publicly known default.` | Set a random `LUMINA_MASTER_KEY` |
 | Model shown in Open WebUI but chat fails with a 403 | Group can see the model in Open WebUI but its LiteLLM team does not allow it |

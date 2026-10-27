@@ -29,7 +29,7 @@ litellm_settings:
   store_audit_logs: true
 ```
 
-To turn audit logs off on an enterprise license, set it explicitly to `false`, which takes precedence over the default. `LITELLM_STORE_AUDIT_LOGS` works the same way as the config setting and is read when the config leaves `store_audit_logs` unset
+To turn audit logs off on an enterprise license, set it explicitly to `false`, which takes precedence over the default. `LUMINA_STORE_AUDIT_LOGS` works the same way as the config setting and is read when the config leaves `store_audit_logs` unset
 
 ```shell
 litellm_settings:
@@ -42,7 +42,7 @@ In this example, we will delete a key.
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/delete' \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H 'Content-Type: application/json' \
     -d '{
         "key": "d5265fc73296c8fea819b4525590c99beab8c707e465afdf60dab57e1fa145e4"
@@ -136,7 +136,7 @@ Set `allow_litellm_changed_by_header: true` in the metadata of the admin virtual
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/update' \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H 'Content-Type: application/json' \
     -d '{
         "key": "sk-my-admin-key",

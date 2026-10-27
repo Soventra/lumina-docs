@@ -30,13 +30,13 @@ For testing ahead of the stable cut, use the [v1.92.0-dev.1](https://github.com/
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 guardrails:
   - guardrail_name: headroom-compression
-    litellm_params:
+    lumina_params:
       guardrail: headroom
       mode: pre_call
       api_base: https://your-headroom-service
@@ -102,7 +102,7 @@ Create a key with Headroom attached:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
         "guardrails": ["headroom-compression"]
@@ -175,7 +175,7 @@ The flow has three steps.
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
         "key_alias": "claude-code-alice",

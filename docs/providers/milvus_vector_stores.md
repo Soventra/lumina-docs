@@ -107,7 +107,7 @@ Add this to your config.yaml:
 ```yaml
 vector_store_registry:
   - vector_store_name: "milvus-knowledgebase"
-    litellm_params:
+    lumina_params:
         vector_store_id: "my-collection-name"
         custom_llm_provider: "milvus"
         api_key: os.environ/MILVUS_API_KEY
@@ -134,7 +134,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/vector_stores/my-collection-name/search' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "query": "What is the capital of France?"
 }'
@@ -221,7 +221,7 @@ This is for the proxy only.
 ```yaml
 model_list:  
   - model_name: embedding-model
-    litellm_params:
+    lumina_params:
       model: azure/text-embedding-3-large
       api_base: https://your-endpoint.cognitiveservices.azure.com/
       api_key: os.environ/AZURE_API_KEY
@@ -229,7 +229,7 @@ model_list:
 
 vector_store_registry:
   - vector_store_name: "milvus-store"
-    litellm_params:
+    lumina_params:
       vector_store_id: "can-be-anything" # vector store id can be anything for the purpose of passthrough api
       custom_llm_provider: "milvus"
       api_key: os.environ/MILVUS_API_KEY
@@ -255,10 +255,10 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/indexes' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{ 
     "index_name": "dall-e-6",
-    "litellm_params": {
+    "lumina_params": {
         "vector_store_index": "real-collection-name",
         "vector_store_name": "milvus-store"
     }
@@ -272,7 +272,7 @@ This is a virtual index, which the developer can use to create and search vector
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "allowed_vector_store_indexes": [{"index_name": "dall-e-6", "index_permissions": ["write", "read"]}],
     "models": ["embedding-model"]

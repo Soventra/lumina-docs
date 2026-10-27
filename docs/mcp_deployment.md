@@ -47,7 +47,7 @@ One service, one config, one set of API keys. Use the [public internet filter](.
 
 ```yaml title="config.yaml" showLineNumbers
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   store_model_in_db: true
   mcp_internal_ip_ranges:
     - "10.0.0.0/8"
@@ -57,7 +57,7 @@ general_settings:
 
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 

@@ -43,7 +43,7 @@ for page in response.pages:
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-doc-intel
-    litellm_params:
+    lumina_params:
       model: azure_ai/doc-intelligence/prebuilt-layout
       api_key: os.environ/AZURE_DOCUMENT_INTELLIGENCE_API_KEY
       api_base: os.environ/AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT
@@ -162,7 +162,7 @@ response = litellm.ocr(
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-layout
-    litellm_params:
+    lumina_params:
       model: azure_ai/doc-intelligence/prebuilt-layout
       api_key: os.environ/AZURE_DOCUMENT_INTELLIGENCE_API_KEY
       api_base: os.environ/AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT
@@ -217,7 +217,7 @@ response = litellm.ocr(
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-read
-    litellm_params:
+    lumina_params:
       model: azure_ai/doc-intelligence/prebuilt-read
       api_key: os.environ/AZURE_DOCUMENT_INTELLIGENCE_API_KEY
       api_base: os.environ/AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT
@@ -271,7 +271,7 @@ response = litellm.ocr(
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-document
-    litellm_params:
+    lumina_params:
       model: azure_ai/doc-intelligence/prebuilt-document
       api_key: os.environ/AZURE_DOCUMENT_INTELLIGENCE_API_KEY
       api_base: os.environ/AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT

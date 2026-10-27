@@ -27,14 +27,14 @@ Then ask the proxy what it is reading:
 
 ```bash
 curl -s http://localhost:4000/model/cost_map/source \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 curl -s http://localhost:4000/schedule/model_cost_map_reload/status \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 curl -s -X POST http://localhost:4000/reload/model_cost_map \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
-`GET /model/cost_map/source` reports `url`, the file the proxy fetches (anything other than the `main` URL means `LITELLM_MODEL_COST_MAP_URL` is set and `main` is irrelevant), `source` as `remote` or `local`, `is_env_forced` when `LITELLM_LOCAL_MODEL_COST_MAP=True` pins the proxy to the pricing bundled with its release, `fallback_reason` when a failed fetch made it fall back to that bundled copy, and `model_count` for the map it currently serves.
+`GET /model/cost_map/source` reports `url`, the file the proxy fetches (anything other than the `main` URL means `LUMINA_MODEL_COST_MAP_URL` is set and `main` is irrelevant), `source` as `remote` or `local`, `is_env_forced` when `LUMINA_LOCAL_MODEL_COST_MAP=True` pins the proxy to the pricing bundled with its release, `fallback_reason` when a failed fetch made it fall back to that bundled copy, and `model_count` for the map it currently serves.
 
 `GET /schedule/model_cost_map_reload/status` reports whether a reload schedule exists and its `last_run` and `next_run`. With `scheduled: false` and no manual reload since startup, the map is whatever startup fetched.
 
@@ -63,7 +63,7 @@ If the count matches on every replica and the entry is on `main`, the request is
 Point the proxy at the branch that already has it and restart it, since the URL is read at startup. This swaps the whole pricing map for that branch's copy, so drop the override once `main` catches up:
 
 ```bash
-export LITELLM_MODEL_COST_MAP_URL=https://raw.githubusercontent.com/BerriAI/litellm/litellm_internal_staging/model_prices_and_context_window.json
+export LUMINA_MODEL_COST_MAP_URL=https://raw.githubusercontent.com/BerriAI/litellm/litellm_internal_staging/model_prices_and_context_window.json
 ```
 
 Or give the deployment its own pricing with [custom pricing](../proxy/custom_pricing) in `model_info`. On current releases deployment-level pricing survives later reloads, so it is the safer choice when the model must be billed correctly before the merge lands.

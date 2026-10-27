@@ -55,22 +55,22 @@ For an LLM complexity router, **Local checks before the judge** selects the chai
 
 ## Start with a complete configuration
 
-All settings below belong inside `model_list[].litellm_params.complexity_router_config`, unless explicitly labeled otherwise. `complexity_router_default_model` is a sibling under `litellm_params`.
+All settings below belong inside `model_list[].lumina_params.complexity_router_config`, unless explicitly labeled otherwise. `complexity_router_default_model` is a sibling under `lumina_params`.
 
 This example mirrors the heuristic-first v2 screenshot: a `0.6` success threshold and a `MEDIUM` local ceiling. Those values illustrate the controls; evaluate them on your own traffic before adopting them.
 
 ```yaml title="config.yaml"
 model_list:
   - model_name: demo-efficient
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: demo-capable
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: classifier-chain-demo
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: demo-efficient
       complexity_router_config:
@@ -384,7 +384,7 @@ History excludes tool output and harness reminders. The router takes recent turn
 
 Increasing history sends more data to the judge's provider, which may differ from the answering provider. Use window size `0` when you do not want prior turns sent. It does not make classification data-free.
 
-For `classifier_fallback: default_model`, configure **Default Model**, preferably through the sibling `litellm_params.complexity_router_default_model` shown in the complete example. In the normalized router configuration, this is `default_model`. A plain LLM/OSS/custom heuristic fallback uses v1; a chain uses its selected local version. Custom taxonomies use `fallback_tier`. Capability and Fuse v2 always recover to their capable solver.
+For `classifier_fallback: default_model`, configure **Default Model**, preferably through the sibling `lumina_params.complexity_router_default_model` shown in the complete example. In the normalized router configuration, this is `default_model`. A plain LLM/OSS/custom heuristic fallback uses v1; a chain uses its selected local version. Custom taxonomies use `fallback_tier`. Capability and Fuse v2 always recover to their capable solver.
 
 ## Connect a self-hosted classifier
 
@@ -440,7 +440,7 @@ A generic OpenAI-compatible chat endpoint, such as an Ollama model, is a differe
 
 ```yaml title="Additional model_list entry"
 - model_name: local-routing-judge
-  litellm_params:
+  lumina_params:
     model: openai/your-served-model-name
     api_base: http://judge-server:8000/v1
     api_key: os.environ/LOCAL_JUDGE_API_KEY
@@ -551,7 +551,7 @@ Without this block, routing uses raw forecasts. Calibration examples in the comp
 | Control / key | Default / applicability |
 | --- | --- |
 | `tiers` | Set explicitly to your deployed aliases. A single alias pins a model group; a list provides a pool. |
-| `tier_model_configs` | Empty; stores per-tier, per-model `litellm_params`. YAML can also use structured model entries in `tiers`. |
+| `tier_model_configs` | Empty; stores per-tier, per-model `lumina_params`. YAML can also use structured model entries in `tiers`. |
 | `tier_labels` | Empty partial map. Renames built-in tiers in UI/logs and the LLM rubric, without renaming YAML keys. |
 | Add a non-reasoning tier / `enable_non_reasoning_tier` | `false`. Adds `NON_REASONING` below `SIMPLE`; requires a mapped model and plain LLM, OSS, or custom classifier. Heuristics/chains/forecasts cannot produce it. |
 | Edit tiers / `tier_definitions` | Unset. Ordered custom taxonomy of 2-8 tiers; custom names need descriptions and must exactly match `tiers`. Requires LLM, OSS, or a custom classifier. |
@@ -687,7 +687,7 @@ These do not change the meaning of a v1 score, v2 threshold, or judge prompt. Se
 | --- | --- | --- |
 | Adaptive Routing | `adaptive: false`; `adaptive_weights: {quality: 0.3, cost: 0.7}`; `tier_distance_penalty: 0.5`; `adaptive_eligible: all` | Learn model selection from feedback. Weights are `0` through `1` and sum to `1`; penalty is nonnegative. `classified_tier` restricts sampling to the selected pool; `all` uses a soft tier-distance penalty. |
 | Cache-aware routing | `cache_aware_routing: false`; `cache_aware_routing_output_tokens: 1024`; `cache_aware_routing_timeout_ms: 2000` | Compare warm-cache cost on supported native Anthropic requests. Output estimate is nonnegative; timeout is positive. Unsupported requests retain their normal route. |
-| Compression | Sibling `litellm_params.auto_router_routing_compression` and `auto_router_model_compression`, both unset | Choose a configured guardrail per hop. Both unset preserve inherited behavior. Once either is set, an omitted hop means no compression; `none` explicitly disables a hop. |
+| Compression | Sibling `lumina_params.auto_router_routing_compression` and `auto_router_model_compression`, both unset | Choose a configured guardrail per hop. Both unset preserve inherited behavior. Once either is set, an omitted hop means no compression; `none` explicitly disables a hop. |
 | Context compaction (YAML only) | `context_compaction`, enabled by default | Compacts full conversation history near the selected deployment's input limit. Distinct from the classifier's prior-turn window and compression guardrails. `false` or `null` disables it. |
 | Compatibility | `return_raw_model_name: false`; `max_tokens_from_tier_model: true` | Return the resolved model name instead of the router alias; or control whether the selected model's output ceiling replaces the caller's token limit. Tier-level token overrides still win. |
 | Routing plugins (startup configuration) | `plugins: null` | Narrow candidate models after classification; distinct from a tier-selecting `classifier_plugin`. |

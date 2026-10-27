@@ -44,11 +44,11 @@ export OPENAI_API_KEY=""
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}                          # The `openai/` prefix will call openai.chat.completions.create
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-3.5-turbo-instruct
-    litellm_params:
+    lumina_params:
       model: text-completion-openai/gpt-3.5-turbo-instruct # The `text-completion-openai/` prefix will call openai.completions.create
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -61,7 +61,7 @@ This means requests to `{{openai_large}}`, `{{openai_small}}` will all go throug
 ```yaml
 model_list:
   - model_name: "*"             # all requests where model not in your config go to this deployment
-    litellm_params:
+    lumina_params:
       model: openai/*           # set `openai/` to use the openai route
       api_key: os.environ/OPENAI_API_KEY
 ```

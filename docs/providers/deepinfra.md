@@ -106,7 +106,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: Qwen/Qwen3-Reranker-0.6B
-    litellm_params:
+    lumina_params:
       model: deepinfra/Qwen/Qwen3-Reranker-0.6B
       api_key: os.environ/DEEPINFRA_API_KEY
 ```
@@ -123,7 +123,7 @@ litellm --config /path/to/config.yaml
 
 ```bash 
 curl -L -X POST 'http://0.0.0.0:4000/rerank' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "model": "Qwen/Qwen3-Reranker-0.6B",

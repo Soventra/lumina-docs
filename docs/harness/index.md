@@ -17,7 +17,7 @@ Run an agent with `litellm.agent()` to drive Claude Code, Codex, OpenCode, Deep 
 import litellm
 from litellm import Harness, sandbox
 
-# LITELLM_PROXY_API_BASE and LITELLM_PROXY_API_KEY point at your gateway
+# LUMINA_PROXY_API_BASE and LUMINA_PROXY_API_KEY point at your gateway
 result = litellm.agent(
     Harness.CLAUDE_CODE,
     "Find why tests/test_router.py is flaky and fix it.",
@@ -31,7 +31,7 @@ for f in result.files:
     print(f.kind, f.path)  # modified tests/test_router.py
 ```
 
-The `litellm_proxy/` prefix works the same way it does for `litellm.completion`: the call goes to the gateway at `LITELLM_PROXY_API_BASE` with the virtual key in `LITELLM_PROXY_API_KEY`, or at the `api_base=` and `api_key=` you pass. To run the same task on Codex, change `Harness.CLAUDE_CODE` to `Harness.CODEX`. Streaming is `litellm.agent(..., stream=True)`, async is `await litellm.aagent(...)`, and multi-turn work uses `litellm.agent_session()`.
+The `litellm_proxy/` prefix works the same way it does for `litellm.completion`: the call goes to the gateway at `LUMINA_PROXY_API_BASE` with the virtual key in `LUMINA_PROXY_API_KEY`, or at the `api_base=` and `api_key=` you pass. To run the same task on Codex, change `Harness.CLAUDE_CODE` to `Harness.CODEX`. Streaming is `litellm.agent(..., stream=True)`, async is `await litellm.aagent(...)`, and multi-turn work uses `litellm.agent_session()`.
 
 See [Using with LiteLLM AI Gateway](./gateway.md) for the proxy config, virtual keys, which harness to pick, and spend by harness. Without the prefix, the model is called directly through the LiteLLM SDK; see [Models and routing](./models.md#sdk-mode).
 

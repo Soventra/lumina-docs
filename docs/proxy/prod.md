@@ -18,7 +18,7 @@ Work through this page before going live. It covers the production configuration
 The master key is the proxy admin credential: it authenticates admin API calls and is the Admin UI login password. Set it as an env var (it must start with `sk-`), keep it in your secret manager, and rotate it with the [master key rotation flow](./master_key_rotations.md).
 
 ```bash
-export LITELLM_MASTER_KEY="sk-<long-random-value>"
+export LUMINA_MASTER_KEY="sk-<long-random-value>"
 ```
 
 ### Set trusted proxy ranges
@@ -109,19 +109,19 @@ litellm_settings:
 ```
 
 ```bash
-export LITELLM_LOG="ERROR"
+export LUMINA_LOG="ERROR"
 ```
 
 ### Disable load_dotenv
 
-Set `export LITELLM_MODE="PRODUCTION"`. This disables `load_dotenv()`, which would otherwise automatically load credentials from a local `.env`.
+Set `export LUMINA_MODE="PRODUCTION"`. This disables `load_dotenv()`, which would otherwise automatically load credentials from a local `.env`.
 
 ### Set the salt key
 
 If you use the database, set a salt key for encrypting and decrypting stored variables. Do not change it after adding a model; it encrypts your LLM API key credentials, and changing it makes them unreadable. Use a [password generator](https://1password.com/password-generator/) to get a random hash.
 
 ```bash
-export LITELLM_SALT_KEY="sk-<paste-a-long-random-key>"
+export LUMINA_SALT_KEY="sk-<paste-a-long-random-key>"
 ```
 
 [**See Code**](https://github.com/BerriAI/litellm/blob/036a6821d588bd36d170713dcf5a72791a694178/litellm/proxy/common_utils/encrypt_decrypt_utils.py#L15)
@@ -176,9 +176,9 @@ For packing multiple workers into one container, alternative servers (Gunicorn, 
 
 At startup the proxy registers a scheduler of background jobs, and it does that once per Uvicorn worker process rather than once per pod. A pod started with `--num_workers 4` runs four copies of every job, so a deployment of ten such replicas runs forty, and the amount of work multiplies by replicas times processes even though most of these jobs exist to happen once.
 
-Jobs whose effect is shared, resetting budgets or pruning spend logs or pushing a usage export, elect a single owner through Redis before doing anything. Where Redis is not configured there is nothing to elect through, so each of them runs unguarded on every process that registered it. `LITELLM_JOB_ROLE` lets you register those jobs on one deployment instead of on every replica serving traffic, and for a multi-pod deployment without Redis it is the only way to get single execution.
+Jobs whose effect is shared, resetting budgets or pruning spend logs or pushing a usage export, elect a single owner through Redis before doing anything. Where Redis is not configured there is nothing to elect through, so each of them runs unguarded on every process that registered it. `LUMINA_JOB_ROLE` lets you register those jobs on one deployment instead of on every replica serving traffic, and for a multi-pod deployment without Redis it is the only way to get single execution.
 
-| `LITELLM_JOB_ROLE` | What the process registers |
+| `LUMINA_JOB_ROLE` | What the process registers |
 | --- | --- |
 | unset, or `all` | Every job. This is the default and the behavior you already have |
 | `worker` | Every job, including the single-owner ones |
@@ -218,11 +218,11 @@ spec:
           ports:
             - containerPort: 4000
           env:
-            - name: LITELLM_JOB_ROLE
+            - name: LUMINA_JOB_ROLE
               value: serving
           envFrom:
             - secretRef:
-                name: litellm-secrets # DATABASE_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, LITELLM_MASTER_KEY
+                name: litellm-secrets # DATABASE_URL, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, LUMINA_MASTER_KEY
           volumeMounts:
             - name: config-volume
               mountPath: /app/proxy_server_config.yaml
@@ -259,7 +259,7 @@ spec:
           ports:
             - containerPort: 4000
           env:
-            - name: LITELLM_JOB_ROLE
+            - name: LUMINA_JOB_ROLE
               value: worker
           envFrom:
             - secretRef:
@@ -361,7 +361,7 @@ Plain Docker:
 docker run \
   -v /path/to/global-bundle.pem:/certs/global-bundle.pem:ro \
   -e DATABASE_URL="postgresql://user:pass@mydb.abc123.us-east-1.rds.amazonaws.com:5432/litellm?sslmode=verify-full&sslrootcert=/certs/global-bundle.pem" \
-  -e LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>" \
+  -e LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
   -p 4000:4000 \
   ghcr.io/berriai/litellm:main-stable --config /app/config.yaml
 ```
@@ -480,9 +480,9 @@ For how long migrations take at production scale and how to plan an upgrade arou
 Running LiteLLM with `readOnlyRootFilesystem: true` is a Kubernetes security best practice that prevents container processes from writing to the root filesystem. LiteLLM fully supports this configuration.
 
 If you see a `Permission denied` error, it means the LiteLLM pod is running with a read-only file system. LiteLLM needs writable directories for:
-- **Database migrations**: Set `LITELLM_MIGRATION_DIR="/path/to/writable/directory"`
-- **Admin UI**: Set `LITELLM_UI_PATH="/path/to/writable/directory"`
-- **UI assets/logos**: Set `LITELLM_ASSETS_PATH="/path/to/writable/directory"`
+- **Database migrations**: Set `LUMINA_MIGRATION_DIR="/path/to/writable/directory"`
+- **Admin UI**: Set `LUMINA_UI_PATH="/path/to/writable/directory"`
+- **UI assets/logos**: Set `LUMINA_ASSETS_PATH="/path/to/writable/directory"`
 
 **Option 1: Using EmptyDir Volumes with InitContainer (Recommended)**
 
@@ -518,13 +518,13 @@ spec:
         - name: litellm
           image: ghcr.io/berriai/litellm:latest
           env:
-            - name: LITELLM_NON_ROOT
+            - name: LUMINA_NON_ROOT
               value: "true"
-            - name: LITELLM_UI_PATH
+            - name: LUMINA_UI_PATH
               value: "/app/var/litellm/ui"
-            - name: LITELLM_ASSETS_PATH
+            - name: LUMINA_ASSETS_PATH
               value: "/app/var/litellm/assets"
-            - name: LITELLM_MIGRATION_DIR
+            - name: LUMINA_MIGRATION_DIR
               value: "/app/migrations"
             - name: PRISMA_BINARY_CACHE_DIR
               value: "/app/cache/prisma-python/binaries"
@@ -577,9 +577,9 @@ If you don't need the admin UI, you can run with minimal configuration:
 
 ```yaml
 env:
-  - name: LITELLM_NON_ROOT
+  - name: LUMINA_NON_ROOT
     value: "true"
-  - name: LITELLM_MIGRATION_DIR
+  - name: LUMINA_MIGRATION_DIR
     value: "/app/migrations"
 securityContext:
   readOnlyRootFilesystem: true
@@ -591,13 +591,13 @@ Environment variables for read-only filesystems:
 
 | Variable | Purpose | Default |
 |----------|---------|---------|
-| `LITELLM_UI_PATH` | Admin UI directory | `/var/lib/litellm/ui` (Docker) |
-| `LITELLM_ASSETS_PATH` | UI assets/logos | `/var/lib/litellm/assets` (Docker) |
-| `LITELLM_MIGRATION_DIR` | Database migrations | Package directory |
+| `LUMINA_UI_PATH` | Admin UI directory | `/var/lib/litellm/ui` (Docker) |
+| `LUMINA_ASSETS_PATH` | UI assets/logos | `/var/lib/litellm/assets` (Docker) |
+| `LUMINA_MIGRATION_DIR` | Database migrations | Package directory |
 | `PRISMA_BINARY_CACHE_DIR` | Prisma binary cache | System default |
 | `XDG_CACHE_HOME` | General cache directory | System default |
 
-Notes: always set `LITELLM_MIGRATION_DIR` to a writable emptyDir path, and set `PRISMA_BINARY_CACHE_DIR` and `XDG_CACHE_HOME` to writable paths. If using a custom `server_root_path`, you must pre-process UI files in your Dockerfile as the proxy cannot modify files at runtime with a read-only filesystem. The UI is automatically detected as pre-restructured if it contains a `.litellm_ui_ready` marker file (created by the official Docker images).
+Notes: always set `LUMINA_MIGRATION_DIR` to a writable emptyDir path, and set `PRISMA_BINARY_CACHE_DIR` and `XDG_CACHE_HOME` to writable paths. If using a custom `server_root_path`, you must pre-process UI files in your Dockerfile as the proxy cannot modify files at runtime with a read-only filesystem. The UI is automatically detected as pre-restructured if it contains a `.litellm_ui_ready` marker file (created by the official Docker images).
 
 ## Verify production readiness
 

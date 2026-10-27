@@ -181,7 +181,7 @@ Path("flux2_edited_image.png").write_bytes(img_bytes)
 ```yaml showLineNumbers title="Azure AI Image Editing Configuration"
 model_list:
   - model_name: azure-flux-kontext-edit
-    litellm_params:
+    lumina_params:
       model: azure_ai/FLUX.1-Kontext-pro
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -190,7 +190,7 @@ model_list:
       mode: image_edit
 
   - model_name: azure-flux-2-flex-edit
-    litellm_params:
+    lumina_params:
       model: azure_ai/FLUX.2-flex
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -199,7 +199,7 @@ model_list:
       mode: image_edit
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start LiteLLM Proxy Server
@@ -265,7 +265,7 @@ path.write_bytes(img_bytes)
 
 ```bash showLineNumbers title="Azure AI Image Editing via Proxy - cURL"
 curl --location 'http://localhost:4000/v1/images/edits' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'model="azure-flux-kontext-edit"' \
 --form 'prompt="Convert this image to a vintage sepia tone with old-fashioned effects"' \
 --form 'image=@"path/to/your/image.png"'

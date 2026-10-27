@@ -63,7 +63,7 @@ SAML_SP_ENTITY_ID="https://litellm.yourcompany.com/sso/saml/metadata"
 
 # Required for any SSO
 PROXY_BASE_URL="https://litellm.yourcompany.com"
-LITELLM_MASTER_KEY="sk-..."
+LUMINA_MASTER_KEY="sk-..."
 DATABASE_URL="postgresql://..."
 ```
 

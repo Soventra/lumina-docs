@@ -13,7 +13,7 @@ One deployment can also be split across several teams in PTUs. Each team's share
 The feature is off by default and inert until you opt in:
 
 ```bash
-export LITELLM_ENABLE_PTU_COST_ATTRIBUTION=True
+export LUMINA_ENABLE_PTU_COST_ATTRIBUTION=True
 ```
 
 A configured secret manager can hold the variable instead. When the proxy would ask a secret manager for it, as it does for other settings, the secret manager's value wins over the environment and is read at most once a minute. The environment decides only when no secret manager is consulted.
@@ -30,11 +30,11 @@ The same thing through `POST /model/new`:
 
 ```bash
 curl -X POST http://localhost:4000/model/new \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model_name": "gpt-4o-ptu",
-    "litellm_params": {
+    "lumina_params": {
       "model": "azure/<your-deployment-name>",
       "api_key": "os.environ/AZURE_API_KEY",
       "api_base": "os.environ/AZURE_API_BASE"
@@ -53,7 +53,7 @@ Or in `config.yaml`:
 ```yaml
 model_list:
   - model_name: gpt-4o-ptu
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -65,7 +65,7 @@ model_list:
       ptu_effective_from: "2026-01-01T00:00:00Z"
 ```
 
-`model_info.id` is required on a deployment declared this way, and the proxy refuses to load one without it, naming the deployment in the startup log. Left to itself the id is derived from the model name and the resolved `litellm_params`, so rotating the credential mints a new identity and the reservation is charged a second time under it, which nothing later retracts. Any stable string works, and it has to be unique across your deployments
+`model_info.id` is required on a deployment declared this way, and the proxy refuses to load one without it, naming the deployment in the startup log. Left to itself the id is derived from the model name and the resolved `lumina_params`, so rotating the credential mints a new identity and the reservation is charged a second time under it, which nothing later retracts. Any stable string works, and it has to be unique across your deployments
 
 Upgrading an existing reservation that has already accrued cost, set `id` to the id it uses today rather than a fresh name, or the charges already written stay under the old identity and the new one starts beside them. The startup refusal quotes that current id so you can copy it
 
@@ -92,11 +92,11 @@ A department that reserves 50 PTUs and lets two teams use them declares the spli
 
 ```bash
 curl -X POST http://localhost:4000/model/new \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model_name": "gpt-4.1-ptu",
-    "litellm_params": {
+    "lumina_params": {
       "model": "azure/<your-deployment-name>",
       "api_key": "os.environ/AZURE_API_KEY",
       "api_base": "os.environ/AZURE_API_BASE"
@@ -116,7 +116,7 @@ Or in `config.yaml`:
 ```yaml
 model_list:
   - model_name: gpt-4.1-ptu
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -131,11 +131,11 @@ model_list:
         <team b id>: 20
 ```
 
-`ptu_shares` and `team_id` cannot both be set, and the shares have to add up to `ptu_count` exactly, in whole PTUs. A split that leaves capacity unowned or hands out more than was reserved is refused from `POST /model/new` with a 400 saying how many of the PTUs were allocated, and so is a split declared without `ptu_count` and `cost_per_ptu_per_hour`, since it would have nothing to add up to and no flat cost to roll up. In `config.yaml` the same entry is dropped when the proxy loads its models, whether or not `LITELLM_ENABLE_PTU_COST_ATTRIBUTION` is set: the startup log names the deployment and the reason, the proxy starts without it, and a request to that model name gets a 400 with no healthy deployments. Through the API every team in the split has to exist already: `POST /model/new` and `PATCH /model/{model_id}/update` refuse a split naming an unknown team with a 400 that names it, the same way they refuse an unknown `team_id`
+`ptu_shares` and `team_id` cannot both be set, and the shares have to add up to `ptu_count` exactly, in whole PTUs. A split that leaves capacity unowned or hands out more than was reserved is refused from `POST /model/new` with a 400 saying how many of the PTUs were allocated, and so is a split declared without `ptu_count` and `cost_per_ptu_per_hour`, since it would have nothing to add up to and no flat cost to roll up. In `config.yaml` the same entry is dropped when the proxy loads its models, whether or not `LUMINA_ENABLE_PTU_COST_ATTRIBUTION` is set: the startup log names the deployment and the reason, the proxy starts without it, and a request to that model name gets a 400 with no healthy deployments. Through the API every team in the split has to exist already: `POST /model/new` and `PATCH /model/{model_id}/update` refuse a split naming an unknown team with a 400 that names it, the same way they refuse an unknown `team_id`
 
 A deployment one team already owns through `team_id` is not switched to `ptu_shares` by a `PATCH`: a `team_id` row is team-scoped, with an internal routing name and an entry in that team's model list, and a shared row is proxy-wide, so the patch is refused with the same 400. To split it, delete the deployment and register it again with `ptu_shares` and the same `model_info.id`, which keeps the flat-cost rows already written under that id
 
-A shared deployment keeps its public model name and stays visible in model lists, but the proxy serves it only to the teams named in `ptu_shares`. A key from any other team, a key with no team, and the master key all get a 400 on it, whether or not `LITELLM_ENABLE_PTU_COST_ATTRIBUTION` is set, because a declared split is an access rule; the ceiling, the cost split, and PTU-hours below need the flag:
+A shared deployment keeps its public model name and stays visible in model lists, but the proxy serves it only to the teams named in `ptu_shares`. A key from any other team, a key with no team, and the master key all get a 400 on it, whether or not `LUMINA_ENABLE_PTU_COST_ATTRIBUTION` is set, because a declared split is an access rule; the ceiling, the cost split, and PTU-hours below need the flag:
 
 ```
 Deployment gpt-4.1-ptu is reserved for the teams holding a PTU share of it
@@ -164,7 +164,7 @@ A request that could never fit, such as one whose `max_tokens` alone is more tha
 
 A request without `max_tokens` gets one written for it when the share is small. When the share counted in output tokens (the ceiling divided by the output ratio) is under 4,096, the proxy sends `max_tokens` as 1,024 or a quarter of that, whichever is smaller, the same cap it writes under any `tpm_limit` that small, and a longer reply stops with `finish_reason: length`. Three PTUs of gpt-5.4-mini cap an uncapped reply at 987 output tokens and one PTU of gpt-5.4 at 100. A client that sends its own `max_tokens` is never rewritten, so a team on a small share that needs long replies sets it.
 
-The ceiling lives on the same per-minute window as a team's `model_tpm_limit`, so it reads and resets the way the limits you already set do, and it needs nothing beyond `LITELLM_ENABLE_PTU_COST_ATTRIBUTION`. The sizing row is looked up by `model_info.base_model` first, then by the model in `litellm_params`, because an Azure deployment name is arbitrary. A shared deployment, or an Azure deployment reserved for one team, whose model has no row logs a warning at startup, sets no ceiling, and reports no PTU-hours; set `base_model` to the Azure model name to fix it. A single-team reservation on another provider only feeds the flat-cost rollup, which needs no sizing, so it is not warned about
+The ceiling lives on the same per-minute window as a team's `model_tpm_limit`, so it reads and resets the way the limits you already set do, and it needs nothing beyond `LUMINA_ENABLE_PTU_COST_ATTRIBUTION`. The sizing row is looked up by `model_info.base_model` first, then by the model in `lumina_params`, because an Azure deployment name is arbitrary. A shared deployment, or an Azure deployment reserved for one team, whose model has no row logs a warning at startup, sets no ceiling, and reports no PTU-hours; set `base_model` to the Azure model name to fix it. A single-team reservation on another provider only feeds the flat-cost rollup, which needs no sizing, so it is not warned about
 
 A request counts against its team's ceiling however it names the shared deployment: the model group, a `model_group_alias`, a routing group, the deployment's `model_info.id`, its provider model, or a wildcard pattern such as `ptu-*` that the router serves it through. A wildcard name counts only against the pattern the router serves it from, the most specific one that matches, so a request an open `*` route serves never charges a share, and a team holding no share gets the 400 on a name the shared pattern matches even when `*` matches it too.
 
@@ -197,7 +197,7 @@ Spilled requests are tagged in the spend log metadata, so you can tell them apar
 "azure_spillover": {"from_deployment": "<your-deployment-name>"}
 ```
 
-This needs `LITELLM_ENABLE_PTU_COST_ATTRIBUTION` set and a pricing map entry for the served model (set `base_model` if the deployment name does not match one). Without either, spilled requests still log at zero
+This needs `LUMINA_ENABLE_PTU_COST_ATTRIBUTION` set and a pricing map entry for the served model (set `base_model` if the deployment name does not match one). Without either, spilled requests still log at zero
 
 ## Read the cost back
 
@@ -205,7 +205,7 @@ This needs `LITELLM_ENABLE_PTU_COST_ATTRIBUTION` set and a pricing map entry for
 
 ```bash
 curl -s "http://localhost:4000/team/daily/activity?team_ids=<team-id>&start_date=2026-01-01&end_date=2026-01-31" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" | jq '{
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" | jq '{
     total_spend: .metadata.total_spend,
     total_flat_cost: .metadata.total_flat_cost,
     total_ptu_hours: .metadata.total_ptu_hours,

@@ -101,7 +101,7 @@ export AZURE_API_KEY=""
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -190,7 +190,7 @@ You can set the `api_version` for Azure OpenAI in your proxy config.yaml in the 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/my-gpt4-deployment
       api_base: https://your-resource.openai.azure.com/
       api_version: "2024-08-01-preview"  # Set version per model
@@ -341,7 +341,7 @@ litellm.completion(model="azure/my-o3-deployment", messages=[{"role": "user", "c
 ```yaml
 model_list:
   - model_name: o3-mini
-    litellm_params:
+    lumina_params:
       model: azure/o3-model
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -366,7 +366,7 @@ litellm.completion(model="azure/o_series/my-random-deployment-name", messages=[{
 ```yaml
 model_list:
   - model_name: o3-mini
-    litellm_params:
+    lumina_params:
       model: azure/o_series/my-random-deployment-name
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -406,7 +406,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt5_series/my-gpt-5-deployment
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -437,7 +437,7 @@ response = litellm.completion(
 ```yaml keep-model-ids
 model_list:
   - model_name: gpt-5.6-luna
-    litellm_params:
+    lumina_params:
       model: azure/my-gpt-5-deployment  # deployment name contains 'gpt-5'
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -486,7 +486,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: azure-openai-4o-audio
-    litellm_params:
+    lumina_params:
       model: azure/azure-openai-4o-audio
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -504,7 +504,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-openai-4o-audio",
@@ -605,7 +605,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -621,7 +621,7 @@ Here is an example of setting up `tenant_id`, `client_id`, `client_secret` in yo
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -658,7 +658,7 @@ Here is an example of setting up `client_id`, `azure_username`, `azure_password`
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -747,7 +747,7 @@ export AZURE_CLIENT_SECRET=""
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/your-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
 
@@ -762,7 +762,7 @@ Perfect for AKS clusters, Azure VMs, or other managed environments where Azure a
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/your-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
 
@@ -777,7 +777,7 @@ If you're authenticated via `az login`, no additional configuration needed:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/your-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
 
@@ -851,7 +851,7 @@ file_id = batch_input_file.id
 
 ```bash
 curl http://localhost:4000/v1/files \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -F purpose="batch" \
     -F file="@mydata.jsonl"
 ```
@@ -886,7 +886,7 @@ batch = client.batches.create( # re use client from above
 
 ```bash
 curl http://localhost:4000/v1/batches \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "file-abc123",
@@ -914,7 +914,7 @@ retrieved_batch = client.batches.retrieve(
 
 ```bash
 curl http://localhost:4000/v1/batches/batch_abc123 \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
 ```
 
@@ -938,7 +938,7 @@ cancelled_batch = client.batches.cancel(
 
 ```bash
 curl http://localhost:4000/v1/batches/batch_abc123/cancel \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -X POST
 ```
@@ -960,7 +960,7 @@ client.batches.list(extra_headers={"custom-llm-provider": "azure"})
 
 ```bash
 curl http://localhost:4000/v1/batches?limit=2 \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json"
 ```
 </TabItem>
@@ -1041,7 +1041,7 @@ In your config.yaml, set `enable_loadbalancing_on_batch_endpoints: true`
 ```yaml keep-model-ids
 model_list:
   - model_name: "batch-gpt-4o-mini"
-    litellm_params:
+    lumina_params:
       model: "azure/gpt-5.6-luna"
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -1061,7 +1061,7 @@ Just set `model: batch-gpt-4o-mini` in your .jsonl.
 
 ```bash
 curl http://localhost:4000/v1/files \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -F purpose="batch" \
     -F file="@mydata.jsonl"
 ```
@@ -1086,7 +1086,7 @@ Expected Response (OpenAI-compatible)
 
 ```bash
 curl http://0.0.0.0:4000/v1/batches \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "file-f0be81f654454113a922da60acb0eea6",
@@ -1106,7 +1106,7 @@ Expected Response:
 
 ```bash
 curl http://0.0.0.0:4000/v1/batches/batch_94e43f0a-d805-477d-adf9-bbb9c50910ed \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
 ```
 
@@ -1121,7 +1121,7 @@ Expected Response:
 
 ```bash
 curl http://0.0.0.0:4000/v1/batches?limit=2 \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json"
 ```
 
@@ -1151,7 +1151,7 @@ from litellm import Router
 
 model_list = [{ # list of model deployments 
 	"model_name": "{{openai_small}}", # openai model name 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-v-2", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1161,7 +1161,7 @@ model_list = [{ # list of model deployments
 	"rpm": 1800
 }, {
     "model_name": "{{openai_small}}", # openai model name 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "azure/chatgpt-functioncalling", 
 		"api_key": os.getenv("AZURE_API_KEY"),
 		"api_version": os.getenv("AZURE_API_VERSION"),
@@ -1171,7 +1171,7 @@ model_list = [{ # list of model deployments
 	"rpm": 1800
 }, {
     "model_name": "{{openai_small}}", # openai model name 
-	"litellm_params": { # params for litellm completion/embedding call 
+	"lumina_params": { # params for litellm completion/embedding call 
 		"model": "{{openai_small}}", 
 		"api_key": os.getenv("OPENAI_API_KEY"),
 	},
@@ -1258,7 +1258,7 @@ print("\nTool Choice:\n", tool_calls)
 ```yaml
 model_list:
   - model_name: azure-gpt-3.5
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-functioncalling
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -1276,7 +1276,7 @@ litellm --config config.yaml
 ```bash
 curl -L -X POST 'http://localhost:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "azure-gpt-3.5",
     "messages": [
@@ -1302,7 +1302,7 @@ Set base model for cost tracking azure image-gen call
 ```yaml
 model_list: 
   - model_name: dall-e-3
-    litellm_params:
+    lumina_params:
         model: azure/dall-e-3-test
         api_version: 2023-06-01-preview
         api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
@@ -1324,7 +1324,7 @@ Example config with `base_model`
 ```yaml
 model_list:
   - model_name: azure-gpt-3.5
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY

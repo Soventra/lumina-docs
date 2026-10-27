@@ -87,7 +87,7 @@ If you need to migrate Databases the following Tables should be copied to ensure
 
 Postgres logical replication only carries the columns of the replica identity when a row is updated or deleted. Prisma creates every LiteLLM table at the Postgres default, which is the primary key, so a downstream consumer sees the new row but not the previous one. Sinks such as Neon's lakehouse sync require `REPLICA IDENTITY FULL` and reject tables that do not have it.
 
-Set `LITELLM_SET_REPLICA_IDENTITY_FULL=True` to have LiteLLM run
+Set `LUMINA_SET_REPLICA_IDENTITY_FULL=True` to have LiteLLM run
 
 ```sql
 ALTER TABLE "LiteLLM_..." REPLICA IDENTITY FULL;
@@ -96,7 +96,7 @@ ALTER TABLE "LiteLLM_..." REPLICA IDENTITY FULL;
 on every LiteLLM table at the end of each migration run, including tables that a future upgrade adds, so the setting survives upgrades instead of having to be re-applied by hand. Tables that are already `FULL` are skipped, and tables in the same schema that LiteLLM does not own are left alone.
 
 ```bash
-export LITELLM_SET_REPLICA_IDENTITY_FULL=True
+export LUMINA_SET_REPLICA_IDENTITY_FULL=True
 litellm --config /path/to/config.yaml
 ```
 

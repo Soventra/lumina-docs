@@ -20,13 +20,13 @@ Define the guardrail under the `guardrails` section. One entry covers both direc
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: alice
-    litellm_params:
+    lumina_params:
       guardrail: alice
       mode: [pre_call, post_call]
       default_on: true
@@ -47,7 +47,7 @@ Alice resolves the application from the authenticated virtual key, so a request 
 
 ```shell
 curl -sSLX POST 'http://0.0.0.0:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "key_alias": "payments-bot",

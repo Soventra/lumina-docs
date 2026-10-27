@@ -46,7 +46,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: llamafile/mistralai/mistral-7b-instruct-v0.2 # add llamafile/ prefix to route as OpenAI provider
         api_base: http://localhost:8080/v1 # add api base for OpenAI compatible provider
   ```
@@ -88,7 +88,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",
@@ -130,7 +130,7 @@ print(embedding)
 ```yaml
 model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: llamafile/sentence-transformers/all-MiniLM-L6-v2 # add llamafile/ prefix to route as OpenAI provider
         api_base: http://localhost:8080/v1 # add api base for OpenAI compatible provider
 ```
@@ -147,7 +147,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/embeddings' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"input": ["hello world"], "model": "my-model"}'
 ```

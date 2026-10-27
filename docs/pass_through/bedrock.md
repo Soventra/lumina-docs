@@ -9,7 +9,7 @@ Pass-through endpoints for Bedrock - call provider-specific endpoint, in native 
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ✅ | |
 
-Just replace `https://bedrock-runtime.{aws_region_name}.amazonaws.com` with `LITELLM_PROXY_BASE_URL/bedrock`
+Just replace `https://bedrock-runtime.{aws_region_name}.amazonaws.com` with `LUMINA_PROXY_BASE_URL/bedrock`
 
 ## Overview
 
@@ -24,7 +24,7 @@ Define your Bedrock models in `config.yaml` and reference them by name. The prox
 ```yaml showLineNumbers
 model_list:
   - model_name: my-bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       custom_llm_provider: bedrock
@@ -32,7 +32,7 @@ model_list:
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-bedrock-model/converse' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"messages": [{"role": "user", "content": [{"text": "Hello"}]}]}'
 ```
@@ -51,7 +51,7 @@ export AWS_REGION_NAME="us-west-2"
 
 ```bash showLineNumbers
 curl "http://0.0.0.0:4000/bedrock/guardrail/my-guardrail-id/version/1/apply" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"contents": [{"text": {"text": "Hello"}}], "source": "INPUT"}'
 ```
@@ -69,7 +69,7 @@ Let's call the Bedrock [`/converse` endpoint](https://docs.aws.amazon.com/bedroc
 ```yaml showLineNumbers
 model_list:
   - model_name: my-bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       custom_llm_provider: bedrock
@@ -96,7 +96,7 @@ Let's call the Bedrock converse endpoint using the model name from config:
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-bedrock-model/converse' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "messages": [
@@ -120,13 +120,13 @@ Use config.yaml to define Bedrock models and use them via passthrough endpoints.
 ```yaml showLineNumbers
 model_list:
   - model_name: my-claude-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       custom_llm_provider: bedrock
   
   - model_name: my-cohere-model
-    litellm_params:
+    lumina_params:
       model: bedrock/cohere.command-r-v1:0
       aws_region_name: us-east-1
       custom_llm_provider: bedrock
@@ -146,7 +146,7 @@ Use the `model_name` from config in the URL path:
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-claude-model/converse' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "messages": [
@@ -168,7 +168,7 @@ For streaming responses, use the `/converse-stream` endpoint:
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-claude-model/converse-stream' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "messages": [
@@ -207,14 +207,14 @@ Define multiple Bedrock deployments with the same `model_name` to enable automat
 model_list:
   # First deployment - us-west-2
   - model_name: my-claude-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       custom_llm_provider: bedrock
   
   # Second deployment - us-east-1 (load balanced)
   - model_name: my-claude-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
       custom_llm_provider: bedrock
@@ -232,7 +232,7 @@ litellm --config config.yaml
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-claude-model/invoke' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "max_tokens": 100,
@@ -302,7 +302,7 @@ A `guardrailConfig` on a model in `config.yaml` (or a model added in the UI) app
 ```yaml showLineNumbers
 model_list:
   - model_name: my-claude-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       guardrailConfig:
@@ -334,8 +334,8 @@ Key Changes:
 
 | **Original Endpoint**                                | **Replace With**                  |
 |------------------------------------------------------|-----------------------------------|
-| `https://bedrock-runtime.{aws_region_name}.amazonaws.com`          | `http://0.0.0.0:4000/bedrock` (LITELLM_PROXY_BASE_URL="http://0.0.0.0:4000")      |
-| `AWS4-HMAC-SHA256..`                                 | `Bearer anything` (use `Bearer LITELLM_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
+| `https://bedrock-runtime.{aws_region_name}.amazonaws.com`          | `http://0.0.0.0:4000/bedrock` (LUMINA_PROXY_BASE_URL="http://0.0.0.0:4000")      |
+| `AWS4-HMAC-SHA256..`                                 | `Bearer anything` (use `Bearer LUMINA_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
 
 
 
@@ -489,7 +489,7 @@ Use this, to avoid giving developers the raw AWS Keys, but still letting them us
 
 ```bash showLineNumbers
 export DATABASE_URL=""
-export LITELLM_MASTER_KEY=""
+export LUMINA_MASTER_KEY=""
 export AWS_ACCESS_KEY_ID=""  # Access key
 export AWS_SECRET_ACCESS_KEY="" # Secret access key
 export AWS_REGION_NAME="" # us-east-1, us-east-2, us-west-1, us-west-2
@@ -505,7 +505,7 @@ litellm
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```
@@ -524,7 +524,7 @@ Expected Response
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/cohere.command-r-v1:0/converse' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "messages": [
@@ -608,7 +608,7 @@ Create a `config.yaml`:
 ```yaml showLineNumbers
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
       custom_llm_provider: bedrock

@@ -13,7 +13,7 @@ Add `/v1/messages` to `model_info.supported_endpoints` on the deployment:
 ```yaml
 model_list:
   - model_name: my-open-model
-    litellm_params:
+    lumina_params:
       model: openai/some-open-model
       api_base: https://inference.example.com/v1
       api_key: os.environ/EXAMPLE_API_KEY
@@ -34,7 +34,7 @@ When the upstream honors `ttl`, keep it with `cache_control_ttl: true` in `model
 ```yaml
 model_list:
   - model_name: my-open-model
-    litellm_params:
+    lumina_params:
       model: openai/some-open-model
       api_base: https://inference.example.com/v1
       api_key: os.environ/EXAMPLE_API_KEY
@@ -49,7 +49,7 @@ Test it with an Anthropic-only feature in the request:
 
 ```bash
 curl http://0.0.0.0:4000/v1/messages \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "content-type: application/json" \
   -H "anthropic-version: 2023-06-01" \
   -d '{

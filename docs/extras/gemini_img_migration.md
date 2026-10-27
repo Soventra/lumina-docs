@@ -125,17 +125,17 @@ The image is returned in the `message.images` field:
 ```yaml
 model_list:
   - model_name: gemini-image-gen
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.0-flash-exp-image-generation
       api_key: os.environ/GEMINI_API_KEY
   - model_name: vertex-image-gen  
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-2.5-flash-image-preview
       vertex_project: your-project-id
       vertex_location: us-central1
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY  # Your proxy API key
+  master_key: os.environ/LUMINA_MASTER_KEY  # Your proxy API key
 ```
 
 2. **Start the proxy server:**
@@ -175,7 +175,7 @@ print(response.choices[0].message.images[0]["image_url"]["url"])  # "data:image/
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "gemini-image-gen",
   "messages": [

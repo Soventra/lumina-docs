@@ -242,7 +242,7 @@ Add Veo models to your `config.yaml`:
 ```yaml
 model_list:
   - model_name: veo-3
-    litellm_params:
+    lumina_params:
       model: gemini/veo-3.0-generate-preview
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -263,7 +263,7 @@ litellm --config config.yaml
 # Step 1: Generate video
 curl --location 'http://0.0.0.0:4000/v1/videos' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "veo-3",
     "prompt": "A cat playing with a ball of yarn in a sunny garden"

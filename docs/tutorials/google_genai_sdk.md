@@ -53,7 +53,7 @@ uv add google-genai
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -249,7 +249,7 @@ Route `{{gemini_flash}}` requests to Claude Sonnet:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -265,7 +265,7 @@ Route `{{gemini_flash}}` requests to `{{openai_large}}`:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: openai-gpt
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -281,7 +281,7 @@ Route `{{gemini_flash}}` requests to Claude on Bedrock:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: bedrock-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -299,11 +299,11 @@ Load balance across Anthropic and OpenAI:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: my-model
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: my-model
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 

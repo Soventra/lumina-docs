@@ -496,11 +496,11 @@ litellm --config config.yaml --port 4000
 # https://docs.litellm.ai/docs/mcp_rest_api
 
 curl http://localhost:4000/mcp-rest/tools/list \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl http://localhost:4000/mcp-rest/tools/call \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "server_id": "test_oauth2",
     "name": "echo",
@@ -556,7 +556,7 @@ The response includes these headers (all sensitive values are masked):
 | Header | Description |
 |--------|-------------|
 | `x-mcp-debug-inbound-auth` | Which inbound auth headers were present. |
-| `x-mcp-debug-oauth2-token` | The OAuth2 token (masked). Shows `SAME_AS_LITELLM_KEY` if the LiteLLM key is leaking. |
+| `x-mcp-debug-oauth2-token` | The OAuth2 token (masked). Shows `SAME_AS_LUMINA_KEY` if the LiteLLM key is leaking. |
 | `x-mcp-debug-auth-resolution` | Which auth method was used: `oauth2-passthrough`, `m2m-client-credentials`, `per-request-header`, `static-token`, or `no-auth`. |
 | `x-mcp-debug-outbound-url` | The upstream MCP server URL. |
 | `x-mcp-debug-server-auth-type` | The `auth_type` configured on the server. |
@@ -575,7 +575,7 @@ x-mcp-debug-server-auth-type: oauth2
 
 ```
 x-mcp-debug-inbound-auth: authorization=Bearer****1234
-x-mcp-debug-oauth2-token: Bearer****1234 (SAME_AS_LITELLM_KEY - likely misconfigured)
+x-mcp-debug-oauth2-token: Bearer****1234 (SAME_AS_LUMINA_KEY - likely misconfigured)
 x-mcp-debug-auth-resolution: oauth2-passthrough
 x-mcp-debug-outbound-url: https://mcp.atlassian.com/v1/mcp
 x-mcp-debug-server-auth-type: oauth2
@@ -585,7 +585,7 @@ x-mcp-debug-server-auth-type: oauth2
 
 #### LiteLLM API key leaking to the MCP server
 
-**Symptom:** `x-mcp-debug-oauth2-token` shows `SAME_AS_LITELLM_KEY`.
+**Symptom:** `x-mcp-debug-oauth2-token` shows `SAME_AS_LUMINA_KEY`.
 
 The `Authorization` header carries the LiteLLM API key instead of an OAuth2 token. The OAuth2 flow never ran because the client already had an `Authorization` header set.
 

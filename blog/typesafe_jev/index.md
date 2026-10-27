@@ -19,7 +19,7 @@ $0.042 per 1M input tokens, no output charge. Spend is logged under the versione
 
 ## Usage
 
-Set your TypeSafe key once on the proxy, then replace `https://api.typesafe.ai` with `LITELLM_PROXY_BASE_URL/typesafe`. Clients only need a LiteLLM virtual key.
+Set your TypeSafe key once on the proxy, then replace `https://api.typesafe.ai` with `LUMINA_PROXY_BASE_URL/typesafe`. Clients only need a LiteLLM virtual key.
 
 ```bash
 export TYPESAFE_API_KEY="your-typesafe-api-key"
@@ -27,7 +27,7 @@ export TYPESAFE_API_KEY="your-typesafe-api-key"
 
 ```bash
 curl -X POST "http://0.0.0.0:4000/typesafe/v1/systemone" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "state": "Help! My payouts have been failing for 3 days.",

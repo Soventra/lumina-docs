@@ -38,13 +38,13 @@ Create a configuration file with your preferred non-Anthropic models:
 model_list:
   # OpenAI {{openai_large}}
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   
   # OpenAI {{openai_small}}
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -53,7 +53,7 @@ Set your environment variables:
 
 ```bash
 export OPENAI_API_KEY="your-openai-api-key"
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
 ```
 
 </TabItem>
@@ -63,7 +63,7 @@ export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure ke
 model_list:
   # Google Gemini
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -72,7 +72,7 @@ Set your environment variables:
 
 ```bash
 export GEMINI_API_KEY="your-gemini-api-key"
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
 ```
 
 </TabItem>
@@ -82,7 +82,7 @@ export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure ke
 model_list:
   # Google Gemini
   - model_name: vertex-gemini-3.8-flash
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_flash}}
       vertex_credentials: os.environ/VERTEX_FILE_PATH_ENV_VAR # os.environ["VERTEX_FILE_PATH_ENV_VAR"] = "/path/to/service_account.json" 
       vertex_project: "my-test-project"
@@ -90,7 +90,7 @@ model_list:
 
   # Anthropic Claude
   - model_name: anthropic-vertex
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{anthropic}}
       vertex_ai_project: "my-test-project"
       vertex_ai_location: "us-east-1"
@@ -101,7 +101,7 @@ Set your environment variables:
 
 ```bash
 export VERTEX_FILE_PATH_ENV_VAR="/path/to/service_account.json"
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  
 ```
 
 </TabItem>
@@ -111,7 +111,7 @@ export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"
 model_list:
   # Azure OpenAI
   - model_name: azure-gpt-5.6-terra
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -123,7 +123,7 @@ Set your environment variables:
 ```bash
 export AZURE_API_KEY="your-azure-api-key"
 export AZURE_API_BASE="https://your-resource.openai.azure.com"
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"
 ```
 
 </TabItem>
@@ -146,7 +146,7 @@ Test that your proxy is working correctly:
 
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
--H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+-H "Authorization: Bearer $LUMINA_MASTER_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "{{openai_large}}",
@@ -160,7 +160,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
--H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+-H "Authorization: Bearer $LUMINA_MASTER_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "{{gemini_flash}}",
@@ -174,7 +174,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
--H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+-H "Authorization: Bearer $LUMINA_MASTER_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "{{gemini_flash}}",
@@ -188,7 +188,7 @@ curl -X POST http://0.0.0.0:4000/v1/messages \
 
 ```bash
 curl -X POST http://0.0.0.0:4000/v1/messages \
--H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+-H "Authorization: Bearer $LUMINA_MASTER_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "azure-gpt-5.6-terra",
@@ -206,11 +206,11 @@ Configure Claude Code to use your LiteLLM proxy:
 
 ```bash
 export ANTHROPIC_BASE_URL="http://0.0.0.0:4000"
-export ANTHROPIC_AUTH_TOKEN="$LITELLM_MASTER_KEY"
+export ANTHROPIC_AUTH_TOKEN="$LUMINA_MASTER_KEY"
 ```
 
 :::tip
-The `LITELLM_MASTER_KEY` gives Claude Code access to all proxy models. You can also create virtual keys in the LiteLLM UI to limit access to specific models.
+The `LUMINA_MASTER_KEY` gives Claude Code access to all proxy models. You can also create virtual keys in the LiteLLM UI to limit access to specific models.
 :::
 
 ### 5. Use Claude Code with Non-Anthropic Models
@@ -278,7 +278,7 @@ The `/model` picker only keeps gateway models whose id contains `claude` or `ant
 ```yaml
 model_list:
   - model_name: kimi-k3-claude-compatible
-    litellm_params:
+    lumina_params:
       model: moonshot/kimi-k3
       api_key: os.environ/MOONSHOT_API_KEY
     model_info:
@@ -314,12 +314,12 @@ Configure multiple deployments with automatic fallback:
 ```yaml
 model_list:
   - model_name: {{openai_large}}  # virtual model name
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   
   - model_name: {{openai_large}}  # same virtual name
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -336,7 +336,7 @@ Track usage and set budgets through the LiteLLM UI:
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: "postgresql://..."  # Enable database for tracking
   store_model_in_db: true
 ```

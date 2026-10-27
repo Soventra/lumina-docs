@@ -24,7 +24,7 @@ We will use the `--config` to set `litellm.callbacks = ["azure_sentinel"]` this 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["azure_sentinel"] # logs llm success + failure logs to Azure Sentinel
@@ -178,7 +178,7 @@ Follow this step-by-step guide to set up Azure Sentinel with LiteLLM.
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/863ad29b-2c3a-4b7c-9a6b-36d3a76c9f32/ascreenshot.jpeg?tl_px=0,0&br_px=2618,1463&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=526,146)
 
-3. Enter a table name (e.g., "LITELLM_PROD_CL")
+3. Enter a table name (e.g., "LUMINA_PROD_CL")
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/ef2f1c52-aa36-46a1-91e6-9bd868891b15/ascreenshot.jpeg?tl_px=0,0&br_px=2618,1463&force_format=jpeg&q=100&width=1120.0)
 
@@ -224,7 +224,7 @@ Follow this step-by-step guide to set up Azure Sentinel with LiteLLM.
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/fd8a5504-4769-4f23-983e-520f256ee308/ascreenshot.jpeg?tl_px=1160,0&br_px=2618,814&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=965,257)
 
-2. Find the **Stream Name** in the `streamDeclarations` section (e.g., "Custom-LITELLM_PROD_CL_CL")
+2. Find the **Stream Name** in the `streamDeclarations` section (e.g., "Custom-LUMINA_PROD_CL_CL")
 
 ![](https://ajeuwbhvhr.cloudimg.io/https://colony-recorder.s3.amazonaws.com/files/2025-12-17/a4052b32-2028-4d12-8930-bfcdf6f47652/ascreenshot.jpeg?tl_px=405,270&br_px=2115,1225&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=523,277)
 

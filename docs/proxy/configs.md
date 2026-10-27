@@ -24,7 +24,7 @@ In the `config.yaml` the model_name parameter is the user-facing name to use for
 
 In the config below:
 - `model_name`: the name to pass TO litellm from the external client  
-- `litellm_params.model`: the model string passed to the litellm.completion() function
+- `lumina_params.model`: the model string passed to the litellm.completion() function
 
 E.g.: 
 - `model=vllm-models` will route to `openai/facebook/opt-125m`. 
@@ -33,27 +33,27 @@ E.g.:
 ```yaml
 model_list:
   - model_name: {{openai_large}} ### RECEIVED MODEL NAME ###
-    litellm_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
       model: azure/gpt-4o-eu ### MODEL NAME sent to `litellm.completion()` ###
       api_base: https://my-endpoint-europe-berri-992.openai.azure.com/
       api_key: "os.environ/AZURE_API_KEY_EU" # does os.getenv("AZURE_API_KEY_EU")
       rpm: 6      # [OPTIONAL] Rate limit for this deployment: in requests per minute (rpm)
   - model_name: bedrock-claude-v1 
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4o-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: "os.environ/AZURE_API_KEY_CA"
       rpm: 6
   - model_name: anthropic-claude
-    litellm_params: 
+    lumina_params: 
       model: bedrock/us.anthropic.{{anthropic}}
       ### [OPTIONAL] SET AWS REGION ###
       aws_region_name: us-east-1
   - model_name: vllm-models
-    litellm_params:
+    lumina_params:
       model: openai/facebook/opt-125m # the `openai/` prefix tells litellm it's openai compatible
       api_base: http://0.0.0.0:4000/v1
       api_key: none
@@ -65,7 +65,7 @@ model_list:
   # Default models
   # Works for ALL Providers and needs the default provider credentials in .env
   - model_name: "*" 
-    litellm_params:
+    lumina_params:
       model: "*"
 
 litellm_settings: # module level litellm settings - https://github.com/BerriAI/litellm/blob/main/litellm/__init__.py
@@ -73,7 +73,7 @@ litellm_settings: # module level litellm settings - https://github.com/BerriAI/l
   success_callback: ["langfuse"] # OPTIONAL - if you want to start sending LLM Logs to Langfuse. Make sure to set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` in your env
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY # [OPTIONAL] Only use this if you to require all calls to contain this key (Authorization: Bearer $LITELLM_API_KEY)
+  master_key: os.environ/LUMINA_MASTER_KEY # [OPTIONAL] Only use this if you to require all calls to contain this key (Authorization: Bearer $LUMINA_API_KEY)
   alerting: ["slack"] # [OPTIONAL] If you want Slack Alerts for Hanging LLM requests, Slow llm responses, Budget Alerts. Make sure to set `SLACK_WEBHOOK_URL` in your env
 ```
 :::info
@@ -138,7 +138,7 @@ You can use the config to save model-specific information like api_base, api_key
 ```yaml
 model_list:
   - model_name: gpt-4-team1
-    litellm_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
+    lumina_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -146,20 +146,20 @@ model_list:
       seed: 12
       max_tokens: 20
   - model_name: gpt-4-team2
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: sk-123
       api_base: https://openai-gpt-4-test-v-2.openai.azure.com/
       temperature: 0.2
   - model_name: openai-gpt-4o
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       extra_headers: {"AI-Resource Group": "ishaan-resource"}
       api_key: sk-123
       organization: org-ikDc4ex8NB
       temperature: 0.2
   - model_name: mistral-7b
-    litellm_params:
+    lumina_params:
       model: ollama/mistral
       api_base: your_ollama_api_base
 ```
@@ -188,15 +188,15 @@ See supported Embedding Providers & Models [here](https://docs.litellm.ai/docs/e
 ```yaml
 model_list:
   - model_name: bedrock-cohere
-    litellm_params:
+    lumina_params:
       model: "bedrock/cohere.command-text-v14"
       aws_region_name: "us-west-2"
   - model_name: bedrock-cohere
-    litellm_params:
+    lumina_params:
       model: "bedrock/cohere.command-text-v14"
       aws_region_name: "us-east-2"
   - model_name: bedrock-cohere
-    litellm_params:
+    lumina_params:
       model: "bedrock/cohere.command-text-v14"
       aws_region_name: "us-east-1"
 
@@ -211,20 +211,20 @@ Here's how to route between GPT-J embedding (sagemaker endpoint), Amazon Titan e
 ```yaml
 model_list:
   - model_name: sagemaker-embeddings
-    litellm_params: 
+    lumina_params: 
       model: "sagemaker/berri-benchmarking-gpt-j-6b-fp16"
   - model_name: amazon-embeddings
-    litellm_params:
+    lumina_params:
       model: "bedrock/amazon.titan-embed-text-v1"
   - model_name: azure-embeddings
-    litellm_params: 
+    lumina_params: 
       model: "azure/azure-embedding-model"
       api_base: "os.environ/AZURE_API_BASE" # os.getenv("AZURE_API_BASE")
       api_key: "os.environ/AZURE_API_KEY" # os.getenv("AZURE_API_KEY")
       api_version: "2023-07-01-preview"
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY # [OPTIONAL] if set all calls to proxy will require either this key or a valid generated token
+  master_key: os.environ/LUMINA_MASTER_KEY # [OPTIONAL] if set all calls to proxy will require either this key or a valid generated token
 ```
 
 </TabItem>
@@ -235,13 +235,13 @@ LiteLLM Proxy supports all <a href="https://huggingface.co/models?pipeline_tag=f
 ```yaml
 model_list:
   - model_name: deployed-codebert-base
-    litellm_params: 
+    lumina_params: 
       # send request to deployed hugging face inference endpoint
       model: huggingface/microsoft/codebert-base # add huggingface prefix so it routes to hugging face
       api_key: hf_LdS                            # api key for hugging face inference endpoint
       api_base: https://uysneno1wv2wd4lw.us-east-1.aws.endpoints.huggingface.cloud # your hf inference endpoint 
   - model_name: codebert-base
-    litellm_params: 
+    lumina_params: 
       # no api_base set, sends request to hugging face free inference api https://api-inference.huggingface.co/models/
       model: huggingface/microsoft/codebert-base # add huggingface prefix so it routes to hugging face
       api_key: hf_LdS                            # api key for hugging face                     
@@ -255,7 +255,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: azure-embedding-model # model group
-    litellm_params:
+    lumina_params:
       model: azure/azure-embedding-model # model name for litellm.embedding(model=azure/azure-embedding-model) call
       api_base: your-azure-api-base
       api_key: your-api-key
@@ -269,11 +269,11 @@ model_list:
 ```yaml
 model_list:
 - model_name: text-embedding-ada-002 # model group
-  litellm_params:
+  lumina_params:
     model: text-embedding-ada-002 # model name for litellm.embedding(model=text-embedding-ada-002) 
     api_key: your-api-key-1
 - model_name: text-embedding-ada-002 
-  litellm_params:
+  lumina_params:
     model: text-embedding-ada-002
     api_key: your-api-key-2
 ```
@@ -285,12 +285,12 @@ model_list:
 
 https://docs.litellm.ai/docs/providers/xinference
 
-**Note add `xinference/` prefix to `litellm_params`: `model` so litellm knows to route to OpenAI**
+**Note add `xinference/` prefix to `lumina_params`: `model` so litellm knows to route to OpenAI**
 
 ```yaml
 model_list:
 - model_name: embedding-model  # model group
-  litellm_params:
+  lumina_params:
     model: xinference/bge-base-en   # model name for litellm.embedding(model=xinference/bge-base-en) 
     api_base: http://0.0.0.0:9997/v1
 ```
@@ -301,12 +301,12 @@ model_list:
 
 <p>Use this for calling <a href="https://github.com/xorbitsai/inference">/embedding endpoints on OpenAI Compatible Servers</a>.</p>
 
-**Note add `openai/` prefix to `litellm_params`: `model` so litellm knows to route to OpenAI**
+**Note add `openai/` prefix to `lumina_params`: `model` so litellm knows to route to OpenAI**
 
 ```yaml
 model_list:
 - model_name: text-embedding-ada-002  # model group
-  litellm_params:
+  lumina_params:
     model: openai/<your-model-name>   # model name for litellm.embedding(model=text-embedding-ada-002) 
     api_base: <model-api-base>
 ```
@@ -344,7 +344,7 @@ Add all openai models across all OpenAI organizations with just 1 model definiti
 
 ```yaml
   - model_name: "*"
-    litellm_params:
+    lumina_params:
       model: openai/*
       api_key: os.environ/OPENAI_API_KEY
       organization:
@@ -359,7 +359,7 @@ Confirm this via
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/model/info' \
---header 'Authorization: Bearer ${LITELLM_KEY}' \
+--header 'Authorization: Bearer ${LUMINA_KEY}' \
 --data ''
 ```
 
@@ -386,28 +386,28 @@ When `tpm/rpm` is set + `routing_strategy==simple-shuffle` litellm will use a we
 ```yaml
 model_list:
   - model_name: zephyr-beta
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8001
         rpm: 60      # Optional[int]: When rpm/tpm set - litellm uses weighted pick for load balancing. rpm = Rate limit for this deployment: in requests per minute (rpm).
         tpm: 1000   # Optional[int]: tpm = Tokens Per Minute 
   - model_name: zephyr-beta
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8002
         rpm: 600      
   - model_name: zephyr-beta
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8003
         rpm: 60000      
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
         model: {{openai_small}}
         api_key: <my-openai-key>
         rpm: 200      
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
         model: {{openai_large}}
         api_key: <my-openai-key>
         rpm: 100      
@@ -443,7 +443,7 @@ os.environ/<YOUR-ENV-VAR> # runs os.getenv("YOUR-ENV-VAR")
 ```yaml 
 model_list:
   - model_name: gpt-4-team1
-    litellm_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
+    lumina_params: # params for litellm.completion() - https://docs.litellm.ai/docs/completion/input#input---request-body
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -463,7 +463,7 @@ Define credentials once and reuse them across multiple models. This helps with:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       litellm_credential_name: default_azure_credential  # Reference credential below
 
@@ -491,7 +491,7 @@ To relabel a credential in the Admin UI, set `display_name` instead. It is optio
 
 ```bash
 curl -X PATCH http://localhost:4000/credentials/default_azure_credential \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"display_name": "Azure EU (prod)", "credential_info": {}}'
 ```
@@ -512,26 +512,26 @@ Supported Environments:
 - `staging`
 - `development`
 
-1. Set `LITELLM_ENVIRONMENT="<environment>"` in your environment. Can be one of `production`, `staging` or `development`
+1. Set `LUMINA_ENVIRONMENT="<environment>"` in your environment. Can be one of `production`, `staging` or `development`
 
 
 2. For each model set the list of supported environments in `model_info.supported_environments`
 ```yaml
 model_list:
  - model_name: {{openai_small}}
-   litellm_params:
+   lumina_params:
      model: openai/{{openai_small}}
      api_key: os.environ/OPENAI_API_KEY
    model_info:
      supported_environments: ["development", "production", "staging"]
  - model_name: {{openai_large}}
-   litellm_params:
+   lumina_params:
      model: openai/{{openai_large}}
      api_key: os.environ/OPENAI_API_KEY
    model_info:
      supported_environments: ["production", "staging"]
  - model_name: {{anthropic}}
-   litellm_params:
+   lumina_params:
      model: anthropic/{{anthropic}}
      api_key: os.environ/ANTHROPIC_API_KEY
    model_info:
@@ -548,7 +548,7 @@ LiteLLM by default checks if a model has a [prompt template and applies it](../c
 # Model-specific parameters
 model_list:
   - model_name: mistral-7b # model alias
-    litellm_params: # actual params for litellm.completion()
+    lumina_params: # actual params for litellm.completion()
       model: "huggingface/mistralai/Mistral-7B-Instruct-v0.1" 
       api_base: "<your-api-base>"
       api_key: "<your-api-key>" # [OPTIONAL] for hf inference endpoints
@@ -573,7 +573,7 @@ If you're using the [`/utils/token_counter` endpoint](https://docs.litellm.ai/ap
 ```yaml
 model_list:
   - model_name: openai-deepseek
-    litellm_params:
+    lumina_params:
       model: deepseek/deepseek-chat
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -687,7 +687,7 @@ The tradeoff is that every query pays the prepare cost instead of amortizing it,
 To enable [LiteLLM Enterprise features](https://docs.litellm.ai/docs/enterprise), set your license key as an environment variable:
 
 ```bash
-export LITELLM_LICENSE="eyJ..."
+export LUMINA_LICENSE="eyJ..."
 ```
 
 The license key is a JWT token provided when you purchase a LiteLLM Enterprise license. Once set, LiteLLM will automatically detect and activate enterprise features.
@@ -695,7 +695,7 @@ The license key is a JWT token provided when you purchase a LiteLLM Enterprise l
 You can also add it to your `.env` file:
 
 ```env
-LITELLM_LICENSE="eyJ..."
+LUMINA_LICENSE="eyJ..."
 ```
 
 ## Extras
@@ -750,7 +750,7 @@ Restart the proxy after setting these. `/redoc` and `/openapi.json` then 404 wit
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -781,9 +781,9 @@ LiteLLM Proxy will read your config.yaml from an s3 Bucket or GCS Bucket
 
 Set the following .env vars 
 ```shell
-LITELLM_CONFIG_BUCKET_TYPE = "gcs"                              # set this to "gcs"         
-LITELLM_CONFIG_BUCKET_NAME = "litellm-proxy"                    # your bucket name on GCS
-LITELLM_CONFIG_BUCKET_OBJECT_KEY = "proxy_config.yaml"         # object key on GCS
+LUMINA_CONFIG_BUCKET_TYPE = "gcs"                              # set this to "gcs"         
+LUMINA_CONFIG_BUCKET_NAME = "litellm-proxy"                    # your bucket name on GCS
+LUMINA_CONFIG_BUCKET_OBJECT_KEY = "proxy_config.yaml"         # object key on GCS
 ```
 
 Start litellm proxy with these env vars - litellm will read your config from GCS 
@@ -791,9 +791,9 @@ Start litellm proxy with these env vars - litellm will read your config from GCS
 ```shell
 docker run --name litellm-proxy \
    -e DATABASE_URL=<database_url> \
-   -e LITELLM_CONFIG_BUCKET_NAME=<bucket_name> \
-   -e LITELLM_CONFIG_BUCKET_OBJECT_KEY="<object_key>> \
-   -e LITELLM_CONFIG_BUCKET_TYPE="gcs" \
+   -e LUMINA_CONFIG_BUCKET_NAME=<bucket_name> \
+   -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="<object_key>> \
+   -e LUMINA_CONFIG_BUCKET_TYPE="gcs" \
    -p 4000:4000 \
    docker.litellm.ai/berriai/litellm:latest --detailed_debug
 ```
@@ -804,8 +804,8 @@ docker run --name litellm-proxy \
 
 Set the following .env vars 
 ```shell
-LITELLM_CONFIG_BUCKET_NAME = "litellm-proxy"                    # your bucket name on s3 
-LITELLM_CONFIG_BUCKET_OBJECT_KEY = "litellm_proxy_config.yaml"  # object key on s3
+LUMINA_CONFIG_BUCKET_NAME = "litellm-proxy"                    # your bucket name on s3 
+LUMINA_CONFIG_BUCKET_OBJECT_KEY = "litellm_proxy_config.yaml"  # object key on s3
 ```
 
 Start litellm proxy with these env vars - litellm will read your config from s3 
@@ -813,8 +813,8 @@ Start litellm proxy with these env vars - litellm will read your config from s3
 ```shell
 docker run --name litellm-proxy \
    -e DATABASE_URL=<database_url> \
-   -e LITELLM_CONFIG_BUCKET_NAME=<bucket_name> \
-   -e LITELLM_CONFIG_BUCKET_OBJECT_KEY="<object_key>> \
+   -e LUMINA_CONFIG_BUCKET_NAME=<bucket_name> \
+   -e LUMINA_CONFIG_BUCKET_OBJECT_KEY="<object_key>> \
    -p 4000:4000 \
    docker.litellm.ai/berriai/litellm:latest
 ```

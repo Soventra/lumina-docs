@@ -50,14 +50,14 @@ Reference your custom secret manager in `config.yaml`:
 
 ```yaml showLineNumbers title="config.yaml"
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   key_management_system: custom  # KEY CHANGE
   key_management_settings:
     custom_secret_manager: my_secret_manager.InMemorySecretManager  # KEY CHANGE
 
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY  # Read from custom secret manager
 ```
@@ -72,7 +72,7 @@ Mount your custom secret manager file on the container:
 ```bash showLineNumbers
 docker run -d \
   -p 4000:4000 \
-  -e LITELLM_MASTER_KEY=$LITELLM_MASTER_KEY \
+  -e LUMINA_MASTER_KEY=$LUMINA_MASTER_KEY \
   --name litellm-proxy \
   -v $(pwd)/config.yaml:/app/config.yaml \
   -v $(pwd)/my_secret_manager.py:/app/my_secret_manager.py \

@@ -74,7 +74,7 @@ Add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gemini-flash
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -94,7 +94,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Create Interaction"
 curl -X POST "http://localhost:4000/v1beta/interactions" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini/{{gemini_flash}}",
@@ -106,7 +106,7 @@ curl -X POST "http://localhost:4000/v1beta/interactions" \
 
 ```bash showLineNumbers title="Streaming Interaction"
 curl -N -X POST "http://localhost:4000/v1beta/interactions" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini/{{gemini_flash}}",
@@ -119,7 +119,7 @@ curl -N -X POST "http://localhost:4000/v1beta/interactions" \
 
 ```bash showLineNumbers title="Get Interaction by ID"
 curl "http://localhost:4000/v1beta/interactions/{interaction_id}" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -234,7 +234,7 @@ print(response.outputs[-1].text)
 ```yaml showLineNumbers title="Example Configuration"
 model_list:
 - model_name: openai-model
-  litellm_params:
+  lumina_params:
     model: {{openai_large}}
     api_key: os.environ/OPENAI_API_KEY
 ```
@@ -252,7 +252,7 @@ litellm --config /path/to/config.yaml
 ```bash showLineNumbers title="non-Interactions API Model Request"
 curl http://localhost:4000/v1beta/interactions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "openai-model",
     "input": "Tell me a short joke about programming."

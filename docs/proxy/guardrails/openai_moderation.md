@@ -27,13 +27,13 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "openai-moderation-pre"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "pre_call"
       api_key: os.environ/OPENAI_API_KEY  # Optional if already set globally, or if OPENAI_IDENTITY_* federation is set (v1.108.0+)
@@ -81,7 +81,7 @@ Expect this to fail since the request contains harmful content:
 ```shell
 curl -i http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -123,7 +123,7 @@ Expected response on failure:
 ```shell
 curl -i http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -171,13 +171,13 @@ You can configure separate guardrails for user input and LLM responses:
 ```yaml showLineNumbers title="Multiple Guardrails Config"
 guardrails:
   - guardrail_name: "openai-moderation-input" 
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "pre_call"
       api_key: os.environ/OPENAI_API_KEY
       
   - guardrail_name: "openai-moderation-output"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "post_call" 
       api_key: os.environ/OPENAI_API_KEY
@@ -190,7 +190,7 @@ Configure custom OpenAI API endpoints or different models:
 ```yaml showLineNumbers title="Custom API Config"
 guardrails:
   - guardrail_name: "openai-moderation-custom"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "pre_call"
       api_key: os.environ/OPENAI_API_KEY
@@ -211,7 +211,7 @@ The OpenAI Moderation guardrail fully supports streaming responses. When used in
 ```yaml showLineNumbers title="Streaming Config"
 guardrails:
   - guardrail_name: "openai-moderation-streaming"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "post_call"  # Works with streaming responses
       api_key: os.environ/OPENAI_API_KEY
@@ -247,7 +247,7 @@ When content violates OpenAI's moderation policy:
 ```yaml
 guardrails:
   - guardrail_name: "input-moderation"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "pre_call"  # Block harmful user inputs early
 ```
@@ -257,7 +257,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: "output-moderation"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation  
       mode: "post_call"  # Ensure LLM responses are safe
 ```
@@ -267,12 +267,12 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: "openai-moderation"
-    litellm_params:
+    lumina_params:
       guardrail: openai_moderation
       mode: "pre_call"
       
   - guardrail_name: "custom-pii-detection"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
 ```

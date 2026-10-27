@@ -36,7 +36,7 @@ Create a new tag and set `max_budget` and `budget_duration`
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/tag/new' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
             "name": "engineering", 
@@ -107,7 +107,7 @@ Use the top-level `tags` field on `/key/generate` or `/key/update`:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
             "tags": ["engineering"]
@@ -118,7 +118,7 @@ You can also set tags under key `metadata`:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
             "metadata": {
@@ -169,7 +169,7 @@ response = client.chat.completions.create(
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
            "model": "{{openai_large}}",
@@ -202,7 +202,7 @@ If you skipped step 2, include the tag in the request body instead:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
            "model": "{{openai_large}}",
@@ -248,7 +248,7 @@ With this config, `entrypoint=support_bot` adds the tag `support`, and any other
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -H 'baggage: entrypoint=checkout' \
      -d '{
@@ -319,7 +319,7 @@ Create a tag with rate limits:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/tag/new' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
             "name": "engineering",
@@ -332,7 +332,7 @@ Update rate limits on an existing tag:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/tag/update' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
             "name": "engineering",
@@ -349,7 +349,7 @@ Get information about specific tags:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/tag/info' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
            "names": ["engineering", "marketing"]
@@ -389,7 +389,7 @@ Update an existing tag's budget:
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/tag/update' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
            "name": "engineering",
@@ -402,7 +402,7 @@ curl -X POST 'http://0.0.0.0:4000/tag/update' \
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/tag/delete' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
            "name": "engineering"
@@ -427,7 +427,7 @@ response = client.chat.completions.create(
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-     -H "Authorization: Bearer $LITELLM_API_KEY" \
+     -H "Authorization: Bearer $LUMINA_API_KEY" \
      -H 'Content-Type: application/json' \
      -d '{
            "model": "{{openai_large}}",

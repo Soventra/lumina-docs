@@ -29,7 +29,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
@@ -509,7 +509,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 
 ### Proxy configuration
 
-- Add LITELLM_DISABLE_LAZY_ROUTES to register optional routers at startup - [PR #43911](https://github.com/BerriAI/litellm/pull/43911)
+- Add LUMINA_DISABLE_LAZY_ROUTES to register optional routers at startup - [PR #43911](https://github.com/BerriAI/litellm/pull/43911)
 
 ### CLI and coding agents
 
@@ -553,7 +553,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 
 - Honor experimental_use_latest_role_message_only on every request shape - [PR #42447](https://github.com/BerriAI/litellm/pull/42447)
 - Enable explicit PANW MCP output scanning - [PR #43109](https://github.com/BerriAI/litellm/pull/43109)
-- Honor litellm_params.timeout in every HTTP guardrail - [PR #43134](https://github.com/BerriAI/litellm/pull/43134)
+- Honor lumina_params.timeout in every HTTP guardrail - [PR #43134](https://github.com/BerriAI/litellm/pull/43134)
 - Fix agent 365 to the production endpoint and log the opt-in fail_open at error level - [PR #43189](https://github.com/BerriAI/litellm/pull/43189)
 - Scan retrieved vector store chunks with the request's pre-call guardrails - [PR #43271](https://github.com/BerriAI/litellm/pull/43271)
 - Block private destinations in custom code http_request and bound guardrail execution time - [PR #43280](https://github.com/BerriAI/litellm/pull/43280)

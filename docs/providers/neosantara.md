@@ -209,26 +209,26 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: neosantara-gemini-flash-lite
-    litellm_params:
+    lumina_params:
       model: neosantara/gemini-3.1-flash-lite
       api_key: os.environ/NEOSANTARA_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Start your LiteLLM Proxy server:
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
 export NEOSANTARA_API_KEY="your-neosantara-api-key"
-export LITELLM_MASTER_KEY="${LITELLM_MASTER_KEY:-sk-$(openssl rand -hex 16)}"
-printf 'Local proxy key: %s\n' "$LITELLM_MASTER_KEY"
+export LUMINA_MASTER_KEY="${LUMINA_MASTER_KEY:-sk-$(openssl rand -hex 16)}"
+printf 'Local proxy key: %s\n' "$LUMINA_MASTER_KEY"
 litellm --config config.yaml
 
 # RUNNING on http://0.0.0.0:4000
 ```
 
-In another terminal, set `LITELLM_MASTER_KEY` to the key printed above and call the proxy:
+In another terminal, set `LUMINA_MASTER_KEY` to the key printed above and call the proxy:
 
 <Tabs>
 <TabItem value="openai-sdk" label="OpenAI SDK">
@@ -239,7 +239,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:4000",
-    api_key=os.environ["LITELLM_MASTER_KEY"],
+    api_key=os.environ["LUMINA_MASTER_KEY"],
 )
 
 response = client.chat.completions.create(
@@ -262,7 +262,7 @@ response = litellm.completion(
     model="litellm_proxy/neosantara-gemini-flash-lite",
     messages=[{"role": "user", "content": "Say hello from the proxy"}],
     api_base="http://localhost:4000",
-    api_key=os.environ["LITELLM_MASTER_KEY"],
+    api_key=os.environ["LUMINA_MASTER_KEY"],
 )
 
 print(response.choices[0].message.content)
@@ -275,7 +275,7 @@ print(response.choices[0].message.content)
 ```bash showLineNumbers title="Neosantara via Proxy - cURL"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "neosantara-gemini-flash-lite",
     "messages": [{"role": "user", "content": "Say hello from the proxy"}]
@@ -285,7 +285,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```bash showLineNumbers title="Neosantara via Proxy - Responses API"
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "neosantara-gemini-flash-lite",
     "input": "Reply with exactly: pong"
@@ -302,7 +302,7 @@ Depending on the model, the proxy can answer 400 `UnsupportedParamsError` to `to
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: neosantara-glm-flash
-    litellm_params:
+    lumina_params:
       model: neosantara/glm-4.7-flash
       api_key: os.environ/NEOSANTARA_API_KEY
       allowed_openai_params: ["tools", "tool_choice", "parallel_tool_calls", "reasoning_effort"]
@@ -310,7 +310,7 @@ model_list:
 
 ### Spend Tracking on the Proxy
 
-Neosantara models are not in LiteLLM's model cost map, so the proxy records $0 spend for them and key or team budgets never move. To track spend, set `input_cost_per_token` and `output_cost_per_token` in `litellm_params`, as shown in [Custom Pricing](../proxy/custom_pricing). Both are in USD per token, so divide a Neosantara price per million tokens by 1,000,000.
+Neosantara models are not in LiteLLM's model cost map, so the proxy records $0 spend for them and key or team budgets never move. To track spend, set `input_cost_per_token` and `output_cost_per_token` in `lumina_params`, as shown in [Custom Pricing](../proxy/custom_pricing). Both are in USD per token, so divide a Neosantara price per million tokens by 1,000,000.
 
 ## Notes
 

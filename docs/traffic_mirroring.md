@@ -16,7 +16,7 @@ This is useful for:
 
 ## Quick Start
 
-To enable traffic mirroring, add `silent_model` to the `litellm_params` of a deployment.
+To enable traffic mirroring, add `silent_model` to the `lumina_params` of a deployment.
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
@@ -27,7 +27,7 @@ from litellm import Router
 model_list = [
     {
         "model_name": "{{openai_small}}",
-        "litellm_params": {
+        "lumina_params": {
             "model": "azure/chatgpt-v-2",
             "api_key": "...",
             "silent_model": "{{openai_large}}" # Mirror traffic to {{openai_large}}
@@ -35,7 +35,7 @@ model_list = [
     },
     {
         "model_name": "{{openai_large}}",
-        "litellm_params": {
+        "lumina_params": {
             "model": "openai/{{openai_large}}",
             "api_key": "..."
         },
@@ -59,12 +59,12 @@ Add `silent_model` to your `config.yaml`:
 ```yaml
 model_list:
   - model_name: primary-model
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_small}}
       api_key: os.environ/AZURE_API_KEY
       silent_model: evaluation-model # Mirror traffic here
   - model_name: evaluation-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -87,16 +87,16 @@ Available from v1.103.0.
 ```yaml
 model_list:
   - model_name: primary-model
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_small}}
       api_key: os.environ/AZURE_API_KEY
       silent_model: [evaluation-model-a, evaluation-model-b]
   - model_name: evaluation-model-a
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: evaluation-model-b
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```

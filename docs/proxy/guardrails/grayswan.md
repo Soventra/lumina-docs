@@ -34,13 +34,13 @@ Add a guardrail entry that references the Gray Swan integration. Below is our re
 ```yaml
 model_list:                                 # this part is a standard litellm configuration for reference
   - model_name: openai/{{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "cygnal-monitor"
-    litellm_params:
+    lumina_params:
       guardrail: grayswan
       mode: [pre_call, post_call]            # monitor both input and output
       api_key: os.environ/GRAYSWAN_API_KEY

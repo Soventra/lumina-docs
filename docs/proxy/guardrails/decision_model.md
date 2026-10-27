@@ -34,17 +34,17 @@ A question flags when any message or chunk scores at or above its threshold. If 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat-model
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: jev
-    litellm_params:
+    lumina_params:
       model: typesafe/jev-latest
       api_key: os.environ/TYPESAFE_API_KEY
 
 guardrails:
   - guardrail_name: injection-screen
-    litellm_params:
+    lumina_params:
       guardrail: decision_model
       mode: pre_call
       decision_model: jev
@@ -75,7 +75,7 @@ litellm --config config.yaml
 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "chat-model",
@@ -106,7 +106,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "chat-model",
@@ -129,7 +129,7 @@ The **Decision Model** picker lists every model on the proxy whose `mode` is `ev
 ```yaml showLineNumbers keep-model-ids
 model_list:
   - model_name: luna
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
     model_info:

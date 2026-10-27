@@ -12,7 +12,7 @@ Create a `config.yaml` with the model:
 ```yaml
 model_list:
   - model_name: mistral-7b
-    litellm_params:
+    lumina_params:
       model: bedrock/mistral.mistral-7b-instruct-v0:2
       aws_region_name: us-east-1
 ```
@@ -20,16 +20,16 @@ model_list:
 Set a master key (the proxy refuses to start without one), then start the proxy with `--detailed_debug` so it logs the raw request it sends to the provider:
 
 ```shell
-$ export LITELLM_MASTER_KEY="sk-$(openssl rand -hex 32)"
+$ export LUMINA_MASTER_KEY="sk-$(openssl rand -hex 32)"
 $ litellm --config config.yaml --detailed_debug
 
 # OpenAI compatible server running on http://0.0.0.0:4000
 ```
 
-In a new shell with the same `LITELLM_MASTER_KEY` exported, send a test request: 
+In a new shell with the same `LUMINA_MASTER_KEY` exported, send a test request: 
 ```shell
 curl http://0.0.0.0:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "mistral-7b",
@@ -57,14 +57,14 @@ Let's say we want our own template instead:
 
 ## Step 2: Create Custom Prompt Template
 
-Our litellm server accepts prompt templates as part of the model's `litellm_params` in `config.yaml`. You can save api keys, fallback models, prompt templates etc. in this config. [See a complete config file](../proxy/configs.md#set-custom-prompt-templates)
+Our litellm server accepts prompt templates as part of the model's `lumina_params` in `config.yaml`. You can save api keys, fallback models, prompt templates etc. in this config. [See a complete config file](../proxy/configs.md#set-custom-prompt-templates)
 
 Update `config.yaml`:
 
 ```yaml
 model_list:
   - model_name: mistral-7b
-    litellm_params:
+    lumina_params:
       model: bedrock/mistral.mistral-7b-instruct-v0:2
       aws_region_name: us-east-1
       roles:

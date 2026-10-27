@@ -26,7 +26,7 @@ LiteLLM now supports `gemini-3.7-flash` on day 0, on both Google AI Studio (`gem
 {/* truncate */}
 
 :::note
-**No Docker image upgrade needed.** Gemini 3.7 Flash routes through the existing Gemini configs, so any recent LiteLLM version works out of the box for inference. For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the latest pricing from GitHub. This is available on `v1.76.0` and above. The `gemini-3.7-flash` pricing and metadata are also bundled starting in `v1.98.0-dev.2` for anyone running with `LITELLM_LOCAL_MODEL_COST_MAP=true`.
+**No Docker image upgrade needed.** Gemini 3.7 Flash routes through the existing Gemini configs, so any recent LiteLLM version works out of the box for inference. For cost tracking, hit the **Reload Model Cost Map** button in the Admin UI (or `POST /reload/model_cost_map`) to pull the latest pricing from GitHub. This is available on `v1.76.0` and above. The `gemini-3.7-flash` pricing and metadata are also bundled starting in `v1.98.0-dev.2` for anyone running with `LUMINA_LOCAL_MODEL_COST_MAP=true`.
 :::
 
 ## Launch pricing
@@ -65,13 +65,13 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: gemini-3.7-flash
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.7-flash
       api_key: os.environ/GEMINI_API_KEY
 
   # Or use Vertex AI
   - model_name: vertex-gemini-3.7-flash
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-3.7-flash
       vertex_project: your-project-id
       vertex_location: us-central1

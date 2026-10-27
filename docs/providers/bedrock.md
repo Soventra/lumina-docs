@@ -57,7 +57,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude-sonnet-4-5
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       api_key: os.environ/AWS_BEARER_TOKEN_BEDROCK
 ```
@@ -94,7 +94,7 @@ Here's how to call Bedrock with the LiteLLM Proxy Server
 ```yaml
 model_list:
   - model_name: bedrock-claude-sonnet-4-5
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -223,7 +223,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude-v1
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       temperature: <your-temp>
       top_p: <your-top-p>
@@ -286,7 +286,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude-v1
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       top_k: 1 # PROVIDER-SPECIFIC PARAM
 ```
@@ -353,7 +353,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude-v1
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       requestMetadata:
         cost_center: "engineering"
@@ -478,7 +478,7 @@ assert isinstance(
 ```yaml
 model_list:
   - model_name: bedrock-claude-3-7
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}} # for bedrock invoke, specify `bedrock/invoke/<model>`
 ```
 
@@ -493,7 +493,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "bedrock-claude-3-7",
   "messages": [
@@ -622,7 +622,7 @@ print(resp)
 ```yaml
 model_list:
   - model_name: bedrock-claude-3-7
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       reasoning_effort: "low" # EITHER HERE OR ON REQUEST
 ```
@@ -871,13 +871,13 @@ response = completion(
 ```yaml keep-model-ids
 model_list:
   - model_name: claude-sonnet-4-1m
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-sonnet-4-20250514-v1:0
       extra_headers:
         anthropic-beta: "context-1m-2025-08-07"  # Enable 1M context
 
   - model_name: claude-computer-use
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/anthropic.claude-3-5-sonnet-20241022-v2:0
       extra_headers:
         anthropic-beta: "computer-use-2024-10-22,context-1m-2025-08-07"
@@ -960,7 +960,7 @@ for chunk in response:
 ```yaml keep-model-ids
 model_list:
   - model_name: bedrock-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.claude-sonnet-4-5-20250929-v1:0  # bedrock/converse/ and bedrock/invoke/ work too
 ```
 
@@ -969,7 +969,7 @@ model_list:
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "bedrock-claude",
     "messages": [{"role": "user", "content": "Write a 2000 word README to docs/README.md"}],
@@ -994,7 +994,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```bash
 curl http://0.0.0.0:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "x-api-key: $LITELLM_KEY" \
+  -H "x-api-key: $LUMINA_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "bedrock-claude",
@@ -1018,7 +1018,7 @@ curl http://0.0.0.0:4000/v1/messages \
 ```bash
 curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "bedrock-claude",
     "input": "Write a 2000 word README to docs/README.md",
@@ -1081,7 +1081,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: bedrock-claude-3-7
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}} # specify invoke via `bedrock/invoke/<model_name>` 
       aws_access_key_id: os.environ/CUSTOM_AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/CUSTOM_AWS_SECRET_ACCESS_KEY
@@ -1099,7 +1099,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "bedrock-claude-3-7",
     "messages": [
@@ -1170,7 +1170,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude-3-7
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       performanceConfig: {"latency": "optimized"} # EITHER HERE OR ON REQUEST
 ```
@@ -1186,7 +1186,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "bedrock-claude-3-7",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -1252,7 +1252,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: qwen3-235b-priority
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/qwen.qwen3-235b-a22b-2507-v1:0
       aws_region_name: ap-northeast-1
       serviceTier:
@@ -1270,7 +1270,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "qwen3-235b-priority",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -1380,7 +1380,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: bedrock-claude-v1
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/CUSTOM_AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/CUSTOM_AWS_SECRET_ACCESS_KEY
@@ -1580,7 +1580,7 @@ print("Final Response: {}".format(response))
 ```yaml
 model_list:
   - model_name: bedrock-claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -1704,7 +1704,7 @@ completion(model="bedrock/converse/us.amazon.nova-pro-v1:0")
 ```yaml
 model_list:
   - model_name: bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/us.amazon.nova-pro-v1:0
 ```
 
@@ -1763,7 +1763,7 @@ completion(model="bedrock/chat_completions/openai.gpt-oss-20b-1:0", messages=[{"
 ```yaml
 model_list:
   - model_name: gpt-oss-20b-native
-    litellm_params:
+    lumina_params:
       model: bedrock/chat_completions/openai.gpt-oss-20b-1:0
 ```
 
@@ -1787,7 +1787,7 @@ completion(model="bedrock/converse/us.openai.gpt-5.6-sol", messages=[{"role": "u
 ```yaml
 model_list:
   - model_name: gpt-5.6-sol-converse
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/us.openai.gpt-5.6-sol
 ```
 
@@ -1802,7 +1802,7 @@ Use `user_continue_message` to add a default user message, for cases (e.g. Autog
 ```yaml
 model_list:
   - model_name: "bedrock-claude"
-    litellm_params:
+    lumina_params:
       model: "bedrock/us.anthropic.{{anthropic}}"
       user_continue_message: {"role": "user", "content": "Please continue"}
 ```
@@ -1814,7 +1814,7 @@ just set `litellm.modify_params=True` and LiteLLM will automatically handle this
 ```yaml
 model_list:
   - model_name: "bedrock-claude"
-    litellm_params:
+    lumina_params:
       model: "bedrock/us.anthropic.{{anthropic}}"
 
 litellm_settings:
@@ -1826,7 +1826,7 @@ Test it!
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-claude",
     "messages": [{"role": "assistant", "content": "Hey, how's it going?"}]
@@ -1901,7 +1901,7 @@ assert response is not None
 ```yaml
 model_list:
   - model_name: bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -1919,7 +1919,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-model",
     "messages": [
@@ -1987,7 +1987,7 @@ assert response is not None
 ```yaml
 model_list:
   - model_name: bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -2005,7 +2005,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-model",
     "messages": [
@@ -2064,14 +2064,14 @@ print(response.choices[0].message.content)
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: gpt-oss-20b
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/openai.gpt-oss-20b-1:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: os.environ/AWS_REGION_NAME
       
   - model_name: gpt-oss-120b
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/openai.gpt-oss-120b-1:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -2090,7 +2090,7 @@ litellm --config /path/to/config.yaml
 
 ```bash title="Test GPT OSS via Proxy" showLineNumbers
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --header 'Content-Type: application/json' \
   --data '{
     "model": "gpt-oss-20b",
@@ -2144,7 +2144,7 @@ print(response.output_text)
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: bedrock-gpt-6-astra
-    litellm_params:
+    lumina_params:
       model: bedrock/us.openai.gpt-6-astra
       aws_region_name: us-east-1
 ```
@@ -2160,7 +2160,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "bedrock-gpt-6-astra",
     "input": "Reply with the single word pong.",
@@ -2226,7 +2226,7 @@ print(response.choices[0].message.content)
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: pegasus-video
-    litellm_params:
+    lumina_params:
       model: bedrock/us.twelvelabs.pegasus-1-2-v1:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -2245,7 +2245,7 @@ litellm --config /path/to/config.yaml
 
 ```bash title="Test Pegasus via Proxy" showLineNumbers
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --header 'Content-Type: application/json' \
   --data '{
     "model": "pegasus-video",
@@ -2461,7 +2461,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: anthropic-claude-sonnet-4-5
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       # You have to set the ARN application inference profile in the model_id parameter
       model_id: arn:aws:bedrock:eu-central-1:000000000000:application-inference-profile/a0a0a0a0a0a0
@@ -2478,7 +2478,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "anthropic-claude-sonnet-4-5",
   "messages": [
@@ -2548,7 +2548,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: bedrock-model
-      litellm_params:
+      lumina_params:
         model: bedrock/us.anthropic.{{anthropic}}
         aws_access_key_id: ""
         aws_secret_access_key: ""
@@ -2568,7 +2568,7 @@ litellm --config /path/to/config.yaml --detailed_debug
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-model",
     "messages": [
@@ -2658,7 +2658,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic_large}}
       aws_region_name: us-east-1
       aws_role_name: arn:aws:iam::123456789012:role/litellm-bedrock
@@ -2708,7 +2708,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_profile_name: "litellm-roles-anywhere"
 ```
@@ -2755,7 +2755,7 @@ Replace `<TARGET_ROLE_ARN>` with the ARN of the role you want to assume (e.g., `
 
 #### Trust policy for session tags
 
-When a deployment sets `aws_session_tags`, the target role's trust policy must also allow `sts:TagSession`. Without it, AssumeRole fails with `AccessDenied ... is not authorized to perform: sts:TagSession`. Replace `<LITELLM_IDENTITY_ARN>` with the IAM identity running LiteLLM. The `Condition` is optional and makes the role admit only sessions that carry the expected tag:
+When a deployment sets `aws_session_tags`, the target role's trust policy must also allow `sts:TagSession`. Without it, AssumeRole fails with `AccessDenied ... is not authorized to perform: sts:TagSession`. Replace `<LUMINA_IDENTITY_ARN>` with the IAM identity running LiteLLM. The `Condition` is optional and makes the role admit only sessions that carry the expected tag:
 
 ```json
 {
@@ -2763,7 +2763,7 @@ When a deployment sets `aws_session_tags`, the target role's trust policy must a
   "Statement": [
     {
       "Effect": "Allow",
-      "Principal": {"AWS": "<LITELLM_IDENTITY_ARN>"},
+      "Principal": {"AWS": "<LUMINA_IDENTITY_ARN>"},
       "Action": ["sts:AssumeRole", "sts:TagSession"],
       "Condition": {"StringEquals": {"aws:RequestTag/team": "genai"}}
     }
@@ -2813,7 +2813,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: bedrock/*
-    litellm_params:
+    lumina_params:
       model: bedrock/*
       aws_role_name: arn:aws:iam::888602223428:role/iam_local_role # AWS RoleArn
       aws_session_name: "bedrock-session" # AWS RoleSessionName
@@ -2907,7 +2907,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: anthropic-claude
-      litellm_params:
+      lumina_params:
         model: bedrock/converse_like/some-model
         api_base: https://some-api-url/models
 ```
@@ -2925,7 +2925,7 @@ litellm --config config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "anthropic-claude",
     "messages": [

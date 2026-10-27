@@ -36,7 +36,7 @@ Example if you want to redact the value of `OPENAI_API_KEY` in the following req
 ```yaml
 guardrails:
   - guardrail_name: "my-custom-name"
-    litellm_params:
+    lumina_params:
       guardrail: "hide-secrets"  # supported values: "aporia", "lakera", .. 
       mode: "pre_call"
 ```
@@ -53,7 +53,7 @@ Send this request
 ```shell
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "fake-claude-endpoint",
     "messages": [
@@ -111,7 +111,7 @@ Here's how to control which plugins are run per request. This is useful if devel
 ```yaml
 guardrails:
   - guardrail_name: "hide-secrets"
-    litellm_params:
+    lumina_params:
       guardrail: "hide-secrets"  # supported values: "aporia", "lakera"
       mode: "pre_call"
       detect_secrets_config: {
@@ -136,7 +136,7 @@ litellm --config /path/to/config.yaml --detailed_debug
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "fake-claude-endpoint",
     "messages": [

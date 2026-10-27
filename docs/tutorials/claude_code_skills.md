@@ -79,7 +79,7 @@ curl -fsSL https://raw.githubusercontent.com/BerriAI/litellm-skills/main/install
 
 ## How it works
 
-When you invoke a skill, the agent asks for your `LITELLM_BASE_URL` and admin key, collects the fields needed for that operation, runs the `curl`, and shows the result. For example:
+When you invoke a skill, the agent asks for your `LUMINA_BASE_URL` and admin key, collects the fields needed for that operation, runs the `curl`, and shows the result. For example:
 
 ```
 /add-model

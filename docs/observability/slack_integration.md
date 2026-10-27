@@ -41,11 +41,11 @@ def send_slack_alert(
     # get it from https://api.slack.com/messaging/webhooks
     slack_webhook_url = os.environ['SLACK_WEBHOOK_URL']   # "https://hooks.slack.com/services/<>/<>/<>"
 
-    # Remove api_key from kwargs under litellm_params
-    if kwargs.get('litellm_params'):
-        kwargs['litellm_params'].pop('api_key', None)
-        if kwargs['litellm_params'].get('metadata'):
-            kwargs['litellm_params']['metadata'].pop('deployment', None)
+    # Remove api_key from kwargs under lumina_params
+    if kwargs.get('lumina_params'):
+        kwargs['lumina_params'].pop('api_key', None)
+        if kwargs['lumina_params'].get('metadata'):
+            kwargs['lumina_params']['metadata'].pop('deployment', None)
     # Remove deployment under metadata
     if kwargs.get('metadata'):
         kwargs['metadata'].pop('deployment', None)

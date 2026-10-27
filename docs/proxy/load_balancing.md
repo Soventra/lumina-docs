@@ -45,19 +45,19 @@ Use the `order` parameter to prioritize specific deployments. [See Deployment Or
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_base: <your-azure-endpoint>
       api_key: <your-azure-api-key>
       rpm: 6      # Rate limit for this deployment: in requests per minute (rpm)
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-small-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: <your-azure-api-key>
       rpm: 6
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-large
       api_base: https://openai-france-1234.openai.azure.com/
       api_key: <your-azure-api-key>
@@ -96,7 +96,7 @@ By default, `rpm` and `tpm` values are only used for **routing decisions** (pick
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
     rpm: 60     # 60 requests per minute
@@ -214,7 +214,7 @@ In this request, the following will occur:
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_small}}",
   "messages": [
@@ -236,13 +236,13 @@ Example config
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_base: <your-azure-endpoint>
       api_key: <your-azure-api-key>
       rpm: 6      # Rate limit for this deployment: in requests per minute (rpm)
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-small-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: <your-azure-api-key>
@@ -279,7 +279,7 @@ Example config with `router_settings`
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_base: <your-azure-endpoint>
       api_key: <your-azure-api-key>
@@ -299,7 +299,7 @@ Use this if you want to set-up aliases for:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_base: <your-azure-endpoint>
       api_key: <your-azure-api-key>
@@ -326,18 +326,18 @@ class RouterModelGroupAliasItem(TypedDict):
 
 ## Deployment Ordering (Priority)
 
-Set `order` in `litellm_params` to prioritize deployments. Lower values = higher priority. When multiple deployments share the same `order`, the routing strategy picks among them.
+Set `order` in `lumina_params` to prioritize deployments. Lower values = higher priority. When multiple deployments share the same `order`, the routing strategy picks among them.
 
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-primary
       api_key: os.environ/AZURE_API_KEY
       order: 1  # Highest priority - always tried first
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-fallback
       api_key: os.environ/AZURE_API_KEY_2
       order: 2  # Used when order=1 fails
@@ -354,19 +354,19 @@ A hop to a deployment that cannot decrypt the failed deployment's encrypted reas
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-primary
       api_key: os.environ/AZURE_API_KEY
       order: 1
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-secondary
       api_key: os.environ/AZURE_API_KEY_2
       order: 2
 
   - model_name: gpt-4-fallback
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -390,7 +390,7 @@ For router internals: when a `team_id` is in scope, optimized lookups key off `(
 
 **Migration options:**
 
-1. **Recommended for upgrades:** Set environment variable `LITELLM_ENABLE_TEAM_STALE_ALIAS_BYPASS=true` so that when sibling team deployments exist for the public name, the stale alias rewrite is skipped and team-scoped routing (including `order` and failover) applies. See the [Environment variables](./config_settings) table in the proxy settings doc.
+1. **Recommended for upgrades:** Set environment variable `LUMINA_ENABLE_TEAM_STALE_ALIAS_BYPASS=true` so that when sibling team deployments exist for the public name, the stale alias rewrite is skipped and team-scoped routing (including `order` and failover) applies. See the [Environment variables](./config_settings) table in the proxy settings doc.
 2. **Data cleanup:** Remove obsolete `model_aliases` entries for team public names from the team record in the database so only `team_public_model_name` + team model list drive access.
 
 If a stale alias is detected and the bypass is **not** enabled, the proxy may emit a **one-time** warning in logs explaining that sibling deployments may be unreachable until the flag is set or aliases are cleaned up.
@@ -416,7 +416,7 @@ When load balancing OpenAI's Responses API across deployments with **different A
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: https://eastus.openai.azure.com/
       api_key: os.environ/AZURE_API_KEY_EASTUS
@@ -424,7 +424,7 @@ model_list:
       id: "deployment-eastus"
   
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: https://westeurope.openai.azure.com/
       api_key: os.environ/AZURE_API_KEY_WESTEUROPE

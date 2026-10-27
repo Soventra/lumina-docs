@@ -29,11 +29,11 @@ If you're on **v1.82.3-stable** or above, you don't need any update to use these
 ```yaml
 model_list:
   - model_name: gpt-5.4-mini
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.4-mini
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.4-nano
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.4-nano
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -50,7 +50,7 @@ litellm --config /path/to/config.yaml
 # GPT-5.4-mini
 curl -X POST "http://localhost:4000/v1/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.4-mini",
     "messages": [{"role": "user", "content": "What is the capital of France?"}]
@@ -59,7 +59,7 @@ curl -X POST "http://localhost:4000/v1/chat/completions" \
 # GPT-5.4-nano
 curl -X POST "http://localhost:4000/v1/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.4-nano",
     "messages": [{"role": "user", "content": "What is 2 + 2?"}]

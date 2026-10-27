@@ -34,12 +34,12 @@ export OPENAI_API_KEY="your-api-key"
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: postgresql://llmproxy:dbpassword9090@db:5432/litellm
 ```
 
@@ -56,7 +56,7 @@ You should see the proxy start on `http://0.0.0.0:4000`.
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [

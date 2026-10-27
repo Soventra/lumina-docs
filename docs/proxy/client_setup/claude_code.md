@@ -12,10 +12,10 @@ import Image from '@theme/IdealImage';
 
 | Setting | Value |
 |---|---|
-| `ANTHROPIC_BASE_URL` | `<LITELLM_PROXY_BASE_URL>` (e.g. `http://localhost:4000`) |
+| `ANTHROPIC_BASE_URL` | `<LUMINA_PROXY_BASE_URL>` (e.g. `http://localhost:4000`) |
 | `ANTHROPIC_AUTH_TOKEN` | Your LiteLLM [virtual key](../virtual_keys.md) |
 | `ANTHROPIC_MODEL` | A `model_name` from your config |
-| MCP endpoint | `<LITELLM_PROXY_BASE_URL>/<server_name>/mcp` |
+| MCP endpoint | `<LUMINA_PROXY_BASE_URL>/<server_name>/mcp` |
 | MCP auth header | `x-litellm-api-key: Bearer <virtual key>` |
 
 ## LLM setup
@@ -25,9 +25,9 @@ import Image from '@theme/IdealImage';
 Export the base URL, your virtual key, and the model, then launch Claude Code:
 
 ```bash
-export LITELLM_API_KEY="sk-<your-virtual-key>"
+export LUMINA_API_KEY="sk-<your-virtual-key>"
 export ANTHROPIC_BASE_URL="http://localhost:4000"
-export ANTHROPIC_AUTH_TOKEN="$LITELLM_API_KEY"
+export ANTHROPIC_AUTH_TOKEN="$LUMINA_API_KEY"
 export ANTHROPIC_MODEL="{{anthropic}}"
 
 claude
@@ -55,19 +55,19 @@ See [Claude Code SSO](../../tutorials/claude_code_gateway.md) for Claude apps ga
 
 ## MCP setup
 
-Expose your LiteLLM [MCP gateway](../../mcp.md) tools inside Claude Code with `claude mcp add`. The URL is `<LITELLM_PROXY_BASE_URL>/<server_name>/mcp`, where `<server_name>` matches a key under `mcp_servers:` in your gateway config, and the virtual key goes in the `x-litellm-api-key` header:
+Expose your LiteLLM [MCP gateway](../../mcp.md) tools inside Claude Code with `claude mcp add`. The URL is `<LUMINA_PROXY_BASE_URL>/<server_name>/mcp`, where `<server_name>` matches a key under `mcp_servers:` in your gateway config, and the virtual key goes in the `x-litellm-api-key` header:
 
 ```bash
 claude mcp add --transport http litellm-tools \
   http://localhost:4000/my_mcp_server/mcp \
-  --header "x-litellm-api-key: Bearer $LITELLM_API_KEY"
+  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 | Part | Meaning |
 |---|---|
 | `litellm-tools` | The name for this server inside Claude Code; choose anything |
 | `http://localhost:4000/my_mcp_server/mcp` | `<PROXY_URL>/<server_name>/mcp`; `my_mcp_server` must match the key under `mcp_servers:` on the gateway |
-| `--header "x-litellm-api-key: Bearer $LITELLM_API_KEY"` | Your virtual key, authenticating you to the gateway |
+| `--header "x-litellm-api-key: Bearer $LUMINA_API_KEY"` | Your virtual key, authenticating you to the gateway |
 
 The key needs access to `my_mcp_server` (see [the overview](./overview.md#the-values-you-will-reuse-everywhere)); otherwise the gateway rejects the connection with `The key is not allowed to access the requested MCP servers`. Start Claude Code and run `/mcp`: the server shows as connected with its tools listed, prefixed with the server name (`my_mcp_server-read_wiki_structure`).
 

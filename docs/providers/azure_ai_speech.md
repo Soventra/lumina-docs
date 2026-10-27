@@ -41,7 +41,7 @@ response.stream_to_file(speech_file_path)
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: azure-speech
-    litellm_params:
+    lumina_params:
       model: azure/speech/azure-tts
       api_base: https://eastus.tts.speech.microsoft.com
       api_key: os.environ/AZURE_TTS_API_KEY
@@ -208,7 +208,7 @@ response.stream_to_file("speech.mp3")
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-speech",
@@ -305,7 +305,7 @@ First, ensure you have set up your proxy config as shown in the [LiteLLM Proxy s
 ```yaml
 model_list:
   - model_name: azure-speech  # This is what you'll use in your API calls
-    litellm_params:
+    lumina_params:
       model: azure/speech/azure-tts
       api_base: https://eastus.tts.speech.microsoft.com
       api_key: os.environ/AZURE_TTS_API_KEY
@@ -315,7 +315,7 @@ model_list:
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-speech",
@@ -329,7 +329,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-speech",
@@ -344,7 +344,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-speech",
@@ -361,7 +361,7 @@ curl http://0.0.0.0:4000/v1/audio/speech \
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "azure-speech",

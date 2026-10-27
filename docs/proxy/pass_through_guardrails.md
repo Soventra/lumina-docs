@@ -51,7 +51,7 @@ To check only specific fields instead of the entire payload:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "pii-guard"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: pre_call
       guardrailIdentifier: "your-guardrail-id"
@@ -78,7 +78,7 @@ litellm --config config.yaml
 ```bash
 curl -X POST "http://localhost:4000/v1/rerank" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "rerank-english-v3.0",
     "query": "What is the capital of France?",
@@ -148,14 +148,14 @@ Target specific JSON fields instead of the entire request/response payload.
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "pii-detection"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: pre_call
       guardrailIdentifier: "pii-guard-id"
       guardrailVersion: "1"
 
   - guardrail_name: "content-moderation"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: post_call
       guardrailIdentifier: "content-guard-id"
@@ -199,7 +199,7 @@ general_settings:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "pii-detection"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: pre_call
       guardrailIdentifier: "your-id"
@@ -218,21 +218,21 @@ general_settings:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "pii-detection"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: pre_call
       guardrailIdentifier: "pii-id"
       guardrailVersion: "1"
 
   - guardrail_name: "content-moderation"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock
       mode: post_call
       guardrailIdentifier: "content-id"
       guardrailVersion: "1"
 
   - guardrail_name: "prompt-injection"
-    litellm_params:
+    lumina_params:
       guardrail: lakera
       mode: pre_call
       api_key: os.environ/LAKERA_API_KEY

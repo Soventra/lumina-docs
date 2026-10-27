@@ -22,7 +22,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: scaleway-model
-    litellm_params:
+    lumina_params:
       model: scaleway/qwen3-235b-a22b-instruct-2507
       api_key: "os.environ/SCW_SECRET_KEY" # ensure you have `SCW_SECRET_KEY` in your .env
 ```
@@ -39,7 +39,7 @@ Assuming the proxy is running on [http://localhost:4000](http://localhost:4000):
 ```bash
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer YOUR_LUMINA_MASTER_KEY" \
   -d '{
     "model": "scaleway-model",
     "messages": [
@@ -54,7 +54,7 @@ curl http://localhost:4000/chat/completions \
     ]
   }'
 ```
-`-H "Authorization: Bearer YOUR_LITELLM_MASTER_KEY" ` is only required if you have set a LiteLLM master key
+`-H "Authorization: Bearer YOUR_LUMINA_MASTER_KEY" ` is only required if you have set a LiteLLM master key
 
 
 ## Supported features
@@ -86,7 +86,7 @@ print(response.text)
 ```yaml
 model_list:
   - model_name: scaleway-whisper
-    litellm_params:
+    lumina_params:
       model: scaleway/whisper-large-v3
       api_key: "os.environ/SCW_SECRET_KEY"
 ```
@@ -95,7 +95,7 @@ model_list:
 
 ```bash
 curl http://localhost:4000/v1/audio/transcriptions \
-  -H "Authorization: Bearer YOUR_LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer YOUR_LUMINA_MASTER_KEY" \
   -F model="scaleway-whisper" \
   -F file="@speech.mp3"
 ```

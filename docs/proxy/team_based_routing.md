@@ -17,20 +17,20 @@ Create a config.yaml with 2 model groups + connected postgres db
 ```yaml
 model_list: 
   - model_name: gpt-4o-mini-eu # Model Group 1
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE_EU
       api_key: os.environ/AZURE_API_KEY_EU
       api_version: "2023-07-01-preview"
   - model_name: gpt-4o-mini-worldwide # Model Group 2
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
       api_version: "2023-07-01-preview"
 
 general_settings: 
-    master_key: os.environ/LITELLM_MASTER_KEY
+    master_key: os.environ/LUMINA_MASTER_KEY
     database_url: "postgresql://..." # Connect proxy to DB
 ```
 
@@ -45,7 +45,7 @@ litellm --config /path/to/config.yaml
 ```bash
 # Authorization: Master Key
 curl --location 'http://0.0.0.0:4000/team/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "team_alias": "my-new-team_4",
@@ -59,7 +59,7 @@ curl --location 'http://0.0.0.0:4000/team/new' \
 
 ```bash 
 curl --location 'http://localhost:4000/key/generate' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "team_id": "my-team-id",  # YOUR TEAM ID

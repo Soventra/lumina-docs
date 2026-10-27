@@ -109,23 +109,23 @@ Inference APIs does not store responses, so `previous_response_id` returns a 400
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: deepseek-v4-flash
-    litellm_params:
+    lumina_params:
       model: inferenceapis/deepseek-ai/DeepSeek-V4-Flash
       api_key: os.environ/INFERENCEAPIS_API_KEY
   - model_name: gpt-oss-120b
-    litellm_params:
+    lumina_params:
       model: inferenceapis/openai/gpt-oss-120b
       api_key: os.environ/INFERENCEAPIS_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Start the proxy:
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
 export INFERENCEAPIS_API_KEY="your-api-key"
-export LITELLM_MASTER_KEY="sk-local-inferenceapis"
+export LUMINA_MASTER_KEY="sk-local-inferenceapis"
 litellm --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
@@ -138,7 +138,7 @@ A deployment configured this way serves `/v1/chat/completions`, `/v1/responses`,
 
 ```bash showLineNumbers title="curl"
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "deepseek-v4-flash",
@@ -170,7 +170,7 @@ print(response.choices[0].message.content)
 
 ```bash showLineNumbers title="curl"
 curl http://localhost:4000/v1/responses \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "deepseek-v4-flash",
@@ -183,7 +183,7 @@ curl http://localhost:4000/v1/responses \
 
 ```bash showLineNumbers title="curl"
 curl http://localhost:4000/v1/messages \
-  -H "x-api-key: $LITELLM_MASTER_KEY" \
+  -H "x-api-key: $LUMINA_MASTER_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \
   -d '{

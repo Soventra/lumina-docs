@@ -61,7 +61,7 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: sora-2
-    litellm_params:
+    lumina_params:
       model: openai/sora-2
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -152,7 +152,7 @@ OpenAI video routes supported by LiteLLM proxy:
 
 ```bash
 curl --location 'http://localhost:4000/v1/videos/characters' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 -F 'name=hero' \
 -F 'target_model_names={{openai_large}}' \
 -F 'video=@/path/to/character.mp4'
@@ -173,7 +173,7 @@ Use that encoded ID directly on get:
 
 ```bash
 curl --location 'http://localhost:4000/v1/videos/characters/character_...' \
---header "Authorization: Bearer $LITELLM_API_KEY"
+--header "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 #### Encoded and non-encoded video IDs for edit/extension
@@ -185,7 +185,7 @@ Both routes accept either plain or encoded `video.id`:
 
 ```bash
 curl --location 'http://localhost:4000/v1/videos/edits' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "prompt": "Make this brighter",
@@ -195,7 +195,7 @@ curl --location 'http://localhost:4000/v1/videos/edits' \
 
 ```bash
 curl --location 'http://localhost:4000/v1/videos/extensions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "prompt": "Continue this scene",
@@ -216,7 +216,7 @@ Test OpenAI video generation request
 
 ```bash
 curl http://localhost:4000/v1/videos \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "sora-2",

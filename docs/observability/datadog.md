@@ -27,7 +27,7 @@ We will use the `--config` to set `litellm.callbacks = ["datadog"]` this will lo
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["datadog"] # logs llm success + failure logs on datadog
@@ -48,7 +48,7 @@ litellm_settings:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["datadog_llm_observability"] # logs llm success logs on datadog
@@ -73,22 +73,22 @@ DD_SOURCE="litellm_dev"       # [OPTIONAL] your datadog source. use to different
 Send logs through a local DataDog agent (useful for containerized environments):
 
 ```shell
-LITELLM_DD_AGENT_HOST="localhost"         # hostname or IP of DataDog agent
-LITELLM_DD_AGENT_PORT="10518"             # [OPTIONAL] port of DataDog agent (default: 10518)
+LUMINA_DD_AGENT_HOST="localhost"         # hostname or IP of DataDog agent
+LUMINA_DD_AGENT_PORT="10518"             # [OPTIONAL] port of DataDog agent (default: 10518)
 DD_API_KEY="5f2d0f310***********"         # [OPTIONAL] your datadog API Key (Agent handles auth for Logs. REQUIRED for LLM Observability)
 DD_SOURCE="litellm_dev"                   # [OPTIONAL] your datadog source
 ```
 
-When `LITELLM_DD_AGENT_HOST` is set, logs are sent to the agent instead of directly to DataDog API. This is useful for:
+When `LUMINA_DD_AGENT_HOST` is set, logs are sent to the agent instead of directly to DataDog API. This is useful for:
 - Centralized log shipping in containerized environments
 - Reducing direct API calls from multiple services
 - Using agent-side processing and filtering
 
-**Note:** We use `LITELLM_DD_AGENT_HOST` instead of `DD_AGENT_HOST` to avoid conflicts with `ddtrace` which automatically sets `DD_AGENT_HOST` for APM tracing.
+**Note:** We use `LUMINA_DD_AGENT_HOST` instead of `DD_AGENT_HOST` to avoid conflicts with `ddtrace` which automatically sets `DD_AGENT_HOST` for APM tracing.
 
 :::info
 
-**Datadog LLM Observability**: `DD_API_KEY` is **REQUIRED** even when using the Datadog Agent (`LITELLM_DD_AGENT_HOST`). The agent acts as a proxy but the API key header is mandatory for the LLM Observability endpoint.
+**Datadog LLM Observability**: `DD_API_KEY` is **REQUIRED** even when using the Datadog Agent (`LUMINA_DD_AGENT_HOST`). The agent acts as a proxy but the API key header is mandatory for the LLM Observability endpoint.
 
 :::
 
@@ -135,7 +135,7 @@ When redaction is enabled, the actual message content and response text will be 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["datadog_llm_observability"] # logs llm success logs on datadog
@@ -197,7 +197,7 @@ All metrics include the following tags: `env`, `service`, `version`, `HOSTNAME`,
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   success_callback: ["datadog_metrics"]
@@ -220,7 +220,7 @@ litellm --config config.yaml
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data '{
     "model": "{{openai_small}}",
     "messages": [{"role": "user", "content": "hello"}]
@@ -246,7 +246,7 @@ We will use the `--config` to set `litellm.callbacks = ["datadog_cost_management
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["datadog_cost_management"]
@@ -304,8 +304,8 @@ LiteLLM supports customizing the following Datadog environment variables
 |---------------------|-------------|---------------|----------|
 | `DD_API_KEY` | Your Datadog API key for authentication (required for direct API, optional for agent) | None | Conditional* |
 | `DD_SITE` | Your Datadog site (e.g., "us5.datadoghq.com") (required for direct API) | None | Conditional* |
-| `LITELLM_DD_AGENT_HOST` | Hostname or IP of DataDog agent (e.g., "localhost"). When set, logs are sent to agent instead of direct API | None | ❌ No |
-| `LITELLM_DD_AGENT_PORT` | Port of DataDog agent for log intake | "10518" | ❌ No |
+| `LUMINA_DD_AGENT_HOST` | Hostname or IP of DataDog agent (e.g., "localhost"). When set, logs are sent to agent instead of direct API | None | ❌ No |
+| `LUMINA_DD_AGENT_PORT` | Port of DataDog agent for log intake | "10518" | ❌ No |
 | `DD_ENV` | Environment tag for your logs (e.g., "production", "staging") | "unknown" | ❌ No |
 | `DD_SERVICE` | Service name for your logs | "litellm-server" | ❌ No |
 | `DD_LLMOBS_ML_APP` | Default ml_app name for LLM Observability (Application column). Can be overridden per-request via `metadata.ml_app`. | Falls back to `DD_SERVICE` | ❌ No |
@@ -315,7 +315,7 @@ LiteLLM supports customizing the following Datadog environment variables
 | `POD_NAME` | Pod name tag (useful for Kubernetes deployments) | "unknown" | ❌ No |
 
 \* **Required when using Direct API** (default): `DD_API_KEY` and `DD_SITE` are required  
-\* **Optional when using DataDog Agent**: Set `LITELLM_DD_AGENT_HOST` to use agent mode; `DD_API_KEY` and `DD_SITE` are not required for **Datadog Logs**. (**Note: `DD_API_KEY` IS REQUIRED for Datadog LLM Observability**)
+\* **Optional when using DataDog Agent**: Set `LUMINA_DD_AGENT_HOST` to use agent mode; `DD_API_KEY` and `DD_SITE` are not required for **Datadog Logs**. (**Note: `DD_API_KEY` IS REQUIRED for Datadog LLM Observability**)
 
 ## Automatic Tags
 

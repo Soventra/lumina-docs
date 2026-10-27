@@ -28,13 +28,13 @@ docker run -d --name llm-shield -p 8000:8000 \
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: llm-shield
-    litellm_params:
+    lumina_params:
       guardrail: llm_shield_proxy
       mode: [pre_call, post_call]
       default_on: true
@@ -59,7 +59,7 @@ litellm --config config.yaml
 
 ```shell
 curl -sSLX POST 'http://0.0.0.0:4000/v1/chat/completions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "model": "{{openai_small}}",
@@ -76,7 +76,7 @@ The provider receives stand-ins such as `john10@example.net` and `65672116397513
 
 ```shell
 curl -sSLX POST 'http://0.0.0.0:4000/v1/chat/completions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
   "model": "{{openai_small}}",

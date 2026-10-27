@@ -58,8 +58,8 @@ It first shipped in the dev release cut from `main` on Tuesday, September 22, ah
 Send a request that mirrors what Claude Code sends, with a forced tool call so the server has something to evaluate, and check the response for `safeguard_results`. The model has to be a deployment that LiteLLM routes to the Anthropic API, Bedrock InvokeModel, Bedrock Mantle or Vertex AI; replace `claude-sonnet-5` with that deployment's model name on your proxy.
 
 ```bash
-curl -s "$LITELLM_PROXY_URL/v1/messages" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+curl -s "$LUMINA_PROXY_URL/v1/messages" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "content-type: application/json" \
   -H "anthropic-version: 2023-06-01" \
   -H "anthropic-beta: dangerous-tool-use-2026-09-03" \

@@ -65,7 +65,7 @@ Add this guardrail to your existing `config.yaml`, then restart the proxy:
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: jev-compaction
-    litellm_params:
+    lumina_params:
       guardrail: typesafe
       mode: pre_call
       api_key: os.environ/TYPESAFE_API_KEY
@@ -79,13 +79,13 @@ guardrails:
 
 This example has two tool results: a weather report and the shop's opening hours. The user only wants to know when the shop closes. Jev can mark the weather report for removal. The shop hours belong to the last assistant exchange, so LiteLLM keeps them.
 
-Set `LITELLM_PROXY_URL` to your gateway URL and `ACCESS_TOKEN` to a bearer token accepted by your proxy. For OIDC, use your valid OIDC access token. Replace `my-model` below with a model available to your team.
+Set `LUMINA_PROXY_URL` to your gateway URL and `ACCESS_TOKEN` to a bearer token accepted by your proxy. For OIDC, use your valid OIDC access token. Replace `my-model` below with a model available to your team.
 
 <details>
 <summary>Complete example request</summary>
 
 ```bash
-curl -i "$LITELLM_PROXY_URL/v1/chat/completions" \
+curl -i "$LUMINA_PROXY_URL/v1/chat/completions" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -140,8 +140,8 @@ Compare the same request with compaction on and off. For the off version, remove
 On LiteLLM Enterprise, attach `jev-compaction` to a team. If your users authenticate with OIDC, use the LiteLLM team that their tokens map to. See the [OIDC setup guide](/docs/proxy/token_auth#tracking-end-users--internal-users--team--org) for that mapping.
 
 ```bash
-curl "$LITELLM_PROXY_URL/team/update" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+curl "$LUMINA_PROXY_URL/team/update" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "team_id": "my-team-id",

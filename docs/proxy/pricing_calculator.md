@@ -97,7 +97,7 @@ You can also estimate costs programmatically using the `/cost/estimate` endpoint
 
 ```bash
 curl -X POST "http://localhost:4000/cost/estimate" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",

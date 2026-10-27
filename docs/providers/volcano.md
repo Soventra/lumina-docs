@@ -111,12 +111,12 @@ We support ALL `volcengine` models for both chat completions and embeddings:
 model_list:
   # Chat model
   - model_name: volcengine-model
-    litellm_params:
+    lumina_params:
       model: volcengine/<OUR_ENDPOINT_ID>
       api_key: os.environ/VOLCENGINE_API_KEY
   # Embedding model
   - model_name: volcengine-embedding
-    litellm_params:
+    lumina_params:
       model: volcengine/doubao-embedding-text-240715
       api_key: os.environ/VOLCENGINE_API_KEY
 ```
@@ -126,7 +126,7 @@ model_list:
 #### Chat Completion
 ```shell
 curl --location 'http://localhost:4000/chat/completions' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
     "model": "volcengine-model",
@@ -142,7 +142,7 @@ curl --location 'http://localhost:4000/chat/completions' \
 #### Embedding
 ```shell
 curl --location 'http://localhost:4000/embeddings' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
     "model": "volcengine-embedding",
@@ -208,7 +208,7 @@ To serve these models on the proxy, add a deployment and call `/v1/videos`:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: seedance
-    litellm_params:
+    lumina_params:
       model: volcengine/doubao-seedance-2-5-260628
       api_key: os.environ/ARK_API_KEY
 ```
@@ -216,7 +216,7 @@ model_list:
 ```bash showLineNumbers title="Video generation via Proxy - cURL"
 curl http://localhost:4000/v1/videos \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "seedance",
     "prompt": "A red fox running through fresh snow",
@@ -225,10 +225,10 @@ curl http://localhost:4000/v1/videos \
   }'
 
 curl http://localhost:4000/v1/videos/$VIDEO_ID \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl http://localhost:4000/v1/videos/$VIDEO_ID/content \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -o video.mp4
 ```
 

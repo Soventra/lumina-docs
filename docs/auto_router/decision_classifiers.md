@@ -39,23 +39,23 @@ For Strands Decider, run the model on a server you operate and set `STRANDS_DECI
 ```yaml title="config.yaml"
 model_list:
   - model_name: small-solver
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: large-solver
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: strands-decider
-    litellm_params:
+    lumina_params:
       model: strands_decider/strands-decider-2B-hobson-v19
       api_base: os.environ/STRANDS_DECIDER_API_BASE
   - model_name: clef
-    litellm_params:
+    lumina_params:
       model: cloudflare/clef
       api_key: os.environ/CLOUDFLARE_API_KEY
   - model_name: strands-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: large-solver
       complexity_router_config:
@@ -70,7 +70,7 @@ model_list:
           REASONING: large-solver
         classifier_fallback: default_model
   - model_name: clef-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: large-solver
       complexity_router_config:
@@ -97,13 +97,13 @@ vLLM serves `/v1/systemone` from [v0.32.0](https://github.com/vllm-project/vllm/
 ```yaml title="config.yaml"
 model_list:
   - model_name: qwen-decider
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/Qwen/Qwen3-0.6B
       api_base: http://vllm-server:8000/v1
     model_info:
       mode: decisions
   - model_name: vllm-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: large-solver
       complexity_router_config:
@@ -257,15 +257,15 @@ This complete example uses a self-hosted Laya classifier. Set the [Laya connecti
 ```yaml title="config.yaml"
 model_list:
   - model_name: small-solver
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: large-solver
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: decision-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: large-solver
       complexity_router_config:
@@ -299,7 +299,7 @@ Use a LiteLLM virtual key with access to `decision-router` to make a completion:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "decision-router",
@@ -323,7 +323,7 @@ The following Laya example also works for Nimble after replacing the endpoint an
 
 ```bash
 curl http://localhost:4000/laya/v1/systemone \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "english",
@@ -346,7 +346,7 @@ Databricks `ai_decide` is called through the [unified decision routes](/docs/dec
 ```yaml
 model_list:
   - model_name: databricks-decider
-    litellm_params:
+    lumina_params:
       model: databricks/ai_decide
       api_base: os.environ/DATABRICKS_API_BASE
       api_key: os.environ/DATABRICKS_API_KEY
@@ -354,7 +354,7 @@ model_list:
 
 ```bash
 curl http://localhost:4000/v1/systemone \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "databricks-decider",

@@ -67,7 +67,7 @@ print(completion)
 ```yaml
 model_list:
   - model_name: {{openai_small}} # OpenAI {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY 
 
@@ -86,8 +86,8 @@ litellm --config config.yaml
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY", # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE" # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
 completion = client.chat.completions.create(

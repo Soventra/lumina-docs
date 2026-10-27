@@ -11,7 +11,7 @@ Log LLM Logs to [Google Cloud Storage Buckets](https://cloud.google.com/storage?
 1. Add `gcs_bucket` to LiteLLM Config.yaml
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: https://openai-function-calling-workers.tasslexyz.workers.dev/
     api_key: my-fake-key
     model: openai/my-fake-model

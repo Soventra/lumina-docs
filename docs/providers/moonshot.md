@@ -89,17 +89,17 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: moonshot-v1-8k
-    litellm_params:
+    lumina_params:
       model: moonshot/moonshot-v1-8k
       api_key: os.environ/MOONSHOT_API_KEY
 
   - model_name: moonshot-v1-32k
-    litellm_params:
+    lumina_params:
       model: moonshot/moonshot-v1-32k
       api_key: os.environ/MOONSHOT_API_KEY
 
   - model_name: moonshot-v1-128k
-    litellm_params:
+    lumina_params:
       model: moonshot/moonshot-v1-128k
       api_key: os.environ/MOONSHOT_API_KEY
 ```

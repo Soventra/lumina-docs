@@ -82,13 +82,13 @@ To use a vector store with LiteLLM, you need to configure your vector_store_regi
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 vector_store_registry:
   - vector_store_name: "bedrock-litellm-website-knowledgebase"
-    litellm_params:
+    lumina_params:
       vector_store_id: "T37J8R4WTM"
       custom_llm_provider: "bedrock"
       vector_store_description: "Bedrock vector store for the Litellm website knowledgebase"
@@ -122,7 +122,7 @@ On the LiteLLM UI, Navigate to Experimental > Vector Stores > Create Vector Stor
 ```bash showLineNumbers title="Curl Request to LiteLLM Proxy"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What is litellm?"}],
@@ -314,7 +314,7 @@ You can list all available vector stores using the /vector_store/list endpoint
 **Request:**
 ```bash showLineNumbers title="List all available vector stores"
 curl -X GET "http://localhost:4000/vector_store/list" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Response:**
@@ -354,13 +354,13 @@ In this config, we add `vector_store_ids` to the claude-3-5-sonnet-with-vector-s
 ```yaml showLineNumbers title="Always on for a model"
 model_list:
   - model_name: claude-3-5-sonnet-with-vector-store
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       vector_store_ids: ["T37J8R4WTM"]
 
 vector_store_registry:
   - vector_store_name: "bedrock-litellm-website-knowledgebase"
-    litellm_params:
+    lumina_params:
       vector_store_id: "T37J8R4WTM"
       custom_llm_provider: "bedrock"
       vector_store_description: "Bedrock vector store for the Litellm website knowledgebase"
@@ -493,7 +493,7 @@ import OpenAI from 'openai';
 
 const client = new OpenAI({
   baseURL: 'http://localhost:4000',
-  apiKey: process.env.LITELLM_API_KEY
+  apiKey: process.env.LUMINA_API_KEY
 });
 
 const response = await client.chat.completions.create({
@@ -686,7 +686,7 @@ For the LiteLLM Proxy, you can configure the same registry in your `config.yaml`
 ```yaml showLineNumbers title="Vector store configuration in config.yaml"
 vector_store_registry:
   - vector_store_name: "bedrock-litellm-website-knowledgebase"  # Optional friendly name
-    litellm_params:
+    lumina_params:
       vector_store_id: "T37J8R4WTM"                            # Required: Unique ID  
       custom_llm_provider: "bedrock"                           # Required: Provider
       vector_store_description: "Bedrock vector store for the Litellm website knowledgebase"
@@ -694,6 +694,6 @@ vector_store_registry:
         source: "https://www.litellm.com/docs"
 ```
 
-The `litellm_params` section accepts all the same parameters as the `LiteLLM_ManagedVectorStore` constructor in the Python SDK.
+The `lumina_params` section accepts all the same parameters as the `LiteLLM_ManagedVectorStore` constructor in the Python SDK.
 
 

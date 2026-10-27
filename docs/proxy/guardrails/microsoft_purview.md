@@ -47,13 +47,13 @@ Grant the permissions listed above in the Azure portal under **App registrations
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: purview-prompt-dlp
-    litellm_params:
+    lumina_params:
       guardrail: microsoft_purview
       mode: pre_call
       api_key: os.environ/AZURE_CLIENT_SECRET   # client_secret
@@ -68,7 +68,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: purview-response-dlp
-    litellm_params:
+    lumina_params:
       guardrail: microsoft_purview
       mode: post_call
       api_key: os.environ/AZURE_CLIENT_SECRET
@@ -83,7 +83,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: purview-audit
-    litellm_params:
+    lumina_params:
       guardrail: microsoft_purview
       mode: logging_only
       api_key: os.environ/AZURE_CLIENT_SECRET
@@ -108,7 +108,7 @@ Send the request with a LiteLLM key whose bound `user_id` is the Entra object ID
 ```shell
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello, what is the capital of France?"}],
@@ -149,7 +149,7 @@ The Entra object ID used for Purview `protectionScopes` / `processContent` comes
 
 If the key has no bound `user_id`, the blocking hooks (`pre_call` / `post_call`) **fail closed** and reject the request with HTTP 400. When only caller-supplied identity fields are present, the error message notes that caller-supplied metadata cannot be used for blocking DLP.
 
-The **logging-only** hook reads the proxy-injected `user_api_key_user_id` from `litellm_params.metadata` (populated from the same key-bound `user_id`). If it is absent, the audit is skipped rather than misattributed.
+The **logging-only** hook reads the proxy-injected `user_api_key_user_id` from `lumina_params.metadata` (populated from the same key-bound `user_id`). If it is absent, the audit is skipped rather than misattributed.
 
 ## Enabling per request
 
@@ -158,7 +158,7 @@ When `default_on: false`, you can opt individual requests in or out:
 ```shell
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello"}],

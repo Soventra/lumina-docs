@@ -9,7 +9,7 @@ Some providers charge less during fixed clock windows; DeepSeek, for example, ha
 ```yaml
 model_list:
   - model_name: deepseek-chat
-    litellm_params:
+    lumina_params:
       model: deepseek/deepseek-chat
       api_key: os.environ/DEEPSEEK_API_KEY
     model_info:
@@ -53,4 +53,4 @@ A request is priced by its completion time. A request that starts at the standar
 
 Malformed windows and weekday values never match, so a typo in the schedule bills at the standard rate rather than applying the discount at the wrong time. Verify a new schedule by comparing tracked spend for the same request inside and outside a window, via `/spend/logs` or the usage dashboard.
 
-`off_peak_pricing` works wherever a model pricing entry lives: deployment `model_info` as above, an entry in a [custom hosted cost map](./custom_model_cost_map#option-2-serve-your-own-cost-map), or `litellm.register_model` in the SDK. It is not a [custom pricing override](./custom_pricing), so setting it inside `litellm_params` has no effect.
+`off_peak_pricing` works wherever a model pricing entry lives: deployment `model_info` as above, an entry in a [custom hosted cost map](./custom_model_cost_map#option-2-serve-your-own-cost-map), or `litellm.register_model` in the SDK. It is not a [custom pricing override](./custom_pricing), so setting it inside `lumina_params` has no effect.

@@ -31,7 +31,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa-key.json
 ```yaml
 model_list:
   - model_name: vertex-gemini-live
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-2.0-flash-live-001
       vertex_project: your-gcp-project-id
       vertex_location: us-east4   # a region (us-east4), a multi-region (us, eu), or "global"
@@ -298,7 +298,7 @@ if __name__ == "__main__":
 ```yaml
 model_list:
   - model_name: vertex-gemini-live
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-live-2.5-flash-native-audio
       vertex_project: your-gcp-project-id
       vertex_location: us-central1

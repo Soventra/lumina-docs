@@ -20,7 +20,7 @@ For a team member, send `temp_budget_increase` and `temp_budget_expiry` on `/tea
 ```bash
 curl -L -X POST 'http://localhost:4000/key/generate' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer LITELLM_MASTER_KEY' \
+-H 'Authorization: Bearer LUMINA_MASTER_KEY' \
 -d '{
     "max_budget": 0.0000001
 }'
@@ -38,7 +38,7 @@ Expected response:
 
 ```bash
 curl -L -X POST 'http://localhost:4000/key/update' \
--H 'Authorization: Bearer LITELLM_MASTER_KEY' \
+-H 'Authorization: Bearer LUMINA_MASTER_KEY' \
 -H 'Content-Type: application/json' \
 -d '{
     "key": "sk-your-new-key",

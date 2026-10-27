@@ -77,7 +77,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: llama-2-compressed
-    litellm_params:
+    lumina_params:
       model: compactifai/cai-llama-3-1-8b-slim
       api_key: os.environ/COMPACTIFAI_API_KEY
 ```

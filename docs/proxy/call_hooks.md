@@ -140,7 +140,7 @@ The last line matters: `callbacks` takes the dotted path of an **instance**, so 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 litellm_settings:
@@ -214,12 +214,12 @@ class MyCustomGuardrail(CustomGuardrail):
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 guardrails:
   - guardrail_name: "my-moderation-guardrail"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.MyCustomGuardrail # {file_name}.{class_name}
       mode: "during_call"
       default_on: true
@@ -305,7 +305,7 @@ proxy_handler_instance = MyCustomHandler()
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 litellm_settings:
@@ -482,11 +482,11 @@ gate = Gate()
 ```yaml
 model_list:
   - model_name: open-model
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: restricted-model
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -494,7 +494,7 @@ litellm_settings:
   callbacks: gate.gate # sets litellm.callbacks = [gate]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### 3. Test it!
@@ -507,7 +507,7 @@ The master key is the proxy admin, and the example hides `restricted-model` from
 
 ```shell
 curl -s http://0.0.0.0:4000/v1/models \
-    -H "Authorization: Bearer $LITELLM_MASTER_KEY" | jq "[.data[].id]"
+    -H "Authorization: Bearer $LUMINA_MASTER_KEY" | jq "[.data[].id]"
 ```
 
 **Expected Response**
@@ -520,7 +520,7 @@ Fetching the hidden model by id answers 404, the same as a model that does not e
 
 ```shell
 curl -s http://0.0.0.0:4000/v1/models/restricted-model \
-    -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+    -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 ```

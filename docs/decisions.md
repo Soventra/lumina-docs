@@ -24,11 +24,11 @@ Extraction models such as Cloudflare Clairic, which fill in typed fields like da
 ```yaml showLineNumbers keep-model-ids
 model_list:
   - model_name: luna
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
   - model_name: jev
-    litellm_params:
+    lumina_params:
       model: typesafe/jev-latest
       api_key: os.environ/TYPESAFE_API_KEY
 ```
@@ -87,7 +87,7 @@ Cloudflare model names without an `@cf/` prefix are expanded to `@cf/cloudflare/
 ```yaml showLineNumbers
 model_list:
   - model_name: decision-1
-    litellm_params:
+    lumina_params:
       model: azure_ai/decision-1
       api_base: https://<resource>.services.ai.azure.com
       api_key: os.environ/AZURE_AI_API_KEY
@@ -120,7 +120,7 @@ Ask one question of each type in the OpenAI format
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/decisions' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "luna",
@@ -213,7 +213,7 @@ OpenAI, Cloudflare Clef and TypeSafe models take `input_image` parts, TypeSafe o
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/decisions' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "luna",
@@ -321,7 +321,7 @@ The same kind of request in the System One format
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/systemone' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "jev",
@@ -401,7 +401,7 @@ Name each image in `assets` and use that name in `state`, since TypeSafe rejects
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/systemone' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -H 'TypeSafe-Danger-Zone-Images: true' \
 -d '{
@@ -534,12 +534,12 @@ Go to **Models + Endpoints**, open the **Add Model** tab and pick the provider, 
 
 ### Decisions playground
 
-The Playground **Decisions** tab (Beta) sends requests to both routes. Open it at `LITELLM_PROXY_BASE_URL/ui/?page=llm-playground&tab=system-one`, or go to **Playground** and pick **Decisions**. The **Endpoint** selector picks `/v1/decisions` (OpenAI Decisions format) or `/v1/systemone` (System One format). The **Model** selector lists the decision models in your `model_list`, such as `jev` from the [proxy setup](#proxy-setup), and a proxy with no decision models shows an **Add a decision model** link instead. An OpenAI decision model such as `luna` is listed once its `model_info` sets `mode: evaluation`.
+The Playground **Decisions** tab (Beta) sends requests to both routes. Open it at `LUMINA_PROXY_BASE_URL/ui/?page=llm-playground&tab=system-one`, or go to **Playground** and pick **Decisions**. The **Endpoint** selector picks `/v1/decisions` (OpenAI Decisions format) or `/v1/systemone` (System One format). The **Model** selector lists the decision models in your `model_list`, such as `jev` from the [proxy setup](#proxy-setup), and a proxy with no decision models shows an **Add a decision model** link instead. An OpenAI decision model such as `luna` is listed once its `model_info` sets `mode: evaluation`.
 
 ```yaml showLineNumbers keep-model-ids
 model_list:
   - model_name: luna
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
     model_info:

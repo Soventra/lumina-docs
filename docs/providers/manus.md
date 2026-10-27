@@ -66,7 +66,7 @@ if response.status == "completed":
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: manus-agent
-    litellm_params:
+    lumina_params:
       model: manus/manus-1.6
       api_key: os.environ/MANUS_API_KEY
 ```

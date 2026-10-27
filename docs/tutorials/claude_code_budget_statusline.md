@@ -19,11 +19,11 @@ Use a user virtual key rather than the proxy master key. Calling `/user/info` wi
 Set the proxy root URL and the same virtual key that Claude Code uses:
 
 ```bash
-export LITELLM_BASE_URL="http://localhost:4000"
-export LITELLM_API_KEY="$ANTHROPIC_AUTH_TOKEN"
+export LUMINA_BASE_URL="http://localhost:4000"
+export LUMINA_API_KEY="$ANTHROPIC_AUTH_TOKEN"
 ```
 
-`LITELLM_BASE_URL` must point to the proxy root, not the `/anthropic` pass-through endpoint.
+`LUMINA_BASE_URL` must point to the proxy root, not the `/anthropic` pass-through endpoint.
 
 ## 2. Create the status line script
 
@@ -32,8 +32,8 @@ Save this script as `~/.claude/litellm-budget-statusline.sh`:
 ```bash
 #!/bin/bash
 
-BASE_URL="${LITELLM_BASE_URL:-${ANTHROPIC_BASE_URL:-}}"
-API_KEY="${LITELLM_API_KEY:-${ANTHROPIC_AUTH_TOKEN:-${ANTHROPIC_API_KEY:-}}}"
+BASE_URL="${LUMINA_BASE_URL:-${ANTHROPIC_BASE_URL:-}}"
+API_KEY="${LUMINA_API_KEY:-${ANTHROPIC_AUTH_TOKEN:-${ANTHROPIC_API_KEY:-}}}"
 
 [ -n "$BASE_URL" ] && [ -n "$API_KEY" ] || exit 0
 

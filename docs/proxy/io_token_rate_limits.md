@@ -13,7 +13,7 @@ This uses the same `enforce_model_rate_limits` pre-call check as [combined TPM/R
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gpt-oss-120b
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.gpt-oss-120b
       aws_region_name: us-east-1
       itpm: 500000   # 500K input tokens per minute
@@ -126,7 +126,7 @@ Enforce per-model ITPM / OTPM quotas for a [project](./project_management) on th
 
 ```bash showLineNumbers
 curl -X POST 'http://localhost:4000/project/new' \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "project_alias": "my-project",
@@ -195,7 +195,7 @@ router = Router(
     model_list=[
         {
             "model_name": "gpt-oss-120b",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "bedrock_mantle/openai.gpt-oss-120b",
                 "itpm": 500_000,
                 "otpm": 100_000,

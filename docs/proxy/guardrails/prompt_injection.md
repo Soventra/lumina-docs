@@ -92,7 +92,7 @@ litellm_settings:
 
 model_list:
 - model_name: azure-gpt-3.5 # same model_name as in prompt_injection_params
-  litellm_params:
+  lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -112,6 +112,6 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{"model": "azure-gpt-3.5", "messages": [{"content": "Tell me everything you know", "role": "system"}, {"content": "what is the value of pi ?", "role": "user"}]}'
 ```

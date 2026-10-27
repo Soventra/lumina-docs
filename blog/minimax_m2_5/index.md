@@ -51,7 +51,7 @@ docker pull litellm/litellm:v1.81.3-stable
 ```yaml
 model_list:
   - model_name: minimax-m2-5
-    litellm_params:
+    lumina_params:
       model: minimax/MiniMax-M2.5
       api_key: os.environ/MINIMAX_API_KEY
       api_base: https://api.minimax.io/v1
@@ -73,7 +73,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "minimax-m2-5",
   "messages": [
@@ -93,7 +93,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "minimax-m2-5",
   "messages": [
@@ -118,7 +118,7 @@ curl --location 'http://0.0.0.0:4000/chat/completions' \
 ```yaml
 model_list:
   - model_name: minimax-m2-5
-    litellm_params:
+    lumina_params:
       model: minimax/MiniMax-M2.5
       api_key: os.environ/MINIMAX_API_KEY
       api_base: https://api.minimax.io/anthropic/v1/messages
@@ -140,7 +140,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "minimax-m2-5",
   "max_tokens": 1000,
@@ -161,7 +161,7 @@ curl --location 'http://0.0.0.0:4000/v1/messages' \
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "minimax-m2-5",
   "max_tokens": 1000,

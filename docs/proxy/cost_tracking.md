@@ -64,7 +64,7 @@ Pass `metadata` as part of the request body
 ```shell title="Curl Request with Spend Tracking" showLineNumbers
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data '{
     "model": "llama3",
     "messages": [
@@ -190,7 +190,7 @@ Create Key with with `permissions={"get_spend_routes": true}`
 
 ```shell title="Generate Key with Spend Route Permissions" showLineNumbers
 curl --location 'http://0.0.0.0:4000/key/generate' \
-        --header "Authorization: Bearer $LITELLM_API_KEY" \
+        --header "Authorization: Bearer $LUMINA_API_KEY" \
         --header 'Content-Type: application/json' \
         --data '{
             "permissions": {"get_spend_routes": true}
@@ -216,12 +216,12 @@ Use `/global/spend/reset` if you want to:
 
 ##### Request
 
-Only the `LITELLM_MASTER_KEY` you set can access this route
+Only the `LUMINA_MASTER_KEY` you set can access this route
 
 ```shell
 curl -X POST \
   'http://localhost:4000/global/spend/reset' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json'
 ```
 
@@ -403,7 +403,7 @@ Requirements:
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {
@@ -419,7 +419,7 @@ curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/team/new' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {
@@ -593,7 +593,7 @@ Key Change: Specify `group_by=team`
 
 ```shell
 curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end_date=2024-06-30&group_by=team' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 #### Example Response
@@ -723,7 +723,7 @@ Key Change: Specify `group_by=customer`
 
 ```shell
 curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end_date=2024-06-30&group_by=customer' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 #### Example Response
@@ -776,7 +776,7 @@ Key Change: Specify `api_key=sk-<your-litellm-api-key>`
 
 ```shell
 curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end_date=2024-06-30&api_key=sk-<your-litellm-api-key>' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 #### Example Response
@@ -820,7 +820,7 @@ Key Change: Specify `internal_user_id=ishaan`
 
 ```shell
 curl -X GET 'http://localhost:4000/global/spend/report?start_date=2024-04-01&end_date=2024-12-30&internal_user_id=ishaan' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 #### Example Response
@@ -904,14 +904,14 @@ The `/spend/logs` endpoint now supports a `summarize` parameter to control data 
 
 ```bash title="Get Individual Transaction Logs" showLineNumbers
 curl -X GET "http://localhost:4000/spend/logs?start_date=2024-01-01&end_date=2024-01-02&summarize=false" \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Get summarized data (default):**
 
 ```bash title="Get Summarized Spend Data" showLineNumbers
 curl -X GET "http://localhost:4000/spend/logs?start_date=2024-01-01&end_date=2024-01-02" \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Use Cases:**
@@ -925,7 +925,7 @@ Use `/spend/logs/v2` for programmatic access to individual spend logs with page-
 
 ```bash title="Get a page of spend logs" showLineNumbers
 curl -X GET "http://localhost:4000/spend/logs/v2?start_date=2024-01-01%2000:00:00&end_date=2024-01-02%2023:59:59&page=1&page_size=100" \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 `start_date` and `end_date` take `YYYY-MM-DD HH:MM:SS` timestamps. `page` starts at 1 and `page_size` accepts up to 1000 rows per page. The endpoint also accepts filters such as `api_key`, `user_id`, `team_id`, `model`, `status_filter`, `min_spend` and `max_spend`; the full list is on your proxy's Swagger page (`/docs`) under `/spend/logs/v2`.
@@ -965,7 +965,7 @@ Requirements:
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {
@@ -983,7 +983,7 @@ curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/team/new' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {
@@ -1166,7 +1166,7 @@ Pass `x-litellm-spend-logs-metadata` as a request header with JSON string
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'x-litellm-spend-logs-metadata: {"user_id": "12345", "project_id": "proj_abc", "request_type": "chat_completion"}' \
     --data '{
     "model": "{{openai_small}}",
@@ -1228,7 +1228,7 @@ print(response)
 ```bash
 # request_id: e.g.: chatcmpl-9ZKMURhVYSi9D6r6PJ9vLcayIK0Vm
 curl -X GET "http://0.0.0.0:4000/spend/logs?request_id=<your-call-id" \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 #### `/spend/logs` Response Format

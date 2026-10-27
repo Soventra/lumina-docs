@@ -70,7 +70,7 @@ print(response.choices[0].message.content)
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "messages": [
@@ -192,7 +192,7 @@ litellm_settings:
 
 model_list:
   - model_name: claude-thinking
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       thinking:
         type: enabled
@@ -325,7 +325,7 @@ if tool_calls:
 ```yaml showLineNumbers
 model_list:
   - model_name: claude-3-7-sonnet-thinking
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       thinking: {
@@ -347,7 +347,7 @@ litellm --config config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "claude-3-7-sonnet-thinking",
     "messages": [
@@ -385,7 +385,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "claude-3-7-sonnet-thinking",
     "messages": [
@@ -499,7 +499,7 @@ response = litellm.completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -531,7 +531,7 @@ response = litellm.responses(
 ```bash showLineNumbers
 curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "{{anthropic_large}}",
     "input": "How many prime numbers are less than 30?",
@@ -568,7 +568,7 @@ If you would rather set Anthropic's native parameters yourself, send `thinking` 
 ```bash showLineNumbers
 curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "{{anthropic_large}}",
     "input": "How many prime numbers are less than 30?",
@@ -609,16 +609,16 @@ assert litellm.supports_reasoning(model="openai/gpt-4.1") == False
 ```yaml showLineNumbers title="litellm proxy config.yaml"
 model_list:
   - model_name: claude-3-sonnet-reasoning
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: deepseek-reasoning
-    litellm_params:
+    lumina_params:
       model: deepseek/deepseek-chat
       api_key: os.environ/DEEPSEEK_API_KEY
   # Example for a custom model where detection might be needed
   - model_name: my-custom-reasoning-model 
-    litellm_params:
+    lumina_params:
       model: openai/my-custom-model # Assuming it's OpenAI compatible
       api_base: http://localhost:8000
       api_key: fake-key
@@ -638,7 +638,7 @@ litellm --config config.yaml
 curl -X 'GET' \
   'http://localhost:4000/model_group/info' \
   -H 'accept: application/json' \
-  -H "x-api-key: $LITELLM_API_KEY"
+  -H "x-api-key: $LUMINA_API_KEY"
 ```
 
 Expected Response 
@@ -687,7 +687,7 @@ litellm.completion(model="azure/responses/my-reasoning-model")  # ...
 ```yaml
 model_list:
   - model_name: my-reasoning-model
-    litellm_params:
+    lumina_params:
       model: azure/my-reasoning-model
     model_info:
       mode: responses
@@ -704,14 +704,14 @@ Some deployments accept only a few reasoning effort levels and answer 400 for th
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: my-model-azure-ai
-    litellm_params:
+    lumina_params:
       model: azure_ai/my-model
       api_base: https://my-endpoint.services.ai.azure.com
       api_key: os.environ/AZURE_AI_API_KEY
     model_info:
       reasoning_effort_levels: ["low", "high", "max", "none"]
   - model_name: my-model-vllm
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/my-model
       api_base: https://my-vllm-server.example.com/v1
     model_info:
@@ -746,7 +746,7 @@ Each change logs one INFO line in this shape.
 reasoning_effort medium sent as high (rounding up) to deployment <deployment id>, model group my-model-azure-ai, model azure_ai/my-model
 ```
 
-The proxy shows INFO lines only when `LITELLM_LOG=INFO` is set. With `json_logs: true` under `litellm_settings`, the line also carries `reasoning_effort_deployment_id`, `reasoning_effort_model_group`, `reasoning_effort_deployment_model`, `reasoning_effort_requested`, `reasoning_effort_sent`, and `reasoning_effort_rounding` as JSON keys, so you can filter or chart them.
+The proxy shows INFO lines only when `LUMINA_LOG=INFO` is set. With `json_logs: true` under `litellm_settings`, the line also carries `reasoning_effort_deployment_id`, `reasoning_effort_model_group`, `reasoning_effort_deployment_model`, `reasoning_effort_requested`, `reasoning_effort_sent`, and `reasoning_effort_rounding` as JSON keys, so you can filter or chart them.
 
 ## OpenAI Responses API - Auto-Summary Control
 
@@ -778,10 +778,10 @@ response = litellm.completion(
 
 ```bash
 # Set environment variable
-export LITELLM_REASONING_AUTO_SUMMARY=true
+export LUMINA_REASONING_AUTO_SUMMARY=true
 
 # Or in your .env file
-LITELLM_REASONING_AUTO_SUMMARY=true
+LUMINA_REASONING_AUTO_SUMMARY=true
 ```
 
 </TabItem>
@@ -794,7 +794,7 @@ litellm_settings:
 
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/responses/{{openai_small}}
 ```
 
@@ -803,7 +803,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       # String format - uses reasoning_auto_summary for summary when set
       reasoning_effort: "high"
@@ -811,7 +811,7 @@ model_list:
       mode: responses  # if using Responses API bridge
 
   - model_name: gpt-5.6-terra-with-summary
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       # Dict format - explicit control over effort and summary
       reasoning_effort: {"effort": "high", "summary": "detailed"}
@@ -877,7 +877,7 @@ response = await litellm.anthropic.messages.acreate(
 <TabItem value="env" label="Environment Variable">
 
 ```bash
-export LITELLM_REASONING_AUTO_SUMMARY=true
+export LUMINA_REASONING_AUTO_SUMMARY=true
 ```
 
 </TabItem>

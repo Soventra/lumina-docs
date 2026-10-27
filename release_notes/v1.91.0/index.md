@@ -203,7 +203,7 @@ Exact per-model context windows and prices are in `model_prices_and_context_wind
     - Add a `requested_model` label to spend and request metrics - [PR #31410](https://github.com/BerriAI/litellm/pull/31410)
     - Add a per-team `litellm_team_members_metric` gauge - [PR #31506](https://github.com/BerriAI/litellm/pull/31506)
 - **[OpenTelemetry](../../docs/observability/opentelemetry_integration)**
-    - Resolve the `LITELLM_OTEL_V2` flag once instead of rebuilding settings per call - [PR #30989](https://github.com/BerriAI/litellm/pull/30989)
+    - Resolve the `LUMINA_OTEL_V2` flag once instead of rebuilding settings per call - [PR #30989](https://github.com/BerriAI/litellm/pull/30989)
     - Use a hashable scope for `_emit_once` when `guardrail_mode` is a list - [PR #31262](https://github.com/BerriAI/litellm/pull/31262)
     - Point the AgentOps OTLP exporter at `otlp.agentops.ai` - [PR #31490](https://github.com/BerriAI/litellm/pull/31490)
 - **General**

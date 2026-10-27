@@ -49,14 +49,14 @@ Define multiple guardrail entries with the **same `guardrail_name`** but differe
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   # First Bedrock guardrail - AWS Account 1
   - guardrail_name: "content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "pre_call"
       guardrailIdentifier: "abc123"
@@ -67,7 +67,7 @@ guardrails:
   
   # Second Bedrock guardrail - AWS Account 2
   - guardrail_name: "content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "pre_call"
       guardrailIdentifier: "def456"
@@ -84,20 +84,20 @@ guardrails:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   # First custom guardrail instance
   - guardrail_name: "pii-filter"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.PIIFilterA
       mode: "pre_call"
   
   # Second custom guardrail instance
   - guardrail_name: "pii-filter"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.PIIFilterB
       mode: "pre_call"
 ```
@@ -109,14 +109,14 @@ guardrails:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   # First Aporia instance
   - guardrail_name: "toxicity-filter"
-    litellm_params:
+    lumina_params:
       guardrail: aporia
       mode: "pre_call"
       api_key: os.environ/APORIA_API_KEY_1
@@ -124,7 +124,7 @@ guardrails:
   
   # Second Aporia instance
   - guardrail_name: "toxicity-filter"
-    litellm_params:
+    lumina_params:
       guardrail: aporia
       mode: "pre_call"
       api_key: os.environ/APORIA_API_KEY_2
@@ -147,7 +147,7 @@ Requests using the guardrail will be automatically load balanced:
 ```bash showLineNumbers title="Test request"
 curl -X POST http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello, how are you?"}],
@@ -163,7 +163,7 @@ Assign weights to distribute traffic unevenly across guardrail instances:
 guardrails:
   # 80% of traffic
   - guardrail_name: "content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "pre_call"
       guardrailIdentifier: "primary-guard"
@@ -172,7 +172,7 @@ guardrails:
   
   # 20% of traffic
   - guardrail_name: "content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "pre_call"
       guardrailIdentifier: "secondary-guard"
@@ -215,13 +215,13 @@ flowchart TB
 ```yaml showLineNumbers title="config.yaml - Multi-account Bedrock"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
 
 guardrails:
   # AWS Account 1 - US East
   - guardrail_name: "bedrock-content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "during_call"
       guardrailIdentifier: "guard-us-east"
@@ -232,7 +232,7 @@ guardrails:
   
   # AWS Account 2 - US West
   - guardrail_name: "bedrock-content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "during_call"
       guardrailIdentifier: "guard-us-west"
@@ -243,7 +243,7 @@ guardrails:
   
   # AWS Account 3 - EU West
   - guardrail_name: "bedrock-content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: bedrock/guardrail
       mode: "during_call"
       guardrailIdentifier: "guard-eu-west"
@@ -260,7 +260,7 @@ guardrails:
 for i in {1..10}; do
   curl -s -X POST http://localhost:4000/v1/chat/completions \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -d '{
       "model": "{{anthropic}}",
       "messages": [{"role": "user", "content": "Hello"}],
@@ -315,12 +315,12 @@ class PIIFilterB(CustomGuardrail):
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "pii-filter"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.PIIFilterA
       mode: "pre_call"
   
   - guardrail_name: "pii-filter"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.PIIFilterB
       mode: "pre_call"
 ```

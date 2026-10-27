@@ -28,12 +28,12 @@ export JWT_PUBLIC_KEY_URL="" # "https://demo.duendesoftware.com/.well-known/open
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
 
 model_list:
 - model_name: azure-gpt-3.5 
-  litellm_params:
+  lumina_params:
       model: azure/<your-deployment-name>
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -326,7 +326,7 @@ spec:
   - name: app
     image: my-app:latest
     env:
-    - name: LITELLM_TOKEN
+    - name: LUMINA_TOKEN
       valueFrom:
         secretKeyRef:
           name: my-llm-client-token
@@ -356,13 +356,13 @@ curl -X POST 'http://0.0.0.0:4000/team/new' \
 
 #### Step 5: Use the Token
 
-From within the pod, the token is available in the `LITELLM_TOKEN` environment variable:
+From within the pod, the token is available in the `LUMINA_TOKEN` environment variable:
 
 ```bash
 # Make a request to LiteLLM using the env var
 curl -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_TOKEN" \
+-H "Authorization: Bearer $LUMINA_TOKEN" \
 -d '{
   "model": "{{openai_large}}",
   "messages": [{"role": "user", "content": "Hello!"}]
@@ -417,7 +417,7 @@ Change the string in JWT 'scopes', that litellm evaluates to see if a user has a
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     admin_jwt_scope: "litellm-proxy-admin"
@@ -431,7 +431,7 @@ Set the field in the jwt token, which corresponds to a litellm user / team / org
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     admin_jwt_scope: "litellm-proxy-admin"
@@ -488,7 +488,7 @@ Sometimes your JWT token contains human-readable names instead of database IDs. 
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     # Name-based fields (resolved via database lookup)
@@ -696,7 +696,7 @@ def my_custom_validate(token: str) -> Literal[True]:
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     user_id_jwt_field: "sub"
@@ -741,7 +741,7 @@ By default:
 **Admin Routes**
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     admin_jwt_scope: "litellm-proxy-admin"
@@ -751,7 +751,7 @@ general_settings:
 **Team Routes**
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     # ...
@@ -831,7 +831,7 @@ Control how long public keys are cached for (in seconds).
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     admin_jwt_scope: "litellm-proxy-admin"
@@ -845,7 +845,7 @@ Set a custom field in which the team_id exists. By default, the 'client_id' fiel
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     team_id_jwt_field: "client_id" # KEY CHANGE
@@ -886,7 +886,7 @@ Allow users who belong to a specific email domain, automatic access to the proxy
  
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     user_email_jwt_field: "email" # checks 'email' field in jwt payload
@@ -1096,11 +1096,11 @@ Control which models a JWT can access. Set `enforce_scope_based_access: true` to
 ```yaml
 model_list:
   - model_name: anthropic-claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: gpt-3.5-turbo-testing
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -1315,7 +1315,7 @@ All endpoints require admin auth (`Authorization: Bearer <master_key>`).
 
 ```bash
 curl -X POST http://localhost:4000/jwt/key/mapping/new \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jwt_claim_name": "email",
@@ -1328,21 +1328,21 @@ curl -X POST http://localhost:4000/jwt/key/mapping/new \
 
 ```bash
 curl http://localhost:4000/jwt/key/mapping/list?page=1&size=50 \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Get a specific mapping:**
 
 ```bash
 curl "http://localhost:4000/jwt/key/mapping/info?id=<mapping-id>" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Update a mapping:**
 
 ```bash
 curl -X POST http://localhost:4000/jwt/key/mapping/update \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "id": "<mapping-id>",
@@ -1355,7 +1355,7 @@ curl -X POST http://localhost:4000/jwt/key/mapping/update \
 
 ```bash
 curl -X POST http://localhost:4000/jwt/key/mapping/delete \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"id": "<mapping-id>"}'
 ```
@@ -1393,7 +1393,7 @@ agents:
       name: research-agent
       url: http://localhost:9999/a2a
       version: "1.0.0"
-    litellm_params:
+    lumina_params:
       require_trace_id_on_calls_by_agent: true
 
 general_settings:

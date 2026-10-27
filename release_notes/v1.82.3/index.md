@@ -52,7 +52,7 @@ pip install litellm==1.82.3
 - **Responses API WebSocket streaming** — Real-time WebSocket streaming for the Responses API, including support across all providers - [PR #22559](https://github.com/BerriAI/litellm/pull/22559), [PR #22771](https://github.com/BerriAI/litellm/pull/22771)
 - **Org Admin RBAC expansion** — Org Admins can now access team management endpoints, view and invite internal users, and manage team membership without requiring a global admin role - [PR #23085](https://github.com/BerriAI/litellm/pull/23085), [PR #23080](https://github.com/BerriAI/litellm/pull/23080)
 - **Guardrail mode defaults and tag-based modes** — Set a default guardrail mode list globally, and specify a list of modes in tag-based guardrail configs - [PR #22676](https://github.com/BerriAI/litellm/pull/22676), [PR #23020](https://github.com/BerriAI/litellm/pull/23020)
-- **Secret redaction in logs** — API keys, tokens, and credentials automatically scrubbed from all proxy log output. Enabled by default; opt out with `LITELLM_DISABLE_REDACT_SECRETS=true` - [PR #23668](https://github.com/BerriAI/litellm/pull/23668)
+- **Secret redaction in logs** — API keys, tokens, and credentials automatically scrubbed from all proxy log output. Enabled by default; opt out with `LUMINA_DISABLE_REDACT_SECRETS=true` - [PR #23668](https://github.com/BerriAI/litellm/pull/23668)
 - **Streaming stability fix** — Critical fix for `RuntimeError: Cannot send a request, as the client has been closed.` crashes after ~1 hour in production - [PR #22926](https://github.com/BerriAI/litellm/pull/22926)
 
 ---
@@ -346,7 +346,7 @@ pip install litellm==1.82.3
     - Allow setting `organization_id` on `/key/update`, so keys can be assigned or moved to a different organization after creation - [PR #23557](https://github.com/BerriAI/litellm/pull/23557)
     - Manual Spend Reset for virtual keys from the UI: admins can reset key spend to zero on demand - [PR #22715](https://github.com/BerriAI/litellm/pull/22715)
     - BYOK (Bring Your Own Key): client-side provider API key takes precedence over proxy key for Anthropic `/v1/messages` - [PR #22964](https://github.com/BerriAI/litellm/pull/22964)
-    - UI login session duration configurable via `LITELLM_UI_SESSION_DURATION` environment variable - [PR #22182](https://github.com/BerriAI/litellm/pull/22182)
+    - UI login session duration configurable via `LUMINA_UI_SESSION_DURATION` environment variable - [PR #22182](https://github.com/BerriAI/litellm/pull/22182)
     - Auto-redirect UI login to SSO via `auto_redirect_ui_login_to_sso: true` in config.yaml - [PR #23367](https://github.com/BerriAI/litellm/pull/23367)
 
 - **Access Control (RBAC)**
@@ -372,7 +372,7 @@ pip install litellm==1.82.3
 - **Default Team Settings**
     - Modernize page to antd (consistent with rest of app) - [PR #23614](https://github.com/BerriAI/litellm/pull/23614)
     - Fix: default team params (budget, duration, tpm, rpm, permissions) now correctly applied on `/team/new` - [PR #23614](https://github.com/BerriAI/litellm/pull/23614)
-    - Fix: settings persist across proxy restarts (`default_team_params` added to `LITELLM_SETTINGS_SAFE_DB_OVERRIDES`) - [PR #23614](https://github.com/BerriAI/litellm/pull/23614)
+    - Fix: settings persist across proxy restarts (`default_team_params` added to `LUMINA_SETTINGS_SAFE_DB_OVERRIDES`) - [PR #23614](https://github.com/BerriAI/litellm/pull/23614)
     - Fix: resolved race condition in `_update_litellm_setting` where `get_config()` could overwrite freshly saved values - [PR #23614](https://github.com/BerriAI/litellm/pull/23614)
 
 - **Usage**
@@ -476,7 +476,7 @@ No major prompt management changes in this release.
 
 ## Security
 
-- **Secret redaction in proxy logs** — Adds a `SecretRedactionFilter` to all LiteLLM loggers that scrubs API keys, tokens, and credentials from log messages, format args, exception tracebacks, and extra fields. Enabled by default; opt out with `LITELLM_DISABLE_REDACT_SECRETS=true` - [PR #23668](https://github.com/BerriAI/litellm/pull/23668), [PR #23667](https://github.com/BerriAI/litellm/pull/23667)
+- **Secret redaction in proxy logs** — Adds a `SecretRedactionFilter` to all LiteLLM loggers that scrubs API keys, tokens, and credentials from log messages, format args, exception tracebacks, and extra fields. Enabled by default; opt out with `LUMINA_DISABLE_REDACT_SECRETS=true` - [PR #23668](https://github.com/BerriAI/litellm/pull/23668), [PR #23667](https://github.com/BerriAI/litellm/pull/23667)
 - **Bump PyJWT to `^2.12.0`** — addresses security vulnerability in `^2.10.1` - [PR #23678](https://github.com/BerriAI/litellm/pull/23678)
 - **Bump `tar` to 7.5.11 and `tornado` to 6.5.5** — addresses CVEs in transitive dependencies - [PR #23602](https://github.com/BerriAI/litellm/pull/23602)
 
@@ -493,7 +493,7 @@ No major prompt management changes in this release.
 
 - Add Anthropic `/v1/messages` → `/responses` parameter mapping reference - [PR #22893](https://github.com/BerriAI/litellm/pull/22893)
 - Update Okta SSO docs and custom SSO handler example - [PR #22786](https://github.com/BerriAI/litellm/pull/22786)
-- Add `LITELLM_MAX_BUDGET_PER_SESSION_TTL` to environment variables reference - [PR #23186](https://github.com/BerriAI/litellm/pull/23186)
+- Add `LUMINA_MAX_BUDGET_PER_SESSION_TTL` to environment variables reference - [PR #23186](https://github.com/BerriAI/litellm/pull/23186)
 - Add DB query performance guidelines to `CLAUDE.md` - [PR #23196](https://github.com/BerriAI/litellm/pull/23196)
 - Add Gemini Vertex AI PayGo/priority cost tracking docs - [PR #22948](https://github.com/BerriAI/litellm/pull/22948)
 

@@ -212,7 +212,7 @@ You can configure `ssl_verify` per guardrail in your `config.yaml`.
 ```yaml
 guardrails:
   - guardrail_name: aim-protected-app
-    litellm_params:
+    lumina_params:
       guardrail: aim
       ssl_verify: "/path/to/aim_cert.pem" # Use specific cert for AIM
 ```
@@ -223,7 +223,7 @@ You can configure `ssl_verify` per guardrail in your `config.yaml`.
 ```yaml
 guardrails:
   - guardrail_name: cato-protected-app
-    litellm_params:
+    lumina_params:
       guardrail: cato_networks
       ssl_verify: "/path/to/cato_cert.pem" # Use specific cert for AIM
 ```

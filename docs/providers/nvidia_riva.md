@@ -56,7 +56,7 @@ Riva runs in two very different shapes. The presence of `nvcf_function_id` is th
 ```yaml
 model_list:
   - model_name: parakeet-asr
-    litellm_params:
+    lumina_params:
       model: nvidia_riva/nvidia/parakeet-ctc-1_1b-asr
       api_base: grpc.nvcf.nvidia.com:443
       api_key: os.environ/NVIDIA_RIVA_API_KEY     # nvapi-...
@@ -73,7 +73,7 @@ When `nvcf_function_id` is set, LiteLLM:
 ```yaml
 model_list:
   - model_name: parakeet-asr
-    litellm_params:
+    lumina_params:
       model: nvidia_riva/nvidia/parakeet-ctc-1_1b-asr
       api_base: localhost:50051
 ```
@@ -83,7 +83,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: parakeet-asr
-    litellm_params:
+    lumina_params:
       model: nvidia_riva/nvidia/parakeet-ctc-1_1b-asr
       api_base: riva.internal.company.com:443
       use_ssl: true
@@ -100,7 +100,7 @@ Parakeet TDT leaves some words out of `words` unless `verbatim_transcripts: true
 ```yaml
 model_list:
   - model_name: parakeet-tdt
-    litellm_params:
+    lumina_params:
       model: nvidia_riva/nvidia/parakeet-0.6b-tdt
       api_base: localhost:50051
       riva_offline: true
@@ -114,7 +114,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: parakeet-asr
-    litellm_params:
+    lumina_params:
       model: nvidia_riva/nvidia/parakeet-ctc-1_1b-asr
       api_base: grpc.nvcf.nvidia.com:443
       api_key: os.environ/NVIDIA_RIVA_API_KEY
@@ -123,7 +123,7 @@ model_list:
       mode: audio_transcription
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### 2. Start the proxy
@@ -141,7 +141,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --form 'file=@"/path/to/speech.mp3"' \
   --form 'model="parakeet-asr"'
 ```
@@ -178,7 +178,7 @@ OpenAI parameters that map cleanly to Riva:
 | `response_format` | `json` (default) returns `{ "text": "..." }`. `verbose_json` adds `duration` and `words` (timestamps in seconds). |
 | `timestamp_granularities` | Pass `["word"]` to enable word-level timestamps (`timestamp_granularities[]=word` in a multipart form request). Without it, `verbose_json` returns no `words`. |
 
-Riva-specific parameters you can set in `litellm_params` (or pass directly to `transcription(...)`):
+Riva-specific parameters you can set in `lumina_params` (or pass directly to `transcription(...)`):
 
 | Param | Default | Purpose |
 |---|---|---|
@@ -210,7 +210,7 @@ ffmpeg -i input.mp3 -ac 1 -ar 16000 -sample_fmt s16 output.wav
 | Variable | Purpose |
 |---|---|
 | `NVIDIA_RIVA_API_KEY` | API key sent as `authorization: Bearer ...`. NVCF expects `nvapi-...`. |
-| `NVIDIA_RIVA_API_BASE` | Default `host:port` for the gRPC endpoint. Same effect as setting `api_base` in `litellm_params`. |
+| `NVIDIA_RIVA_API_BASE` | Default `host:port` for the gRPC endpoint. Same effect as setting `api_base` in `lumina_params`. |
 | `NVIDIA_NIM_API_KEY` | Used as a fallback for `NVIDIA_RIVA_API_KEY` since most users reuse the same `nvapi-...` key across NVCF services. |
 
 ## Notes & limitations

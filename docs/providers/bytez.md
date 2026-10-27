@@ -43,7 +43,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: gemma-3
-    litellm_params:
+    lumina_params:
       model: bytez/google/gemma-3-4b-it
       api_key: os.environ/BYTEZ_API_KEY
 ```
@@ -90,7 +90,7 @@ print(response)
 
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
     "model": "gemma-3",
@@ -146,7 +146,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: gemma-3
-    litellm_params:
+    lumina_params:
       model: bytez/google/gemma-3-4b-it
       api_key: os.environ/BYTEZ_API_KEY
       max_tokens: 20
@@ -179,7 +179,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: gemma-3
-    litellm_params:
+    lumina_params:
       model: bytez/google/gemma-3-4b-it
       api_key: os.environ/BYTEZ_API_KEY
       repetition_penalty: 1.2

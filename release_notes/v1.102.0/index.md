@@ -53,9 +53,9 @@ These callouts cover changes to behavior available in `v1.101.0`, the previous s
 
 **Responses IDs are authorized regardless of their format.** Provider IDs this proxy did not issue are refused by default for retrieval, cancellation, deletion, and chaining. Set `allow_unmanaged_response_ids` only on deployments that intentionally accept unmanaged IDs. See [PR #39548](https://github.com/BerriAI/litellm/pull/39548)
 
-**New model writes no longer accept pricing overrides through `model_info`.** Put custom pricing in `litellm_params`. Clients that echoed displayed catalog rates into `model_info` will now keep following the catalog. See [PR #36222](https://github.com/BerriAI/litellm/pull/36222)
+**New model writes no longer accept pricing overrides through `model_info`.** Put custom pricing in `lumina_params`. Clients that echoed displayed catalog rates into `model_info` will now keep following the catalog. See [PR #36222](https://github.com/BerriAI/litellm/pull/36222)
 
-**Supported OCR uses the native engine by default, and Rust controls are now process-wide.** Replace `LITELLM_USE_RUST_OCR` and per-request or deployment `rust` settings with `LITELLM_RUST` or `litellm.rust(bool)`. Use `LITELLM_RUST=0` for the Python OCR path. See [PR #40734](https://github.com/BerriAI/litellm/pull/40734), [PR #39928](https://github.com/BerriAI/litellm/pull/39928)
+**Supported OCR uses the native engine by default, and Rust controls are now process-wide.** Replace `LUMINA_USE_RUST_OCR` and per-request or deployment `rust` settings with `LUMINA_RUST` or `litellm.rust(bool)`. Use `LUMINA_RUST=0` for the Python OCR path. See [PR #40734](https://github.com/BerriAI/litellm/pull/40734), [PR #39928](https://github.com/BerriAI/litellm/pull/39928)
 
 **Auto Router replaces the caller’s output cap with the selected tier model’s limit by default.** Per-tier limits still take precedence. Set `max_tokens_from_tier_model: false` to retain the caller’s cap. See [PR #40209](https://github.com/BerriAI/litellm/pull/40209)
 
@@ -75,7 +75,7 @@ These callouts cover changes to behavior available in `v1.101.0`, the previous s
 
 **GPT-5.1, GPT-5.2, GPT-5.4, and GPT-5.4 Pro no longer advertise minimal reasoning effort.** This includes their dated snapshots. Use a supported effort or `drop_params` for requests that previously sent `minimal`. See [PR #40581](https://github.com/BerriAI/litellm/pull/40581)
 
-**Headerless Azure Realtime clients use the GA upstream by default.** Beta clients must send `OpenAI-Beta: realtime=v1` or pin `realtime_protocol` / `LITELLM_AZURE_REALTIME_PROTOCOL`. Health checks follow the GA default. See [PR #40769](https://github.com/BerriAI/litellm/pull/40769)
+**Headerless Azure Realtime clients use the GA upstream by default.** Beta clients must send `OpenAI-Beta: realtime=v1` or pin `realtime_protocol` / `LUMINA_AZURE_REALTIME_PROTOCOL`. Health checks follow the GA default. See [PR #40769](https://github.com/BerriAI/litellm/pull/40769)
 
 **Very large local token counts become sampled estimates.** The default exact-count ceiling is 4,000,000 characters per string. Set `TOKEN_COUNTER_MAX_EXACT_CHARS` to choose a different limit. See [PR #40186](https://github.com/BerriAI/litellm/pull/40186)
 
@@ -394,7 +394,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 ### OCR
 
 - Preserve native OCR provider errors and run post-call logging hooks - [PR #40061](https://github.com/BerriAI/litellm/pull/40061), [PR #40154](https://github.com/BerriAI/litellm/pull/40154)
-- Run supported OCR through the native engine by default for Mistral, Azure Mistral, Azure Document Intelligence, Reducto, Vertex Mistral, and Vertex DeepSeek, with bounded document fetching and provider-specific authentication; use `LITELLM_RUST=0` for the Python path - [PR #40502](https://github.com/BerriAI/litellm/pull/40502), [PR #40507](https://github.com/BerriAI/litellm/pull/40507), [PR #40509](https://github.com/BerriAI/litellm/pull/40509), [PR #40530](https://github.com/BerriAI/litellm/pull/40530), [PR #40532](https://github.com/BerriAI/litellm/pull/40532), [PR #40533](https://github.com/BerriAI/litellm/pull/40533), [PR #40534](https://github.com/BerriAI/litellm/pull/40534), [PR #40535](https://github.com/BerriAI/litellm/pull/40535), [PR #40734](https://github.com/BerriAI/litellm/pull/40734)
+- Run supported OCR through the native engine by default for Mistral, Azure Mistral, Azure Document Intelligence, Reducto, Vertex Mistral, and Vertex DeepSeek, with bounded document fetching and provider-specific authentication; use `LUMINA_RUST=0` for the Python path - [PR #40502](https://github.com/BerriAI/litellm/pull/40502), [PR #40507](https://github.com/BerriAI/litellm/pull/40507), [PR #40509](https://github.com/BerriAI/litellm/pull/40509), [PR #40530](https://github.com/BerriAI/litellm/pull/40530), [PR #40532](https://github.com/BerriAI/litellm/pull/40532), [PR #40533](https://github.com/BerriAI/litellm/pull/40533), [PR #40534](https://github.com/BerriAI/litellm/pull/40534), [PR #40535](https://github.com/BerriAI/litellm/pull/40535), [PR #40734](https://github.com/BerriAI/litellm/pull/40734)
 
 ### Realtime
 
@@ -436,7 +436,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 
 - Cascade-delete JWT key mappings when their virtual key is deleted - [PR #33703](https://github.com/BerriAI/litellm/pull/33703)
 - Let internal users read request/response for their own spend logs - [PR #35448](https://github.com/BerriAI/litellm/pull/35448)
-- Keep model edits from turning displayed catalog prices into permanent deployment overrides; set custom prices through `litellm_params` - [PR #36222](https://github.com/BerriAI/litellm/pull/36222)
+- Keep model edits from turning displayed catalog prices into permanent deployment overrides; set custom prices through `lumina_params` - [PR #36222](https://github.com/BerriAI/litellm/pull/36222)
 - Report model limits from the resolved deployment in `/v1/models`, including aliased models - [PR #39296](https://github.com/BerriAI/litellm/pull/39296)
 - Check ownership for every addressed Responses API ID; unmanaged provider IDs require `allow_unmanaged_response_ids` - [PR #39548](https://github.com/BerriAI/litellm/pull/39548)
 - Apply key and team model allowlists to Bedrock passthrough requests - [PR #39660](https://github.com/BerriAI/litellm/pull/39660)
@@ -641,7 +641,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 - Keep spend-log flush notifications local to their worker event loop - [PR #39556](https://github.com/BerriAI/litellm/pull/39556)
 - Move remote media and template fetching, plus asynchronous Bedrock request signing, off inference workers’ event loops - [PR #39839](https://github.com/BerriAI/litellm/pull/39839), [PR #40270](https://github.com/BerriAI/litellm/pull/40270), [PR #40311](https://github.com/BerriAI/litellm/pull/40311)
 - Load database-backed credentials before reconciling models on each worker - [PR #39876](https://github.com/BerriAI/litellm/pull/39876)
-- Control optional Rust execution through `litellm.rust(bool)` or `LITELLM_RUST`; request-level controls are removed - [PR #39928](https://github.com/BerriAI/litellm/pull/39928)
+- Control optional Rust execution through `litellm.rust(bool)` or `LUMINA_RUST`; request-level controls are removed - [PR #39928](https://github.com/BerriAI/litellm/pull/39928)
 - Redact provider credentials from passthrough failure tracebacks - [PR #39964](https://github.com/BerriAI/litellm/pull/39964)
 - Allow spend-log partition maintenance to run within its configured statement timeout - [PR #40098](https://github.com/BerriAI/litellm/pull/40098)
 - Log the budget-reservation configuration notice once at startup - [PR #40167](https://github.com/BerriAI/litellm/pull/40167)

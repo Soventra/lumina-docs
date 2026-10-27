@@ -90,10 +90,10 @@ custom_handler: `custom_handler.my_custom_llm`
 ```yaml
 model_list:
   - model_name: "test-model"             
-    litellm_params:
+    lumina_params:
       model: "openai/text-embedding-ada-002"
   - model_name: "my-custom-model"
-    litellm_params:
+    lumina_params:
       model: "my-custom-llm/my-model"
 
 litellm_settings:
@@ -110,7 +110,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "my-custom-model",
     "messages": [{"role": "user", "content": "Say \"this is a test\" in JSON!"}],
@@ -228,10 +228,10 @@ custom_handler: `custom_handler.my_custom_llm`
 ```yaml
 model_list:
   - model_name: "test-model"             
-    litellm_params:
+    lumina_params:
       model: "openai/text-embedding-ada-002"
   - model_name: "my-custom-model"
-    litellm_params:
+    lumina_params:
       model: "my-custom-llm/my-model"
 
 litellm_settings:
@@ -248,7 +248,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "my-custom-model",
     "prompt": "A cute baby sea otter",
@@ -310,7 +310,7 @@ custom_handler: `custom_handler.my_custom_llm`
 ```yaml
 model_list:
   - model_name: "my-custom-image-edit-model"
-    litellm_params:
+    lumina_params:
       model: "my-custom-llm/my-model"
 
 litellm_settings:
@@ -326,7 +326,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/images/edits' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -F 'model=my-custom-image-edit-model' \
 -F 'image=@/path/to/image.png' \
 -F 'prompt=Make the sky blue'
@@ -377,10 +377,10 @@ custom_handler: `custom_handler.my_custom_llm`
 ```yaml
 model_list:
   - model_name: "test-model"             
-    litellm_params:
+    lumina_params:
       model: "openai/text-embedding-ada-002"
   - model_name: "my-custom-model"
-    litellm_params:
+    lumina_params:
       model: "my-custom-llm/my-model"
 
 litellm_settings:
@@ -398,7 +398,7 @@ litellm --config /path/to/config.yaml
 curl -L -X POST 'http://0.0.0.0:4000/v1/messages' \
 -H 'anthropic-version: 2023-06-01' \
 -H 'content-type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
    "model": "my-custom-model",
      "max_tokens": 1024,
@@ -504,10 +504,10 @@ custom_handler: `custom_handler.my_custom_llm`
 ```yaml
 model_list:
   - model_name: "test-model"             
-    litellm_params:
+    lumina_params:
       model: "openai/text-embedding-ada-002"
   - model_name: "my-custom-model"
-    litellm_params:
+    lumina_params:
       model: "my-custom-llm/my-model"
       my_custom_param: "my-custom-param" # CUSTOM PARAM
 
@@ -525,7 +525,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "my-custom-model",
     "prompt": "A cute baby sea otter",

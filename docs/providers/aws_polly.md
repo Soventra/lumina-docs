@@ -38,7 +38,7 @@ response.stream_to_file(speech_file_path)
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: polly-neural
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       aws_access_key_id: "os.environ/AWS_ACCESS_KEY_ID"
       aws_secret_access_key: "os.environ/AWS_SECRET_ACCESS_KEY"
@@ -88,15 +88,15 @@ response = litellm.speech(
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: polly-neural
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       aws_region_name: "us-east-1"
   - model_name: polly-standard
-    litellm_params:
+    lumina_params:
       model: aws_polly/standard
       aws_region_name: "us-east-1"
   - model_name: polly-generative
-    litellm_params:
+    lumina_params:
       model: aws_polly/generative
       aws_region_name: "us-east-1"
 ```
@@ -148,12 +148,12 @@ response = litellm.speech(
 ```yaml showLineNumbers title="proxy_config.yaml"
 model_list:
   - model_name: polly-joanna
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       voice: "Joanna"
       aws_region_name: "us-east-1"
   - model_name: polly-matthew
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       voice: "Matthew"
       aws_region_name: "us-east-1"
@@ -219,7 +219,7 @@ response = litellm.speech(
 
 ```bash showLineNumbers title="cURL Request with SSML"
 curl -X POST http://localhost:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "polly-neural",
@@ -324,7 +324,7 @@ response = litellm.speech(
 model_list:
   # Using environment variables
   - model_name: polly-neural
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       aws_access_key_id: "os.environ/AWS_ACCESS_KEY_ID"
       aws_secret_access_key: "os.environ/AWS_SECRET_ACCESS_KEY"
@@ -332,13 +332,13 @@ model_list:
   
   # Using IAM Role (when proxy runs on AWS)
   - model_name: polly-neural-iam
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       aws_region_name: "us-east-1"
   
   # Using AWS Profile
   - model_name: polly-neural-profile
-    litellm_params:
+    lumina_params:
       model: aws_polly/neural
       aws_profile_name: "my-profile"
 ```

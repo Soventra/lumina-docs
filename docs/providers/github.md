@@ -59,7 +59,7 @@ for chunk in response:
 ```yaml
 model_list:
   - model_name: github-Llama-3.2-11B-Vision-Instruct # Model Alias to use for requests
-    litellm_params:
+    lumina_params:
       model: github/Llama-3.2-11B-Vision-Instruct
       api_key: "os.environ/GITHUB_API_KEY" # ensure you have `GITHUB_API_KEY` in your .env
 ```

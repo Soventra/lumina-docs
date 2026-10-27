@@ -67,7 +67,7 @@ for chunk in response:
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration"
 model_list:
   - model_name: langgraph-agent
-    litellm_params:
+    lumina_params:
       model: langgraph/agent
       api_base: http://localhost:2024
 ```
@@ -89,7 +89,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Basic Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "langgraph-agent",
     "messages": [
@@ -101,7 +101,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```bash showLineNumbers title="Streaming Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "langgraph-agent",
     "messages": [
@@ -291,7 +291,7 @@ Click on Next to save. And complete the rest of the steps
 From your terminal, fetch the agent card LiteLLM is serving:
 
 ```bash
-curl -H "Authorization: Bearer $LITELLM_API_KEY" \
+curl -H "Authorization: Bearer $LUMINA_API_KEY" \
   http://localhost:4000/a2a/{agent_id}/.well-known/agent.json | jq
 ```
 
@@ -323,7 +323,7 @@ Send an A2A `message/send` request to the LiteLLM proxy URL:
 
 ```bash
 curl -X POST http://localhost:4000/a2a/{agent_id} \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json" \
   -d '{

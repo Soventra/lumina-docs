@@ -58,14 +58,14 @@ The Language Models editor now lists the chat models that key can reach under th
 If your users sign in to LiteLLM through your identity provider and nobody issues them virtual keys, each developer gets the extension's key from the LiteLLM CLI instead. This needs a proxy with SSO configured and `EXPERIMENTAL_UI_LOGIN=True`, as described in [CLI Authentication](../proxy/cli_sso.md). Option 2 below sets no LiteLLM credential on the client, so use this option on an SSO-only gateway
 
 ```shell
-export LITELLM_PROXY_URL=https://litellm.example.com
+export LUMINA_PROXY_URL=https://litellm.example.com
 lite login --pkce
 lite auth print-token
 ```
 
 `lite login --pkce` opens your browser at your identity provider's sign-in, then at a LiteLLM consent page where you pick the team to attribute requests to and click Approve. `lite auth print-token` prints the resulting key, which starts with `litellm_login_`; paste it as the API key in Step 2. The picker then lists the chat models that user and team can reach, and spend is logged against the signed-in user
 
-The key expires after `LITELLM_CLI_JWT_EXPIRATION_HOURS` (24 hours by default), and the extension keeps the key you pasted without renewing it. When requests start failing with an authentication error, run `lite auth print-token` again, which renews the key without a browser sign-in, and paste the new value through the gear on the connection's row and `Update API Key`. If it prints `Key expired. Run 'lite login --pkce' again.`, sign in again first. To make this less frequent, raise `LITELLM_CLI_JWT_EXPIRATION_HOURS` on the proxy
+The key expires after `LUMINA_CLI_JWT_EXPIRATION_HOURS` (24 hours by default), and the extension keeps the key you pasted without renewing it. When requests start failing with an authentication error, run `lite auth print-token` again, which renews the key without a browser sign-in, and paste the new value through the gear on the connection's row and `Update API Key`. If it prints `Key expired. Run 'lite login --pkce' again.`, sign in again first. To make this less frequent, raise `LUMINA_CLI_JWT_EXPIRATION_HOURS` on the proxy
 
 ### Step 3: Pick a model and its reasoning effort
 
@@ -94,17 +94,17 @@ Create a `config.yaml` file with your model configurations:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Step 3: Start LiteLLM Proxy
@@ -150,12 +150,12 @@ Route requests to Claude Sonnet:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 </TabItem>
@@ -166,12 +166,12 @@ Route requests to `{{openai_large}}`:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 </TabItem>
@@ -182,14 +182,14 @@ Route requests to Claude on Bedrock:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: bedrock-claude
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: us-east-1
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 </TabItem>
@@ -200,11 +200,11 @@ All deployments with the same model_name will be load balanced. In this example 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: {{openai_large}}  # Same model name for load balancing
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -212,7 +212,7 @@ router_settings:
   routing_strategy: simple-shuffle
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 </TabItem>

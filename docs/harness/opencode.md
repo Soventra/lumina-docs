@@ -39,16 +39,16 @@ OpenCode speaks plain Chat Completions, so any model group works: Gemini, Claude
 ```yaml title="config.yaml"
 model_list:
   - model_name: gemini
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-pro
       api_key: os.environ/GEMINI_API_KEY
   - model_name: qwen-coder
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/Qwen/Qwen3-Coder-30B-A3B-Instruct
       api_base: http://gpu-01:8000/v1
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 ```
 
@@ -56,7 +56,7 @@ Create a virtual key scoped to those groups.
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"models": ["gemini", "qwen-coder"], "key_alias": "opencode"}'
 ```
@@ -72,8 +72,8 @@ result = litellm.agent(
     "Add a /health endpoint with a test.",
     sandbox=sandbox.docker("my-agents:latest", mounts={"./api": "/workspace"}),
     model="litellm_proxy/qwen-coder",
-    api_base="http://localhost:4000",  # or LITELLM_PROXY_API_BASE
-    api_key="sk-...",                  # or LITELLM_PROXY_API_KEY
+    api_base="http://localhost:4000",  # or LUMINA_PROXY_API_BASE
+    api_key="sk-...",                  # or LUMINA_PROXY_API_KEY
     permissions="edit",
     metadata={"ticket": "ENG-412"},
 )

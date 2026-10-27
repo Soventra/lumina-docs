@@ -55,7 +55,7 @@ pip install litellm==1.95.0
 - **Claude Opus 5 on day zero, everywhere** - the new 1M-context Opus lands simultaneously on Anthropic, Amazon Bedrock (including the `us`, `eu`, `au`, `jp`, and `global` inference profiles), Google Vertex AI, and Azure AI Foundry, with adaptive thinking, xhigh reasoning effort, computer use, PDF input, and prompt caching all recorded in the cost map.
 - **Gemini 3.6 Flash and Gemini 3.5 Flash Lite** - day-0 pricing on both Google AI Studio and Vertex AI, at $1.50/$7.50 and $0.30/$2.50 per 1M tokens respectively.
 - **MCP gateway grows a real front door** - an always-on aggregate DCR discovery endpoint, identity-only session tokens, RFC 8707 resource indicators on upstream OAuth legs, MCP server support on the Anthropic `/v1/messages` API, and a standalone `/connect` route that no longer depends on the Chat UI flag.
-- **The Rust gateway takes over `/v1/messages`** - native Anthropic Messages now routes through the axum gateway behind `LITELLM_RUST`, joined by a 1:1 port of the Responses API WebSockets surface, BaseAWSLLM credential resolution and SigV4 in `litellm-core`, and Bedrock audio transcription over the Python-to-Rust bridge.
+- **The Rust gateway takes over `/v1/messages`** - native Anthropic Messages now routes through the axum gateway behind `LUMINA_RUST`, joined by a 1:1 port of the Responses API WebSockets surface, BaseAWSLLM credential resolution and SigV4 in `litellm-core`, and Bedrock audio transcription over the Python-to-Rust bridge.
 - **SAML 2.0 SSO for the admin UI** - a second enterprise SSO path alongside the existing OIDC flow.
 - **The dashboard finishes its shadcn and DataTable migration** - roughly twenty routes move onto shadcn and the shared composable DataTable, plus new react-hook-form and zod form infrastructure behind Organization Settings and Create Organization.
 - **Budget resets get correct** - a configurable `budget_reset_time` of day, word-form `budget_duration` values that no longer silently collapse to daily, and repair for users and teams whose `budget_reset_at` was left NULL.
@@ -116,7 +116,7 @@ Beyond the new entries, this release raises the advertised context window on `az
 - **[Responses API](../../docs/response_api)**
     - 1:1 port of the OpenAI Responses API WebSockets surface to `litellm-rust` - [PR #33849](https://github.com/BerriAI/litellm/pull/33849)
 - **[Anthropic `/v1/messages`](../../docs/anthropic_unified)**
-    - Route native Anthropic `/messages` through Rust behind the `LITELLM_RUST` env var - [PR #33848](https://github.com/BerriAI/litellm/pull/33848)
+    - Route native Anthropic `/messages` through Rust behind the `LUMINA_RUST` env var - [PR #33848](https://github.com/BerriAI/litellm/pull/33848)
     - Expose the Anthropic Messages route on the axum gateway - [PR #33880](https://github.com/BerriAI/litellm/pull/33880)
 - **[Batches](../../docs/batches)**
     - Forward `bedrock_tags` to `CreateModelInvocationJob` for batch jobs - [PR #33733](https://github.com/BerriAI/litellm/pull/33733)

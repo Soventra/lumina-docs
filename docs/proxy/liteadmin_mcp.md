@@ -32,8 +32,8 @@ Have these values ready:
 
 | Setting | Value |
 | --- | --- |
-| `LITELLM_BASE_URL` | Your gateway's HTTPS origin, such as `https://gateway.example.com`. An optional `/v1` suffix is accepted. |
-| `LITELLM_API_KEY` | Your personal proxy-admin key. |
+| `LUMINA_BASE_URL` | Your gateway's HTTPS origin, such as `https://gateway.example.com`. An optional `/v1` suffix is accepted. |
+| `LUMINA_API_KEY` | Your personal proxy-admin key. |
 
 The computer running the connector must reach your gateway's `/openapi.json` and management APIs. Use HTTPS except for local loopback development.
 
@@ -60,8 +60,8 @@ Open **Settings → Developer → Edit Config** in Claude Desktop. Add the `lite
         "litellm-admin-mcp"
       ],
       "env": {
-        "LITELLM_BASE_URL": "https://gateway.example.com",
-        "LITELLM_API_KEY": "<your-personal-proxy-admin-key>"
+        "LUMINA_BASE_URL": "https://gateway.example.com",
+        "LUMINA_API_KEY": "<your-personal-proxy-admin-key>"
       }
     }
   }
@@ -81,8 +81,8 @@ Run this in your terminal:
 
 ```bash
 claude mcp add --scope user --transport stdio litellm-admin \
-  --env LITELLM_BASE_URL=https://gateway.example.com \
-  --env LITELLM_API_KEY='<your-personal-proxy-admin-key>' \
+  --env LUMINA_BASE_URL=https://gateway.example.com \
+  --env LUMINA_API_KEY='<your-personal-proxy-admin-key>' \
   -- uvx --isolated --refresh-package litellm-admin-mcp \
   --from git+https://github.com/BerriAI/litellm-admin-mcp.git@main \
   litellm-admin-mcp
@@ -115,13 +115,13 @@ args = [
 startup_timeout_sec = 60
 
 [mcp_servers.litellm-admin.env]
-LITELLM_BASE_URL = "https://gateway.example.com"
-LITELLM_API_KEY = "<your-personal-proxy-admin-key>"
+LUMINA_BASE_URL = "https://gateway.example.com"
+LUMINA_API_KEY = "<your-personal-proxy-admin-key>"
 ```
 
 Local Codex clients share this configuration on the same host. Restart your client to load the server. In Codex CLI, run `/mcp` to inspect the active connection and tools; `codex mcp list` lists configured servers.
 
-For terminal use, you can keep the key out of this file: remove the `LITELLM_API_KEY` assignment, add `env_vars = ["LITELLM_API_KEY"]` to the server table above the `.env` table, and export the variable before launching `codex`. A desktop app must also have access to that environment variable to use this option.
+For terminal use, you can keep the key out of this file: remove the `LUMINA_API_KEY` assignment, add `env_vars = ["LUMINA_API_KEY"]` to the server table above the `.env` table, and export the variable before launching `codex`. A desktop app must also have access to that environment variable to use this option.
 
 See the [official Codex MCP documentation](https://developers.openai.com/codex/mcp) for supported configuration fields.
 
@@ -159,8 +159,8 @@ Set these variables in the MCP server's environment, then restart the connection
 
 | Variable | Effect |
 | --- | --- |
-| `LITELLM_ADMIN_READ_ONLY=true` | Expose only reviewed read operations. A `proxy_admin` identity is still required. |
-| `LITELLM_ADMIN_TOOLS=list_keys,list_teams` | Limit the server to these canonical tool names. |
+| `LUMINA_ADMIN_READ_ONLY=true` | Expose only reviewed read operations. A `proxy_admin` identity is still required. |
+| `LUMINA_ADMIN_TOOLS=list_keys,list_teams` | Limit the server to these canonical tool names. |
 
 The connector discovers schemas from your gateway and exposes the reviewed operations available there. Use the [operation catalog](https://github.com/BerriAI/litellm-admin-mcp/blob/main/src/litellm_admin_mcp/operations.json) to find tool names. If you set both restrictions, only tools allowed by both remain available.
 
@@ -177,16 +177,16 @@ See [Tool and response settings](./liteadmin_mcp_enterprise.md#tool-and-response
 Use Streamable HTTP when you want to run the connector on a server instead of each user's computer. Install uv on that host, then run:
 
 ```bash
-export LITELLM_BASE_URL=https://gateway.example.com
-export LITELLM_MCP_PUBLIC_URL=https://admin-mcp.example.com
+export LUMINA_BASE_URL=https://gateway.example.com
+export LUMINA_MCP_PUBLIC_URL=https://admin-mcp.example.com
 uvx --isolated --refresh-package litellm-admin-mcp \
   --from git+https://github.com/BerriAI/litellm-admin-mcp.git@main \
   litellm-admin-mcp --transport streamable-http --port 8080
 ```
 
-Put an HTTPS reverse proxy in front of `127.0.0.1:8080` and forward to it from `admin-mcp.example.com`. The client endpoint is `https://admin-mcp.example.com/mcp`. Set `LITELLM_MCP_PUBLIC_URL` to that public origin without the `/mcp` path so the connector accepts its Host and Origin headers.
+Put an HTTPS reverse proxy in front of `127.0.0.1:8080` and forward to it from `admin-mcp.example.com`. The client endpoint is `https://admin-mcp.example.com/mcp`. Set `LUMINA_MCP_PUBLIC_URL` to that public origin without the `/mcp` path so the connector accepts its Host and Origin headers.
 
-**Leave `LITELLM_API_KEY` unset on the hosted service.** Each client sends its own personal proxy-admin key. Run one installation per trusted gateway and connect only to a connector you operate and trust.
+**Leave `LUMINA_API_KEY` unset on the hosted service.** Each client sends its own personal proxy-admin key. Run one installation per trusted gateway and connect only to a connector you operate and trust.
 
 Configure your client with one of these alternatives to the local setup:
 
@@ -207,13 +207,13 @@ Restart Claude Code and run `/mcp` to check the connection. This command saves t
 ```toml title="~/.codex/config.toml"
 [mcp_servers.litellm-admin-remote]
 url = "https://admin-mcp.example.com/mcp"
-bearer_token_env_var = "LITELLM_API_KEY"
+bearer_token_env_var = "LUMINA_API_KEY"
 ```
 
-Set `LITELLM_API_KEY` in the environment of the Codex process. For Codex CLI:
+Set `LUMINA_API_KEY` in the environment of the Codex process. For Codex CLI:
 
 ```bash
-export LITELLM_API_KEY='<your-personal-proxy-admin-key>'
+export LUMINA_API_KEY='<your-personal-proxy-admin-key>'
 codex
 ```
 
@@ -235,7 +235,7 @@ Check `/healthz` for process health, then repeat the read request to verify gate
 | Unauthorized or forbidden | Use an active personal key owned by a `proxy_admin`. Read-only mode does not grant access to other roles. |
 | Missing tools or schema discovery failure | Check access to `/openapi.json` and the gateway's management routes. Update the connector if an operation ID changed. |
 | Model creation fails | Check the database, `STORE_MODEL_IN_DB`, exact provider/model ID, and gateway credentials. |
-| Hosted connection rejected | Check the `/mcp` URL, bearer header, HTTPS proxy, and `LITELLM_MCP_PUBLIC_URL`. |
+| Hosted connection rejected | Check the `/mcp` URL, bearer header, HTTPS proxy, and `LUMINA_MCP_PUBLIC_URL`. |
 | Write times out | Inspect gateway state before retrying; the connector does not retry tool calls. |
 
 See the [connector repository](https://github.com/BerriAI/litellm-admin-mcp) for result paging, schema-discovery options, and Docker hosting.

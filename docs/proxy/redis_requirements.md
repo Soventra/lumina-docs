@@ -9,7 +9,7 @@ Redis is highly recommended for any LiteLLM proxy deployment that runs more than
 
 Almost everything the proxy enforces (rate limits, budgets, cooldowns, cache hits, config changes) is coordinated through state. With Redis, that state is shared, so every worker sees the same counters and the same invalidations. Without it, each worker keeps its own copy in memory, so a limit of 100 requests per minute across 4 workers really lets through 400, a revoked key stays usable on the workers that did not process the revocation, and cache hits only land on the worker that happened to store the response.
 
-The Admin UI shows a banner while no Redis is configured. If you deliberately run a single worker, set `LITELLM_DISABLE_NO_REDIS_WARNING=true` to hide it.
+The Admin UI shows a banner while no Redis is configured. If you deliberately run a single worker, set `LUMINA_DISABLE_NO_REDIS_WARNING=true` to hide it.
 
 :::warning
 

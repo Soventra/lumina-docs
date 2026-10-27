@@ -71,13 +71,13 @@ Define your guardrails under the `guardrails` section
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-pii"
-    litellm_params:
+    lumina_params:
       guardrail: presidio  # supported values: "aporia", "bedrock", "lakera", "presidio"
       mode: "pre_call"
       presidio_language: "en"  # optional: set default language for PII analysis
@@ -137,7 +137,7 @@ Expect this to mask `Jane Doe` since it's PII
 ```shell title="Masked PII Request" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -184,7 +184,7 @@ Expected response on failure
 ```shell title="No PII Request" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -248,13 +248,13 @@ Define your guardrails with specific entity type configuration:
 ```yaml title="config.yaml with Entity Types" showLineNumbers
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-mask-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_mcp_call"  # Use this mode for MCP requests
       presidio_filter_scope: both  # input | output | both, optional
@@ -267,7 +267,7 @@ guardrails:
         EMAIL_ADDRESS: "MASK"  # Will mask email addresses
         
   - guardrail_name: "presidio-block-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"  # Use this mode for regular LLM requests
       presidio_filter_scope: both  # input | output | both, optional
@@ -290,7 +290,7 @@ Presidio analyzer deployments commonly cap the `/analyze` request body size (for
 ```yaml
 guardrails:
   - guardrail_name: "presidio-pii"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_analyze_chunk_size_bytes: 500000 # optional, default 500000
@@ -319,7 +319,7 @@ When using the masking configuration, entities will be replaced with placeholder
 ```shell title="Masking PII Request" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -357,7 +357,7 @@ When using the blocking configuration, requests containing the configured entity
 ```shell title="Blocking PII Request" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -400,7 +400,7 @@ Here's how to use Presidio guardrails with MCP:
 ```yaml title="MCP Configuration Example" showLineNumbers
 guardrails:
   - guardrail_name: "presidio-mcp-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_mcp_call"
       presidio_filter_scope: both  # input | output | both
@@ -420,7 +420,7 @@ Test the MCP guardrail with a request:
 ```shell title="Test MCP Guardrail" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -444,7 +444,7 @@ The Presidio API [supports passing the `language` param](https://microsoft.githu
 ```shell title="Language Parameter - curl" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -497,13 +497,13 @@ You can configure a default language for PII analysis in your YAML configuration
 ```yaml title="Default Language Configuration" showLineNumbers
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-german"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_language: "de"  # Default to German for PII analysis
@@ -513,7 +513,7 @@ guardrails:
         PERSON: "MASK"
         
   - guardrail_name: "presidio-spanish"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_language: "es"  # Default to Spanish for PII analysis
@@ -545,7 +545,7 @@ The language setting follows this precedence order:
 ```yaml title="Mixed Language Configuration" showLineNumbers
 guardrails:
   - guardrail_name: "presidio-multilingual"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_language: "de"  # Default to German
@@ -557,7 +557,7 @@ guardrails:
 ```shell title="Override with per-request language" showLineNumbers
 curl http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -581,13 +581,13 @@ Define your guardrails under the `guardrails` section
 ```yaml title="Output Parsing Config" showLineNumbers
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio  # supported values: "aporia", "bedrock", "lakera", "presidio"
       mode: "pre_call"
       output_parse_pii: True
@@ -616,13 +616,13 @@ Define your guardrails under the `guardrails` section
 ```yaml title="Ad Hoc Recognizers Config" showLineNumbers
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio  # supported values: "aporia", "bedrock", "lakera", "presidio"
       mode: "pre_call"
       presidio_ad_hoc_recognizers: "./hooks/example_presidio_ad_hoc_recognizer.json"
@@ -676,13 +676,13 @@ Define your guardrails under the `guardrails` section
 ```yaml title="Logging Only Config" showLineNumbers
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "presidio-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: presidio  # supported values: "aporia", "bedrock", "lakera", "presidio"
       mode: "logging_only"
 ```
@@ -706,7 +706,7 @@ litellm --config /path/to/config.yaml
 ```bash title="Test Logging Only" showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -D '{
   "model": "{{openai_small}}",
   "messages": [

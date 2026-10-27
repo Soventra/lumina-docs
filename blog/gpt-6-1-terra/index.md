@@ -69,7 +69,7 @@ No upgrade needed: open **Price Data** under **Models + Endpoints** in the UI an
 ```yaml
 model_list:
   - model_name: gpt-6.1-terra
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6.1-terra
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -90,7 +90,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-6.1-terra",
     "messages": [

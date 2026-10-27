@@ -74,7 +74,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: perplexity-sonar-reasoning-model
-    litellm_params:
+    lumina_params:
         model: perplexity/sonar-reasoning
         api_key: os.environ/PERPLEXITYAI_API_KEY
 ```
@@ -156,7 +156,7 @@ print(response.output)
 ```yaml
 model_list:
   - model_name: perplexity-pro-search
-    litellm_params:
+    lumina_params:
         model: perplexity/preset/pro-search
         api_key: os.environ/PERPLEXITY_API_KEY
 ```

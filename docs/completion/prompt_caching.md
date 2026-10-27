@@ -124,7 +124,7 @@ assert response.usage.prompt_tokens_details.cached_tokens > 0
 ```yaml
 model_list:
     - model_name: {{openai_large}}
-      litellm_params:
+      lumina_params:
         model: openai/{{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
 ```
@@ -142,8 +142,8 @@ from openai import OpenAI
 import os
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY", # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE" # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
 for _ in range(2):
@@ -242,8 +242,8 @@ print(response.usage)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY",
-    base_url="LITELLM_PROXY_BASE",
+    api_key="LUMINA_PROXY_KEY",
+    base_url="LUMINA_PROXY_BASE",
 )
 
 response = client.chat.completions.create(
@@ -314,8 +314,8 @@ print(response.usage.prompt_tokens_details)
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY",
-    base_url="LITELLM_PROXY_BASE",
+    api_key="LUMINA_PROXY_KEY",
+    base_url="LUMINA_PROXY_BASE",
 )
 
 response = client.responses.create(
@@ -393,7 +393,7 @@ print(response.usage.input_tokens_details)
 ```yaml
 model_list:
   - model_name: gpt-5.6-mantle
-    litellm_params:
+    lumina_params:
       model: bedrock_mantle/openai.gpt-5.6-sol
       aws_region_name: us-east-1
       api_key: os.environ/AWS_BEARER_TOKEN_BEDROCK
@@ -403,8 +403,8 @@ model_list:
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY",
-    base_url="LITELLM_PROXY_BASE",
+    api_key="LUMINA_PROXY_KEY",
+    base_url="LUMINA_PROXY_BASE",
 )
 
 response = client.responses.create(
@@ -489,7 +489,7 @@ print(response.usage)
 ```yaml
 model_list:
     - model_name: {{anthropic}}
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -507,8 +507,8 @@ from openai import OpenAI
 import os
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY", # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE" # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
 response = client.chat.completions.create(
@@ -611,7 +611,7 @@ print(response.usage)
 ```yaml
 model_list:
   - model_name: bedrock-claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
 ```
 
@@ -626,7 +626,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "bedrock-claude-sonnet",
     "messages": [
@@ -725,7 +725,7 @@ print(response.usage)
 ```yaml
 model_list:
     - model_name: {{gemini_flash}}
-      litellm_params:
+      lumina_params:
         model: gemini/{{gemini_flash}}
         api_key: os.environ/GEMINI_API_KEY
 ```
@@ -742,8 +742,8 @@ litellm --config /path/to/config.yaml
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY",  # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE",  # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY",  # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE",  # http://0.0.0.0:4000
 )
 
 response = client.chat.completions.create(
@@ -822,7 +822,7 @@ print(response.usage)
 ```yaml
 model_list:
     - model_name: {{gemini_flash}}
-      litellm_params:
+      lumina_params:
         model: vertex_ai/{{gemini_flash}}
         vertex_project: my-gcp-project
         vertex_location: us-central1
@@ -840,8 +840,8 @@ litellm --config /path/to/config.yaml
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY",  # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE",  # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY",  # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE",  # http://0.0.0.0:4000
 )
 
 response = client.chat.completions.create(
@@ -1006,8 +1006,8 @@ LiteLLM returns the calculated cost in the response headers - `x-litellm-respons
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY", # sk-<your-litellm-api-key>..
-    base_url="LITELLM_PROXY_BASE" # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>..
+    base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 response = client.chat.completions.with_raw_response.create(
     messages=[{
@@ -1050,7 +1050,7 @@ Use the `/model/info` endpoint to check if a model on the proxy supports prompt 
 ```yaml
 model_list:
     - model_name: {{anthropic}}
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1065,7 +1065,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl -L -X GET 'http://0.0.0.0:4000/v1/model/info' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 ```
 
 **Expected Response**
@@ -1075,7 +1075,7 @@ curl -L -X GET 'http://0.0.0.0:4000/v1/model/info' \
     "data": [
         {
             "model_name": "{{anthropic}}",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "anthropic/{{anthropic}}"
             },
             "model_info": {

@@ -132,13 +132,13 @@ Example litellm config.yaml:
 ```yaml
 model_list:
   - model_name: thinking-anthropic-claude-sonnet-5 # Bedrock Anthropic
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       thinking: {"type": "enabled", "budget_tokens": 1024}
       max_tokens: 1080
       merge_reasoning_content_in_choices: true
   - model_name: vertex_ai/{{gemini_pro}} # Vertex AI Gemini
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_pro}}
       thinking: {"type": "enabled", "budget_tokens": 1024}
       merge_reasoning_content_in_choices: true

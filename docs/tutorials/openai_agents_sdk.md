@@ -57,25 +57,25 @@ Configure and start the LiteLLM proxy with the models you want to use:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: bedrock-claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: "bedrock/us.anthropic.{{anthropic}}"
       aws_region_name: "us-east-1"
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: "openai/{{openai_large}}"
 
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: "anthropic/{{anthropic}}"
 
   - model_name: bedrock-claude-opus
-    litellm_params:
+    lumina_params:
       model: "bedrock/us.anthropic.{{anthropic_large}}"
       aws_region_name: "us-east-1"
 
   - model_name: bedrock-nova-premier
-    litellm_params:
+    lumina_params:
       model: "bedrock/amazon.nova-premier-v1:0"
       aws_region_name: "us-east-1"
 ```
@@ -88,8 +88,8 @@ Required environment variables:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `LITELLM_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
-| `LITELLM_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key (not your provider's key) |
+| `LUMINA_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
+| `LUMINA_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key (not your provider's key) |
 
 ## 2. Setting Up Environment
 
@@ -115,8 +115,8 @@ from agents import (
 )
 
 # Point to LiteLLM proxy
-BASE_URL = os.getenv("LITELLM_BASE_URL") or "http://localhost:4000"
-API_KEY = os.getenv("LITELLM_API_KEY") or "sk-<your-litellm-api-key>"
+BASE_URL = os.getenv("LUMINA_BASE_URL") or "http://localhost:4000"
+API_KEY = os.getenv("LUMINA_API_KEY") or "sk-<your-litellm-api-key>"
 
 # Define model constants for cleaner code
 MODEL_BEDROCK_SONNET = "bedrock-claude-sonnet-5"
@@ -143,7 +143,7 @@ class LiteLLMModelProvider(ModelProvider):
         )
 
 
-LITELLM_MODEL_PROVIDER = LiteLLMModelProvider()
+LUMINA_MODEL_PROVIDER = LiteLLMModelProvider()
 ```
 
 ## 4. Define a Simple Tool
@@ -197,7 +197,7 @@ async def test_bedrock_agent():
         agent,
         "What's the weather in Tokyo?",
         run_config=RunConfig(
-            model_provider=LITELLM_MODEL_PROVIDER,
+            model_provider=LUMINA_MODEL_PROVIDER,
             model="bedrock-claude-sonnet-5",  # Uses the model name from your LiteLLM config
         ),
     )
@@ -225,7 +225,7 @@ async def test_openai_agent():
         agent,
         "What's the weather in London?",
         run_config=RunConfig(
-            model_provider=LITELLM_MODEL_PROVIDER,
+            model_provider=LUMINA_MODEL_PROVIDER,
             model="{{openai_large}}",  # Uses the model name from your LiteLLM config
         ),
     )
@@ -253,7 +253,7 @@ async def test_anthropic_agent():
         agent,
         "What's the weather in New York?",
         run_config=RunConfig(
-            model_provider=LITELLM_MODEL_PROVIDER,
+            model_provider=LUMINA_MODEL_PROVIDER,
             model="{{anthropic}}",  # Uses the model name from your LiteLLM config
         ),
     )
@@ -287,8 +287,8 @@ from agents import (
 )
 
 # Point to LiteLLM proxy
-BASE_URL = os.getenv("LITELLM_BASE_URL") or "http://localhost:4000"
-API_KEY = os.getenv("LITELLM_API_KEY") or "sk-<your-litellm-api-key>"
+BASE_URL = os.getenv("LUMINA_BASE_URL") or "http://localhost:4000"
+API_KEY = os.getenv("LUMINA_API_KEY") or "sk-<your-litellm-api-key>"
 MODEL_NAME = os.getenv("MODEL_NAME") or "bedrock-claude-sonnet-5"
 
 client = AsyncOpenAI(base_url=BASE_URL, api_key=API_KEY)
@@ -303,7 +303,7 @@ class LiteLLMModelProvider(ModelProvider):
         )
 
 
-LITELLM_MODEL_PROVIDER = LiteLLMModelProvider()
+LUMINA_MODEL_PROVIDER = LiteLLMModelProvider()
 
 
 @function_tool
@@ -337,7 +337,7 @@ async def main():
     result = await Runner.run(
         agent,
         "What's the weather in Tokyo?",
-        run_config=RunConfig(model_provider=LITELLM_MODEL_PROVIDER),
+        run_config=RunConfig(model_provider=LUMINA_MODEL_PROVIDER),
     )
     print(result.final_output)
 
@@ -346,7 +346,7 @@ async def main():
         agent,
         "What's the weather in London?",
         run_config=RunConfig(
-            model_provider=LITELLM_MODEL_PROVIDER,
+            model_provider=LUMINA_MODEL_PROVIDER,
             model="{{openai_large}}",
         ),
     )

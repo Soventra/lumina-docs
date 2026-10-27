@@ -31,7 +31,7 @@ print(response.text)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: whisper-large-v3-turbo
-    litellm_params:
+    lumina_params:
       model: watsonx/whisper-large-v3-turbo
       api_key: os.environ/WATSONX_APIKEY
       api_base: os.environ/WATSONX_URL
@@ -40,7 +40,7 @@ model_list:
 
 ```bash title="Request"
 curl http://localhost:4000/v1/audio/transcriptions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F file="@audio.mp3" \
   -F model="whisper-large-v3-turbo"
 ```

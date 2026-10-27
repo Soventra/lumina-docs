@@ -23,11 +23,11 @@ Each host rejects the other's keys with a 403, so there is nothing to configure:
 ```yaml
 model_list:
   - model_name: voyage-3.5
-    litellm_params:
+    lumina_params:
       model: voyage/voyage-3.5
       api_key: os.environ/VOYAGE_API_KEY   # al-... goes to ai.mongodb.com, pa-... to api.voyageai.com
   - model_name: rerank-2.5
-    litellm_params:
+    lumina_params:
       model: voyage/rerank-2.5
       api_key: os.environ/VOYAGE_API_KEY
 ```
@@ -170,7 +170,7 @@ Add the model to `config.yaml`:
 ```yaml
 model_list:
   - model_name: voyage-context-4
-    litellm_params:
+    lumina_params:
       model: voyage/voyage-context-4
       api_key: os.environ/VOYAGE_API_KEY
 ```
@@ -179,7 +179,7 @@ Flat list, one document per string:
 
 ```bash
 curl http://localhost:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "voyage-context-4",
@@ -191,7 +191,7 @@ Flat list as search queries:
 
 ```bash
 curl http://localhost:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "voyage-context-4",
@@ -204,7 +204,7 @@ Nested list, one document already split into chunks:
 
 ```bash
 curl http://localhost:4000/v1/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "voyage-context-4",
@@ -300,11 +300,11 @@ Add to your `config.yaml`:
 ```yaml
 model_list:
   - model_name: rerank-2.5
-    litellm_params:
+    lumina_params:
       model: voyage/rerank-2.5
       api_key: os.environ/VOYAGE_API_KEY
   - model_name: rerank-2.5-lite
-    litellm_params:
+    lumina_params:
       model: voyage/rerank-2.5-lite
       api_key: os.environ/VOYAGE_API_KEY
 ```
@@ -313,7 +313,7 @@ Test with curl:
 
 ```bash
 curl http://localhost:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "rerank-2.5",

@@ -25,7 +25,7 @@ the LiteLLM Python path, against the same local mock upstream.
 ```bash
 cargo build --release
 # Use a Python that has litellm + fastapi + uvicorn installed:
-LITELLM_PYTHON=/path/to/venv/bin/python python3 orchestrate_compare.py
+LUMINA_PYTHON=/path/to/venv/bin/python python3 orchestrate_compare.py
 ```
 
 ## Result (reference run)

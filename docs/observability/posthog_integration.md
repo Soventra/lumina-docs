@@ -11,7 +11,7 @@ PostHog is an open-source product analytics platform that helps you track and an
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 litellm_settings:
@@ -61,7 +61,7 @@ Configure different PostHog credentials per team using the team callback setting
 
 ```bash
 curl -X POST 'http://localhost:4000/team/{team_id}/callback' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "callback_name": "posthog",

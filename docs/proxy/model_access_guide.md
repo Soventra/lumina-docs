@@ -11,7 +11,7 @@ These model deployments are assigned to a "model group", via the "model_name" fi
 ```yaml
 model_list:
   - model_name: my-custom-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -51,11 +51,11 @@ Example:
 ```yaml
 model_list:
   - model_name: my-custom-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: my-custom-model
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -73,11 +73,11 @@ Example:
 ```yaml
 model_list:
   - model_name: my-custom-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: my-other-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 

@@ -71,9 +71,9 @@ For another OpenAI-compatible provider, use its API key, base URL, and model nam
 Use a LiteLLM key with model access, the gateway's OpenAI-compatible base URL, and a model alias from **Models**:
 
 ```sh
-export OPENAI_API_KEY="YOUR_LITELLM_MODEL_KEY"
+export OPENAI_API_KEY="YOUR_LUMINA_MODEL_KEY"
 export OPENAI_BASE_URL="https://gateway.example.com/v1"
-export LENS_EXAMPLE_MODEL="YOUR_LITELLM_MODEL_ALIAS"
+export LENS_EXAMPLE_MODEL="YOUR_LUMINA_MODEL_ALIAS"
 ```
 
 Replace the example host with your gateway. These values are for model calls. The separate tracing settings still send telemetry to Lens.

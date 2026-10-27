@@ -94,7 +94,7 @@ A `capabilities` block with no truthy `streaming` marks an agent that cannot str
 When you register an A2A agent in LiteLLM:
 
 1. You provide a base URL (and, for some providers, an assistant identifier).
-2. LiteLLM fetches the upstream agent card from the agent's `/.well-known/agent-card.json`, then `/.well-known/agent.json`, then `/agentCard/v1.0`, stopping at the first path that answers. Set `agent_card_path` in the agent's `litellm_params` (for example `agentCard/v1.0`, the path Microsoft Foundry serves) to fetch that path directly.
+2. LiteLLM fetches the upstream agent card from the agent's `/.well-known/agent-card.json`, then `/.well-known/agent.json`, then `/agentCard/v1.0`, stopping at the first path that answers. Set `agent_card_path` in the agent's `lumina_params` (for example `agentCard/v1.0`, the path Microsoft Foundry serves) to fetch that path directly.
 3. You review the parsed card in the LiteLLM UI, choose which skills and fields to expose, and pick a **Protocol Version** (`1.0` or `0.3`) for clients.
 4. LiteLLM saves the curated card and serves it at:
 
@@ -170,7 +170,7 @@ All methods below are accepted on `POST /a2a/{agent_id}` (and `POST /a2a/{agent_
 
 ```bash title="1. Send a message (0.3 wire format — pin protocolVersion: 0.3)"
 curl -X POST "http://localhost:4000/a2a/my-agent" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -191,7 +191,7 @@ Use `result.id` from the response as the task id:
 
 ```bash title="2. Poll task status"
 curl -X POST "http://localhost:4000/a2a/my-agent" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",

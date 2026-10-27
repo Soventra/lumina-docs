@@ -71,12 +71,12 @@ directory. By default the following directories are allowed:
 - `/run/secrets`
 
 If your deployment mounts credentials elsewhere, set the
-`LITELLM_OIDC_ALLOWED_CREDENTIAL_DIRS` environment variable to a
+`LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS` environment variable to a
 comma-separated list of absolute directories. The value replaces the
 default list, so include the defaults if you still need them:
 
 ```bash
-export LITELLM_OIDC_ALLOWED_CREDENTIAL_DIRS="/var/run/secrets,/etc/litellm/creds"
+export LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS="/var/run/secrets,/etc/litellm/creds"
 ```
 
 Paths that resolve (after following symlinks and `..`) outside the
@@ -107,7 +107,7 @@ If you are tempted to use oidc/env_path/AZURE_FEDERATED_TOKEN_FILE, don't do tha
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       aws_session_name: "litellm"
@@ -120,7 +120,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: command-r
-    litellm_params:
+    lumina_params:
       model: bedrock/cohere.command-r-v1:0
       aws_region_name: us-west-2
       aws_session_name: "my-test-session"
@@ -200,7 +200,7 @@ You should _never_ need to create an IAM user. If you did, you're not using OIDC
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       azure_ad_token: "oidc/google/https://example.com"
       api_version: "2024-06-01"
@@ -286,7 +286,7 @@ Please contact us for paid enterprise support if you need help setting up Azure 
 ```yaml
 model list:
   - model_name: aws/{{anthropic}}
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: "eu-central-1"
       aws_role_name: "arn:aws:iam::12345678:role/bedrock-role"

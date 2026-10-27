@@ -19,7 +19,7 @@ The inference server must support and enable prompt or prefix caching for cache 
 
 <CacheAwareRoutingDiagram />
 
-Pod selection happens after LiteLLM selects a deployment. Enable it with `kubernetes_pod_discovery` in the deployment's `litellm_params`; keep your existing [routing strategy](../routing.md). There is no additional `routing_strategy` value to set. Pass-through routes do not use pod discovery.
+Pod selection happens after LiteLLM selects a deployment. Enable it with `kubernetes_pod_discovery` in the deployment's `lumina_params`; keep your existing [routing strategy](../routing.md). There is no additional `routing_strategy` value to set. Pass-through routes do not use pod discovery.
 
 ### Session affinity and retries
 
@@ -75,7 +75,7 @@ Add the model to your proxy configuration. Replace `your-served-model` with the 
 ```yaml
 model_list:
   - model_name: gpu-llama
-    litellm_params:
+    lumina_params:
       model: openai/your-served-model
       api_base: http://my-vllm-headless.gpu.svc.cluster.local:8000/v1
       api_key: os.environ/VLLM_API_KEY
@@ -92,7 +92,7 @@ Coding-agent harnesses can supply this automatically. LiteLLM recognizes session
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpu-llama",

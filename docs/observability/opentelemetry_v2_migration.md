@@ -10,7 +10,7 @@ OpenTelemetry v2 is a rewrite of LiteLLM's tracing. The HTTP server span is owne
 Set the feature flag and restart the proxy:
 
 ```shell
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 ```
 
 Your existing `OTEL_*` environment variables and your callback keep working, so for many setups this is the only change required. The flag is read once at startup.
@@ -45,21 +45,21 @@ v1 sets a successful span's status to `OK`. v2 leaves it `UNSET`, the semantic-c
 
 ### More than one collector
 
-v1 has no list of collectors. Exporting to a second one from LiteLLM itself takes a Python handler per collector with `skip_set_global=True` on the extra ones, and only the first handler receives the proxy's root, auth and database spans, so the other collectors get LLM spans whose parent never arrives. v2 reads the collectors from `callback_settings.otel.exporters` in config.yaml and sends each one the complete trace; see [Send to more than one collector](./opentelemetry_v2#send-to-more-than-one-collector). When you switch, put every collector in that list, the first handler's included even if it came from `OTEL_ENDPOINT`, because the list replaces `OTEL_ENDPOINT` for traces. Then add `otel` to `litellm_settings.callbacks`, which the list needs before it is read, and drop the Python handlers. v1 ignores the list, so it does nothing until `LITELLM_OTEL_V2` is on.
+v1 has no list of collectors. Exporting to a second one from LiteLLM itself takes a Python handler per collector with `skip_set_global=True` on the extra ones, and only the first handler receives the proxy's root, auth and database spans, so the other collectors get LLM spans whose parent never arrives. v2 reads the collectors from `callback_settings.otel.exporters` in config.yaml and sends each one the complete trace; see [Send to more than one collector](./opentelemetry_v2#send-to-more-than-one-collector). When you switch, put every collector in that list, the first handler's included even if it came from `OTEL_ENDPOINT`, because the list replaces `OTEL_ENDPOINT` for traces. Then add `otel` to `litellm_settings.callbacks`, which the list needs before it is read, and drop the Python handlers. v1 ignores the list, so it does nothing until `LUMINA_OTEL_V2` is on.
 
 ## Keep the old attribute names during the cutover
 
-v2 ships with a legacy-compatibility mapper on by default (`LITELLM_OTEL_LEGACY_COMPAT=true`) that emits the same data under the older Traceloop key names (`gen_ai.system`, `gen_ai.usage.prompt_tokens`, `gen_ai.usage.completion_tokens`, `llm.is_streaming`, and so on) alongside the canonical keys. This is what makes a gradual migration possible: turn v2 on and your dashboards that read the old token-count and provider keys keep working. Migrate each query to the canonical `gen_ai.*` keys at your own pace, then set `LITELLM_OTEL_LEGACY_COMPAT=false` to drop the duplicates.
+v2 ships with a legacy-compatibility mapper on by default (`LUMINA_OTEL_LEGACY_COMPAT=true`) that emits the same data under the older Traceloop key names (`gen_ai.system`, `gen_ai.usage.prompt_tokens`, `gen_ai.usage.completion_tokens`, `llm.is_streaming`, and so on) alongside the canonical keys. This is what makes a gradual migration possible: turn v2 on and your dashboards that read the old token-count and provider keys keep working. Migrate each query to the canonical `gen_ai.*` keys at your own pace, then set `LUMINA_OTEL_LEGACY_COMPAT=false` to drop the duplicates.
 
 ## A safe rollout
 
-1. Enable v2 in staging with `LITELLM_OTEL_V2=true`, leaving `legacy_compat` on (the default).
+1. Enable v2 in staging with `LUMINA_OTEL_V2=true`, leaving `legacy_compat` on (the default).
 2. Confirm traces arrive and the tree looks right: one server span per request, the LLM-call span beneath it, guardrails as siblings.
 3. Update dashboards and alerts for the changed span names and the success-status change.
 4. Migrate attribute queries from the legacy key names to the canonical `gen_ai.*` keys.
-5. Set `LITELLM_OTEL_LEGACY_COMPAT=false` and confirm nothing breaks.
+5. Set `LUMINA_OTEL_LEGACY_COMPAT=false` and confirm nothing breaks.
 6. Roll out to production.
 
 ## Rolling back
 
-Set `LITELLM_OTEL_V2=false` (or unset it) and restart. LiteLLM falls back to the v1 logger using the same `OTEL_*` variables and callback you already had configured, so a rollback needs no other change.
+Set `LUMINA_OTEL_V2=false` (or unset it) and restart. LiteLLM falls back to the v1 logger using the same `OTEL_*` variables and callback you already had configured, so a rollback needs no other change.

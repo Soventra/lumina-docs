@@ -13,7 +13,7 @@ Add WebSearch interception to your `litellm_config.yaml`:
 ```yaml showLineNumbers title="litellm_config.yaml"
 model_list:
   - model_name: bedrock-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
 
@@ -30,7 +30,7 @@ litellm_settings:
 # Configure search provider
 search_tools:
   - search_tool_name: perplexity-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITY_API_KEY
 ```
@@ -44,7 +44,7 @@ Create `config.yaml`:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: bedrock-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
 
@@ -55,7 +55,7 @@ litellm_settings:
 
 search_tools:
   - search_tool_name: perplexity-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITY_API_KEY
 ```
@@ -71,7 +71,7 @@ litellm_settings:
 
 search_tools:
   - search_tool_name: parallel-search
-    litellm_params:
+    lumina_params:
       search_provider: parallel_ai
       api_key: os.environ/PARALLEL_API_KEY
 ```
@@ -176,12 +176,12 @@ Use these values in `enabled_providers`:
 ```yaml showLineNumbers title="Complete config.yaml"
 model_list:
   - model_name: bedrock-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
 
   - model_name: azure-gpt
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: https://my-azure.openai.azure.com
       api_key: os.environ/AZURE_API_KEY
@@ -198,12 +198,12 @@ litellm_settings:
 # Configure search tools
 search_tools:
   - search_tool_name: perplexity-search
-    litellm_params:
+    lumina_params:
       search_provider: perplexity
       api_key: os.environ/PERPLEXITY_API_KEY
 
   - search_tool_name: tavily-search
-    litellm_params:
+    lumina_params:
       search_provider: tavily
       api_key: os.environ/TAVILY_API_KEY
 ```

@@ -29,10 +29,10 @@ Team-based guardrails let **developers** register a guardrail for their team via
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `guardrail_name` | string | Yes | Unique name for the guardrail. |
-| `litellm_params` | object | Yes | Must include `guardrail: "generic_guardrail_api"`, `mode` (e.g. `pre_call`, `post_call`), and `api_base`. See [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api#litellm-configuration). |
+| `lumina_params` | object | Yes | Must include `guardrail: "generic_guardrail_api"`, `mode` (e.g. `pre_call`, `post_call`), and `api_base`. See [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api#litellm-configuration). |
 | `guardrail_info` | object | No | Optional metadata (e.g. `description`). |
 
-### Requirements for `litellm_params`
+### Requirements for `lumina_params`
 
 - `guardrail` must be exactly `"generic_guardrail_api"`.
 - `api_base` is required (your guardrail API base URL).
@@ -46,7 +46,7 @@ curl -X POST "http://localhost:4000/guardrails/register" \
   -H "Content-Type: application/json" \
   -d '{
     "guardrail_name": "my-team-guard",
-    "litellm_params": {
+    "lumina_params": {
       "guardrail": "generic_guardrail_api",
       "mode": "pre_call",
       "api_base": "https://your-guardrail-api.com",
@@ -134,4 +134,4 @@ These endpoints require **admin** (e.g. `PROXY_ADMIN`) authentication.
 | **Developer** | Call `POST /guardrails/register` with a team-scoped key and a `generic_guardrail_api` config. Submission enters `pending_review`. |
 | **Admin** | Open **Guardrails → Team Guardrails** in the UI (or use the submissions API), then **Approve** or **Reject** each submission. Approved guardrails become active. |
 
-Only guardrails with `litellm_params.guardrail: "generic_guardrail_api"` are accepted for registration. For the full contract and config options, see [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api).
+Only guardrails with `lumina_params.guardrail: "generic_guardrail_api"` are accepted for registration. For the full contract and config options, see [Generic Guardrail API](/docs/adding_provider/generic_guardrail_api).

@@ -131,13 +131,13 @@ In the config below, we point the guardrail to our custom guardrail by setting `
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "my-custom-guardrail"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.myCustomGuardrail  # Key change
       mode: "pre_call"                  # when apply_guardrail runs - see Mode Options below
       api_key: os.environ/MY_GUARDRAIL_API_KEY
@@ -178,15 +178,15 @@ If you're using individual event hooks, you can configure multiple guardrails wi
 ```yaml
 guardrails:
   - guardrail_name: "custom-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.myCustomGuardrail
       mode: "pre_call"                  # runs async_pre_call_hook
   - guardrail_name: "custom-during-guard"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.myCustomGuardrail  
       mode: "during_call"               # runs async_moderation_hook
   - guardrail_name: "custom-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: custom_guardrail.myCustomGuardrail
       mode: "post_call"                 # runs async_post_call_success_hook
 ```
@@ -241,7 +241,7 @@ This request will be blocked if it violates your guardrail policy:
 ```shell
 curl -i -X POST http://localhost:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -276,7 +276,7 @@ This request passes the guardrail:
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -305,7 +305,7 @@ Expect this to mask the word `litellm` before sending the request to the LLM API
 ```shell
 curl -i  -X POST http://localhost:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -325,7 +325,7 @@ curl -i  -X POST http://localhost:4000/v1/chat/completions \
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -349,7 +349,7 @@ Expect this to fail since `litellm` is in the message content. [This runs the `a
 ```shell
 curl -i  -X POST http://localhost:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -382,7 +382,7 @@ Expected response:
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -406,7 +406,7 @@ Expect this to fail since `coffee` will be in the response content. [This runs t
 ```shell
 curl -i  -X POST http://localhost:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -439,7 +439,7 @@ Expected response:
 ```shell
 curl -i  -X POST http://localhost:4000/v1/chat/completions \
 -H "Content-Type: application/json" \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [

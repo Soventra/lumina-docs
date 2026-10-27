@@ -16,7 +16,7 @@ Step 1: run the diagnostic below against the named endpoint for the failing serv
 curl -sS -D - -X POST http://localhost:4000/deepwiki/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
   -H "x-litellm-mcp-debug: true" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 ```
@@ -47,7 +47,7 @@ data: {"jsonrpc":"2.0","id":1,"result":{"_meta":{"litellm.ai/server_outcomes":{"
 | `405` `Method Not Allowed` | Client -> LiteLLM | `curl -sS -D - -X PUT ...` reproduces it | `allow: GET, POST, DELETE` header plus JSON-RPC error body | Use POST for JSON-RPC calls; the endpoint speaks streamable HTTP, not SSE-only or WebSocket | Method + transport client config |
 | `406` `Not Acceptable` | Client -> LiteLLM | Diagnostic curl without the `Accept` header | `Client must accept both application/json and text/event-stream` | Send `Accept: application/json, text/event-stream` | Client HTTP config |
 | `400` on UI OAuth Connect: `{"detail":"invalid_request"}` | LiteLLM auth/routing | See [OAuth redirect_uri rejected](#mcp-oauth-invalid-request) | Log line `MCP OAuth: rejecting redirect_uri ...` | Set `PROXY_BASE_URL` or trust `X-Forwarded-*` | `.well-known` issuer output |
-| OAuth flow sends LiteLLM key upstream | LiteLLM auth/routing | Diagnostic curl, read `x-mcp-debug-oauth2-token` | `SAME_AS_LITELLM_KEY` in the header | Move the LiteLLM key to `x-litellm-api-key` so `Authorization` stays free for the upstream token, see [Debugging OAuth](./mcp_oauth#debugging-oauth) | Debug headers |
+| OAuth flow sends LiteLLM key upstream | LiteLLM auth/routing | Diagnostic curl, read `x-mcp-debug-oauth2-token` | `SAME_AS_LUMINA_KEY` in the header | Move the LiteLLM key to `x-litellm-api-key` so `Authorization` stays free for the upstream token, see [Debugging OAuth](./mcp_oauth#debugging-oauth) | Debug headers |
 | Client cannot register (DCR) or discovery fails | LiteLLM auth/routing | `curl -sS http://localhost:4000/.well-known/oauth-authorization-server` | JSON with `authorization_endpoint` and `token_endpoint` | Verify metadata is reachable from the client; check [OAuth docs](./mcp_oauth) for supported grants | Metadata JSON, client error verbatim |
 | `200` but `"status": "unreachable"`, empty tools | LiteLLM -> MCP Server | Diagnostic curl + proxy log grep for the alias | Log: `httpx.ConnectError: All connection attempts failed` (network) or `CERTIFICATE_VERIFY_FAILED` (TLS) | Fix the upstream URL, network path, firewall, or the server's certificate | Proxy log lines + MCP-server logs |
 | `200` but tool list empty on aggregate `/mcp` | LiteLLM -> MCP Server | Read `litellm.ai/server_outcomes` in the body | Per-server `status` shows which upstream failed and which returned tools | Fix the failing server; aggregate absorbs per-server failures instead of failing the whole list | `server_outcomes` object |
@@ -134,7 +134,7 @@ curl -sS http://localhost:4000/.well-known/oauth-authorization-server
 {"issuer":"http://localhost:4000","authorization_endpoint":"http://localhost:4000/v1/mcp/oauth/authorize","token_endpoint":"http://localhost:4000/v1/mcp/oauth/token","response_types_supported":["code"],"grant_types_supported":["authorization_code"],"code_challenge_methods_supported":["S256"]}
 ```
 
-The `issuer` must match the origin users type into their browser. If it shows an internal hostname behind an ingress, see the redirect_uri section below. For token flow debugging, `SAME_AS_LITELLM_KEY` in `x-mcp-debug-oauth2-token` means the LiteLLM key is leaking upstream instead of an OAuth token; see [Debugging OAuth](./mcp_oauth#debugging-oauth)
+The `issuer` must match the origin users type into their browser. If it shows an internal hostname behind an ingress, see the redirect_uri section below. For token flow debugging, `SAME_AS_LUMINA_KEY` in `x-mcp-debug-oauth2-token` means the LiteLLM key is leaking upstream instead of an OAuth token; see [Debugging OAuth](./mcp_oauth#debugging-oauth)
 
 #### MCP OAuth: Connect returns `{"detail":"invalid_request"}` {#mcp-oauth-invalid-request}
 
@@ -233,7 +233,7 @@ During `/v1/responses` or `/v1/chat/completions`, LiteLLM executes MCP tool call
 ```bash
 curl -sS http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gpt-4o-mini",
     "input": "List the top-level wiki pages for BerriAI/litellm",

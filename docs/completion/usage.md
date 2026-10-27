@@ -89,7 +89,7 @@ With this setting enabled, a simple streaming request like:
 
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",

@@ -10,7 +10,7 @@ Litellm supports Ragflow's chat completions APIs
 - ✅ Chat completions
 - ✅ Streaming responses
 - ✅ Both chat and agent endpoints
-- ✅ Multiple credential sources (params, env vars, litellm_params)
+- ✅ Multiple credential sources (params, env vars, lumina_params)
 - ✅ OpenAI-compatible API format
 
 
@@ -134,7 +134,7 @@ Where:
 LiteLLM supports multiple ways to provide credentials, checked in this order:
 
 1. **Function parameters**: `api_key="..."`, `api_base="..."`
-2. **litellm_params**: `litellm_params={"api_key": "...", "api_base": "..."}`
+2. **lumina_params**: `lumina_params={"api_key": "...", "api_base": "..."}`
 3. **Environment variables**: `RAGFLOW_API_KEY`, `RAGFLOW_API_BASE`
 4. **Global litellm settings**: `litellm.api_key`, `litellm.api_base`
 
@@ -155,12 +155,12 @@ export RAGFLOW_API_BASE="http://localhost:9380"
 ```yaml
 model_list:
   - model_name: ragflow-chat-gpt4
-    litellm_params:
+    lumina_params:
       model: ragflow/chat/my-chat-id/{{openai_small}}
       api_key: os.environ/RAGFLOW_API_KEY
       api_base: os.environ/RAGFLOW_API_BASE
   - model_name: ragflow-agent-gpt4
-    litellm_params:
+    lumina_params:
       model: ragflow/agent/my-agent-id/{{openai_small}}
       api_key: os.environ/RAGFLOW_API_KEY
       api_base: os.environ/RAGFLOW_API_BASE
@@ -186,7 +186,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "ragflow-chat-gpt4",
     "messages": [
@@ -233,7 +233,7 @@ All three formats will work correctly.
 If you encounter errors:
 
 1. **Invalid model format**: Ensure your model name follows `ragflow/{chat|agent}/{id}/{model_name}` format
-2. **Missing api_base**: Provide `api_base` via parameter, environment variable, or litellm_params
+2. **Missing api_base**: Provide `api_base` via parameter, environment variable, or lumina_params
 3. **Connection errors**: Verify your RAGFlow server is running and accessible at the provided `api_base`
 
 :::info

@@ -45,7 +45,7 @@ os.environ["OPENAI_API_KEY"] = "sk-..."
 register_sandbox_tools([
     {
         "sandbox_tool_name": "my-e2b",
-        "litellm_params": {
+        "lumina_params": {
             "sandbox_provider": "e2b",
             "api_key": "os.environ/E2B_API_KEY",
         },
@@ -80,7 +80,7 @@ os.environ["OPENAI_API_KEY"] = "sk-..."
 register_sandbox_tools([
     {
         "sandbox_tool_name": "my-e2b",
-        "litellm_params": {
+        "lumina_params": {
             "sandbox_provider": "e2b",
             "api_key": "os.environ/E2B_API_KEY",
         },
@@ -112,13 +112,13 @@ Same swap behind the AI gateway, with no client-side change.
 ```yaml title="config.yaml"
 model_list:
   - model_name: gpt-5
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5
       api_key: os.environ/OPENAI_API_KEY
 
 sandbox_tools:
   - sandbox_tool_name: my-e2b
-    litellm_params:
+    lumina_params:
       sandbox_provider: e2b
       api_key: os.environ/E2B_API_KEY
 
@@ -148,7 +148,7 @@ To run fully on-prem, swap the `sandbox_tools` entry to OpenSandbox:
 ```yaml
 sandbox_tools:
   - sandbox_tool_name: my-opensandbox
-    litellm_params:
+    lumina_params:
       sandbox_provider: opensandbox
       api_base: os.environ/OPEN_SANDBOX_API_BASE
       api_key: os.environ/OPEN_SANDBOX_API_KEY

@@ -15,7 +15,7 @@ You can define Zscaler AI Guard settings directly in your LiteLLM `config.yaml` 
 ```yaml
 guardrails:
   - guardrail_name: "zscaler-ai-guard-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: zscaler_ai_guard
       mode: "pre_call"                                  # Supported modes: pre_call, post_call
       api_key: os.environ/ZSCALER_AI_GUARD_API_KEY      # Your Zscaler AI Guard API key
@@ -27,7 +27,7 @@ guardrails:
       timeout: 30                                       # Optional: seconds to wait for each scan. Defaults to 5
 
   - guardrail_name: "zscaler-ai-guard-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: zscaler_ai_guard
       mode: "post_call"
       api_key: os.environ/ZSCALER_AI_GUARD_API_KEY
@@ -135,7 +135,7 @@ Example Request with Custom Policy Metadata
 ```shell
 curl -i http://localhost:8165/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [

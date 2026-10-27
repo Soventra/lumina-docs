@@ -37,7 +37,7 @@ router = Router(
     model_list=[
         {
             "model_name": "{{openai_small}}",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "{{openai_small}}",
                 "mock_response": "Hello world this is Macintosh!", # fakes the LLM API call
                 "rpm": 1,
@@ -69,7 +69,7 @@ To prioritize requests on LiteLLM Proxy add `priority` to the request.
 ```curl 
 curl -X POST 'http://localhost:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -D '{
     "model": "gpt-3.5-turbo-fake-model",
     "messages": [
@@ -123,7 +123,7 @@ router = Router(
     model_list=[
         {
             "model_name": "{{openai_small}}",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "{{openai_small}}",
                 "mock_response": "Hello world this is Macintosh!", # fakes the LLM API call
                 "rpm": 1,
@@ -151,7 +151,7 @@ except Exception as e:
 ```yaml
 model_list:
     - model_name: gpt-3.5-turbo-fake-model
-      litellm_params:
+      lumina_params:
         model: {{openai_small}}
         mock_response: "hello world!" 
         api_key: my-good-key
@@ -174,7 +174,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://localhost:4000/queue/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -D '{
     "model": "gpt-3.5-turbo-fake-model",
     "messages": [

@@ -85,8 +85,8 @@ general_settings:
 <TabItem value="api" label="API">
 
 ```bash
-curl "$LITELLM_PROXY_URL/config/field/update" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+curl "$LUMINA_PROXY_URL/config/field/update" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "field_name": "mcp_allowed_clients",
@@ -109,7 +109,7 @@ Call the [MCP REST API](./mcp_rest_api.md) with a valid access token for an allo
 
 ```bash
 curl -sS -o /dev/null -w 'HTTP %{http_code}\n' \
-  "$LITELLM_PROXY_URL/mcp-rest/tools/list" \
+  "$LUMINA_PROXY_URL/mcp-rest/tools/list" \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
@@ -155,7 +155,7 @@ The check covers `/mcp`, `/mcp/sse`, `/mcp-rest/tools/list`, and `/mcp-rest/tool
 | Valid, nonempty list | Only matching client identities pass. |
 | `[]` or an invalid list | Requests subject to the allowlist are denied. Entries must contain nonempty `alias` and `value` strings. |
 
-Dashboard session tokens are exempt, including when used outside the dashboard. Their lifetime is controlled by `LITELLM_UI_SESSION_DURATION` (24 hours by default). Admin UI connection-test routes are also exempt.
+Dashboard session tokens are exempt, including when used outside the dashboard. Their lifetime is controlled by `LUMINA_UI_SESSION_DURATION` (24 hours by default). Admin UI connection-test routes are also exempt.
 
 ## Remove or repair the allowlist
 
@@ -164,8 +164,8 @@ To disable client filtering in the Admin UI, remove all client cards and click *
 To remove a database-stored allowlist through the API:
 
 ```bash
-curl "$LITELLM_PROXY_URL/config/field/delete" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+curl "$LUMINA_PROXY_URL/config/field/delete" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"field_name": "mcp_allowed_clients", "config_type": "general_settings"}'
 ```

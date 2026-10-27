@@ -25,7 +25,7 @@ import TabItem from '@theme/TabItem';
 | `prism/deepseek-v4.1-flash` | DeepSeek-V4.1-Flash, the current generation for coding, vision, reasoning, and tool-use loops; takes text and image input | 1,000,000 tokens | 384,000 tokens |
 | `prism/deepseek-v4-flash` | DeepSeek-V4-Flash, a text-only model for fast coding and tool loops | 1,000,000 tokens | 384,000 tokens |
 
-Both models support reasoning, function calling, JSON mode, and JSON schema output, and LiteLLM ships their pricing (input, output, and cached input) so spend is tracked out of the box. Prism's catalog at `GET https://api.prisminference.com/v1/models` lists more models (for example `glm-5.3` and `kimi-k3`); any of them works with the `prism/` prefix, but for spend tracking on those you need to pass `input_cost_per_token` and `output_cost_per_token` in `litellm_params` until they are added to LiteLLM's model cost map.
+Both models support reasoning, function calling, JSON mode, and JSON schema output, and LiteLLM ships their pricing (input, output, and cached input) so spend is tracked out of the box. Prism's catalog at `GET https://api.prisminference.com/v1/models` lists more models (for example `glm-5.3` and `kimi-k3`); any of them works with the `prism/` prefix, but for spend tracking on those you need to pass `input_cost_per_token` and `output_cost_per_token` in `lumina_params` until they are added to LiteLLM's model cost map.
 
 ## Required Variables
 
@@ -214,11 +214,11 @@ asyncio.run(main())
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: deepseek-v4.1-flash
-    litellm_params:
+    lumina_params:
       model: prism/deepseek-v4.1-flash
       api_key: os.environ/PRISM_API_KEY
   - model_name: deepseek-v4-flash
-    litellm_params:
+    lumina_params:
       model: prism/deepseek-v4-flash
       api_key: os.environ/PRISM_API_KEY
 ```
@@ -230,7 +230,7 @@ A deployment configured this way serves all three endpoints on the proxy: `/v1/c
 
 ```bash showLineNumbers title="curl"
 curl http://0.0.0.0:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "deepseek-v4.1-flash",
@@ -243,7 +243,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 
 ```bash showLineNumbers title="curl"
 curl http://0.0.0.0:4000/v1/responses \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "deepseek-v4.1-flash",
@@ -256,7 +256,7 @@ curl http://0.0.0.0:4000/v1/responses \
 
 ```bash showLineNumbers title="curl"
 curl http://0.0.0.0:4000/v1/messages \
-  -H "x-api-key: $LITELLM_API_KEY" \
+  -H "x-api-key: $LUMINA_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \
   -d '{

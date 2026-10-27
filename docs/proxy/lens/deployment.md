@@ -25,7 +25,7 @@ flowchart LR
 
 Lens is one service. It serves the UI and API and runs investigations in background workers. It stores traces, LiteLLM spend records, and investigation results in ClickHouse. Every Lens replica shares that ClickHouse state, so you can run more than one.
 
-Agents send OpenTelemetry traces directly to Lens with a tracing key. Traces do not pass through LiteLLM. When you use Lens inside LiteLLM, the dashboard and the LiteLLM trace and investigation routes call Lens on the user's behalf. LiteLLM authenticates those calls with `LITELLM_LENS_SERVICE_TOKEN`, signs the user's identity with `LENS_GATEWAY_SECRET`, and sends its spend records so each run can show its cost.
+Agents send OpenTelemetry traces directly to Lens with a tracing key. Traces do not pass through LiteLLM. When you use Lens inside LiteLLM, the dashboard and the LiteLLM trace and investigation routes call Lens on the user's behalf. LiteLLM authenticates those calls with `LUMINA_LENS_SERVICE_TOKEN`, signs the user's identity with `LENS_GATEWAY_SECRET`, and sends its spend records so each run can show its cost.
 
 Investigations send only the selected trace content to the analysis model you configure. Everything else stays on your infrastructure. Standalone Lens needs only Lens and ClickHouse.
 

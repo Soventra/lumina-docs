@@ -92,7 +92,7 @@ Via LiteLLM Proxy (`/v1/images/generations`):
 ```bash showLineNumbers title="Proxy request with web_search_options"
 curl -X POST 'http://localhost:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "gemini-3.1-flash-image-preview",
     "prompt": "Generate an image of the latest iPhone design",
@@ -134,7 +134,7 @@ response = await litellm.aimage_generation(
 ```bash showLineNumbers title="Passing imageConfig via Proxy"
 curl -X POST 'http://localhost:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "gemini-3.1-flash-image",
     "prompt": "A nano banana on a desk",
@@ -190,7 +190,7 @@ print(response.data[0].b64_json)  # Imagen also returns base64 images
 ```yaml showLineNumbers title="Vertex AI Image Generation Configuration"
 model_list:
   - model_name: vertex-imagen
-    litellm_params:
+    lumina_params:
       model: vertex_ai/imagen-4.0-generate-001
       vertex_ai_project: "your-project-id"
       vertex_ai_location: "us-central1"

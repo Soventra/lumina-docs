@@ -52,12 +52,12 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: grok-4.7
-    litellm_params:
+    lumina_params:
       model: xai/grok-4.7
       api_key: os.environ/XAI_API_KEY
 
   - model_name: grok-4.7-openrouter
-    litellm_params:
+    lumina_params:
       model: openrouter/x-ai/grok-4.7
       api_key: os.environ/OPENROUTER_API_KEY
 ```

@@ -157,11 +157,11 @@ print(response.choices[0].text)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: mercury-2
-    litellm_params:
+    lumina_params:
       model: inception/mercury-2
       api_key: os.environ/INCEPTION_API_KEY
   - model_name: mercury-edit-2
-    litellm_params:
+    lumina_params:
       model: text-completion-inception/mercury-edit-2
       api_key: os.environ/INCEPTION_API_KEY
 ```

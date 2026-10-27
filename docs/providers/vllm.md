@@ -46,7 +46,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/facebook/opt-125m  # add hosted_vllm/ prefix to route as OpenAI provider
         api_base: https://hosted-vllm-api.co      # add api base for OpenAI compatible provider
   ```
@@ -88,7 +88,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",
@@ -128,7 +128,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: gpt-oss-120b
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/gpt-oss-120b
         api_base: https://hosted-vllm-api.co
   ```
@@ -153,7 +153,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 
 ## Embeddings
 
-vLLM serves OpenAI-compatible `/v1/embeddings`. When clients omit `encoding_format`, LiteLLM defaults it for OpenAI-compatible embedding routing (request → model `litellm_params` → `LITELLM_DEFAULT_EMBEDDING_ENCODING_FORMAT` → `float`). See [Embeddings](../proxy/embedding.md#embedding-encoding-format).
+vLLM serves OpenAI-compatible `/v1/embeddings`. When clients omit `encoding_format`, LiteLLM defaults it for OpenAI-compatible embedding routing (request → model `lumina_params` → `LUMINA_DEFAULT_EMBEDDING_ENCODING_FORMAT` → `float`). See [Embeddings](../proxy/embedding.md#embedding-encoding-format).
 
 <Tabs>
 <TabItem value="sdk" label="SDK">
@@ -178,7 +178,7 @@ print(embedding)
 ```yaml
 model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/facebook/opt-125m  # add hosted_vllm/ prefix to route as OpenAI provider
         api_base: https://hosted-vllm-api.co      # add api base for OpenAI compatible provider
 ```
@@ -195,7 +195,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/embeddings' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"input": ["hello world"], "model": "my-model"}'
 ```
@@ -271,7 +271,7 @@ asyncio.run(test_async_rerank())
 ```yaml
 model_list:
     - model_name: my-rerank-model
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/your-rerank-model  # add hosted_vllm/ prefix to route as VLLM provider
         api_base: http://localhost:8000      # add api base for your VLLM server
         # api_key: your-api-key             # [optional] if your VLLM server requires authentication
@@ -289,7 +289,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/rerank' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "model": "my-rerank-model",
@@ -343,7 +343,7 @@ print(response)
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/rerank' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "model": "my-rerank-model",
@@ -387,7 +387,7 @@ print(response)
 ```yaml
 model_list:
     - model_name: qwen-image-edit
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/Qwen/Qwen-Image-Edit-2511  # add hosted_vllm/ prefix to route as OpenAI provider
         api_base: http://localhost:8091              # your vLLM-Omni server
       model_info:
@@ -406,7 +406,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/images/edits' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -F 'model=qwen-image-edit' \
 -F 'image=@original_image.png' \
 -F 'prompt=Add a red hat to the person in the image'
@@ -488,11 +488,11 @@ print(response)
 ```yaml
 model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/qwen  # add hosted_vllm/ prefix to route as OpenAI provider
         api_base: https://hosted-vllm-api.co      # add api base for OpenAI compatible provider
     - model_name: my-gemini-model
-      litellm_params:
+      lumina_params:
         model: gemini/{{gemini_flash}}  # add gemini/ prefix to route as Google AI Studio provider
         api_key: os.environ/GEMINI_API_KEY
 ```
@@ -509,7 +509,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X POST http://0.0.0.0:4000/chat/completions \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "my-model",
@@ -585,7 +585,7 @@ print(response)
 ```yaml
 model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: hosted_vllm/qwen  # add hosted_vllm/ prefix to route as OpenAI provider
         api_base: https://hosted-vllm-api.co      # add api base for OpenAI compatible provider
 ```
@@ -602,7 +602,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X POST http://0.0.0.0:4000/chat/completions \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "model": "my-model",

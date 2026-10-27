@@ -39,7 +39,7 @@ Configure a `vertex_ai` deployment for the model you want to batch. The poller u
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_flash}}
       vertex_project: my-gcp-project
       vertex_location: us-central1
@@ -79,7 +79,7 @@ Pass the GCS URI as `input_file_id`:
 
 ```bash
 curl -X POST http://localhost:4000/v1/batches \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "gs://my-bucket/batches/publishers/google/models/{{gemini_flash}}/batch.jsonl",
@@ -97,7 +97,7 @@ Pass `custom_llm_provider=vertex_ai` so the proxy routes to Vertex instead of Op
 
 ```bash
 curl -X GET "http://localhost:4000/v1/batches/8823717160934178816?custom_llm_provider=vertex_ai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ### 4. Retrieve results

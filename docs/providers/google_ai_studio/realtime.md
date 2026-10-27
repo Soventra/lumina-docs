@@ -13,7 +13,7 @@
 ```yaml
 model_list:
   - model_name: "gemini-2.0-flash"
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.0-flash-live-001
     model_info:
       mode: realtime
@@ -39,7 +39,7 @@ const url = "ws://0.0.0.0:4000/v1/realtime?model=openai-gemini-2.0-flash";
 
 const ws = new WebSocket(url, {
     headers: {
-        "api-key": `${LITELLM_API_KEY}`,
+        "api-key": `${LUMINA_API_KEY}`,
         "OpenAI-Beta": "realtime=v1",
     },
 });
@@ -187,7 +187,7 @@ if __name__ == "__main__":
 ```yaml
 model_list:
   - model_name: gemini-live
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-flash-native-audio-latest
       api_key: os.environ/GEMINI_API_KEY
 

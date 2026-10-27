@@ -72,7 +72,7 @@ $ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X GET 'http://0.0.0.0:4000/health/services?service=slack' \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ## Advanced
@@ -207,13 +207,13 @@ Set `alert_to_webhook_url` on your config.yaml
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   alerting: ["slack"]
   alerting_threshold: 0.0001 # (Seconds) set an artificially low threshold for testing alerting
   alert_to_webhook_url: {
@@ -241,13 +241,13 @@ Provide multiple slack channels for a given alert type
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   alerting: ["slack"]
   alerting_threshold: 0.0001 # (Seconds) set an artificially low threshold for testing alerting
   alert_to_webhook_url: {
@@ -276,7 +276,7 @@ Test it - send a valid llm request - expect to see a `llm_too_slow` alert in it'
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -305,7 +305,7 @@ MS_TEAMS_WEBHOOK_URL="https://<your-tenant>.webhook.office.com/webhookb2/<...>/I
 ```yaml
 model_list: 
     model_name: "azure-model"
-    litellm_params:
+    lumina_params:
         model: "azure/{{openai_small}}"
         api_key: "my-bad-key" # bad key
 
@@ -320,7 +320,7 @@ Call the proxy `/health/services` endpoint with `service=ms_teams` to send a tes
 
 ```bash
 curl --location 'http://0.0.0.0:4000/health/services?service=ms_teams' \
---header "Authorization: Bearer $LITELLM_API_KEY"
+--header "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Expected Response**
@@ -356,7 +356,7 @@ Discord provides a slack compatible webhook url that you can use for alerting
 ```yaml
 model_list: 
     model_name: "azure-model"
-    litellm_params:
+    lumina_params:
         model: "azure/{{openai_small}}"
         api_key: "my-bad-key" # bad key
 
@@ -401,7 +401,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl -X GET --location 'http://0.0.0.0:4000/health/services?service=webhook' \
---header "Authorization: Bearer $LITELLM_API_KEY"
+--header "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Expected Response**

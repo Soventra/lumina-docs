@@ -82,7 +82,7 @@ This release brings accurate multi-instance rate limiting across keys/users/team
 This is currently behind a feature flag, and we plan to have this be the default by next week. To enable this today, just add this environment variable:
 
 ```
-export LITELLM_RATE_LIMIT_ACCURACY=true
+export LUMINA_RATE_LIMIT_ACCURACY=true
 ```
 
 [Read more here](/docs/proxy/users#multi-instance-rate-limiting)

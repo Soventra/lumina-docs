@@ -40,11 +40,11 @@ print(response)
 ```yaml
 model_list:
   - model_name: pplx-embed-v1-0.6b
-    litellm_params:
+    lumina_params:
       model: perplexity/pplx-embed-v1-0.6b
       api_key: os.environ/PERPLEXITYAI_API_KEY
   - model_name: pplx-embed-v1-4b
-    litellm_params:
+    lumina_params:
       model: perplexity/pplx-embed-v1-4b
       api_key: os.environ/PERPLEXITYAI_API_KEY
 ```
@@ -60,7 +60,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/embeddings \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "pplx-embed-v1-0.6b",
     "input": ["good morning from litellm"]
@@ -104,7 +104,7 @@ print(f"Embedding dimensions: {len(response.data[0]['embedding'])}")
 ```bash
 curl http://0.0.0.0:4000/v1/embeddings \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "pplx-embed-v1-4b",
     "input": ["Your text here"],

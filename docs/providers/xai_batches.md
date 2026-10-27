@@ -17,7 +17,7 @@ LiteLLM routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to 
 ```yaml
 model_list:
   - model_name: grok-4.3
-    litellm_params:
+    lumina_params:
       model: xai/grok-4.3
       api_key: os.environ/XAI_API_KEY
 
@@ -39,7 +39,7 @@ A plain upload carries nothing to route on, so name the provider on the request:
 
 ```bash
 curl "http://0.0.0.0:4000/v1/files?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F purpose="batch" \
   -F file="@batch_input.jsonl"
 ```
@@ -50,7 +50,7 @@ xAI does not store a purpose, so every xAI file reads back with `purpose: batch`
 
 ```bash
 curl "http://0.0.0.0:4000/v1/batches?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "<file id from step 2>",
@@ -65,7 +65,7 @@ xAI routes each line by its own `url`, so `endpoint` is echoed back rather than 
 
 ```bash
 curl "http://0.0.0.0:4000/v1/batches/<batch id>?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 xAI reports request counters instead of a status, so LiteLLM derives one: `validating` while xAI has not counted any requests yet, `in_progress` while some are still pending, `completed` once none are, `cancelled` when you cancelled it, and `failed` when xAI cancelled it (an input file that fails validation lands here, with xAI's message under `errors`). `created_at`, `expires_at`, and `cancelled_at` come back at day resolution, because xAI stores those dates without a time of day
@@ -74,7 +74,7 @@ xAI has no output file: results are read from the batch itself, so `output_file_
 
 ```bash
 curl "http://0.0.0.0:4000/v1/files/<batch id>/content?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 The response is OpenAI batch output JSONL, one line per request, with the result under `response.body` or the failure under `error`. xAI serves results in pages of 1000, which LiteLLM walks and joins before responding, so a large batch is held in memory while it downloads. Image and video results carry media URLs that xAI expires after one hour, so fetch those right away
@@ -83,16 +83,16 @@ The response is OpenAI batch output JSONL, one line per request, with the result
 
 ```bash
 curl "http://0.0.0.0:4000/v1/files?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl "http://0.0.0.0:4000/v1/batches" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl -X POST "http://0.0.0.0:4000/v1/batches/<batch id>/cancel?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl -X DELETE "http://0.0.0.0:4000/v1/files/<file id>?provider=xai" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 The file list walks every page xAI returns, and the batch list picks the provider up from `files_settings`. A deleted or expired file reads back as a 404

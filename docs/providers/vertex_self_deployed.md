@@ -54,7 +54,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: llama3-1-8b-instruct
-      litellm_params:
+      lumina_params:
         model: vertex_ai/openai/5464397967697903616
         vertex_ai_project: "my-test-project"
         vertex_ai_location: "us-east-1"
@@ -72,7 +72,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "llama3-1-8b-instruct", # the 'model_name' in config
@@ -131,7 +131,7 @@ Deploy Gemma models on custom Vertex AI prediction endpoints with OpenAI-compati
 ```yaml
 model_list:
   - model_name: gemma-model
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemma/gemma-3-12b-it-1222199011122
       api_base: https://ENDPOINT.us-central1-PROJECT.prediction.vertexai.goog/v1/projects/PROJECT_ID/locations/us-central1/endpoints/ENDPOINT_ID:predict
       vertex_project: "my-project-id"
@@ -149,7 +149,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemma-model",
     "messages": [{"role": "user", "content": "What is machine learning?"}],
@@ -188,7 +188,7 @@ Deploy MedGemma models on custom Vertex AI prediction endpoints with OpenAI-comp
 ```yaml
 model_list:
   - model_name: medgemma-model
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemma/medgemma-2b-v1
       api_base: https://ENDPOINT.us-central1-PROJECT.prediction.vertexai.goog/v1/projects/PROJECT_ID/locations/us-central1/endpoints/ENDPOINT_ID:predict
       vertex_project: "my-project-id"
@@ -206,7 +206,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "medgemma-model",
     "messages": [{"role": "user", "content": "What are the symptoms of hypertension?"}],

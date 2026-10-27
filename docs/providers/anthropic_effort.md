@@ -110,7 +110,7 @@ console.log(response.content[0].text);
 ```bash keep-model-ids
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "anthropic/claude-sonnet-4-6",
     "messages": [{

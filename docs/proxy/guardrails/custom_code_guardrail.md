@@ -12,13 +12,13 @@ Write custom guardrail logic using Python-like code that runs in a sandboxed env
 ```yaml
 model_list:
     - model_name: {{openai_large}}
-      litellm_params:
+      lumina_params:
         model: {{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
     - guardrail_name: block-ssn
-      litellm_params:
+      lumina_params:
         guardrail: custom_code
         mode: pre_call
         custom_code: |
@@ -39,7 +39,7 @@ litellm --config config.yaml
 
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",
@@ -120,7 +120,7 @@ In the Guardrails Monitor a flagged request counts as flagged rather than passed
 ```yaml
 guardrails:
   - guardrail_name: audit-competitor-mentions
-    litellm_params:
+    lumina_params:
       guardrail: custom_code
       mode: [pre_call, post_call]
       default_on: true
@@ -250,7 +250,7 @@ Each run of `apply_guardrail` is bounded by `timeout` (default 30 seconds), and 
 ```yaml
 guardrails:
   - guardrail_name: "slow-moderation"
-    litellm_params:
+    lumina_params:
       guardrail: custom_code
       mode: "pre_call"
       timeout: 10
@@ -394,7 +394,7 @@ Enable guardrail per request:
 
 ```bash
 curl -X POST http://localhost:4000/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "{{openai_large}}",
@@ -410,7 +410,7 @@ Run guardrail on all requests by setting `default_on: true` on the top-level `gu
 ```yaml
 guardrails:
   - guardrail_name: block-ssn
-    litellm_params:
+    lumina_params:
       guardrail: custom_code
       mode: pre_call
       default_on: true

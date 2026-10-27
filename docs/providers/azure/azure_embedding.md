@@ -48,7 +48,7 @@ export AZURE_API_KEY=""
 ```yaml
 model_list:
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: azure/my-deployment-name
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"

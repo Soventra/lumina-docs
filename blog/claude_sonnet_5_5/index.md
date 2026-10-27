@@ -44,7 +44,7 @@ Pricing landed in [PR #43586](https://github.com/BerriAI/litellm/pull/43586). No
 ```yaml
 model_list:
   - model_name: claude-sonnet-5-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -68,7 +68,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-sonnet-5-5
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-sonnet-5-5
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -99,7 +99,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-sonnet-5-5
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-sonnet-5-5
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: global
@@ -126,7 +126,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-sonnet-5-5
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-sonnet-5-5
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -152,7 +152,7 @@ docker run -d \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-sonnet-5-5",
   "messages": [

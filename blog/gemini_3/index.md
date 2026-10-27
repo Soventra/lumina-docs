@@ -52,7 +52,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: gemini-3-pro-preview
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3-pro-preview
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -68,7 +68,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-3-pro-preview",
     "messages": [{"role": "user", "content": "Hello!"}],
@@ -271,7 +271,7 @@ print(response2.choices[0].message.content)
 # Step 1: Initial request
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-3-pro-preview",
     "messages": [
@@ -324,7 +324,7 @@ curl http://localhost:4000/v1/chat/completions \
 # Step 2: Follow-up request (include assistant message with thought signature)
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-3-pro-preview",
     "messages": [
@@ -425,7 +425,7 @@ print(response2.choices[0].message.content)
 # Step 1: Start with gemini-2.5-flash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-2.5-flash",
     "messages": [{"role": "user", "content": "What'\''s the weather?"}],
@@ -437,7 +437,7 @@ curl http://localhost:4000/v1/chat/completions \
 # LiteLLM automatically handles the missing thought signature
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-3-pro-preview",  # 👈 Switched model
     "messages": [
@@ -514,7 +514,7 @@ response = completion(
 # Low thinking level
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-3-pro-preview",
     "messages": [{"role": "user", "content": "What'\''s the weather?"}],
@@ -524,7 +524,7 @@ curl http://localhost:4000/v1/chat/completions \
 # High thinking level
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "gemini-3-pro-preview",
     "messages": [{"role": "user", "content": "Solve this complex problem."}],
@@ -660,7 +660,7 @@ When using LiteLLM Proxy, all cost tracking is automatically logged and availabl
 # config.yaml
 model_list:
   - model_name: gemini-3-pro-preview
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3-pro-preview
       api_key: os.environ/GEMINI_API_KEY
 
@@ -680,19 +680,19 @@ You can use `gemini-3-pro-preview` with **Claude Code CLI** - Anthropic's comman
 ```yaml
 model_list:
   - model_name: gemini-3-pro-preview
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3-pro-preview
       api_key: os.environ/GEMINI_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 **2. Set environment variables:**
 
 ```bash
 export GEMINI_API_KEY="your-gemini-api-key"
-export LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
+export LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"  # Generate a secure key
 ```
 
 **3. Start LiteLLM Proxy:**
@@ -707,7 +707,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 export ANTHROPIC_BASE_URL="http://0.0.0.0:4000"
-export ANTHROPIC_AUTH_TOKEN="$LITELLM_MASTER_KEY"
+export ANTHROPIC_AUTH_TOKEN="$LUMINA_MASTER_KEY"
 ```
 
 **5. Use Gemini 3 Pro Preview with Claude Code:**

@@ -84,7 +84,7 @@ litellm_settings:
 
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
 ```
 
@@ -239,7 +239,7 @@ litellm_settings:
 <TabItem value="env" label="Environment Variable">
 
 ```bash
-export LITELLM_MODIFY_PARAMS=True
+export LUMINA_MODIFY_PARAMS=True
 ```
 
 </TabItem>

@@ -78,7 +78,7 @@ custom_ui_sso_sign_in_handler = MyCustomSSOLoginHandler()
 ```yaml
 model_list: 
   - model_name: "openai-model"
-    litellm_params: 
+    lumina_params: 
       model: "{{openai_small}}"
 
 general_settings:
@@ -181,7 +181,7 @@ e.g. if they're both in the same dir - `./config.yaml` and `./custom_sso.py`, th
 ```yaml 
 model_list: 
   - model_name: "openai-model"
-    litellm_params: 
+    lumina_params: 
       model: "{{openai_small}}"
 
 general_settings:

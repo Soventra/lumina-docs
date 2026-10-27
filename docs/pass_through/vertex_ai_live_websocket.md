@@ -275,7 +275,7 @@ The WebSocket passthrough uses the same authentication as other LiteLLM endpoint
 Enable debug logging to see detailed connection information:
 
 ```bash
-export LITELLM_LOG=DEBUG
+export LUMINA_LOG=DEBUG
 ```
 
 ## Related Documentation

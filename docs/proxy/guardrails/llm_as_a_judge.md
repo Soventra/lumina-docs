@@ -30,17 +30,17 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat-model
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: my-judge-model
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 guardrails:
   - guardrail_name: "quality-judge"
-    litellm_params:
+    lumina_params:
       guardrail: llm_as_a_judge
       mode: post_call
       judge_model: my-judge-model
@@ -75,7 +75,7 @@ A response that fails the criteria is rejected with HTTP 422 and the verdicts at
 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "chat-model",
@@ -133,7 +133,7 @@ The guardrail fails open on judge errors: if the judge call fails or returns an 
 ```yaml
 guardrails:
   - guardrail_name: string          # required, unique name
-    litellm_params:
+    lumina_params:
       guardrail: llm_as_a_judge     # required
       mode: pre_call | during_call | post_call  # required; pre_call and during_call judge the request, post_call judges the response
       judge_model: string           # required, proxy model name or provider model id

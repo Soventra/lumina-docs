@@ -87,7 +87,7 @@ Here's how to call a Cerebras model with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: cerebras/<your-model-name>  # add cerebras/ prefix to route as Cerebras provider
         api_key: api-key                 # api key to send your model
   ```
@@ -130,7 +130,7 @@ Here's how to call a Cerebras model with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",

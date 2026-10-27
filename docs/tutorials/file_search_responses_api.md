@@ -31,12 +31,12 @@ In `tools[].vector_store_ids`, LiteLLM accepts both provider-native IDs (e.g. `v
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```

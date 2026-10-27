@@ -64,13 +64,13 @@ Test examples:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "harmful-content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       
@@ -99,13 +99,13 @@ guardrails:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "content-filter-pre"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       
@@ -133,13 +133,13 @@ guardrails:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "comprehensive-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       
@@ -182,7 +182,7 @@ litellm --config config.yaml
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -212,7 +212,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -244,7 +244,7 @@ In `logging_only` mode the filter only observes. Every match is recorded in the 
 ```yaml
 guardrails:
   - guardrail_name: "secrets-audit"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: logging_only
       default_on: true
@@ -287,7 +287,7 @@ In the Admin UI, pick **Logging Only** as the mode when you add the guardrail.
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "pii-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       patterns:
@@ -311,7 +311,7 @@ Define your own regex patterns for domain-specific sensitive data:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "custom-patterns"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       patterns:
@@ -335,7 +335,7 @@ Block or mask specific keywords:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "keyword-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       blocked_words:
@@ -358,7 +358,7 @@ For large keyword lists, use a YAML file:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "keyword-file-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       blocked_words_file: "/path/to/sensitive_keywords.yaml"
@@ -386,7 +386,7 @@ Content filter works with streaming responses by checking each chunk:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "streaming-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "during_call"  # Check each streaming chunk
       patterns:
@@ -433,13 +433,13 @@ This is because, each request containing images will be sent to the vision-capab
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gpt-4-vision
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "image-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       image_model: "gpt-4-vision"  # value is `model_name` of the vision-capable model
@@ -519,7 +519,7 @@ Use `pattern_redaction_format` and `keyword_redaction_tag` to change the redacti
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "custom-redaction"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       pattern_redaction_format: "***{pattern_name}***"  # Use {pattern_name} placeholder
@@ -601,7 +601,7 @@ Bias detection is **complex and context-dependent**. Rule-based systems catch ex
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       
@@ -677,7 +677,7 @@ extraVolumes:
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: "<your-guardrail-name>"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: pre_call
       default_on: true
@@ -695,7 +695,7 @@ Update `mountPath` if you upgrade to a litellm image built on a different Python
 Set
 
 ```bash
-LITELLM_CONTENT_FILTER_ALLOW_EXTERNAL_PATHS=true
+LUMINA_CONTENT_FILTER_ALLOW_EXTERNAL_PATHS=true
 ```
 
 on the proxy pod, then reference the file by absolute path
@@ -854,7 +854,7 @@ Combining harmful content and bias detection for consumer-facing AI:
 ```yaml
 guardrails:
   - guardrail_name: "safe-consumer-ai"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: "pre_call"
       

@@ -117,7 +117,7 @@ Both handlers run through the same filtered catalog and dispatch path as the nor
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 

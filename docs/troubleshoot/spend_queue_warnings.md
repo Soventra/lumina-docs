@@ -12,7 +12,7 @@ LiteLLM Proxy:WARNING: spend_update_queue.py - Spend update queue is full. Aggre
 
 ## Root Cause
 
-The spend update queue is an in-memory `asyncio.Queue` capped at `LITELLM_ASYNCIO_QUEUE_MAXSIZE` entries (default `1000`). Aggregation is triggered earlier, once the queue holds `MAX_SIZE_IN_MEMORY_QUEUE` entries, which defaults to 80% of `LITELLM_ASYNCIO_QUEUE_MAXSIZE` (`800` with the defaults). When this threshold is reached:
+The spend update queue is an in-memory `asyncio.Queue` capped at `LUMINA_ASYNCIO_QUEUE_MAXSIZE` entries (default `1000`). Aggregation is triggered earlier, once the queue holds `MAX_SIZE_IN_MEMORY_QUEUE` entries, which defaults to 80% of `LUMINA_ASYNCIO_QUEUE_MAXSIZE` (`800` with the defaults). When this threshold is reached:
 
 1. New spend tracking entries are aggregated instead of queued individually
 2. This prevents memory exhaustion but may slightly delay spend updates
@@ -22,16 +22,16 @@ The spend update queue is an in-memory `asyncio.Queue` capped at `LITELLM_ASYNCI
 
 ### 1. Increase Queue Size
 
-Raise `LITELLM_ASYNCIO_QUEUE_MAXSIZE`, which sets the actual queue capacity. `MAX_SIZE_IN_MEMORY_QUEUE` follows it at 80% unless you set it explicitly, in which case keep it below `LITELLM_ASYNCIO_QUEUE_MAXSIZE`:
+Raise `LUMINA_ASYNCIO_QUEUE_MAXSIZE`, which sets the actual queue capacity. `MAX_SIZE_IN_MEMORY_QUEUE` follows it at 80% unless you set it explicitly, in which case keep it below `LUMINA_ASYNCIO_QUEUE_MAXSIZE`:
 
 ```bash
-LITELLM_ASYNCIO_QUEUE_MAXSIZE=62500
-MAX_SIZE_IN_MEMORY_QUEUE=50000  # optional, defaults to 80% of LITELLM_ASYNCIO_QUEUE_MAXSIZE
+LUMINA_ASYNCIO_QUEUE_MAXSIZE=62500
+MAX_SIZE_IN_MEMORY_QUEUE=50000  # optional, defaults to 80% of LUMINA_ASYNCIO_QUEUE_MAXSIZE
 ```
 
-Raising only `MAX_SIZE_IN_MEMORY_QUEUE` does not enlarge the queue. If it is greater than or equal to `LITELLM_ASYNCIO_QUEUE_MAXSIZE`, the proxy logs `Misconfigured queue thresholds` at startup, aggregation never runs, and spend updates block once the queue holds `LITELLM_ASYNCIO_QUEUE_MAXSIZE` entries
+Raising only `MAX_SIZE_IN_MEMORY_QUEUE` does not enlarge the queue. If it is greater than or equal to `LUMINA_ASYNCIO_QUEUE_MAXSIZE`, the proxy logs `Misconfigured queue thresholds` at startup, aggregation never runs, and spend updates block once the queue holds `LUMINA_ASYNCIO_QUEUE_MAXSIZE` entries
 
-`LITELLM_ASYNCIO_QUEUE_MAXSIZE` also bounds the other spend update queues (daily and window spend) and the GCS bucket logging queue, so raising it raises their capacity too
+`LUMINA_ASYNCIO_QUEUE_MAXSIZE` also bounds the other spend update queues (daily and window spend) and the GCS bucket logging queue, so raising it raises their capacity too
 
 **Tradeoffs:**
 Higher queue sizes store more items in memory - provision at least 8GB RAM for large queues
@@ -47,6 +47,6 @@ Deploy multiple proxy instances with load balancing. This distributes the spend 
 
 ```yaml
 # Environment variables
-LITELLM_ASYNCIO_QUEUE_MAXSIZE: 1000  # Default queue capacity
-MAX_SIZE_IN_MEMORY_QUEUE: 800        # Default aggregation threshold (80% of LITELLM_ASYNCIO_QUEUE_MAXSIZE)
+LUMINA_ASYNCIO_QUEUE_MAXSIZE: 1000  # Default queue capacity
+MAX_SIZE_IN_MEMORY_QUEUE: 800        # Default aggregation threshold (80% of LUMINA_ASYNCIO_QUEUE_MAXSIZE)
 ```

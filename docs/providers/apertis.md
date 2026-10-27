@@ -86,7 +86,7 @@ export STIMA_API_KEY=""
 ```yaml
 model_list:
   - model_name: apertis-model
-    litellm_params:
+    lumina_params:
       model: apertis/model-name  # Replace with actual model name
       api_key: os.environ/STIMA_API_KEY
 ```

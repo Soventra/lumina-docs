@@ -14,18 +14,18 @@ import TabItem from '@theme/TabItem';
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
       tags: ["free"] # Key Change
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["paid"] # Key Change
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -35,7 +35,7 @@ router_settings:
   enable_tag_filtering: True # Key Change
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### 2. Make Request with `tags=["free"]`
@@ -43,7 +43,7 @@ general_settings:
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -79,7 +79,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -115,7 +115,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'x-litellm-tags: free,my-custom-tag' \
 -d '{
   "model": "{{openai_large}}",
@@ -135,7 +135,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -155,7 +155,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "fake-openai-endpoint",
     "messages": [
@@ -173,7 +173,7 @@ Prefix any tag with `!` to **exclude** deployments that carry that exact tag. Th
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -188,19 +188,19 @@ Any deployment tagged `provider:anthropic` is removed from the candidate pool be
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       tags: ["provider:anthropic"]
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["provider:openai"]
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_flash}}
       api_key: os.environ/VERTEX_API_KEY
       tags: ["provider:vertex"]
@@ -209,7 +209,7 @@ router_settings:
   enable_tag_filtering: true
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Combining positive and negation tags
@@ -219,7 +219,7 @@ Use positive tags to select a tier and negation tags to exclude a provider withi
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -234,7 +234,7 @@ Send multiple `!` tags to exclude more than one deployment group:
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -251,13 +251,13 @@ When the primary model group is banned, the router falls through to the configur
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: primary
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       tags: ["provider:anthropic"]
 
   - model_name: fallback
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["provider:openai"]
@@ -268,13 +268,13 @@ router_settings:
     - {"primary": ["fallback"]}
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "primary",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -303,7 +303,7 @@ Prefix any tag with `&` to require it. A deployment must carry every `&`-prefixe
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -318,13 +318,13 @@ Only a deployment carrying both `reasoning_type:high` and `provider:anthropic` i
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       tags: ["reasoning_type:high", "provider:anthropic"]
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["reasoning_type:high", "provider:openai"]
@@ -333,7 +333,7 @@ router_settings:
   enable_tag_filtering: true
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Combining required, negation, and plain tags
@@ -343,7 +343,7 @@ general_settings:
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -373,7 +373,7 @@ This is an explicit opt-in. Without it, behavior is unchanged: an unsatisfiable 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       tags: ["provider:anthropic"]
@@ -381,7 +381,7 @@ model_list:
       allow_fail_open: true
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["provider:openai", "default"]
@@ -392,7 +392,7 @@ router_settings:
   enable_tag_filtering: true
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Without `allow_fail_open`
@@ -400,7 +400,7 @@ general_settings:
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -416,7 +416,7 @@ Using the config above, the same request instead falls back to the default-tagge
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -439,7 +439,7 @@ This protection requires the proxy layer. A direct SDK `Router` call that bypass
 
 | Behavior | Detail |
 |----------|--------|
-| Location | `model_info.allow_fail_open`, not `litellm_params`. Set it on every deployment sharing the model group for consistent behavior; the router checks any one member |
+| Location | `model_info.allow_fail_open`, not `lumina_params`. Set it on every deployment sharing the model group for consistent behavior; the router checks any one member |
 | Default | Unset (`false`). Existing `!` negation behavior is unchanged unless a group opts in |
 | Scope | Only gates exhaustion caused by `!` or `&`. Plain-tag exhaustion keeps its existing behavior: fall back to the default pool if one exists, otherwise raise |
 | Fallback pool | The same default-tagged pool used for untagged and ban-only requests, without re-applying the request's own `!`/`&` constraints |
@@ -464,7 +464,7 @@ With `tag_routing_prefix: "route:"` configured:
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -479,7 +479,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       tags: ["default", "provider:anthropic"]
@@ -487,7 +487,7 @@ model_list:
       allow_fail_open: true
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["provider:openai"]
@@ -497,7 +497,7 @@ router_settings:
   tag_routing_prefix: "route:" # opt-in: enables the prefix mechanism
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Prefixed tags and the unknown-tag fail-open guard
@@ -507,7 +507,7 @@ A prefixed `&`/`!` tag counts as known to the [unknown-tag fail-open guard](#fai
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -541,7 +541,7 @@ This matters on a proxy that serves many unrelated model groups. Turning on `rou
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "chat-compliance",
     "messages": [{"role": "user", "content": "Hello"}],
@@ -556,7 +556,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chat-compliance
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       tags: ["provider:anthropic"]
@@ -564,7 +564,7 @@ model_list:
       enable_tag_filtering: true # opt in for this group only
 
   - model_name: chat-compliance
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       tags: ["provider:openai"]
@@ -572,7 +572,7 @@ model_list:
       enable_tag_filtering: true
 
   - model_name: incident-response
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -582,7 +582,7 @@ router_settings:
   enable_tag_filtering: false # router-wide default; chat-compliance overrides it
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 With this config, `chat-compliance` evaluates tags on every request even though the router-wide default is off, while every other model group, including `incident-response`, ignores tags and falls back to ordinary load-balanced routing. Flip the router-wide default to `true` instead and `chat-compliance` still evaluates tags, unaffected, while `incident-response`'s explicit `enable_tag_filtering: false` keeps it exempt.
@@ -591,7 +591,7 @@ With this config, `chat-compliance` evaluates tags on every request even though 
 
 | Behavior | Detail |
 |----------|--------|
-| Location | `model_info.enable_tag_filtering`, not `litellm_params`. Set it on every deployment sharing the model group; the router checks any one member |
+| Location | `model_info.enable_tag_filtering`, not `lumina_params`. Set it on every deployment sharing the model group; the router checks any one member |
 | Precedence | Low to high: `router_settings.enable_tag_filtering` (router-wide default), then `model_info.enable_tag_filtering` if set on the requested group, which overrides the router default in either direction for that group alone, then request-level `enable_tag_filtering` from key/team settings |
 | Request-level escalation only | The request-level setting, set by the proxy from key/team settings, can only turn filtering on. A request-level `enable_tag_filtering=True` still wins over a group that opted itself out with `enable_tag_filtering: false`; there is no request-level way to turn filtering off over what the router and the model group already decided |
 | Default | Unset. The model group defers to `router_settings.enable_tag_filtering`, exactly as before this override existed |
@@ -614,7 +614,7 @@ Header-based routing is not a security boundary on its own. It is only meaningfu
 model_list:
   # Claude Code traffic → dedicated deployment, matched by User-Agent
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/anthropic-claude-sonnet-4-6
       aws_region_name: us-east-1
       aws_role_name: arn:aws:iam::111122223333:role/LiteLLMClaudeCode
@@ -624,7 +624,7 @@ model_list:
       id: claude-code-deployment
   # All other traffic falls back to the default deployment
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/converse/anthropic-claude-sonnet-4-6
       aws_region_name: us-east-1
       aws_role_name: arn:aws:iam::444455556666:role/LiteLLMDefault
@@ -638,7 +638,7 @@ router_settings:
   tag_filtering_match_any: true
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### 2. Verify routing
@@ -646,14 +646,14 @@ general_settings:
 ```bash
 # Claude Code request (User-Agent set automatically by Claude Code)
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "User-Agent: claude-code/1.2.3" \
   -d '{"model": "claude-sonnet", "messages": [{"role": "user", "content": "hi"}]}'
 # -> x-litellm-model-id: claude-code-deployment
 
 # Any other client (no matching User-Agent) -> default deployment
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{"model": "claude-sonnet", "messages": [{"role": "user", "content": "hi"}]}'
 # -> x-litellm-model-id: regular-deployment
 ```
@@ -681,12 +681,12 @@ Negation exclusion runs before `tag_regex` matching. The order matters when a de
 ```yaml
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       tag_regex: ["^User-Agent: claude-code\\/"]   # no plain tags
     model_info: {id: claude-code-deployment}
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       tags: ["provider:anthropic"]
     model_info: {id: anthropic-deployment}
 ```
@@ -705,13 +705,13 @@ If the negated tag is on the same deployment as `tag_regex`, that deployment is 
 ```yaml
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       tag_regex: ["^User-Agent: claude-code\\/"]
       tags: ["group:claude"]   # negation target is on the tag_regex deployment
     model_info: {id: claude-code-deployment}
 
   - model_name: chat
-    litellm_params:
+    lumina_params:
       tags: ["provider:openai"]
     model_info: {id: openai-deployment}
 ```
@@ -744,7 +744,7 @@ curl ... -H "User-Agent: claude-code/1.2.3" \
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -752,7 +752,7 @@ model_list:
     model_info:
       id: "team-a-model"
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -760,7 +760,7 @@ model_list:
     model_info:
       id: "team-b-model"
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -770,7 +770,7 @@ router_settings:
   enable_tag_filtering: True # Key Change
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Create teams with tags
@@ -778,13 +778,13 @@ general_settings:
 ```bash
 # Create Team A
 curl -X POST http://0.0.0.0:4000/team/new \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"tags": ["teamA"]}'
 
 # Create Team B
 curl -X POST http://0.0.0.0:4000/team/new \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"tags": ["teamB"]}'
 ```
@@ -794,13 +794,13 @@ curl -X POST http://0.0.0.0:4000/team/new \
 ```bash
 # Generate key for Team A
 curl -X POST http://0.0.0.0:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"team_id": "team_a_id_here"}'
 
 # Generate key for Team B
 curl -X POST http://0.0.0.0:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"team_id": "team_b_id_here"}'
 ```

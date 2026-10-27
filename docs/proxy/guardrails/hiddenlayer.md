@@ -38,13 +38,13 @@ export HIDDENLAYER_API_BASE="https://hiddenlayer.your-domain.com"
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "hiddenlayer-guardrails"
-    litellm_params:
+    lumina_params:
       guardrail: hiddenlayer
       mode: ["pre_call", "post_call", "during_call"] # run at multiple stages
       default_on: true
@@ -154,7 +154,7 @@ If HiddenLayer responds with `action: "Redact"`, the proxy automatically rewrite
 ```yaml
 guardrails:
   - guardrail_name: "hiddenlayer-input-guard"
-    litellm_params:
+    lumina_params:
       guardrail: hiddenlayer
       mode: ["pre_call", "post_call", "during_call"]
       api_key: os.environ/HIDDENLAYER_CLIENT_SECRET   # optional

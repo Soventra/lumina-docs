@@ -107,7 +107,7 @@ Define the cohere models you want to use in the config.yaml
 ```yaml showLineNumbers
 model_list:
   - model_name: command-a-03-2025 
-    litellm_params:
+    lumina_params:
       model: cohere_chat/v1/command-a-03-2025
       api_key: "os.environ/COHERE_API_KEY"
 ```
@@ -116,7 +116,7 @@ model_list:
 ```yaml showLineNumbers
 model_list:
   - model_name: command-a-03-2025-v2
-    litellm_params:
+    lumina_params:
       model: cohere_chat/command-a-03-2025
       api_key: "os.environ/COHERE_API_KEY"
 ```
@@ -227,7 +227,7 @@ Cohere does not publish a per-token price for `north-large-01-2026`, so LiteLLM 
 ```yaml
 model_list:
   - model_name: north-large
-    litellm_params:
+    lumina_params:
       model: cohere_chat/north-large-01-2026
       api_key: os.environ/COHERE_API_KEY
       input_cost_per_token: 0.000001
@@ -328,11 +328,11 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: Salesforce/Llama-Rank-V1
-    litellm_params:
+    lumina_params:
       model: together_ai/Salesforce/Llama-Rank-V1
       api_key: os.environ/TOGETHERAI_API_KEY
   - model_name: rerank-english-v3.0
-    litellm_params:
+    lumina_params:
       model: cohere/rerank-english-v3.0
       api_key: os.environ/COHERE_API_KEY
 ```
@@ -349,7 +349,7 @@ Test request
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "rerank-english-v3.0",
@@ -405,7 +405,7 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: cohere-parse
-    litellm_params:
+    lumina_params:
       model: cohere/parse-v5.0
       api_key: os.environ/COHERE_API_KEY
 ```
@@ -422,7 +422,7 @@ Test request
 
 ```bash
 curl http://0.0.0.0:4000/v1/ocr \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "cohere-parse",

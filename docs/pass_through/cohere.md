@@ -9,7 +9,7 @@ Pass-through endpoints for Cohere - call provider-specific endpoint, in native f
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ✅ | |
 
-Just replace `https://api.cohere.com` with `LITELLM_PROXY_BASE_URL/cohere`
+Just replace `https://api.cohere.com` with `LUMINA_PROXY_BASE_URL/cohere`
 
 #### **Example Usage**
 ```bash
@@ -81,8 +81,8 @@ Key Changes:
 
 | **Original Endpoint**                                | **Replace With**                  |
 |------------------------------------------------------|-----------------------------------|
-| `https://api.cohere.com`          | `http://0.0.0.0:4000/cohere` (LITELLM_PROXY_BASE_URL="http://0.0.0.0:4000")      |
-| `bearer $CO_API_KEY`                                 | `bearer anything` (use `bearer LITELLM_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
+| `https://api.cohere.com`          | `http://0.0.0.0:4000/cohere` (LUMINA_PROXY_BASE_URL="http://0.0.0.0:4000")      |
+| `bearer $CO_API_KEY`                                 | `bearer anything` (use `bearer LUMINA_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
 
 
 ### **Example 1: Rerank endpoint**
@@ -211,7 +211,7 @@ Use this, to avoid giving developers the raw Cohere API key, but still letting t
 
 ```bash
 export DATABASE_URL=""
-export LITELLM_MASTER_KEY=""
+export LUMINA_MASTER_KEY=""
 export COHERE_API_KEY=""
 ```
 
@@ -225,7 +225,7 @@ litellm
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```
@@ -247,7 +247,7 @@ curl --request POST \
   --url http://0.0.0.0:4000/cohere/v1/rerank \
   --header 'accept: application/json' \
   --header 'content-type: application/json' \
-  --header "Authorization: bearer $LITELLM_API_KEY" \
+  --header "Authorization: bearer $LUMINA_API_KEY" \
   --data '{
     "model": "rerank-english-v3.0",
     "query": "What is the capital of the United States?",

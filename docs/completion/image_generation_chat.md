@@ -68,7 +68,7 @@ print(response.choices[0].message.images)   # List of image objects
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gemini-image-gen
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-flash-image-preview
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -86,7 +86,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Make request"
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gemini-image-gen",
     "messages": [
@@ -168,7 +168,7 @@ for chunk in response:
 ```bash showLineNumbers title="Streaming request"
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gemini-image-gen",
     "messages": [

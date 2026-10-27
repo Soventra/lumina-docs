@@ -44,7 +44,7 @@ Sampling parameters (`temperature`, `top_p`, `top_k`), fixed thinking budgets, a
 
 Opus 5 ships in the **`v1.95.0-dev.3`** image, cutting later today, but most proxies do not need to upgrade at all. On the default remote cost map, open the **Price Data** tab under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map` as a proxy admin). That refetches pricing and re-registers provider routing in one step, so `claude-opus-5` becomes available across Anthropic, Azure, Vertex AI, and Bedrock even on an older version.
 
-The exception is `LITELLM_LOCAL_MODEL_COST_MAP=true`, which bakes the cost map into the image and puts it out of the Reload button's reach. Pull `v1.95.0-dev.3` or later for the bundled Opus 5 metadata:
+The exception is `LUMINA_LOCAL_MODEL_COST_MAP=true`, which bakes the cost map into the image and puts it out of the Reload button's reach. Pull `v1.95.0-dev.3` or later for the bundled Opus 5 metadata:
 
 ```bash
 docker pull ghcr.io/berriai/litellm:v1.95.0-dev.3
@@ -62,7 +62,7 @@ Pick your provider below. Each tab wires up `claude-opus-5` for that provider; t
 ```yaml
 model_list:
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -86,7 +86,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-opus-5
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -112,7 +112,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-opus-5
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: global
@@ -139,7 +139,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-opus-5
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -172,7 +172,7 @@ The request is the same regardless of which provider you configured above:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-5",
   "messages": [
@@ -198,7 +198,7 @@ Opus 5 runs roughly 2.5x faster with `speed: "fast"`, billed at $10 / MTok input
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-5",
   "messages": [
@@ -217,7 +217,7 @@ curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
---header "x-api-key: $LITELLM_API_KEY" \
+--header "x-api-key: $LUMINA_API_KEY" \
 --header 'content-type: application/json' \
 --data '{
     "model": "claude-opus-5",

@@ -16,7 +16,7 @@ providers:
   litellm:
     api: https://litellm.example.com/v1
     transport: chat_completions
-    key_env: LITELLM_API_KEY
+    key_env: LUMINA_API_KEY
 
 model:
   default: my-model
@@ -28,11 +28,11 @@ Replace the gateway URL and `my-model` with a `model_name` available to your key
 Export the key in the terminal where you launch Hermes:
 
 ```bash
-export LITELLM_API_KEY="sk-<your-virtual-key>"
+export LUMINA_API_KEY="sk-<your-virtual-key>"
 hermes
 ```
 
-For a persistent configuration, put `LITELLM_API_KEY` in `~/.hermes/.env`, which Hermes loads for its credentials. Keep the key out of `config.yaml` and source control.
+For a persistent configuration, put `LUMINA_API_KEY` in `~/.hermes/.env`, which Hermes loads for its credentials. Keep the key out of `config.yaml` and source control.
 
 ## Verify
 

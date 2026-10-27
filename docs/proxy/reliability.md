@@ -50,7 +50,7 @@ router = Router(
   model_list=[
     {
       "model_name": "{{openai_small}}",
-      "litellm_params": {
+      "lumina_params": {
         "model": "azure/<your-deployment-name>",
         "api_base": "<your-azure-endpoint>",
         "api_key": "<your-azure-api-key>",
@@ -59,7 +59,7 @@ router = Router(
     },
     {
       "model_name": "{{openai_large}}",
-      "litellm_params": {
+      "lumina_params": {
         "model": "azure/gpt-4-ca",
         "api_base": "https://my-endpoint-canada-berri992.openai.azure.com/",
         "api_key": "<your-azure-api-key>",
@@ -79,13 +79,13 @@ router = Router(
 ```yaml keep-model-ids
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_base: <your-azure-endpoint>
       api_key: <your-azure-api-key>
       rpm: 6      # Rate limit for this deployment: in requests per minute (rpm)
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: <your-azure-api-key>
@@ -179,7 +179,7 @@ router = Router(
   model_list=[
     {
       "model_name": "{{anthropic}}",
-      "litellm_params": {
+      "lumina_params": {
         "model": "{{anthropic}}",
         "api_key": "",
         "mock_response": Exception("content filtering policy"),
@@ -187,7 +187,7 @@ router = Router(
     },
     {
       "model_name": "my-fallback-model",
-      "litellm_params": {
+      "lumina_params": {
         "model": "{{anthropic}}",
         "api_key": "",
         "mock_response": "This works!",
@@ -243,7 +243,7 @@ router = Router(
   model_list=[
     {
       "model_name": "{{anthropic}}",
-      "litellm_params": {
+      "lumina_params": {
         "model": "{{anthropic}}",
         "api_key": "",
         "mock_response": Exception("prompt is too long"),
@@ -251,7 +251,7 @@ router = Router(
     },
     {
       "model_name": "my-fallback-model",
-      "litellm_params": {
+      "lumina_params": {
         "model": "{{anthropic}}",
         "api_key": "",
         "mock_response": "This works!",
@@ -305,23 +305,23 @@ litellm_settings:
 ```yaml
 model_list:
   - model_name: zephyr-beta
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8001
   - model_name: zephyr-beta
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8002
   - model_name: zephyr-beta
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8003
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
         model: {{openai_small}}
         api_key: <my-openai-key>
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
         model: {{openai_large}}
         api_key: <my-openai-key>
 
@@ -343,17 +343,17 @@ This skips any cooldown check for the fallback model.
 ```yaml keep-model-ids
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
     model_info:
       id: my-specific-model-id # KEY CHANGE
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
   - model_name: anthropic-claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -372,7 +372,7 @@ litellm_settings:
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_large}}",
   "messages": [
@@ -453,7 +453,7 @@ router_settings:
 
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -480,7 +480,7 @@ router_settings:
 
 model_list:
   - model_name: gpt-4o-mini
-    litellm_params:
+    lumina_params:
     model: azure/chatgpt-v-2
     api_base: os.environ/AZURE_API_BASE
     api_key: os.environ/AZURE_API_KEY
@@ -489,7 +489,7 @@ model_list:
     base_model: azure/gpt-4.1 # 2. (azure-only) SET BASE MODEL
 
   - model_name: gpt-4o-mini
-    litellm_params:
+    lumina_params:
     model: gpt-4o-mini
     api_key: os.environ/OPENAI_API_KEY
 ```
@@ -539,7 +539,7 @@ router_settings:
 
 model_list:
   - model_name: gpt-3.5-turbo-small
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -548,12 +548,12 @@ model_list:
       base_model: azure/gpt-4o # 2. (azure-only) SET BASE MODEL
 
   - model_name: gpt-3.5-turbo-large
-    litellm_params:
+    lumina_params:
       model: gpt-4.1
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: claude-opus
-    litellm_params:
+    lumina_params:
       model: claude-opus-4-6
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -603,14 +603,14 @@ Fallback across providers (e.g. from Azure OpenAI to Anthropic) if you hit conte
 ```yaml keep-model-ids
 model_list:
     - model_name: gpt-3.5-turbo-small
-      litellm_params:
+      lumina_params:
         model: azure/chatgpt-v-2
         api_base: os.environ/AZURE_API_BASE
         api_key: os.environ/AZURE_API_KEY
         api_version: "2023-07-01-preview"
 
     - model_name: claude-opus
-      litellm_params:
+      lumina_params:
         model: {{anthropic_large}}
         api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -628,14 +628,14 @@ You can also set default_fallbacks, in case a specific model group is misconfigu
 ```yaml keep-model-ids
 model_list:
     - model_name: gpt-3.5-turbo-small
-      litellm_params:
+      lumina_params:
         model: azure/chatgpt-v-2
         api_base: os.environ/AZURE_API_BASE
         api_key: os.environ/AZURE_API_KEY
         api_version: "2023-07-01-preview"
 
     - model_name: claude-opus
-      litellm_params:
+      lumina_params:
         model: {{anthropic_large}}
         api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -663,7 +663,7 @@ router_settings:
 
 model_list:
 - model_name: {{openai_small}}
-  litellm_params:
+  lumina_params:
     model: azure/chatgpt-v-2
     api_base: os.environ/AZURE_API_BASE
     api_key: os.environ/AZURE_API_KEY
@@ -671,12 +671,12 @@ model_list:
     region_name: "eu" # SET EU-REGION
 
 - model_name: {{openai_small}}
-  litellm_params:
+  lumina_params:
     model: {{openai_small}}
     api_key: os.environ/OPENAI_API_KEY
 
 - model_name: {{gemini_flash}}
-  litellm_params:
+  lumina_params:
     model: vertex_ai/{{gemini_flash}}
     vertex_project: adroit-crow-1234
     vertex_location: us-east1 # AUTOMATICALLY INFERS 'region_name'
@@ -714,7 +714,7 @@ print(response.headers.get('x-litellm-model-api-base'))
 
 **Before call is made** LiteLLM removes deployments declared text-only from the candidates for a request that carries an image, meaning a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. This runs on by default under every routing strategy and does not need `enable_pre_call_checks: true`.
 
-A deployment is text-only when `model_info.supports_vision: false` is set, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `litellm_params.base_model`, then the model name. A deployment with no declaration and no catalog entry stays eligible, so declare `supports_vision: false` on custom text-only deployments. When every deployment in the group is text-only nothing is removed and the provider's own error is returned, which keeps the earlier behavior for groups that only ever served text. The `x-litellm-model-id` response header names the deployment that served, or failed, the request.
+A deployment is text-only when `model_info.supports_vision: false` is set, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `lumina_params.base_model`, then the model name. A deployment with no declaration and no catalog entry stays eligible, so declare `supports_vision: false` on custom text-only deployments. When every deployment in the group is text-only nothing is removed and the provider's own error is returned, which keeps the earlier behavior for groups that only ever served text. The `x-litellm-model-id` response header names the deployment that served, or failed, the request.
 
 **1. Set Config**
 
@@ -723,15 +723,15 @@ The Bedrock gpt-oss deployment below needs no declaration because the model cata
 ```yaml
 model_list:
   - model_name: mixed
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6
       api_key: os.environ/OPENAI_API_KEY
   - model_name: mixed
-    litellm_params:
+    lumina_params:
       model: bedrock/openai.gpt-oss-120b-1:0
       aws_region_name: us-east-1
   - model_name: mixed
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/my-text-only-model
       api_base: os.environ/TEXT_API_BASE
     model_info:
@@ -745,7 +745,7 @@ router_settings:
 
 ```bash
 curl -i http://0.0.0.0:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "mixed",
@@ -766,11 +766,11 @@ You can set fallbacks for wildcard models (e.g. `azure/*`) in your config file.
 ```yaml
 model_list:
   - model_name: "{{openai_large}}"
-    litellm_params:
+    lumina_params:
       model: "openai/{{openai_large}}"
       api_key: os.environ/OPENAI_API_KEY
   - model_name: "azure/*"
-    litellm_params:
+    lumina_params:
       model: "azure/*"
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -789,7 +789,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -814,15 +814,15 @@ A request for a bare model name such as `{{anthropic}}`, the form Claude Code se
 ```yaml
 model_list:
   - model_name: "anthropic/*"
-    litellm_params:
+    lumina_params:
       model: "anthropic/*"
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: "openai/{{openai_large}}"
-    litellm_params:
+    lumina_params:
       model: "openai/{{openai_large}}"
       api_key: os.environ/OPENAI_API_KEY
   - model_name: "{{openai_small}}"
-    litellm_params:
+    lumina_params:
       model: "openai/{{openai_small}}"
       api_key: os.environ/OPENAI_API_KEY
 
@@ -841,13 +841,13 @@ The proxy applies the calling key's, team's and project's model access checks to
 ```yaml keep-model-ids
 model_list:
   - model_name: gpt-5.6
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6
       api_key: os.environ/OPENAI_API_KEY
     model_info:
       access_groups: ["openai-only"]
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -856,7 +856,7 @@ router_settings:
     - gpt-5.6: ["{{anthropic}}"]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 A key created with `"models": ["openai-only"]` can call `gpt-5.6` but not `{{anthropic}}`. A failing `gpt-5.6` request from that key returns the OpenAI error instead of a `{{anthropic}}` completion, and the response carries no `x-litellm-attempted-fallbacks` header. A key created with `"models": ["openai-only", "{{anthropic}}"]` still falls back.
@@ -885,7 +885,7 @@ The proxy re-checks the calling key's and user's budget against every fallback t
 ```yaml keep-model-ids
 model_list:
   - model_name: free-model
-    litellm_params:
+    lumina_params:
       model: ollama/llama2
       api_base: http://localhost:11434
       input_cost_per_token: 0
@@ -894,7 +894,7 @@ model_list:
       input_cost_per_token: 0
       output_cost_per_token: 0
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -903,7 +903,7 @@ router_settings:
     - free-model: ["{{anthropic}}"]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 A user whose spend has passed their `max_budget` can still call `free-model` and pay nothing. Once `free-model` fails, that user gets the `free-model` error instead of a billed `{{anthropic}}` completion, and the response carries no `x-litellm-attempted-fallbacks` header. A user still under budget keeps falling back to `{{anthropic}}` as before.
@@ -929,7 +929,7 @@ You can disable fallbacks per request by setting `disable_fallbacks: true` in yo
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "messages": [
         {
@@ -950,7 +950,7 @@ You can disable fallbacks per key by setting `disable_fallbacks: true` in your k
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {

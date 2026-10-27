@@ -255,7 +255,7 @@ New interactive playground UI enables side-by-side comparison of multiple LLM mo
 - **General**
     - Get custom_llm_provider from query param - [PR #16731](https://github.com/BerriAI/litellm/pull/16731)
     - Fix optional param mapping - [PR #16852](https://github.com/BerriAI/litellm/pull/16852)
-    - Add None check for litellm_params - [PR #16754](https://github.com/BerriAI/litellm/pull/16754)
+    - Add None check for lumina_params - [PR #16754](https://github.com/BerriAI/litellm/pull/16754)
 
 ---
 

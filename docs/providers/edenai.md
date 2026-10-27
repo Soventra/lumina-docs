@@ -49,7 +49,7 @@ The proxy can expose the whole catalog with a wildcard deployment. With `check_p
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: edenai/*
-    litellm_params:
+    lumina_params:
       model: edenai/*
       api_key: os.environ/EDENAI_API_KEY
 
@@ -290,36 +290,36 @@ with open("ball.mp4", "wb") as f:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gpt-mini-latest
-    litellm_params:
+    lumina_params:
       model: edenai/openai/gpt-mini-latest
       api_key: os.environ/EDENAI_API_KEY
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: edenai/anthropic/claude-sonnet-latest
       api_key: os.environ/EDENAI_API_KEY
   - model_name: gemini-flash-eu
-    litellm_params:
+    lumina_params:
       model: edenai/vertex/gemini-3.7-flash
       api_key: os.environ/EDENAI_API_KEY
       api_base: https://api.eu.edenai.run/v3
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: edenai/openai/text-embedding-3-small
       api_key: os.environ/EDENAI_API_KEY
   - model_name: whisper-1
-    litellm_params:
+    lumina_params:
       model: edenai/openai/whisper-1
       api_key: os.environ/EDENAI_API_KEY
   - model_name: tts-1
-    litellm_params:
+    lumina_params:
       model: edenai/openai/tts-1
       api_key: os.environ/EDENAI_API_KEY
   - model_name: gpt-image-1-mini
-    litellm_params:
+    lumina_params:
       model: edenai/openai/gpt-image-1-mini
       api_key: os.environ/EDENAI_API_KEY
   - model_name: p-video
-    litellm_params:
+    lumina_params:
       model: edenai/pruna/p-video
       api_key: os.environ/EDENAI_API_KEY
 ```

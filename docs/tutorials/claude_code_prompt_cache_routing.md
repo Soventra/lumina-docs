@@ -12,14 +12,14 @@ router_settings:
   optional_pre_call_checks: ["prompt_caching"]
 
 model_list:
-- litellm_params:
+- lumina_params:
     model: us.anthropic.{{anthropic}}
     aws_profile_name: account-1
     aws_region_name: us-west-2
   model_info:
     litellm_provider: bedrock
   model_name: us.anthropic.{{anthropic}}
-- litellm_params:
+- lumina_params:
     model: us.anthropic.{{anthropic}}
     aws_profile_name: account-2
     aws_region_name: us-west-2

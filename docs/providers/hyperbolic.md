@@ -140,17 +140,17 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: deepseek-fast
-    litellm_params:
+    lumina_params:
       model: hyperbolic/deepseek-ai/DeepSeek-V3
       api_key: os.environ/HYPERBOLIC_API_KEY
 
   - model_name: qwen-coder
-    litellm_params:
+    lumina_params:
       model: hyperbolic/Qwen/Qwen2.5-Coder-32B-Instruct
       api_key: os.environ/HYPERBOLIC_API_KEY
 
   - model_name: deepseek-reasoning
-    litellm_params:
+    lumina_params:
       model: hyperbolic/deepseek-ai/DeepSeek-R1
       api_key: os.environ/HYPERBOLIC_API_KEY
 ```

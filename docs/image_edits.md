@@ -374,7 +374,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: gpt-image-1
-    litellm_params:
+    lumina_params:
       model: gpt-image-1
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -446,7 +446,7 @@ curl -X POST "http://localhost:4000/v1/images/edits" \
 ```yaml showLineNumbers title="Gemini Proxy Configuration"
 model_list:
   - model_name: gemini-image-edit
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-flash-image
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -474,7 +474,7 @@ curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
 ```yaml showLineNumbers title="Black Forest Labs Proxy Configuration"
 model_list:
   - model_name: bfl-kontext-pro
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-kontext-pro
       api_key: os.environ/BFL_API_KEY
     model_info:
@@ -503,14 +503,14 @@ curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
 ```yaml showLineNumbers title="Vertex AI Proxy Configuration"
 model_list:
   - model_name: vertex-gemini-image-edit
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-2.5-flash-image
       vertex_project: os.environ/VERTEXAI_PROJECT
       vertex_location: os.environ/VERTEXAI_LOCATION
       vertex_credentials: os.environ/GOOGLE_APPLICATION_CREDENTIALS
 
   - model_name: vertex-imagen-image-edit
-    litellm_params:
+    lumina_params:
       model: vertex_ai/imagen-3.0-capability-001
       vertex_project: os.environ/VERTEXAI_PROJECT
       vertex_location: os.environ/VERTEXAI_LOCATION
@@ -552,7 +552,7 @@ curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
 ```yaml showLineNumbers title="OpenRouter Proxy Configuration"
 model_list:
   - model_name: openrouter-image-edit
-    litellm_params:
+    lumina_params:
       model: openrouter/google/gemini-2.5-flash-image
       api_key: os.environ/OPENROUTER_API_KEY
 ```
@@ -579,7 +579,7 @@ curl -X POST "http://0.0.0.0:4000/v1/images/edits" \
 ```yaml showLineNumbers title="Hosted vLLM Proxy Configuration"
 model_list:
   - model_name: qwen-image-edit
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/Qwen/Qwen-Image-Edit-2511
       api_base: http://localhost:8091
     model_info:

@@ -103,20 +103,20 @@ This is the shape they deployed, one router per model family:
 ```yaml title="config.yaml"
 model_list:
   - model_name: claude-haiku-4-5           # $1 / $5 per 1M tokens
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5            # $3 / $15
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-opus-5              # $5 / $25
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-auto-latest
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:

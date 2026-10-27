@@ -69,7 +69,7 @@ agents:
   - agent_name: dbx-serving
     agent_card_params:
       name: "Databricks ResponsesAgent on Model Serving"
-    litellm_params:
+    lumina_params:
       custom_llm_provider: databricks_agent
       model: my-responses-agent
       api_base: https://adb-1234567890123456.7.azuredatabricks.net
@@ -79,7 +79,7 @@ agents:
   - agent_name: dbx-app
     agent_card_params:
       name: "Databricks App ResponsesAgent"
-    litellm_params:
+    lumina_params:
       custom_llm_provider: databricks_agent
       api_base: https://my-agent-app-1234567890123456.7.azure.databricksapps.com
       client_id: os.environ/DATABRICKS_CLIENT_ID
@@ -97,7 +97,7 @@ curl -X POST http://localhost:4000/v1/agents \
   -d '{
     "agent_name": "dbx-serving",
     "agent_card_params": {"name": "Databricks ResponsesAgent on Model Serving"},
-    "litellm_params": {
+    "lumina_params": {
       "custom_llm_provider": "databricks_agent",
       "model": "my-responses-agent",
       "api_base": "https://adb-1234567890123456.7.azuredatabricks.net",

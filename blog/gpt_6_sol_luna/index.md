@@ -39,11 +39,11 @@ Sol and Luna join GPT-6 Astra, trained with the same methods and priced for work
 ```yaml
 model_list:
   - model_name: gpt-6-sol
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-sol
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-6-luna
-    litellm_params:
+    lumina_params:
       model: openai/gpt-6-luna
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -64,7 +64,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-6-sol",
     "messages": [
@@ -115,7 +115,7 @@ For agentic and multi-turn workflows, use `/v1/responses` to preserve reasoning 
 ```bash
 curl -X POST "http://0.0.0.0:4000/v1/responses" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-6-sol",
     "input": "Plan and write a Python script that scrapes a webpage and summarizes it."

@@ -222,7 +222,7 @@ general_settings:
 # proxy_config.yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
     model_info:

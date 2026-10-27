@@ -64,7 +64,7 @@ async for chunk in response:
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration"
 model_list:
   - model_name: vertex-agent-1
-    litellm_params:
+    lumina_params:
       model: vertex_ai/agent_engine/projects/1060139831167/locations/us-central1/reasoningEngines/8263861224643493888
       vertex_project: your-project-id
       vertex_location: us-central1
@@ -87,7 +87,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Basic Agent Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "vertex-agent-1",
     "messages": [

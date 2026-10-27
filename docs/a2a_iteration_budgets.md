@@ -18,7 +18,7 @@ Both controls require a `session_id` (sent via `x-litellm-trace-id` header or `m
 
 ## Trace-ID Enforcement
 
-LiteLLM supports two independent trace-id flags, configured in `litellm_params` on the agent:
+LiteLLM supports two independent trace-id flags, configured in `lumina_params` on the agent:
 
 | Flag | Description |
 |------|-------------|
@@ -35,7 +35,7 @@ When creating an agent in the LiteLLM Admin UI:
 4. Set **Max Iterations** to cap the number of LLM calls per session
 5. Set **Max Budget Per Session ($)** to cap spend per session
 
-The trace-id flags are stored on the agent's `litellm_params`. Budget controls (`max_iterations`, `max_budget_per_session`) are stored in the virtual key's metadata.
+The trace-id flags are stored on the agent's `lumina_params`. Budget controls (`max_iterations`, `max_budget_per_session`) are stored in the virtual key's metadata.
 
 ## Configuring via API
 
@@ -43,7 +43,7 @@ Set trace-id enforcement on the agent itself:
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/agents' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_name": "my-research-agent",
@@ -53,18 +53,18 @@ curl -X POST 'http://localhost:4000/v1/agents' \
       "url": "http://my-agent:8080",
       "version": "1.0.0"
     },
-    "litellm_params": {
+    "lumina_params": {
       "require_trace_id_on_calls_to_agent": true,
       "require_trace_id_on_calls_by_agent": true
     }
   }'
 ```
 
-Budget controls are set on the agent's `litellm_params` (not on individual keys), so they apply across all keys for the agent:
+Budget controls are set on the agent's `lumina_params` (not on individual keys), so they apply across all keys for the agent:
 
 ```bash
 curl -X POST 'http://localhost:4000/v1/agents' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_name": "my-research-agent",
@@ -74,7 +74,7 @@ curl -X POST 'http://localhost:4000/v1/agents' \
       "url": "http://my-agent:8080",
       "version": "1.0.0"
     },
-    "litellm_params": {
+    "lumina_params": {
       "require_trace_id_on_calls_by_agent": true,
       "max_iterations": 25,
       "max_budget_per_session": 5.00
@@ -92,18 +92,18 @@ Callers identify their session by including a `session_id` in one of these ways:
 
 ### Max Iterations
 
-When `max_iterations` is set in agent `litellm_params`:
+When `max_iterations` is set in agent `lumina_params`:
 - Each LLM call for a session increments a counter
 - When the counter exceeds `max_iterations`, the request receives a **429 Too Many Requests**
-- Counters expire after 1 hour by default (configurable via `LITELLM_MAX_ITERATIONS_TTL` env var)
+- Counters expire after 1 hour by default (configurable via `LUMINA_MAX_ITERATIONS_TTL` env var)
 
 ### Max Budget Per Session
 
-When `max_budget_per_session` is set in agent `litellm_params`:
+When `max_budget_per_session` is set in agent `lumina_params`:
 - After each successful LLM call, the response cost is accumulated for the session
 - Before each call, the accumulated spend is checked against the budget
 - When spend exceeds the budget, the request receives a **429 Too Many Requests**
-- Session spend counters expire after 1 hour by default (configurable via `LITELLM_MAX_BUDGET_PER_SESSION_TTL` env var)
+- Session spend counters expire after 1 hour by default (configurable via `LUMINA_MAX_BUDGET_PER_SESSION_TTL` env var)
 
 ## Example
 
@@ -127,7 +127,7 @@ Create an agent with max 25 iterations and a $5 budget cap:
 ```bash
 # 1. Create the agent with trace-id enforcement
 curl -X POST 'http://localhost:4000/v1/agents' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_name": "my-research-agent",
@@ -137,14 +137,14 @@ curl -X POST 'http://localhost:4000/v1/agents' \
       "url": "http://my-agent:8080",
       "version": "1.0.0"
     },
-    "litellm_params": {
+    "lumina_params": {
       "require_trace_id_on_calls_by_agent": true
     }
   }'
 
 # 2. Create a key for the agent
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "agent_id": "<agent_id_from_step_1>",
@@ -184,5 +184,5 @@ After 25 calls or $5 spent within this session, subsequent requests will receive
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LITELLM_MAX_ITERATIONS_TTL` | `3600` (1 hour) | TTL in seconds for session iteration counters |
-| `LITELLM_MAX_BUDGET_PER_SESSION_TTL` | `3600` (1 hour) | TTL in seconds for session budget counters |
+| `LUMINA_MAX_ITERATIONS_TTL` | `3600` (1 hour) | TTL in seconds for session iteration counters |
+| `LUMINA_MAX_BUDGET_PER_SESSION_TTL` | `3600` (1 hour) | TTL in seconds for session budget counters |

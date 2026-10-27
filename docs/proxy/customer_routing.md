@@ -21,7 +21,7 @@ End-users can be tracked / id'ed by passing the 'user' param to litellm in an op
 
 ```bash
 curl -X POST --location 'http://0.0.0.0:4000/end_user/new' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "user_id" : "ishaan-jaff-45",
@@ -38,13 +38,13 @@ Supported regions are 'eu' and 'us'.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_small}} # EU azure model
       api_base: https://my-endpoint-europe-berri-992.openai.azure.com/
       api_key: os.environ/AZURE_EUROPE_API_KEY
       region_name: "eu"
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: https://openai-gpt-4-test-v-1.openai.azure.com/
       api_version: "2023-05-15"
@@ -68,7 +68,7 @@ Make a simple chat completions call to the proxy. In the response headers, you s
 ```bash
 curl -X POST --location 'http://localhost:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_small}}", 
     "messages": [

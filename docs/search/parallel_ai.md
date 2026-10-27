@@ -24,13 +24,13 @@ response = search(
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 search_tools:
   - search_tool_name: parallel-search
-    litellm_params:
+    lumina_params:
       search_provider: parallel_ai
       api_key: os.environ/PARALLEL_AI_API_KEY
 ```
@@ -47,7 +47,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test Request"
 curl http://0.0.0.0:4000/v1/search/parallel-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments",
@@ -80,13 +80,13 @@ When a Parallel AI search tool backs [web search interception](../integrations/w
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
 search_tools:
   - search_tool_name: parallel-search
-    litellm_params:
+    lumina_params:
       search_provider: parallel_ai
       api_key: os.environ/PARALLEL_AI_API_KEY
       max_results: 5
@@ -100,7 +100,7 @@ litellm_settings:
 
 ```bash showLineNumbers title="Request"
 curl http://0.0.0.0:4000/v1/messages \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "claude",
@@ -121,5 +121,5 @@ The model sees the [three-field schema](../integrations/websearch_interception.m
 }
 ```
 
-When the model fills only `query`, or you call `/v1/search/parallel-search` with a single `query` string, that string is sent as both a one-item `search_queries` list and the `objective`. A list of `query` strings on a direct search call maps to `search_queries` the same way, with `objective` passed through only when you supply it. An `objective` set in the search tool's `litellm_params` is kept on every request and the model's is dropped.
+When the model fills only `query`, or you call `/v1/search/parallel-search` with a single `query` string, that string is sent as both a one-item `search_queries` list and the `objective`. A list of `query` strings on a direct search call maps to `search_queries` the same way, with `objective` passed through only when you supply it. An `objective` set in the search tool's `lumina_params` is kept on every request and the model's is dropped.
 

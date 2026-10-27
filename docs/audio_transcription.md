@@ -43,14 +43,14 @@ print(f"response: {response}")
 ```yaml showLineNumbers title="OpenAI Configuration"
 model_list:
 - model_name: whisper
-  litellm_params:
+  lumina_params:
     model: whisper-1
     api_key: os.environ/OPENAI_API_KEY
   model_info:
     mode: audio_transcription
     
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 </TabItem>
 <TabItem value="openai+azure" label="OpenAI + Azure">
@@ -58,13 +58,13 @@ general_settings:
 ```yaml showLineNumbers title="OpenAI + Azure Configuration"
 model_list:
 - model_name: whisper
-  litellm_params:
+  lumina_params:
     model: whisper-1
     api_key: os.environ/OPENAI_API_KEY
   model_info:
     mode: audio_transcription
 - model_name: whisper
-  litellm_params:
+  lumina_params:
     model: azure/azure-whisper
     api_version: 2024-02-15-preview
     api_base: os.environ/AZURE_EUROPE_API_BASE
@@ -73,7 +73,7 @@ model_list:
     mode: audio_transcription
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 </TabItem>
@@ -94,7 +94,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test with cURL"
 curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'file=@"/Users/krrishdholakia/Downloads/gettysburg.wav"' \
 --form 'model="whisper"'
 ```
@@ -141,7 +141,7 @@ You can configure fallbacks for audio transcription to automatically retry with 
 
 ```bash showLineNumbers title="Test with cURL and Fallbacks"
 curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'file=@"gettysburg.wav"' \
 --form 'model="groq/whisper-large-v3"' \
 --form 'fallbacks[]="openai/whisper-1"'

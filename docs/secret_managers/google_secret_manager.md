@@ -21,7 +21,7 @@ export GOOGLE_SECRET_MANAGER_ALWAYS_READ_SECRET_MANAGER = ""  # (str) set to "tr
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
       api_key: os.environ/OPENAI_API_KEY # this will be read from Google Secret Manager

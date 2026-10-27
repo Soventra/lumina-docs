@@ -81,11 +81,11 @@ export MORPH_API_KEY="your-api-key"
 ```yaml
 model_list:
   - model_name: morph-v3-fast
-    litellm_params:
+    lumina_params:
       model: morph/morph-v3-fast
       
   - model_name: morph-v3-large
-    litellm_params:
+    lumina_params:
       model: morph/morph-v3-large
 ```
 

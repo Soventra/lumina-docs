@@ -138,7 +138,7 @@ print(delete_response)
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -371,7 +371,7 @@ print(response.output)
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -492,7 +492,7 @@ print(response_with_mcp_call)
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -792,7 +792,7 @@ for item in response.output:
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -893,7 +893,7 @@ for tool_call in response.choices[0].message.tool_calls:
 
 ```bash showLineNumbers title="Tool Search via /v1/chat/completions"
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "openai/responses/{{openai_large}}",

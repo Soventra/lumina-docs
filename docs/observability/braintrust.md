@@ -44,7 +44,7 @@ BRAINTRUST_API_BASE="https://api.braintrustdata.com/v1"
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -57,7 +57,7 @@ litellm_settings:
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -D '{
     "model": "groq-llama3",
     "messages": [
@@ -126,7 +126,7 @@ response = litellm.completion(
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -D '{
     "model": "groq-llama3",
     "messages": [

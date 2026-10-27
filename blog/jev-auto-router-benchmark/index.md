@@ -125,7 +125,7 @@ Add this entry beside the existing tier deployments in `model_list`, replacing t
 
 ```yaml title="config.yaml"
 - model_name: jev-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_default_model: {{openai_large}}
     complexity_router_config:

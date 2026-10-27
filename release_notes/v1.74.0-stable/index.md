@@ -78,7 +78,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "<your-litellm-proxy-base-url>/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "Zapier_Gmail"
             }
         }
@@ -97,7 +97,7 @@ In this example, the request will only have access to tools from the "Zapier_Gma
 ```bash title="cURL Example with Server Segregation" showLineNumbers
 curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "gpt-4o",
     "tools": [
@@ -107,7 +107,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
             "server_url": "<your-litellm-proxy-base-url>/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "Zapier_Gmail,Server2"
             }
         }
@@ -245,7 +245,7 @@ This release brings significant performance improvements to the Python SDK with 
 - **[/chat/completions](/docs/anthropic_unified)**
   - Support Cursor IDE tool_choice format `{"type": "auto"}` - [PR](https://github.com/BerriAI/litellm/pull/12168)
 - **[/generateContent](/docs/generateContent)**
-  - Allow passing litellm_params - [PR](https://github.com/BerriAI/litellm/pull/12177)
+  - Allow passing lumina_params - [PR](https://github.com/BerriAI/litellm/pull/12177)
   - Only pass supported params when using OpenAI models - [PR](https://github.com/BerriAI/litellm/pull/12297)
   - Fix using gemini-cli with Vertex Anthropic Models - [PR](https://github.com/BerriAI/litellm/pull/12246)
 - **Streaming**

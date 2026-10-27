@@ -85,11 +85,11 @@ export GMI_API_KEY=""
 ```yaml
 model_list:
   - model_name: deepseek-v3
-    litellm_params:
+    lumina_params:
       model: gmi/deepseek-ai/DeepSeek-V3.2
       api_key: os.environ/GMI_API_KEY
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: gmi/anthropic/claude-sonnet-4.5
       api_key: os.environ/GMI_API_KEY
 ```

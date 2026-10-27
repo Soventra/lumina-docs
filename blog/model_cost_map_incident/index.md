@@ -77,7 +77,7 @@ A contributor PR introduced an extra `{` bracket, producing invalid JSON. The re
 | 4 | Resilience test suite (bad hosted map, fallback, completion) | ✅ Done | [`test_model_cost_map_resilience.py#L150-L291`](https://github.com/BerriAI/litellm/blob/main/tests/llm_translation/test_model_cost_map_resilience.py#L150-L291) |
 | 5 | Test that backup model cost map always exists and contains common models | ✅ Done | [`test_model_cost_map_resilience.py#L213-L228`](https://github.com/BerriAI/litellm/blob/main/tests/llm_translation/test_model_cost_map_resilience.py#L213-L228) |
 
-Enterprises that require zero external dependencies at import time can set `LITELLM_LOCAL_MODEL_COST_MAP=True` to skip the GitHub fetch entirely.
+Enterprises that require zero external dependencies at import time can set `LUMINA_LOCAL_MODEL_COST_MAP=True` to skip the GitHub fetch entirely.
 
 ---
 

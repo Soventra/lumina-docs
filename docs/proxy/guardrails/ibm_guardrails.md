@@ -28,13 +28,13 @@ You can run these checks:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: ibm-jailbreak-detector
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: pre_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -64,7 +64,7 @@ litellm --config config.yaml --detailed_debug
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -110,7 +110,7 @@ IBM Guardrails has two APIs you can use:
 ```yaml
 guardrails:
   - guardrail_name: ibm-detector
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: pre_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -126,7 +126,7 @@ If you're using the IBM FMS Guardrails Orchestrator, you can use [FMS Orchestrat
 ```yaml
 guardrails:
   - guardrail_name: ibm-orchestrator
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: pre_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -142,7 +142,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: jailbreak-check
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: pre_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -159,7 +159,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: pii-check
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: post_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -176,7 +176,7 @@ guardrails:
 ```yaml
 guardrails:
   - guardrail_name: jailbreak-check
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: pre_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -185,7 +185,7 @@ guardrails:
       is_detector_server: true
       
   - guardrail_name: pii-check
-    litellm_params:
+    lumina_params:
       guardrail: ibm_guardrails
       mode: post_call
       auth_token: os.environ/IBM_GUARDRAILS_AUTH_TOKEN
@@ -199,7 +199,7 @@ Then in your request:
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [{"role": "user", "content": "Hello"}],

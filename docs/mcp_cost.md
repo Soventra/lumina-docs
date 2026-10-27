@@ -19,7 +19,7 @@ Configure fixed costs for MCP servers directly in your config.yaml:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: sk-xxxxxxx
 
@@ -95,7 +95,7 @@ custom_mcp_cost_tracker = CustomMCPCostTracker()
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: sk-xxxxxxx
 

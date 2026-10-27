@@ -40,7 +40,7 @@ Context window and max output are unchanged from Opus 5 at 1M and 128K.
 
 Pricing landed in [PR #42489](https://github.com/BerriAI/litellm/pull/42489), and most proxies do not need to upgrade at all. On the default remote cost map, open the **Price Data** tab under **Models + Endpoints** in the UI and click **Reload Price Data** (or `POST /reload/model_cost_map` as a proxy admin), on any version `v1.76.0` or newer.
 
-The exception is `LITELLM_LOCAL_MODEL_COST_MAP=true`, which bakes the cost map into the image and puts it out of the Reload button's reach. That path needs an image built after #42489 merged.
+The exception is `LUMINA_LOCAL_MODEL_COST_MAP=true`, which bakes the cost map into the image and puts it out of the Reload button's reach. That path needs an image built after #42489 merged.
 
 ## Usage
 
@@ -54,7 +54,7 @@ Pick your provider below. Each tab wires up `claude-opus-5-5` for that provider;
 ```yaml
 model_list:
   - model_name: claude-opus-5-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5-5
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -78,7 +78,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-opus-5-5
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-opus-5-5
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -105,7 +105,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-opus-5-5
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-opus-5-5
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: global
@@ -132,7 +132,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-opus-5-5
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-opus-5-5
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -160,7 +160,7 @@ The request is the same regardless of which provider you configured above:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-5-5",
   "messages": [
@@ -183,7 +183,7 @@ Opus 5.5 runs faster with `speed: "fast"`, billed at $8 / MTok input and $40 / M
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-opus-5-5",
   "messages": [

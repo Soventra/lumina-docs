@@ -131,7 +131,7 @@ Set `BEDROCK_MANTLE_API_BASE` to send the Mantle call to another host, for examp
 ```bash
 curl -X POST "http://localhost:4000/v1/responses/input_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "input": "Hello, how are you?"
@@ -175,7 +175,7 @@ See [Anthropic Token Counting](./anthropic_count_tokens.md) for full documentati
 ```bash
 curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [
@@ -220,13 +220,13 @@ As an alternative, set `token_count_model` to count with a different model that 
 ```yaml
 model_list:
   - model_name: glm
-    litellm_params:
+    lumina_params:
       model: vertex_ai/zai-org/glm-5-maas
     model_info:
       token_count_framing: 8  # tokens added to the local estimate
 
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.claude-sonnet-5-5
     model_info:
       token_count_model:
@@ -247,12 +247,12 @@ The `/v1/messages/count_tokens`, `/v1/responses/input_tokens`, and `:countTokens
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```

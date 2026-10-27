@@ -325,7 +325,7 @@ Let's dive in.
 - **LRU cache for `normalize_request_route`** - [PR #19812](https://github.com/BerriAI/litellm/pull/19812)
 - **Optimize `get_standard_logging_metadata`** with set intersection - [PR #19685](https://github.com/BerriAI/litellm/pull/19685)
 - **Early-exit guards in `completion_cost`** for unused features - [PR #20020](https://github.com/BerriAI/litellm/pull/20020)
-- **Optimize `get_litellm_params`** with sparse kwargs extraction - [PR #19884](https://github.com/BerriAI/litellm/pull/19884)
+- **Optimize `get_lumina_params`** with sparse kwargs extraction - [PR #19884](https://github.com/BerriAI/litellm/pull/19884)
 - **Guard debug log f-strings** and remove redundant dict copies - [PR #19961](https://github.com/BerriAI/litellm/pull/19961)
 - **Replace enum construction with frozenset lookup** - [PR #20302](https://github.com/BerriAI/litellm/pull/20302)
 - **Guard debug f-string in `update_environment_variables`** - [PR #20360](https://github.com/BerriAI/litellm/pull/20360)
@@ -350,7 +350,7 @@ Let's dive in.
 
 ## Documentation Updates (14 updates)
 
-- Add FAQ for setting up and verifying LITELLM_LICENSE - [PR #20284](https://github.com/BerriAI/litellm/pull/20284)
+- Add FAQ for setting up and verifying LUMINA_LICENSE - [PR #20284](https://github.com/BerriAI/litellm/pull/20284)
 - Model request tags documentation - [PR #20290](https://github.com/BerriAI/litellm/pull/20290)
 - Add Prisma migration troubleshooting guide - [PR #20300](https://github.com/BerriAI/litellm/pull/20300)
 - MCP Semantic Filtering documentation - [PR #20316](https://github.com/BerriAI/litellm/pull/20316)

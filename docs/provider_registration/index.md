@@ -128,7 +128,7 @@ elif custom_llm_provider == "bytez":
         acompletion=acompletion,
         logging_obj=logging,
         optional_params=optional_params,
-        litellm_params=litellm_params,
+        lumina_params=lumina_params,
         timeout=timeout,  # type: ignore
         client=client,
         custom_llm_provider=custom_llm_provider,
@@ -143,10 +143,10 @@ NOTE you can rely on liteLLM passing each of the args/kwargs to your config via 
 
 #### `litellm/constants.py`
 
-Add yourself to the list of `LITELLM_CHAT_PROVIDERS`
+Add yourself to the list of `LUMINA_CHAT_PROVIDERS`
 
 ```py
-LITELLM_CHAT_PROVIDERS = [
+LUMINA_CHAT_PROVIDERS = [
     "openai",
     "openai_like",
     "bytez",

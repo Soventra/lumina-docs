@@ -14,13 +14,13 @@ Define your guardrails under the `guardrails` section:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "enkryptai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: enkryptai
       mode: "pre_call"
       api_key: os.environ/ENKRYPTAI_API_KEY
@@ -35,7 +35,7 @@ guardrails:
 
 #### Available Detectors
 
-Detectors are configured in the EnkryptAI policy referenced by `policy_name`, not in the LiteLLM config. LiteLLM sends only the text and the `x-enkrypt-policy` header, so a `detectors:` block under `litellm_params` has no effect. EnkryptAI policies support these detection types:
+Detectors are configured in the EnkryptAI policy referenced by `policy_name`, not in the LiteLLM config. LiteLLM sends only the text and the `x-enkrypt-policy` header, so a `detectors:` block under `lumina_params` has no effect. EnkryptAI policies support these detection types:
 
 - **toxicity** - Detect toxic language
 - **nsfw** - Detect NSFW (Not Safe For Work) content
@@ -69,7 +69,7 @@ litellm --config config.yaml --detailed_debug
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -92,7 +92,7 @@ Expect this to fail if content violates detector policies:
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -133,7 +133,7 @@ You can specify a custom EnkryptAI policy:
 ```yaml
 guardrails:
   - guardrail_name: "enkryptai-custom"
-    litellm_params:
+    lumina_params:
       guardrail: enkryptai
       mode: "pre_call"
       api_key: os.environ/ENKRYPTAI_API_KEY
@@ -150,7 +150,7 @@ Configure separate guardrails for input and output:
 guardrails:
   # Input guardrail
   - guardrail_name: "enkryptai-input"
-    litellm_params:
+    lumina_params:
       guardrail: enkryptai
       mode: "pre_call"
       api_key: os.environ/ENKRYPTAI_API_KEY
@@ -158,7 +158,7 @@ guardrails:
 
   # Output guardrail
   - guardrail_name: "enkryptai-output"
-    litellm_params:
+    lumina_params:
       guardrail: enkryptai
       mode: "post_call"
       api_key: os.environ/ENKRYPTAI_API_KEY

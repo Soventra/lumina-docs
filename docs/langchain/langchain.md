@@ -443,18 +443,18 @@ When using tags with LiteLLM Proxy, you can:
 
 #### Example Proxy Configuration with Tags
 
-Tag routing is configured per deployment: add `tags` under each deployment's `litellm_params` and turn on `enable_tag_filtering` in `router_settings`. A request tagged `premium` to `chat` then only goes to the deployments carrying that tag. See [Tag Based Routing](../proxy/tag_routing.md) for default tags and match modes
+Tag routing is configured per deployment: add `tags` under each deployment's `lumina_params` and turn on `enable_tag_filtering` in `router_settings`. A request tagged `premium` to `chat` then only goes to the deployments carrying that tag. See [Tag Based Routing](../proxy/tag_routing.md) for default tags and match modes
 
 ```yaml
 # config.yaml
 model_list:
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: your-key
       tags: ["premium", "high-priority"]
   - model_name: chat
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: your-key
       tags: ["standard"]

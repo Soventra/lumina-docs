@@ -164,7 +164,7 @@ pip install litellm==1.83.14
 - **[Anthropic Messages API](../../docs/anthropic_unified)**
     - Preserve `anthropic_messages` call type for `/v1/messages` logging - [PR #26248](https://github.com/BerriAI/litellm/pull/26248)
 - **[Image API](../../docs/image_generation)**
-    - Forward `litellm_params` to `validate_environment` for Vertex AI credentials in `image_edit` - [PR #26160](https://github.com/BerriAI/litellm/pull/26160)
+    - Forward `lumina_params` to `validate_environment` for Vertex AI credentials in `image_edit` - [PR #26160](https://github.com/BerriAI/litellm/pull/26160)
     - Enforce multipart-only file inputs on image edit endpoints - [PR #26293](https://github.com/BerriAI/litellm/pull/26293)
     - Align image URL fetch with the validated HTTP client (Bedrock + token counter paths) - [PR #26272](https://github.com/BerriAI/litellm/pull/26272)
 - **[Vector Stores](../../docs/vector_stores)**

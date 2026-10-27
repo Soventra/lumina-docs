@@ -27,13 +27,13 @@ Add a `prompts` field to your config.yaml:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 prompts:
   - prompt_id: "my_prompt_id"
-    litellm_params:
+    lumina_params:
       prompt_id: "my_prompt_id"
       prompt_integration: "dotprompt"  # or bitbucket, gitlab, generic_prompt_management, arize_phoenix
       # integration-specific parameters below
@@ -63,13 +63,13 @@ Point each entry at a single file with `prompt_file`, or omit it to load `<promp
 ```yaml
 prompts:
   - prompt_id: "hello"
-    litellm_params:
+    lumina_params:
       prompt_id: "hello"
       prompt_integration: "dotprompt"
       prompt_file: "./prompts/hello.prompt"  # Path to a single .prompt file
 
   - prompt_id: "goodbye"
-    litellm_params:
+    lumina_params:
       prompt_id: "goodbye"
       prompt_integration: "dotprompt"  # Loads ./prompts/goodbye.prompt from global_prompt_directory
 
@@ -82,7 +82,7 @@ litellm_settings:
 ```yaml
 prompts:
   - prompt_id: "my_inline_prompt"
-    litellm_params:
+    lumina_params:
       prompt_id: "my_inline_prompt"
       prompt_integration: "dotprompt"
       prompt_data:
@@ -99,7 +99,7 @@ prompts:
 ```yaml
 prompts:
   - prompt_id: "simple_prompt"
-    litellm_params:
+    lumina_params:
       prompt_id: "simple_prompt"
       prompt_integration: "dotprompt"
       dotprompt_content: |
@@ -132,7 +132,7 @@ User: {{user_message}}
 ```yaml
 prompts:
   - prompt_id: "my_bitbucket_prompt"
-    litellm_params:
+    lumina_params:
       prompt_id: "my_bitbucket_prompt"
       prompt_integration: "bitbucket"
       bitbucket_workspace: "your-workspace"
@@ -168,7 +168,7 @@ User: {{user_message}}
 ```yaml
 prompts:
   - prompt_id: "my_gitlab_prompt"
-    litellm_params:
+    lumina_params:
       prompt_id: "my_gitlab_prompt"
       prompt_integration: "gitlab"
       gitlab_project: "group/sub/repo"
@@ -203,7 +203,7 @@ User: {{user_message}}
 ```yaml
 prompts:
   - prompt_id: "simple_prompt"
-    litellm_params:
+    lumina_params:
       prompt_integration: "generic_prompt_management"
       provider_specific_query_params:
         project_name: litellm
@@ -257,21 +257,21 @@ Here's a complete example showing multiple prompts:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 prompts:
   # File-based dotprompt
   - prompt_id: "coding_assistant"
-    litellm_params:
+    lumina_params:
       prompt_id: "coding_assistant"
       prompt_integration: "dotprompt"
       prompt_file: "./prompts/coding_assistant.prompt"
   
   # Inline dotprompt
   - prompt_id: "simple_chat"
-    litellm_params:
+    lumina_params:
       prompt_id: "simple_chat"
       prompt_integration: "dotprompt"
       prompt_data:
@@ -299,7 +299,7 @@ After loading prompts via config.yaml, use them in your API requests:
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "prompt_id": "coding_assistant",
@@ -315,7 +315,7 @@ You can also use the same `prompt_id` with the Responses API:
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/responses' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_large}}",
     "prompt_id": "coding_assistant",
@@ -332,7 +332,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/responses' \
 Each prompt in the `prompts` list requires:
 
 - **`prompt_id`** (string, required): Unique identifier for the prompt
-- **`litellm_params`** (object, required): Configuration for the prompt
+- **`lumina_params`** (object, required): Configuration for the prompt
   - **`prompt_id`** (string, required): Must match the top-level prompt_id
   - **`prompt_integration`** (string, required): One of: `dotprompt`, `bitbucket`, `gitlab`, `generic_prompt_management`, `arize_phoenix`
   - Additional integration-specific parameters (see tabs above)
@@ -381,12 +381,12 @@ resp = litellm.completion(
 ```yaml
 model_list:
   - model_name: my-langfuse-model
-    litellm_params:
+    lumina_params:
       model: langfuse/openai-model
       prompt_id: "<langfuse_prompt_id>"
       api_key: os.environ/OPENAI_API_KEY
   - model_name: openai-model
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -405,7 +405,7 @@ litellm --config config.yaml --detailed_debug
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "my-langfuse-model",
     "messages": [
@@ -486,7 +486,7 @@ litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: langfuse/{{openai_small}} # OR langfuse/anthropic/{{anthropic}}
       prompt_id: <langfuse_prompt_id>
       api_key: os.environ/OPENAI_API_KEY
@@ -504,7 +504,7 @@ If the model is specified in the Langfuse config, it will be used.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -541,7 +541,7 @@ If the Langfuse prompt is a list, it will be sent as is (Langfuse chat prompts a
 
 ## API Reference
 
-These are the params you can pass to the `litellm.completion` function in SDK and `litellm_params` in config.yaml
+These are the params you can pass to the `litellm.completion` function in SDK and `lumina_params` in config.yaml
 
 ```
 prompt_id: str # required

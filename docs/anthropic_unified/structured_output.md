@@ -26,7 +26,7 @@ Use LiteLLM to call Anthropic's structured output feature via the `/v1/messages`
 ```yaml
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -42,7 +42,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "claude-sonnet",
@@ -79,7 +79,7 @@ curl http://localhost:4000/v1/messages \
 ```yaml
 model_list:
   - model_name: azure-claude-sonnet
-    litellm_params:
+    lumina_params:
       model: azure_ai/{{anthropic}}
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: https://your-endpoint.inference.ai.azure.com
@@ -96,7 +96,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "azure-claude-sonnet",
@@ -133,7 +133,7 @@ curl http://localhost:4000/v1/messages \
 ```yaml
 model_list:
   - model_name: bedrock-claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/global.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -151,7 +151,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "bedrock-claude-sonnet",
@@ -188,7 +188,7 @@ curl http://localhost:4000/v1/messages \
 ```yaml
 model_list:
   - model_name: bedrock-claude-invoke
-    litellm_params:
+    lumina_params:
       model: bedrock/invoke/global.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -206,7 +206,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "bedrock-claude-invoke",

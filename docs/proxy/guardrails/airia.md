@@ -28,13 +28,13 @@ One entry covers both directions. `pre_call` checks the prompt; `post_call` chec
 ```yaml title="config.yaml"
 model_list:
   - model_name: gpt-4o-mini
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-mini
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: airia
-    litellm_params:
+    lumina_params:
       guardrail: airia
       mode: [pre_call, post_call]
       default_on: true

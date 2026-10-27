@@ -1,6 +1,6 @@
 # Worker Startup Hooks
 
-Use `LITELLM_WORKER_STARTUP_HOOKS` to run custom initialization functions in **each worker process** during proxy startup. This is essential when using multi-worker deployments (`--num_workers > 1`) with libraries that require per-process initialization, such as [gflags](https://github.com/google/python-gflags).
+Use `LUMINA_WORKER_STARTUP_HOOKS` to run custom initialization functions in **each worker process** during proxy startup. This is essential when using multi-worker deployments (`--num_workers > 1`) with libraries that require per-process initialization, such as [gflags](https://github.com/google/python-gflags).
 
 ## The Problem
 
@@ -19,10 +19,10 @@ Each worker is a **separate process** spawned by uvicorn, gunicorn, or Granian (
 
 ## Usage
 
-Set the `LITELLM_WORKER_STARTUP_HOOKS` environment variable to a comma-separated list of `module.path:function_name` callables:
+Set the `LUMINA_WORKER_STARTUP_HOOKS` environment variable to a comma-separated list of `module.path:function_name` callables:
 
 ```bash
-export LITELLM_WORKER_STARTUP_HOOKS="my_module:my_init_function"
+export LUMINA_WORKER_STARTUP_HOOKS="my_module:my_init_function"
 ```
 
 Each hook is called **early** in the worker startup lifecycle, before config loading, database setup, or any request handling. Both sync and async functions are supported.
@@ -82,7 +82,7 @@ from my_litellm_wrapper import init_gflags
 os.environ["GFLAGS_ARGV"] = json.dumps(sys.argv)
 
 # Tell LiteLLM to call our hook in each worker
-os.environ["LITELLM_WORKER_STARTUP_HOOKS"] = "my_litellm_wrapper:init_gflags_for_worker"
+os.environ["LUMINA_WORKER_STARTUP_HOOKS"] = "my_litellm_wrapper:init_gflags_for_worker"
 
 # Initialize gflags in the master process
 init_gflags()
@@ -100,7 +100,7 @@ Or via shell:
 
 ```bash
 export GFLAGS_ARGV='["my_app", "--my_flag=value", "--batch_size=32"]'
-export LITELLM_WORKER_STARTUP_HOOKS="my_litellm_wrapper:init_gflags_for_worker"
+export LUMINA_WORKER_STARTUP_HOOKS="my_litellm_wrapper:init_gflags_for_worker"
 
 litellm --config config.yaml --num_workers 4
 ```
@@ -111,7 +111,7 @@ litellm --config config.yaml --num_workers 4
 Master Process                          Worker Process (×N)
 ─────────────────                       ──────────────────────
 1. init_gflags()                        3. proxy_startup_event():
-2. run_server()                            → Read LITELLM_WORKER_STARTUP_HOOKS
+2. run_server()                            → Read LUMINA_WORKER_STARTUP_HOOKS
    → sets env vars                         → Import & call each hook
    → uvicorn.run(workers=N)                  (gflags.FLAGS re-initialized ✓)
    → spawns workers ──────────────────►    → Continue with config/DB setup
@@ -127,7 +127,7 @@ Master Process                          Worker Process (×N)
 Separate multiple hooks with commas:
 
 ```bash
-export LITELLM_WORKER_STARTUP_HOOKS="my_module:init_gflags,my_module:init_metrics,my_module:init_connections"
+export LUMINA_WORKER_STARTUP_HOOKS="my_module:init_gflags,my_module:init_metrics,my_module:init_connections"
 ```
 
 Hooks are executed **in order**, left to right.
@@ -143,13 +143,13 @@ async def init_async_connections():
 ```
 
 ```bash
-export LITELLM_WORKER_STARTUP_HOOKS="my_module:init_async_connections"
+export LUMINA_WORKER_STARTUP_HOOKS="my_module:init_async_connections"
 ```
 
 ## Reference
 
 | Environment Variable | Description |
 |---|---|
-| `LITELLM_WORKER_STARTUP_HOOKS` | Comma-separated `module.path:function_name` callables to run in each worker on startup |
+| `LUMINA_WORKER_STARTUP_HOOKS` | Comma-separated `module.path:function_name` callables to run in each worker on startup |
 
 The hook format follows the standard Python entry point syntax: `module.path:function_name`, where `module.path` is a dotted Python import path and `function_name` is the name of the callable within that module.

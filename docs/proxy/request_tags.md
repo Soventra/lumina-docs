@@ -18,14 +18,14 @@ Set tags on model deployments in `config.yaml`:
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-prod
       api_key: os.environ/AZURE_PROD_API_KEY
       api_base: https://prod.openai.azure.com/
       tags: ["AWS_IAM_PROD"]  # Tag for production
 
   - model_name: gpt-4-dev
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4-dev
       api_key: os.environ/AZURE_DEV_API_KEY
       api_base: https://dev.openai.azure.com/
@@ -40,7 +40,7 @@ Requests just specify the model - tags are automatically applied from config:
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "{{openai_large}}",
@@ -54,7 +54,7 @@ Pass tags dynamically via the `x-litellm-tags` header as a comma-separated strin
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -H 'x-litellm-tags: team-api,production,us-east-1' \
   -d '{
@@ -74,7 +74,7 @@ Pass tags directly in the request body. Both formats are supported:
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "{{openai_large}}",
@@ -89,7 +89,7 @@ curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "{{openai_large}}",
@@ -118,7 +118,7 @@ You can also set default tags at the API key or team level:
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {
@@ -132,7 +132,7 @@ curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/team/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "metadata": {

@@ -28,7 +28,7 @@ user_config = {
     'model_list': [
         {
             'model_name': 'user-azure-instance',
-            'litellm_params': {
+            'lumina_params': {
                 'model': 'azure/chatgpt-v-2',
                 'api_key': os.getenv('AZURE_API_KEY'),
                 'api_version': os.getenv('AZURE_API_VERSION'),
@@ -40,7 +40,7 @@ user_config = {
         },
         {
             'model_name': 'user-openai-instance',
-            'litellm_params': {
+            'lumina_params': {
                 'model': '{{openai_small}}',
                 'api_key': os.getenv('OPENAI_API_KEY'),
                 'timeout': 10,
@@ -96,7 +96,7 @@ const userConfig = {
     model_list: [
         {
             model_name: 'user-azure-instance',
-            litellm_params: {
+            lumina_params: {
                 model: 'azure/chatgpt-v-2',
                 api_key: process.env.AZURE_API_KEY,
                 api_version: process.env.AZURE_API_VERSION,
@@ -108,7 +108,7 @@ const userConfig = {
         },
         {
             model_name: 'user-openai-instance',
-            litellm_params: {
+            lumina_params: {
                 model: '{{openai_small}}',
                 api_key: process.env.OPENAI_API_KEY,
                 timeout: 10,
@@ -162,7 +162,7 @@ Here's how to do it:
 ```yaml
 model_list:
   - model_name: "fireworks_ai/*"
-    litellm_params:
+    lumina_params:
       model: "fireworks_ai/*"
       configurable_clientside_auth_params: ["api_base"]
       # OR 
@@ -206,7 +206,7 @@ More examples:
 <Tabs>
 <TabItem value="openai-py" label="Azure Credentials">
 
-Pass in the litellm_params (E.g. api_key, api_base, etc.) via the `extra_body` parameter in the OpenAI client. 
+Pass in the lumina_params (E.g. api_key, api_base, etc.) via the `extra_body` parameter in the OpenAI client. 
 
 ```python
 import openai
@@ -282,7 +282,7 @@ response = client.chat.completions.create(
             "content": "this is a test request, write a short poem"
         }
     ],
-    extra_body={ # pass any additional litellm_params here
+    extra_body={ # pass any additional lumina_params here
         vertex_ai_location: "us-east1" 
     }
 )

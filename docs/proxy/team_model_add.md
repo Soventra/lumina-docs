@@ -16,7 +16,7 @@ curl -L -X POST 'http://0.0.0.0:4000/model/new' \
 -H 'Content-Type: application/json' \
 -d '{
   "model_name": "my-team-model", # Call LiteLLM with this model name
-  "litellm_params": {
+  "lumina_params": {
     "model": "openai/{{openai_large}}",
     "custom_llm_provider": "openai",
     "api_key": "******ccb07",

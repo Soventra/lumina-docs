@@ -83,12 +83,12 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: swiss-ai-apertus-8b
-    litellm_params:
+    lumina_params:
       model: publicai/swiss-ai/apertus-8b-instruct
       api_key: os.environ/PUBLICAI_API_KEY
 
   - model_name: swiss-ai-apertus-70b
-    litellm_params:
+    lumina_params:
       model: publicai/swiss-ai/apertus-70b-instruct
       api_key: os.environ/PUBLICAI_API_KEY
 ```

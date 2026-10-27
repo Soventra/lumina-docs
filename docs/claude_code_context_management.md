@@ -122,7 +122,7 @@ You can also trigger on tool-use count instead of tokens:
 ```bash
 curl -X POST http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "max_tokens": 1024,
@@ -186,7 +186,7 @@ response = await litellm.anthropic.messages.acreate(
 ```bash
 curl -X POST http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "max_tokens": 1024,
@@ -404,7 +404,7 @@ To opt a model out of the polyfill, list `context_management` in that model's `a
 # proxy_server_config.yaml
 model_list:
   - model_name: gpt-4.1
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4.1
       additional_drop_params: ["context_management"]
 ```

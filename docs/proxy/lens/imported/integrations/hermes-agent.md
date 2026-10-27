@@ -40,11 +40,11 @@ If you already cloned the repository, run the remaining commands from `hermes-ag
 
 | Variable              | Value                                                                                                                                                                                             |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `LITELLM_GATEWAY_URL` | Your gateway’s base URL without a trailing slash or `/v1`, for example `http://localhost:4000`                                                                                                    |
-| `LITELLM_API_KEY`     | Your LiteLLM model key                                                                                                                                                                            |
+| `LUMINA_GATEWAY_URL` | Your gateway’s base URL without a trailing slash or `/v1`, for example `http://localhost:4000`                                                                                                    |
+| `LUMINA_API_KEY`     | Your LiteLLM model key                                                                                                                                                                            |
 | `LENS_URL`            | Copy **Traces endpoint** from Lens tracing setup and remove the final `/v1/traces`. Keep `/lens-ingest` if present. For example, `http://localhost:4318` or `https://gateway.example/lens-ingest` |
 | `LENS_TRACING_KEY`    | The dedicated tracing key from Lens tracing setup                                                                                                                                                 |
-| `LITELLM_MODEL`       | A model alias configured on your gateway                                                                                                                                                          |
+| `LUMINA_MODEL`       | A model alias configured on your gateway                                                                                                                                                          |
 
 The checked-in values target a local development gateway. Replace them for your deployment. [home/hermes\_otel.yaml](https://github.com/BerriAI/litellm-lens-example/blob/a2294277609202247b71c08d7b491f5212809988/hermes-agent/home/hermes_otel.yaml) sends traces to `LENS_URL/v1/traces` with the tracing key as a bearer token.
 

@@ -9,14 +9,14 @@ Pass-through endpoints for Mistral - call provider-specific endpoint, in native 
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ✅ | |
 
-Just replace `https://api.mistral.ai/v1` with `LITELLM_PROXY_BASE_URL/mistral`
+Just replace `https://api.mistral.ai/v1` with `LUMINA_PROXY_BASE_URL/mistral`
 
 #### **Example Usage**
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/ocr' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "mistral-ocr-latest",
     "document": {
@@ -54,7 +54,7 @@ Let's call the Mistral `/ocr` endpoint
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/ocr' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "mistral-ocr-latest",
     "document": {
@@ -74,8 +74,8 @@ Key Changes:
 
 | **Original Endpoint**                                | **Replace With**                  |
 |------------------------------------------------------|-----------------------------------|
-| `https://api.mistral.ai/v1`          | `http://0.0.0.0:4000/mistral` (LITELLM_PROXY_BASE_URL="http://0.0.0.0:4000")      |
-| `bearer $MISTRAL_API_KEY`                                 | `bearer anything` (use `bearer LITELLM_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
+| `https://api.mistral.ai/v1`          | `http://0.0.0.0:4000/mistral` (LUMINA_PROXY_BASE_URL="http://0.0.0.0:4000")      |
+| `bearer $MISTRAL_API_KEY`                                 | `bearer anything` (use `bearer LUMINA_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
 
 
 ### **Example 1: OCR endpoint**
@@ -85,7 +85,7 @@ Key Changes:
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/ocr' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "mistral-ocr-latest",
     "document": {
@@ -119,7 +119,7 @@ curl https://api.mistral.ai/v1/ocr \
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer $LITELLM_VIRTUAL_KEY' \
+-H 'Authorization: Bearer $LUMINA_VIRTUAL_KEY' \
 -d '{
     "messages": [
         {
@@ -167,7 +167,7 @@ Use this, to avoid giving developers the raw Mistral API key, but still letting 
 
 ```bash
 export DATABASE_URL=""
-export LITELLM_MASTER_KEY=""
+export LUMINA_MASTER_KEY=""
 export MISTRAL_API_BASE=""
 export MISTRAL_API_KEY="<your-mistral-api-key>"
 ```
@@ -182,7 +182,7 @@ litellm
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```
@@ -202,7 +202,7 @@ Expected Response
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/mistral/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
   --data '{
     "messages": [
         {

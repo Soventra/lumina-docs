@@ -21,7 +21,7 @@ With `use_v2: true`, requests route to `noma_v2`; `monitor_mode` and `block_fail
 ```yaml showLineNumbers title="litellm config.yaml"
 guardrails:
   - guardrail_name: "noma-v2-guard"
-    litellm_params:
+    lumina_params:
       guardrail: noma_v2
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
@@ -33,7 +33,7 @@ If you want to migrate gradually without changing guardrail names yet:
 ```yaml showLineNumbers title="litellm config.yaml"
 guardrails:
   - guardrail_name: "noma-guard"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       use_v2: true
       mode: "pre_call"
@@ -69,13 +69,13 @@ Apply different v2 configurations for input and output:
 ```yaml showLineNumbers title="litellm config.yaml"
 guardrails:
   - guardrail_name: "noma-v2-input"
-    litellm_params:
+    lumina_params:
       guardrail: noma_v2
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
 
   - guardrail_name: "noma-v2-output"
-    litellm_params:
+    lumina_params:
       guardrail: noma_v2
       mode: "post_call"
       api_key: os.environ/NOMA_API_KEY
@@ -117,19 +117,19 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "noma-guard"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "during_call"
       api_key: os.environ/NOMA_API_KEY
       api_base: os.environ/NOMA_API_BASE
   - guardrail_name: "noma-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
@@ -230,7 +230,7 @@ Expected response:
 ```yaml
 guardrails:
   - guardrail_name: "noma-guard"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
@@ -276,7 +276,7 @@ Use monitor mode to test your guardrails without blocking requests:
 ```yaml
 guardrails:
   - guardrail_name: "noma-monitor"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
@@ -290,7 +290,7 @@ Control behavior when the Noma API is unavailable:
 ```yaml
 guardrails:
   - guardrail_name: "noma-failopen"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
@@ -304,7 +304,7 @@ Enable anonymization to replace sensitive content instead of blocking:
 ```yaml
 guardrails:
   - guardrail_name: "noma-anonymize"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
@@ -318,14 +318,14 @@ Apply different configurations for input and output:
 ```yaml
 guardrails:
   - guardrail_name: "noma-strict-input"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "pre_call"
       api_key: os.environ/NOMA_API_KEY
       block_failures: true
 
   - guardrail_name: "noma-monitor-output"
-    litellm_params:
+    lumina_params:
       guardrail: noma
       mode: "post_call"
       api_key: os.environ/NOMA_API_KEY

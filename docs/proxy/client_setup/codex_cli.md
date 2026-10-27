@@ -19,10 +19,10 @@ To keep your own ChatGPT login and send its requests through the gateway, follow
 | Setting | Value |
 |---|---|
 | Config file | `~/.codex/config.toml` |
-| `base_url` | `<LITELLM_PROXY_BASE_URL>/v1` (e.g. `http://localhost:4000/v1`) |
+| `base_url` | `<LUMINA_PROXY_BASE_URL>/v1` (e.g. `http://localhost:4000/v1`) |
 | Provider key | Your LiteLLM [virtual key](../virtual_keys.md), read from the env var named in `env_key`, or [`lite auth print-token`](./codex_cli_sso.md) |
-| `model_catalog_url` | `<LITELLM_PROXY_BASE_URL>/v1/models`, plus `api_key_model_discovery = true` under `[features]` |
-| MCP endpoint | `<LITELLM_PROXY_BASE_URL>/<server_name>/mcp` |
+| `model_catalog_url` | `<LUMINA_PROXY_BASE_URL>/v1/models`, plus `api_key_model_discovery = true` under `[features]` |
+| MCP endpoint | `<LUMINA_PROXY_BASE_URL>/<server_name>/mcp` |
 | MCP auth | The same virtual key, read from the env var named in `bearer_token_env_var` |
 
 ## LLM setup
@@ -50,7 +50,7 @@ model_provider = "litellm"
 [model_providers.litellm]
 name = "LiteLLM"
 base_url = "http://localhost:4000/v1"
-env_key = "LITELLM_API_KEY"
+env_key = "LUMINA_API_KEY"
 wire_api = "responses"
 ```
 
@@ -66,7 +66,7 @@ request_max_retries = 4
 Export the key, then run Codex:
 
 ```bash
-export LITELLM_API_KEY="sk-<your-virtual-key>"
+export LUMINA_API_KEY="sk-<your-virtual-key>"
 
 codex
 ```
@@ -87,7 +87,7 @@ The row carries no end user yet, since Codex has no setting that puts one in the
 
 For an OpenAI deployment with UI screenshots, configuration, and request examples, see [Fast & Ultrafast mode](../../providers/openai/ultrafast.md). The guide also explains when to set a default `service_tier` and when to let Codex choose it per request.
 
-Codex never asks a custom provider which models it serves unless you tell it to, so its `/model` picker shows Codex's built-in OpenAI models and a gateway-only name such as `my-coding-model` never appears in it. Codex CLI 0.159 or newer can fetch the catalog from the gateway instead. Two settings are needed together: `model_catalog_url` on the provider block, pointed at `<LITELLM_PROXY_BASE_URL>/v1/models`, and the `api_key_model_discovery` feature under `[features]`. Either one alone changes nothing, so `codex --enable api_key_model_discovery` without the URL never calls the gateway. `suppress_unstable_features_warning = true` silences the startup warning that enabling the feature adds
+Codex never asks a custom provider which models it serves unless you tell it to, so its `/model` picker shows Codex's built-in OpenAI models and a gateway-only name such as `my-coding-model` never appears in it. Codex CLI 0.159 or newer can fetch the catalog from the gateway instead. Two settings are needed together: `model_catalog_url` on the provider block, pointed at `<LUMINA_PROXY_BASE_URL>/v1/models`, and the `api_key_model_discovery` feature under `[features]`. Either one alone changes nothing, so `codex --enable api_key_model_discovery` without the URL never calls the gateway. `suppress_unstable_features_warning = true` silences the startup warning that enabling the feature adds
 
 ```toml title="~/.codex/config.toml"
 [features]
@@ -98,11 +98,11 @@ suppress_unstable_features_warning = true
 name = "LiteLLM"
 base_url = "http://localhost:4000/v1"
 model_catalog_url = "http://localhost:4000/v1/models"
-env_key = "LITELLM_API_KEY"
+env_key = "LUMINA_API_KEY"
 wire_api = "responses"
 ```
 
-On startup Codex calls `GET /v1/models?client_version=<its version>` with your virtual key, and the gateway answers in Codex's own catalog format. The `/model` picker then lists your gateway's chat models in `model_list` order, named by `model_info.display_name` when you set one and by the `model_name` otherwise. Wildcard entries such as `openai/*` and models that are not chat models (embeddings, for example) are left out. A model Codex already knows, by its `model_name` or by the upstream model in `litellm_params.model`, keeps Codex's own metadata (reasoning levels, prompt, tool support) under your name, so `my-coding-model` backed by `openai/gpt-6.1-sol` gets the same reasoning levels and prompt as Codex's own `gpt-6.1-sol`. Any other model gets the same fallback metadata Codex uses for `codex -m <unknown name>`, with the gateway's `max_input_tokens` as its context window, so it works but offers no reasoning-effort choices
+On startup Codex calls `GET /v1/models?client_version=<its version>` with your virtual key, and the gateway answers in Codex's own catalog format. The `/model` picker then lists your gateway's chat models in `model_list` order, named by `model_info.display_name` when you set one and by the `model_name` otherwise. Wildcard entries such as `openai/*` and models that are not chat models (embeddings, for example) are left out. A model Codex already knows, by its `model_name` or by the upstream model in `lumina_params.model`, keeps Codex's own metadata (reasoning levels, prompt, tool support) under your name, so `my-coding-model` backed by `openai/gpt-6.1-sol` gets the same reasoning levels and prompt as Codex's own `gpt-6.1-sol`. Any other model gets the same fallback metadata Codex uses for `codex -m <unknown name>`, with the gateway's `max_input_tokens` as its context window, so it works but offers no reasoning-effort choices
 
 **Prerequisites for service tiers:** Ask your gateway administrator to configure the model's [Fast and Ultrafast settings](../../providers/openai/ultrafast.md#set-up-with-configyaml). Select the gateway model in Codex, then use `/fast` or `/ultrafast` when available.
 
@@ -138,7 +138,7 @@ Register the LiteLLM MCP gateway as a streamable HTTP server in the same `~/.cod
 ```toml title="~/.codex/config.toml"
 [mcp_servers.litellm]
 url = "http://localhost:4000/my_mcp_server/mcp"
-bearer_token_env_var = "LITELLM_API_KEY"
+bearer_token_env_var = "LUMINA_API_KEY"
 ```
 
 `my_mcp_server` must match a key under `mcp_servers:` in your gateway config, and the key needs access to that server (see [the overview](./overview.md#the-values-you-will-reuse-everywhere)). Codex sends the key as `Authorization: Bearer <key>`, which the gateway accepts. Start `codex` and run `/mcp`: the server shows as `connected` with its tool count, and `/mcp verbose` lists the tools prefixed with the server name (`my_mcp_server-read_wiki_structure`) and `Auth: Bearer token`.
@@ -151,7 +151,7 @@ For a LiteLLM server that fronts an upstream OAuth provider, run `codex mcp logi
 
 ## Troubleshooting
 
-Connection refused means the gateway is not reachable at the `base_url` you set; check the host, port, and the `/v1` suffix. A 401 from the gateway means `LITELLM_API_KEY` is not exported in the shell you launch `codex` from, or the key is no longer valid. `Invalid model name passed in` means `model` does not match a `model_name` in your gateway config; use your name, not the upstream provider's. If requests never appear in the Admin UI you are still on the default provider, so confirm `model_provider = "litellm"` is set at the top level of the file. If the `/model` picker still shows only Codex's built-in models after [step 4](#model-catalog-and-service-tiers), the provider block is missing `model_catalog_url`, the `api_key_model_discovery` feature is off, or the gateway runs a release without the Codex catalog; a `curl` of `<LITELLM_PROXY_BASE_URL>/v1/models?client_version=0.159.3` with your key shows which side is at fault, since a gateway that supports the catalog answers with a top-level `models` key instead of `data`
+Connection refused means the gateway is not reachable at the `base_url` you set; check the host, port, and the `/v1` suffix. A 401 from the gateway means `LUMINA_API_KEY` is not exported in the shell you launch `codex` from, or the key is no longer valid. `Invalid model name passed in` means `model` does not match a `model_name` in your gateway config; use your name, not the upstream provider's. If requests never appear in the Admin UI you are still on the default provider, so confirm `model_provider = "litellm"` is set at the top level of the file. If the `/model` picker still shows only Codex's built-in models after [step 4](#model-catalog-and-service-tiers), the provider block is missing `model_catalog_url`, the `api_key_model_discovery` feature is off, or the gateway runs a release without the Codex catalog; a `curl` of `<LUMINA_PROXY_BASE_URL>/v1/models?client_version=0.159.3` with your key shows which side is at fault, since a gateway that supports the catalog answers with a top-level `models` key instead of `data`
 
 ## Next steps
 

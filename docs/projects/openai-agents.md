@@ -20,17 +20,17 @@ uv add "openai-agents[litellm]"
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: "openai/{{openai_large}}"
       api_key: "os.environ/OPENAI_API_KEY"
 
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: "anthropic/{{anthropic}}"
       api_key: "os.environ/ANTHROPIC_API_KEY"
 
   - model_name: {{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: "gemini/{{gemini_pro}}"
       api_key: "os.environ/GEMINI_API_KEY"
 ```
@@ -111,8 +111,8 @@ print(result.context_wrapper.usage)  # Token counts
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `LITELLM_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
-| `LITELLM_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key |
+| `LUMINA_BASE_URL` | `http://localhost:4000` | LiteLLM proxy URL |
+| `LUMINA_API_KEY` | `sk-<your-litellm-api-key>` | Your LiteLLM API key |
 
 ## Related Resources
 

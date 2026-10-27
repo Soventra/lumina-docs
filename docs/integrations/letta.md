@@ -32,17 +32,17 @@ First, create a configuration file for your LiteLLM proxy:
 # config.yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_small}}
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -415,7 +415,7 @@ general_settings:
 
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -482,14 +482,14 @@ LiteLLM proxy's load balancing and fallback features work with Letta:
 # config.yaml with fallbacks
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
     tpm: 40000
     rpm: 500
 
   - model_name: {{openai_large}}  # Same model name for fallback
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -518,7 +518,7 @@ router = Router(
     model_list=[
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "openai/{{openai_large}}",
                 "api_key": os.environ["OPENAI_API_KEY"]
             },
@@ -527,7 +527,7 @@ router = Router(
         },
         {
             "model_name": "{{openai_large}}",  # Same name for fallback
-            "litellm_params": {
+            "lumina_params": {
                 "model": "azure/{{openai_large}}", 
                 "api_key": os.environ["AZURE_API_KEY"],
                 "api_base": os.environ["AZURE_API_BASE"],

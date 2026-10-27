@@ -83,16 +83,16 @@ That closes the loop on everything above: draft a config with the new gates on, 
 ```yaml
 model_list:
   - model_name: gpt-4o-mini
-    litellm_params: {model: openai/gpt-4o-mini, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4o-mini, api_key: os.environ/OPENAI_API_KEY}
   - model_name: gpt-4o
-    litellm_params: {model: openai/gpt-4o, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4o, api_key: os.environ/OPENAI_API_KEY}
   - model_name: claude-sonnet-5
-    litellm_params: {model: anthropic/claude-sonnet-5, api_key: os.environ/ANTHROPIC_API_KEY}
+    lumina_params: {model: anthropic/claude-sonnet-5, api_key: os.environ/ANTHROPIC_API_KEY}
   - model_name: gpt-5.5
-    litellm_params: {model: openai/gpt-5.5, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-5.5, api_key: os.environ/OPENAI_API_KEY}
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:

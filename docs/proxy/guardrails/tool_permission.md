@@ -37,7 +37,7 @@ Select **+ Restrict tool arguments** to attach regex validations to nested paths
 ```yaml
 guardrails:
   - guardrail_name: "tool-permission-guardrail"
-    litellm_params:
+    lumina_params:
       guardrail: tool_permission
       mode: "post_call"
       rules:
@@ -101,7 +101,7 @@ Example:
 ```yaml
 guardrails:
   - guardrail_name: "tool-permission-guardrail"
-    litellm_params:
+    lumina_params:
       guardrail: tool_permission
       mode: "post_call"
       violation_message_template: "this violates our org policy, we don't support executing {tool_name} commands"
@@ -231,7 +231,7 @@ Sometimes you want to allow a tool but still restrict **how** it can be used. Ad
 ```yaml title="Only allow mail_mcp to mail @berri.ai addresses"
 guardrails:
   - guardrail_name: "tool-permission-mail"
-    litellm_params:
+    lumina_params:
       guardrail: tool_permission
       mode: "post_call"
       rules:

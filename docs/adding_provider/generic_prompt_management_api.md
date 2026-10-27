@@ -30,7 +30,7 @@ Add to your `config.yaml`:
 ```yaml
 prompts:
   - prompt_id: "simple_prompt"
-    litellm_params:
+    lumina_params:
       prompt_integration: "generic_prompt_management"
       api_base: http://localhost:8080
       api_key: os.environ/YOUR_API_KEY
@@ -132,13 +132,13 @@ Add to `config.yaml`:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 prompts:
   - prompt_id: "simple_prompt"
-    litellm_params:
+    lumina_params:
       prompt_integration: "generic_prompt_management"
       provider_specific_query_params:
         project_name: litellm
@@ -203,7 +203,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "prompt_id": "simple_prompt",
@@ -465,7 +465,7 @@ This means your API endpoint is only called once per unique prompt configuration
 ```yaml
 prompts:
   - prompt_id: "my_prompt"
-    litellm_params:
+    lumina_params:
       prompt_integration: "generic_prompt_management"
       api_base: http://localhost:8080
 ```
@@ -476,7 +476,7 @@ If your API returns `"prompt_template_model": "{{openai_large}}"`, LiteLLM will 
 ```yaml
 prompts:
   - prompt_id: "my_prompt"
-    litellm_params:
+    lumina_params:
       prompt_integration: "generic_prompt_management"
       api_base: http://localhost:8080
       ignore_prompt_manager_model: true

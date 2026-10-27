@@ -112,7 +112,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: gemini-3-flash
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3-flash-preview
       api_key: os.environ/GEMINI_API_KEY
 ```

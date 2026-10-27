@@ -198,7 +198,7 @@ from litellm.exceptions import RateLimitErrorCategory
 try:
     response = litellm.completion(model="{{openai_small}}", messages=[{"role": "user", "content": "hi"}])
 except litellm.RateLimitError as e:
-    if e.category == RateLimitErrorCategory.LITELLM_RATE_LIMIT:
+    if e.category == RateLimitErrorCategory.LUMINA_RATE_LIMIT:
         print(f"LiteLLM's own limiter: {e.rate_limit_type}")
     elif e.category == RateLimitErrorCategory.VENDOR_RATE_LIMIT:
         print("the upstream provider throttled us")
@@ -292,12 +292,12 @@ You do not need a failing provider to test your error handling. Point a deployme
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: always-429
-    litellm_params:
+    lumina_params:
       model: openai/fail-429
       api_base: http://127.0.0.1:8199/v1
       api_key: sk-mock
   - model_name: unreachable
-    litellm_params:
+    lumina_params:
       model: openai/anything
       api_base: http://127.0.0.1:9/v1
       api_key: sk-mock
@@ -308,19 +308,19 @@ The `unreachable` deployment above needs no mock server at all; port 9 refuses c
 ```bash showLineNumbers
 # 403 key_model_access_denied
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"key_alias": "restricted", "models": ["{{openai_small}}"]}'
 
 # 429 throttling_error, on the second call within the same minute
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"key_alias": "capped", "rpm_limit": 1}'
 
 # 429 budget_exceeded, once accrued spend passes the cap
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"key_alias": "tiny-budget", "max_budget": 0.05}'
 ```
@@ -358,4 +358,4 @@ Pass-through routes relay the provider's own error body, so the id is added at t
 
 The setting only adds the id where the gateway already set the `x-litellm-call-id` header on a JSON body, so 422 request-validation errors, authentication failures rejected before an id exists, errors that arrive mid-stream, and non-JSON pass-through bodies are unchanged
 
-To see the exact request the gateway sent upstream, restart with `--detailed_debug` or set `LITELLM_LOG=DEBUG`, or add `"litellm_request_debug": true` to a single request body. See [Debugging](/docs/proxy/debugging)
+To see the exact request the gateway sent upstream, restart with `--detailed_debug` or set `LUMINA_LOG=DEBUG`, or add `"litellm_request_debug": true` to a single request body. See [Debugging](/docs/proxy/debugging)

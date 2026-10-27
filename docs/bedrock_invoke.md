@@ -16,7 +16,7 @@ Call Bedrock's `/invoke` endpoint through LiteLLM Proxy.
 ```yaml showLineNumbers
 model_list:
   - model_name: my-bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID  # reads from environment
@@ -43,7 +43,7 @@ litellm --config config.yaml
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-bedrock-model/invoke' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "max_tokens": 100,
@@ -63,7 +63,7 @@ For streaming responses, use `/invoke-with-response-stream`:
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/bedrock/model/my-bedrock-model/invoke-with-response-stream' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "max_tokens": 100,
@@ -85,7 +85,7 @@ Define multiple deployments with the same `model_name` for automatic load balanc
 model_list:
   # Deployment 1 - us-west-2
   - model_name: my-bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
@@ -94,7 +94,7 @@ model_list:
   
   # Deployment 2 - us-east-1
   - model_name: my-bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID

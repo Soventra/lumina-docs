@@ -75,11 +75,11 @@ print(response)
 ```yaml keep-model-ids
 model_list:
   - model_name: claude-3-5-sonnet-latest # Anthropic claude-3-5-sonnet-latest
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-3-5-sonnet-latest
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-bedrock         # Bedrock Anthropic model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -166,11 +166,11 @@ assert supports_computer_use(model="openai/{{openai_large}}") == False
 ```yaml
 model_list:
   - model_name: claude-sonnet          # Anthropic model, supports_computer_use comes from the model cost map
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-bedrock         # Bedrock Anthropic model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -191,7 +191,7 @@ litellm --config config.yaml
 curl -X 'GET' \
   'http://localhost:4000/model/info' \
   -H 'accept: application/json' \
-  -H "x-api-key: $LITELLM_API_KEY"
+  -H "x-api-key: $LUMINA_API_KEY"
 ```
 
 Expected Response (trimmed)
@@ -201,7 +201,7 @@ Expected Response (trimmed)
   "data": [
     {
       "model_name": "claude-sonnet",
-      "litellm_params": {"model": "anthropic/{{anthropic}}"},
+      "lumina_params": {"model": "anthropic/{{anthropic}}"},
       "model_info": {
         "litellm_provider": "anthropic",
         "mode": "chat",
@@ -212,7 +212,7 @@ Expected Response (trimmed)
     },
     {
       "model_name": "claude-bedrock",
-      "litellm_params": {"model": "bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0"},
+      "lumina_params": {"model": "bedrock/us.anthropic.claude-3-5-sonnet-20241022-v2:0"},
       "model_info": {
         "litellm_provider": "bedrock",
         "mode": "chat",

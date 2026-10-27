@@ -111,7 +111,7 @@ Pass `tool_name_to_display_name` and `tool_name_to_description` in the create or
 
 ```bash title="Create server with tool name overrides" showLineNumbers
 curl -X POST http://localhost:4000/v1/mcp/server \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "petstore_mcp",
@@ -130,7 +130,7 @@ curl -X POST http://localhost:4000/v1/mcp/server \
 
 ```bash title="Update overrides on an existing server" showLineNumbers
 curl -X PUT http://localhost:4000/v1/mcp/server \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "server_id": "<server-id>",
@@ -236,7 +236,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "http://localhost:4000/petstore_mcp/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY"
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY"
             }
         }
     ],

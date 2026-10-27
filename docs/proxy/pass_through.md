@@ -115,7 +115,7 @@ You can also create pass through endpoints using the `config.yaml` file. Here's 
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   pass_through_endpoints:
     - path: "/v1/rerank"                                  # Route on LiteLLM Proxy
       target: "https://api.cohere.com/v1/rerank"          # Target endpoint
@@ -199,7 +199,7 @@ general_settings:
 
 Pass-through routes default to a **600 second** upstream timeout. Set `general_settings.pass_through_request_timeout` for a global override, or `timeout` on a custom endpoint (per-endpoint wins)
 
-Native provider passthrough routes (Bedrock `/converse`, `/v1/messages`, and the native `/v1/responses` stream) resolve their timeout through the router, and the first value set wins: the request's `timeout`, the deployment's `timeout` under `litellm_params`, `router_settings.timeout`, `litellm_settings.request_timeout` when you set it (or the `REQUEST_TIMEOUT` env var), `general_settings.pass_through_request_timeout`, then 600 seconds. A streaming request checks `stream_timeout` at each of those levels before `timeout`. So a `litellm_settings.request_timeout` you set outranks `pass_through_request_timeout` on these routes, and on a stream it bounds each wait for the next chunk, so a stalled upstream ends the stream with an error instead of hanging
+Native provider passthrough routes (Bedrock `/converse`, `/v1/messages`, and the native `/v1/responses` stream) resolve their timeout through the router, and the first value set wins: the request's `timeout`, the deployment's `timeout` under `lumina_params`, `router_settings.timeout`, `litellm_settings.request_timeout` when you set it (or the `REQUEST_TIMEOUT` env var), `general_settings.pass_through_request_timeout`, then 600 seconds. A streaming request checks `stream_timeout` at each of those levels before `timeout`. So a `litellm_settings.request_timeout` you set outranks `pass_through_request_timeout` on these routes, and on a stream it bounds each wait for the next chunk, so a stalled upstream ends the stream with an error instead of hanging
 
 ### Header Options
 - **Authorization**: Authentication for the target API
@@ -237,7 +237,7 @@ An endpoint with `auth: true` rejects non-admin keys with a 403 unless the key o
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "allowed_passthrough_routes": ["/custom-api"],
@@ -381,12 +381,12 @@ anthropic_adapter = AnthropicAdapter()
 ```yaml
 model_list:
   - model_name: my-claude-endpoint
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   pass_through_endpoints:
     - path: "/v1/messages"
       target: custom_callbacks.anthropic_adapter
@@ -398,7 +398,7 @@ general_settings:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/messages' \
-  -H "x-api-key: $LITELLM_API_KEY" \
+  -H "x-api-key: $LUMINA_API_KEY" \
   -H 'anthropic-version: 2023-06-01' \
   -H 'content-type: application/json' \
   -d '{

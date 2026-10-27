@@ -26,8 +26,8 @@ import TabItem from '@theme/TabItem';
 Use a virtual key from your [LiteLLM AI Gateway](./gateway.md). It stays on your host. Models prefixed with `litellm_proxy/` are sent to this gateway.
 
 ```bash
-export LITELLM_PROXY_API_BASE=https://litellm.example.com
-export LITELLM_PROXY_API_KEY=sk-...
+export LUMINA_PROXY_API_BASE=https://litellm.example.com
+export LUMINA_PROXY_API_KEY=sk-...
 ```
 
 To skip the gateway, export a provider key such as `ANTHROPIC_API_KEY` instead and use a model string without the prefix, like `anthropic/claude-sonnet-4-5`.

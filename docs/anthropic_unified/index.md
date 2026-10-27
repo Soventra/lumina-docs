@@ -245,7 +245,7 @@ Example response:
 ```yaml
 model_list:
     - model_name: anthropic-claude
-      litellm_params:
+      lumina_params:
         model: {{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -283,7 +283,7 @@ response = client.messages.create(
 ```yaml
 model_list:
     - model_name: openai-gpt4
-      litellm_params:
+      lumina_params:
         model: openai/{{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
 ```
@@ -321,7 +321,7 @@ response = client.messages.create(
 ```yaml
 model_list:
     - model_name: gemini-2-flash
-      litellm_params:
+      lumina_params:
         model: gemini/{{gemini_flash}}
         api_key: os.environ/GEMINI_API_KEY
 ```
@@ -359,7 +359,7 @@ response = client.messages.create(
 ```yaml
 model_list:
     - model_name: vertex-gemini
-      litellm_params:
+      lumina_params:
         model: vertex_ai/{{gemini_flash}}
         vertex_project: your-gcp-project-id
         vertex_location: us-central1
@@ -398,7 +398,7 @@ response = client.messages.create(
 ```yaml
 model_list:
     - model_name: bedrock-claude
-      litellm_params:
+      lumina_params:
         model: bedrock/us.anthropic.{{anthropic}}
         aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
         aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -436,7 +436,7 @@ response = client.messages.create(
 ```bash showLineNumbers title="Example using LiteLLM Proxy Server"
 curl -L -X POST 'http://0.0.0.0:4000/v1/messages' \
 -H 'content-type: application/json' \
--H "x-api-key: $LITELLM_API_KEY" \
+-H "x-api-key: $LUMINA_API_KEY" \
 -H 'anthropic-version: 2023-06-01' \
 -d '{
   "model": "anthropic-claude",

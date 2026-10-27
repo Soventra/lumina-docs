@@ -70,7 +70,7 @@ response = litellm.completion(
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-- litellm_params:
+- lumina_params:
     api_base: my-base
     model: openai/my-model
     drop_params: true # KEY CHANGE
@@ -106,7 +106,7 @@ response = litellm.completion(
 <TabItem value="proxy" label="PROXY">
 
 ```yaml
-- litellm_params:
+- lumina_params:
     api_base: my-base
     model: openai/my-model
     additional_drop_params: ["response_format"] # KEY CHANGE
@@ -146,7 +146,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: my-bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       additional_drop_params: ["tools[*].input_examples"]  # Remove from all tools
 ```
@@ -230,7 +230,7 @@ You can also set `allowed_openai_params` on the config.yaml file for a specific 
 ```yaml showLineNumbers title="Set allowed_openai_params on config.yaml"
 model_list:
   - model_name: azure-o1-preview
-    litellm_params:
+    lumina_params:
       model: azure/o_series/<my-deployment-name>
       api_key: xxxxx
       api_base: https://openai-prod-test.openai.azure.com/openai/deployments/o1/chat/completions?api-version=2025-01-01-preview

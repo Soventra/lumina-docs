@@ -136,7 +136,7 @@ The gateway serves each server at `http://localhost:4000/{server_name}/mcp`, so 
 
 ```bash showLineNumbers
 claude mcp add --transport http linear http://localhost:4000/linear_mcp/mcp \
-  --header "x-litellm-api-key: Bearer $LITELLM_API_KEY"
+  --header "x-litellm-api-key: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -185,7 +185,7 @@ Grant the server per key or per team with `object_permission`, and cap call volu
 :::
 
 :::warning[Put the LiteLLM key in `x-litellm-api-key`]
-Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the LiteLLM API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and LiteLLM forwards your LiteLLM key to Linear, which rejects it. To diagnose, add `x-litellm-mcp-debug: true` and read the response headers: `SAME_AS_LITELLM_KEY` confirms this case, and `m2m-client-credentials` means client credentials are set and every caller shares one identity. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth) and the [MCP Troubleshooting Guide](../mcp_troubleshoot.md).
+Interactive OAuth needs the `Authorization` header free for the upstream token. If a client sends the LiteLLM API key as `Authorization: Bearer sk-...`, the OAuth flow never runs and LiteLLM forwards your LiteLLM key to Linear, which rejects it. To diagnose, add `x-litellm-mcp-debug: true` and read the response headers: `SAME_AS_LUMINA_KEY` confirms this case, and `m2m-client-credentials` means client credentials are set and every caller shares one identity. See [Debugging OAuth](../mcp_oauth.md#debugging-oauth) and the [MCP Troubleshooting Guide](../mcp_troubleshoot.md).
 :::
 
 An authorized session is bound to one Linear workspace, and reconnecting alone does not switch it, so a user who needs a second workspace has to register it as a separate MCP server entry.

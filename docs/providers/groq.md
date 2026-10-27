@@ -58,7 +58,7 @@ for chunk in response:
 ```yaml
 model_list:
   - model_name: groq-llama3-8b-8192 # Model Alias to use for requests
-    litellm_params:
+    lumina_params:
       model: groq/llama3-8b-8192
       api_key: "os.environ/GROQ_API_KEY" # ensure you have `GROQ_API_KEY` in your .env
 ```
@@ -306,7 +306,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: groq-llama3-8b-8192 # Model Alias to use for requests
-    litellm_params:
+    lumina_params:
       model: groq/llama3-8b-8192
       api_key: "os.environ/GROQ_API_KEY" # ensure you have `GROQ_API_KEY` in your .env
 ```

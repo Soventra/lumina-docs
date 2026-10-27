@@ -18,7 +18,7 @@ $ litellm --debug
 **via env**
 
 ```python showLineNumbers
-os.environ["LITELLM_LOG"] = "INFO"
+os.environ["LUMINA_LOG"] = "INFO"
 ```
 
 ## `detailed debug`
@@ -32,7 +32,7 @@ $ litellm --detailed_debug
 **via env**
 
 ```python showLineNumbers
-os.environ["LITELLM_LOG"] = "DEBUG"
+os.environ["LUMINA_LOG"] = "DEBUG"
 ```
 
 ### Debug Logs 
@@ -58,7 +58,7 @@ Pass in `litellm_request_debug=True` in the request body
 ```bash showLineNumbers
 curl -L -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{ 
     "model":"fake-openai-endpoint",
     "messages": [{"role": "user","content": "How many r in the word strawberry?"}],
@@ -156,12 +156,12 @@ litellm_settings:
     json_logs: true
 ```
 
-2. Set `LITELLM_LOG` to 'ERROR' 
+2. Set `LUMINA_LOG` to 'ERROR' 
 
 Only get logs if an error occurs. 
 
 ```bash showLineNumbers
-LITELLM_LOG="ERROR"
+LUMINA_LOG="ERROR"
 ```
 
 3. Start proxy 
@@ -179,10 +179,10 @@ Expected Output:
 
 ## Suppress Startup Output
 
-At startup the proxy prints messages outside its logger, such as the banner, the feedback box, the model list, `Setting Cache on Proxy` and the Search Tools list. `LITELLM_LOG` does not filter them. To turn them all off, set `LITELLM_SUPPRESS_STARTUP_OUTPUT` in your env:
+At startup the proxy prints messages outside its logger, such as the banner, the feedback box, the model list, `Setting Cache on Proxy` and the Search Tools list. `LUMINA_LOG` does not filter them. To turn them all off, set `LUMINA_SUPPRESS_STARTUP_OUTPUT` in your env:
 
 ```bash showLineNumbers
-export LITELLM_SUPPRESS_STARTUP_OUTPUT="true"
+export LUMINA_SUPPRESS_STARTUP_OUTPUT="true"
 ```
 **OR**
 
@@ -193,7 +193,7 @@ litellm_settings:
     suppress_startup_output: true
 ```
 
-Only `true` turns it on. Log lines still show at the level `LITELLM_LOG` sets, in plaintext or JSON.
+Only `true` turns it on. Log lines still show at the level `LUMINA_LOG` sets, in plaintext or JSON.
 
 When stdout is not a terminal, for example in a container, or when `NO_COLOR` is set, the startup messages and plaintext log lines carry no ANSI color codes, so a log pipeline stores plain text. Available from v1.108.0.
 

@@ -97,17 +97,17 @@ print(response)
 ```yaml
 model_list:
   - model_name: gemini-embedding-2-preview
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-embedding-2-preview
       api_key: os.environ/GEMINI_API_KEY
   - model_name: vertex-gemini-embedding-2-preview
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-embedding-2-preview
       vertex_project: os.environ/VERTEXAI_PROJECT
       vertex_location: os.environ/VERTEXAI_LOCATION
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 **2. Start proxy**
@@ -120,7 +120,7 @@ litellm --config config.yaml
 
 ```bash
 curl -X POST http://localhost:4000/embeddings \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gemini-embedding-2-preview",

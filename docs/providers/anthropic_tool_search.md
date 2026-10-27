@@ -223,7 +223,7 @@ Tool search works automatically through the LiteLLM proxy.
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -486,7 +486,7 @@ Configure the proxy to use Messages API endpoints.
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-sonnet-messages
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```

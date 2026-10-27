@@ -42,7 +42,7 @@ Once saved, the credential is available wherever you add or edit a model. In the
 
 Storing models in the database is what makes UI-driven management possible. Turn it on by setting `STORE_MODEL_IN_DB="True"` as an environment variable, or `general_settings.store_model_in_db: true` in your config. You can also toggle it at runtime from the **Models + Endpoints** settings in the UI, which is handy for cloud deployments where editing the config means a full release; the UI value overrides the config value.
 
-With it enabled, every model you add through the UI or the API persists in the database and survives restarts and additional proxy instances. Provider credentials for those models are encrypted at rest using `LITELLM_SALT_KEY` (falling back to `LITELLM_MASTER_KEY` if the salt key is not set); keep that value secret and never change it once models exist, since credentials encrypted with the old value cannot be decrypted with a new one.
+With it enabled, every model you add through the UI or the API persists in the database and survives restarts and additional proxy instances. Provider credentials for those models are encrypted at rest using `LUMINA_SALT_KEY` (falling back to `LUMINA_MASTER_KEY` if the salt key is not set); keep that value secret and never change it once models exist, since credentials encrypted with the old value cannot be decrypted with a new one.
 
 Database storage does not replace your `config.yaml`. Any models defined there keep working and show up alongside your database models. The one difference is that config models are owned by the file, so they cannot be edited or deleted from the UI; change them in the config and reload. For the config format itself, see [Config.yaml](./configs.md).
 
@@ -69,11 +69,11 @@ Add a model:
 
 ```bash
 curl -X POST "http://0.0.0.0:4000/model/new" \
-    -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+    -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
     -H "Content-Type: application/json" \
     -d '{
       "model_name": "azure-gpt-4o",
-      "litellm_params": {
+      "lumina_params": {
         "model": "azure/{{openai_large}}",
         "api_key": "os.environ/AZURE_API_KEY",
         "api_base": "https://my-endpoint.openai.azure.com/"
@@ -86,7 +86,7 @@ The rest of the operations:
 | Operation | Route | Notes |
 | --- | --- | --- |
 | List models | `GET /model/info` | Returns the full model list with API keys masked |
-| Update a model | `POST /model/update` | Change `litellm_params` or `model_info` for an existing model |
+| Update a model | `POST /model/update` | Change `lumina_params` or `model_info` for an existing model |
 | Delete a model | `POST /model/delete` | Body `{"id": "<model_id>"}`, admin only. This is a POST; there is no DELETE-verb route |
 
 You can attach arbitrary `model_info` fields when you create or update a model, and they pass straight through to `GET /model/info` alongside the mapped cost and context data. That is the mechanism for annotating models with your own metadata, such as an owning team, a description, or a version, and reading it back programmatically.

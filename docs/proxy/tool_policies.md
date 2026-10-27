@@ -34,14 +34,14 @@ All Tool Policy management routes require proxy authentication. Send the proxy m
 
 ```bash
 curl "http://localhost:4000/v1/tool/list" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 To list only blocked tools:
 
 ```bash
 curl "http://localhost:4000/v1/tool/list?input_policy=blocked" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 ### Get one tool
@@ -50,14 +50,14 @@ curl "http://localhost:4000/v1/tool/list?input_policy=blocked" \
 
 ```bash
 curl "http://localhost:4000/v1/tool/example_tool" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 `GET /v1/tool/{tool_name}/detail` returns the tool row together with its `overrides` list. The detail route is used by the Admin UI
 
 ```bash
 curl "http://localhost:4000/v1/tool/example_tool/detail" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 The detail response has the following shape:
@@ -82,7 +82,7 @@ The complete tool row can also contain `origin`, `call_count`, `assignments`, `k
 
 ```bash
 curl "http://localhost:4000/v1/tool/policy/options" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 The response has `input_policies` and `output_policies` arrays. Each option contains `value`, `label`, and `description`:
@@ -112,7 +112,7 @@ The response has `input_policies` and `output_policies` arrays. Each option cont
 
 ```bash
 curl -X POST "http://localhost:4000/v1/tool/policy" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "tool_name": "example_tool",
@@ -129,7 +129,7 @@ The same update route can add or remove a block for one team or one key. Include
 
 ```bash
 curl -X POST "http://localhost:4000/v1/tool/policy" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "tool_name": "example_tool",
@@ -142,7 +142,7 @@ For a key override, use `key_hash` instead of `team_id`. The request model also 
 
 ```bash
 curl -X POST "http://localhost:4000/v1/tool/policy" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "tool_name": "example_tool",
@@ -156,7 +156,7 @@ To remove an override, use `DELETE /v1/tool/{tool_name}/overrides` with exactly 
 
 ```bash
 curl -X DELETE "http://localhost:4000/v1/tool/example_tool/overrides?team_id=team-id" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 The delete route returns `{"deleted": true, "tool_name": "example_tool"}` when the override is removed. Supplying both `team_id` and `key_hash` is rejected with `Provide either team_id or key_hash, not both`
@@ -167,7 +167,7 @@ The detail view reads invoked-tool logs from `GET /v1/tool/{tool_name}/logs`. It
 
 ```bash
 curl "http://localhost:4000/v1/tool/example_tool/logs?page=1&page_size=50" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 The response contains `logs`, `total`, `page`, and `page_size`. A log entry can include the request ID, timestamp, model, spend, total tokens, and an input snippet
@@ -179,7 +179,7 @@ Add the Tool Policy Guardrail to the proxy configuration to enable policy enforc
 ```yaml
 guardrails:
   - guardrail_name: "tool_policy"
-    litellm_params:
+    lumina_params:
       guardrail: tool_policy
       mode: post_call
 ```

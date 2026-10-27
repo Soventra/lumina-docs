@@ -27,7 +27,7 @@ Grant developers access to Batch models.
 ```yaml showLineNumbers title="litellm-config.yaml"
 model_list:
   - model_name: "gpt-4o-batch"
-    litellm_params:
+    lumina_params:
       model: azure/gpt-4o-mini-general-deployment
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -35,14 +35,14 @@ model_list:
       mode: batch # metadata, tells developers this is a batch model
 
   - model_name: "gpt-4o-batch"
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-mini
       api_key: os.environ/OPENAI_API_KEY
     model_info:
       mode: batch # metadata, tells developers this is a batch model
 
   - model_name: vertex-batch
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-3.5-flash
       vertex_project: <vertex-project>
       vertex_location: global
@@ -98,11 +98,11 @@ LiteLLM translates the model name to the Azure deployment specific value (e.g. `
 `target_model_names` enables LiteLLM managed files and request validation. It must match the `model` in request.jsonl. The upload returns a file object; its `id` is the `input_file_id` for Step 3.
 
 ```bash showLineNumbers
-export LITELLM_BASE_URL="http://0.0.0.0:4000"
-export LITELLM_API_KEY="sk-<your-litellm-api-key>"
+export LUMINA_BASE_URL="http://0.0.0.0:4000"
+export LUMINA_API_KEY="sk-<your-litellm-api-key>"
 
-curl -s "${LITELLM_BASE_URL}/v1/files" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}" \
+curl -s "${LUMINA_BASE_URL}/v1/files" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}" \
   -F purpose="batch" \
   -F file="@./request.jsonl" \
   -F target_model_names="gpt-4o-batch"
@@ -118,8 +118,8 @@ The file is written to every deployment that matches `target_model_names` (here:
 
 ```bash showLineNumbers
 # Create the batch
-curl -s "${LITELLM_BASE_URL}/v1/batches" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}" \
+curl -s "${LUMINA_BASE_URL}/v1/batches" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "file-abc123",
@@ -131,8 +131,8 @@ curl -s "${LITELLM_BASE_URL}/v1/batches" \
 # Retrieve the batch, using the id the create call returned
 export BATCH_ID="batch_abc123"
 
-curl -s "${LITELLM_BASE_URL}/v1/batches/${BATCH_ID}" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}"
+curl -s "${LUMINA_BASE_URL}/v1/batches/${BATCH_ID}" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}"
 ```
 
 ### 4. Retrieve Batch Content
@@ -140,11 +140,11 @@ curl -s "${LITELLM_BASE_URL}/v1/batches/${BATCH_ID}" \
 `output_file_id` is set on the batch once its `status` is `completed`. The content is one JSON result per line, keyed by the `custom_id` from request.jsonl.
 
 ```bash showLineNumbers
-OUTPUT_FILE_ID=$(curl -s "${LITELLM_BASE_URL}/v1/batches/${BATCH_ID}" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}" | jq -r '.output_file_id')
+OUTPUT_FILE_ID=$(curl -s "${LUMINA_BASE_URL}/v1/batches/${BATCH_ID}" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}" | jq -r '.output_file_id')
 
-curl -s "${LITELLM_BASE_URL}/v1/files/${OUTPUT_FILE_ID}/content" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}"
+curl -s "${LUMINA_BASE_URL}/v1/files/${OUTPUT_FILE_ID}/content" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}"
 ```
 
 ### 5. List batches
@@ -152,8 +152,8 @@ curl -s "${LITELLM_BASE_URL}/v1/files/${OUTPUT_FILE_ID}/content" \
 Returns the managed batches owned by the calling key, user, or team, newest first. `limit` must be between 0 and 100 and defaults to 20; page with `after`. The `provider` and `target_model_names` filters are not supported for managed batches and return `400`.
 
 ```bash showLineNumbers
-curl -s "${LITELLM_BASE_URL}/v1/batches?limit=10" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}"
+curl -s "${LUMINA_BASE_URL}/v1/batches?limit=10" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}"
 ```
 
 ### 6. Cancel a batch
@@ -161,8 +161,8 @@ curl -s "${LITELLM_BASE_URL}/v1/batches?limit=10" \
 The cancel call returns the batch with `status: "cancelling"`.
 
 ```bash showLineNumbers
-curl -s -X POST "${LITELLM_BASE_URL}/v1/batches/${BATCH_ID}/cancel" \
-  -H "Authorization: Bearer ${LITELLM_API_KEY}"
+curl -s -X POST "${LUMINA_BASE_URL}/v1/batches/${BATCH_ID}/cancel" \
+  -H "Authorization: Bearer ${LUMINA_API_KEY}"
 ```
 
 ## Access control
@@ -278,7 +278,7 @@ The batch's cost row has `call_type: "aretrieve_batch"` and a `request_id` of `<
 
 ```bash showLineNumbers
 curl -s "http://0.0.0.0:4000/spend/logs?request_id=${BATCH_ID}_batch_cost" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ```json showLineNumbers title="batch cost row (trimmed)"
@@ -340,13 +340,13 @@ A batch reaches `completed` at the provider as soon as it finishes running, whet
 ```bash showLineNumbers
 # what the provider reports
 curl -s "http://0.0.0.0:4000/v1/batches/${BATCH_ID}" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" | jq '.status, .request_counts'
+  -H "Authorization: Bearer $LUMINA_API_KEY" | jq '.status, .request_counts'
 # "completed"
 # {"completed": 2, "failed": 1, "total": 3}
 
 # what the spend log recorded
 curl -s "http://0.0.0.0:4000/spend/logs?request_id=${BATCH_ID}_batch_cost" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   | jq '.[0].metadata | {batch_successful_requests, batch_failed_requests}'
 # {"batch_successful_requests": 2, "batch_failed_requests": 1}
 ```
@@ -355,10 +355,10 @@ To see why the failed requests failed, download the batch's error file. It holds
 
 ```bash showLineNumbers
 ERROR_FILE_ID=$(curl -s "http://0.0.0.0:4000/v1/batches/${BATCH_ID}" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" | jq -r '.error_file_id')
+  -H "Authorization: Bearer $LUMINA_API_KEY" | jq -r '.error_file_id')
 
 curl -s "http://0.0.0.0:4000/v1/files/${ERROR_FILE_ID}/content" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 Failed requests cost nothing, so `spend` covers the successful lines only and a batch that half failed costs about half of what you budgeted for. A request the provider accepted but LiteLLM could not price still counts as successful and is billed at `$0`, which keeps the counts reconcilable with the provider's own numbers. A batch whose requests all failed has no output file at all, and its cost row records `$0`, zero successful requests, and the failure count read from the error file. Anthropic and Bedrock extended thinking batches do not report reasoning tokens per line, so `reasoning_tokens` stays absent for them even though the model was thinking. The one case where the two counts do not add up to the provider's total is an output line that is not valid JSON, which gets skipped with a warning and lands in neither count

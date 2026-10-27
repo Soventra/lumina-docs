@@ -143,18 +143,18 @@ The full resource path works on every LiteLLM version. The short `firerouter` ID
 ```yaml
 model_list:
   - model_name: auto
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/routers/auto
       api_key: os.environ/FIREWORKS_AI_API_KEY
   - model_name: firerouter
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/routers/firerouter
       api_key: os.environ/FIREWORKS_AI_API_KEY
 ```
 
 ```bash
 curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model": "auto", "messages": [{"role": "user", "content": "hello"}]}'
 ```
@@ -169,12 +169,12 @@ Fireworks does not resell closed models. When a `firerouter` route includes Clau
 
 If no credential is available for a closed model, FireRouter leaves it out and serves the turn with the other models in the route. For example, `firerouter/opus` without an Anthropic credential is served by Fireworks open models. You get `400 no_credential` instead when you send `x-routing-preference: 1`, which forces the route's closed primary, or when you call a closed model ID directly
 
-To send the header from LiteLLM, set it on the deployment with `litellm_params.extra_headers`, or let each client send its own by enabling `forward_client_headers_to_llm_api` globally or per model group
+To send the header from LiteLLM, set it on the deployment with `lumina_params.extra_headers`, or let each client send its own by enabling `forward_client_headers_to_llm_api` globally or per model group
 
 ```yaml
 model_list:
   - model_name: firerouter
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/routers/firerouter
       api_key: os.environ/FIREWORKS_AI_API_KEY
       extra_headers:
@@ -203,7 +203,7 @@ response = completion(
 
 ### Routing preference
 
-`x-routing-preference` sets how strongly a `firerouter` request favors its primary model or cheaper models, from `1` (max intelligence) to `5` (max savings). The default is `3`. See [Routing Preferences](https://docs.fireworks.ai/nexus/routing-preferences). It travels the same way as the credential headers: `litellm_params.extra_headers` on the deployment, client-supplied when `forward_client_headers_to_llm_api` is on, or `extra_headers` on `completion()`
+`x-routing-preference` sets how strongly a `firerouter` request favors its primary model or cheaper models, from `1` (max intelligence) to `5` (max savings). The default is `3`. See [Routing Preferences](https://docs.fireworks.ai/nexus/routing-preferences). It travels the same way as the credential headers: `lumina_params.extra_headers` on the deployment, client-supplied when `forward_client_headers_to_llm_api` is on, or `extra_headers` on `completion()`
 
 ### Cost tracking
 
@@ -216,7 +216,7 @@ LiteLLM prices each request off the model Fireworks reports it routed to, so a r
 ```yaml
 model_list:
   - model_name: fireworks-glm-5p3
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/glm-5p3-flash
       api_key: "os.environ/FIREWORKS_AI_API_KEY"
 ```
@@ -331,14 +331,14 @@ print(response.answers)
 ```yaml
 model_list:
   - model_name: rune
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/routers/rune
       api_key: os.environ/FIREWORKS_AI_API_KEY
 ```
 
 ```bash
 curl http://0.0.0.0:4000/v1/systemone \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "rune",
@@ -353,7 +353,7 @@ The same deployment answers OpenAI-format requests on `/v1/decisions`:
 
 ```bash
 curl http://0.0.0.0:4000/v1/decisions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "rune",
@@ -404,7 +404,7 @@ print(response.output)
 ```yaml
 model_list:
   - model_name: fireworks-kimi-k3
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/models/kimi-k3
       api_key: "os.environ/FIREWORKS_AI_API_KEY"
 ```
@@ -420,7 +420,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "fireworks-kimi-k3",
     "input": "Use the deepwiki MCP server to tell me in one sentence what the BerriAI/litellm repository is.",
@@ -489,7 +489,7 @@ print(completion)
 ```yaml
 model_list:
   - model_name: llama-v3p3-70b-instruct
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct
       api_key: os.environ/FIREWORKS_AI_API_KEY
     #   api_base: os.environ/FIREWORKS_AI_API_BASE [OPTIONAL], defaults to "https://api.fireworks.ai/inference/v1"
@@ -581,7 +581,7 @@ print(response)
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "fireworks_ai/accounts/fireworks/models/qwen3-8b",
     "messages": [
@@ -612,13 +612,13 @@ Fireworks can tell apart the developers behind a shared Fireworks API key when L
 
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -H "x-litellm-session-id: my-session-1" \
   -H "Content-Type: application/json" \
   -d '{"model": "fireworks-glm-5p2", "messages": [{"role": "user", "content": "hi"}]}'
 ```
 
-When the request has no session id, or the proxy generated one because of `general_settings.missing_session_id`, no `x-session-affinity` header is sent. A client that sends its own `x-session-affinity` header keeps that value. For a Fireworks model behind the `openai/` prefix, set `provider_affinity_header: x-session-affinity` in that deployment's `litellm_params`
+When the request has no session id, or the proxy generated one because of `general_settings.missing_session_id`, no `x-session-affinity` header is sent. A client that sends its own `x-session-affinity` header keeps that value. For a Fireworks model behind the `openai/` prefix, set `provider_affinity_header: x-session-affinity` in that deployment's `lumina_params`
 
 ### User id
 
@@ -627,7 +627,7 @@ Set `fireworks_forward_user_id: true` on a deployment to send the LiteLLM user i
 ```yaml
 model_list:
   - model_name: fireworks-glm-5p2
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/glm-5p2
       api_key: "os.environ/FIREWORKS_AI_API_KEY"
       fireworks_forward_user_id: true
@@ -703,7 +703,7 @@ response = transcription(
 ```yaml
 model_list:
   - model_name: whisper-v3
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/whisper-v3
       api_base: https://audio-prod.api.fireworks.ai/v1
       api_key: os.environ/FIREWORKS_API_KEY
@@ -721,7 +721,7 @@ litellm --config config.yaml
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/audio/transcriptions' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -F 'file=@"/Users/krrishdholakia/Downloads/gettysburg.wav"' \
 -F 'model="whisper-v3"' \
 -F 'response_format="verbose_json"' \
@@ -771,7 +771,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: qwen3-reranker-8b
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/fireworks/qwen3-reranker-8b
       api_key: os.environ/FIREWORKS_API_KEY
     model_info:
@@ -788,7 +788,7 @@ litellm --config config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "qwen3-reranker-8b",

@@ -15,7 +15,7 @@ This flow runs on the proxy and needs a database (`DATABASE_URL`), because the i
 
 ## When LiteLLM runs the batch itself
 
-LiteLLM decides per request. A deployment qualifies when its `litellm_params.model` starts with `hosted_vllm/` and `GET {api_base}/files` on its server answers 404. Every other deployment, and a `hosted_vllm` deployment whose server does implement the Files API (for example the vLLM production-stack router), keeps the passthrough behavior: the upload and the batch are forwarded to the server and it runs the batch
+LiteLLM decides per request. A deployment qualifies when its `lumina_params.model` starts with `hosted_vllm/` and `GET {api_base}/files` on its server answers 404. Every other deployment, and a `hosted_vllm` deployment whose server does implement the Files API (for example the vLLM production-stack router), keeps the passthrough behavior: the upload and the batch are forwarded to the server and it runs the batch
 
 Point `api_base` at the server's `/v1` root so the probe hits the right route
 
@@ -26,7 +26,7 @@ Point `api_base` at the server's `/v1` root so the probe hits the right route
 ```yaml
 model_list:
   - model_name: my-vllm-model
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/Qwen/Qwen2.5-0.5B-Instruct
       api_base: http://localhost:8000/v1  # your vLLM server
       api_key: os.environ/HOSTED_VLLM_API_KEY  # only if your server checks one
@@ -65,7 +65,7 @@ The upload has to name the deployment, either with the `x-litellm-model` header,
 
 ```bash
 curl http://localhost:4000/v1/files \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "x-litellm-model: my-vllm-model" \
   -F purpose="batch" \
   -F file="@batch_requests.jsonl"
@@ -75,7 +75,7 @@ curl http://localhost:4000/v1/files \
 
 ```bash
 curl http://localhost:4000/v1/batches \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "<file id from the upload>",
@@ -88,14 +88,14 @@ curl http://localhost:4000/v1/batches \
 
 ```bash
 curl http://localhost:4000/v1/batches/<batch id> \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Download the results**
 
 ```bash
 curl http://localhost:4000/v1/files/<output_file_id>/content \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 </TabItem>
@@ -107,7 +107,7 @@ import time
 
 from openai import OpenAI
 
-client = OpenAI(api_key=os.environ["LITELLM_API_KEY"], base_url="http://localhost:4000/v1")
+client = OpenAI(api_key=os.environ["LUMINA_API_KEY"], base_url="http://localhost:4000/v1")
 
 input_file = client.files.create(
     file=open("batch_requests.jsonl", "rb"),
@@ -163,7 +163,7 @@ If the replica running a batch restarts, the batch is marked `failed` with a `ru
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `LITELLM_EXECUTED_BATCH_CONCURRENCY` | `4` | How many lines of one batch run in parallel |
+| `LUMINA_EXECUTED_BATCH_CONCURRENCY` | `4` | How many lines of one batch run in parallel |
 | `general_settings.allow_client_side_credentials` | `false` | Batch lines follow the same rule as live requests: a line whose body carries `api_base`, `api_key`, or another client-side credential field is rejected at upload unless this is `true` or the deployment lists the field in `configurable_clientside_auth_params` |
 
 Batch lines skip the proxy's pre-call guardrails, the same as batches a provider runs

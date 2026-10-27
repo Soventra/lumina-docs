@@ -13,7 +13,7 @@ A sandbox is required by every call. CLI harnesses run there, and Deep Agents' b
 | `sandbox.local(path)` | host subprocess, working directory is `path` | your laptop and trusted repos; the runtime has your user's permissions |
 | `sandbox.docker(image, mounts=, workdir="/workspace")` | a container started with the `docker` CLI | CI and code you don't trust |
 
-`sandbox.local` strips provider credentials from the child environment (`ANTHROPIC_*`, `OPENAI_*`, `LITELLM_*`, `AZURE_*`, `AWS_*`, `GEMINI_*`, `GOOGLE_API_KEY`, `CODEX_*`, `CURSOR_*`), so the runtime can't pick up your real keys. `sandbox.docker` reaches the host endpoint through `host.docker.internal` and needs no Python Docker SDK.
+`sandbox.local` strips provider credentials from the child environment (`ANTHROPIC_*`, `OPENAI_*`, `LUMINA_*`, `AZURE_*`, `AWS_*`, `GEMINI_*`, `GOOGLE_API_KEY`, `CODEX_*`, `CURSOR_*`), so the runtime can't pick up your real keys. `sandbox.docker` reaches the host endpoint through `host.docker.internal` and needs no Python Docker SDK.
 
 ## Runtime binaries
 

@@ -94,7 +94,7 @@ Just pass a comma-separated string of model names and the flag `fastest_response
 
 curl -X POST 'http://localhost:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \ 
+-H "Authorization: Bearer $LUMINA_API_KEY" \ 
 -D '{
     "model": "{{openai_large}}, groq-llama", # Comma-separated models
     "messages": [
@@ -145,11 +145,11 @@ print(response)
 ```yaml 
 model_list: 
 - model_name: groq-llama
-  litellm_params:
+  lumina_params:
     model: groq/llama3-8b-8192
     api_key: os.environ/GROQ_API_KEY
 - model_name: {{openai_large}}
-  litellm_params:
+  lumina_params:
     model: {{openai_large}}
     api_key: os.environ/OPENAI_API_KEY
 ```

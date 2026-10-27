@@ -37,17 +37,17 @@ router_settings:
 
 model_list:
   - model_name: sonnet-standard
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: opus
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: production-auto-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         classifier_type: heuristic

@@ -71,7 +71,7 @@ The largest share went to the proxy core: scaling, resilience, and the circuit b
 
 ### OCR runs on Rust by default
 
-Starting with `v1.102.0`, OCR runs on Rust by default. `LITELLM_RUST=0` still falls back to Python. SDK and gateway users don't need to change anything for this migration.
+Starting with `v1.102.0`, OCR runs on Rust by default. `LUMINA_RUST=0` still falls back to Python. SDK and gateway users don't need to change anything for this migration.
 
 ![OCR benchmark at 30 offered requests per second with an 8 MiB upload, showing Rust completing every arrival while Python falls well short, and Rust p95 latency in the tens of milliseconds against several seconds for Python](./rust-ocr-benchmark.png)
 

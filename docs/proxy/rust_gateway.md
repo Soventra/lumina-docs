@@ -28,18 +28,18 @@ There are two ways to adopt it.
 
 Mode 1 keeps your current deployment. The Python proxy still terminates the request, runs auth and routing, and calls your callbacks; only the provider translation and network call for the supported routes below run through the Rust core. Because it is opt-in per model and falls back to Python on any error, this is the recommended way to start.
 
-Set `rust: true` in a model's `litellm_params`. Everything else about the deployment stays the same.
+Set `rust: true` in a model's `lumina_params`. Everything else about the deployment stays the same.
 
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       rust: true            # run this deployment through the Rust core
 
   - model_name: azure-claude
-    litellm_params:
+    lumina_params:
       model: azure_ai/{{anthropic}}
       api_base: os.environ/AZURE_AI_API_BASE
       api_key: os.environ/AZURE_AI_API_KEY
@@ -50,7 +50,7 @@ A response served by the Rust core carries an `x-litellm-rust: true` header, so 
 
 ```bash
 curl -i http://localhost:4000/v1/messages \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "content-type: application/json" \
   -d '{
     "model": "{{anthropic}}",

@@ -22,7 +22,7 @@ Requirements:
 - Set `DATABASE_URL=postgresql://<user>:<password>@<host>:<port>/<dbname>` in your env 
 - Set a `master key`, this is your Proxy Admin key - you can use this to create other keys (must start with `sk-`).
   - ** Set on config.yaml** set your master key under `general_settings:master_key`, example below
-  - ** Set env variable** set `LITELLM_MASTER_KEY`
+  - ** Set env variable** set `LUMINA_MASTER_KEY`
 
 (the proxy Dockerfile checks if the `DATABASE_URL` is set and then initializes the DB connection)
 
@@ -41,14 +41,14 @@ You can then generate keys by hitting the `/key/generate` endpoint.
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
         model: ollama/llama2
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
         model: ollama/llama2
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY 
+  master_key: os.environ/LUMINA_MASTER_KEY 
   database_url: "postgresql://<user>:<password>@<host>:<port>/<dbname>" # KEY CHANGE
 ```
 
@@ -253,19 +253,19 @@ Here's how you can do that:
 ```yaml
 model_list:
   - model_name: my-free-tier
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8001
   - model_name: my-free-tier
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8002
   - model_name: my-free-tier
-    litellm_params:
+    lumina_params:
         model: huggingface/HuggingFaceH4/zephyr-7b-beta
         api_base: http://0.0.0.0:8003
   - model_name: my-paid-tier
-    litellm_params:
+    lumina_params:
         model: {{openai_large}}
         api_key: my-api-key
 ```
@@ -314,13 +314,13 @@ Use this to make LiteLLM proxy look for the virtual key in a custom header inste
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
 
 general_settings: 
-  master_key: os.environ/LITELLM_MASTER_KEY 
+  master_key: os.environ/LUMINA_MASTER_KEY 
   litellm_key_header_name: "X-Litellm-Key" # Key Change
 
 ```
@@ -335,7 +335,7 @@ In this request, litellm will use the Virtual key in the `X-Litellm-Key` header
 ```shell
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "X-Litellm-Key: Bearer $LITELLM_API_KEY" \
+  -H "X-Litellm-Key: Bearer $LUMINA_API_KEY" \
   -H "Authorization: Bearer bad-key" \
   -d '{
     "model": "fake-openai-endpoint",
@@ -415,7 +415,7 @@ Whether the `user` value reaches the provider on the wire is each provider's exi
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/block' \
--H 'Authorization: Bearer LITELLM_MASTER_KEY' \
+-H 'Authorization: Bearer LUMINA_MASTER_KEY' \
 -H 'Content-Type: application/json' \
 -d '{"key": "KEY-TO-BLOCK"}'
 ```
@@ -433,7 +433,7 @@ Expected Response:
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/unblock' \
--H 'Authorization: Bearer LITELLM_MASTER_KEY' \
+-H 'Authorization: Bearer LUMINA_MASTER_KEY' \
 -H 'Content-Type: application/json' \
 -d '{"key": "KEY-TO-UNBLOCK"}'
 ```
@@ -525,7 +525,7 @@ e.g. if they're both in the same dir - `./config.yaml` and `./custom_auth.py`, t
 ```yaml 
 model_list: 
   - model_name: "openai-model"
-    litellm_params: 
+    lumina_params: 
       model: "{{openai_small}}"
 
 litellm_settings:
@@ -643,7 +643,7 @@ A request whose alias does not match fails with a `400` that names the pattern:
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"key_alias": "Prod Key"}'
 ```
@@ -704,7 +704,7 @@ Rotate an existing API Key, while optionally updating its parameters.
 
 curl 'http://localhost:4000/key/sk-<virtual-key>/regenerate' \
   -X POST \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "max_budget": 100,
@@ -720,7 +720,7 @@ curl 'http://localhost:4000/key/sk-<virtual-key>/regenerate' \
 
 ```
 
-**Grace period (optional)**: Set `grace_period` (e.g. `"24h"`, `"2d"`, `"1w"`) to keep the old key valid for a transitional period. Both old and new keys work until the grace period elapses, so you can cut over without production downtime. Omitted or empty = immediate revoke. Can also be set via `LITELLM_KEY_ROTATION_GRACE_PERIOD` env var for scheduled rotations.
+**Grace period (optional)**: Set `grace_period` (e.g. `"24h"`, `"2d"`, `"1w"`) to keep the old key valid for a transitional period. Both old and new keys work until the grace period elapses, so you can cut over without production downtime. Omitted or empty = immediate revoke. Can also be set via `LUMINA_KEY_ROTATION_GRACE_PERIOD` env var for scheduled rotations.
 
 **Read More**
 
@@ -736,8 +736,8 @@ LiteLLM can rotate **virtual keys automatically** based on time intervals you de
 #### Prerequisites
 
 1. **Database connection required** - Key rotation requires a connected database to track rotation schedules
-2. **Enable the rotation worker** - Set environment variable `LITELLM_KEY_ROTATION_ENABLED=true`
-3. **Configure check interval** - Optionally set `LITELLM_KEY_ROTATION_CHECK_INTERVAL_SECONDS` (default: 86400 seconds / 24 hours)
+2. **Enable the rotation worker** - Set environment variable `LUMINA_KEY_ROTATION_ENABLED=true`
+3. **Configure check interval** - Optionally set `LUMINA_KEY_ROTATION_CHECK_INTERVAL_SECONDS` (default: 86400 seconds / 24 hours)
 
 #### How it works
 
@@ -810,15 +810,15 @@ Set these environment variables when starting the proxy:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `LITELLM_KEY_ROTATION_ENABLED` | Enable the rotation worker | `false` |
-| `LITELLM_KEY_ROTATION_CHECK_INTERVAL_SECONDS` | How often to scan for keys to rotate (in seconds) | `86400` (24 hours) |
-| `LITELLM_KEY_ROTATION_GRACE_PERIOD` | Duration to keep old key valid after rotation (e.g. `24h`, `2d`) | `""` (immediate revoke) |
+| `LUMINA_KEY_ROTATION_ENABLED` | Enable the rotation worker | `false` |
+| `LUMINA_KEY_ROTATION_CHECK_INTERVAL_SECONDS` | How often to scan for keys to rotate (in seconds) | `86400` (24 hours) |
+| `LUMINA_KEY_ROTATION_GRACE_PERIOD` | Duration to keep old key valid after rotation (e.g. `24h`, `2d`) | `""` (immediate revoke) |
 
 **Example:**
 ```bash
-export LITELLM_KEY_ROTATION_ENABLED=true
-export LITELLM_KEY_ROTATION_CHECK_INTERVAL_SECONDS=3600  # Check every hour
-export LITELLM_KEY_ROTATION_GRACE_PERIOD=48h  # Keep old key valid for 48h during cutover
+export LUMINA_KEY_ROTATION_ENABLED=true
+export LUMINA_KEY_ROTATION_CHECK_INTERVAL_SECONDS=3600  # Check every hour
+export LUMINA_KEY_ROTATION_GRACE_PERIOD=48h  # Keep old key valid for 48h during cutover
 
 litellm --config config.yaml
 ```
@@ -829,7 +829,7 @@ Use the `/key/update` endpoint to increase the budget of an existing key. `temp_
 
 ```bash
 curl -L -X POST 'http://localhost:4000/key/update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"key": "sk-b3Z3Lqdb_detHXSUp4ol4Q", "temp_budget_increase": 100, "temp_budget_expiry": "2026-10-15"}'
 ```
@@ -842,7 +842,7 @@ By default any change to `max_budget` or `budget_limits` on `/key/update`, or to
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   self_serve_budget_policy: lower_only
 ```
 

@@ -43,7 +43,7 @@ Add Helicone to your LiteLLM proxy configuration:
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -187,11 +187,11 @@ Log requests to Helicone while using any LLM provider directly.
   ```yaml title="config.yaml"
   model_list:
     - model_name: {{openai_large}}
-      litellm_params:
+      lumina_params:
         model: {{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
     - model_name: {{anthropic}}
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 
@@ -322,12 +322,12 @@ Track multi-step and agentic LLM interactions using session IDs and paths:
   ```yaml title="config.yaml"
   model_list:
     - model_name: {{openai_large}}
-      litellm_params:
+      lumina_params:
         model: {{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
         api_base: "https://oai.hconeai.com/v1"
 
-  default_litellm_params:
+  default_lumina_params:
     headers:
       Helicone-Auth: "Bearer ${HELICONE_API_KEY}"
       Helicone-Retry-Enabled: "true"

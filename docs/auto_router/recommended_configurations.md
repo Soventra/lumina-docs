@@ -31,25 +31,25 @@ Haiku, Sonnet, Opus, then Opus at high reasoning effort.
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: claude-haiku-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-opus-5-high
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
       reasoning_effort: high
 
   - model_name: claude-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -72,25 +72,25 @@ Luna, Terra, Sol, then Sol at xhigh reasoning effort.
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.6-sol
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6-sol
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.6-sol-xhigh
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6-sol
       api_key: os.environ/OPENAI_API_KEY
       reasoning_effort: xhigh
 
   - model_name: gpt-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -111,24 +111,24 @@ Flash Lite 2.5, Flash Lite 3.1, Flash 3.7, then Pro 3.1.
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: gemini-2.5-flash-lite
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-2.5-flash-lite
       api_key: os.environ/GEMINI_API_KEY
   - model_name: gemini-3.1-flash-lite
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.1-flash-lite
       api_key: os.environ/GEMINI_API_KEY
   - model_name: gemini-3.7-flash
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.7-flash
       api_key: os.environ/GEMINI_API_KEY
   - model_name: gemini-3.1-pro-preview
-    litellm_params:
+    lumina_params:
       model: gemini/gemini-3.1-pro-preview
       api_key: os.environ/GEMINI_API_KEY
 
   - model_name: gemini-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -149,26 +149,26 @@ Cross-provider, built for cost. DeepSeek V4 Flash also serves as the LLM classif
 ```yaml title="config.yaml"
 model_list:
   - model_name: deepseek-v4-flash
-    litellm_params:
+    lumina_params:
       model: deepseek/deepseek-v4-flash
       api_key: os.environ/DEEPSEEK_API_KEY
   - model_name: muse-spark-1.2-xhigh
-    litellm_params:
+    lumina_params:
       model: meta/muse-spark-1.2
       api_key: os.environ/META_API_KEY
       reasoning_effort: xhigh
   - model_name: kimi-k3-max
-    litellm_params:
+    lumina_params:
       model: moonshot/kimi-k3
       api_key: os.environ/MOONSHOT_API_KEY
       reasoning_effort: max
   - model_name: {{anthropic_large}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: lite-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -196,25 +196,25 @@ The GPT tiers accept up to 922K input tokens and Opus 5 accepts 1M. The router m
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-5.6-sol
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.6-sol
       api_key: os.environ/OPENAI_API_KEY
   - model_name: claude-opus-5-high
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
       reasoning_effort: high
 
   - model_name: 1m-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -236,24 +236,24 @@ model_list:
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: claude-haiku-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: gpt-5.4-mini
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.4-mini
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -283,20 +283,20 @@ The classifier context window is the knob to revisit for your own traffic:
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: claude-haiku-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-auto-latest
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -316,24 +316,24 @@ model_list:
 ```yaml title="config.yaml" keep-model-ids
 model_list:
   - model_name: claude-haiku-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.claude-sonnet-5
       aws_region_name: us-east-1
   - model_name: claude-opus-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-opus-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       cache_control_injection_points:
         - location: message

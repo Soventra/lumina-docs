@@ -39,7 +39,7 @@ The Connection ID and API Key are minted when you add an **AI Gateway** integrat
 ```yaml
 model_list:
   - model_name: gpt-4o
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o
       api_key: sk-your-key
 

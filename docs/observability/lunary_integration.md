@@ -138,7 +138,7 @@ export LUNARY_PUBLIC_KEY="<your-public-key>"
 ```yaml
 model_list:
   - model_name: "*"
-    litellm_params:
+    lumina_params:
       model: "*"
 litellm_settings:
   success_callback: ["lunary"]

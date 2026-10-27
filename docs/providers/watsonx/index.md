@@ -108,7 +108,7 @@ $ litellm --model watsonx/meta-llama/llama-3-8b-instruct
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: llama-3-8b
-    litellm_params:
+    lumina_params:
       model: watsonx/meta-llama/llama-3-8b-instruct
       api_key: "os.environ/WATSONX_API_KEY"
 ```

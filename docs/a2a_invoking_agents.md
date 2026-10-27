@@ -46,8 +46,8 @@ from a2a.types import Message, Part, Role, SendMessageRequest
 from a2a.utils.constants import TransportProtocol
 
 # === CONFIGURE THESE ===
-LITELLM_BASE_URL = "http://localhost:4000"  # Your LiteLLM proxy URL
-LITELLM_VIRTUAL_KEY = "sk-<your-litellm-api-key>"             # Your LiteLLM Virtual Key
+LUMINA_BASE_URL = "http://localhost:4000"  # Your LiteLLM proxy URL
+LUMINA_VIRTUAL_KEY = "sk-<your-litellm-api-key>"             # Your LiteLLM Virtual Key
 # =======================
 
 
@@ -67,11 +67,11 @@ def handle_event(event) -> None:
 
 
 async def main():
-    headers = {"Authorization": f"Bearer {LITELLM_VIRTUAL_KEY}"}
+    headers = {"Authorization": f"Bearer {LUMINA_VIRTUAL_KEY}"}
 
     async with httpx.AsyncClient(headers=headers, timeout=60.0) as http_client:
         # Step 1: List available agents
-        response = await http_client.get(f"{LITELLM_BASE_URL}/v1/agents")
+        response = await http_client.get(f"{LUMINA_BASE_URL}/v1/agents")
         agents = response.json()
 
         print("Available agents:")
@@ -88,7 +88,7 @@ async def main():
         print(f"\nInvoking: {selected_agent['agent_name']}")
 
         # Step 3: Discover agent card and create a2a-sdk 1.x client
-        base_url = f"{LITELLM_BASE_URL}/a2a/{agent_id}"
+        base_url = f"{LUMINA_BASE_URL}/a2a/{agent_id}"
         resolver = A2ACardResolver(httpx_client=http_client, base_url=base_url)
         agent_card = await resolver.get_agent_card()
 
@@ -131,15 +131,15 @@ from a2a.types import Message, Part, Role, SendMessageRequest
 from a2a.utils.constants import TransportProtocol
 
 # === CONFIGURE THESE ===
-LITELLM_BASE_URL = "http://localhost:4000"  # Your LiteLLM proxy URL
-LITELLM_VIRTUAL_KEY = "sk-<your-litellm-api-key>"             # Your LiteLLM Virtual Key
-LITELLM_AGENT_NAME = "ij-local"             # Agent name registered in LiteLLM
+LUMINA_BASE_URL = "http://localhost:4000"  # Your LiteLLM proxy URL
+LUMINA_VIRTUAL_KEY = "sk-<your-litellm-api-key>"             # Your LiteLLM Virtual Key
+LUMINA_AGENT_NAME = "ij-local"             # Agent name registered in LiteLLM
 # =======================
 
 
 async def main():
-    base_url = f"{LITELLM_BASE_URL}/a2a/{LITELLM_AGENT_NAME}"
-    headers = {"Authorization": f"Bearer {LITELLM_VIRTUAL_KEY}"}
+    base_url = f"{LUMINA_BASE_URL}/a2a/{LUMINA_AGENT_NAME}"
+    headers = {"Authorization": f"Bearer {LUMINA_VIRTUAL_KEY}"}
 
     async with httpx.AsyncClient(headers=headers, timeout=60.0) as http_client:
         resolver = A2ACardResolver(httpx_client=http_client, base_url=base_url)
@@ -229,7 +229,7 @@ console.log(response.choices[0].message.content);
 
 ```bash showLineNumbers title="curl_non_streaming.sh"
 curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "a2a/my-agent",
@@ -300,7 +300,7 @@ for await (const chunk of stream) {
 
 ```bash showLineNumbers title="curl_streaming.sh"
 curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "a2a/my-agent",
@@ -320,7 +320,7 @@ Agents that return a `submitted` task from `message/send` expect clients to poll
 
 ```bash showLineNumbers title="tasks_get.sh"
 curl -X POST "http://localhost:4000/a2a/${AGENT_ID}" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",

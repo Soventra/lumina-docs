@@ -106,7 +106,7 @@ Here's how to call an Nvidia NIM Endpoint with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: nvidia_nim/<your-model-name>  # add nvidia_nim/ prefix to route as Nvidia NIM provider
         api_key: api-key                 # api key to send your model
        # api_base: "" # [OPTIONAL] - default is https://integrate.api.nvidia.com/v1/
@@ -150,7 +150,7 @@ Here's how to call an Nvidia NIM Endpoint with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",

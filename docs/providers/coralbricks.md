@@ -95,19 +95,19 @@ Add CoralBricks to your LiteLLM Proxy configuration:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: deepseek-v4.1-flash
-    litellm_params:
+    lumina_params:
       model: coralbricks/deepseek-v4.1-flash-fast
       api_key: os.environ/CORALBRICKS_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Start the proxy:
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
 export CORALBRICKS_API_KEY="your-api-key"
-export LITELLM_MASTER_KEY="sk-local-coralbricks"
+export LUMINA_MASTER_KEY="sk-local-coralbricks"
 litellm --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
@@ -139,7 +139,7 @@ print(response.choices[0].message.content)
 ```bash showLineNumbers title="CoralBricks via Proxy - cURL"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "deepseek-v4.1-flash",
     "messages": [{"role": "user", "content": "hello from litellm"}]
@@ -158,7 +158,7 @@ The proxy forwards `/v1/responses` requests to the CoralBricks Responses endpoin
 ```bash showLineNumbers title="Responses API through LiteLLM Proxy"
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "deepseek-v4.1-flash",
     "input": "hello from litellm",
@@ -173,7 +173,7 @@ The proxy forwards `/v1/messages` requests to the CoralBricks Messages endpoint,
 ```bash showLineNumbers title="Anthropic Messages through LiteLLM Proxy"
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "x-api-key: $LITELLM_MASTER_KEY" \
+  -H "x-api-key: $LUMINA_MASTER_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "deepseek-v4.1-flash",
@@ -193,7 +193,7 @@ Set `CORALBRICKS_API_BASE` or pass `api_base` explicitly to route through a diff
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: deepseek-v4.1-flash
-    litellm_params:
+    lumina_params:
       model: coralbricks/deepseek-v4.1-flash-fast
       api_base: https://your-coralbricks-endpoint/v1
       api_key: os.environ/CORALBRICKS_API_KEY

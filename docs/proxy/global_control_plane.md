@@ -30,7 +30,7 @@ The control plane needs a `worker_registry` that lists all worker instances. Eac
 model_list: []
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 
 worker_registry:

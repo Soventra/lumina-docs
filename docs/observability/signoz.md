@@ -11,7 +11,7 @@ For SigNoz Cloud you need the ingestion endpoint for your [region](https://signo
 
 ## Quick start
 
-Add `signoz` to `callbacks` and point it at your SigNoz instance. `LITELLM_OTEL_V2=true` is recommended: it gives you one trace per request covering the HTTP call, auth, guardrails, the model call and the spend write, and it is required for per-team routing. See [OpenTelemetry v2](./opentelemetry_v2) for what the v2 trace contains.
+Add `signoz` to `callbacks` and point it at your SigNoz instance. `LUMINA_OTEL_V2=true` is recommended: it gives you one trace per request covering the HTTP call, auth, guardrails, the model call and the spend write, and it is required for per-team routing. See [OpenTelemetry v2](./opentelemetry_v2) for what the v2 trace contains.
 
 ```yaml title="config.yaml"
 litellm_settings:
@@ -22,7 +22,7 @@ litellm_settings:
 <TabItem value="cloud" label="SigNoz Cloud" default>
 
 ```shell title=".env"
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 SIGNOZ_INGESTION_ENDPOINT="https://ingest.<region>.signoz.cloud:443"
 SIGNOZ_INGESTION_KEY="<your-ingestion-key>"
 ```
@@ -33,7 +33,7 @@ Replace `<region>` with `us`, `eu` or `in` to match your SigNoz Cloud account.
 <TabItem value="self-hosted" label="Self-hosted SigNoz">
 
 ```shell title=".env"
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 SIGNOZ_INGESTION_ENDPOINT="http://<signoz-otel-collector>:4318"
 ```
 
@@ -46,7 +46,7 @@ Start the proxy and send a request:
 
 ```shell
 curl -X POST 'http://localhost:4000/v1/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H 'Content-Type: application/json' \
   -d '{"model": "{{openai_small}}", "messages": [{"role": "user", "content": "What is SigNoz?"}]}'
 ```
 
@@ -61,7 +61,7 @@ You can also enable the callback from the Admin UI under **Settings > Logging & 
 The `signoz` callback exports traces. LiteLLM's GenAI metrics and log events are not routed per vendor; they follow the proxy-wide OTLP settings, so to see them in SigNoz set the standard OpenTelemetry variables to the same destination:
 
 ```shell title=".env"
-LITELLM_OTEL_INTEGRATION_ENABLE_METRICS=true
+LUMINA_OTEL_INTEGRATION_ENABLE_METRICS=true
 OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
 OTEL_EXPORTER_OTLP_ENDPOINT="https://ingest.<region>.signoz.cloud:443"
 OTEL_EXPORTER_OTLP_HEADERS="signoz-ingestion-key=<your-ingestion-key>"
@@ -73,7 +73,7 @@ Drop `OTEL_EXPORTER_OTLP_HEADERS` for self-hosted SigNoz. Setting `OTEL_EXPORTER
 
 Under OTel v2 a team or a virtual key can carry its own SigNoz destination, so that team's traces land in its own SigNoz account while everyone else's stay at the proxy-wide endpoint. This is the same key/team callback mechanism as [Team/Key based logging](../proxy/team_logging), and the general behaviour (override versus additive mode, what the tenant receives, key beating team) is described in [Per-key / per-team credentials](./opentelemetry_v2#per-key--per-team-credentials-multi-tenant).
 
-Requires `LITELLM_OTEL_V2=true`. Allowlist every tenant endpoint host first, or the proxy ignores that endpoint with a warning:
+Requires `LUMINA_OTEL_V2=true`. Allowlist every tenant endpoint host first, or the proxy ignores that endpoint with a warning:
 
 ```yaml title="config.yaml"
 litellm_settings:
@@ -85,7 +85,7 @@ Register the callback on the team:
 
 ```shell
 curl -X POST 'http://localhost:4000/team/<team-id>/callback' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H 'Content-Type: application/json' \
   -d '{
     "callback_name": "signoz",
     "callback_type": "success",
@@ -100,7 +100,7 @@ Or on a key, including a key with no team:
 
 ```shell
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H 'Content-Type: application/json' \
   -d '{
     "metadata": {
       "logging": [{
@@ -137,7 +137,7 @@ Spans still queued in the batch processor when the proxy receives SIGTERM can be
 
 ## Without OTel v2
 
-The `signoz` callback also works with `LITELLM_OTEL_V2` unset. It then uses the legacy [OpenTelemetry integration](./opentelemetry_integration): the same two environment variables, OTLP HTTP to `<endpoint>/v1/traces`, and the `signoz-ingestion-key` header when a key is set. Per-team and per-key routing is not available on this path; team or key `callback_vars` for SigNoz are ignored and every trace goes to the proxy-wide destination.
+The `signoz` callback also works with `LUMINA_OTEL_V2` unset. It then uses the legacy [OpenTelemetry integration](./opentelemetry_integration): the same two environment variables, OTLP HTTP to `<endpoint>/v1/traces`, and the `signoz-ingestion-key` header when a key is set. Per-team and per-key routing is not available on this path; team or key `callback_vars` for SigNoz are ignored and every trace goes to the proxy-wide destination.
 
 ## Dashboards
 

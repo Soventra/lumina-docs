@@ -49,7 +49,7 @@ print(response)
 ```yaml
 model_list:
     - model_name: bedrock-rerank
-      litellm_params:
+      lumina_params:
         model: bedrock/arn:aws:bedrock:us-west-2::foundation-model/amazon.rerank-v1:0
         aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
         aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -68,7 +68,7 @@ litellm --config config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "bedrock-rerank",

@@ -19,7 +19,7 @@ os.environ['XINFERENCE_API_BASE'] = "http://127.0.0.1:9997/v1"
 os.environ['XINFERENCE_API_KEY'] = "anything" #[optional] no api key required
 ```
 
-These env variables are only read by `embedding()`. `image_generation()` ignores them, so pass `api_base` and a non-empty `api_key` on the call or in `litellm_params`. Without `api_base` the request goes to `https://api.openai.com/v1`, and without `api_key` the call fails with an AuthenticationError unless `OPENAI_API_KEY` is set
+These env variables are only read by `embedding()`. `image_generation()` ignores them, so pass `api_base` and a non-empty `api_key` on the call or in `lumina_params`. Without `api_base` the request goes to `https://api.openai.com/v1`, and without `api_key` the call fails with an AuthenticationError unless `OPENAI_API_KEY` is set
 
 ## Sample Usage - Embedding
 ```python showLineNumbers
@@ -72,7 +72,7 @@ print(response)
 ```yaml showLineNumbers
 model_list:
   - model_name: xinference-sd
-    litellm_params:
+    lumina_params:
       model: xinference/stabilityai/stable-diffusion-3.5-large
       api_base: http://127.0.0.1:9997/v1
       api_key: anything
@@ -80,7 +80,7 @@ model_list:
       mode: image_generation
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start the proxy
@@ -96,7 +96,7 @@ litellm --config config.yaml
 ```bash showLineNumbers
 curl --location 'http://0.0.0.0:4000/v1/images/generations' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "xinference-sd",
     "prompt": "A beautiful sunset over a calm ocean",

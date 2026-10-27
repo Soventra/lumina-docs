@@ -8,7 +8,7 @@ Pass-through endpoints for GigaChat - call the provider-specific endpoint in nat
 | Logging | ✅ | works across all integrations |
 | Streaming | ✅ | |
 
-Just replace `https://gigachat.devices.sberbank.ru/api/v1` with `LITELLM_PROXY_BASE_URL/gigachat`
+Just replace `https://gigachat.devices.sberbank.ru/api/v1` with `LUMINA_PROXY_BASE_URL/gigachat`
 
 ## Quick Start
 
@@ -42,7 +42,7 @@ litellm
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/gigachat/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "GigaChat-2",
     "messages": [{"role": "user", "content": "Hello!"}]
@@ -57,15 +57,15 @@ Key Changes:
 
 | **Original Endpoint**                                | **Replace With**                  |
 |------------------------------------------------------|-----------------------------------|
-| `https://gigachat.devices.sberbank.ru/api/v1`          | `http://0.0.0.0:4000/gigachat` (LITELLM_PROXY_BASE_URL="http://0.0.0.0:4000")      |
-| `bearer $GIGACHAT_ACCESS_TOKEN`                                 | `bearer anything` (use `bearer LITELLM_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
+| `https://gigachat.devices.sberbank.ru/api/v1`          | `http://0.0.0.0:4000/gigachat` (LUMINA_PROXY_BASE_URL="http://0.0.0.0:4000")      |
+| `bearer $GIGACHAT_ACCESS_TOKEN`                                 | `bearer anything` (use `bearer LUMINA_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
 
 ### **Example 1: Chat completions (streaming)**
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/gigachat/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "GigaChat-2",
     "messages": [{"role": "user", "content": "Hello!"}],
@@ -78,7 +78,7 @@ curl -L -X POST 'http://0.0.0.0:4000/gigachat/chat/completions' \
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/gigachat/embeddings' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "EmbeddingsGigaR",
     "input": ["Hello!"]
@@ -89,5 +89,5 @@ curl -L -X POST 'http://0.0.0.0:4000/gigachat/embeddings' \
 
 ```bash
 curl -L -X GET 'http://0.0.0.0:4000/gigachat/models' \
--H "Authorization: Bearer $LITELLM_API_KEY"
+-H "Authorization: Bearer $LUMINA_API_KEY"
 ```

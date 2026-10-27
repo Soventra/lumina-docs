@@ -32,11 +32,11 @@ EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
 
 #### JWT Token Expiration
 
-By default, CLI authentication tokens expire after **24 hours**. You can customize this expiration time by setting the `LITELLM_CLI_JWT_EXPIRATION_HOURS` environment variable when starting your LiteLLM Proxy:
+By default, CLI authentication tokens expire after **24 hours**. You can customize this expiration time by setting the `LUMINA_CLI_JWT_EXPIRATION_HOURS` environment variable when starting your LiteLLM Proxy:
 
 ```bash
 # Set CLI JWT tokens to expire after 48 hours
-export LITELLM_CLI_JWT_EXPIRATION_HOURS=48
+export LUMINA_CLI_JWT_EXPIRATION_HOURS=48
 export EXPERIMENTAL_UI_LOGIN="True"
 litellm --config config.yaml
 ```
@@ -44,16 +44,16 @@ litellm --config config.yaml
 Or in a single command:
 
 ```bash
-LITELLM_CLI_JWT_EXPIRATION_HOURS=48 EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
+LUMINA_CLI_JWT_EXPIRATION_HOURS=48 EXPERIMENTAL_UI_LOGIN="True" litellm --config config.yaml
 ```
 
 **Examples:**
-- `LITELLM_CLI_JWT_EXPIRATION_HOURS=12` - Tokens expire after 12 hours
-- `LITELLM_CLI_JWT_EXPIRATION_HOURS=168` - Tokens expire after 7 days (168 hours)
-- `LITELLM_CLI_JWT_EXPIRATION_HOURS=720` - Tokens expire after 30 days (720 hours)
+- `LUMINA_CLI_JWT_EXPIRATION_HOURS=12` - Tokens expire after 12 hours
+- `LUMINA_CLI_JWT_EXPIRATION_HOURS=168` - Tokens expire after 7 days (168 hours)
+- `LUMINA_CLI_JWT_EXPIRATION_HOURS=720` - Tokens expire after 30 days (720 hours)
 
 :::note[Experimental UI Session]
-When `EXPERIMENTAL_UI_LOGIN` is enabled, the **browser UI login** session uses a fixed 10-minute expiry (not configurable). `LITELLM_UI_SESSION_DURATION` applies only to non-experimental flows.
+When `EXPERIMENTAL_UI_LOGIN` is enabled, the **browser UI login** session uses a fixed 10-minute expiry (not configurable). `LUMINA_UI_SESSION_DURATION` applies only to non-experimental flows.
 :::
 
 :::tip
@@ -87,7 +87,7 @@ export CLI_SSO_CLAIM_MAP="employment_type->acme_employment_type,org_info.departm
 export GENERIC_USER_EXTRA_ATTRIBUTES="employment_type,org_info.department"
 ```
 
-`CLI_SSO_CLAIM_MAP` and `LITELLM_CLI_SSO_CLAIM_MAP` are equivalent. Format: comma-separated `source_claim->metadata_key` pairs. The optional `metadata.` prefix on the destination is stripped; values are stored on the user's `metadata` JSON column.
+`CLI_SSO_CLAIM_MAP` and `LUMINA_CLI_SSO_CLAIM_MAP` are equivalent. Format: comma-separated `source_claim->metadata_key` pairs. The optional `metadata.` prefix on the destination is stripped; values are stored on the user's `metadata` JSON column.
 
 | Part | Meaning |
 |------|---------|
@@ -139,7 +139,7 @@ Example poll response (after SSO completes):
    On your local machine, set the proxy URL:
 
    ```bash
-   export LITELLM_PROXY_URL=http://localhost:4000
+   export LUMINA_PROXY_URL=http://localhost:4000
    ```
 
    *(Replace with your actual proxy URL)*
@@ -169,7 +169,7 @@ Example poll response (after SSO completes):
 `lite login --pkce` signs you in through your system browser with OAuth 2.0 authorization code and PKCE (S256). The CLI acts as a public client: it registers itself with the proxy, listens on a loopback port that the OS assigns, and never holds a client secret. The proxy sign-in page and your SSO provider do the authentication, and the CLI only ever sees the resulting credential
 
 ```shell
-export LITELLM_PROXY_URL=https://litellm.example.com
+export LUMINA_PROXY_URL=https://litellm.example.com
 lite login --pkce
 ```
 
@@ -191,7 +191,7 @@ The classic `lite login` flow and virtual API keys keep working unchanged. `--pk
 
 The key and the refresh token both go to your OS keychain, the same place `lite login` puts the key, and the rest of the record goes to `~/.litellm/token.json` (mode `0600`). Next to the `base_url`, `user_id`, and `user_role` fields that `lite login` writes, a `--pkce` record also holds `expires_at`, `client_id`, `token_endpoint`, `revocation_endpoint`, `resource`, and `team_id`, none of which gets anyone a key on its own. On a machine with no usable keychain the key and the refresh token fall back into that same file and `lite login` says so; treat `~/.litellm/token.json` as sensitive whenever it does, because anyone who can read it can exchange the refresh token for a working key. A `--pkce` login made with an earlier `lite` leaves its refresh token in the file until the next `lite` command reads it and moves it into the keychain
 
-The key expires after `LITELLM_CLI_JWT_EXPIRATION_HOURS` (24 hours by default, see [JWT Token Expiration](#jwt-token-expiration)). You do not need to log in again when it does: the next `lite` command that needs the key renews it with the refresh token and saves the new pair. Each renewal rotates the refresh token, and a refresh token that was already used is refused
+The key expires after `LUMINA_CLI_JWT_EXPIRATION_HOURS` (24 hours by default, see [JWT Token Expiration](#jwt-token-expiration)). You do not need to log in again when it does: the next `lite` command that needs the key renews it with the refresh token and saves the new pair. Each renewal rotates the refresh token, and a refresh token that was already used is refused
 
 ### Use the credential from other tools
 
@@ -211,7 +211,7 @@ Claude Code can run it as its [`apiKeyHelper`](https://code.claude.com/docs/en/s
 For OpenCode, or any other OpenAI-compatible client, point the client at `<proxy>/v1` and pass the key through an environment variable:
 
 ```shell
-LITELLM_PROXY_KEY=$(lite auth print-token) opencode
+LUMINA_PROXY_KEY=$(lite auth print-token) opencode
 ```
 
 ```json title="opencode.json"
@@ -223,7 +223,7 @@ LITELLM_PROXY_KEY=$(lite auth print-token) opencode
       "name": "LiteLLM proxy",
       "options": {
         "baseURL": "https://litellm.example.com/v1",
-        "apiKey": "{env:LITELLM_PROXY_KEY}"
+        "apiKey": "{env:LUMINA_PROXY_KEY}"
       },
       "models": {
         "{{openai_small}}": { "name": "{{openai_small}}" }
@@ -242,11 +242,11 @@ Requests made with the key are attributed to your user and the team you picked, 
 lite logout
 ```
 
-`lite logout` sends the refresh token to the proxy's `POST /revoke` endpoint and then clears both stores, the keychain entry and `~/.litellm/token.json`. The refresh token is dead from that point on. The key itself is not revocable; it expires on its own within `LITELLM_CLI_JWT_EXPIRATION_HOURS`
+`lite logout` sends the refresh token to the proxy's `POST /revoke` endpoint and then clears both stores, the keychain entry and `~/.litellm/token.json`. The refresh token is dead from that point on. The key itself is not revocable; it expires on its own within `LUMINA_CLI_JWT_EXPIRATION_HOURS`
 
 Signing in again, with `lite login --pkce` or the classic `lite login`, does the same to the record it replaces: the new credential is saved first, then the previous login's refresh token is revoked, so an older copy of `token.json` cannot be renewed once you have signed in again. If the proxy cannot be reached for that revocation, the login still succeeds and says so
 
-An admin cannot revoke a `--pkce` login from the dashboard; only the holder's `lite logout` cuts the refresh token short. Every renewal re-reads the user on the proxy, so deactivating the user or removing them from the team makes the next renewal fail, and the key runs out within `LITELLM_CLI_JWT_EXPIRATION_HOURS`. When a renewal is refused, `lite auth print-token` and every other `lite` command print the reason the proxy gave on stderr, and once the key has run out they tell you to run `lite login --pkce` again
+An admin cannot revoke a `--pkce` login from the dashboard; only the holder's `lite logout` cuts the refresh token short. Every renewal re-reads the user on the proxy, so deactivating the user or removing them from the team makes the next renewal fail, and the key runs out within `LUMINA_CLI_JWT_EXPIRATION_HOURS`. When a renewal is refused, `lite auth print-token` and every other `lite` command print the reason the proxy gave on stderr, and once the key has run out they tell you to run `lite login --pkce` again
 
 ### Several workers or replicas
 
@@ -405,13 +405,13 @@ A hosted application can reuse the gateway's configured Google, Okta or other SS
 
 | Requested scope | Gateway callback setting | Access |
 | --- | --- | --- |
-| `proxy:read` | `LITELLM_PROXY_API_OAUTH_REDIRECT_URIS` | Model listings and aggregate usage reports within the user's current permissions |
-| `proxy:admin` | `LITELLM_PROXY_API_OAUTH_ADMIN_REDIRECT_URIS` | Existing administrator operations and model calls, subject to current `proxy_admin` authority and gateway limits |
+| `proxy:read` | `LUMINA_PROXY_API_OAUTH_REDIRECT_URIS` | Model listings and aggregate usage reports within the user's current permissions |
+| `proxy:admin` | `LUMINA_PROXY_API_OAUTH_ADMIN_REDIRECT_URIS` | Existing administrator operations and model calls, subject to current `proxy_admin` authority and gateway limits |
 
 For an administrator app, set on the gateway:
 
 ```shell
-export LITELLM_PROXY_API_OAUTH_ADMIN_REDIRECT_URIS=https://admin.example.com/oauth/callback
+export LUMINA_PROXY_API_OAUTH_ADMIN_REDIRECT_URIS=https://admin.example.com/oauth/callback
 ```
 
 Both settings accept comma-separated exact HTTPS URIs. Wildcards, query strings and fragments are rejected. An admin callback may request either scope; a reporting callback cannot request admin access. Omitting `scope` requests `proxy:read`. Registering a callback never promotes the user or skips their consent

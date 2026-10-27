@@ -83,7 +83,7 @@ Reasoning tokens are counted inside `completion_tokens`, so they are billed at t
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: clf_ai_gateway/glm-5.3
         api_key: os.environ/CLF_AI_GATEWAY_API_KEY
   ```

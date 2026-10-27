@@ -33,11 +33,11 @@ This release is published as [`ghcr.io/berriai/litellm:vX.Y.Z`](https://github.c
 
 ## Release notes: runnable docker command
 
-The Docker tab under "Deploy this version" must be a command that actually boots the proxy. `STORE_MODEL_IN_DB=True` alone does nothing without a database, so always pair it with `LITELLM_MASTER_KEY` and `DATABASE_URL`:
+The Docker tab under "Deploy this version" must be a command that actually boots the proxy. `STORE_MODEL_IN_DB=True` alone does nothing without a database, so always pair it with `LUMINA_MASTER_KEY` and `DATABASE_URL`:
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \

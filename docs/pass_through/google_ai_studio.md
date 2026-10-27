@@ -15,7 +15,7 @@ Pass-through endpoints for Google AI Studio - call provider-specific endpoint, i
 | Streaming | ✅ | |
 
 
-Just replace `https://generativelanguage.googleapis.com` with `LITELLM_PROXY_BASE_URL/gemini`
+Just replace `https://generativelanguage.googleapis.com` with `LUMINA_PROXY_BASE_URL/gemini`
 
 #### **Example Usage**
 
@@ -128,8 +128,8 @@ Key Changes:
 
 | **Original Endpoint**                                | **Replace With**                  |
 |------------------------------------------------------|-----------------------------------|
-| `https://generativelanguage.googleapis.com`          | `http://0.0.0.0:4000/gemini` (LITELLM_PROXY_BASE_URL="http://0.0.0.0:4000")      |
-| `key=$GOOGLE_API_KEY`                                 | `key=anything` (use `key=LITELLM_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
+| `https://generativelanguage.googleapis.com`          | `http://0.0.0.0:4000/gemini` (LUMINA_PROXY_BASE_URL="http://0.0.0.0:4000")      |
+| `key=$GOOGLE_API_KEY`                                 | `key=anything` (use `key=LUMINA_VIRTUAL_KEY` if Virtual Keys are setup on proxy)                    |
 
 
 ### **Example 1: Counting tokens**
@@ -250,7 +250,7 @@ Use this, to avoid giving developers the raw Google AI Studio key, but still let
 
 ```bash
 export DATABASE_URL=""
-export LITELLM_MASTER_KEY=""
+export LUMINA_MASTER_KEY=""
 export GEMINI_API_KEY=""
 ```
 
@@ -264,7 +264,7 @@ litellm
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{}'
 ```

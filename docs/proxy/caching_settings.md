@@ -13,10 +13,10 @@ keys apply depends on `type`.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: text-embedding-ada-002
 
 litellm_settings:

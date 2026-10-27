@@ -53,16 +53,16 @@ run curl -fsSL https://docs.litellm.ai/skills/auto-router and follow the instruc
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params: {model: openai/{{openai_small}}, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/{{openai_small}}, api_key: os.environ/OPENAI_API_KEY}
   - model_name: {{openai_large}}
-    litellm_params: {model: openai/{{openai_large}}, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/{{openai_large}}, api_key: os.environ/OPENAI_API_KEY}
   - model_name: {{anthropic}}
-    litellm_params: {model: anthropic/{{anthropic}}, api_key: os.environ/ANTHROPIC_API_KEY}
+    lumina_params: {model: anthropic/{{anthropic}}, api_key: os.environ/ANTHROPIC_API_KEY}
   - model_name: {{anthropic_large}}
-    litellm_params: {model: anthropic/{{anthropic_large}}, api_key: os.environ/ANTHROPIC_API_KEY}
+    lumina_params: {model: anthropic/{{anthropic_large}}, api_key: os.environ/ANTHROPIC_API_KEY}
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -116,7 +116,7 @@ Add this router entry alongside the tier deployments in your `model_list`. The t
 
 ```yaml title="config.yaml"
 - model_name: jev-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_default_model: {{openai_large}}
     complexity_router_config:
@@ -149,11 +149,11 @@ For CI/CD or scripts, create the same deployment with `POST /model/new`. Enable 
 
 ```bash
 curl -X POST "http://localhost:4000/model/new" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model_name": "claude-auto",
-    "litellm_params": {
+    "lumina_params": {
       "model": "auto_router/complexity_router",
       "complexity_router_config": {
         "tiers": {

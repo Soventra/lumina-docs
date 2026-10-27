@@ -15,13 +15,13 @@ Set your guardrails under the `guardrails` section
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: general-guard
-    litellm_params:
+    lumina_params:
       guardrail: cato_networks
       mode: [pre_call, post_call]
       api_key: os.environ/CATO_API_KEY
@@ -29,13 +29,13 @@ guardrails:
       default_on: true # Optional
   
   - guardrail_name: "aporia-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: aporia  # supported values: "aporia", "lakera"
       mode: "during_call"
       api_key: os.environ/APORIA_API_KEY_1
       api_base: os.environ/APORIA_API_BASE_1
   - guardrail_name: "aporia-post-guard"
-    litellm_params:
+    lumina_params:
       guardrail: aporia  # supported values: "aporia", "lakera"
       mode: "post_call"
       api_key: os.environ/APORIA_API_KEY_2
@@ -51,7 +51,7 @@ guardrails:
 
 # Example Presidio guardrail config with entity actions + confidence score thresholds
   - guardrail_name: "presidio-pii"
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: "pre_call"
       presidio_language: "en"
@@ -65,7 +65,7 @@ guardrails:
 
 # Example Pillar Security config via Generic Guardrail API
   - guardrail_name: "pillar-security"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
       api_base: https://api.pillar.security/api/v1/integrations/litellm
@@ -88,7 +88,7 @@ For generic guardrail APIs you can also set **static headers** (`headers`: key/v
 
 ### Run on streaming or non-streaming requests only with `stream_scope`
 
-A guardrail runs on both streaming and non-streaming requests by default. Set `stream_scope` under the guardrail's `litellm_params` to choose which request shapes it evaluates:
+A guardrail runs on both streaming and non-streaming requests by default. Set `stream_scope` under the guardrail's `lumina_params` to choose which request shapes it evaluates:
 
 - `streaming` — run only when the client asked for a streamed response
 - `non_streaming` — run only for regular request/response calls
@@ -98,7 +98,7 @@ A guardrail runs on both streaming and non-streaming requests by default. Set `s
 guardrails:
   # runs only on streaming requests; non-streaming calls bypass the scan
   - guardrail_name: "moderate-streams-only"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: post_call
       stream_scope: streaming
@@ -107,7 +107,7 @@ guardrails:
 
   # runs only on non-streaming requests
   - guardrail_name: "moderate-non-streams"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: post_call
       stream_scope: non_streaming
@@ -120,7 +120,7 @@ A guardrail configured with several modes (for example `mode: [pre_call, post_ca
 ```yaml
 guardrails:
   - guardrail_name: "scoped-by-mode"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
       stream_scope:
@@ -164,7 +164,7 @@ A `stream_scope` value other than `streaming`, `non_streaming` or `both` (or a m
 
 ### Observe only one direction with `logging_only_scope`
 
-A `logging_only` guardrail observes the request and the response by default. Set `logging_only_scope` under the guardrail's `litellm_params` to choose which direction the scan observes:
+A `logging_only` guardrail observes the request and the response by default. Set `logging_only_scope` under the guardrail's `lumina_params` to choose which direction the scan observes:
 
 - `input` — scan only the request
 - `output` — scan only the response
@@ -175,7 +175,7 @@ A `logging_only` guardrail observes the request and the response by default. Set
 guardrails:
   # unset (default): scans request and response, pre-existing behavior
   - guardrail_name: "observe-default"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: logging_only
       api_base: os.environ/GUARDRAIL_API_BASE
@@ -183,7 +183,7 @@ guardrails:
 
   # scans only the request
   - guardrail_name: "observe-requests"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: logging_only
       logging_only_scope: input
@@ -192,7 +192,7 @@ guardrails:
 
   # scans only the response
   - guardrail_name: "observe-responses"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: logging_only
       logging_only_scope: output
@@ -201,7 +201,7 @@ guardrails:
 
   # explicitly scans both directions
   - guardrail_name: "observe-both"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: logging_only
       logging_only_scope: both
@@ -247,7 +247,7 @@ litellm_settings:
   skip_system_message_in_guardrail: true
 ```
 
-**Per guardrail**, under that guardrail’s `litellm_params`: set `skip_system_message_in_guardrail: true` or `false`. If omitted, the global `litellm_settings` value is used; per-guardrail `false` forces system messages to be included even when the global flag is `true`.
+**Per guardrail**, under that guardrail’s `lumina_params`: set `skip_system_message_in_guardrail: true` or `false`. If omitted, the global `litellm_settings` value is used; per-guardrail `false` forces system messages to be included even when the global flag is `true`.
 
 **Via LiteLLM UI**, when **creating** or **editing** a guardrail in the LiteLLM Admin Dashboard, set **Skip system messages in guardrail** (under Basic Info on create, or in the edit / guardrail settings flows):
 
@@ -277,7 +277,7 @@ litellm_settings:
   skip_tool_message_in_guardrail: true
 ```
 
-**Per guardrail**: under that guardrail's `litellm_params`, set `skip_tool_message_in_guardrail: true` or `false`, with the same global/per-guardrail precedence as the system-message flag above.
+**Per guardrail**: under that guardrail's `lumina_params`, set `skip_tool_message_in_guardrail: true` or `false`, with the same global/per-guardrail precedence as the system-message flag above.
 
 **Via LiteLLM UI**: set **Skip tool messages in guardrail** the same way, right below the system-message dropdown described above, with the same three options (**Use global default**, **Yes, exclude from guardrail scan**, **No, always include in scan**).
 
@@ -374,7 +374,7 @@ Set `default_on: true` in your guardrail config to run the guardrail on every re
 ```yaml
 guardrails:
   - guardrail_name: "aporia-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: aporia
       mode: "pre_call"
       default_on: true
@@ -438,7 +438,7 @@ Set `include_guardrail_response: true` in the request body to get the guardrail 
 ```shell
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "messages": [{"role": "user", "content": "Reply OK"}],
@@ -518,7 +518,7 @@ This config will return the `/guardrails/list` response above. The `guardrail_in
 
 ```yaml
 - guardrail_name: "aporia-post-guard"
-  litellm_params:
+  lumina_params:
       guardrail: aporia  # supported values: "aporia", "lakera"
       mode: "post_call"
       api_key: os.environ/APORIA_API_KEY_2
@@ -674,7 +674,7 @@ Use this to control what guardrails run per API Key. In this tutorial we only wa
 
 ```shell
 curl -X POST 'http://0.0.0.0:4000/key/generate' \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H 'Content-Type: application/json' \
     -d '{
             "guardrails": ["aporia-pre-guard", "aporia-post-guard"]
@@ -685,7 +685,7 @@ curl -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/update' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
         "key": "sk-jNm1Zar7XfNdZXp49Z1kSQ",
@@ -725,13 +725,13 @@ Both `default` and tag values can be a single mode string or a list of modes.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "guardrails_ai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: guardrails_ai
       guard_name: "pii_detect" # Guardrail AI guard name
       mode:
@@ -747,13 +747,13 @@ guardrails:
 ```yaml
 Per guardrailmodel_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "guardrails_ai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: guardrails_ai
       guard_name: "pii_detect"
       mode:
@@ -769,13 +769,13 @@ guardrails:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "guardrails_ai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: guardrails_ai
       guard_name: "pii_detect"
       mode:
@@ -797,25 +797,25 @@ This is great for cases when you have an on-prem and hosted model, and just want
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       api_base: https://api.anthropic.com/v1
       guardrails: ["azure-text-moderation"]
   - model_name: openai-gpt-4o
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
 
 guardrails:
   - guardrail_name: "presidio-pii"
-    litellm_params:
+    lumina_params:
       guardrail: presidio  # supported values: "aporia", "bedrock", "lakera", "presidio"
       mode: "pre_call"
       presidio_language: "en"  # optional: set default language for PII analysis
       pii_entities_config:
         PERSON: "BLOCK"  # Will mask credit card numbers
   - guardrail_name: azure-text-moderation
-    litellm_params:
+    lumina_params:
       guardrail: azure/text_moderations
       mode: "post_call" 
       api_key: os.environ/AZURE_GUARDRAIL_API_KEY
@@ -830,7 +830,7 @@ guardrails:
 
 ```bash
 curl -X POST 'http://0.0.0.0:4000/team/update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "team_id": "4198d93c-d375-4c83-8d5a-71e7c5473e50",
@@ -843,7 +843,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_VIRTUAL_KEY' \
+--header 'Authorization: Bearer $LUMINA_VIRTUAL_KEY' \
 --data '{
 "model": "{{openai_small}}",
     "messages": [
@@ -884,7 +884,7 @@ The `pii_masking` guardrail ran on this request because api key=sk-jNm1Zar7XfNdZ
 ```yaml
 guardrails:
   - guardrail_name: string     # Required: Name of the guardrail
-    litellm_params:            # Required: Configuration parameters
+    lumina_params:            # Required: Configuration parameters
       guardrail: string        # Required: One of "aporia", "bedrock", "guardrails_ai", "lakera", "presidio", "hide-secrets"
       mode: Union[string, List[string], Mode]             # Required: One or more of "pre_call", "post_call", "during_call", "logging_only"
       api_key: string          # Required: API key for the guardrail service

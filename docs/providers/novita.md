@@ -70,7 +70,7 @@ print(content)
 ```yaml
 model_list:
   - model_name: deepseek-r1-turbo
-    litellm_params:
+    lumina_params:
       model: novita/deepseek/deepseek-r1-turbo
       api_key: os.environ/NOVITA_API_KEY
 ```
@@ -179,7 +179,7 @@ print(json.loads(response.choices[0].message.content))
 ```yaml
 model_list:
   - model_name: deepseek-r1-turbo
-    litellm_params:
+    lumina_params:
       model: novita/deepseek/deepseek-r1-turbo
       api_key: os.environ/NOVITA_API_KEY
 ```
@@ -195,7 +195,7 @@ $ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "deepseek-r1-turbo",
   "messages": [

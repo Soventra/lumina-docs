@@ -21,7 +21,7 @@ If you're authenticating with an Anthropic API key rather than `/login`, enable 
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       # No api_key needed — client's key will be used
 
@@ -71,7 +71,7 @@ export ANTHROPIC_MODEL="{{anthropic}}"
 # LiteLLM proxy auth: this is added to every request
 # Use x-litellm-api-key so the proxy authenticates you; your Anthropic credential goes
 # via Authorization (from /login) or x-api-key (if you configured a key directly)
-export ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LITELLM_API_KEY"
+export ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LUMINA_API_KEY"
 ```
 
 Replace `sk-<your-litellm-api-key>` with your actual LiteLLM virtual key.
@@ -81,7 +81,7 @@ Replace `sk-<your-litellm-api-key>` with your actual LiteLLM virtual key.
 For multiple headers, use newline-separated values:
 
 ```bash
-export ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LITELLM_API_KEY
+export ANTHROPIC_CUSTOM_HEADERS="x-litellm-api-key: $LUMINA_API_KEY
 x-litellm-user-id: my-user-id"
 ```
 
@@ -132,7 +132,7 @@ This applies to the `x-api-key` path; the OAuth `Authorization` header from `/lo
 
 - Confirm `forward_llm_provider_auth_headers: true` is in your config.
 - The setting can be in `litellm_settings` or `general_settings` depending on your config structure.
-- Enable debug logging: `LITELLM_LOG=DEBUG` to see which key is being forwarded.
+- Enable debug logging: `LUMINA_LOG=DEBUG` to see which key is being forwarded.
 
 ### Model is unavailable for everyone after one user hits their limit
 

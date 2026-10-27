@@ -99,7 +99,7 @@ and a write round-tripped
 
 ```shell
 curl -s -X GET 'http://localhost:4000/cache/ping' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ```json

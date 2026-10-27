@@ -49,7 +49,7 @@ That phase then maps to a tier, and each tier has its own model:
 
 ```yaml title="config.yaml"
 - model_name: subtask-type-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_default_model: anthropic/claude-sonnet-5
     complexity_router_config:
@@ -64,7 +64,7 @@ That phase then maps to a tier, and each tier has its own model:
           - anthropic/claude-haiku-4-5
         COMPLEX:                         # implement
           - model_name: anthropic/claude-opus-5
-            litellm_params:
+            lumina_params:
               reasoning_effort: high
 ```
 

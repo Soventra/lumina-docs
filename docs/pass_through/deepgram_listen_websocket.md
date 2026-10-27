@@ -25,7 +25,7 @@ Set the Deepgram credential in one of two places. The proxy checks the configure
 
 ```bash
 export DEEPGRAM_API_KEY="your-deepgram-key"
-export LITELLM_MASTER_KEY="${LITELLM_MASTER_KEY:-sk-$(openssl rand -hex 16)}"
+export LUMINA_MASTER_KEY="${LUMINA_MASTER_KEY:-sk-$(openssl rand -hex 16)}"
 litellm --config config.yaml --port 4000
 ```
 
@@ -37,13 +37,13 @@ Add a Deepgram deployment with `use_in_pass_through: true`. The same flag is the
 ```yaml
 model_list:
   - model_name: nova-3
-    litellm_params:
+    lumina_params:
       model: deepgram/nova-3
       api_key: os.environ/DEEPGRAM_API_KEY
       use_in_pass_through: true
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 </TabItem>
@@ -72,13 +72,13 @@ import os
 import websockets
 
 PROXY_URL = "ws://localhost:4000/deepgram/v1/listen?model=nova-3&encoding=linear16&sample_rate=16000&interim_results=true"
-LITELLM_KEY = os.environ["LITELLM_API_KEY"]
+LUMINA_KEY = os.environ["LUMINA_API_KEY"]
 
 
 async def main() -> None:
     async with websockets.connect(
         PROXY_URL,
-        additional_headers={"Authorization": f"Bearer {LITELLM_KEY}"},
+        additional_headers={"Authorization": f"Bearer {LUMINA_KEY}"},
     ) as ws:
 
         async def send_audio() -> None:
@@ -109,7 +109,7 @@ asyncio.run(main())
 
 ```bash
 websocat -b \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   "ws://localhost:4000/deepgram/v1/listen?model=nova-3&encoding=linear16&sample_rate=16000" \
   < audio.raw
 ```
@@ -140,7 +140,7 @@ Deepgram to client: every frame is relayed byte for byte in the order received, 
 When the socket closes, the proxy reads the last `Metadata` frame's `duration` (seconds of audio Deepgram processed) and multiplies it by the `input_cost_per_second` of the `deepgram/streaming/<model>` entry (`deepgram/streaming/<model>-multilingual` when `language=multi`) in [`model_prices_and_context_window.json`](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json). The pre-recorded `deepgram/<model>` entry is never used as a substitute. If Deepgram never sends `Metadata` (for example the client dropped the connection), the proxy falls back to the furthest `start + duration` seen across `Results` frames. Deepgram bills every channel it processes, so a stereo session with `multichannel=true&channels=2` costs twice its wall-clock duration. The proxy multiplies the duration by the channel count from `Metadata.channels`, falling back to the widest `channel_index` seen in `Results` frames and then to the `channels` query parameter, and defaulting to one. The spend is written to SpendLogs with `call_type: pass_through_endpoint`, attributed to the calling key, team, and user like any other route
 
 ```bash
-curl -s "http://localhost:4000/spend/logs?api_key=$LITELLM_API_KEY" -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+curl -s "http://localhost:4000/spend/logs?api_key=$LUMINA_API_KEY" -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 ## Known limitations

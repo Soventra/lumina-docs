@@ -44,7 +44,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: cross-encoder/ms-marco-minilm-l-12-v2
-    litellm_params:
+    lumina_params:
       model: watsonx/cross-encoder/ms-marco-minilm-l-12-v2
       api_key: os.environ/WATSONX_APIKEY
       api_base: os.environ/WATSONX_API_BASE

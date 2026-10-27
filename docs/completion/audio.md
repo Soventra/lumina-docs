@@ -46,7 +46,7 @@ with open("dog.wav", "wb") as f:
 ```yaml
 model_list:
   - model_name: gpt-4o-audio-preview # OpenAI gpt-4o-audio-preview
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-audio-preview
       api_key: os.environ/OPENAI_API_KEY 
 
@@ -66,8 +66,8 @@ import base64
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY", # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE" # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
 completion = client.chat.completions.create(
@@ -144,7 +144,7 @@ print(completion.choices[0].message)
 ```yaml
 model_list:
   - model_name: gpt-4o-audio-preview # OpenAI gpt-4o-audio-preview
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-audio-preview
       api_key: os.environ/OPENAI_API_KEY 
 
@@ -164,8 +164,8 @@ import base64
 from openai import OpenAI
 
 client = OpenAI(
-    api_key="LITELLM_PROXY_KEY", # sk-<your-litellm-api-key>
-    base_url="LITELLM_PROXY_BASE" # http://0.0.0.0:4000
+    api_key="LUMINA_PROXY_KEY", # sk-<your-litellm-api-key>
+    base_url="LUMINA_PROXY_BASE" # http://0.0.0.0:4000
 )
 
 
@@ -233,11 +233,11 @@ assert litellm.supports_audio_input(model="{{openai_small}}") == False
 ```yaml
 model_list:
   - model_name: gpt-audio # OpenAI gpt-audio
-    litellm_params:
+    lumina_params:
       model: openai/gpt-audio
       api_key: os.environ/OPENAI_API_KEY
   - model_name: llava-hf          # Custom OpenAI compatible model
-    litellm_params:
+    lumina_params:
       model: openai/llava-hf/llava-v1.6-vicuna-7b-hf
       api_base: http://localhost:8000
       api_key: fake-key
@@ -258,7 +258,7 @@ litellm --config config.yaml
 curl -X 'GET' \
   'http://localhost:4000/model/info' \
   -H 'accept: application/json' \
-  -H "x-api-key: $LITELLM_API_KEY"
+  -H "x-api-key: $LUMINA_API_KEY"
 ```
 
 Expected Response (trimmed)

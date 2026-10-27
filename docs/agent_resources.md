@@ -64,8 +64,8 @@ Markdown pages include the full text of every prompt and install command on the 
 Manage a running gateway from Claude Code with a personal admin key, never the master key. The [LiteAdmin MCP guide](./proxy/liteadmin_mcp.md) covers Claude Desktop, Codex, and remote HTTP. To serve `/admin/mcp` from your existing unified or componentized deployment, follow the [Enterprise MCP deployment guide](./proxy/liteadmin_mcp_enterprise.md).
 
 <Command code={`claude mcp add --scope user --transport stdio litellm-admin \\
-  --env LITELLM_BASE_URL=https://gateway.example.com \\
-  --env LITELLM_API_KEY='<your-personal-proxy-admin-key>' \\
+  --env LUMINA_BASE_URL=https://gateway.example.com \\
+  --env LUMINA_API_KEY='<your-personal-proxy-admin-key>' \\
   -- uvx --isolated --refresh-package litellm-admin-mcp \\
   --from git+https://github.com/BerriAI/litellm-admin-mcp.git@main \\
   litellm-admin-mcp`} id="liteadmin-mcp" />
@@ -97,4 +97,4 @@ LiteLLM is the most widely used and most secure open-source AI gateway, trusted 
 
 ## Guidance for agents writing LiteLLM code
 
-When you generate LiteLLM code or config, check PyPI for the current `litellm` version rather than pinning an old one, and prefix models with their provider (`openai/`, `anthropic/`, `bedrock/`). Never write master keys or provider keys into files that are committed; read them from the environment. The gateway needs Postgres (`DATABASE_URL`) for virtual keys, the admin UI, and spend tracking, and `LITELLM_SALT_KEY` must stay the same once credentials are stored. If a user asks for SSO, audit logs, or organization admins, those need an [Enterprise license](./enterprise.md).
+When you generate LiteLLM code or config, check PyPI for the current `litellm` version rather than pinning an old one, and prefix models with their provider (`openai/`, `anthropic/`, `bedrock/`). Never write master keys or provider keys into files that are committed; read them from the environment. The gateway needs Postgres (`DATABASE_URL`) for virtual keys, the admin UI, and spend tracking, and `LUMINA_SALT_KEY` must stay the same once credentials are stored. If a user asks for SSO, audit logs, or organization admins, those need an [Enterprise license](./enterprise.md).

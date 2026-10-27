@@ -140,12 +140,12 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
 - **Who is affected:** Anyone passing `api_base` (or any of the newly-blocked fields) at request time and relying on the implicit-`api_key` bypass to thread it through.
 - **Restore prior behavior:** Use the documented BYOK paths instead of the bypass:
   - Proxy-wide: `general_settings.allow_client_side_credentials: true`
-  - Per deployment: `litellm_params.configurable_clientside_auth_params: ["api_base", ...]`
+  - Per deployment: `lumina_params.configurable_clientside_auth_params: ["api_base", ...]`
 
   The 400 returned by the proxy on a blocked request names the offending field and points at the same two settings.
 
 #### Master-key requests now propagate an alias instead of the master-key hash
-- **What changed:** When a request authenticates with the master key, the `UserAPIKeyAuth.api_key` / `token` value handed to downstream code is now the constant `LITELLM_PROXY_MASTER_KEY_ALIAS = "litellm_proxy_master_key"`. The cache lookup is unchanged (still keyed on `hash_token(master_key)`). `_is_master_key` no longer accepts the SHA-256 hash form, only the raw master key.
+- **What changed:** When a request authenticates with the master key, the `UserAPIKeyAuth.api_key` / `token` value handed to downstream code is now the constant `LUMINA_PROXY_MASTER_KEY_ALIAS = "litellm_proxy_master_key"`. The cache lookup is unchanged (still keyed on `hash_token(master_key)`). `_is_master_key` no longer accepts the SHA-256 hash form, only the raw master key.
 - **Who is affected:** Anything joining or filtering on the prior master-key hash value, including custom dashboards over spend logs and Prometheus `/metrics` queries pinned to the hash literal.
 - **Restore prior behavior:** None. Operators querying spend logs or metrics for master-key activity should switch their filter to the alias `"litellm_proxy_master_key"`.
 
@@ -187,7 +187,7 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
 - **Restore prior behavior:** Set the opt-in on the key that sends the header (or on its team):
   ```shell
   curl -X POST 'http://0.0.0.0:4000/key/update' \
-      -H "Authorization: Bearer $LITELLM_API_KEY" \
+      -H "Authorization: Bearer $LUMINA_API_KEY" \
       -H 'Content-Type: application/json' \
       -d '{"key": "<admin key that sends the header>", "metadata": {"allow_litellm_changed_by_header": true}}'
   ```
@@ -201,11 +201,11 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
 
 #### Credentials redacted; `/vector_store/update` is per-store gated
 - **What changed:**
-  - `/vector_store/list`, `/vector_store/info`, `/vector_store/update` redact credential-bearing values inside the persisted `litellm_params` (handles dicts, JSON-string-serialized params, and nested-dict shapes like `litellm_embedding_config`).
+  - `/vector_store/list`, `/vector_store/info`, `/vector_store/update` redact credential-bearing values inside the persisted `lumina_params` (handles dicts, JSON-string-serialized params, and nested-dict shapes like `litellm_embedding_config`).
   - `/vector_store/update` is now gated by `_fetch_and_authorize_vector_store`, the same per-store access check `/vector_store/info` already had.
   - `SensitiveDataMasker` adds plural `"credentials"` to its default sensitive-pattern set, so segment-exact matching catches `vertex_credentials`, `aws_credentials`, etc. (Latent fix that affects every default-instantiated masker, not just vector stores.)
   - `get_vector_store_info` and `update_vector_store` re-raise `HTTPException` instead of letting the catch-all downgrade `403` / `404` to `500`.
-- **Who is affected:** Anything reading `litellm_params` off these responses to recover provider keys, or any non-store-admin caller mutating arbitrary vector stores via `/vector_store/update`.
+- **Who is affected:** Anything reading `lumina_params` off these responses to recover provider keys, or any non-store-admin caller mutating arbitrary vector stores via `/vector_store/update`.
 - **Restore prior behavior:** None.
 
 ### Logging callbacks & key/team metadata
@@ -213,7 +213,7 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
 #### `os.environ/*` callback refs in key/team metadata are no longer resolved
 - **What changed:** `convert_key_logging_metadata_to_callback()` no longer resolves `os.environ/*` values from key/team metadata via `get_secret()`. Existing rows with such values are silently ignored at request setup instead of crashing the request. Trusted `config.yaml` team-callback env resolution in `add_team_based_callbacks_from_config()` is unchanged. New `AddTeamCallback` constructions from key/team logging metadata also reject `os.environ/*` callback vars.
 - **Who is affected:** Any key/team that stored `os.environ/DATABASE_URL` (or similar) in its callback metadata to pick up a server env var at request time.
-- **Restore prior behavior:** Configure those callback secrets through trusted proxy `config.yaml` (`team_callbacks` / `model_list[*].litellm_params`) instead of putting `os.environ/*` references in DB-backed key or team metadata. The literal credential value can still be stored in metadata if absolutely necessary.
+- **Restore prior behavior:** Configure those callback secrets through trusted proxy `config.yaml` (`team_callbacks` / `model_list[*].lumina_params`) instead of putting `os.environ/*` references in DB-backed key or team metadata. The literal credential value can still be stored in metadata if absolutely necessary.
 
 #### Team-callback admin mutations now emit audit logs
 - **What changed:** `POST /team/{id}/callback` (`add_team_callbacks`) and `POST /team/{id}/disable_logging` (`disable_team_logging`) emit `LiteLLM_AuditLogs` rows when `litellm.store_audit_logs=True`. Additive when audit logging is enabled.
@@ -261,11 +261,11 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
 
 #### `/get_image`, `/get_favicon`, `/get_logo_url`
 - **What changed:**
-  - Remote HTTP(S) `UI_LOGO_PATH` / `LITELLM_FAVICON_URL` are now browser-loaded via redirect; the proxy no longer fetches them server-side from these unauthenticated endpoints.
+  - Remote HTTP(S) `UI_LOGO_PATH` / `LUMINA_FAVICON_URL` are now browser-loaded via redirect; the proxy no longer fetches them server-side from these unauthenticated endpoints.
   - Local file paths still work in place, but the resolved file must have a supported image signature (`jpeg`, `png`, `gif`, `webp`, `ico`); non-image paths fall back to the bundled default.
   - `/get_logo_url` only returns HTTP(S) values; local filesystem paths are not disclosed.
   - Stale `cached_logo.jpg` files are no longer served by `/get_image`.
-- **Who is affected:** Custom branding setups that pointed `UI_LOGO_PATH` / `LITELLM_FAVICON_URL` at non-image local files, or relied on `/get_logo_url` to surface a local path.
+- **Who is affected:** Custom branding setups that pointed `UI_LOGO_PATH` / `LUMINA_FAVICON_URL` at non-image local files, or relied on `/get_logo_url` to surface a local path.
 - **Restore prior behavior:** No new env vars required. Existing remote URLs continue to work; local image paths continue to work as long as the file is a recognized image type.
 
 #### `/ui/chat` removed
@@ -369,7 +369,7 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
     - `DELETE /openai/responses/{id}` no longer sends `json={}`, since Azure now rejects the empty `{}` body with `unexpected_body` - [PR #26949](https://github.com/BerriAI/litellm/pull/26949)
 - **Pass-through endpoints**
     - Invoke post-call guardrails on non-streaming pass-through responses (`/vertex_ai/*`, `/openai/*`, `/bedrock/*`); opt-in only when guardrails are configured for the route - [PR #26262](https://github.com/BerriAI/litellm/pull/26262)
-    - Inherit caller identity from `litellm_params` metadata when fabricating `UserAPIKeyAuth` for managed-files passthrough batch creation (Anthropic + Vertex AI) - [PR #26831](https://github.com/BerriAI/litellm/pull/26831)
+    - Inherit caller identity from `lumina_params` metadata when fabricating `UserAPIKeyAuth` for managed-files passthrough batch creation (Anthropic + Vertex AI) - [PR #26831](https://github.com/BerriAI/litellm/pull/26831)
 - **Embedding cache**
     - Preserve `prompt_tokens_details` (incl. `image_count`) through the cache round-trip; aggregate per-item details on retrieval; merge in `combine_usage()` for partial cache hits - [PR #26653](https://github.com/BerriAI/litellm/pull/26653)
 - **Streaming logging**
@@ -452,7 +452,7 @@ This release tightens a number of defaults across auth, ingress, callbacks, MCP,
 ## MCP Gateway
 
 - **Tool prefix**
-    - Opt-in `LITELLM_USE_SHORT_MCP_TOOL_PREFIX` env var: switches per-tool prefix from the human-readable server name (`github_onprem-get_repo`) to a deterministic 3-char base62 id derived from `server_id` (`Xy7-get_repo`). Lets long server names stay under the 60-char tool-name limit some model APIs enforce - [PR #26733](https://github.com/BerriAI/litellm/pull/26733)
+    - Opt-in `LUMINA_USE_SHORT_MCP_TOOL_PREFIX` env var: switches per-tool prefix from the human-readable server name (`github_onprem-get_repo`) to a deterministic 3-char base62 id derived from `server_id` (`Xy7-get_repo`). Lets long server names stay under the 60-char tool-name limit some model APIs enforce - [PR #26733](https://github.com/BerriAI/litellm/pull/26733)
 - **OAuth**
     - Azure Entra discovery endpoint support - [PR #26584](https://github.com/BerriAI/litellm/pull/26584)
     - See **Important Behavior Changes** for public-route detection, OAuth root endpoint visibility, OAuth metadata SSRF guard, and user-scoped credential encryption.

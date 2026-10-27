@@ -82,7 +82,7 @@ Add RunwayML to your proxy configuration:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gen4-image
-    litellm_params:
+    lumina_params:
       model: runwayml/gen4_image
       api_key: os.environ/RUNWAYML_API_KEY
 ```

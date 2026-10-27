@@ -237,17 +237,17 @@ Example config
 ```yaml
 model_list: 
   - model_name: {{openai_small}} # user-facing model alias
-    litellm_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
       model: azure/<your-deployment-name>
       api_base: <your-azure-api-endpoint>
       api_key: <your-azure-api-key>
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: azure/gpt-turbo-small-ca
       api_base: https://my-endpoint-canada-berri992.openai.azure.com/
       api_key: <your-azure-api-key>
   - model_name: vllm-model
-    litellm_params:
+    lumina_params:
       model: openai/<your-model-name>
       api_base: <your-vllm-api-base> # e.g. http://0.0.0.0:3000/v1
       api_key: <your-vllm-api-key|none>
@@ -453,17 +453,17 @@ litellm --model {{openai_small}} --detailed_debug
 
 Events that occur during normal operation
 ```shell
-export LITELLM_LOG=INFO
+export LUMINA_LOG=INFO
 ```
 
 Detailed information
 ```shell
-export LITELLM_LOG=DEBUG
+export LUMINA_LOG=DEBUG
 ```
 
 Errors only
 ```shell
-export LITELLM_LOG=ERROR
+export LUMINA_LOG=ERROR
 ```
 
-`LITELLM_LOG` must be a valid Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). Setting it to `None` makes `import litellm` fail.
+`LUMINA_LOG` must be a valid Python logging level (`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`). Setting it to `None` makes `import litellm` fail.

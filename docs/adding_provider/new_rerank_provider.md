@@ -26,7 +26,7 @@ class YourProviderRerankConfig(BaseRerankConfig):
         model: str,
         api_key: str | None = None,
         optional_params: dict | None = None,
-        litellm_params: dict | None = None,
+        lumina_params: dict | None = None,
     ) -> dict:
         # Return the request headers, including auth
         api_key = api_key or get_secret_str("YOUR_PROVIDER_API_KEY")
@@ -72,7 +72,7 @@ class YourProviderRerankConfig(BaseRerankConfig):
         model: str,
         optional_rerank_params: dict,
         headers: dict,
-        litellm_params: dict | None = None,
+        lumina_params: dict | None = None,
     ) -> dict:
         # Transform request to RerankRequest spec
         rerank_request = RerankRequest(model=model, **optional_rerank_params)
@@ -87,7 +87,7 @@ class YourProviderRerankConfig(BaseRerankConfig):
         api_key: str | None = None,
         request_data: dict = {},
         optional_params: dict = {},
-        litellm_params: dict = {},
+        lumina_params: dict = {},
     ) -> RerankResponse:
         # Transform provider response to RerankResponse
         return RerankResponse(**raw_response.json())
@@ -124,7 +124,7 @@ elif _custom_llm_provider == "your_provider":
         headers=headers or litellm.headers or {},
         client=client,
         model_response=model_response,
-        litellm_params=rerank_litellm_params,
+        lumina_params=rerank_lumina_params,
     )
     ...
 ```

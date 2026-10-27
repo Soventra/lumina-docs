@@ -55,7 +55,7 @@ response = search(
 ```yaml showLineNumbers title="config.yaml"
 search_tools:
   - search_tool_name: agentcore-search
-    litellm_params:
+    lumina_params:
       search_provider: agentcore
       api_base: https://<gateway-id>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
 ```
@@ -72,7 +72,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Test Request"
 curl http://0.0.0.0:4000/v1/search/agentcore-search \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "query": "latest AI developments",
@@ -87,13 +87,13 @@ Because the provider needs no third-party key, it is a natural backend for [web 
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
 
 search_tools:
   - search_tool_name: agentcore-search
-    litellm_params:
+    lumina_params:
       search_provider: agentcore
       api_base: https://<gateway-id>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
 

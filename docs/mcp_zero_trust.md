@@ -23,7 +23,7 @@ mcp_servers:
 
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true
@@ -86,7 +86,7 @@ With verify+re-sign, LiteLLM validates the incoming IdP token first, then builds
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true
@@ -131,7 +131,7 @@ Some MCP servers expose sensitive operations that should only be reachable by ve
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true
@@ -164,7 +164,7 @@ Your MCP server may need context that LiteLLM doesn't carry natively: which depl
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true
@@ -196,7 +196,7 @@ LiteLLM can issue both in one hook and inject them into separate headers:
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true
@@ -228,7 +228,7 @@ If your MCP server does its own scope enforcement and needs a specific format, s
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true
@@ -250,7 +250,7 @@ Your MCP server is returning 401 and you're not sure what's in the JWT. Enable `
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: mcp-jwt-signer
-    litellm_params:
+    lumina_params:
       guardrail: mcp_jwt_signer
       mode: pre_mcp_call
       default_on: true

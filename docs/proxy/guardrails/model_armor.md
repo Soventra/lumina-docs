@@ -19,13 +19,13 @@ Define your guardrails under the `guardrails` section
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: model-armor-shield
-    litellm_params:
+    lumina_params:
       guardrail: model_armor
       mode: [pre_call, during_call, post_call]  # Run on input, parallel, and output
       template_id: "your-template-id"  # Required: Your Model Armor template ID
@@ -55,7 +55,7 @@ Use `logging_only` to evaluate a Model Armor template before enforcing it:
 ```yaml
 guardrails:
   - guardrail_name: model-armor-observe
-    litellm_params:
+    lumina_params:
       guardrail: model_armor
       mode: logging_only
       template_id: "your-template-id"

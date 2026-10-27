@@ -29,7 +29,7 @@ import TabItem from '@theme/TabItem';
 
 ```bash
 docker run \
--e LITELLM_MASTER_KEY=sk-<paste-a-long-random-key> \
+-e LUMINA_MASTER_KEY=sk-<paste-a-long-random-key> \
 -e DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname> \
 -e STORE_MODEL_IN_DB=True \
 -p 4000:4000 \
@@ -79,11 +79,11 @@ If your spend logs table is partitioned, Postgres cannot build its index concurr
 
 **Bedrock Realtime requires `aws-sdk-bedrock-runtime` 0.10 or 0.11.** The pin moved to `aws-sdk-bedrock-runtime[awscrt]>=0.10.0,<0.12.0`; 0.7.x is no longer supported and the init error now distinguishes an absent SDK from an unsupported version. Nova Sonic sessions fail until operators install a supported SDK with the `awscrt` extra. See [PR #41542](https://github.com/BerriAI/litellm/pull/41542)
 
-**`/v1/rag/ingest` resolves the registered store and refuses providers without ingestion.** A request that names a registered store by id now uses that store's provider and `litellm_params` instead of defaulting to OpenAI Files, only per-upload options survive from the caller, and a provider with no ingestion implementation returns 400 naming the supported ones instead of a 200 with `status: failed` or a 500. See [PR #41940](https://github.com/BerriAI/litellm/pull/41940)
+**`/v1/rag/ingest` resolves the registered store and refuses providers without ingestion.** A request that names a registered store by id now uses that store's provider and `lumina_params` instead of defaulting to OpenAI Files, only per-upload options survive from the caller, and a provider with no ingestion implementation returns 400 naming the supported ones instead of a 200 with `status: failed` or a 500. See [PR #41940](https://github.com/BerriAI/litellm/pull/41940)
 
 **Capability and Fuse v2 routers are limited to one each without a license.** Registering a second router of either classifier returns 403 naming the `auto_router` entitlement. Existing routers are unaffected. See [PR #41326](https://github.com/BerriAI/litellm/pull/41326)
 
-**Pricing copied into `model_info` by pre-v1.102 Admin UI edits is ignored.** A stored `model_info` blob carrying a `key` field next to prices is treated as a copied `/model/info` response, so the row follows the cost map again and heals on its next save. Custom pricing declared in `litellm_params`, or typed without `key`, is untouched. `/model/info` now reports `model_info.pricing_overrides`. See [PR #41843](https://github.com/BerriAI/litellm/pull/41843)
+**Pricing copied into `model_info` by pre-v1.102 Admin UI edits is ignored.** A stored `model_info` blob carrying a `key` field next to prices is treated as a copied `/model/info` response, so the row follows the cost map again and heals on its next save. Custom pricing declared in `lumina_params`, or typed without `key`, is untouched. `/model/info` now reports `model_info.pricing_overrides`. See [PR #41843](https://github.com/BerriAI/litellm/pull/41843)
 
 **The `litellm-proxy` entrypoint is deprecated in favour of `lite`.** It still runs, printing one deprecation line on stderr. `lite autoroute up` and `down` are renamed to `start` and `stop`, with the old names kept as deprecated aliases. See [PR #41673](https://github.com/BerriAI/litellm/pull/41673), [PR #41672](https://github.com/BerriAI/litellm/pull/41672)
 
@@ -105,7 +105,7 @@ The stable tag includes these release-line additions:
 
 - **Prompt caching** applies configured `cache_control_injection_points` beside client cache marks, keeps `prompt_caching` pinning when a replayed `redacted_thinking` block is present, and stands the automatic cache points down on `/v1/messages` when `extra_body` hides a client's own mark - [PR #41956](https://github.com/BerriAI/litellm/pull/41956), [PR #42069](https://github.com/BerriAI/litellm/pull/42069), [PR #43341](https://github.com/BerriAI/litellm/pull/43341)
 - **MCP** `/v1/mcp/tools` returns camelCase `inputSchema` and `outputSchema` again after the MCP SDK 2 upgrade - [PR #42352](https://github.com/BerriAI/litellm/pull/42352)
-- **Rust bridge** keeps `/v1/messages`, the token counter and the tokenizer on Python when `LITELLM_RUST=1` is set, so compaction edits no longer fail with 400 - [PR #42517](https://github.com/BerriAI/litellm/pull/42517)
+- **Rust bridge** keeps `/v1/messages`, the token counter and the tokenizer on Python when `LUMINA_RUST=1` is set, so compaction edits no longer fail with 400 - [PR #42517](https://github.com/BerriAI/litellm/pull/42517)
 - **Bedrock** streams `/v1/messages` Invoke bytes through instead of holding them in a 1024-byte chunker - [PR #42607](https://github.com/BerriAI/litellm/pull/42607)
 - **Streaming** keeps LiteLLM's `Usage` on text-completion usage chunks, so `/v1/completions` streams with `include_usage` end with token counts instead of an error - [PR #43047](https://github.com/BerriAI/litellm/pull/43047)
 - **JWT and OpenTelemetry**: `x-litellm-team-id` accepts a team alias, its 403 says it matched no team id or alias, and with `fallback_to_db_teams` on it can select any DB team the caller belongs to. v2 LLM spans carry the caller's session id as `gen_ai.conversation.id` - [PR #42445](https://github.com/BerriAI/litellm/pull/42445), [PR #42495](https://github.com/BerriAI/litellm/pull/42495), [PR #43206](https://github.com/BerriAI/litellm/pull/43206), [PR #42486](https://github.com/BerriAI/litellm/pull/42486)
@@ -827,7 +827,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 
 ### Responses API
 
-- Stop managed Responses WebSocket from leaking litellm_params into provider request body - [PR #33101](https://github.com/BerriAI/litellm/pull/33101)
+- Stop managed Responses WebSocket from leaking lumina_params into provider request body - [PR #33101](https://github.com/BerriAI/litellm/pull/33101)
 - Route Responses API to native /openai/v1/responses for Foundry Models - [PR #33856](https://github.com/BerriAI/litellm/pull/33856)
 - Guard empty-choices chunks in the Responses API streaming bridge - [PR #34455](https://github.com/BerriAI/litellm/pull/34455)
 - Translate the reasoning object into a chat-completion reasoning effort - [PR #36363](https://github.com/BerriAI/litellm/pull/36363)
@@ -838,7 +838,7 @@ The registry also updates capability flags, context/output limits, non-token rat
 - Recount tokens when a streamed response completes without usage - [PR #41337](https://github.com/BerriAI/litellm/pull/41337)
 - Announce message item before text events in the chat completions bridge - [PR #41564](https://github.com/BerriAI/litellm/pull/41564)
 - Keep the addressed response id off bridged provider requests - [PR #41689](https://github.com/BerriAI/litellm/pull/41689)
-- Merge deployment litellm_params into native websocket response.create frames - [PR #41881](https://github.com/BerriAI/litellm/pull/41881)
+- Merge deployment lumina_params into native websocket response.create frames - [PR #41881](https://github.com/BerriAI/litellm/pull/41881)
 - Restore encrypted_content and apply affinity on the native WebSocket relay - [PR #41893](https://github.com/BerriAI/litellm/pull/41893)
 - Return 400 instead of 500 for /v1/responses without input - [PR #41939](https://github.com/BerriAI/litellm/pull/41939)
 - Drop tool_search and local_shell in the chat completions bridge - [PR #41953](https://github.com/BerriAI/litellm/pull/41953)
@@ -991,9 +991,9 @@ The registry also updates capability flags, context/output limits, non-token rat
 
 ### Proxy configuration
 
-- Honor LITELLM_DISABLE_ACCESS_LOG_PATHS to drop noisy uvicorn access log lines - [PR #41096](https://github.com/BerriAI/litellm/pull/41096)
+- Honor LUMINA_DISABLE_ACCESS_LOG_PATHS to drop noisy uvicorn access log lines - [PR #41096](https://github.com/BerriAI/litellm/pull/41096)
 - Skip background health check DB writes when the latest-row read fails - [PR #41145](https://github.com/BerriAI/litellm/pull/41145)
-- Honor LITELLM_LOG for uvicorn and proxy extras loggers - [PR #41306](https://github.com/BerriAI/litellm/pull/41306)
+- Honor LUMINA_LOG for uvicorn and proxy extras loggers - [PR #41306](https://github.com/BerriAI/litellm/pull/41306)
 - Hide model allowlist from client-facing model access denied errors - [PR #41310](https://github.com/BerriAI/litellm/pull/41310)
 - Explicit priority for policy attachment execution order - [PR #41571](https://github.com/BerriAI/litellm/pull/41571)
 - Persist only the keys a caller changed in save_config - [PR #41748](https://github.com/BerriAI/litellm/pull/41748)

@@ -50,7 +50,7 @@ Commit [`7b7f304`](https://github.com/BerriAI/litellm/commit/7b7f304675) lands f
     )
     ```
 
-    The list is extensible at deploy time via the `LITELLM_MCP_STDIO_EXTRA_COMMANDS` env var (comma-separated) if you need to allow additional binaries.
+    The list is extensible at deploy time via the `LUMINA_MCP_STDIO_EXTRA_COMMANDS` env var (comma-separated) if you need to allow additional binaries.
 
 2. **Pydantic-level validation.** Both `NewMCPServerRequest` and `UpdateMCPServerRequest` now reject configs whose `command` basename is not in the allowlist, so the bad input never makes it past request parsing.
 
@@ -76,7 +76,7 @@ Any LiteLLM release newer than these also includes the fix.
 ## What you should do
 
 - **Upgrade.** Move to `v1.83.7-stable` or later. If you track nightlies, anything `>= v1.83.6-nightly` is patched.
-- **Audit existing MCP servers.** If you have stdio MCP servers configured from before the upgrade, any row whose `command` basename isn't in the allowlist will now fail to start. Either update the config to use an allowed launcher (e.g. `npx`, `uvx`, `python`) or add the binary to `LITELLM_MCP_STDIO_EXTRA_COMMANDS`.
+- **Audit existing MCP servers.** If you have stdio MCP servers configured from before the upgrade, any row whose `command` basename isn't in the allowlist will now fail to start. Either update the config to use an allowed launcher (e.g. `npx`, `uvx`, `python`) or add the binary to `LUMINA_MCP_STDIO_EXTRA_COMMANDS`.
 - **Review who has `PROXY_ADMIN`.** The stdio test endpoints are now admin-only. If you'd previously delegated MCP testing to non-admin users, they'll now hit a 403.
 
 ## Credit

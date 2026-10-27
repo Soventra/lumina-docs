@@ -83,7 +83,7 @@ Turn 2 may be classified as simple while the work it authorises is substantial.
 Three new fields on `complexity_router_config` address this:
 
 ```yaml
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         classifier_type: llm
@@ -196,16 +196,16 @@ Affinity requires a resolvable `session_id` in metadata and is ignored when `plu
 ```yaml
 model_list:
   - model_name: gpt-5.4-nano
-    litellm_params: {model: openai/gpt-5.4-nano}
+    lumina_params: {model: openai/gpt-5.4-nano}
   - model_name: gpt-5.4-mini
-    litellm_params: {model: openai/gpt-5.4-mini}
+    lumina_params: {model: openai/gpt-5.4-mini}
   - model_name: claude-sonnet-5
-    litellm_params: {model: anthropic/claude-sonnet-5}
+    lumina_params: {model: anthropic/claude-sonnet-5}
   - model_name: gpt-5.5
-    litellm_params: {model: openai/gpt-5.5}
+    lumina_params: {model: openai/gpt-5.5}
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_default_model: claude-sonnet-5
       complexity_router_config:

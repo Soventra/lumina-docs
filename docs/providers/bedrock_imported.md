@@ -37,7 +37,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: DeepSeek-R1-Distill-Llama-70B
-      litellm_params:
+      lumina_params:
         model: bedrock/deepseek_r1/arn:aws:bedrock:us-east-1:086734376398:imported-model/r4c4kewx2s0n
 
 ```
@@ -54,7 +54,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "DeepSeek-R1-Distill-Llama-70B", # the 'model_name' in config
@@ -106,7 +106,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: DeepSeek-R1-Distill-Llama-70B
-      litellm_params:
+      lumina_params:
         model: bedrock/llama/arn:aws:bedrock:us-east-1:086734376398:imported-model/r4c4kewx2s0n
 
 ```
@@ -123,7 +123,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "DeepSeek-R1-Distill-Llama-70B", # the 'model_name' in config
@@ -170,7 +170,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: Qwen3-32B
-      litellm_params:
+      lumina_params:
         model: bedrock/qwen3/arn:aws:bedrock:us-east-1:086734376398:imported-model/your-qwen3-model
 
 ```
@@ -187,7 +187,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "Qwen3-32B", # the 'model_name' in config
@@ -235,7 +235,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: Qwen2-72B
-      litellm_params:
+      lumina_params:
         model: bedrock/qwen2/arn:aws:bedrock:us-east-1:086734376398:imported-model/your-qwen2-model
 
 ```
@@ -252,7 +252,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "Qwen2-72B", # the 'model_name' in config
@@ -372,7 +372,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: qwen-25vl-72b
-      litellm_params:
+      lumina_params:
         model: bedrock/openai/arn:aws:bedrock:us-east-1:046319184608:imported-model/0m2lasirsp6z
 ```
 
@@ -390,7 +390,7 @@ Basic text request:
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "qwen-25vl-72b",
@@ -408,7 +408,7 @@ With vision (image):
 
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
             "model": "qwen-25vl-72b",
@@ -489,7 +489,7 @@ if response.choices[0].message.reasoning_content:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: kimi-k2
-    litellm_params:
+    lumina_params:
       model: bedrock/moonshot.kimi-k2-thinking
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -508,7 +508,7 @@ litellm --config /path/to/config.yaml
 
 ```bash title="Test Kimi K2 via Proxy" showLineNumbers
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-  --header "Authorization: Bearer $LITELLM_API_KEY" \
+  --header "Authorization: Bearer $LUMINA_API_KEY" \
   --header 'Content-Type: application/json' \
   --data '{
     "model": "kimi-k2",

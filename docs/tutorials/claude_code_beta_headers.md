@@ -100,7 +100,7 @@ Instead of restarting your application, you can dynamically reload the beta head
 
 ```bash
 # Set environment variable to fetch from remote URL (Do this if you want to point it to some other URL)
-export LITELLM_ANTHROPIC_BETA_HEADERS_URL="https://raw.githubusercontent.com/BerriAI/litellm/main/litellm/anthropic_beta_headers_config.json"
+export LUMINA_ANTHROPIC_BETA_HEADERS_URL="https://raw.githubusercontent.com/BerriAI/litellm/main/litellm/anthropic_beta_headers_config.json"
 
 # Manually trigger reload via API (no restart needed!)
 curl -X POST "https://your-proxy-url/reload/anthropic_beta_headers" \
@@ -252,17 +252,17 @@ Control how LiteLLM loads the beta headers configuration:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `LITELLM_ANTHROPIC_BETA_HEADERS_URL` | URL to fetch config from | GitHub main branch |
-| `LITELLM_LOCAL_ANTHROPIC_BETA_HEADERS` | Set to `True` to use local config only | `False` |
+| `LUMINA_ANTHROPIC_BETA_HEADERS_URL` | URL to fetch config from | GitHub main branch |
+| `LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS` | Set to `True` to use local config only | `False` |
 
 **Example: Use Custom Config URL**
 ```bash
-export LITELLM_ANTHROPIC_BETA_HEADERS_URL="https://your-company.com/custom-beta-headers.json"
+export LUMINA_ANTHROPIC_BETA_HEADERS_URL="https://your-company.com/custom-beta-headers.json"
 ```
 
 **Example: Use Local Config Only (No Remote Fetching)**
 ```bash
-export LITELLM_LOCAL_ANTHROPIC_BETA_HEADERS=True
+export LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS=True
 ```
 ## Provider-Specific Notes
 

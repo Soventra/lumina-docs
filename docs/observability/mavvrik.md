@@ -39,7 +39,7 @@ Only `daily` frequency is supported. The Mavvrik ingestion protocol stores one f
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: sk-your-key
 

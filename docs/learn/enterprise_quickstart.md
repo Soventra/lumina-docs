@@ -32,7 +32,7 @@ Make these decisions before the first deployment. Each one is difficult to chang
 
 - **Postgres.** The Admin UI, virtual keys, the MCP and agent registries, and budget tracking keep their data in Postgres. Refer to [Database sizing](/docs/proxy/db_sizing).
 - **Redis.** Run Redis 7.0 or newer when you run more than one instance or more than one worker. Without Redis, each instance enforces rate limits and budgets independently. Refer to [What needs Redis](/docs/proxy/redis_requirements).
-- **Salt key.** Set `LITELLM_SALT_KEY` before you add the first model. The salt key encrypts the stored credentials, and you must not change it after you add a model. Refer to [Set the salt key](/docs/proxy/prod#set-the-salt-key).
+- **Salt key.** Set `LUMINA_SALT_KEY` before you add the first model. The salt key encrypts the stored credentials, and you must not change it after you add a model. Refer to [Set the salt key](/docs/proxy/prod#set-the-salt-key).
 - **Master key.** Keep the master key in your secret manager. Applications must use virtual keys, not the master key.
 - **Version.** Pin an exact version or image digest, and [verify the image signature](/docs/proxy/docker_image_security). Stay on a [supported version](/docs/enterprise/version_support).
 - **Topology.** For more than one region, read [Multi-region deployment](/docs/proxy/multi_region) before you deploy.
@@ -60,9 +60,9 @@ curl -O https://raw.githubusercontent.com/BerriAI/litellm/main/docker-compose.ym
 Create `.env`:
 
 ```bash
-LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>"
-LITELLM_SALT_KEY="sk-salt-change-me"
-LITELLM_LICENSE="eyJ..."
+LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>"
+LUMINA_SALT_KEY="sk-salt-change-me"
+LUMINA_LICENSE="eyJ..."
 OPENAI_API_KEY="your-api-key"
 ```
 
@@ -71,7 +71,7 @@ Create `config.yaml`:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -79,7 +79,7 @@ litellm_settings:
   callbacks: ["prometheus"]
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: "postgresql://llmproxy:dbpassword9090@db:5432/litellm"
   store_model_in_db: true
 ```
@@ -105,7 +105,7 @@ data:
   config.yaml: |
     model_list:
       - model_name: {{openai_large}}
-        litellm_params:
+        lumina_params:
           model: openai/{{openai_large}}
           api_key: os.environ/OPENAI_API_KEY
 
@@ -113,7 +113,7 @@ data:
       callbacks: ["prometheus"]
 
     general_settings:
-      master_key: os.environ/LITELLM_MASTER_KEY
+      master_key: os.environ/LUMINA_MASTER_KEY
       store_model_in_db: true
 ```
 
@@ -125,9 +125,9 @@ kubectl apply -f litellm-config.yaml
 
 ```bash
 kubectl create secret generic litellm-secrets \
-  --from-literal=LITELLM_MASTER_KEY="sk-<paste-a-long-random-key>" \
-  --from-literal=LITELLM_SALT_KEY="sk-salt-change-me" \
-  --from-literal=LITELLM_LICENSE="eyJ..." \
+  --from-literal=LUMINA_MASTER_KEY="sk-<paste-a-long-random-key>" \
+  --from-literal=LUMINA_SALT_KEY="sk-salt-change-me" \
+  --from-literal=LUMINA_LICENSE="eyJ..." \
   --from-literal=OPENAI_API_KEY="your-api-key" \
   --from-literal=DATABASE_URL="postgresql://user:pass@host:5432/litellm"
 ```
@@ -227,7 +227,7 @@ The chart is published to an OCI registry, so Helm installs it directly; there i
 
 ```bash
 kubectl create secret generic litellm-env-secret \
-  --from-literal=LITELLM_LICENSE="eyJ..." \
+  --from-literal=LUMINA_LICENSE="eyJ..." \
   --from-literal=OPENAI_API_KEY="your-api-key"
 ```
 
@@ -250,7 +250,7 @@ proxyConfigMap:
 proxy_config:
   model_list:
     - model_name: {{openai_large}}
-      litellm_params:
+      lumina_params:
         model: openai/{{openai_large}}
         api_key: os.environ/OPENAI_API_KEY
   litellm_settings:
@@ -379,7 +379,7 @@ flowchart TD
     APP -->|"Authorization: Bearer sk-..."| PROXY["LiteLLM Gateway"]
     PROXY -->|"virtual key lookup"| KEY["Virtual Key + Team"]
     KEY -->|"model allowlist"| ROUTE["LLM Router /v1/chat/completions"]
-    ROUTE -->|"litellm_params.model"| PROVIDER["Provider API (OpenAI, Azure, Bedrock)"]
+    ROUTE -->|"lumina_params.model"| PROVIDER["Provider API (OpenAI, Azure, Bedrock)"]
     PROXY -->|"request + token spend"| LOGS["Logs tab · Spend dashboard"]
 ```
 
@@ -451,15 +451,15 @@ from uuid import uuid4
 from a2a.client import A2ACardResolver, A2AClient
 from a2a.types import MessageSendParams, SendMessageRequest
 
-LITELLM_BASE_URL = "http://localhost:4000"
-LITELLM_VIRTUAL_KEY = "sk-team-key"
+LUMINA_BASE_URL = "http://localhost:4000"
+LUMINA_VIRTUAL_KEY = "sk-team-key"
 
 async def main():
-    headers = {"Authorization": f"Bearer {LITELLM_VIRTUAL_KEY}"}
+    headers = {"Authorization": f"Bearer {LUMINA_VIRTUAL_KEY}"}
     async with httpx.AsyncClient(headers=headers) as client:
-        agents = (await client.get(f"{LITELLM_BASE_URL}/v1/agents")).json()
+        agents = (await client.get(f"{LUMINA_BASE_URL}/v1/agents")).json()
         agent_id = agents[0]["agent_id"]
-        base_url = f"{LITELLM_BASE_URL}/a2a/{agent_id}"
+        base_url = f"{LUMINA_BASE_URL}/a2a/{agent_id}"
         resolver = A2ACardResolver(httpx_client=client, base_url=base_url)
         a2a_client = A2AClient(
             httpx_client=client,
@@ -606,7 +606,7 @@ A project groups the keys of one application or use case. A project has a budget
 
 ```bash
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "max_budget": 0.01,
@@ -652,7 +652,7 @@ curl -X POST 'http://localhost:4000/chat/completions' \
 
 ```bash
 curl -X GET 'http://localhost:4000/spend/tags' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 Make sure that the response shows `poc:chat-app` with `total_spend` and `log_count`.

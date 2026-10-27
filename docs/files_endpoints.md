@@ -34,13 +34,13 @@ Use different OpenAI API keys for files and batches by specifying a `model` para
 model_list:
   # litellm OpenAI Account
   - model_name: "gpt-4o-litellm"
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
-      api_key: os.environ/OPENAI_LITELLM_API_KEY
+      api_key: os.environ/OPENAI_LUMINA_API_KEY
   
   # Free OpenAI Account
   - model_name: "gpt-4o-free"
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_FREE_API_KEY
 ```
@@ -134,7 +134,7 @@ client.files.retrieve(file_id, extra_headers={"custom-llm-provider": "openai"})
 ```yaml
 model_list:
   - model_name: "gpt-4o-account1"
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_KEY
 ```

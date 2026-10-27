@@ -4,10 +4,10 @@ LiteLLM sends requests to the providers, callbacks, guardrails, secret managers 
 
 ## Turn on offline mode
 
-Set `LITELLM_OFFLINE_MODE=true` on the proxy to stop every request in the table below:
+Set `LUMINA_OFFLINE_MODE=true` on the proxy to stop every request in the table below:
 
 ```shell
-export LITELLM_OFFLINE_MODE=true
+export LUMINA_OFFLINE_MODE=true
 litellm --config config.yaml
 ```
 
@@ -19,12 +19,12 @@ Only `true` turns it on, in any letter case. Any other value, such as `1` or `ye
 
 | What | Host | When | With offline mode on | Per-feature switch |
 |---|---|---|---|---|
-| Model cost map | `raw.githubusercontent.com`, or `LITELLM_MODEL_COST_MAP_URL` | Startup, `/reload/model_cost_map` and the scheduled cost map reload | Uses the copy bundled with the package | `LITELLM_LOCAL_MODEL_COST_MAP=true` |
-| Anthropic beta headers | `raw.githubusercontent.com`, or `LITELLM_ANTHROPIC_BETA_HEADERS_URL` | First Anthropic or Bedrock request that sends a beta header, `/reload/anthropic_beta_headers` and its scheduled reload | Uses the bundled copy | `LITELLM_LOCAL_ANTHROPIC_BETA_HEADERS=true` |
-| Auto router presets | `raw.githubusercontent.com`, or `LITELLM_AUTOROUTER_PRESETS_URL` | `/public/autorouter_presets`, called by the Admin UI auto router form | Uses the bundled copy | `LITELLM_LOCAL_AUTOROUTER_PRESETS=true` |
-| Policy templates | `raw.githubusercontent.com` | `/policy/templates`, called by the Admin UI Policies page | Uses the bundled copy | `LITELLM_LOCAL_POLICY_TEMPLATES=true` |
-| Blog posts | `docs.litellm.ai`, or `LITELLM_BLOG_POSTS_URL` | `/public/litellm_blog_posts`, called by the Admin UI Home page and Blog menu | Uses the bundled copy | `LITELLM_LOCAL_BLOG_POSTS=true` |
-| Latest release | `docs.litellm.ai` and `api.github.com` | `/get/latest_release_info`, called by the Admin UI notifications bell | Returns `null`, so no upgrade notice shows | `LITELLM_DISABLE_LATEST_RELEASE_CHECK=true` |
+| Model cost map | `raw.githubusercontent.com`, or `LUMINA_MODEL_COST_MAP_URL` | Startup, `/reload/model_cost_map` and the scheduled cost map reload | Uses the copy bundled with the package | `LUMINA_LOCAL_MODEL_COST_MAP=true` |
+| Anthropic beta headers | `raw.githubusercontent.com`, or `LUMINA_ANTHROPIC_BETA_HEADERS_URL` | First Anthropic or Bedrock request that sends a beta header, `/reload/anthropic_beta_headers` and its scheduled reload | Uses the bundled copy | `LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS=true` |
+| Auto router presets | `raw.githubusercontent.com`, or `LUMINA_AUTOROUTER_PRESETS_URL` | `/public/autorouter_presets`, called by the Admin UI auto router form | Uses the bundled copy | `LUMINA_LOCAL_AUTOROUTER_PRESETS=true` |
+| Policy templates | `raw.githubusercontent.com` | `/policy/templates`, called by the Admin UI Policies page | Uses the bundled copy | `LUMINA_LOCAL_POLICY_TEMPLATES=true` |
+| Blog posts | `docs.litellm.ai`, or `LUMINA_BLOG_POSTS_URL` | `/public/litellm_blog_posts`, called by the Admin UI Home page and Blog menu | Uses the bundled copy | `LUMINA_LOCAL_BLOG_POSTS=true` |
+| Latest release | `docs.litellm.ai` and `api.github.com` | `/get/latest_release_info`, called by the Admin UI notifications bell | Returns `null`, so no upgrade notice shows | `LUMINA_DISABLE_LATEST_RELEASE_CHECK=true` |
 | Breached password check | `api.pwnedpasswords.com` | Setting or changing a user password, and password login | Skipped | `general_settings.password_policy_check_breached_passwords: false` |
 | Hugging Face tokenizers | `huggingface.co` | Token counting for Cohere, Llama 2 and Llama 3 models | Counts with the OpenAI tokenizer instead | `litellm_settings.disable_hf_tokenizer_download: true` |
 | Kimi K3 tokenizer | `huggingface.co` | Token counting for Bedrock Kimi K3 models | Reads the file from the local Hugging Face cache, and estimates the count when it isn't cached | `litellm_settings.disable_hf_tokenizer_download: true` |
@@ -42,7 +42,7 @@ The bundled copies are as current as the installed LiteLLM version. New model pr
 Offline mode doesn't change requests to destinations in your config, such as LLM providers, logging callbacks, guardrail vendors, secret managers, SSO, email and alerting. It also doesn't change these:
 
 - **Model info refresh.** For `openai`, `openai_like`, `text-completion-openai` and `hosted_vllm` deployments with an `api_base`, the proxy calls `{api_base}/v1/models` every 5 minutes. Set `general_settings.disable_model_info_refresh: true` to stop it.
-- **License check.** With `LITELLM_LICENSE` set, the proxy checks the key against `license.litellm.ai` when it can't verify the key's signature locally.
+- **License check.** With `LUMINA_LICENSE` set, the proxy checks the key against `license.litellm.ai` when it can't verify the key's signature locally.
 - **Image URLs in requests.** When a request carries an image URL, token counting and some providers, such as Bedrock, download it.
 
 ### Hugging Face model lookups

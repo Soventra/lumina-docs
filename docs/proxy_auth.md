@@ -316,7 +316,7 @@ import litellm
 from litellm.proxy_auth import AzureADCredential, ProxyAuthHandler
 
 # Route all requests through the proxy
-os.environ["LITELLM_PROXY_API_BASE"] = "https://my-proxy.example.com"
+os.environ["LUMINA_PROXY_API_BASE"] = "https://my-proxy.example.com"
 litellm.use_litellm_proxy = True
 
 # Authenticate with OAuth2/JWT

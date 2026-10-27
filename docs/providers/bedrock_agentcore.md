@@ -84,14 +84,14 @@ for chunk in response:
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration"
 model_list:
   - model_name: agentcore-runtime-1
-    litellm_params:
+    lumina_params:
       model: bedrock/agentcore/arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/my-agent-runtime
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
       aws_region_name: us-west-2
 
   - model_name: agentcore-runtime-2
-    litellm_params:
+    lumina_params:
       model: bedrock/agentcore/arn:aws:bedrock-agentcore:us-east-1:987654321098:runtime/production-runtime
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -115,7 +115,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Basic AgentCore Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "agentcore-runtime-1",
     "messages": [
@@ -130,7 +130,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```bash showLineNumbers title="Streaming AgentCore Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "agentcore-runtime-2",
     "messages": [
@@ -227,7 +227,7 @@ response = litellm.completion(
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration with Parameters"
 model_list:
   - model_name: agentcore-runtime-prod
-    litellm_params:
+    lumina_params:
       model: bedrock/agentcore/arn:aws:bedrock-agentcore:us-west-2:123456789012:runtime/my-agent-runtime
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -280,7 +280,7 @@ curl -X POST http://localhost:4000/v1/agents \
       "description": "Internal research agent",
       "url": "bedrock/agentcore/arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/my-runtime"
     },
-    "litellm_params": {
+    "lumina_params": {
       "custom_llm_provider": "bedrock",
       "aws_role_name": "arn:aws:iam::123456789012:role/LiteLLMAgentCoreInvoker",
       "aws_region_name": "us-east-1"
@@ -293,7 +293,7 @@ curl -X POST http://localhost:4000/v1/agents \
 
 ### Updating or rotating credentials
 
-Any credential-bearing field in `litellm_params` (`aws_access_key_id`, `aws_secret_access_key`, `aws_session_token`, `api_key`, and similar) is write-only. `GET`/`POST`/`PUT`/`PATCH /v1/agents` responses, and the Admin UI's agent edit form, always show these fields as a redacted placeholder rather than the stored value.
+Any credential-bearing field in `lumina_params` (`aws_access_key_id`, `aws_secret_access_key`, `aws_session_token`, `api_key`, and similar) is write-only. `GET`/`POST`/`PUT`/`PATCH /v1/agents` responses, and the Admin UI's agent edit form, always show these fields as a redacted placeholder rather than the stored value.
 
 - Editing an unrelated field (name, description, rate limits) and saving leaves the stored credential unchanged, even though the form round-trips the placeholder for every credential field it didn't touch.
 - To rotate a credential, submit the new value for that field; the update is applied immediately and, again, never echoed back.
@@ -324,7 +324,7 @@ curl -X POST http://localhost:4000/a2a/my-agentcore-runtime/message/send \
 Each AgentCore runtime session is its own microVM: reusing the same `X-Amzn-Bedrock-AgentCore-Runtime-Session-Id` keeps conversation context, and mixing two callers into one session leaks context between them. LiteLLM picks that session id in this order:
 
 1. **`params.message.contextId`** in the A2A request, scoped to the calling API key so two keys can never collide on the same `contextId`. This is the recommended way to isolate sessions per conversation.
-2. **`runtimeSessionId`** in the agent's `litellm_params` (see [Available Parameters](#available-parameters)), used only when the request carries no `contextId`. Every caller that omits `contextId` shares this one session.
+2. **`runtimeSessionId`** in the agent's `lumina_params` (see [Available Parameters](#available-parameters)), used only when the request carries no `contextId`. Every caller that omits `contextId` shares this one session.
 3. A freshly generated id, when neither of the above is set. Every request gets its own session, so multi-turn context is not preserved.
 
 To keep a conversation going across turns, send the same `contextId` on every `message/send` or `message/stream` call for that conversation, and a different `contextId` for each new conversation or end user:
@@ -352,12 +352,12 @@ AWS requires the runtime session id to be 33-256 characters. LiteLLM prefixes `c
 
 ### Authentication {#a2a-gateway-authentication}
 
-The AgentCore A2A path supports **two distinct outbound auth modes**, picked automatically based on what's in `litellm_params`:
+The AgentCore A2A path supports **two distinct outbound auth modes**, picked automatically based on what's in `lumina_params`:
 
 | Mode | When it fires | What's sent to AgentCore |
 |---|---|---|
-| **Bearer / JWT** | `litellm_params.api_key` is set (any value) | `Authorization: Bearer <api_key>` — SigV4 is bypassed entirely |
-| **SigV4** | `litellm_params.api_key` is **not** set | Per-request SigV4 signature using the full AWS credential chain (below) |
+| **Bearer / JWT** | `lumina_params.api_key` is set (any value) | `Authorization: Bearer <api_key>` — SigV4 is bypassed entirely |
+| **SigV4** | `lumina_params.api_key` is **not** set | Per-request SigV4 signature using the full AWS credential chain (below) |
 
 #### SigV4 credential resolution
 
@@ -370,7 +370,7 @@ When SigV4 mode is active, credentials are resolved in this priority order:
 5. **`aws_access_key_id` + `aws_secret_access_key` + `aws_region_name`** → explicit long-lived credentials. All three must be set; without `aws_region_name` this branch is skipped.
 6. **No credentials configured** → boto3 default chain (env vars, IRSA via `AWS_WEB_IDENTITY_TOKEN_FILE` + `AWS_ROLE_ARN`, instance metadata).
 
-Recognized fields on `litellm_params` for SigV4:
+Recognized fields on `lumina_params` for SigV4:
 
 | Field | Description |
 |---|---|
@@ -399,7 +399,7 @@ curl -X POST http://localhost:4000/v1/agents \
       "name": "production-runtime",
       "url": "bedrock/agentcore/arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/prod"
     },
-    "litellm_params": {
+    "lumina_params": {
       "custom_llm_provider": "bedrock",
       "aws_role_name": "arn:aws:iam::123456789012:role/AgentCoreInvocationRole",
       "aws_session_name": "litellm-prod"
@@ -417,14 +417,14 @@ The standard A2A header forwarding mechanisms apply; see [A2A Agent Authenticati
 - **`extra_headers`** — admin-configured allowlist of client headers to forward
 - **`x-a2a-{agent_name_or_id}-{header}` convention** — caller-driven forwarding without admin config
 
-Note that the SigV4 / Bearer auth handled by `litellm_params` is **separate** from the agent-level header forwarding above. Auth headers are computed per-request by the AWS signer; user passthrough headers are merged into the request after signing.
+Note that the SigV4 / Bearer auth handled by `lumina_params` is **separate** from the agent-level header forwarding above. Auth headers are computed per-request by the AWS signer; user passthrough headers are merged into the request after signing.
 
 ### RBAC and trace IDs
 
 All standard A2A controls apply:
 - **Per-agent RBAC** — [Agent Permission Management](../a2a_agent_permissions). Returns HTTP 403 when the calling key/team isn't authorized for the AgentCore agent.
 - **Access groups** — tag the agent with one or more access groups in the LiteLLM dashboard, then grant the group to a team or key via `object_permission.agent_access_groups`. See [Agent Access Groups](../a2a_agent_permissions#agent-access-groups).
-- **Trace ID enforcement.** Set `require_trace_id_on_calls_to_agent: true` on `litellm_params` to require `x-litellm-trace-id` on every inbound call. See [A2A Overview: Trace ID enforcement](../a2a#trace-id-enforcement-optional-per-agent).
+- **Trace ID enforcement.** Set `require_trace_id_on_calls_to_agent: true` on `lumina_params` to require `x-litellm-trace-id` on every inbound call. See [A2A Overview: Trace ID enforcement](../a2a#trace-id-enforcement-optional-per-agent).
 
 ## Further Reading
 

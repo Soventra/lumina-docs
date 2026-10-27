@@ -53,12 +53,12 @@ It's rejected together with `session_affinity` and `classification_mode: user_tu
 ```yaml
 model_list:
   - model_name: gpt-4o-mini
-    litellm_params: {model: openai/gpt-4o-mini, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4o-mini, api_key: os.environ/OPENAI_API_KEY}
   - model_name: gpt-4o
-    litellm_params: {model: openai/gpt-4o, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/gpt-4o, api_key: os.environ/OPENAI_API_KEY}
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:

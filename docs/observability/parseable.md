@@ -50,15 +50,15 @@ litellm.callbacks = ["otel"]
 export OTEL_EXPORTER="otlp_http"
 export OTEL_ENDPOINT="http://localhost:4318"
 export OTEL_SERVICE_NAME="litellm-sdk"
-export LITELLM_OTEL_V2="true"
-export LITELLM_OTEL_INTEGRATION_ENABLE_METRICS="true"
-export LITELLM_OTEL_INTEGRATION_ENABLE_EVENTS="true"
-export USE_OTEL_LITELLM_REQUEST_SPAN="true"
+export LUMINA_OTEL_V2="true"
+export LUMINA_OTEL_INTEGRATION_ENABLE_METRICS="true"
+export LUMINA_OTEL_INTEGRATION_ENABLE_EVENTS="true"
+export USE_OTEL_LUMINA_REQUEST_SPAN="true"
 export OTEL_SEMCONV_STABILITY_OPT_IN="gen_ai_latest_experimental"
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT="no_content"
 ```
 
-`LITELLM_OTEL_INTEGRATION_ENABLE_EVENTS` exports GenAI events as logs. `USE_OTEL_LITELLM_REQUEST_SPAN` and `OTEL_SEMCONV_STABILITY_OPT_IN` create the `CLIENT` spans used by the Parseable dashboard queries.
+`LUMINA_OTEL_INTEGRATION_ENABLE_EVENTS` exports GenAI events as logs. `USE_OTEL_LUMINA_REQUEST_SPAN` and `OTEL_SEMCONV_STABILITY_OPT_IN` create the `CLIENT` spans used by the Parseable dashboard queries.
 
 **Step 4:** Run the application.
 
@@ -112,7 +112,7 @@ response = litellm.completion(
 print(response.choices[0].message.content)
 ```
 
-`USE_OTEL_LITELLM_REQUEST_SPAN=true` creates a model-call span for each SDK request. `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT="no_content"` and request-level masking keep raw prompts and responses out of exported telemetry.
+`USE_OTEL_LUMINA_REQUEST_SPAN=true` creates a model-call span for each SDK request. `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT="no_content"` and request-level masking keep raw prompts and responses out of exported telemetry.
 
 </TabItem>
 </Tabs>
@@ -186,10 +186,10 @@ The attribute exclusion list prevents request-specific metadata from creating hi
 **Step 3:** Point LiteLLM at the OpenTelemetry Collector.
 
 ```bash
-export LITELLM_MASTER_KEY="<litellm-master-key>"
-export LITELLM_OTEL_V2="true"
-export LITELLM_OTEL_INTEGRATION_ENABLE_METRICS="true"
-export USE_OTEL_LITELLM_REQUEST_SPAN="true"
+export LUMINA_MASTER_KEY="<litellm-master-key>"
+export LUMINA_OTEL_V2="true"
+export LUMINA_OTEL_INTEGRATION_ENABLE_METRICS="true"
+export USE_OTEL_LUMINA_REQUEST_SPAN="true"
 export OTEL_SEMCONV_STABILITY_OPT_IN="gen_ai_latest_experimental"
 export OTEL_EXPORTER="otlp_http"
 export OTEL_ENDPOINT="http://localhost:4318"
@@ -198,7 +198,7 @@ export OTEL_ENVIRONMENT_NAME="production"
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT="no_content"
 ```
 
-Use the same `LITELLM_MASTER_KEY` in LiteLLM and the Collector's Prometheus receiver. The request-span and semantic-convention settings create the `CLIENT` spans used by the Parseable dashboard queries.
+Use the same `LUMINA_MASTER_KEY` in LiteLLM and the Collector's Prometheus receiver. The request-span and semantic-convention settings create the `CLIENT` spans used by the Parseable dashboard queries.
 
 **Step 4:** Start the Gateway.
 

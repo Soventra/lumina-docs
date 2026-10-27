@@ -55,7 +55,7 @@ pip install litellm==1.81.12
 
 ## Add Semgrep & fix OOMs
 
-This release fixes out-of-memory (OOM) risks from unbounded `asyncio.Queue()` usage. Log queues (e.g. GCS bucket) and DB spend-update queues were previously unbounded and could grow without limit under load. They now use a configurable max size (`LITELLM_ASYNCIO_QUEUE_MAXSIZE`, default 1000); when full, queues flush immediately to make room instead of growing memory. A Semgrep rule (`.semgrep/rules/python/unbounded-memory.yml`) was added to flag similar unbounded-memory patterns in future code. [PR #20912](https://github.com/BerriAI/litellm/pull/20912)
+This release fixes out-of-memory (OOM) risks from unbounded `asyncio.Queue()` usage. Log queues (e.g. GCS bucket) and DB spend-update queues were previously unbounded and could grow without limit under load. They now use a configurable max size (`LUMINA_ASYNCIO_QUEUE_MAXSIZE`, default 1000); when full, queues flush immediately to make room instead of growing memory. A Semgrep rule (`.semgrep/rules/python/unbounded-memory.yml`) was added to flag similar unbounded-memory patterns in future code. [PR #20912](https://github.com/BerriAI/litellm/pull/20912)
 
 ---
 
@@ -305,7 +305,7 @@ Access Groups simplify defining resource access across your organization. One gr
 - **General**
     - Allow `MAX_CALLBACKS` override via env var - [PR #20781](https://github.com/BerriAI/litellm/pull/20781)
     - Add `standard_logging_payload_excluded_fields` config option - [PR #20831](https://github.com/BerriAI/litellm/pull/20831)
-    - Enable `verbose_logger` when `LITELLM_LOG=DEBUG` - [PR #20496](https://github.com/BerriAI/litellm/pull/20496)
+    - Enable `verbose_logger` when `LUMINA_LOG=DEBUG` - [PR #20496](https://github.com/BerriAI/litellm/pull/20496)
     - Guard against None `litellm_metadata` in batch logging path - [PR #20832](https://github.com/BerriAI/litellm/pull/20832)
     - Propagate model-level tags from config to SpendLogs - [PR #20769](https://github.com/BerriAI/litellm/pull/20769)
 
@@ -405,7 +405,7 @@ Access Groups simplify defining resource access across your organization. One gr
 - Add native thinking param examples for Claude Opus 4.6 - [PR #20799](https://github.com/BerriAI/litellm/pull/20799)
 - Fix Claude Code MCP tutorial - [PR #21145](https://github.com/BerriAI/litellm/pull/21145)
 - Add API base URLs for Dashscope (International and China/Beijing) - [PR #21083](https://github.com/BerriAI/litellm/pull/21083)
-- Fix `DEFAULT_NUM_WORKERS_LITELLM_PROXY` default (1, not 4) - [PR #21127](https://github.com/BerriAI/litellm/pull/21127)
+- Fix `DEFAULT_NUM_WORKERS_LUMINA_PROXY` default (1, not 4) - [PR #21127](https://github.com/BerriAI/litellm/pull/21127)
 - Correct ElevenLabs support status in README - [PR #20643](https://github.com/BerriAI/litellm/pull/20643)
 
 ---

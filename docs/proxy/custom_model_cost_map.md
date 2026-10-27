@@ -6,14 +6,14 @@ Prefer the per-deployment override for a bounded correction. It changes only the
 
 ## Option 1: per-deployment pricing overrides (recommended)
 
-Any pricing key from the cost map can be set directly in `litellm_params` on a deployment, including the tiered long-context keys of the form `input_cost_per_token_above_{N}k_tokens`. When the input token count crosses the threshold, LiteLLM bills the whole request at the tier rate.
+Any pricing key from the cost map can be set directly in `lumina_params` on a deployment, including the tiered long-context keys of the form `input_cost_per_token_above_{N}k_tokens`. When the input token count crosses the threshold, LiteLLM bills the whole request at the tier rate.
 
 Example: an Azure deployment billed under a regional price variant (such as US Data Zone) whose long-context tier is missing from the default map:
 
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/<your-deployment-name>
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -42,12 +42,12 @@ Treat the override block as the complete rate card for the deployment: base inpu
 Point the proxy at your own copy of the map with:
 
 ```bash
-export LITELLM_MODEL_COST_MAP_URL="https://your-host.example.com/model_prices.json"
+export LUMINA_MODEL_COST_MAP_URL="https://your-host.example.com/model_prices.json"
 # or read it straight from a private S3 bucket
-export LITELLM_MODEL_COST_MAP_URL="s3://my-bucket/prices/model_prices.json"
+export LUMINA_MODEL_COST_MAP_URL="s3://my-bucket/prices/model_prices.json"
 ```
 
-The map is fetched at startup with a 5 second timeout, so the variable must be set in the proxy's environment before it starts (a `.env` file, `docker run -e`, or the Kubernetes `env:` block); setting it under `environment_variables` in `config.yaml` is too late. The URL can be HTTP(S) or `s3://`; `file://` paths are not supported. To run fully offline instead, set `LITELLM_LOCAL_MODEL_COST_MAP=True`, which skips the fetch and uses the backup map bundled with the package (`litellm/model_prices_and_context_window_backup.json`), a file you can overwrite in your own image.
+The map is fetched at startup with a 5 second timeout, so the variable must be set in the proxy's environment before it starts (a `.env` file, `docker run -e`, or the Kubernetes `env:` block); setting it under `environment_variables` in `config.yaml` is too late. The URL can be HTTP(S) or `s3://`; `file://` paths are not supported. To run fully offline instead, set `LUMINA_LOCAL_MODEL_COST_MAP=True`, which skips the fetch and uses the backup map bundled with the package (`litellm/model_prices_and_context_window_backup.json`), a file you can overwrite in your own image.
 
 ### Reading the map from S3
 
@@ -81,7 +81,7 @@ Verify which map actually loaded with the admin endpoint:
 
 ```bash
 curl -s http://localhost:4000/model/cost_map/source \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 The response reports `source` ("remote" or "local"), the attempted `url`, a human-readable `fallback_reason` (null on success), and `model_count`. Alert when `source` is not `remote` or `fallback_reason` is non-null.

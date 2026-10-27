@@ -238,7 +238,7 @@ This update significantly improves `/responses` latency by integrating our inter
 
 - **General**
     - Fix index field not populated in streaming mode with n>1 and tool calls - [PR #15962](https://github.com/BerriAI/litellm/pull/15962)
-    - Pass aws_region_name in litellm_params - [PR #16321](https://github.com/BerriAI/litellm/pull/16321)
+    - Pass aws_region_name in lumina_params - [PR #16321](https://github.com/BerriAI/litellm/pull/16321)
     - Add `retry-after` header support for errors `502`, `503`, `504` - [PR #16288](https://github.com/BerriAI/litellm/pull/16288)
 
 ---
@@ -266,7 +266,7 @@ This update significantly improves `/responses` latency by integrating our inter
     - Change guardrail_information to list type - [PR #16127](https://github.com/BerriAI/litellm/pull/16127)
     - UI - LiteLLM Guardrail - ensure you can see UI Friendly name for PII Patterns - [PR #16382](https://github.com/BerriAI/litellm/pull/16382)
     - UI - Guardrails - LiteLLM Content Filter, Allow Viewing/Editing Content Filter Settings - [PR #16383](https://github.com/BerriAI/litellm/pull/16383)
-    - UI - Guardrails - allow updating guardrails through UI. Ensure litellm_params actually get updated in memory - [PR #16384](https://github.com/BerriAI/litellm/pull/16384)
+    - UI - Guardrails - allow updating guardrails through UI. Ensure lumina_params actually get updated in memory - [PR #16384](https://github.com/BerriAI/litellm/pull/16384)
 
 - **SSO Settings**
     - Support dot notation on ui sso - [PR #16135](https://github.com/BerriAI/litellm/pull/16135)

@@ -19,7 +19,7 @@ Run Redis 7.0 or newer when you run more than one gateway instance or more than 
 
 ### 2. Add the license key
 
-Set `LITELLM_LICENSE` on each gateway instance and restart the instances. Then make sure that the API docs page shows **Enterprise Edition**. Refer to [Activate your license](./activate.md).
+Set `LUMINA_LICENSE` on each gateway instance and restart the instances. Then make sure that the API docs page shows **Enterprise Edition**. Refer to [Activate your license](./activate.md).
 
 ### 3. Set up SSO before you expose the Admin UI
 
@@ -36,9 +36,9 @@ Refer to [Disable environment credential login](../proxy/security_best_practices
 
 If persons other than the proxy admins know the master key, set a new master key before you go to production.
 
-If you set `LITELLM_SALT_KEY`, the master key is only an admin credential. Then you can replace the key and restart the instances. If you did not set a salt key, the master key also encrypts the stored credentials. In that case, use the full rotation procedure. Refer to [Rotating the master key](../proxy/master_key_rotations.md).
+If you set `LUMINA_SALT_KEY`, the master key is only an admin credential. Then you can replace the key and restart the instances. If you did not set a salt key, the master key also encrypts the stored credentials. In that case, use the full rotation procedure. Refer to [Rotating the master key](../proxy/master_key_rotations.md).
 
-Do not change `LITELLM_SALT_KEY` after you add a model. Refer to [Set the salt key](../proxy/prod.md#set-the-salt-key).
+Do not change `LUMINA_SALT_KEY` after you add a model. Refer to [Set the salt key](../proxy/prod.md#set-the-salt-key).
 
 ### 5. Harden the deployment
 

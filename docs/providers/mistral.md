@@ -52,7 +52,7 @@ for chunk in response:
 ```yaml
 model_list:
   - model_name: mistral-small-latest
-    litellm_params:
+    lumina_params:
       model: mistral/mistral-small-latest
       api_key: "os.environ/MISTRAL_API_KEY" # ensure you have `MISTRAL_API_KEY` in your .env
 ```
@@ -366,7 +366,7 @@ response = transcription(
 ```yaml
 model_list:
   - model_name: voxtral
-    litellm_params:
+    lumina_params:
       model: mistral/voxtral-mini-latest
       api_key: os.environ/MISTRAL_API_KEY
     model_info:
@@ -379,7 +379,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/audio/transcriptions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'file=@"audio.wav"' \
 --form 'model="voxtral"'
 ```
@@ -455,7 +455,7 @@ Mistral's speech API rejects `speed` and `instructions` with a 422, so LiteLLM d
 ```yaml
 model_list:
   - model_name: voxtral-tts
-    litellm_params:
+    lumina_params:
       model: mistral/voxtral-mini-tts-2603
       api_key: os.environ/MISTRAL_API_KEY
 ```
@@ -466,7 +466,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl --location 'http://0.0.0.0:4000/v1/audio/speech' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "model": "voxtral-tts",

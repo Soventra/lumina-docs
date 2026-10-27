@@ -61,13 +61,13 @@ Add a guardrail with `mode: realtime_input_transcription` to your proxy config:
 ```yaml
 model_list:
   - model_name: openai/gpt-4o-realtime-preview
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-realtime-preview
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "voice-content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: realtime_input_transcription
       default_on: true
@@ -83,7 +83,7 @@ guardrails:
           description: "Prompt injection attempt"
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 ### Step 2: Start proxy
@@ -173,7 +173,7 @@ On a transcription-only session (`/v1/realtime?intent=transcription`, or a `sess
 
 ## Using with other guardrail providers
 
-The proxy runs realtime guardrails through the provider's `apply_guardrail` method, but a guardrail can only be configured with `mode: realtime_input_transcription` if that hook is listed in its `get_supported_event_hooks()`. Currently only `litellm_content_filter` declares it. Setting the mode on another provider (for example `lakera_v2`, which supports only `pre_call`, `during_call`, and `post_call`) fails validation at proxy startup: the proxy logs an error (`Skipping guardrail ... proxy is starting WITHOUT this guardrail`) and starts without that guardrail, so realtime sessions run unprotected. Setting `LITELLM_STRICT_GUARDRAIL_MODES=false` downgrades the log to a warning, but the guardrail is still not supported for this mode.
+The proxy runs realtime guardrails through the provider's `apply_guardrail` method, but a guardrail can only be configured with `mode: realtime_input_transcription` if that hook is listed in its `get_supported_event_hooks()`. Currently only `litellm_content_filter` declares it. Setting the mode on another provider (for example `lakera_v2`, which supports only `pre_call`, `during_call`, and `post_call`) fails validation at proxy startup: the proxy logs an error (`Skipping guardrail ... proxy is starting WITHOUT this guardrail`) and starts without that guardrail, so realtime sessions run unprotected. Setting `LUMINA_STRICT_GUARDRAIL_MODES=false` downgrades the log to a warning, but the guardrail is still not supported for this mode.
 
 To add realtime support to a custom guardrail, include `GuardrailEventHooks.realtime_input_transcription` in its `get_supported_event_hooks()` and implement `apply_guardrail`.
 
@@ -184,7 +184,7 @@ To enable realtime guardrails only for specific API keys, set `default_on: false
 ```yaml
 guardrails:
   - guardrail_name: "voice-content-filter"
-    litellm_params:
+    lumina_params:
       guardrail: litellm_content_filter
       mode: realtime_input_transcription
       default_on: false   # off by default

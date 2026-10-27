@@ -27,13 +27,13 @@ Define the guardrail under the `guardrails` section. Register it once per hook p
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: straiker-pre
-    litellm_params:
+    lumina_params:
       guardrail: straiker
       mode: pre_call
       default_on: true
@@ -41,7 +41,7 @@ guardrails:
       unreachable_fallback: fail_closed  # block if Straiker is unreachable
 
   - guardrail_name: straiker-post
-    litellm_params:
+    lumina_params:
       guardrail: straiker
       mode: post_call
       default_on: true

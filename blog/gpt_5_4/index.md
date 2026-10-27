@@ -34,7 +34,7 @@ docker pull ghcr.io/berriai/litellm:v1.81.14-stable.gpt-5.4_patch
 ```yaml
 model_list:
   - model_name: gpt-5.4
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5.4
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -55,7 +55,7 @@ docker run -d \
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "gpt-5.4",
     "messages": [

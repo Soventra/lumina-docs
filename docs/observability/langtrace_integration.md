@@ -16,9 +16,9 @@ join our [discord](https://discord.gg/wuPM9dRgDw)
 uv add litellm
 ```
 
-Langtrace ingests OTLP at a custom path (`/api/trace`) with an `x-api-key` header, whereas OpenTelemetry v2 exports to `/v1/traces` with no Langtrace credentials. With `LITELLM_OTEL_V2=true`, run an OpenTelemetry Collector between them: litellm exports to the collector, and the collector forwards the spans to Langtrace with your key. The `langtrace` preset applies Langtrace's attribute schema; the collector only handles delivery, which is why `LANGTRACE_API_KEY` lives in the collector's environment rather than the proxy's
+Langtrace ingests OTLP at a custom path (`/api/trace`) with an `x-api-key` header, whereas OpenTelemetry v2 exports to `/v1/traces` with no Langtrace credentials. With `LUMINA_OTEL_V2=true`, run an OpenTelemetry Collector between them: litellm exports to the collector, and the collector forwards the spans to Langtrace with your key. The `langtrace` preset applies Langtrace's attribute schema; the collector only handles delivery, which is why `LANGTRACE_API_KEY` lives in the collector's environment rather than the proxy's
 
-Without `LITELLM_OTEL_V2`, the `langtrace` callback posts directly to `https://app.langtrace.ai/api/trace` with `LANGTRACE_API_KEY` set on the proxy as the `x-api-key` header, no collector needed. Set `LANGTRACE_API_HOST` to the base URL of a self-hosted Langtrace (for example `https://langtrace.example.com`) and the callback posts to `<host>/api/trace`. See the [proxy logging guide](../proxy/logging#langtrace) for that setup
+Without `LUMINA_OTEL_V2`, the `langtrace` callback posts directly to `https://app.langtrace.ai/api/trace` with `LANGTRACE_API_KEY` set on the proxy as the `x-api-key` header, no collector needed. Set `LANGTRACE_API_HOST` to the base URL of a self-hosted Langtrace (for example `https://langtrace.example.com`) and the callback posts to `<host>/api/trace`. See the [proxy logging guide](../proxy/logging#langtrace) for that setup
 
 ## Quick Start
 
@@ -29,7 +29,7 @@ Without `LITELLM_OTEL_V2`, the `langtrace` callback posts directly to `https://a
 import litellm
 import os
 
-os.environ["LITELLM_OTEL_V2"] = "true"
+os.environ["LUMINA_OTEL_V2"] = "true"
 os.environ["OTEL_ENDPOINT"] = "http://otel-collector:4318"
 # LLM API Keys
 os.environ["OPENAI_API_KEY"] = ""
@@ -54,7 +54,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -65,7 +65,7 @@ litellm_settings:
 2. Point litellm at your collector
 
 ```shell
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 OTEL_ENDPOINT="http://otel-collector:4318"
 ```
 
@@ -105,7 +105,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_large}}",
   "messages": [

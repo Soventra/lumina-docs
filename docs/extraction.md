@@ -29,12 +29,12 @@ Both model names call the `@cf/cloudflare/clairic` run URL on Cloudflare. The ke
 ```yaml showLineNumbers
 model_list:
   - model_name: clairic
-    litellm_params:
+    lumina_params:
       model: cloudflare/@cf/cloudflare/clairic
       api_key: os.environ/CLOUDFLARE_API_KEY
 ```
 
-Set `CLOUDFLARE_ACCOUNT_ID` in the proxy environment, or add `api_base` to `litellm_params`. `model: cloudflare/clairic` is the short form and calls the same model.
+Set `CLOUDFLARE_ACCOUNT_ID` in the proxy environment, or add `api_base` to `lumina_params`. `model: cloudflare/clairic` is the short form and calls the same model.
 
 2. Start the proxy.
 
@@ -50,7 +50,7 @@ Pull five typed fields out of an invoice.
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/extraction' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "clairic",
@@ -161,7 +161,7 @@ An estimate of a date takes ISO dates for `min` and `max`, and its `step` is a n
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/extraction' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "clairic",

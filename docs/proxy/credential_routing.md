@@ -25,7 +25,7 @@ When a request comes in, the system walks this precedence chain (first match win
 3. **Project default** — `defaultconfig` in the project's `model_config`
 4. **Team model-specific** — override for this exact model in the team's `model_config`
 5. **Team default** — `defaultconfig` in the team's `model_config`
-6. **Deployment default** — the model's `litellm_params` as configured in `config.yaml`
+6. **Deployment default** — the model's `lumina_params` as configured in `config.yaml`
 
 ## Quick Start
 
@@ -36,7 +36,7 @@ Store your Azure endpoint credentials in the credentials table. You can do this 
 ```bash showLineNumbers
 # Create credential for Hotel team's Azure endpoint
 curl -X POST 'http://0.0.0.0:4000/credentials' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "credential_name": "hotel-azure-eastus",
@@ -50,7 +50,7 @@ curl -X POST 'http://0.0.0.0:4000/credentials' \
 ```bash showLineNumbers
 # Create credential for Flight team's Azure endpoint
 curl -X POST 'http://0.0.0.0:4000/credentials' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "credential_name": "flight-azure-centralus",
@@ -68,7 +68,7 @@ Add a `model_config` key to the team's metadata referencing the credential by na
 ```bash showLineNumbers
 # Hotel team — default Azure endpoint for all models
 curl -X POST 'http://0.0.0.0:4000/team/update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "team_id": "hotel-team-id",
@@ -87,7 +87,7 @@ curl -X POST 'http://0.0.0.0:4000/team/update' \
 ```bash showLineNumbers
 # Flight team — default Azure endpoint for all models
 curl -X POST 'http://0.0.0.0:4000/team/update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "team_id": "flight-team-id",
@@ -127,7 +127,7 @@ You can set different credentials for specific models while keeping a default fo
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/team/update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "team_id": "hotel-team-id",
@@ -159,7 +159,7 @@ Projects inherit their team's `model_config` but can override at the project lev
 ```bash showLineNumbers
 # Project overrides the team default for all models
 curl -X POST 'http://0.0.0.0:4000/project/update' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "project_id": "hotel-rec-app-id",
@@ -254,7 +254,7 @@ litellm_settings:
 <TabItem value="env" label="Environment Variable">
 
 ```bash
-export LITELLM_ENABLE_MODEL_CONFIG_CREDENTIAL_OVERRIDES=true
+export LUMINA_ENABLE_MODEL_CONFIG_CREDENTIAL_OVERRIDES=true
 ```
 
 </TabItem>

@@ -309,14 +309,14 @@ Add the model to your `model_list` with the `openrouter/` prefix. The model then
 ```yaml showLineNumbers
 model_list:
   - model_name: jev
-    litellm_params:
+    lumina_params:
       model: openrouter/typesafe/jev-1.14
       api_key: os.environ/OPENROUTER_API_KEY
 ```
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/systemone' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "jev",
@@ -337,7 +337,7 @@ A virtual key with a `models` list needs `typesafe/jev-1.14`, the model name in 
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/openrouter/alpha/decisions' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "typesafe/jev-1.14",

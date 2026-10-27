@@ -140,7 +140,7 @@ export SSL_CERTIFICATE="/path/to/client_certificate.pem"
 ### What data is stored in encrypted form?
 
 #### Encrypted Data:
-1. **LLM API Keys** - Model credentials in `LiteLLM_ProxyModelTable.litellm_params`
+1. **LLM API Keys** - Model credentials in `LiteLLM_ProxyModelTable.lumina_params`
 2. **Provider Credentials** - Stored in `LiteLLM_CredentialsTable.credential_values`
 3. **Configuration Secrets** - Sensitive config values in `LiteLLM_Config` table
 4. **Virtual Keys** - When using secret managers (optional feature)
@@ -239,7 +239,7 @@ general_settings:
 - Equivalent security to AES-256
 
 **Key Derivation:**
-1. Takes `LITELLM_SALT_KEY` (or `LITELLM_MASTER_KEY` if salt key not set)
+1. Takes `LUMINA_SALT_KEY` (or `LUMINA_MASTER_KEY` if salt key not set)
 2. Hashes with SHA-256 to derive 256-bit encryption key
 3. Uses NaCl SecretBox for authenticated encryption
 
@@ -263,21 +263,21 @@ encrypted = box.encrypt(value_bytes)
 
 **Required Environment Variable:**
 ```bash
-export LITELLM_SALT_KEY="your-strong-random-key-here"
+export LUMINA_SALT_KEY="your-strong-random-key-here"
 ```
 
 **Important Notes:**
 - **Must be set before adding any models**
 - **Never change this key** - encrypted data becomes unrecoverable
 - Use a strong random key (recommended: https://1password.com/password-generator/)
-- If not set, falls back to `LITELLM_MASTER_KEY`
+- If not set, falls back to `LUMINA_MASTER_KEY`
 
 **Documentation:** `docs/my-website/docs/proxy/prod.md` (section 8, lines 184-196)
 
 ### Documentation Coverage
 
 **Primary Documentation:**
-- `docs/my-website/docs/proxy/prod.md` (section 8) - LITELLM_SALT_KEY setup
+- `docs/my-website/docs/proxy/prod.md` (section 8) - LUMINA_SALT_KEY setup
 - `docs/my-website/docs/secret.md` - Secret management systems
 - `docs/my-website/docs/proxy/db_info.md` - Database information
 
@@ -310,7 +310,7 @@ export LITELLM_SALT_KEY="your-strong-random-key-here"
 
 **For Production Deployments:**
 
-1. **Set LITELLM_SALT_KEY** before adding any models
+1. **Set LUMINA_SALT_KEY** before adding any models
 2. **Configure SSL certificates** for HTTPS client connections
 3. **Consider disabling logs** if they contain sensitive data
 4. **Use secret managers** for enhanced security (optional)
@@ -322,7 +322,7 @@ export LITELLM_SALT_KEY="your-strong-random-key-here"
 
 ```bash
 # 1. Generate a strong salt key
-export LITELLM_SALT_KEY="$(openssl rand -base64 32)"
+export LUMINA_SALT_KEY="$(openssl rand -base64 32)"
 
 # 2. Set up SSL certificates (for HTTPS)
 export SSL_KEYFILE_PATH="/path/to/private_key.pem"

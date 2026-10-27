@@ -69,7 +69,7 @@ Add the following to your LiteLLM Proxy configuration file:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: nadir-auto
-    litellm_params:
+    lumina_params:
       model: nadir/auto
       api_key: os.environ/NADIR_API_KEY
 ```
@@ -83,7 +83,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Nadir via Proxy - cURL"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "nadir-auto",
     "messages": [{"role": "user", "content": "Hello, how are you?"}]

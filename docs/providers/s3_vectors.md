@@ -28,7 +28,7 @@ You need an embedding model for ingest and search. AWS credentials come from the
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -47,7 +47,7 @@ Pass `custom_llm_provider: "s3_vectors"` in the `vector_store` block. Setting `a
 
 ```bash showLineNumbers title="Ingest into S3 Vectors"
 curl -X POST "http://localhost:4000/v1/rag/ingest" \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "Content-Type: application/json" \
     -d "{
         \"file\": {
@@ -86,7 +86,7 @@ The index dimension is fixed at creation time from the ingest embedding model (a
 
 ```bash showLineNumbers title="Search"
 curl -X POST "http://localhost:4000/v1/vector_stores/my-embeddings:litellm-index-a1b2c3d4/search" \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{"query": "What does the document say about pricing?", "max_num_results": 5}'
 ```
@@ -113,7 +113,7 @@ curl -X POST "http://localhost:4000/v1/vector_stores/my-embeddings:litellm-index
 
 ```bash showLineNumbers title="file_search tool"
 curl -X POST "http://localhost:4000/v1/chat/completions" \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{
         "model": "{{openai_large}}",
@@ -131,18 +131,18 @@ If the vector bucket and index already exist (created by an earlier ingest, anot
 ```yaml showLineNumbers title="config.yaml"
 vector_store_registry:
   - vector_store_name: "product-docs"
-    litellm_params:
+    lumina_params:
       vector_store_id: "my-embeddings:my-index"
       custom_llm_provider: "s3_vectors"
       aws_region_name: "us-west-2"
       embedding_model: "text-embedding-3-small"
 ```
 
-`aws_region_name` is required for search. `embedding_model` should match the model the index was built with. Instead of the `bucket:index` id you can also set `vector_bucket_name` in `litellm_params` and use the plain index name as `vector_store_id`. Once registered, a `/rag/ingest` request that names the store id lands in that index too, taking the provider, region, credentials, and embedding model from the registration instead of the request.
+`aws_region_name` is required for search. `embedding_model` should match the model the index was built with. Instead of the `bucket:index` id you can also set `vector_bucket_name` in `lumina_params` and use the plain index name as `vector_store_id`. Once registered, a `/rag/ingest` request that names the store id lands in that index too, taking the provider, region, credentials, and embedding model from the registration instead of the request.
 
 ## Configuration reference
 
-Search-side `litellm_params` (registry entry, or persisted automatically from ingest):
+Search-side `lumina_params` (registry entry, or persisted automatically from ingest):
 
 | Parameter | Required | Description |
 |-----------|----------|-------------|

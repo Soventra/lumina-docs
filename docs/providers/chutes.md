@@ -87,7 +87,7 @@ export CHUTES_API_KEY=""
 ```yaml
 model_list:
   - model_name: chutes-model
-    litellm_params:
+    lumina_params:
       model: chutes/model-name  # Replace with actual model name
       api_key: os.environ/CHUTES_API_KEY
 ```

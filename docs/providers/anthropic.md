@@ -114,7 +114,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -130,7 +130,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -171,7 +171,7 @@ import os
 
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 # os.environ["ANTHROPIC_API_BASE"] = "" # [OPTIONAL] or 'ANTHROPIC_BASE_URL'
-# os.environ["LITELLM_ANTHROPIC_DISABLE_URL_SUFFIX"] = "true" # [OPTIONAL] Disable automatic URL suffix appending
+# os.environ["LUMINA_ANTHROPIC_DISABLE_URL_SUFFIX"] = "true" # [OPTIONAL] Disable automatic URL suffix appending
 ```
 
 :::tip[Azure Foundry Support]
@@ -200,14 +200,14 @@ If your custom endpoint already includes the full path or doesn't follow Anthrop
 import os
 
 os.environ["ANTHROPIC_API_BASE"] = "https://my-custom-endpoint.com/custom/path"
-os.environ["LITELLM_ANTHROPIC_DISABLE_URL_SUFFIX"] = "true"  # Prevents automatic suffix
+os.environ["LUMINA_ANTHROPIC_DISABLE_URL_SUFFIX"] = "true"  # Prevents automatic suffix
 ```
 
-Without `LITELLM_ANTHROPIC_DISABLE_URL_SUFFIX`:
+Without `LUMINA_ANTHROPIC_DISABLE_URL_SUFFIX`:
 - Base URL `https://my-proxy.com` → `https://my-proxy.com/v1/messages`
 - Base URL `https://my-proxy.com/api` → `https://my-proxy.com/api/v1/messages`
 
-With `LITELLM_ANTHROPIC_DISABLE_URL_SUFFIX=true`:
+With `LUMINA_ANTHROPIC_DISABLE_URL_SUFFIX=true`:
 - Base URL `https://my-proxy.com/custom/path` → `https://my-proxy.com/custom/path` (unchanged)
 
 ### Azure AI Foundry (Alternative Method)
@@ -280,12 +280,12 @@ There are four ways to supply the OIDC assertion. Two need no `anthropic_identit
 
 #### Token file (default)
 
-Reads an assertion a platform already projects onto disk, which is how Kubernetes service account tokens and most CI runners work. Set `anthropic_identity_token_file` and leave `anthropic_identity_source` unset. The path must sit under LiteLLM's OIDC file allowlist, which you extend with `LITELLM_OIDC_ALLOWED_CREDENTIAL_DIRS`. The file is re-read on each mint, so a rotated token is picked up without a restart.
+Reads an assertion a platform already projects onto disk, which is how Kubernetes service account tokens and most CI runners work. Set `anthropic_identity_token_file` and leave `anthropic_identity_source` unset. The path must sit under LiteLLM's OIDC file allowlist, which you extend with `LUMINA_OIDC_ALLOWED_CREDENTIAL_DIRS`. The file is re-read on each mint, so a rotated token is picked up without a restart.
 
 ```yaml
 model_list:
   - model_name: claude-sonnet-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-5
       anthropic_identity_token_file: /var/run/secrets/anthropic.com/token
       anthropic_federation_rule_id: os.environ/ANTHROPIC_FEDERATION_RULE_ID
@@ -323,7 +323,7 @@ credential_list:
 
 model_list:
   - model_name: claude-sonnet-4-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-4-5
       litellm_credential_name: anthropic_wif
 ```
@@ -332,7 +332,7 @@ Anthropic needs the matching public key to verify what LiteLLM signs. Export it 
 
 ```shell
 curl -s http://localhost:4000/credentials/anthropic_wif/jwks \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 The endpoint is proxy-admin only and never exposes the private key, so paste the JSON it returns into the Anthropic Console rather than pointing Anthropic at the URL. A freshly registered JWKS takes about a minute before Anthropic accepts assertions signed by it.
@@ -359,7 +359,7 @@ The Admin UI does not offer these fields yet, so configure federation through th
 
 LiteLLM caches the minted access token per deployment and refreshes it in the background before it expires, so a request rarely waits on an exchange. Refresh is two-tier: an advisory refresh at half the token's lifetime that happens in the background while the old token keeps serving, and a mandatory one at an eighth of the lifetime that blocks. Concurrent requests for the same deployment share a single in-flight exchange rather than each minting their own, so the number of exchanges does not scale with traffic.
 
-Workers on the same host share the minted token through a small on-disk cache under the temp directory, readable only by the proxy's user, so a proxy running several uvicorn workers exchanges each assertion once rather than once per worker. `LITELLM_TOKEN_EXCHANGE_CACHE_DIR` moves that cache, and setting it to an empty string turns it off so every process mints on its own. Replicas on different hosts always mint their own token.
+Workers on the same host share the minted token through a small on-disk cache under the temp directory, readable only by the proxy's user, so a proxy running several uvicorn workers exchanges each assertion once rather than once per worker. `LUMINA_TOKEN_EXCHANGE_CACHE_DIR` moves that cache, and setting it to an empty string turns it off so every process mints on its own. Replicas on different hosts always mint their own token.
 
 Anthropic accepts each assertion once: a second exchange of the same JWT is denied with the opaque 401 and shows up as `jti_reused` in the rule's authentication history. That is fine for the internal issuer and Keycloak sources, which mint a fresh assertion for every exchange, but a token file or `oidc/env/` value has to rotate faster than the rule's `token_lifetime_seconds`, or the first refresh after the minted token expires fails until a new assertion shows up. Kubernetes rotates a projected service account token once 80% of its `expirationSeconds` has passed, so keep the rule's token lifetime at or above that rotation period; the defaults (a one hour projected token and a one hour rule lifetime) line up.
 
@@ -373,16 +373,16 @@ Teams keep normal access to a federated deployment. Only editing it moves to the
 
 ### Restricting where assertions are sent
 
-The exchange only talks to `api.anthropic.com`. If you front Anthropic with a gateway, list its hostname in `LITELLM_ANTHROPIC_WIF_ALLOWED_HOSTS` (comma separated) so the signed assertion is allowed to reach it.
+The exchange only talks to `api.anthropic.com`. If you front Anthropic with a gateway, list its hostname in `LUMINA_ANTHROPIC_WIF_ALLOWED_HOSTS` (comma separated) so the signed assertion is allowed to reach it.
 
 ```shell
-export LITELLM_ANTHROPIC_WIF_ALLOWED_HOSTS="anthropic.gateway.internal"
+export LUMINA_ANTHROPIC_WIF_ALLOWED_HOSTS="anthropic.gateway.internal"
 ```
 
 An entry may name a port, in which case only that port is trusted and another process on the same host is not. An entry without a port trusts every port on that host.
 
 ```shell
-export LITELLM_ANTHROPIC_WIF_ALLOWED_HOSTS="anthropic.gateway.internal:8443"
+export LUMINA_ANTHROPIC_WIF_ALLOWED_HOSTS="anthropic.gateway.internal:8443"
 ```
 
 The list is read from the environment only. It is never taken from a model or credential API, because `api_base` decides both where the assertion is sent and where the minted token is presented
@@ -445,7 +445,7 @@ export ANTHROPIC_API_KEY="your-api-key"
 ```yaml
 model_list:
   - model_name: claude-4 ### RECEIVED MODEL NAME ###
-    litellm_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
+    lumina_params: # all params accepted by litellm.completion() - https://docs.litellm.ai/docs/completion/input
       model: {{anthropic_large}} ### MODEL NAME sent to `litellm.completion()` ###
       api_key: "os.environ/ANTHROPIC_API_KEY" # does os.getenv("ANTHROPIC_API_KEY")
 ```
@@ -466,7 +466,7 @@ ANTHROPIC_API_KEY=sk-ant****
 ```yaml
 model_list:
   - model_name: "*" 
-    litellm_params:
+    lumina_params:
       model: "*"
 ```
 
@@ -1036,7 +1036,7 @@ response = completion(
 ```yaml
 model_list:
   - model_name: anthropic-claude-model
-    litellm_params:
+    lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1138,7 +1138,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: claude-4-sonnet
-    litellm_params:
+    lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1157,7 +1157,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "claude-4-sonnet",
     "messages": [{"role": "user", "content": "Who won the World Cup in 2022?"}],
@@ -1171,7 +1171,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "claude-4-sonnet",
     "messages": [{"role": "user", "content": "Who won the World Cup in 2022?"}],
@@ -1366,7 +1366,7 @@ print(resp)
 
 ```yaml keep-model-ids
 - model_name: claude-3-5-sonnet-latest
-  litellm_params:
+  lumina_params:
     model: anthropic/claude-3-5-sonnet-latest
     api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1382,7 +1382,7 @@ litellm --config /path/to/config.yaml
 ```bash keep-model-ids
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "claude-3-5-sonnet-latest",
     "messages": [{"role": "user", "content": "There's a syntax error in my primes.py file. Can you help me fix it?"}],
@@ -1470,7 +1470,7 @@ print(resp)
 
 ```yaml
 - model_name: {{anthropic}}
-  litellm_params:
+  lumina_params:
     model: anthropic/{{anthropic}}
     api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1490,7 +1490,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What's the weather like today?"}],
@@ -1511,7 +1511,7 @@ curl http://0.0.0.0:4000/v1/chat/completions \
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [{"role": "user", "content": "What's the weather like today?"}],
@@ -1567,7 +1567,7 @@ print(response)
 ```yaml
 model_list:
     - model_name: claude-memory-model
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1583,7 +1583,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
     -H "Content-Type: application/json" \
-    -H "Authorization: Bearer $LITELLM_KEY" \
+    -H "Authorization: Bearer $LUMINA_KEY" \
     -d '{
     "model": "claude-memory-model",
     "messages": [{"role": "user", "content": "Please remember that my favorite color is blue."}],
@@ -1704,7 +1704,7 @@ resp = completion(
 
 ```yaml
 - model_name: {{anthropic}}
-  litellm_params:
+  lumina_params:
     model: anthropic/{{anthropic}}
     api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1812,7 +1812,7 @@ response = litellm.completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -1842,7 +1842,7 @@ response = litellm.completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "anthropic/{{anthropic_large}}",
     "messages": [{"role": "user", "content": "What is the optimal strategy for solving this problem?"}],
@@ -1872,7 +1872,7 @@ response = litellm.completion(
 ```bash
 curl http://0.0.0.0:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "anthropic/{{anthropic_large}}",
     "messages": [{"role": "user", "content": "What is the capital of France?"}],
@@ -2015,7 +2015,7 @@ print(response.choices[0])
 
 ```yaml
 - model_name: {{anthropic}}
-  litellm_params:
+  lumina_params:
     model: anthropic/{{anthropic}}
     api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -2110,7 +2110,7 @@ assert citations is not None
 ```yaml
 model_list:
     - model_name: anthropic-claude
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -2128,7 +2128,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "anthropic-claude",
   "messages": [
@@ -2273,7 +2273,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: {{anthropic}}
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -2337,7 +2337,7 @@ response = completion(
 ```yaml
 model_list:
     - model_name: {{anthropic}}
-      litellm_params:
+      lumina_params:
         model: anthropic/{{anthropic}}
         api_key: os.environ/ANTHROPIC_API_KEY
 ```

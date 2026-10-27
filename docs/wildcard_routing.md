@@ -24,21 +24,21 @@ router = Router(
     model_list=[
         {
             "model_name": "anthropic/*",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "anthropic/*",
                 "api_key": os.environ["ANTHROPIC_API_KEY"]
             }
         }, 
         {
             "model_name": "groq/*",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "groq/*",
                 "api_key": os.environ["GROQ_API_KEY"]
             }
         }, 
         {
             "model_name": "fo::*:static::*", # all requests matching this pattern will be routed to this deployment, example: model="fo::hi::static::hi" will be routed to deployment: "openai/fo::*:static::*"
-            "litellm_params": {
+            "lumina_params": {
                 "model": "openai/fo::*:static::*",
                 "api_key": os.environ["OPENAI_API_KEY"]
             }
@@ -55,15 +55,15 @@ router = Router(
 model_list:
   # provider specific wildcard routing
   - model_name: "anthropic/*"
-    litellm_params:
+    lumina_params:
       model: "anthropic/*"
       api_key: os.environ/ANTHROPIC_API_KEY
   - model_name: "groq/*"
-    litellm_params:
+    lumina_params:
       model: "groq/*"
       api_key: os.environ/GROQ_API_KEY
   - model_name: "fo::*:static::*" # all requests matching this pattern will be routed to this deployment, example: model="fo::hi::static::hi" will be routed to deployment: "openai/fo::*:static::*"
-    litellm_params:
+    lumina_params:
       model: "openai/fo::*:static::*"
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -106,7 +106,7 @@ Test with `anthropic/` - all models with `anthropic/` prefix will get routed to 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "messages": [
@@ -119,7 +119,7 @@ Test with `groq/` - all models with `groq/` prefix will get routed to `groq/*`
 ```shell
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "groq/llama3-8b-8192",
     "messages": [
@@ -132,7 +132,7 @@ Test with `fo::*::static::*` - all requests matching this pattern will be routed
 ```shell
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "fo::hi::static::hi",
     "messages": [
@@ -153,7 +153,7 @@ A team can [add its own wildcard deployment](/docs/proxy/team_model_add) with it
 model_list:
   # Proxy-wide: serves keys that have no team-scoped openrouter/* deployment
   - model_name: openrouter/*
-    litellm_params:
+    lumina_params:
       model: openrouter/*
       api_key: os.environ/SHARED_OPENROUTER_API_KEY
 ```
@@ -161,11 +161,11 @@ model_list:
 ```bash
 # Team-scoped: serves keys that belong to this team, with the team's own credentials
 curl -X POST 'http://0.0.0.0:4000/model/new' \
-  -H 'Authorization: Bearer $LITELLM_MASTER_KEY' \
+  -H 'Authorization: Bearer $LUMINA_MASTER_KEY' \
   -H 'Content-Type: application/json' \
   -d '{
     "model_name": "openrouter/*",
-    "litellm_params": {"model": "openrouter/*", "api_key": "<team-openrouter-key>"},
+    "lumina_params": {"model": "openrouter/*", "api_key": "<team-openrouter-key>"},
     "model_info": {"team_id": "<team-id>"}
   }'
 ```

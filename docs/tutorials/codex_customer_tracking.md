@@ -25,7 +25,7 @@ model_provider = "litellm"
 [model_providers.litellm]
 name = "LiteLLM"
 base_url = "http://localhost:4000/v1"
-env_key = "LITELLM_API_KEY"
+env_key = "LUMINA_API_KEY"
 wire_api = "responses"
 http_headers = { "x-litellm-end-user-id" = "alice" }
 ```
@@ -41,11 +41,11 @@ http_headers = { "x-litellm-customer-id" = "carol", "x-litellm-tags" = "project:
 
 ## Option 3: Per-Developer Value from an Environment Variable
 
-A shared `config.toml` cannot hard-code each developer's id. `env_http_headers` names an environment variable instead, so the file stays identical across machines and each developer runs `export LITELLM_END_USER_ID=alice` before launching Codex. When the variable is unset or empty, Codex omits the header.
+A shared `config.toml` cannot hard-code each developer's id. `env_http_headers` names an environment variable instead, so the file stays identical across machines and each developer runs `export LUMINA_END_USER_ID=alice` before launching Codex. When the variable is unset or empty, Codex omits the header.
 
 ```toml
 [model_providers.litellm]
-env_http_headers = { "x-litellm-end-user-id" = "LITELLM_END_USER_ID" }
+env_http_headers = { "x-litellm-end-user-id" = "LUMINA_END_USER_ID" }
 ```
 
 ## Option 4: Custom Header Name
@@ -69,7 +69,7 @@ env_http_headers = { "x-okta-user" = "CODEX_OKTA_USER" }
 Add the provider block from Option 1 to `~/.codex/config.toml`, then export your LiteLLM key and start Codex.
 
 ```bash
-export LITELLM_API_KEY=sk-<your-api-key>
+export LUMINA_API_KEY=sk-<your-api-key>
 codex
 ```
 

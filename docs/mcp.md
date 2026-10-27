@@ -57,7 +57,7 @@ general_settings:
 
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: sk-xxxxxxx
 ```
@@ -112,13 +112,13 @@ This video walks through adding and using an SSE MCP server on LiteLLM UI and us
 
 :::warning stdio is off by default
 
-stdio MCP servers are disabled unless the proxy is started with `LITELLM_ENABLE_MCP_STDIO=true` in its environment. While it is off, the stdio transport is greyed out in the UI, creating or updating a stdio server returns an error, and existing stdio servers stay listed but never start: their tools are left out of tool listings, direct tool calls return `403`, and their health check reports them as unhealthy
+stdio MCP servers are disabled unless the proxy is started with `LUMINA_ENABLE_MCP_STDIO=true` in its environment. While it is off, the stdio transport is greyed out in the UI, creating or updating a stdio server returns an error, and existing stdio servers stay listed but never start: their tools are left out of tool listings, direct tool calls return `403`, and their health check reports them as unhealthy
 
 The flag is read from the proxy's process environment only. Setting it under `environment_variables` in config.yaml or in the database has no effect
 
 :::
 
-**Upgrading with existing stdio servers?** Add `LITELLM_ENABLE_MCP_STDIO=true` to the proxy's environment and restart it. Until you do, the proxy logs a warning naming each stdio server it will not start
+**Upgrading with existing stdio servers?** Add `LUMINA_ENABLE_MCP_STDIO=true` to the proxy's environment and restart it. Until you do, the proxy logs a warning naming each stdio server it will not start
 
 For stdio MCP servers, select "Standard Input/Output (stdio)" as the transport type and provide the stdio configuration in JSON format:
 
@@ -205,7 +205,7 @@ Add your MCP servers directly in your `config.yaml` file:
 ```yaml title="config.yaml" showLineNumbers
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: sk-xxxxxxx
 
@@ -225,7 +225,7 @@ mcp_servers:
     url: "https://actions.zapier.com/mcp/sk-akxxxxx/sse"
   
   # Standard Input/Output (stdio) Server - CircleCI Example
-  # Requires LITELLM_ENABLE_MCP_STDIO=true in the proxy's environment
+  # Requires LUMINA_ENABLE_MCP_STDIO=true in the proxy's environment
   circleci_mcp:
     transport: "stdio"
     command: "npx"
@@ -364,12 +364,12 @@ If the server already has permissions, use its current id from `GET /v1/mcp/serv
 
 ```bash
 curl -s http://localhost:4000/v1/mcp/server \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 `server_id` must be a non-empty string. Config entries cannot reuse an id or another entry's name or alias. Clashes with a database-backed server only log a warning: if the id matches, the database server wins and the config one is unreachable, and if it matches that server's name or alias, permissions naming it reach the config server instead.
 
-If `LITELLM_USE_SHORT_MCP_TOOL_PREFIX` is enabled, changing the id also changes the server's tool prefix. Servers added through the UI or `/v1/mcp/server` already have stable ids.
+If `LUMINA_USE_SHORT_MCP_TOOL_PREFIX` is enabled, changing the id also changes the server's tool prefix. Servers added through the UI or `/v1/mcp/server` already have stable ids.
 
 ### MCP Walkthroughs
 
@@ -695,7 +695,7 @@ asyncio.run(main())
 ```bash title="cURL with Custom Headers" showLineNumbers
 curl --location 'http://localhost:4000/github_mcp/mcp' \
 --header 'Content-Type: application/json' \
---header "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+--header "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
 --header 'Authorization: Bearer gho_token' \
 --header 'custom_key: custom_value' \
 --header 'x-custom-header: additional_data' \
@@ -817,7 +817,7 @@ Using `server_url: "https://your-proxy.com/mcp"` is incorrect when the request i
 ```bash title="Correct: Using litellm_proxy" showLineNumbers
 curl --location 'https://your-proxy.com/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "tools": [
@@ -856,7 +856,7 @@ To pass custom headers (e.g., API keys, auth tokens) to specific MCP servers, us
     "server_url": "litellm_proxy",
     "require_approval": "never",
     "headers": {
-        "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+        "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
         "x-mcp-servers": "Zapier_MCP,dev-group",
         "x-mcp-weather2-authorization": "Bearer your-weather-api-token"
     }
@@ -886,7 +886,7 @@ When the servers in an access group share one credential, pass `x-mcp-{access_gr
 curl -X POST http://localhost:4000/mcp/dev_group \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
   -H "x-mcp-dev_group-authorization: Bearer SHARED_TOKEN" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
@@ -915,7 +915,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "https://your-litellm-proxy.example.com/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-github-authorization": "Bearer YOUR_GITHUB_TOKEN",
                 "x-mcp-zapier-x-api-key": "YOUR_ZAPIER_API_KEY"
             }
@@ -937,7 +937,7 @@ Use this when calling LiteLLM Proxy for LLM API requests to `/v1/responses` endp
 ```bash title="cURL Example with Server-Specific Auth" showLineNumbers
 curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "tools": [
@@ -947,7 +947,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
             "server_url": "litellm_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-github-authorization": "Bearer YOUR_GITHUB_TOKEN",
                 "x-mcp-zapier-x-api-key": "YOUR_ZAPIER_API_KEY"
             }
@@ -1002,7 +1002,7 @@ http://localhost:4000/mcp/
 
 **Headers:**
 ```text showLineNumbers
-x-litellm-api-key: Bearer YOUR_LITELLM_API_KEY
+x-litellm-api-key: Bearer YOUR_LUMINA_API_KEY
 x-mcp-github-authorization: Bearer YOUR_GITHUB_TOKEN
 x-mcp-zapier-x-api-key: YOUR_ZAPIER_API_KEY
 ```
@@ -1027,7 +1027,7 @@ server_url = "http://localhost:4000/mcp/"
 transport = StreamableHttpTransport(
     server_url,
     headers={
-        "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+        "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
         "x-mcp-github-authorization": "Bearer YOUR_GITHUB_TOKEN",
         "x-mcp-zapier-x-api-key": "YOUR_ZAPIER_API_KEY"
     }
@@ -1082,7 +1082,7 @@ LiteLLM Proxy also supports MCP-aware tooling on the classic `/v1/chat/completio
 ```bash title="Chat Completions with MCP Tools" showLineNumbers
 curl --location '<your-litellm-proxy-base-url>/v1/chat/completions' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
   "model": "{{openai_small}}",
   "messages": [

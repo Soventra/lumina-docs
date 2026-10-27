@@ -134,7 +134,7 @@ Add RunwayML to your proxy configuration:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: runway-tts
-    litellm_params:
+    lumina_params:
       model: runwayml/eleven_multilingual_v2
       api_key: os.environ/RUNWAYML_API_KEY
 ```

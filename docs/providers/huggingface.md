@@ -309,7 +309,7 @@ In this case, we are configuring a proxy to serve `DeepSeek R1` from Hugging Fac
 ```yaml
 model_list:
   - model_name: my-r1-model
-    litellm_params:
+    lumina_params:
       model: huggingface/together/deepseek-ai/DeepSeek-R1
       api_key: os.environ/HF_TOKEN # ensure you have `HF_TOKEN` in your .env
 ```

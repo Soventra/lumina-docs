@@ -114,12 +114,12 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: snowflake/claude-sonnet-4-6
       api_key: pat/<your-pat>
       api_base: https://<account>.snowflakecomputing.com
   - model_name: llama4-maverick
-    litellm_params:
+    lumina_params:
       model: snowflake/llama4-maverick
       api_key: pat/<your-pat>
       api_base: https://<account>.snowflakecomputing.com
@@ -242,7 +242,7 @@ print(response.choices[0].message.tool_calls)
 ```yaml
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: snowflake/claude-sonnet-4-6
       api_key: pat/<your-pat>
       api_base: https://<account>.snowflakecomputing.com

@@ -91,10 +91,10 @@ class BudgetPolicy:
 
 router = Router(
     model_list=[
-        {"model_name": "smart-router", "litellm_params": {"model": "openai/{{openai_small}}"}},
-        {"model_name": "smart-router", "litellm_params": {"model": "anthropic/{{anthropic}}"}},
-        {"model_name": "smart-router", "litellm_params": {"model": "openai/{{openai_large}}"}},
-        {"model_name": "smart-router", "litellm_params": {"model": "ollama/llama-3-70b"}},
+        {"model_name": "smart-router", "lumina_params": {"model": "openai/{{openai_small}}"}},
+        {"model_name": "smart-router", "lumina_params": {"model": "anthropic/{{anthropic}}"}},
+        {"model_name": "smart-router", "lumina_params": {"model": "openai/{{openai_large}}"}},
+        {"model_name": "smart-router", "lumina_params": {"model": "ollama/llama-3-70b"}},
     ],
     plugins=[LanguageDetector(), DomainClassifier(), TenantPolicy(), BudgetPolicy()],
 )
@@ -149,7 +149,7 @@ Add `plugins` under `complexity_router_config`. Each entry is a dotted path to a
 ```yaml
 model_list:
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -162,12 +162,12 @@ model_list:
           - plugins.cost_ceiling_plugin.cost_ceiling_plugin
 
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -213,11 +213,11 @@ from litellm import Router
 
 router = Router(
     model_list=[
-        {"model_name": "{{openai_small}}", "litellm_params": {"model": "openai/{{openai_small}}"}},
-        {"model_name": "{{openai_large}}", "litellm_params": {"model": "openai/{{openai_large}}"}},
+        {"model_name": "{{openai_small}}", "lumina_params": {"model": "openai/{{openai_small}}"}},
+        {"model_name": "{{openai_large}}", "lumina_params": {"model": "openai/{{openai_large}}"}},
         {
             "model_name": "smart-router",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "auto_router/complexity_router",
                 "complexity_router_config": {
                     "tiers": {
@@ -250,7 +250,7 @@ Set `classifier_type: custom` and point `classifier_plugin` at a dotted path to 
 ```yaml title="config.yaml"
 model_list:
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         classifier_type: custom
@@ -262,7 +262,7 @@ model_list:
         default_model: {{openai_small}}
 
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 ```

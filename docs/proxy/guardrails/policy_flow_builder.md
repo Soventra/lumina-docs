@@ -178,12 +178,12 @@ Define a pipeline in your policy config:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: pii_masking
-    litellm_params:
+    lumina_params:
       guardrail: presidio
       mode: pre_call
 
   - guardrail_name: prompt_injection
-    litellm_params:
+    lumina_params:
       guardrail: lakera
       mode: pre_call
 

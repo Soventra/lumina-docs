@@ -40,7 +40,7 @@ Your Proxy Swagger is available on the root of the Proxy: e.g.: `http://localhos
 Out of the box, the UI accepts a login built from environment variables: the username is `UI_USERNAME` (default `admin`) and the password is `UI_PASSWORD`. If `UI_PASSWORD` is unset, the master key itself is accepted as the password. Anyone who signs in this way is a proxy admin.
 
 ```shell
-LITELLM_MASTER_KEY="sk-$(openssl rand -hex 32)" # master key for the proxy; must start with sk-
+LUMINA_MASTER_KEY="sk-$(openssl rand -hex 32)" # master key for the proxy; must start with sk-
 UI_USERNAME=ishaan-litellm   # username to sign in on UI
 UI_PASSWORD=langchain        # password to sign in on UI
 ```
@@ -59,7 +59,7 @@ Then turn off the environment credential login path in your `config.yaml` and re
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   disable_env_credential_login: true
 ```
 
@@ -92,12 +92,12 @@ You can also create it over the API with the master key. `/user/new` does not ac
 
 ```bash
 curl -X POST "$PROXY_BASE_URL/user/new" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"user_id": "breakglass-admin", "user_email": "breakglass-admin@example.com", "user_role": "proxy_admin", "auto_create_key": false}'
 
 curl -X POST "$PROXY_BASE_URL/user/update" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"user_id": "breakglass-admin", "password": "<password>"}'
 ```
@@ -130,7 +130,7 @@ general_settings:
     "198.51.100.4": 0                         # 0 exempts this address from both limits
 ```
 
-An override raises both limits for that address, since the per-username allowance follows the address limit, and `0` exempts the address entirely. `LITELLM_DISABLE_LOGIN_RATE_LIMIT=true` turns the limit off everywhere; it is read once at startup. See [Security best practices](./security_best_practices#limit-failed-admin-ui-sign-in-attempts) for the reasoning behind the defaults.
+An override raises both limits for that address, since the per-username allowance follows the address limit, and `0` exempts the address entirely. `LUMINA_DISABLE_LOGIN_RATE_LIMIT=true` turns the limit off everywhere; it is read once at startup. See [Security best practices](./security_best_practices#limit-failed-admin-ui-sign-in-attempts) for the reasoning behind the defaults.
 
 ## Invite-other users
 

@@ -59,7 +59,7 @@ export JWT_ISSUER="https://your-idp.example.com"  # optional but recommended
 
 ```yaml title="config.yaml"
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     user_id_jwt_field: "sub"        # stable per-user id from your IdP
@@ -92,7 +92,7 @@ Add two settings to `litellm_jwtauth`: the claim that identifies each client, an
 
 ```yaml title="config.yaml"
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   enable_jwt_auth: True
   litellm_jwtauth:
     user_id_jwt_field: "sub"
@@ -115,11 +115,11 @@ A developer's tool needs the proxy as its base URL and a credential as its beare
 **Recommended: launch the agent with the `lite` CLI.** The CLI ships wrapper commands, `lite claude`, `lite codex`, and `lite opencode`, that log the developer in over SSO if they have no credential yet, verify the key against the proxy, set the environment variables the agent reads, then hand off. The developer exports nothing.
 
 ```bash
-export LITELLM_PROXY_URL=https://your-litellm-proxy:4000
+export LUMINA_PROXY_URL=https://your-litellm-proxy:4000
 lite claude          # or: lite codex / lite opencode
 ```
 
-On first run this triggers `lite login` (browser SSO), stores a short-lived session token in the developer's OS keychain, then starts the agent. The wrapper sets the right variables per agent: Claude Code gets `ANTHROPIC_BASE_URL` (the proxy root) and `ANTHROPIC_AUTH_TOKEN`, and it clears any stray `ANTHROPIC_API_KEY` so the proxy token wins; Codex and OpenCode get `OPENAI_BASE_URL` (proxy plus `/v1`) and `OPENAI_API_KEY`, with Codex additionally pointed at a custom provider since it ignores `OPENAI_BASE_URL`. Forward the agent's own flags through the wrapper, for example `lite claude --model my-proxy-model`, and whatever model it requests must exist on the proxy. This path uses the session token from `lite login`, tied to the SSO'd (and SCIM-provisioned) user, so it does not go through the Step 3 `auto_register` path; the login flow issues the credential and spend still tracks against that user. To use a long-lived virtual key instead of the SSO session token, pass `--api-key` or set `LITELLM_PROXY_API_KEY`. See [CLI authentication](./cli_sso.md) for deployment prerequisites.
+On first run this triggers `lite login` (browser SSO), stores a short-lived session token in the developer's OS keychain, then starts the agent. The wrapper sets the right variables per agent: Claude Code gets `ANTHROPIC_BASE_URL` (the proxy root) and `ANTHROPIC_AUTH_TOKEN`, and it clears any stray `ANTHROPIC_API_KEY` so the proxy token wins; Codex and OpenCode get `OPENAI_BASE_URL` (proxy plus `/v1`) and `OPENAI_API_KEY`, with Codex additionally pointed at a custom provider since it ignores `OPENAI_BASE_URL`. Forward the agent's own flags through the wrapper, for example `lite claude --model my-proxy-model`, and whatever model it requests must exist on the proxy. This path uses the session token from `lite login`, tied to the SSO'd (and SCIM-provisioned) user, so it does not go through the Step 3 `auto_register` path; the login flow issues the credential and spend still tracks against that user. To use a long-lived virtual key instead of the SSO session token, pass `--api-key` or set `LUMINA_PROXY_API_KEY`. See [CLI authentication](./cli_sso.md) for deployment prerequisites.
 
 **Clients that already carry an IdP JWT.** Services, or agents already wired to your IdP, send the IdP-minted JWT straight to the proxy as the bearer token; LiteLLM never stores it. This is the path that triggers Step 3's `auto_register`, minting a per-user virtual key on the first request. For an Anthropic-style client, point it at the proxy root and pass the JWT as the auth token:
 
@@ -128,7 +128,7 @@ export ANTHROPIC_BASE_URL="https://your-litellm-proxy:4000"
 export ANTHROPIC_AUTH_TOKEN="<user-sso-jwt-token>"
 ```
 
-Two clarifications that trip people up. The credential from `lite login` lives in the OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `litellm-cli`, and `~/.litellm/token.json` keeps only non-secret metadata: the gateway URL, the user's id, email, and role, the auth header name, and the sign-in timestamp. Reaching the keychain needs the `keyring` package, which comes with the `cli` extra, so install the CLI as `litellm[cli]`. Where no keychain is available, on a headless Linux box for instance, or where you set `LITELLM_CLI_DISABLE_KEYRING` to turn keychain storage off, the credential falls back into that same `0600` file and `lite login` says which of the two it used. There is still no git-style credential-helper integration. And the session token the CLI stores is a LiteLLM-issued token scoped to the gateway, not the raw IdP JWT and not a persisted virtual key that appears in the Keys UI
+Two clarifications that trip people up. The credential from `lite login` lives in the OS keychain (macOS Keychain, Windows Credential Manager, or Linux Secret Service) under the service `litellm-cli`, and `~/.litellm/token.json` keeps only non-secret metadata: the gateway URL, the user's id, email, and role, the auth header name, and the sign-in timestamp. Reaching the keychain needs the `keyring` package, which comes with the `cli` extra, so install the CLI as `litellm[cli]`. Where no keychain is available, on a headless Linux box for instance, or where you set `LUMINA_CLI_DISABLE_KEYRING` to turn keychain storage off, the credential falls back into that same `0600` file and `lite login` says which of the two it used. There is still no git-style credential-helper integration. And the session token the CLI stores is a LiteLLM-issued token scoped to the gateway, not the raw IdP JWT and not a persisted virtual key that appears in the Keys UI
 
 ---
 
@@ -150,7 +150,7 @@ That first request mints the user's virtual key and the claim-to-key mapping. Co
 ```bash
 # The mapping now exists, keyed on the claim value (the user's email here)
 curl 'https://your-litellm-proxy:4000/jwt/key/mapping/list?page=1&size=50' \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 In the Admin UI, the auto-registered key appears under the user with `auto_registered: true` in its metadata, and spend, rate limits, and model access now track per user. From here every subsequent request from that user reuses the same key. This is the point where the flow is self-sustaining; you only step back in to adjust a specific user's budget or model set, which you do by updating the underlying key.

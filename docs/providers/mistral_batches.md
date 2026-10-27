@@ -15,7 +15,7 @@ LiteLLM routes the OpenAI-compatible `/v1/files` and `/v1/batches` endpoints to 
 ```yaml
 model_list:
   - model_name: mistral-ocr
-    litellm_params:
+    lumina_params:
       model: mistral/mistral-ocr-latest
       api_key: os.environ/MISTRAL_API_KEY
 ```
@@ -33,7 +33,7 @@ Pass `model` with the upload so LiteLLM sends the file with that deployment's cr
 
 ```bash
 curl http://0.0.0.0:4000/v1/files \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F purpose="batch" \
   -F model="mistral-ocr" \
   -F file="@ocr_batch_input.jsonl"
@@ -47,7 +47,7 @@ Mistral accepts the `batch`, `fine-tune`, and `ocr` purposes. LiteLLM maps `user
 
 ```bash
 curl http://0.0.0.0:4000/v1/batches \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "input_file_id": "file-bGl0ZWxsbTo1YTJm...",
@@ -63,14 +63,14 @@ Mistral has no `completion_window`; the value is accepted and echoed back as `24
 
 ```bash
 curl http://0.0.0.0:4000/v1/batches/batch_bGl0ZWxsbTo1YzU4... \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 Mistral's job statuses map onto the OpenAI ones: `QUEUED` -> `validating`, `RUNNING` -> `in_progress`, `SUCCESS` -> `completed`, `FAILED` -> `failed`, `TIMEOUT_EXCEEDED` -> `expired`, `CANCELLATION_REQUESTED` -> `cancelling`, `CANCELLED` -> `cancelled`. Once the status is `completed`, download `output_file_id`:
 
 ```bash
 curl http://0.0.0.0:4000/v1/files/file-bGl0ZWxsbToyNjE0.../content \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 Each output line carries the OCR response under `response.body`, including `usage_info.pages_processed`.
@@ -81,7 +81,7 @@ A file id that LiteLLM encoded carries its own routing, but a plain list has no 
 
 ```bash
 curl "http://0.0.0.0:4000/v1/files?provider=mistral&purpose=batch" \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 OCR files read back with `purpose=user_data`, and files created by other Mistral products with a purpose the upload endpoint does not accept (`playground`, `audio`, and similar) also read back as `user_data`, so an unfiltered list never fails on them.
@@ -102,7 +102,7 @@ The batch rates for `mistral/mistral-ocr-latest` are half the synchronous per-pa
 ```yaml
 model_list:
   - model_name: mistral-ocr
-    litellm_params:
+    lumina_params:
       model: mistral/mistral-ocr-latest
       api_key: os.environ/MISTRAL_API_KEY
     model_info:

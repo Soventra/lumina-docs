@@ -91,37 +91,37 @@ response = completion(
 model_list:
   # OpenAI search models
   - model_name: gpt-5-search-api
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5-search-api
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: gpt-4o-search-preview
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-search-preview
       api_key: os.environ/OPENAI_API_KEY
 
   # xAI
   - model_name: grok-3
-    litellm_params:
+    lumina_params:
       model: xai/grok-3
       api_key: os.environ/XAI_API_KEY
 
   # Anthropic
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   # VertexAI
   - model_name: gemini-2-flash
-    litellm_params:
+    lumina_params:
       model: {{gemini_flash}}
       vertex_project: your-project-id
       vertex_location: us-central1
 
   # Google AI Studio
   - model_name: gemini-2-flash-studio
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GOOGLE_API_KEY
 ```
@@ -325,12 +325,12 @@ response = responses(
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -421,7 +421,7 @@ You can set default web search options directly in your proxy config file:
 model_list:
   # Enable web search by default for all requests to this model
   - model_name: grok-3
-    litellm_params:
+    lumina_params:
       model: xai/grok-3
       api_key: os.environ/XAI_API_KEY
       web_search_options: {}  # Enables web search with default settings
@@ -431,10 +431,10 @@ model_list:
 You can configure LiteLLM's router to optionally drop models that do not support WebSearch, for example
 ```yaml
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: "x.openai.azure.com/"
       api_version: 2025-03-01-preview
@@ -450,7 +450,7 @@ In this example, LiteLLM will still route LLM requests to both deployments, but 
 model_list:
   # Set custom web search context size
   - model_name: grok-3
-    litellm_params:
+    lumina_params:
       model: xai/grok-3
       api_key: os.environ/XAI_API_KEY
       web_search_options:
@@ -458,7 +458,7 @@ model_list:
   
   # OpenAI search model with custom context size
   - model_name: gpt-5-search-api
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5-search-api
       api_key: os.environ/OPENAI_API_KEY
       web_search_options:
@@ -466,7 +466,7 @@ model_list:
 
   # Gemini with medium context (default)
   - model_name: gemini-2-flash
-    litellm_params:
+    lumina_params:
       model: {{gemini_flash}}
       vertex_project: your-project-id
       vertex_location: us-central1
@@ -513,14 +513,14 @@ assert litellm.supports_web_search(model="gemini/{{gemini_flash}}") == True
 model_list:
   # OpenAI
   - model_name: gpt-5-search-api
-    litellm_params:
+    lumina_params:
       model: openai/gpt-5-search-api
       api_key: os.environ/OPENAI_API_KEY
     model_info:
       supports_web_search: True
 
   - model_name: gpt-4o-search-preview
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-search-preview
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -528,7 +528,7 @@ model_list:
 
   # xAI
   - model_name: grok-3
-    litellm_params:
+    lumina_params:
       model: xai/grok-3
       api_key: os.environ/XAI_API_KEY
     model_info:
@@ -536,7 +536,7 @@ model_list:
   
   # Anthropic
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
     model_info:
@@ -544,7 +544,7 @@ model_list:
   
   # VertexAI
   - model_name: gemini-2-flash
-    litellm_params:
+    lumina_params:
       model: {{gemini_flash}}
       vertex_project: your-project-id
       vertex_location: us-central1
@@ -553,7 +553,7 @@ model_list:
   
   # Google AI Studio
   - model_name: gemini-2-flash-studio
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GOOGLE_API_KEY
     model_info:
@@ -572,7 +572,7 @@ litellm --config config.yaml
 curl -X 'GET' \
   'http://localhost:4000/model_group/info' \
   -H 'accept: application/json' \
-  -H "x-api-key: $LITELLM_API_KEY"
+  -H "x-api-key: $LUMINA_API_KEY"
 ```
 
 Expected Response 
@@ -661,7 +661,7 @@ You can override these in your proxy config using `model_info`:
 ```yaml
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
     model_info:
       web_search_billing_unit: per_query

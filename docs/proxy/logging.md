@@ -31,7 +31,7 @@ mentioned in this page.
 
 ```shell
 curl -i -sSL --location 'http://0.0.0.0:4000/chat/completions' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'Content-Type: application/json' \
     --data '{
       "model": "{{openai_small}}",
@@ -71,7 +71,7 @@ Set `litellm.turn_off_message_logging=True` This will prevent the messages and r
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   success_callback: ["langfuse"]
@@ -117,7 +117,7 @@ Example config.yaml
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 ```
 
@@ -174,7 +174,7 @@ The proxy only honors this header on keys or teams whose metadata has `allow_cli
 
 ```shell
 curl --location 'http://0.0.0.0:4000/key/generate' \
-    --header "Authorization: Bearer $LITELLM_MASTER_KEY" \
+    --header "Authorization: Bearer $LUMINA_MASTER_KEY" \
     --header 'Content-Type: application/json' \
     --data '{"metadata": {"allow_client_message_redaction_opt_out": true}}'
 ```
@@ -287,7 +287,7 @@ Send the list of callbacks to disable in the request header `x-litellm-disable-c
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'x-litellm-disable-callbacks: langfuse' \
     --data '{
     "model": "{{anthropic}}",
@@ -364,7 +364,7 @@ uv add "langfuse>=4.7,<5"
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   success_callback: ["langfuse"]
@@ -549,7 +549,7 @@ Pass `metadata` as part of the request body
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data '{
     "model": "llama3",
     "messages": [
@@ -631,7 +631,7 @@ Example config.yaml
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -1052,7 +1052,7 @@ Log LLM Logs to [Google Cloud Storage Buckets](https://cloud.google.com/storage?
 1. Add `gcs_bucket` to LiteLLM Config.yaml
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: https://exampleopenaiendpoint-production.up.railway.app/
     api_key: my-fake-key
     model: openai/my-fake-model
@@ -1137,7 +1137,7 @@ When to use `gcs_pubsub`?
 1. Add `gcs_pubsub` to LiteLLM Config.yaml
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: https://exampleopenaiendpoint-production.up.railway.app/
     api_key: my-fake-key
     model: openai/my-fake-model
@@ -1186,7 +1186,7 @@ LiteLLM supports logging on [Confidential AI](https://documentation.confident-ai
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
 litellm_settings:
   success_callback: ["deepeval"]
@@ -1210,7 +1210,7 @@ litellm --config config.yaml --debug
 ```shell
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "{{openai_small}}",
     "messages": [
@@ -1251,7 +1251,7 @@ AWS_REGION_NAME = ""
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   success_callback: ["s3_v2"]
@@ -1407,7 +1407,7 @@ AWS_REGION_NAME = ""
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
 
 litellm_settings:
@@ -1472,7 +1472,7 @@ Log LLM Logs to [Azure Data Lake Storage](https://learn.microsoft.com/en-us/azur
 ```yaml
 model_list:
   - model_name: fake-openai-endpoint
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -1574,7 +1574,7 @@ export LUNARY_PUBLIC_KEY="<your-public-key>"
 ```yaml
 model_list:
   - model_name: "*"
-    litellm_params:
+    lumina_params:
       model: "*"
 litellm_settings:
   success_callback: ["lunary"]
@@ -1651,9 +1651,9 @@ class MyCustomHandler(CustomLogger):
         messages = kwargs.get("messages", None)
         user = kwargs.get("user", None)
 
-        # Access litellm_params passed to litellm.completion(), example access `metadata`
-        litellm_params = kwargs.get("litellm_params", {})
-        metadata = litellm_params.get("metadata", {})   # headers passed to LiteLLM proxy, can be found here
+        # Access lumina_params passed to litellm.completion(), example access `metadata`
+        lumina_params = kwargs.get("lumina_params", {})
+        metadata = lumina_params.get("metadata", {})   # headers passed to LiteLLM proxy, can be found here
 
         # Calculate cost using  litellm.completion_cost()
         cost = litellm.completion_cost(completion_response=response_obj)
@@ -1683,9 +1683,9 @@ class MyCustomHandler(CustomLogger):
             messages = kwargs.get("messages", None)
             user = kwargs.get("user", None)
 
-            # Access litellm_params passed to litellm.completion(), example access `metadata`
-            litellm_params = kwargs.get("litellm_params", {})
-            metadata = litellm_params.get("metadata", {})   # headers passed to LiteLLM proxy, can be found here
+            # Access lumina_params passed to litellm.completion(), example access `metadata`
+            lumina_params = kwargs.get("lumina_params", {})
+            metadata = lumina_params.get("metadata", {})   # headers passed to LiteLLM proxy, can be found here
 
             # Access Exceptions & Traceback
             exception_event = kwargs.get("exception", None)
@@ -1730,7 +1730,7 @@ In the config below, we pass
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 litellm_settings:
@@ -1777,7 +1777,7 @@ custom_handler = MyCustomHandler()
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 litellm_settings:
@@ -1789,7 +1789,7 @@ litellm_settings:
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 
 litellm_settings:
@@ -1874,7 +1874,7 @@ litellm --config proxy_config.yaml
 
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data ' {
     "model": "{{openai_small}}",
     "messages": [
@@ -1898,7 +1898,7 @@ On Success
     Usage: {'completion_tokens': 10, 'prompt_tokens': 11, 'total_tokens': 21},
     Cost: 1.42e-05,
     Response: {'id': 'chatcmpl-8S8avKJ1aVBg941y5xzGMSKrYCMvN', 'choices': [{'finish_reason': 'stop', 'index': 0, 'message': {'content': 'Good morning! How can I assist you today?', 'role': 'assistant'}}], 'created': 1701716913, 'model': '{{openai_small}}', 'object': 'chat.completion', 'system_fingerprint': None, 'usage': {'completion_tokens': 10, 'prompt_tokens': 11, 'total_tokens': 21}}
-    Proxy Metadata: {'user_api_key': None, 'headers': Headers({'host': '0.0.0.0:4000', 'user-agent': 'curl/7.88.1', 'accept': '*/*', 'authorization': "Bearer $LITELLM_API_KEY", 'content-length': '199', 'content-type': 'application/x-www-form-urlencoded'}), 'model_group': '{{openai_small}}', 'deployment': 'gpt-5.6-luna-ModelID-gpt-5.6-luna'}
+    Proxy Metadata: {'user_api_key': None, 'headers': Headers({'host': '0.0.0.0:4000', 'user-agent': 'curl/7.88.1', 'accept': '*/*', 'authorization': "Bearer $LUMINA_API_KEY", 'content-length': '199', 'content-type': 'application/x-www-form-urlencoded'}), 'model_group': '{{openai_small}}', 'deployment': 'gpt-5.6-luna-ModelID-gpt-5.6-luna'}
 ```
 
 #### Logging Proxy Request Object, Header, Url
@@ -1910,8 +1910,8 @@ class MyCustomHandler(CustomLogger):
     async def async_log_success_event(self, kwargs, response_obj, start_time, end_time):
         print(f"On Async Success!")
 
-        litellm_params = kwargs.get("litellm_params", None)
-        proxy_server_request = litellm_params.get("proxy_server_request")
+        lumina_params = kwargs.get("lumina_params", None)
+        proxy_server_request = lumina_params.get("proxy_server_request")
         print(proxy_server_request)
 ```
 
@@ -1953,8 +1953,8 @@ class MyCustomHandler(CustomLogger):
     async def async_log_success_event(self, kwargs, response_obj, start_time, end_time):
         print(f"On Async Success!")
 
-        litellm_params = kwargs.get("litellm_params", None)
-        model_info = litellm_params.get("model_info")
+        lumina_params = kwargs.get("lumina_params", None)
+        model_info = lumina_params.get("model_info")
         print(model_info)
 ```
 
@@ -2055,7 +2055,7 @@ Use this if you:
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -2091,7 +2091,7 @@ litellm --config /path/to/config.yaml
 ```shell
 curl -i --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data '{
     "model": "openai/{{openai_large}}",
     "messages": [
@@ -2157,7 +2157,7 @@ Expect to see your log on Langfuse
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -2206,7 +2206,7 @@ The `langtrace` callback posts spans straight to `https://app.langtrace.ai/api/t
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/fake
       api_key: fake-key
       api_base: https://exampleopenaiendpoint-production.up.railway.app/
@@ -2279,7 +2279,7 @@ export GALILEO_PASSWORD=""
 
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: https://exampleopenaiendpoint-production.up.railway.app/
     api_key: my-fake-key
     model: openai/my-fake-model
@@ -2337,7 +2337,7 @@ export OPENMETER_API_KEY=""
 
 ```yaml
 model_list:
-- litellm_params:
+- lumina_params:
     api_base: https://openai-function-calling-workers.tasslexyz.workers.dev/
     api_key: my-fake-key
     model: openai/my-fake-model
@@ -2394,7 +2394,7 @@ AWS_REGION_NAME = ""
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   success_callback: ["dynamodb"]
@@ -2522,7 +2522,7 @@ export SENTRY_SEND_DEFAULT_PII="true" # Sends user ids, emails, and key hashes t
 ```yaml 
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   # other settings
@@ -2562,7 +2562,7 @@ ATHINA_API_KEY = "your-athina-api-key"
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   success_callback: ["athina"]
@@ -2616,7 +2616,7 @@ AZURE_CONTENT_SAFETY_KEY = "<your-azure-content-safety-key>"
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["azure_content_safety"]
@@ -2663,7 +2663,7 @@ You can customize the thresholds for each category by setting the `thresholds` i
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
 litellm_settings:
   callbacks: ["azure_content_safety"]

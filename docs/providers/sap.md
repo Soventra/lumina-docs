@@ -136,7 +136,7 @@ import litellm
 
 # Enable debug logging to see what's happening
 import os
-os.environ["LITELLM_LOG"] = "DEBUG"
+os.environ["LUMINA_LOG"] = "DEBUG"
 
 # Either use AICORE_SERVICE_KEY (contains all credentials including resourcegroup)
 # OR use individual variables (all required together)
@@ -249,7 +249,7 @@ When using the LiteLLM Proxy, you use the **friendly `model_name`** defined in y
 # In config.yaml, define the mapping
 model_list:
   - model_name: {{openai_large}}          # ← Use this name in client requests
-    litellm_params:
+    lumina_params:
       model: sap/{{openai_large}}         # ← Proxy handles the sap/ prefix
 ```
 
@@ -309,21 +309,21 @@ Create a `config.yaml` file in your project directory with your model mappings a
 model_list:
   # OpenAI models
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: sap/{{openai_large}}
 
   # Anthropic models (note the double-dash)
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: sap/anthropic--claude-4.5-sonnet
 
   - model_name: claude-opus
-    litellm_params:
+    lumina_params:
       model: sap/anthropic--claude-4.5-opus
 
   # Embeddings
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: sap/text-embedding-3-small
 
 litellm_settings:
@@ -363,7 +363,7 @@ The proxy will start on `http://localhost:4000` by default.
 ```bash showLineNumbers title="Test Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [{"role": "user", "content": "Hello"}]
@@ -395,7 +395,7 @@ print(response.choices[0].message.content)
 import os
 import litellm
 
-os.environ["LITELLM_PROXY_API_KEY"] = "sk-<your-litellm-api-key>"
+os.environ["LUMINA_PROXY_API_KEY"] = "sk-<your-litellm-api-key>"
 litellm.use_litellm_proxy = True
 
 response = litellm.completion(

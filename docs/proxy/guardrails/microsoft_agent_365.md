@@ -72,12 +72,12 @@ A database is needed for the virtual key in step 3
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
 
 guardrails:
   - guardrail_name: agent365-mcp
-    litellm_params:
+    lumina_params:
       guardrail: agent_365
       mode: pre_mcp_call
       default_on: true
@@ -97,7 +97,7 @@ mcp_servers:
 export AGENT365_TENANT_ID="<your Entra tenant id>"
 export AGENT365_CLIENT_ID="<gateway app client id>"
 export AGENT365_CLIENT_SECRET="<gateway app client secret>"
-export LITELLM_MASTER_KEY="sk-<your-master-key>"
+export LUMINA_MASTER_KEY="sk-<your-master-key>"
 export DATABASE_URL="postgresql://<user>:<password>@<host>:5432/<db>"
 
 litellm --config config.yaml
@@ -107,7 +107,7 @@ litellm --config config.yaml
 
 ```bash
 curl -X POST http://localhost:4000/key/generate \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"key_alias": "my-agent", "object_permission": {"mcp_servers": ["deepwiki"]}}'
 ```
@@ -117,10 +117,10 @@ The `key_alias` is the agent id Agent 365 records with each evaluation
 ### 4. Call an MCP tool
 
 ```bash
-export LITELLM_API_KEY="<key from step 3>"
+export LUMINA_API_KEY="<key from step 3>"
 TOKEN=$(az account get-access-token --tenant <tenant_id> --resource api://<gateway_client_id> --query accessToken -o tsv)
 curl -X POST http://localhost:4000/mcp-rest/tools/call \
-  -H "x-litellm-api-key: Bearer $LITELLM_API_KEY" \
+  -H "x-litellm-api-key: Bearer $LUMINA_API_KEY" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -166,7 +166,7 @@ With `enable_jwt_auth` and Entra as the issuer ([OIDC JWT auth](/docs/proxy/toke
 
 ```yaml
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
   database_url: os.environ/DATABASE_URL
   enable_jwt_auth: true
   litellm_jwtauth:
@@ -186,7 +186,7 @@ export JWT_ISSUER="https://sts.windows.net/<tenant_id>/"
 
 ```bash
 curl -X POST http://localhost:4000/team/new \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"team_id": "entra-users", "team_alias": "entra-users", "object_permission": {"mcp_servers": ["<server_id>"]}}'
 ```

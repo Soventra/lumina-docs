@@ -101,11 +101,11 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: glm-4.7
-    litellm_params:
+    lumina_params:
         model: zai/glm-4.7
         api_key: os.environ/ZAI_API_KEY
   - model_name: glm-4.5-flash  # Free tier
-    litellm_params:
+    lumina_params:
         model: zai/glm-4.5-flash
         api_key: os.environ/ZAI_API_KEY
 ```
@@ -121,7 +121,7 @@ litellm --config config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "glm-4.7",
     "messages": [

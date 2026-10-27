@@ -28,7 +28,7 @@ Set up the Akto Guardrail API Service and note your Guardrail API Base URL (`AKT
 ```yaml
 guardrails:
   - guardrail_name: "akto-request"
-    litellm_params:
+    lumina_params:
       guardrail: akto
       mode: pre_call
       akto_base_url: os.environ/AKTO_GUARDRAIL_API_BASE
@@ -38,7 +38,7 @@ guardrails:
       guardrail_timeout: 5                # optional, default: 5
 
   - guardrail_name: "akto-response"
-    litellm_params:
+    lumina_params:
       guardrail: akto
       mode: post_call
       akto_base_url: os.environ/AKTO_GUARDRAIL_API_BASE
@@ -47,7 +47,7 @@ guardrails:
       streaming_sampling_rate: 5          # optional, default: 5
 
   - guardrail_name: "akto-mcp"
-    litellm_params:
+    lumina_params:
       guardrail: akto
       mode: [pre_mcp_call, post_mcp_call]
       akto_base_url: os.environ/AKTO_GUARDRAIL_API_BASE
@@ -119,7 +119,7 @@ Use `mode: logging_only` to send traffic to Akto for evaluation and recording wi
 ```yaml
 guardrails:
   - guardrail_name: "akto-monitor"
-    litellm_params:
+    lumina_params:
       guardrail: akto
       mode: logging_only
       akto_base_url: os.environ/AKTO_GUARDRAIL_API_BASE

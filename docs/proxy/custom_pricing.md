@@ -40,12 +40,12 @@ legacy aliases. `cost_per_second` takes precedence, followed by `input_cost_per_
 ```yaml
 model_list:
   - model_name: sagemaker-completion-model
-    litellm_params:
+    lumina_params:
       model: sagemaker/berri-benchmarking-Llama-2-70b-chat-hf-4
     model_info:
       cost_per_second: 0.000420
   - model_name: sagemaker-embedding-model
-    litellm_params:
+    lumina_params:
       model: sagemaker/berri-benchmarking-gpt-j-6b-fp16
     model_info:
       cost_per_second: 0.000420
@@ -68,7 +68,7 @@ litellm --config /path/to/config.yaml
 ```yaml
 model_list:
   - model_name: azure-model
-    litellm_params:
+    lumina_params:
       model: azure/<your_deployment_name>
       api_key: os.environ/AZURE_API_KEY
       api_base: os.environ/AZURE_API_BASE
@@ -89,7 +89,7 @@ Example: Override Anthropic's model cost map for the `prod/{{anthropic}}` model.
 ```yaml
 model_list:
   - model_name: "prod/{{anthropic}}"
-    litellm_params:
+    lumina_params:
       model: "anthropic/{{anthropic}}"
       api_key: os.environ/ANTHROPIC_PROD_API_KEY
     model_info:
@@ -148,7 +148,7 @@ When a model is configured with zero cost, LiteLLM will automatically skip ALL b
 model_list:
   # On-premises model - free to use
   - model_name: on-prem-llama
-    litellm_params:
+    lumina_params:
       model: ollama/llama3
       api_base: http://localhost:11434
     model_info:
@@ -157,7 +157,7 @@ model_list:
   
   # Paid cloud model - budget checks apply
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
     # No model_info - uses default pricing from cost map
@@ -185,7 +185,7 @@ Example config with `base_model`
 ```yaml
 model_list:
   - model_name: azure-gpt-3.5
-    litellm_params:
+    lumina_params:
       model: azure/chatgpt-v-2
       api_base: os.environ/AZURE_API_BASE
       api_key: os.environ/AZURE_API_KEY
@@ -205,7 +205,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: my-audio-model
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-mini-audio-preview
       api_key: os.environ/OPENAI_API_KEY
     model_info:
@@ -226,7 +226,7 @@ model_list:
 ```yaml
 model_list:
   - model_name: glm-5.2
-    litellm_params:
+    lumina_params:
       model: zai-org/GLM-5.2
       api_base: https://inference.baseten.co/v1
       api_key: os.environ/BASETEN_API_KEY
@@ -244,7 +244,7 @@ Rates you set on the deployment win. Rates you leave out, such as `cache_read_in
 
 If you're custom pricing is not being used or you're seeing errors, please check the following:
 
-1. Run the proxy with `LITELLM_LOG="DEBUG"` or the `--detailed_debug` cli flag
+1. Run the proxy with `LUMINA_LOG="DEBUG"` or the `--detailed_debug` cli flag
 
 ```bash
 litellm --config /path/to/config.yaml --detailed_debug

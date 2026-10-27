@@ -84,7 +84,7 @@ Here's how to call a W&B Inference model with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: wandb/<your-model-name>  # add wandb/ prefix to use W&B Inference as provider
         api_key: api-key                 # api key to send your model
   ```

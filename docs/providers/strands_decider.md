@@ -66,7 +66,7 @@ LiteLLM sends `Authorization: Bearer <key>` only when `STRANDS_DECIDER_API_KEY` 
 ```yaml showLineNumbers
 model_list:
   - model_name: strands-decider
-    litellm_params:
+    lumina_params:
       model: strands_decider/strands-decider-2B-hobson-v19
       api_base: os.environ/STRANDS_DECIDER_API_BASE
 ```
@@ -84,7 +84,7 @@ Ask one question of each type in the OpenAI Decisions format.
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/decisions' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "strands-decider",
@@ -157,7 +157,7 @@ Ask the same questions in the System One format.
 
 ```bash showLineNumbers
 curl -X POST 'http://0.0.0.0:4000/v1/systemone' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
   "model": "strands-decider",

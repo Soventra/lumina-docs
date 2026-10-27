@@ -9,7 +9,7 @@ Pass-through endpoints for the [TinyFish Agent API](https://docs.tinyfish.ai/age
 | End-user Tracking | ❌ | [Tell us if you need this](https://github.com/BerriAI/litellm/issues/new) |
 | Streaming | ✅ | `run-sse` progress events relayed live |
 
-Just replace `https://agent.tinyfish.ai` with `LITELLM_PROXY_BASE_URL/tinyfish`
+Just replace `https://agent.tinyfish.ai` with `LUMINA_PROXY_BASE_URL/tinyfish`
 
 **Supported endpoints:**
 
@@ -37,7 +37,7 @@ export TINYFISH_API_KEY="your-tinyfish-api-key"
 
 ```bash
 curl http://localhost:4000/tinyfish/v1/automation/run \
-  -H "X-API-Key: $LITELLM_VIRTUAL_KEY" \
+  -H "X-API-Key: $LUMINA_VIRTUAL_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "url": "https://scrapeme.live/shop",

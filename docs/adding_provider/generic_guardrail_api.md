@@ -252,7 +252,7 @@ Add to `config.yaml`:
 litellm_settings:
   guardrails:
     - guardrail_name: "my-guardrail"
-      litellm_params:
+      lumina_params:
         guardrail: generic_guardrail_api
         mode: pre_call  # or post_call, during_call
         api_base: https://your-guardrail-api.com
@@ -296,7 +296,7 @@ The default is fail closed precisely because a guardrail is usually a security c
 A guardrail check can be lost after it was sent: the guardrail holds the request past the `timeout`, or a load balancer closes the idle keep-alive connection the check was sent on. Set `num_retries` to resend the check in those cases instead of failing the request.
 
 ```yaml
-litellm_params:
+lumina_params:
   guardrail: generic_guardrail_api
   api_base: https://your-guardrail-api.com
   timeout: 5
@@ -315,10 +315,10 @@ Only enable retries when your guardrail endpoint is safe to call twice for the s
 
 You can send two kinds of headers to your guardrail endpoint:
 
-- **Static headers** (`headers`): A key/value map sent with **every** request to your guardrail. Use this for fixed values (e.g. API keys, `X-Service-Name`). Configure in `litellm_params`:
+- **Static headers** (`headers`): A key/value map sent with **every** request to your guardrail. Use this for fixed values (e.g. API keys, `X-Service-Name`). Configure in `lumina_params`:
 
   ```yaml
-  litellm_params:
+  lumina_params:
     guardrail: generic_guardrail_api
     api_base: https://your-guardrail-api.com
     headers:
@@ -326,10 +326,10 @@ You can send two kinds of headers to your guardrail endpoint:
       X-API-Key: "secret"
   ```
 
-- **Dynamic headers** (`extra_headers`): A list of **header names** that are forwarded from the **client request** to your guardrail. Only headers in this list (plus a small default allowlist such as `x-litellm-*`) have their values sent; others are sent as `[present]`. Use this to pass through client-provided headers (e.g. `x-request-id`, `x-correlation-id`). Configure in `litellm_params`:
+- **Dynamic headers** (`extra_headers`): A list of **header names** that are forwarded from the **client request** to your guardrail. Only headers in this list (plus a small default allowlist such as `x-litellm-*`) have their values sent; others are sent as `[present]`. Use this to pass through client-provided headers (e.g. `x-request-id`, `x-correlation-id`). Configure in `lumina_params`:
 
   ```yaml
-  litellm_params:
+  lumina_params:
     guardrail: generic_guardrail_api
     api_base: https://your-guardrail-api.com
     extra_headers:
@@ -347,7 +347,7 @@ This mirrors the [MCP static and extra headers](/docs/mcp#forwarding-custom-head
 ```yaml
 guardrails:
   - guardrail_name: "pillar-security"
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
       api_base: https://api.pillar.security/api/v1/integrations/litellm

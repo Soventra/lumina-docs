@@ -39,7 +39,7 @@ Sonnet 5 is the most agentic Sonnet model yet, with performance close to Opus 4.
 Sonnet 5 ships in the **`v1.92.0-dev.1`** image (and every release after it). How you pick it up depends on where your proxy reads pricing from:
 
 - **Default (remote cost map): no upgrade needed.** In the LiteLLM UI, open the **Price Data** tab under **Models + Endpoints** and click **Reload Price Data** (or, as a proxy admin, `POST /reload/model_cost_map`). This refetches the latest pricing from LiteLLM's cost map **and** re-registers provider routing in one step, so `claude-sonnet-5` becomes available across Anthropic, Azure, Vertex AI, and Bedrock, even if you're on an older proxy version.
-- **Running `LITELLM_LOCAL_MODEL_COST_MAP=true`?** The cost map is baked into the image, so the Reload button won't reach it. Pull `v1.92.0-dev.1` or later to get the bundled Sonnet 5 metadata:
+- **Running `LUMINA_LOCAL_MODEL_COST_MAP=true`?** The cost map is baked into the image, so the Reload button won't reach it. Pull `v1.92.0-dev.1` or later to get the bundled Sonnet 5 metadata:
 
   ```bash
   docker pull ghcr.io/berriai/litellm:v1.92.0-dev.1
@@ -57,7 +57,7 @@ Pick your provider below. Each tab wires up `claude-sonnet-5` for that provider;
 ```yaml
 model_list:
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: anthropic/claude-sonnet-5
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -81,7 +81,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: azure_ai/claude-sonnet-5
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE  # https://<resource>.services.ai.azure.com
@@ -107,7 +107,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: vertex_ai/claude-sonnet-5
       vertex_project: os.environ/VERTEX_PROJECT
       vertex_location: global
@@ -134,7 +134,7 @@ docker run -d \
 ```yaml
 model_list:
   - model_name: claude-sonnet-5
-    litellm_params:
+    lumina_params:
       model: bedrock/anthropic.claude-sonnet-5
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -167,7 +167,7 @@ The request is the same regardless of which provider you configured above:
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer $LITELLM_KEY' \
+--header 'Authorization: Bearer $LUMINA_KEY' \
 --data '{
   "model": "claude-sonnet-5",
   "messages": [

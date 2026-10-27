@@ -29,7 +29,7 @@ uv add litellm
 import litellm
 import os
 
-os.environ["LITELLM_OTEL_V2"] = "true"
+os.environ["LUMINA_OTEL_V2"] = "true"
 os.environ["PHOENIX_API_KEY"] = ""
 os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "https://app.phoenix.arize.com/v1/traces"
 os.environ["PHOENIX_PROJECT_NAME"] = ""   # optional, defaults to "default"
@@ -56,7 +56,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -67,7 +67,7 @@ litellm_settings:
 2. Set your credentials
 
 ```shell
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 PHOENIX_API_KEY="your-api-key"
 PHOENIX_COLLECTOR_ENDPOINT="https://app.phoenix.arize.com/v1/traces"
 PHOENIX_PROJECT_NAME="my-project"   # optional
@@ -84,7 +84,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_large}}",
   "messages": [
@@ -141,7 +141,7 @@ One Phoenix collector can hold many projects. On the LiteLLM proxy, set `phoenix
 
 This is how you split traces by team without standing up a Phoenix instance per tenant. The project comes only from the team or key the proxy resolved at auth. A caller who puts `phoenix_project_name` in the request body is ignored; the call still returns 200 and no attacker-chosen project is created.
 
-Requires OTel v2 (`LITELLM_OTEL_V2=true`) and `callbacks: ["arize_phoenix"]`. Phoenix 15.5.0+ honors the `x-project-name` header this uses; older collectors ignore it and stay on the env project.
+Requires OTel v2 (`LUMINA_OTEL_V2=true`) and `callbacks: ["arize_phoenix"]`. Phoenix 15.5.0+ honors the `x-project-name` header this uses; older collectors ignore it and stay on the env project.
 
 <Tabs>
 <TabItem value="team" label="Per team">
@@ -150,7 +150,7 @@ Every key on the team sends its LLM spans to the named project.
 
 ```bash
 curl -X POST 'http://localhost:4000/team/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_alias": "payments", "metadata": {"phoenix_project_name": "payments-prod"}}'
 ```
@@ -159,7 +159,7 @@ Update an existing team the same way:
 
 ```bash
 curl -X POST 'http://localhost:4000/team/update' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_id": "<team-id>", "metadata": {"phoenix_project_name": "payments-prod"}}'
 ```
@@ -168,7 +168,7 @@ Then generate a key for that team and call the proxy as usual:
 
 ```bash
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_id": "<team-id>"}'
 ```
@@ -187,7 +187,7 @@ A single key can name its own project, including keys that do not belong to a te
 
 ```bash
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"metadata": {"phoenix_project_name": "payments-canary"}}'
 ```

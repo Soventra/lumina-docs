@@ -32,7 +32,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [
@@ -83,19 +83,19 @@ Add models to your `config.yaml`:
 ```yaml
 model_list:
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-vertex
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{anthropic}}
       vertex_project: my-project
       vertex_location: us-east5
       vertex_count_tokens_location: us-east5 # Optional: Override location for token counting (count_tokens not available on global location)
 
   - model_name: claude-bedrock
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-west-2
 ```
@@ -151,7 +151,7 @@ The `/v1/messages/count_tokens` endpoint automatically routes to the appropriate
 ```bash
 curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [
@@ -165,7 +165,7 @@ curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
 ```bash
 curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{anthropic}}",
     "messages": [
@@ -181,7 +181,7 @@ curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
 ```bash
 curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-vertex",
     "messages": [
@@ -195,7 +195,7 @@ curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
 ```bash
 curl -X POST "http://localhost:4000/v1/messages/count_tokens" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "claude-bedrock",
     "messages": [
@@ -220,7 +220,7 @@ For direct Anthropic API access with full native headers:
 ```bash
 curl --request POST \
     --url http://0.0.0.0:4000/anthropic/v1/messages/count_tokens \
-    --header "x-api-key: $LITELLM_API_KEY" \
+    --header "x-api-key: $LUMINA_API_KEY" \
     --header "anthropic-version: 2023-06-01" \
     --header "anthropic-beta: token-counting-2024-11-01" \
     --header "content-type: application/json" \

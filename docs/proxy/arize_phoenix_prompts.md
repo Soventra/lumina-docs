@@ -26,7 +26,7 @@ response = litellm.completion(
 ```yaml
 prompts:
   - prompt_id: "simple_prompt"
-    litellm_params:
+    lumina_params:
       prompt_id: "UHJvbXB0VmVyc2lvbjox"
       prompt_integration: "arize_phoenix"
       api_base: https://app.phoenix.arize.com/s/your-workspace
@@ -40,7 +40,7 @@ prompts:
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_small}}",
     "prompt_id": "simple_prompt",

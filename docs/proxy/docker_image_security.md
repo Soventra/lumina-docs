@@ -138,7 +138,7 @@ Add a verification step before any deployment job:
   run: |
     cosign verify \
       --key https://raw.githubusercontent.com/BerriAI/litellm/0112e53046018d726492c814b3644b7d376029d0/cosign.pub \
-      ghcr.io/berriai/litellm:${{ env.LITELLM_VERSION }}
+      ghcr.io/berriai/litellm:${{ env.LUMINA_VERSION }}
 ```
 
 ## Recommended deployment patterns

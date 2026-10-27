@@ -74,8 +74,8 @@ Lite-Harness supports proxy'ing harnesses via LiteLLM AI Gateway. This enables e
 Point Lite-Harness at your gateway by setting two environment variables:
 
 ```bash
-export LITELLM_API_BASE=https://litellm.your-company.com/v1
-export LITELLM_API_KEY=sk-litellm-...
+export LUMINA_API_BASE=https://litellm.your-company.com/v1
+export LUMINA_API_KEY=sk-litellm-...
 ```
 
 Then call as usual; every underlying model request routes through the gateway:

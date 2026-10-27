@@ -268,7 +268,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -308,7 +308,7 @@ print(search_results)
 ```bash showLineNumbers title="Search Vector Store via curl"
 curl -L -X POST 'http://0.0.0.0:4000/v1/vector_stores/vs_abc123/search' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "query": "What is the capital of France?",
   "filters": {
@@ -333,7 +333,7 @@ A data store that uses layout-based chunking returns whole-document snippets by 
 ```bash showLineNumbers title="Search a chunked data store"
 curl -L -X POST 'http://0.0.0.0:4000/v1/vector_stores/my-datastore_1234567890/search' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "query": "annual pass refund window",
   "max_num_results": 5,
@@ -350,7 +350,7 @@ An Enterprise-tier search app can return extractive segments or answers instead.
 ```bash showLineNumbers title="Search with extractive content"
 curl -L -X POST 'http://0.0.0.0:4000/v1/vector_stores/my-search-app/search' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "query": "how does billing work",
   "extra_body": {

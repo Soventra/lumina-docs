@@ -60,12 +60,12 @@ print(result['message'])
 
 **Custom beta headers config URL:**
 ```bash
-export LITELLM_ANTHROPIC_BETA_HEADERS_URL="https://raw.githubusercontent.com/BerriAI/litellm/main/litellm/anthropic_beta_headers_config.json"
+export LUMINA_ANTHROPIC_BETA_HEADERS_URL="https://raw.githubusercontent.com/BerriAI/litellm/main/litellm/anthropic_beta_headers_config.json"
 ```
 
 **Use local beta headers config:**
 ```bash
-export LITELLM_LOCAL_ANTHROPIC_BETA_HEADERS=True
+export LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS=True
 ```
 
 ## Scheduling Automatic Reloads
@@ -104,8 +104,8 @@ curl -X DELETE "https://your-proxy-url/schedule/anthropic_beta_headers_reload" \
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `LITELLM_ANTHROPIC_BETA_HEADERS_URL` | URL to fetch beta headers config from | GitHub main branch |
-| `LITELLM_LOCAL_ANTHROPIC_BETA_HEADERS` | Set to `True` to use local config only | `False` |
+| `LUMINA_ANTHROPIC_BETA_HEADERS_URL` | URL to fetch beta headers config from | GitHub main branch |
+| `LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS` | Set to `True` to use local config only | `False` |
 
 ## How It Works
 

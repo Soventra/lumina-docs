@@ -31,8 +31,8 @@ Open your browser's Developer Tools (F12 → Network tab), reproduce the issue, 
 
 Non-sensitive environment variables related to the UI and proxy setup, such as:
 
-- `LITELLM_MASTER_KEY`
-- `PROXY_BASE_URL` / `LITELLM_PROXY_BASE_URL`
+- `LUMINA_MASTER_KEY`
+- `PROXY_BASE_URL` / `LUMINA_PROXY_BASE_URL`
 - `UI_BASE_PATH`
 - Any SSO-related variables (e.g., `GOOGLE_CLIENT_ID`, `MICROSOFT_TENANT`)
 

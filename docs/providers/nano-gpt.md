@@ -118,7 +118,7 @@ export NANOGPT_API_KEY=""
 ```yaml
 model_list:
   - model_name: nano-gpt-model
-    litellm_params:
+    lumina_params:
       model: nano-gpt/model-name  # Replace with actual model name
       api_key: os.environ/NANOGPT_API_KEY
 ```

@@ -47,11 +47,11 @@ Reference it from `router_settings.plugins` by its dotted path. The proxy loads 
 ```yaml
 model_list:
   - model_name: gpt-4o-mini
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-mini
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-4o
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
 
@@ -110,7 +110,7 @@ Each plugin only narrows; if any plugin removes every remaining candidate, the r
 ```yaml
 model_list:
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -121,11 +121,11 @@ model_list:
           - plugins.cheap_first.cheap_first_plugin
 
   - model_name: gpt-4o-mini
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-mini
       api_key: os.environ/OPENAI_API_KEY
   - model_name: gpt-4o
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
 ```

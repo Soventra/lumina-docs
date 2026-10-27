@@ -35,16 +35,16 @@ The [semantic auto router](./auto_routing_semantic.md) is deprecated but still w
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params: {model: openai/{{openai_small}}, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/{{openai_small}}, api_key: os.environ/OPENAI_API_KEY}
   - model_name: {{openai_large}}
-    litellm_params: {model: openai/{{openai_large}}, api_key: os.environ/OPENAI_API_KEY}
+    lumina_params: {model: openai/{{openai_large}}, api_key: os.environ/OPENAI_API_KEY}
   - model_name: {{anthropic}}
-    litellm_params: {model: anthropic/{{anthropic}}, api_key: os.environ/ANTHROPIC_API_KEY}
+    lumina_params: {model: anthropic/{{anthropic}}, api_key: os.environ/ANTHROPIC_API_KEY}
   - model_name: {{anthropic_large}}
-    litellm_params: {model: anthropic/{{anthropic_large}}, api_key: os.environ/ANTHROPIC_API_KEY}
+    lumina_params: {model: anthropic/{{anthropic_large}}, api_key: os.environ/ANTHROPIC_API_KEY}
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       complexity_router_config:
         tiers:
@@ -59,7 +59,7 @@ Call it like any other model:
 
 ```shell
 curl -X POST http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{"model": "smart-router", "messages": [{"role": "user", "content": "What is 2+2?"}]}'
 ```
 
@@ -79,7 +79,7 @@ Every knob v2 exposes. All fields on `complexity_router_config` are optional exc
 
 ```yaml
 - model_name: smart-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     drop_params: true
     complexity_router_config:
@@ -173,12 +173,12 @@ Every knob v2 exposes. All fields on `complexity_router_config` are optional exc
 
 ## Image requests and text-only tiers
 
-An image request is a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. LiteLLM does not send one to a deployment that is declared text-only. A deployment is text-only when `model_info.supports_vision` is `false`, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `litellm_params.base_model`, then the deployment model name. A deployment with no declaration and no catalog entry is treated as image-capable, so a custom text-only deployment needs an explicit `model_info.supports_vision: false` before it is skipped. LiteLLM never probes a provider during routing.
+An image request is a `/v1/chat/completions` call with an `image_url` content part, a `/v1/responses` call with an `input_image` item, or a `/v1/messages` call with an `image` block. LiteLLM does not send one to a deployment that is declared text-only. A deployment is text-only when `model_info.supports_vision` is `false`, or when that key is unset and the model catalog says `supports_vision: false` for `model_info.base_model`, then `lumina_params.base_model`, then the deployment model name. A deployment with no declaration and no catalog entry is treated as image-capable, so a custom text-only deployment needs an explicit `model_info.supports_vision: false` before it is skipped. LiteLLM never probes a provider during routing.
 
 ```yaml
 model_list:
   - model_name: oss-120b
-    litellm_params:
+    lumina_params:
       model: hosted_vllm/my-text-only-model
       api_base: os.environ/TEXT_API_BASE
     model_info:
@@ -255,7 +255,7 @@ These bounds cover prior-turn text. The current ask and extracted system text ar
 
 #### Fallback and recovery
 
-Timeouts, HTTP failures, malformed responses, missing or unknown choices, and an open circuit use the existing classifier fallback. For built-in tiers, `classifier_fallback: heuristic` is the default. `classifier_fallback: default_model` sends the request to `litellm_params.complexity_router_default_model`. A configured `fallback_tier` takes precedence for custom tiers
+Timeouts, HTTP failures, malformed responses, missing or unknown choices, and an open circuit use the existing classifier fallback. For built-in tiers, `classifier_fallback: heuristic` is the default. `classifier_fallback: default_model` sends the request to `lumina_params.complexity_router_default_model`. A configured `fallback_tier` takes precedence for custom tiers
 
 The breaker opens on a recognized classification timeout. During its cooldown, requests use fallback without making another JEV call. After cooldown, one request probes recovery while others continue to fall back. A successful probe closes the breaker, and a failed probe reopens it. Ordinary non-timeout failures while closed use fallback without opening the breaker. This state belongs to one router instance in one process and is not shared across workers
 
@@ -306,7 +306,7 @@ Custom classifier plugins ship in **v1.99.x** ([PR #37249](https://github.com/Be
 
 ```yaml title="config.yaml"
 - model_name: smart-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_config:
       classifier_type: custom
@@ -458,25 +458,25 @@ Recommended shape for a coding-agent workload, pinning the tier for the session 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
   # same tier, second deployment: this is the fan-out a model-name pin cannot hold
   - model_name: {{anthropic}}
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
   - model_name: {{anthropic_large}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic_large}}
       api_key: os.environ/ANTHROPIC_API_KEY
 
   - model_name: claude-auto
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       cache_control_injection_points:
         - location: message
@@ -527,7 +527,7 @@ Set `return_raw_model_name` on the router to put it there. The proxy then skips 
 
 ```yaml
 - model_name: smart-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_config:
       tiers:
@@ -614,13 +614,13 @@ For example, a baseline-identical request costing $0.10 has $0.10 baseline cost,
 
 :::
 
-## Alias `litellm_params` on the router
+## Alias `lumina_params` on the router
 
-`drop_params`, `cache_control_injection_points`, and any other `litellm_params` set on the auto router deployment itself are merged into the outbound request when the router picks a tier. Values the caller passes explicitly on a request win over the alias defaults.
+`drop_params`, `cache_control_injection_points`, and any other `lumina_params` set on the auto router deployment itself are merged into the outbound request when the router picks a tier. Values the caller passes explicitly on a request win over the alias defaults.
 
 ```yaml
 - model_name: smart-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     drop_params: true
     cache_control_injection_points:
@@ -631,11 +631,11 @@ For example, a baseline-identical request costing $0.10 has $0.10 baseline cost,
 
 ## Compression
 
-From v1.101.0 an auto router can name a compression guardrail for each of the two hops a routed request makes: the classifier call that decides the tier, and the call to the model it routes to. Both fields sit on the marker's `litellm_params` next to `complexity_router_default_model`, take the name of a [Headroom](./headroom.md) or [Compresr](./guardrails/compresr.md) guardrail, and accept `none`, case-insensitive, for a hop that should not be compressed at all.
+From v1.101.0 an auto router can name a compression guardrail for each of the two hops a routed request makes: the classifier call that decides the tier, and the call to the model it routes to. Both fields sit on the marker's `lumina_params` next to `complexity_router_default_model`, take the name of a [Headroom](./headroom.md) or [Compresr](./guardrails/compresr.md) guardrail, and accept `none`, case-insensitive, for a hop that should not be compressed at all.
 
 ```yaml title="config.yaml"
 - model_name: smart-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_config: {...}
     auto_router_routing_compression: headroom-compression
@@ -656,7 +656,7 @@ Declare it in `model_info` on the router entry:
 
 ```yaml title="config.yaml"
 - model_name: smart-router
-  litellm_params:
+  lumina_params:
     model: auto_router/complexity_router
     complexity_router_config:
       tiers:
@@ -702,42 +702,42 @@ Unknown windows are left alone in both directions. A model group with no resolva
 
 The window escalation reads is `model_info.max_input_tokens` on each tier deployment, falling back to the model cost map. Declaring a window on the router entry has no effect here. Escalated decisions log `context_escalated` alongside the tier the classifier originally picked, and they are never session-pinned, so routing comes back down when the session does.
 
-Both keys belong inside `complexity_router_config`. Setting either one level up, directly under `litellm_params`, is rejected at load and on management-endpoint writes rather than silently ignored.
+Both keys belong inside `complexity_router_config`. Setting either one level up, directly under `lumina_params`, is rejected at load and on management-endpoint writes rather than silently ignored.
 
 ## Effort ladders
 
 Switching models is not the only axis a router can climb. Reasoning effort changes how many output tokens a request spends at the same per-token rate, while switching models changes the rate on every token in the request, so climbing effort on a cheap model is often the cheaper next step and worth exhausting before the tier ladder reaches for a frontier model
 
-Nothing new is needed to express that. Declare one `model_list` entry per rung, identical except for the reasoning parameter in its `litellm_params`, and point tiers at those names. When the router returns a tier's model name, that name resolves to its deployment and the deployment's own `litellm_params` are merged into the outbound request, with anything the caller sent explicitly winning over them. A client that sets `reasoning_effort` itself therefore keeps its value, and everyone else gets the rung
+Nothing new is needed to express that. Declare one `model_list` entry per rung, identical except for the reasoning parameter in its `lumina_params`, and point tiers at those names. When the router returns a tier's model name, that name resolves to its deployment and the deployment's own `lumina_params` are merged into the outbound request, with anything the caller sent explicitly winning over them. A client that sets `reasoning_effort` itself therefore keeps its value, and everyone else gets the rung
 
 ```yaml
 model_list:
   - model_name: {{openai_small}}-low
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       reasoning_effort: low
 
   # same model and the same per-token rate as the rung above, more thinking
   - model_name: {{openai_small}}-high
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       reasoning_effort: high
   - model_name: {{openai_small}}-xhigh
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
       reasoning_effort: xhigh
 
   # top rung: a different rate on every token
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
   - model_name: smart-router
-    litellm_params:
+    lumina_params:
       model: auto_router/complexity_router
       drop_params: true
       complexity_router_config:
@@ -749,11 +749,11 @@ model_list:
       complexity_router_default_model: {{openai_small}}-high
 ```
 
-Anthropic-family rungs use `thinking` the same way, since it is an ordinary `litellm_params` key:
+Anthropic-family rungs use `thinking` the same way, since it is an ordinary `lumina_params` key:
 
 ```yaml
   - model_name: claude-sonnet-5-thinking
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
       thinking: {type: enabled, budget_tokens: 8192}
@@ -768,13 +768,13 @@ from litellm import Router
 
 router = Router(
     model_list=[
-        {"model_name": "{{openai_small}}",   "litellm_params": {"model": "{{openai_small}}"}},
-        {"model_name": "{{openai_large}}",        "litellm_params": {"model": "{{openai_large}}"}},
-        {"model_name": "claude-sonnet", "litellm_params": {"model": "{{anthropic}}"}},
-        {"model_name": "claude-opus",   "litellm_params": {"model": "{{anthropic_large}}"}},
+        {"model_name": "{{openai_small}}",   "lumina_params": {"model": "{{openai_small}}"}},
+        {"model_name": "{{openai_large}}",        "lumina_params": {"model": "{{openai_large}}"}},
+        {"model_name": "claude-sonnet", "lumina_params": {"model": "{{anthropic}}"}},
+        {"model_name": "claude-opus",   "lumina_params": {"model": "{{anthropic_large}}"}},
         {
             "model_name": "smart-router",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "auto_router/complexity_router",
                 "complexity_router_config": {
                     "tiers": {

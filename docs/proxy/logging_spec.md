@@ -1,7 +1,7 @@
 
 # StandardLoggingPayload Specification
 
-Terminal success and failure callback events include `kwargs["standard_logging_object"]` when LiteLLM finishes building the standard payload. Custom logging callbacks should read request identity from `kwargs["standard_logging_object"]["metadata"]`, rather than raw `litellm_params` metadata. Optional identity fields are `null` when unavailable. Intermediate streaming events and callbacks where payload construction fails can omit `standard_logging_object`.
+Terminal success and failure callback events include `kwargs["standard_logging_object"]` when LiteLLM finishes building the standard payload. Custom logging callbacks should read request identity from `kwargs["standard_logging_object"]["metadata"]`, rather than raw `lumina_params` metadata. Optional identity fields are `null` when unavailable. Intermediate streaming events and callbacks where payload construction fails can omit `standard_logging_object`.
 
 ## StandardLoggingPayload
 

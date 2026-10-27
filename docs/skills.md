@@ -168,7 +168,7 @@ Define multiple models in your config and use the `model` parameter to specify w
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-sonnet
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -248,12 +248,12 @@ If you have multiple Anthropic accounts, you can use model-based routing to spec
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: claude-team-a
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY_TEAM_A
   
   - model_name: claude-team-b
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY_TEAM_B
 ```
@@ -458,7 +458,7 @@ Set an embedding model in `litellm_settings`:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: text-embedding-3-small
-    litellm_params:
+    lumina_params:
       model: openai/text-embedding-3-small
       api_key: os.environ/OPENAI_API_KEY
 
@@ -472,7 +472,7 @@ Pass `query` (and optionally `top_k`, default 5) to `GET /v1/skills`:
 
 ```bash showLineNumbers title="search_skills.sh"
 curl "http://0.0.0.0:4000/v1/skills?custom_llm_provider=litellm_proxy&query=summarize+a+pdf&top_k=5" \
-  -H "Authorization: Bearer $LITELLM_KEY"
+  -H "Authorization: Bearer $LUMINA_KEY"
 ```
 
 Each result carries a `search_score` (cosine similarity to the query) and, unlike a plain list, a populated `description` field:

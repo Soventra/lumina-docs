@@ -22,7 +22,7 @@ Connect Claude Code or Codex to your gateway at `/admin/mcp` to manage keys, tea
 
 ## 1. Enable MCP {#enable-the-endpoint}
 
-Keep your existing `DATABASE_URL`, `LITELLM_MASTER_KEY`, and proxy configuration. Rename any MCP server alias called `admin` before enabling the endpoint, which reserves `/admin`
+Keep your existing `DATABASE_URL`, `LUMINA_MASTER_KEY`, and proxy configuration. Rename any MCP server alias called `admin` before enabling the endpoint, which reserves `/admin`
 
 <Tabs groupId="liteadmin-deployment">
 <TabItem value="unified" label="Unified Docker" default>
@@ -33,8 +33,8 @@ Add these entries to your existing `litellm` service. Supply the license through
 services:
   litellm:
     environment:
-      LITELLM_ENABLE_ADMIN_MCP: "true"
-      LITELLM_LICENSE: ${LITELLM_LICENSE}
+      LUMINA_ENABLE_ADMIN_MCP: "true"
+      LUMINA_LICENSE: ${LUMINA_LICENSE}
       PROXY_BASE_URL: https://gateway.example.com
 ```
 
@@ -54,9 +54,9 @@ For the [`helm/litellm` chart](https://github.com/BerriAI/litellm/tree/main/helm
 ```yaml title="values.yaml (componentized chart fragment)"
 backend:
   extraEnv:
-    - name: LITELLM_ENABLE_ADMIN_MCP
+    - name: LUMINA_ENABLE_ADMIN_MCP
       value: "true"
-    - name: LITELLM_LICENSE
+    - name: LUMINA_LICENSE
       valueFrom:
         secretKeyRef:
           name: litellm-enterprise
@@ -75,9 +75,9 @@ The chart's ingress routes `/admin/mcp` to the backend. For custom ingress, use 
 <details>
 <summary>Public URL and startup settings</summary>
 
-Set `PROXY_BASE_URL` to your public HTTPS origin for Host and Origin checks. For a separate MCP hostname, set `LITELLM_MCP_PUBLIC_URL=https://admin-mcp.example.com` and connect to `https://admin-mcp.example.com/admin/mcp`
+Set `PROXY_BASE_URL` to your public HTTPS origin for Host and Origin checks. For a separate MCP hostname, set `LUMINA_MCP_PUBLIC_URL=https://admin-mcp.example.com` and connect to `https://admin-mcp.example.com/admin/mcp`
 
-Opting in with an invalid license or enable-flag value fails startup. To disable MCP, set `LITELLM_ENABLE_ADMIN_MCP=false` and restart the serving container
+Opting in with an invalid license or enable-flag value fails startup. To disable MCP, set `LUMINA_ENABLE_ADMIN_MCP=false` and restart the serving container
 
 </details>
 
@@ -102,13 +102,13 @@ Restart Claude Code and run `/mcp`. The command stores your key in Claude's conf
 ```toml title="~/.codex/config.toml"
 [mcp_servers.litellm-admin]
 url = "https://gateway.example.com/admin/mcp"
-bearer_token_env_var = "LITELLM_API_KEY"
+bearer_token_env_var = "LUMINA_API_KEY"
 ```
 
 For Codex CLI:
 
 ```bash
-export LITELLM_API_KEY='<your-personal-proxy-admin-key>'
+export LUMINA_API_KEY='<your-personal-proxy-admin-key>'
 codex
 ```
 
@@ -171,10 +171,10 @@ Set these variables on the LiteLLM or backend container, then restart it
 
 | Variable | Default | Options |
 | --- | --- | --- |
-| `LITELLM_ADMIN_READ_ONLY` | `false` | `true` restricts discovery and execution to reviewed read operations; `proxy_admin` required |
-| `LITELLM_ADMIN_TOOLS` | All available reviewed operations | Comma-separated [tool names](https://github.com/BerriAI/litellm-admin-mcp/blob/main/src/litellm_admin_mcp/operations.json), such as `list_keys,list_teams`; combines with read-only restrictions |
-| `LITELLM_ADMIN_RESPONSE_VIEW` | `full` | `full` returns results inline; `compact` can return saved-result references |
-| `LITELLM_ADMIN_SCHEMA_MODE` | `full` | `discovery` defers parameter details to `describe_admin_tool`; execution validates the full schema |
+| `LUMINA_ADMIN_READ_ONLY` | `false` | `true` restricts discovery and execution to reviewed read operations; `proxy_admin` required |
+| `LUMINA_ADMIN_TOOLS` | All available reviewed operations | Comma-separated [tool names](https://github.com/BerriAI/litellm-admin-mcp/blob/main/src/litellm_admin_mcp/operations.json), such as `list_keys,list_teams`; combines with read-only restrictions |
+| `LUMINA_ADMIN_RESPONSE_VIEW` | `full` | `full` returns results inline; `compact` can return saved-result references |
+| `LUMINA_ADMIN_SCHEMA_MODE` | `full` | `discovery` defers parameter details to `describe_admin_tool`; execution validates the full schema |
 
 Keep `full` responses for multiple workers or replicas. With `compact`, send `read_admin_result` calls to the same worker process; pod affinity alone is insufficient. Results expire and disappear on worker restart. Inspect gateway state before retrying a write
 
@@ -189,7 +189,7 @@ Keep `full` responses for multiple workers or replicas. With `compact`, send `re
 | `404` | Check the image version, enable flag, and container restart. Route `/admin/mcp` unchanged to the unified proxy or backend |
 | `401` or `403` in key mode | Use an active personal `proxy_admin` key |
 | OAuth2 proxy authentication fails | Check the trusted direct peer, mapped identity headers, and stored user role |
-| Host or Origin rejected | Match `PROXY_BASE_URL` or `LITELLM_MCP_PUBLIC_URL` to your public HTTPS origin |
+| Host or Origin rejected | Match `PROXY_BASE_URL` or `LUMINA_MCP_PUBLIC_URL` to your public HTTPS origin |
 | Missing tools | Check tool restrictions and the underlying management API's availability |
 | Compact result unavailable | Use the same worker process or switch to `full` |
 | Write times out | Inspect gateway state before retrying; the connector does not retry tool calls |

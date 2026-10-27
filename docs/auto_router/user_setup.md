@@ -21,11 +21,11 @@ See the [LiteLLM Proxy CLI](/docs/proxy/management_cli#quick-start) for other in
 Replace the gateway URL and key with the values from your admin, then run:
 
 ```bash
-export LITELLM_PROXY_API_KEY="sk-your-virtual-key"
+export LUMINA_PROXY_API_KEY="sk-your-virtual-key"
 
 lite configure \
   --gateway-url https://your-proxy.example.com \
-  --api-key "$LITELLM_PROXY_API_KEY"
+  --api-key "$LUMINA_PROXY_API_KEY"
 ```
 
 Choose **Claude Code**, **Codex**, or both, then select your team's Auto Router from the model picker for each agent. The CLI checks your key and available models before saving the connection in your agent's settings. Use a long-lived virtual key for this setup; `lite configure` does not use the temporary credential from `lite login`.
@@ -38,7 +38,7 @@ You can also specify the agent and router in the command. Replace `smart-router`
 lite configure \
   --gateway-url https://your-proxy.example.com \
   claude \
-  --api-key "$LITELLM_PROXY_API_KEY" \
+  --api-key "$LUMINA_PROXY_API_KEY" \
   --model smart-router
 
 claude
@@ -50,7 +50,7 @@ claude
 lite configure \
   --gateway-url https://your-proxy.example.com \
   codex \
-  --api-key "$LITELLM_PROXY_API_KEY" \
+  --api-key "$LUMINA_PROXY_API_KEY" \
   --model smart-router
 
 codex

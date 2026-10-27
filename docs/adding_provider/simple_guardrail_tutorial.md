@@ -11,7 +11,7 @@ Request with guardrail:
 
 ```bash
 curl --location 'http://localhost:4000/chat/completions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "model": "{{openai_large}}",
@@ -54,15 +54,15 @@ if TYPE_CHECKING:
     from litellm.types.guardrails import Guardrail, LitellmParams
 
 
-def initialize_guardrail(litellm_params: "LitellmParams", guardrail: "Guardrail"):
+def initialize_guardrail(lumina_params: "LitellmParams", guardrail: "Guardrail"):
     import litellm
     
     _my_guardrail_callback = MyGuardrail(
-        api_base=litellm_params.api_base,
-        api_key=litellm_params.api_key,
+        api_base=lumina_params.api_base,
+        api_key=lumina_params.api_key,
         guardrail_name=guardrail.get("guardrail_name", ""),
-        event_hook=litellm_params.mode,
-        default_on=litellm_params.default_on,
+        event_hook=lumina_params.mode,
+        default_on=lumina_params.default_on,
     )
     
     litellm.logging_callback_manager.add_litellm_callback(_my_guardrail_callback)
@@ -99,13 +99,13 @@ class SupportedGuardrailIntegrations(str, Enum):
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
     api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
     - guardrail_name: my_guardrail
-      litellm_params:
+      lumina_params:
         guardrail: my_guardrail
         mode: during_call
         api_key: os.environ/MY_GUARDRAIL_API_KEY
@@ -116,7 +116,7 @@ guardrails:
 
 ```bash
 curl --location 'http://localhost:4000/chat/completions' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --header 'Content-Type: application/json' \
 --data '{
     "model": "{{openai_large}}",

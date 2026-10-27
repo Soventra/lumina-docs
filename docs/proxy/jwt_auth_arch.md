@@ -58,10 +58,10 @@ general_settings:
 
 model_list:
     - model_name: anthropic-claude
-      litellm_params:
+      lumina_params:
         model: {{anthropic}}
     - model_name: openai-gpt-4o
-      litellm_params:
+      lumina_params:
         model: {{openai_large}}
 ```
 
@@ -82,10 +82,10 @@ general_settings:
 
 model_list:
     - model_name: anthropic-claude
-      litellm_params:
+      lumina_params:
         model: {{anthropic}}
     - model_name: openai-gpt-4o
-      litellm_params:
+      lumina_params:
         model: {{openai_large}}
 ```
 

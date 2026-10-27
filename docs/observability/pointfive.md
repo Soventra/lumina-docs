@@ -30,7 +30,7 @@ You need a PointFive account and an API key. Add the LiteLLM integration in the 
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -95,7 +95,7 @@ Delivery is at-least-once. A failure that is worth retrying keeps the batch queu
 
 ## Verification
 
-Run the proxy with `LITELLM_LOG=DEBUG` and send a request. Each upload logs the compressed size and the key it landed at:
+Run the proxy with `LUMINA_LOG=DEBUG` and send a request. Each upload logs the compressed size and the key it landed at:
 
 ```log
 pointfive: uploaded 5182 gzipped bytes to <object-key>
@@ -106,7 +106,7 @@ Failures are logged as warnings or errors on the same `pointfive:` prefix, inclu
 A proxy admin can also ask the proxy to check the connection directly:
 
 ```bash
-curl -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+curl -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   "http://localhost:4000/health/services?service=pointfive"
 ```
 

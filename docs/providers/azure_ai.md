@@ -42,7 +42,7 @@ response = completion(
   ```yaml
   model_list:
     - model_name: command-r-plus
-      litellm_params:
+      lumina_params:
         model: azure_ai/command-r-plus
         api_key: os.environ/AZURE_AI_API_KEY
         api_base: os.environ/AZURE_AI_API_BASE
@@ -92,7 +92,7 @@ response = completion(
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "command-r-plus",
@@ -142,7 +142,7 @@ response = completion(
 ```yaml
   model_list:
     - model_name: command-r-plus
-      litellm_params:
+      lumina_params:
         model: azure_ai/command-r-plus
         api_key: os.environ/AZURE_AI_API_KEY
         api_base: os.environ/AZURE_AI_API_BASE
@@ -189,7 +189,7 @@ response = completion(
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "mistral",
@@ -355,7 +355,7 @@ export AZURE_AI_API_BASE="https://my-resource.services.ai.azure.com/anthropic"
 ```yaml
 model_list:
   - model_name: claude-4-azure
-    litellm_params:
+    lumina_params:
       model: azure_ai/{{anthropic_large}}
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -372,7 +372,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
   --header 'Content-Type: application/json' \
-  --header 'Authorization: Bearer $LITELLM_KEY' \
+  --header 'Authorization: Bearer $LUMINA_KEY' \
   --data '{
     "model": "claude-4-azure",
     "messages": [
@@ -435,11 +435,11 @@ Add this to your litellm proxy config.yaml
 ```yaml
 model_list:
   - model_name: Salesforce/Llama-Rank-V1
-    litellm_params:
+    lumina_params:
       model: together_ai/Salesforce/Llama-Rank-V1
       api_key: os.environ/TOGETHERAI_API_KEY
   - model_name: cohere-rerank-v3.5
-    litellm_params:
+    lumina_params:
       model: azure_ai/cohere-rerank-v3.5
       api_key: os.environ/AZURE_AI_API_KEY
       api_base: os.environ/AZURE_AI_API_BASE
@@ -457,7 +457,7 @@ Test request
 
 ```bash
 curl http://0.0.0.0:4000/rerank \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "cohere-rerank-v3.5",

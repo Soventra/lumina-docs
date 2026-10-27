@@ -31,7 +31,7 @@ Here's how to give developers access to your Bedrock Batch models.
 ```yaml showLineNumbers title="litellm_config.yaml"
 model_list:
   - model_name: "bedrock-batch-claude"
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       #########################################################
       ########## batch specific params ########################
@@ -128,7 +128,7 @@ print(batch_input_file)
 
 ```bash showLineNumbers title="Upload File"
 curl http://localhost:4000/v1/files \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -F purpose="batch" \
     -F file="@bedrock_batch_completions.jsonl" \
     -F extra_body='{"target_model_names": "bedrock-batch-claude"}'
@@ -163,7 +163,7 @@ print(batch)
 
 ```bash showLineNumbers title="Create Batch Request"
 curl http://localhost:4000/v1/batches \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "Content-Type: application/json" \
     -d '{
         "input_file_id": "file-abc123",
@@ -212,11 +212,11 @@ if batch_status.status == "completed":
 ```bash showLineNumbers title="Download Batch Results"
 # First retrieve batch to get output_file_id
 curl http://localhost:4000/v1/batches/batch_abc123 \
-    -H "Authorization: Bearer $LITELLM_API_KEY"
+    -H "Authorization: Bearer $LUMINA_API_KEY"
 
 # Then download the output file
 curl http://localhost:4000/v1/files/{output_file_id}/content \
-    -H "Authorization: Bearer $LITELLM_API_KEY" \
+    -H "Authorization: Bearer $LUMINA_API_KEY" \
     -H "custom-llm-provider: bedrock" \
     -o batch_output.jsonl
 ```
@@ -280,7 +280,7 @@ Give each team its own batch model with its own bucket, then restrict each team 
 ```yaml showLineNumbers title="litellm_config.yaml"
 model_list:
   - model_name: "bedrock-batch-team-a"
-    litellm_params:
+    lumina_params:
       model: bedrock/us.amazon.nova-lite-v1:0
       s3_bucket_name: team-a-batch-bucket
       s3_output_bucket_name: team-a-batch-bucket
@@ -289,7 +289,7 @@ model_list:
     model_info:
       mode: batch
   - model_name: "bedrock-batch-team-b"
-    litellm_params:
+    lumina_params:
       model: bedrock/us.amazon.nova-lite-v1:0
       s3_bucket_name: team-b-batch-bucket
       s3_output_bucket_name: team-b-batch-bucket
@@ -323,7 +323,7 @@ A non-Anthropic batch model is configured the same way as the Claude example abo
 ```yaml showLineNumbers title="litellm_config.yaml"
 model_list:
   - model_name: "bedrock-batch-nova"
-    litellm_params:
+    lumina_params:
       model: bedrock/us.amazon.nova-lite-v1:0
       s3_bucket_name: litellm-proxy
       s3_region_name: us-east-1
@@ -333,7 +333,7 @@ model_list:
     model_info:
       mode: batch
   - model_name: "bedrock-batch-titan-embeddings"
-    litellm_params:
+    lumina_params:
       model: bedrock/amazon.titan-embed-text-v2:0
       s3_bucket_name: litellm-proxy
       s3_region_name: us-east-1
@@ -360,7 +360,7 @@ You can set the encryption key in 2 ways:
 ```yaml
 model_list:
   - model_name: "bedrock-batch-claude"
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       s3_encryption_key_id: arn:aws:kms:us-west-2:123456789012:key/12345678-1234-1234-1234-123456789012
       # ... other params
@@ -375,12 +375,12 @@ export AWS_S3_ENCRYPTION_KEY_ID=arn:aws:kms:us-west-2:123456789012:key/12345678-
 
 Bedrock checks that the input and output buckets belong to the account named in `s3BucketOwner`, and when that field is missing it defaults to the account running the batch job. If your buckets live in another account the job fails validation with an S3 permission error even though the bucket policy grants access. Set `s3_bucket_owner` to the id of the account that owns the buckets and LiteLLM sends it on both the input and output data config
 
-Through the proxy, an `s3_bucket_owner` passed in the `/v1/batches` request body takes precedence over the deployment's `litellm_params` value, which in turn takes precedence over the `AWS_S3_BUCKET_OWNER` env var. This is the same order the router applies to every other deployment parameter such as `s3_bucket_name` or `s3_encryption_key_id`. When none is set the field is omitted and Bedrock keeps its default
+Through the proxy, an `s3_bucket_owner` passed in the `/v1/batches` request body takes precedence over the deployment's `lumina_params` value, which in turn takes precedence over the `AWS_S3_BUCKET_OWNER` env var. This is the same order the router applies to every other deployment parameter such as `s3_bucket_name` or `s3_encryption_key_id`. When none is set the field is omitted and Bedrock keeps its default
 
 ```yaml
 model_list:
   - model_name: "bedrock-batch-claude"
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       s3_bucket_name: shared-batch-bucket
       s3_bucket_owner: "123456789012"

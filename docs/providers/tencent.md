@@ -155,7 +155,7 @@ print(
 ```yaml
 model_list:
   - model_name: deepseek-v4-pro
-    litellm_params:
+    lumina_params:
         model: tencent/deepseek-v4-pro
         api_key: os.environ/TENCENT_API_KEY
 ```
@@ -171,7 +171,7 @@ python litellm/proxy/main.py
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "deepseek-v4-pro",
     "messages": [

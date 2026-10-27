@@ -35,10 +35,10 @@ The same default applies to asynchronous OCR calls. Gateway users get the Rust p
 
 ### Opt out when needed
 
-Set `LITELLM_RUST=0` to disable the Rust path for a process:
+Set `LUMINA_RUST=0` to disable the Rust path for a process:
 
 ```bash
-export LITELLM_RUST=0
+export LUMINA_RUST=0
 ```
 
 You can also opt out for the current Python process before making OCR calls:
@@ -55,7 +55,7 @@ litellm.rust(False)
 
 ### How we tested
 
-We measured proxy overhead, not end-to-end OCR latency. Each path ran in a fresh container with `v1.102.0-rc.1`, one proxy worker, one CPU, `2 GiB` of memory, and a local mock provider. Python and Rust used the same image and limits; only `LITELLM_RUST` changed, and the order alternated across six paired rounds for each upload size.
+We measured proxy overhead, not end-to-end OCR latency. Each path ran in a fresh container with `v1.102.0-rc.1`, one proxy worker, one CPU, `2 GiB` of memory, and a local mock provider. Python and Rust used the same image and limits; only `LUMINA_RUST` changed, and the order alternated across six paired rounds for each upload size.
 
 ### Rust raises the CPU-limited proxy ceiling
 

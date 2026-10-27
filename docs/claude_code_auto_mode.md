@@ -36,11 +36,11 @@ Add `safeguards_classifier_model` to `general_settings`, naming a `model_name` f
 ```yaml
 model_list:
   - model_name: kimi-k3
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/models/kimi-k3
       api_key: os.environ/FIREWORKS_AI_API_KEY
   - model_name: gpt-oss-120b
-    litellm_params:
+    lumina_params:
       model: fireworks_ai/accounts/fireworks/models/gpt-oss-120b
       api_key: os.environ/FIREWORKS_AI_API_KEY
 
@@ -50,7 +50,7 @@ general_settings:
 
 The classifier runs on every turn that ends in a tool call, so pick a fast, cheap model that reliably answers in JSON. An open model on the same provider as the coding model works well. The example above uses one Fireworks deployment for coding and another for the verdicts.
 
-The classifier call goes through the router like any other request, so `model_list` aliases, fallbacks, and cooldowns apply to it. It is never retried. The proxy waits at most 30 seconds for its answer, and a shorter `timeout` under the classifier deployment's `litellm_params` ends the wait earlier.
+The classifier call goes through the router like any other request, so `model_list` aliases, fallbacks, and cooldowns apply to it. It is never retried. The proxy waits at most 30 seconds for its answer, and a shorter `timeout` under the classifier deployment's `lumina_params` ends the wait earlier.
 
 Every virtual key that runs Claude Code needs access to the classifier model. Before the classifier call, the proxy runs the same model access checks it would run if the caller asked for that model directly, for the key, team, team member, user, project, end user, and agent. It then checks the overall and per-model budgets of the key, team, user, team member, and end user, the caller's TPM headroom, and any RPM limit set on the classifier model itself, without using any of it. As on a direct call, a classifier model priced at zero skips the budget checks. The overall RPM limits of the key, team, and user are left out of that check, since the Claude Code request already counted against them. The classifier call's tokens count toward the caller's TPM and spend, but the call takes no request slot, so it adds nothing to any RPM count. A refused access check or a spent budget turns the classifier off for the session (see [When the Classifier Cannot Be Used](#when-the-classifier-cannot-be-used)). A full RPM or TPM window, or a check the proxy could not run, only skips the classifier for that one response (see [When the Classifier Fails](#when-the-classifier-fails)).
 

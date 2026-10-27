@@ -37,7 +37,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: embedding-model
-    litellm_params:
+    lumina_params:
       model: jina_ai/jina-embeddings-v3
       api_key: os.environ/JINA_AI_API_KEY
 ```
@@ -54,7 +54,7 @@ litellm --config /path/to/config.yaml
 
 ```bash 
 curl -L -X POST 'http://0.0.0.0:4000/embeddings' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"input": ["hello world"], "model": "embedding-model"}'
 ```
@@ -96,7 +96,7 @@ print(response)
 ```yaml
 model_list:
   - model_name: rerank-model
-    litellm_params:
+    lumina_params:
       model: jina_ai/jina-reranker-v2-base-multilingual
       api_key: os.environ/JINA_AI_API_KEY
 ```
@@ -111,7 +111,7 @@ litellm --config /path/to/config.yaml
 
 ```bash 
 curl -L -X POST 'http://0.0.0.0:4000/rerank' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "model": "rerank-model",
@@ -162,7 +162,7 @@ response = embedding(
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/embeddings' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{"input": ["good morning from litellm"], "model": "jina_ai/jina-embeddings-v3", "dimensions": 1536, "my_custom_param": "my_custom_value"}'
 ```

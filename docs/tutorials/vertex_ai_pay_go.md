@@ -42,7 +42,7 @@ print(response.choices[0].message.content)
 ```yaml title="config.yaml"
 model_list:
   - model_name: gemini-priority
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_pro}}
       vertex_project: "YOUR_PROJECT_ID"
       vertex_location: "us-central1"
@@ -68,7 +68,7 @@ MODEL_ID="{{gemini_pro}}"
 PROJECT_ID="YOUR_PROJECT_ID"
 
 curl -X POST \
-  "${LITELLM_PROXY_BASE_URL}/vertex_ai/v1/projects/${PROJECT_ID}/locations/global/publishers/google/models/${MODEL_ID}:generateContent" \
+  "${LUMINA_PROXY_BASE_URL}/vertex_ai/v1/projects/${PROJECT_ID}/locations/global/publishers/google/models/${MODEL_ID}:generateContent" \
   -H "Authorization: Bearer sk-your-litellm-key" \
   -H "Content-Type: application/json" \
   -H "x-pass-X-Vertex-AI-LLM-Shared-Request-Type: priority" \
@@ -124,7 +124,7 @@ MODEL_ID="{{gemini_flash}}"
 PROJECT_ID="YOUR_PROJECT_ID"
 
 curl -X POST \
-  "${LITELLM_PROXY_BASE_URL}/vertex_ai/v1/projects/${PROJECT_ID}/locations/global/publishers/google/models/${MODEL_ID}:generateContent" \
+  "${LUMINA_PROXY_BASE_URL}/vertex_ai/v1/projects/${PROJECT_ID}/locations/global/publishers/google/models/${MODEL_ID}:generateContent" \
   -H "Authorization: Bearer sk-your-litellm-key" \
   -H "Content-Type: application/json" \
   -H "x-pass-X-Vertex-AI-LLM-Request-Type: shared" \

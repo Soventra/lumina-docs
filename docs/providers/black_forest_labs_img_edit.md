@@ -169,35 +169,35 @@ print(response.data[0].url)
 ```yaml showLineNumbers title="Black Forest Labs Image Editing Configuration"
 model_list:
   - model_name: bfl-kontext-pro
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-kontext-pro
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_edit
 
   - model_name: bfl-kontext-max
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-kontext-max
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_edit
 
   - model_name: bfl-fill
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-pro-1.0-fill
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_edit
 
   - model_name: bfl-expand
-    litellm_params:
+    lumina_params:
       model: black_forest_labs/flux-pro-1.0-expand
       api_key: os.environ/BFL_API_KEY
     model_info:
       mode: image_edit
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 #### 2. Start LiteLLM Proxy Server
@@ -238,7 +238,7 @@ print(response.data[0].url)
 
 ```bash showLineNumbers title="Black Forest Labs via Proxy - cURL"
 curl --location 'http://localhost:4000/v1/images/edits' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --form 'model="bfl-kontext-pro"' \
 --form 'prompt="Add a sunset in the background"' \
 --form 'image=@"path/to/your/image.png"'

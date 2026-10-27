@@ -192,7 +192,7 @@ Pin the catalog the gateway sees right now (admin only, needs a database). Find 
 
 ```bash title="Pin" showLineNumbers
 curl -s -X POST http://localhost:4000/v1/mcp/server/$SERVER_ID/pin \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 ```json
@@ -210,7 +210,7 @@ Unpin to serve the live upstream catalog again:
 
 ```bash title="Unpin" showLineNumbers
 curl -s -X DELETE http://localhost:4000/v1/mcp/server/$SERVER_ID/pin \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY"
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY"
 ```
 
 ```json
@@ -465,7 +465,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "<your-litellm-proxy-base-url>/github_mcp/mcp",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY"
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY"
             }
         }
     ],
@@ -483,7 +483,7 @@ This example uses URL namespacing to access only the "github" MCP server.
 ```bash title="cURL Example with URL Namespacing" showLineNumbers
 curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "tools": [
@@ -493,7 +493,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
             "server_url": "litellm_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY"
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY"
             }
         }
     ],
@@ -564,7 +564,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "<your-litellm-proxy-base-url>/mcp/",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1"
             }
         }
@@ -583,7 +583,7 @@ In this example, the request will only have access to tools from the "alias_1" M
 ```bash title="cURL Example with Header Namespacing" showLineNumbers
 curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "tools": [
@@ -593,7 +593,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
             "server_url": "litellm_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1,Server2"
             }
         }
@@ -658,7 +658,7 @@ curl --location 'https://api.openai.com/v1/responses' \
             "server_url": "<your-litellm-proxy-base-url>/mcp/",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1"
             }
         }
@@ -677,7 +677,7 @@ In this example, the request will only have access to tools from the "alias_1" M
 ```bash title="cURL Example with Server Segregation" showLineNumbers
 curl --location '<your-litellm-proxy-base-url>/v1/responses' \
 --header 'Content-Type: application/json' \
---header "Authorization: Bearer $LITELLM_API_KEY" \
+--header "Authorization: Bearer $LUMINA_API_KEY" \
 --data '{
     "model": "{{openai_large}}",
     "tools": [
@@ -687,7 +687,7 @@ curl --location '<your-litellm-proxy-base-url>/v1/responses' \
             "server_url": "litellm_proxy",
             "require_approval": "never",
             "headers": {
-                "x-litellm-api-key": "Bearer YOUR_LITELLM_API_KEY",
+                "x-litellm-api-key": "Bearer YOUR_LUMINA_API_KEY",
                 "x-mcp-servers": "alias_1,Server2"
             }
         }
@@ -1018,7 +1018,7 @@ In the Admin UI the same setting is the **RPM limit (all callers)** field on the
 
 How requests are counted. Each page of a paginated listing is one request to every server it reads, so a client paging through a large catalog uses one unit per page per server. In a listing that spans several servers, a server that is over its limit on the first page is left out and reported with a `rate_limited` status while the other servers still return their items; if the limit is hit on a later page the whole request is rejected, since dropping a server mid-listing would make the pagination cursor inconsistent. A `server/discover` request charges each server once, even though it runs several listings. Calls rejected before reaching the limiter, for example a tool the key is not allowed to use or invalid arguments, are not counted. A request rejected by one of these limits does not count toward any of them, so a key retrying past its own `mcp_rpm_limit` does not use up the team or server budget. For `tools/call`, the key's ordinary `rpm_limit` and guardrails are checked first, and a call they reject is not counted against MCP limits either. Internal listings are not counted either: the catalog warmup the proxy runs before a first tool call, and the admin configuration view of a server's tools that includes disabled tools.
 
-The window defaults to 60 seconds and starts with the first counted request; set `LITELLM_RATE_LIMIT_WINDOW_SIZE` (in seconds) to change it. These MCP limits are enforced by the default rate limiter only. With `LEGACY_MULTI_INSTANCE_RATE_LIMITING=true`, neither `mcp_rpm_limit` nor the server `rpm` is enforced.
+The window defaults to 60 seconds and starts with the first counted request; set `LUMINA_RATE_LIMIT_WINDOW_SIZE` (in seconds) to change it. These MCP limits are enforced by the default rate limiter only. With `LEGACY_MULTI_INSTANCE_RATE_LIMITING=true`, neither `mcp_rpm_limit` nor the server `rpm` is enforced.
 
 
 ## Dashboard View Modes

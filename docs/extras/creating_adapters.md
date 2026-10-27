@@ -191,7 +191,7 @@ Then call it:
 
 ```bash
 curl http://localhost:4000/v1/messages \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{"model": "{{openai_large}}", "messages": [...]}'
 ```
 

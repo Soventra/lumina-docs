@@ -38,7 +38,7 @@ print(response.text)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: gemini-transcribe
-    litellm_params:
+    lumina_params:
       model: vertex_ai/gemini-3.5-transcribe-preview
       vertex_project: "your-project-id"
       vertex_credentials: "/path/to/service_account.json"
@@ -57,7 +57,7 @@ litellm --config /path/to/config.yaml
 
 ```bash showLineNumbers title="Gemini Transcribe Quick Start"
 curl http://0.0.0.0:4000/v1/audio/transcriptions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -F file=@speech.wav \
   -F model=gemini-transcribe \
   -F language=en
@@ -110,7 +110,7 @@ Without it the first session fails with `google-cloud-speech is not installed`
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: chirp-3
-    litellm_params:
+    lumina_params:
       model: vertex_ai/chirp_3
       vertex_project: "your-project-id"
       vertex_location: us
@@ -219,7 +219,7 @@ import os
 
 from openai import AsyncOpenAI
 
-client = AsyncOpenAI(base_url="http://localhost:4000/v1", api_key=os.environ["LITELLM_API_KEY"])
+client = AsyncOpenAI(base_url="http://localhost:4000/v1", api_key=os.environ["LUMINA_API_KEY"])
 
 
 def pcm_chunks(path, chunk_ms=100):

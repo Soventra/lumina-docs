@@ -177,7 +177,7 @@ Configure MLflow in your LiteLLM proxy configuration file:
 ```yaml
 model_list:
   - model_name: openai/*
-    litellm_params:
+    lumina_params:
       model: openai/*
 
 litellm_settings:
@@ -210,7 +210,7 @@ import TabItem from '@theme/TabItem';
 ```shell
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --data '{
     "model": "{{gemini_flash}}",
     "messages": [

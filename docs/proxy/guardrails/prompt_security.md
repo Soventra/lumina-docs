@@ -15,13 +15,13 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "prompt-security-guard"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       mode: "during_call"
       api_key: os.environ/PROMPT_SECURITY_API_KEY
@@ -371,7 +371,7 @@ The accumulated response text is sent to Prompt Security every 5 chunks and once
 ```yaml
 guardrails:
   - guardrail_name: "prompt-security-guard"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       mode: "post_call"
       api_key: os.environ/PROMPT_SECURITY_API_KEY
@@ -403,7 +403,7 @@ Use these settings to choose availability and file-replacement behavior:
 ```yaml
 guardrails:
   - guardrail_name: "prompt-security-guard"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       mode: "during_call"
       api_key: os.environ/PROMPT_SECURITY_API_KEY
@@ -424,7 +424,7 @@ Track users and provide system context for better security analysis:
 ```yaml
 guardrails:
   - guardrail_name: "prompt-security-tracked"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       mode: "during_call"
       api_key: os.environ/PROMPT_SECURITY_API_KEY
@@ -460,14 +460,14 @@ Configure separate pre-call and post-call guardrails for fine-grained control:
 ```yaml
 guardrails:
   - guardrail_name: "prompt-security-input"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       mode: "pre_call"
       api_key: os.environ/PROMPT_SECURITY_API_KEY
       api_base: os.environ/PROMPT_SECURITY_API_BASE
       
   - guardrail_name: "prompt-security-output"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       mode: "post_call"
       api_key: os.environ/PROMPT_SECURITY_API_KEY
@@ -578,7 +578,7 @@ Check that the guardrail is enabled in your config:
 ```yaml
 guardrails:
   - guardrail_name: "prompt-security-guard"
-    litellm_params:
+    lumina_params:
       guardrail: prompt_security
       default_on: true  # Ensure this is set
 ```

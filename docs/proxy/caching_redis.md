@@ -17,10 +17,10 @@ them too.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: text-embedding-ada-002
 
 litellm_settings:
@@ -122,7 +122,7 @@ Point the proxy at a Redis Cluster either with `redis_startup_nodes` under `cach
 ```yaml
 model_list:
   - model_name: "*"
-    litellm_params:
+    lumina_params:
       model: "*"
 
 litellm_settings:
@@ -181,7 +181,7 @@ Point the proxy at a Redis Sentinel deployment either with `service_name` and `s
 ```yaml
 model_list:
   - model_name: "*"
-    litellm_params:
+    lumina_params:
       model: "*"
 
 litellm_settings:

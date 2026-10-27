@@ -127,7 +127,7 @@ Here's how to use it [today](../../docs/tutorials/claude_responses_api)
     - Handle empty string for arguments in function calls - [PR](https://github.com/BerriAI/litellm/pull/11601)
     - Add audio/ogg mime type support when inferring from file url’s - [PR](https://github.com/BerriAI/litellm/pull/11635)
 - **[Custom LLM](../../docs/providers/custom_llm_server)**
-    - Fix passing api_base, api_key, litellm_params_dict to custom_llm embedding methods - [PR](https://github.com/BerriAI/litellm/pull/11450) s/o [ElefHead](https://github.com/ElefHead)
+    - Fix passing api_base, api_key, lumina_params_dict to custom_llm embedding methods - [PR](https://github.com/BerriAI/litellm/pull/11450) s/o [ElefHead](https://github.com/ElefHead)
 - **[Huggingface](../../docs/providers/huggingface)**
     - Add /chat/completions to endpoint url when missing - [PR](https://github.com/BerriAI/litellm/pull/11630)
 - **[Deepgram](../../docs/providers/deepgram)**

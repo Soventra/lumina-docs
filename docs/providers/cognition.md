@@ -110,19 +110,19 @@ Add Cognition to your LiteLLM Proxy configuration:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: swe-1.7
-    litellm_params:
+    lumina_params:
       model: cognition/swe-1.7
       api_key: os.environ/COGNITION_API_KEY
 
 general_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/LUMINA_MASTER_KEY
 ```
 
 Start the proxy:
 
 ```bash showLineNumbers title="Start LiteLLM Proxy"
 export COGNITION_API_KEY="your-api-key"
-export LITELLM_MASTER_KEY="sk-local-cognition"
+export LUMINA_MASTER_KEY="sk-local-cognition"
 litellm --config config.yaml --port 4000
 
 # RUNNING on http://0.0.0.0:4000
@@ -154,7 +154,7 @@ print(response.choices[0].message.content)
 ```bash showLineNumbers title="Cognition via Proxy - cURL"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -d '{
     "model": "swe-1.7",
     "messages": [{"role": "user", "content": "hello from litellm"}]
@@ -173,7 +173,7 @@ LiteLLM translates Anthropic Messages-shaped requests into Cognition chat comple
 ```bash showLineNumbers title="Anthropic Messages through LiteLLM Proxy"
 curl http://localhost:4000/v1/messages \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -d '{
     "model": "swe-1.7",
@@ -193,7 +193,7 @@ Cognition provisions API endpoints per customer today, so most deployments shoul
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: swe-1.7
-    litellm_params:
+    lumina_params:
       model: cognition/swe-1.7
       api_base: https://your-cognition-endpoint/v1
       api_key: os.environ/COGNITION_API_KEY

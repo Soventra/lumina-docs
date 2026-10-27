@@ -15,7 +15,7 @@ A managed vector store is a mapping, stored in `config.yaml` or in the LiteLLM d
 | `vector_store_description` | No | Description shown in the UI |
 | `vector_store_metadata` | No | Free-form metadata object |
 | `litellm_credential_name` | No | Name of a [stored credential](../proxy/config_settings.md) to authenticate with |
-| `litellm_params` | No | Provider parameters, e.g. `vertex_project` and `vertex_location` for Vertex AI, `aws_region_name` for Bedrock |
+| `lumina_params` | No | Provider parameters, e.g. `vertex_project` and `vertex_location` for Vertex AI, `aws_region_name` for Bedrock |
 
 Registering does not create anything on the provider. To create a new store upstream, use [`POST /v1/vector_stores`](./create.md) instead.
 
@@ -27,40 +27,40 @@ Registering does not create anything on the provider. To create a new store upst
 ```yaml showLineNumbers title="config.yaml"
 vector_store_registry:
   - vector_store_name: "docs-knowledgebase"
-    litellm_params:
+    lumina_params:
       vector_store_id: "T37J8R4WTM"
       custom_llm_provider: "bedrock"
       aws_region_name: "us-west-2"
 
   - vector_store_name: "website-search"
-    litellm_params:
+    lumina_params:
       vector_store_id: "my-datastore_1234567890"
       custom_llm_provider: "vertex_ai/search_api"
       vertex_project: "my-gcp-project"
       vertex_location: "global"
 ```
 
-`vector_store_id` and `custom_llm_provider` are required inside `litellm_params`; the proxy fails to start without them.
+`vector_store_id` and `custom_llm_provider` are required inside `lumina_params`; the proxy fails to start without them.
 
 </TabItem>
 <TabItem value="api" label="Management API">
 
 ```bash showLineNumbers title="Register a Vertex AI Search datastore"
 curl -X POST 'http://localhost:4000/vector_store/new' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "vector_store_id": "my-datastore_1234567890",
     "custom_llm_provider": "vertex_ai/search_api",
     "vector_store_name": "website-search",
-    "litellm_params": {
+    "lumina_params": {
       "vertex_project": "my-gcp-project",
       "vertex_location": "global"
     }
   }'
 ```
 
-The store is written to the LiteLLM database and is immediately available to direct search; no restart needed. If the proxy started with no registered vector stores, chat retrieval for its first UI or API registration becomes available after database synchronization or a proxy restart. The response echoes the stored object with sensitive `litellm_params` values redacted.
+The store is written to the LiteLLM database and is immediately available to direct search; no restart needed. If the proxy started with no registered vector stores, chat retrieval for its first UI or API registration becomes available after database synchronization or a proxy restart. The response echoes the stored object with sensitive `lumina_params` values redacted.
 
 </TabItem>
 <TabItem value="ui" label="Admin UI">
@@ -76,7 +76,7 @@ Search it through the unified endpoint. LiteLLM resolves the provider and creden
 
 ```bash showLineNumbers title="Unified search"
 curl -X POST 'http://localhost:4000/v1/vector_stores/my-datastore_1234567890/search' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"query": "How do I authenticate?"}'
 ```
@@ -87,7 +87,7 @@ Or attach it to a chat completion, and LiteLLM will search the store and inject 
 
 ```bash showLineNumbers title="RAG in /chat/completions"
 curl -X POST 'http://localhost:4000/v1/chat/completions' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "model": "gpt-5.6",
@@ -141,7 +141,7 @@ Set `object_permission.vector_stores` when creating a key or team to control whi
 
 ```bash showLineNumbers title="Key limited to one store"
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H 'Content-Type: application/json' \
   -d '{
     "object_permission": {"vector_stores": ["my-datastore_1234567890"]}
@@ -174,12 +174,12 @@ For a team key, grant the store on both objects:
 
 ```bash showLineNumbers title="Team and key both grant the store"
 curl -X POST 'http://localhost:4000/team/new' \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_alias": "support", "object_permission": {"vector_stores": ["YOUR_KNOWLEDGE_BASE_ID"]}}'
 
 curl -X POST 'http://localhost:4000/key/generate' \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H 'Content-Type: application/json' \
   -d '{"team_id": "<team_id from above>", "object_permission": {"vector_stores": ["YOUR_KNOWLEDGE_BASE_ID"]}}'
 ```

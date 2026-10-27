@@ -14,25 +14,25 @@ Define your guardrails under the `guardrails` section
 ```yaml showLineNumbers title="litellm config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "lakera-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lakera_v2  # supported values: "aporia", "bedrock", "lakera"
       mode: "during_call"
       api_key: os.environ/LAKERA_API_KEY
       api_base: os.environ/LAKERA_API_BASE
   - guardrail_name: "lakera-pre-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lakera_v2  # supported values: "aporia", "bedrock", "lakera"
       mode: "pre_call"
       api_key: os.environ/LAKERA_API_KEY
       api_base: os.environ/LAKERA_API_BASE
   - guardrail_name: "lakera-monitor"
-    litellm_params:
+    lumina_params:
       guardrail: lakera_v2
       mode: "pre_call"
       on_flagged: "monitor"  # Log violations but don't block
@@ -142,7 +142,7 @@ curl -i http://localhost:4000/v1/chat/completions \
 ```yaml
 guardrails:
   - guardrail_name: "lakera-guard"
-    litellm_params:
+    lumina_params:
       guardrail: lakera_v2  # supported values: "aporia", "bedrock", "lakera"
       mode: "during_call"
       api_key: os.environ/LAKERA_API_KEY
@@ -185,7 +185,7 @@ Masking in place preserves both skip flags and every other field on a message (a
 ```yaml showLineNumbers title="litellm config.yaml"
 guardrails:
   - guardrail_name: "lakera-advisory"
-    litellm_params:
+    lumina_params:
       guardrail: lakera_v2
       mode: "pre_call"
       on_flagged: "inject_system_message"

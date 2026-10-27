@@ -226,7 +226,7 @@ This makes LiteLLM especially beneficial for serverless functions, Lambda deploy
 
 - **Virtual Keys**
     - Add master key rotation for credentials table - [PR #17952](https://github.com/BerriAI/litellm/pull/17952)
-    - Fix tag management to preserve encrypted fields in litellm_params - [PR #17484](https://github.com/BerriAI/litellm/pull/17484)
+    - Fix tag management to preserve encrypted fields in lumina_params - [PR #17484](https://github.com/BerriAI/litellm/pull/17484)
     - Fix key delete and regenerate permissions - [PR #18214](https://github.com/BerriAI/litellm/pull/18214)
 - **Models + Endpoints**
     - Add Models Conditional Rendering in UI - [PR #18071](https://github.com/BerriAI/litellm/pull/18071)

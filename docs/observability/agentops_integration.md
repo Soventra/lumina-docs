@@ -25,7 +25,7 @@ uv add litellm
 import litellm
 import os
 
-os.environ["LITELLM_OTEL_V2"] = "true"
+os.environ["LUMINA_OTEL_V2"] = "true"
 os.environ["AGENTOPS_API_KEY"] = ""
 # LLM API Keys
 os.environ["OPENAI_API_KEY"] = ""
@@ -50,7 +50,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -61,7 +61,7 @@ litellm_settings:
 2. Set your credentials
 
 ```shell
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 AGENTOPS_API_KEY="your-api-key"
 ```
 
@@ -76,7 +76,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_large}}",
   "messages": [

@@ -121,7 +121,7 @@ async for chunk in response:
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration"
 model_list:
   - model_name: azure-agent-1
-    litellm_params:
+    lumina_params:
       model: azure_ai/agents/asst_abc123
       api_base: https://your-resource.services.ai.azure.com/api/projects/your-project
       # Service Principal auth (recommended)
@@ -130,7 +130,7 @@ model_list:
       client_secret: os.environ/AZURE_CLIENT_SECRET
 
   - model_name: azure-agent-math-tutor
-    litellm_params:
+    lumina_params:
       model: azure_ai/agents/asst_def456
       api_base: https://your-resource.services.ai.azure.com/api/projects/your-project
       # Or pass Azure AD token directly
@@ -154,7 +154,7 @@ litellm --config config.yaml
 ```bash showLineNumbers title="Basic Agent Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "azure-agent-1",
     "messages": [
@@ -169,7 +169,7 @@ curl http://localhost:4000/v1/chat/completions \
 ```bash showLineNumbers title="Streaming Agent Request"
 curl http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "azure-agent-math-tutor",
     "messages": [
@@ -309,7 +309,7 @@ response = litellm.completion(
 ```yaml showLineNumbers title="LiteLLM Proxy Configuration with Parameters"
 model_list:
   - model_name: azure-agent-analyst
-    litellm_params:
+    lumina_params:
       model: azure_ai/agents/asst_abc123
       api_base: https://your-resource.services.ai.azure.com/api/projects/your-project
       tenant_id: os.environ/AZURE_TENANT_ID
@@ -441,7 +441,7 @@ agents:
       protocolVersion: "1.0"
       capabilities:
         streaming: false
-    litellm_params:
+    lumina_params:
       agent_card_path: agentCard/v1.0
       tenant_id: os.environ/AZURE_TENANT_ID
       client_id: os.environ/AZURE_CLIENT_ID
@@ -456,7 +456,7 @@ Call the agent over A2A with a blocking send:
 
 ```bash
 curl http://localhost:4000/a2a/foundry-agent \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "jsonrpc": "2.0",
@@ -478,7 +478,7 @@ Or through chat completions, where LiteLLM asks for the blocking send itself:
 
 ```bash
 curl http://localhost:4000/v1/chat/completions \
-  -H "Authorization: Bearer $LITELLM_MASTER_KEY" \
+  -H "Authorization: Bearer $LUMINA_MASTER_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model": "a2a/foundry-agent", "messages": [{"role": "user", "content": "What is 2 + 2?"}]}'
 ```

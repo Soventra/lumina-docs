@@ -29,7 +29,7 @@ uv add litellm
 import litellm
 import os
 
-os.environ["LITELLM_OTEL_V2"] = "true"
+os.environ["LUMINA_OTEL_V2"] = "true"
 os.environ["ARIZE_SPACE_ID"] = ""
 os.environ["ARIZE_API_KEY"] = ""
 os.environ["ARIZE_PROJECT_NAME"] = ""   # recommended: names the project traces land in
@@ -56,7 +56,7 @@ response = litellm.completion(
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -67,7 +67,7 @@ litellm_settings:
 2. Set your credentials
 
 ```shell
-LITELLM_OTEL_V2=true
+LUMINA_OTEL_V2=true
 ARIZE_SPACE_ID="your-space-id"
 ARIZE_API_KEY="your-api-key"
 ARIZE_PROJECT_NAME="your-project-name"   # recommended: names the project traces land in
@@ -84,7 +84,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
   "model": "{{openai_large}}",
   "messages": [
@@ -144,7 +144,7 @@ To send only a share of a tenant's requests to its Arize space, add `arize_succe
 
 ```shell
 curl -X POST 'http://localhost:4000/team/<team-id>/callback' \
-  -H "Authorization: Bearer $LITELLM_API_KEY" -H 'Content-Type: application/json' \
+  -H "Authorization: Bearer $LUMINA_API_KEY" -H 'Content-Type: application/json' \
   -d '{
     "callback_name": "arize",
     "callback_type": "success_and_failure",
@@ -157,13 +157,13 @@ curl -X POST 'http://localhost:4000/team/<team-id>/callback' \
   }'
 ```
 
-With `LITELLM_OTEL_V2=true` the proxy keeps or drops each request whole, from the HTTP request span down to the model call and the spend write, and the request's trace ID makes the decision. Every pod and worker reaches the same answer for the same trace ID and outcome, so when a caller sends several requests with one W3C `traceparent`, as an agent or an internal service usually does, the tenant sees all of them or none of them, however they are load balanced. A request without a `traceparent` starts a trace of its own and is sampled on its own.
+With `LUMINA_OTEL_V2=true` the proxy keeps or drops each request whole, from the HTTP request span down to the model call and the spend write, and the request's trace ID makes the decision. Every pod and worker reaches the same answer for the same trace ID and outcome, so when a caller sends several requests with one W3C `traceparent`, as an agent or an internal service usually does, the tenant sees all of them or none of them, however they are load balanced. A request without a `traceparent` starts a trace of its own and is sampled on its own.
 
 Requests of one trace that end differently can still land apart when the two rates differ. At a success rate of `0.1` and an error rate of `1.0`, a trace whose third request fails usually shows only that failed request. As long as the error rate is at least the success rate, a trace whose successful requests are kept always keeps its failed ones too.
 
 Because the trace ID decides, a caller that reuses one trace ID gets the same answer every time, and a caller can pick a trace ID that is always kept or always dropped, as with OpenTelemetry's `TraceIdRatioBased` sampler. The rates thin only the tenant's own Arize space. Your proxy-wide exporters, and the copy that [`additive` mode](./opentelemetry_v2#keep-your-own-copy-as-well) keeps, receive every request.
 
-OpenTelemetry v1, without `LITELLM_OTEL_V2`, makes a random draw for each request instead, so requests that share a trace can be kept on one pod and dropped on another.
+OpenTelemetry v1, without `LUMINA_OTEL_V2`, makes a random draw for each request instead, so requests that share a trace can be kept on one pod and dropped on another.
 
 ## Full OpenTelemetry reference
 

@@ -96,7 +96,7 @@ print(result)
 ```yaml showLineNumbers title="ElevenLabs configuration in config.yaml"
 model_list:
   - model_name: elevenlabs-transcription
-    litellm_params:
+    lumina_params:
       model: elevenlabs/scribe_v1
       api_key: os.environ/ELEVENLABS_API_KEY
 
@@ -110,7 +110,7 @@ general_settings:
 
 ```bash showLineNumbers title="Required environment variables"
 export ELEVENLABS_API_KEY="your-elevenlabs-api-key"
-export LITELLM_MASTER_KEY="your-master-key"
+export LUMINA_MASTER_KEY="your-master-key"
 ```
 
 </TabItem>
@@ -131,7 +131,7 @@ litellm --config config.yaml
 
 ```bash showLineNumbers title="Audio transcription with curl"
 curl http://localhost:4000/v1/audio/transcriptions \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: multipart/form-data" \
   -F file="@audio.mp3" \
   -F model="elevenlabs-transcription" \
@@ -387,7 +387,7 @@ audio = litellm.speech(
 ```yaml showLineNumbers title="ElevenLabs TTS configuration in config.yaml"
 model_list:
   - model_name: elevenlabs-tts
-    litellm_params:
+    lumina_params:
       model: elevenlabs/eleven_multilingual_v2
       api_key: os.environ/ELEVENLABS_API_KEY
 
@@ -403,7 +403,7 @@ You can use standard OpenAI-compatible parameters without any provider-specific 
 
 ```bash showLineNumbers title="Simple TTS request with curl"
 curl http://localhost:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "elevenlabs-tts",
@@ -440,7 +440,7 @@ with open("speech.mp3", "wb") as f:
 
 ```bash showLineNumbers title="Advanced TTS request with curl"
 curl http://localhost:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "elevenlabs-tts",

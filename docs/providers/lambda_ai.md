@@ -207,19 +207,19 @@ print(response)
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: llama-8b
-    litellm_params:
+    lumina_params:
       model: lambda_ai/llama3.1-8b-instruct
       api_key: os.environ/LAMBDA_API_KEY
   - model_name: deepseek-70b
-    litellm_params:
+    lumina_params:
       model: lambda_ai/deepseek-llama3.3-70b
       api_key: os.environ/LAMBDA_API_KEY
   - model_name: hermes-405b
-    litellm_params:
+    lumina_params:
       model: lambda_ai/hermes3-405b
       api_key: os.environ/LAMBDA_API_KEY
   - model_name: qwen-coder
-    litellm_params:
+    lumina_params:
       model: lambda_ai/qwen25-coder-32b-instruct
       api_key: os.environ/LAMBDA_API_KEY
 ```

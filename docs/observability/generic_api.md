@@ -7,7 +7,7 @@ Send LiteLLM logs to any HTTP endpoint.
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -19,7 +19,7 @@ callback_settings:
     callback_type: generic_api
     endpoint: https://your-endpoint.com/logs
     headers:
-      Authorization: Bearer $LITELLM_API_KEY
+      Authorization: Bearer $LUMINA_API_KEY
 ```
 
 ## Configuration

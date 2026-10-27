@@ -35,7 +35,7 @@ Load balance across multiple xAI deployments or combine with other providers.
 ```yaml
 model_list:
   - model_name: grok-voice-agent
-    litellm_params:
+    lumina_params:
       model: xai/grok-voice-latest
       api_key: os.environ/XAI_API_KEY
     model_info:
@@ -43,7 +43,7 @@ model_list:
 
   # Optional: Add fallback to OpenAI
   - model_name: grok-voice-agent
-    litellm_params:
+    lumina_params:
       model: openai/gpt-4o-realtime-preview-2024-10-01
       api_key: os.environ/OPENAI_API_KEY
     model_info:

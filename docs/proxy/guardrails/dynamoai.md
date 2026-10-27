@@ -14,13 +14,13 @@ Define your guardrails under the `guardrails` section:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: "dynamoai-guard"
-    litellm_params:
+    lumina_params:
       guardrail: dynamoai
       mode: "pre_call"
       api_key: os.environ/DYNAMOAI_API_KEY
@@ -56,7 +56,7 @@ litellm --config config.yaml --detailed_debug
 ```shell showLineNumbers title="Successful Request"
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -77,7 +77,7 @@ Content passes all policy checks and is allowed through.
 ```shell showLineNumbers title="Blocked Request"
 curl -i http://localhost:4000/v1/chat/completions \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "{{openai_large}}",
     "messages": [
@@ -114,7 +114,7 @@ Configure specific DynamoAI policies to apply:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "dynamoai-policies"
-    litellm_params:
+    lumina_params:
       guardrail: dynamoai
       mode: "pre_call"
       api_key: os.environ/DYNAMOAI_API_KEY
@@ -131,7 +131,7 @@ Specify a custom DynamoAI API endpoint:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "dynamoai-custom"
-    litellm_params:
+    lumina_params:
       guardrail: dynamoai
       mode: "pre_call"
       api_key: os.environ/DYNAMOAI_API_KEY
@@ -145,7 +145,7 @@ Add a model ID for tracking and logging purposes:
 ```yaml showLineNumbers title="config.yaml"
 guardrails:
   - guardrail_name: "dynamoai-tracked"
-    litellm_params:
+    lumina_params:
       guardrail: dynamoai
       mode: "pre_call"
       api_key: os.environ/DYNAMOAI_API_KEY
@@ -160,14 +160,14 @@ Configure separate guardrails for input and output:
 guardrails:
   # Input guardrail
   - guardrail_name: "dynamoai-input"
-    litellm_params:
+    lumina_params:
       guardrail: dynamoai
       mode: "pre_call"
       api_key: os.environ/DYNAMOAI_API_KEY
 
   # Output guardrail
   - guardrail_name: "dynamoai-output"
-    litellm_params:
+    lumina_params:
       guardrail: dynamoai
       mode: "post_call"
       api_key: os.environ/DYNAMOAI_API_KEY

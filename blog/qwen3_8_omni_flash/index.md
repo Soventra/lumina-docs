@@ -59,7 +59,7 @@ print(response.choices[0].message.content)
 ```yaml
 model_list:
   - model_name: qwen3.8-omni-flash
-    litellm_params:
+    lumina_params:
       model: dashscope/qwen3.8-omni-flash
       api_base: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
       api_key: os.environ/DASHSCOPE_API_KEY
@@ -68,7 +68,7 @@ model_list:
 ```bash
 curl -X POST "http://0.0.0.0:4000/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_KEY" \
+  -H "Authorization: Bearer $LUMINA_KEY" \
   -d '{
     "model": "qwen3.8-omni-flash",
     "messages": [{"role": "user", "content": "what llm are you"}]

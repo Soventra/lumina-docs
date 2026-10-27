@@ -251,7 +251,7 @@ print(cancel_response)
 **REST API:**
 ```bash
 curl -X POST http://localhost:4000/v1/responses/response_id/cancel \
-    -H "Authorization: Bearer $LITELLM_API_KEY"
+    -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 This will attempt to cancel the in-progress response with the given ID.
@@ -474,7 +474,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="OpenAI Proxy Configuration"
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -603,7 +603,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="Anthropic Proxy Configuration"
 model_list:
   - model_name: anthropic/{{anthropic}}
-    litellm_params:
+    lumina_params:
       model: anthropic/{{anthropic}}
       api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -656,7 +656,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="Vertex AI Proxy Configuration"
 model_list:
   - model_name: vertex_ai/{{gemini_pro}}
-    litellm_params:
+    lumina_params:
       model: vertex_ai/{{gemini_pro}}
       vertex_project: your-gcp-project-id
       vertex_location: us-central1
@@ -710,7 +710,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="AWS Bedrock Proxy Configuration"
 model_list:
   - model_name: bedrock/us.anthropic.{{anthropic}}
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -765,7 +765,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="Google AI Studio Proxy Configuration"
 model_list:
   - model_name: gemini/{{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
 ```
@@ -960,7 +960,7 @@ ws.on('error', (error) => {
 
 # Connect to WebSocket endpoint
 websocat "ws://localhost:4000/v1/responses?model={{gemini_flash}}" \
-  -H="Authorization: Bearer $LITELLM_API_KEY"
+  -H="Authorization: Bearer $LUMINA_API_KEY"
 
 # Then send JSON events (paste and press Enter):
 {"type":"response.create","model":"{{gemini_flash}}","input":[{"type":"message","role":"user","content":[{"type":"input_text","text":"Hello!"}]}]}
@@ -1040,12 +1040,12 @@ For LiteLLM Proxy, ensure your models are configured normally:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{gemini_flash}}
-    litellm_params:
+    lumina_params:
       model: gemini/{{gemini_flash}}
       api_key: os.environ/GEMINI_API_KEY
   
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 ```
@@ -1117,7 +1117,7 @@ LiteLLM passes OpenAI's `background: true` parameter through to the provider. Th
 
 ```bash showLineNumbers title="Create a background response"
 curl http://localhost:4000/v1/responses \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-5.6",
@@ -1128,7 +1128,7 @@ curl http://localhost:4000/v1/responses \
 
 ```bash showLineNumbers title="Poll for the result"
 curl http://localhost:4000/v1/responses/{response_id} \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 ### Cost tracking for background responses
@@ -1171,7 +1171,7 @@ router = litellm.Router(
     model_list=[
         {
             "model_name": "azure-gpt4-turbo",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "azure/{{openai_large}}",
                 "api_key": "your-api-key-1",
                 "api_version": "2024-06-01",
@@ -1180,7 +1180,7 @@ router = litellm.Router(
         },
         {
             "model_name": "azure-gpt4-turbo",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "azure/{{openai_large}}",
                 "api_key": "your-api-key-2",
                 "api_version": "2024-06-01",
@@ -1242,13 +1242,13 @@ Notes:
 ```yaml showLineNumbers title="config.yaml with Session Continuity"
 model_list:
   - model_name: azure-gpt4-turbo
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: your-api-key-1
       api_version: 2024-06-01
       api_base: https://endpoint1.openai.azure.com
   - model_name: azure-gpt4-turbo
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: your-api-key-2
       api_version: 2024-06-01
@@ -1365,7 +1365,7 @@ router = Router(
     model_list=[
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "openai/{{openai_large}}",
                 "api_key": "org-1-api-key",  # Different API key
             },
@@ -1373,7 +1373,7 @@ router = Router(
         },
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {
+            "lumina_params": {
                 "model": "openai/{{openai_large}}",
                 "api_key": "org-2-api-key",  # Different API key
             },
@@ -1402,7 +1402,7 @@ response2 = await router.aresponses(
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: https://eastus.openai.azure.com/
       api_key: os.environ/AZURE_API_KEY_EASTUS
@@ -1412,7 +1412,7 @@ model_list:
       id: "gpt-5.6-terra-eastus"
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_base: https://westeurope.openai.azure.com/
       api_key: os.environ/AZURE_API_KEY_WESTEUROPE
@@ -1460,19 +1460,19 @@ router = litellm.Router(
     model_list=[
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {"model": "azure/{{openai_large}}", "api_key": "...", "api_base": "https://endpoint1.openai.azure.com"},
+            "lumina_params": {"model": "azure/{{openai_large}}", "api_key": "...", "api_base": "https://endpoint1.openai.azure.com"},
         },
         {
             "model_name": "{{openai_large}}",
-            "litellm_params": {"model": "bedrock/us.anthropic.{{anthropic}}", "aws_region_name": "us-east-1"},
+            "lumina_params": {"model": "bedrock/us.anthropic.{{anthropic}}", "aws_region_name": "us-east-1"},
         },
         {
             "model_name": "text-embedding-ada-002",
-            "litellm_params": {"model": "azure/text-embedding-ada-002", "api_key": "...", "api_base": "https://endpoint1.openai.azure.com"},
+            "lumina_params": {"model": "azure/text-embedding-ada-002", "api_key": "...", "api_base": "https://endpoint1.openai.azure.com"},
         },
         {
             "model_name": "text-embedding-ada-002",
-            "litellm_params": {"model": "azure/text-embedding-ada-002", "api_key": "...", "api_base": "https://endpoint2.openai.azure.com"},
+            "lumina_params": {"model": "azure/text-embedding-ada-002", "api_key": "...", "api_base": "https://endpoint2.openai.azure.com"},
         },
     ],
     # {{openai_large}}: cross-provider (Azure + Bedrock) — enable deployment affinity
@@ -1489,24 +1489,24 @@ router = litellm.Router(
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: azure/{{openai_large}}
       api_key: os.environ/AZURE_API_KEY_1
       api_base: https://endpoint1.openai.azure.com
 
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_region_name: us-east-1
 
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: azure/text-embedding-ada-002
       api_key: os.environ/AZURE_API_KEY_1
       api_base: https://endpoint1.openai.azure.com
 
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: azure/text-embedding-ada-002
       api_key: os.environ/AZURE_API_KEY_2
       api_base: https://endpoint2.openai.azure.com
@@ -1556,7 +1556,7 @@ print(response)
 ```yaml showLineNumbers title="Example Configuration"
 model_list:
 - model_name: anthropic-model
-  litellm_params:
+  lumina_params:
     model: anthropic/{{anthropic}}
     api_key: os.environ/ANTHROPIC_API_KEY
 ```
@@ -1574,7 +1574,7 @@ litellm --config /path/to/config.yaml
 ```bash showLineNumbers title="non-Responses API Model Request"
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "anthropic-model",
     "input": "who is Michael Jordan"
@@ -1634,7 +1634,7 @@ print(response)
 ```yaml showLineNumbers title="config.yaml — bridge for custom openai/ endpoint"
 model_list:
 - model_name: my-local-model
-  litellm_params:
+  lumina_params:
     model: openai/my-custom-model
     api_base: http://localhost:8080/v1
     api_key: fake-key
@@ -1656,7 +1656,7 @@ litellm --config /path/to/config.yaml
 ```bash showLineNumbers title="Request via bridge"
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "my-local-model",
     "input": "Hello!"
@@ -1833,7 +1833,7 @@ Start a new conversation by making a request without specifying a previous respo
 ```curl
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "input": "who is Michael Jordan"
@@ -1891,7 +1891,7 @@ Continue the conversation by referencing the previous response ID to maintain co
 ```curl
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "input": "can you tell me more about him",
@@ -1950,7 +1950,7 @@ Start a brand new conversation without referencing previous context to demonstra
 ```curl
 curl http://localhost:4000/v1/responses \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "anthropic/{{anthropic}}",
     "input": "can you tell me more about him"

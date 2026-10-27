@@ -10,13 +10,13 @@ OpenTelemetry is a CNCF standard for observability. It connects to any observabi
 
 :::tip[Looking for full-request tracing?]
 
-There's a newer, opt-in **[OpenTelemetry v2](./opentelemetry_v2)** integration for LiteLLM Proxy that produces one trace per request (HTTP → auth → guardrails → LLM call → DB writes), follows the official GenAI semantic conventions, and ships with presets for Arize, Phoenix, Langfuse, Weave, and more. Enable it with `LITELLM_OTEL_V2=true`.
+There's a newer, opt-in **[OpenTelemetry v2](./opentelemetry_v2)** integration for LiteLLM Proxy that produces one trace per request (HTTP → auth → guardrails → LLM call → DB writes), follows the official GenAI semantic conventions, and ships with presets for Arize, Phoenix, Langfuse, Weave, and more. Enable it with `LUMINA_OTEL_V2=true`.
 
 :::
 
 :::note[Change in v1.81.0]
 
-From v1.81.0, the request/response is set as attributes on the parent `Received Proxy Server Request` span by default, and there is **no** separate `litellm_request` span unless you opt in. To restore nested `litellm_request` spans, set `USE_OTEL_LITELLM_REQUEST_SPAN=true`. See [Span Hierarchy](#span-hierarchy) for the full picture and [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span) for when to flip the flag.
+From v1.81.0, the request/response is set as attributes on the parent `Received Proxy Server Request` span by default, and there is **no** separate `litellm_request` span unless you opt in. To restore nested `litellm_request` spans, set `USE_OTEL_LUMINA_REQUEST_SPAN=true`. See [Span Hierarchy](#span-hierarchy) for the full picture and [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span) for when to flip the flag.
 
 :::
 
@@ -105,7 +105,7 @@ Every LLM request handled by the LiteLLM Proxy produces a tree of spans rooted a
 ```
 Received Proxy Server Request                      (SpanKind.SERVER, root)
 │
-├── litellm_request                                (INTERNAL, only when USE_OTEL_LITELLM_REQUEST_SPAN=true)
+├── litellm_request                                (INTERNAL, only when USE_OTEL_LUMINA_REQUEST_SPAN=true)
 │   ├── raw_gen_ai_request                         (INTERNAL — provider request/response, content-capture-gated)
 │   └── guardrail                                  (INTERNAL — one per executed guardrail)
 │
@@ -118,7 +118,7 @@ Received Proxy Server Request                      (SpanKind.SERVER, root)
 └── Failed Proxy Server Request                    (INTERNAL — only on exception)
 ```
 
-In **semconv mode** (`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`), when an LLM-call span is created its name becomes `{operation} {model}` (e.g. `chat {{openai_large}}`) with `SpanKind.CLIENT`, and `raw_gen_ai_request` is suppressed. The same `USE_OTEL_LITELLM_REQUEST_SPAN` gating decides whether the span is emitted at all. See [Opt-In to Latest GenAI Semantic Conventions](#opt-in-to-latest-genai-semantic-conventions).
+In **semconv mode** (`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`), when an LLM-call span is created its name becomes `{operation} {model}` (e.g. `chat {{openai_large}}`) with `SpanKind.CLIENT`, and `raw_gen_ai_request` is suppressed. The same `USE_OTEL_LUMINA_REQUEST_SPAN` gating decides whether the span is emitted at all. See [Opt-In to Latest GenAI Semantic Conventions](#opt-in-to-latest-genai-semantic-conventions).
 
 The SDK (no proxy) emits `litellm_request` as the root if no parent context exists; there is no `Received Proxy Server Request` span in pure-SDK use.
 
@@ -127,7 +127,7 @@ The SDK (no proxy) emits `litellm_request` as the root if no parent context exis
 | Span name | Span kind | Parent | When emitted |
 |---|---|---|---|
 | `Received Proxy Server Request` | `SERVER` | root (or external `traceparent` if present) | Once per HTTP request to the LiteLLM Proxy |
-| `litellm_request` | `INTERNAL` | proxy root (proxy) or root (SDK) | When `USE_OTEL_LITELLM_REQUEST_SPAN=true` (proxy) or no parent context exists (SDK). In semconv mode replaced by `{operation} {model}` |
+| `litellm_request` | `INTERNAL` | proxy root (proxy) or root (SDK) | When `USE_OTEL_LUMINA_REQUEST_SPAN=true` (proxy) or no parent context exists (SDK). In semconv mode replaced by `{operation} {model}` |
 | `raw_gen_ai_request` | `INTERNAL` | `litellm_request` if present, else proxy root | One per upstream provider call. Carries provider-native request/response under `llm.{provider}.*`. Suppressed in semconv mode and when message content capture is disabled |
 | `guardrail` | `INTERNAL` (OpenInference kind = `guardrail`) | `litellm_request` if present, else proxy root | One span per guardrail execution (pre-call, during-call, or post-call) |
 | `Failed Proxy Server Request` | `INTERNAL` | proxy root | When the proxy raises an exception before completing the request |
@@ -155,7 +155,7 @@ There is currently **no env var that disables individual service-hook spans**. I
 
 ### Why don't I see a `litellm_request` span?
 
-Behavior changed in **v1.81.0**. By default, `USE_OTEL_LITELLM_REQUEST_SPAN=false` and the proxy collapses the `litellm_request` span into the parent `Received Proxy Server Request` span, setting its `gen_ai.*` attributes on the parent instead. This:
+Behavior changed in **v1.81.0**. By default, `USE_OTEL_LUMINA_REQUEST_SPAN=false` and the proxy collapses the `litellm_request` span into the parent `Received Proxy Server Request` span, setting its `gen_ai.*` attributes on the parent instead. This:
 
 - Avoids duplicating attributes across parent and child.
 - Reduces span count (and storage cost) by ~1 span per request.
@@ -164,7 +164,7 @@ Behavior changed in **v1.81.0**. By default, `USE_OTEL_LITELLM_REQUEST_SPAN=fals
 To restore the older nested behavior, where every LLM call gets its own `litellm_request` span as a child of the proxy root span, set:
 
 ```shell
-USE_OTEL_LITELLM_REQUEST_SPAN=true
+USE_OTEL_LUMINA_REQUEST_SPAN=true
 ```
 
 This is the right setting if:
@@ -175,7 +175,7 @@ This is the right setting if:
 
 This is **not a regression**; the change is intentional. The flag is read fresh on every request, so it can be flipped without restarting.
 
-In semconv mode (`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`), the same `USE_OTEL_LITELLM_REQUEST_SPAN` gating still decides whether the LLM-call span is emitted; semconv mode only changes the span's name (to `{operation} {model}`), kind (to `CLIENT`), and child structure.
+In semconv mode (`OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental`), the same `USE_OTEL_LUMINA_REQUEST_SPAN` gating still decides whether the LLM-call span is emitted; semconv mode only changes the span's name (to `{operation} {model}`), kind (to `CLIENT`), and child structure.
 
 ### Context propagation (W3C `traceparent`)
 
@@ -303,7 +303,7 @@ The OpenTelemetry logger does not read the Langfuse `mask_input`, `mask_output` 
 
 ### I don't see a `litellm_request` span
 
-Expected behavior under the v1.81.0+ default (`USE_OTEL_LITELLM_REQUEST_SPAN=false`): the proxy root span absorbs the LLM-call attributes and there is no separate `litellm_request` span. To restore nested spans, set `USE_OTEL_LITELLM_REQUEST_SPAN=true`. See [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span).
+Expected behavior under the v1.81.0+ default (`USE_OTEL_LUMINA_REQUEST_SPAN=false`): the proxy root span absorbs the LLM-call attributes and there is no separate `litellm_request` span. To restore nested spans, set `USE_OTEL_LUMINA_REQUEST_SPAN=true`. See [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span).
 
 If you're in semconv mode, the LLM-call span exists but is renamed to `{operation} {model}` (e.g. `chat {{openai_large}}`), so search by `gen_ai.system` rather than by the literal name `litellm_request`.
 
@@ -314,7 +314,7 @@ Those are [service-hook spans](#service-hook-spans-aka-infrastructure-spans). Th
 1. Verify `litellm.callbacks` (or `litellm_settings.callbacks`) includes `"otel"`.
 2. Verify the request actually hit a `/chat/completions` (or other LLM) route. Management endpoints (`/key/info`, `/user/info`, …) won't have `gen_ai.*` attributes.
 3. Check whether `litellm.turn_off_message_logging=true` or a `NO_CONTENT` capture mode is set, since they suppress message and raw-provider attributes.
-4. Set `USE_OTEL_LITELLM_REQUEST_SPAN=true` so the LLM attributes land on a span named `litellm_request` instead of being co-mingled with HTTP request attributes on `Received Proxy Server Request`.
+4. Set `USE_OTEL_LUMINA_REQUEST_SPAN=true` so the LLM attributes land on a span named `litellm_request` instead of being co-mingled with HTTP request attributes on `Received Proxy Server Request`.
 
 ### Trace LiteLLM Proxy user/key/org/team information on failed requests
 
@@ -435,8 +435,8 @@ All flags below are read from environment variables unless noted. Boolean flags 
 | `OTEL_ENVIRONMENT_NAME` | `production` | Resource attribute `deployment.environment` |
 | `OTEL_MODEL_ID` | `OTEL_SERVICE_NAME` | Resource attribute `model_id` |
 | `OTEL_TRACER_NAME` | `litellm` | Tracer name |
-| `LITELLM_METER_NAME` | `litellm` | Meter name (when metrics enabled) |
-| `LITELLM_LOGGER_NAME` | `litellm` | Logger name (when events enabled) |
+| `LUMINA_METER_NAME` | `litellm` | Meter name (when metrics enabled) |
+| `LUMINA_LOGGER_NAME` | `litellm` | Logger name (when events enabled) |
 | `OTEL_LOGS_EXPORTER` | none | Logs exporter (e.g. `console`) when events are enabled |
 
 When the `otlp_http` exporter talks to a collector behind an internal CA, it honors `SSL_CERT_FILE` (a path to a CA bundle) and `litellm_settings.ssl_verify` (`false` disables verification). The OpenTelemetry SDK's own `OTEL_EXPORTER_OTLP_CERTIFICATE` still wins when set
@@ -445,11 +445,11 @@ When the `otlp_http` exporter talks to a collector behind an internal CA, it hon
 
 | Variable | Default | Effect |
 |---|---|---|
-| `USE_OTEL_LITELLM_REQUEST_SPAN` | `false` | Force `litellm_request` to always be emitted as a child of the proxy root span. See [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span) |
+| `USE_OTEL_LUMINA_REQUEST_SPAN` | `false` | Force `litellm_request` to always be emitted as a child of the proxy root span. See [Why don't I see a `litellm_request` span?](#why-dont-i-see-a-litellm_request-span) |
 | `OTEL_SEMCONV_STABILITY_OPT_IN` | unset | Set to `gen_ai_latest_experimental` to switch to the [latest GenAI semantic conventions](#opt-in-to-latest-genai-semantic-conventions). Comma-separable per OTEL spec |
 | `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` | unset → falls back to legacy `message_logging` (default `True` → `SPAN_AND_EVENT`) | `NO_CONTENT` / `SPAN_ONLY` / `EVENT_ONLY` / `SPAN_AND_EVENT`. Boolean form accepted (`true`→`EVENT_ONLY`, `false`→`NO_CONTENT`) |
-| `LITELLM_OTEL_INTEGRATION_ENABLE_METRICS` | `false` | Enable OTLP metrics (TTFT, TPOT, response duration, cost, token usage, operation duration) |
-| `LITELLM_OTEL_INTEGRATION_ENABLE_EVENTS` | `false` | Enable OTLP semantic logs (`gen_ai.content.prompt`/`gen_ai.content.completion`, or `gen_ai.client.inference.operation.details` in semconv mode) |
+| `LUMINA_OTEL_INTEGRATION_ENABLE_METRICS` | `false` | Enable OTLP metrics (TTFT, TPOT, response duration, cost, token usage, operation duration) |
+| `LUMINA_OTEL_INTEGRATION_ENABLE_EVENTS` | `false` | Enable OTLP semantic logs (`gen_ai.content.prompt`/`gen_ai.content.completion`, or `gen_ai.client.inference.operation.details` in semconv mode) |
 | `OTEL_IGNORE_CONTEXT_PROPAGATION` | `false` | If `true`, ignore inbound `traceparent` headers and any active span — every LiteLLM trace becomes its own root |
 | `DEBUG_OTEL` | `false` | Print exporter and span-creation diagnostics to stderr |
 | `litellm.turn_off_message_logging` (Python global / `litellm_settings.turn_off_message_logging`) | `false` | Kill-switch for content capture. Suppresses `llm.{provider}.*` raw request/response, `gen_ai.input.messages`, `gen_ai.output.messages`, and `gen_ai.content.*` log events. Overrides per-handler `capture_message_content` |
@@ -469,8 +469,8 @@ The Langfuse `mask_input`, `mask_output` and `update_trace_keys` keys have no ef
 | `exporter` | `console` | Same as `OTEL_EXPORTER` |
 | `endpoint` | none | Same as `OTEL_ENDPOINT` |
 | `headers` | none | Same as `OTEL_HEADERS` |
-| `enable_metrics` | `false` | Same as `LITELLM_OTEL_INTEGRATION_ENABLE_METRICS` |
-| `enable_events` | `false` | Same as `LITELLM_OTEL_INTEGRATION_ENABLE_EVENTS` |
+| `enable_metrics` | `false` | Same as `LUMINA_OTEL_INTEGRATION_ENABLE_METRICS` |
+| `enable_events` | `false` | Same as `LUMINA_OTEL_INTEGRATION_ENABLE_EVENTS` |
 | `capture_message_content` | env var | Per-handler override; same value space as `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` |
 | `semconv_stability_opt_in` | empty set | Set of `OTELSemconvCategory` values, unioned with `OTEL_SEMCONV_STABILITY_OPT_IN` |
 | `skip_set_global` | `false` | Don't claim the process-global `TracerProvider`/`MeterProvider`/`LoggerProvider` |
@@ -488,7 +488,7 @@ The LLM-call span is the AI-semantic core. Its name, kind, and supporting child 
 | Span | Kind | Default mode | Semconv mode |
 |---|---|---|---|
 | Proxy request frame | `SERVER` | `Received Proxy Server Request` | `Received Proxy Server Request` (unchanged) |
-| LLM-call span | `INTERNAL` (default) / `CLIENT` (semconv) | `litellm_request` (only when `USE_OTEL_LITELLM_REQUEST_SPAN=true`; otherwise attributes land on the proxy frame span) | `{operation} {model}` (e.g. `chat gpt-4`, `embeddings text-embedding-3-small`); same `USE_OTEL_LITELLM_REQUEST_SPAN` gating as default mode |
+| LLM-call span | `INTERNAL` (default) / `CLIENT` (semconv) | `litellm_request` (only when `USE_OTEL_LUMINA_REQUEST_SPAN=true`; otherwise attributes land on the proxy frame span) | `{operation} {model}` (e.g. `chat gpt-4`, `embeddings text-embedding-3-small`); same `USE_OTEL_LUMINA_REQUEST_SPAN` gating as default mode |
 | Raw provider payload | `INTERNAL` | `raw_gen_ai_request` (when message content capture is permitted) | not emitted (data lives on the LLM-call span and the consolidated event) |
 | Guardrail check | `INTERNAL` | one span per guardrail invocation, named per guardrail | unchanged |
 | Management endpoint | `INTERNAL` | one span per proxy admin call, named per endpoint | unchanged |

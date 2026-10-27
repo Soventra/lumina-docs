@@ -50,10 +50,10 @@ Caching is enabled by adding the `cache` key to the `config.yaml`
 ```yaml
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: {{openai_small}}
   - model_name: text-embedding-ada-002
-    litellm_params:
+    lumina_params:
       model: text-embedding-ada-002
 
 litellm_settings:
@@ -200,7 +200,7 @@ LiteLLM Proxy exposes a `/cache/ping` endpoint to test if the cache is working a
 **Usage**
 
 ```shell
-curl --location 'http://0.0.0.0:4000/cache/ping'  -H "Authorization: Bearer $LITELLM_API_KEY"
+curl --location 'http://0.0.0.0:4000/cache/ping'  -H "Authorization: Bearer $LUMINA_API_KEY"
 ```
 
 **Expected Response - when cache healthy**

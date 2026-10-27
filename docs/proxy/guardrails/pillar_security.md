@@ -29,13 +29,13 @@ Create or update your `config.yaml`:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pillar-security
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
       api_base: https://api.pillar.security/api/v1/integrations/litellm
@@ -139,13 +139,13 @@ These parameters are passed via `additional_provider_specific_params`:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pillar-security
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
       api_base: https://api.pillar.security/api/v1/integrations/litellm
@@ -175,13 +175,13 @@ litellm_settings:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pillar-monitor
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: [pre_call, post_call]
       api_base: https://api.pillar.security/api/v1/integrations/litellm
@@ -208,13 +208,13 @@ general_settings:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pillar-input-only
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: pre_call
       api_base: https://api.pillar.security/api/v1/integrations/litellm
@@ -240,13 +240,13 @@ general_settings:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: pillar-parallel
-    litellm_params:
+    lumina_params:
       guardrail: generic_guardrail_api
       mode: during_call
       api_base: https://api.pillar.security/api/v1/integrations/litellm

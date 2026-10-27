@@ -119,7 +119,7 @@ Create a `config.yaml`:
 ```yaml
 model_list:
   - model_name: minimax/MiniMax-M2.1
-    litellm_params:
+    lumina_params:
       model: minimax/MiniMax-M2.1
       api_key: os.environ/MINIMAX_API_KEY
       api_base: https://api.minimax.io/anthropic/v1/messages
@@ -289,7 +289,7 @@ Create a `config.yaml`:
 ```yaml
 model_list:
   - model_name: minimax/MiniMax-M2.1
-    litellm_params:
+    lumina_params:
       model: minimax/MiniMax-M2.1
       api_key: os.environ/MINIMAX_API_KEY
       api_base: https://api.minimax.io/v1
@@ -529,12 +529,12 @@ Add MiniMax to your proxy configuration:
 ```yaml
 model_list:
   - model_name: tts
-    litellm_params:
+    lumina_params:
       model: minimax/speech-2.6-hd
       api_key: os.environ/MINIMAX_API_KEY
   
   - model_name: tts-turbo
-    litellm_params:
+    lumina_params:
       model: minimax/speech-2.6-turbo
       api_key: os.environ/MINIMAX_API_KEY
 ```
@@ -551,7 +551,7 @@ litellm --config /path/to/config.yaml
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "tts",
@@ -565,7 +565,7 @@ With custom parameters:
 
 ```bash
 curl http://0.0.0.0:4000/v1/audio/speech \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "tts",
@@ -691,7 +691,7 @@ To serve these models on the proxy, add a deployment and call `/v1/videos`:
 ```yaml showLineNumbers title="config.yaml"
 model_list:
   - model_name: minimax-h3
-    litellm_params:
+    lumina_params:
       model: minimax/MiniMax-H3
       api_key: os.environ/MINIMAX_API_KEY
 ```
@@ -699,7 +699,7 @@ model_list:
 ```bash showLineNumbers title="Video generation via Proxy - cURL"
 curl http://localhost:4000/v1/videos \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "minimax-h3",
     "prompt": "A paper boat drifting down a rain-soaked city gutter",
@@ -708,10 +708,10 @@ curl http://localhost:4000/v1/videos \
   }'
 
 curl http://localhost:4000/v1/videos/$VIDEO_ID \
-  -H "Authorization: Bearer $LITELLM_API_KEY"
+  -H "Authorization: Bearer $LUMINA_API_KEY"
 
 curl http://localhost:4000/v1/videos/$VIDEO_ID/content \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -o video.mp4
 ```
 

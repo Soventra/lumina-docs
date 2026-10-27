@@ -40,7 +40,7 @@ print(f"response: {response}")
 ```yaml showLineNumbers
 model_list:
   - model_name: gpt-image-1 ### RECEIVED MODEL NAME ###
-    litellm_params: # all params accepted by litellm.image_generation()
+    lumina_params: # all params accepted by litellm.image_generation()
       model: azure/gpt-image-1 ### MODEL NAME sent to `litellm.image_generation()` ###
       api_base: https://my-endpoint-europe-berri-992.openai.azure.com/
       api_key: "os.environ/AZURE_API_KEY_EU" # does os.getenv("AZURE_API_KEY_EU")
@@ -63,7 +63,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/v1/images/generations' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "gpt-image-1",
     "prompt": "A cute baby sea otter",

@@ -70,7 +70,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
   ```yaml
   model_list:
     - model_name: my-model
-      litellm_params:
+      lumina_params:
         model: openai/<your-model-name>  # add openai/ prefix to route as OpenAI provider
         api_base: <model-api-base>       # add api base for OpenAI compatible provider
         api_key: api-key                 # api key to send your model
@@ -121,7 +121,7 @@ Here's how to call an OpenAI-Compatible Endpoint with the LiteLLM Proxy Server
 
   ```shell
   curl --location 'http://0.0.0.0:4000/chat/completions' \
-      --header "Authorization: Bearer $LITELLM_API_KEY" \
+      --header "Authorization: Bearer $LUMINA_API_KEY" \
       --header 'Content-Type: application/json' \
       --data '{
       "model": "my-model",
@@ -145,7 +145,7 @@ Some VLLM models (e.g. gemma) don't support system messages. To map those reques
 ```yaml
 model_list:
 - model_name: my-custom-model
-  litellm_params:
+  lumina_params:
       model: openai/google/gemma
       api_base: http://my-custom-base
       api_key: "" 

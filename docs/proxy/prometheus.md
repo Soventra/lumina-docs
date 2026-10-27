@@ -15,7 +15,7 @@ Add this to your proxy config.yaml
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
 litellm_settings:
   callbacks:
@@ -588,7 +588,7 @@ Track custom metrics on prometheus on all events mentioned above.
 ```yaml
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -604,7 +604,7 @@ litellm_settings:
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer <LITELLM_API_KEY>' \
+-H 'Authorization: Bearer <LUMINA_API_KEY>' \
 -d '{
     "model": "openai/{{openai_large}}",
     "messages": [
@@ -629,7 +629,7 @@ curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {
@@ -642,7 +642,7 @@ curl -L -X POST 'http://0.0.0.0:4000/key/generate' \
 
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/team/new' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -H 'Content-Type: application/json' \
 -d '{
     "metadata": {
@@ -668,7 +668,7 @@ Track specific tags as prometheus labels for better filtering and monitoring.
 ```yaml
 model_list:
   - model_name: openai/{{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
@@ -688,7 +688,7 @@ litellm_settings:
 ```bash
 curl -L -X POST 'http://0.0.0.0:4000/v1/chat/completions' \
 -H 'Content-Type: application/json' \
--H 'Authorization: Bearer <LITELLM_API_KEY>' \
+-H 'Authorization: Bearer <LUMINA_API_KEY>' \
 -d '{
     "model": "openai/{{openai_large}}",
     "messages": [
@@ -749,7 +749,7 @@ Configure which metrics to emit by specifying them in `prometheus_metrics_config
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
 
 litellm_settings:
@@ -899,7 +899,7 @@ To monitor the health of litellm adjacent services (redis / postgres), do:
 ```yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: {{openai_large}}
 litellm_settings:
   service_callback: ["prometheus_system"]
@@ -984,7 +984,7 @@ scrape_configs:
   - job_name: 'litellm'
     authorization:
       type: Bearer
-      credentials: <LITELLM_API_KEY>
+      credentials: <LUMINA_API_KEY>
     static_configs:
       - targets: ['localhost:4000']
 ```

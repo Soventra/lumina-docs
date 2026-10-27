@@ -27,13 +27,13 @@ Define the guardrail under the `guardrails` section. Register it once per hook p
 ```yaml title="config.yaml"
 model_list:
   - model_name: {{openai_small}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_small}}
       api_key: os.environ/OPENAI_API_KEY
 
 guardrails:
   - guardrail_name: wingback-pre
-    litellm_params:
+    lumina_params:
       guardrail: wingback
       mode: pre_call
       default_on: true
@@ -42,7 +42,7 @@ guardrails:
       unreachable_fallback: fail_closed  # block if Wingback is unreachable
 
   - guardrail_name: wingback-post
-    litellm_params:
+    lumina_params:
       guardrail: wingback
       mode: post_call
       default_on: true
@@ -122,7 +122,7 @@ Set `wingback_app_id` in the guardrail config to attribute LiteLLM traffic to a 
 ```yaml title="config.yaml"
 guardrails:
   - guardrail_name: wingback-runtime-security
-    litellm_params:
+    lumina_params:
       guardrail: wingback
       mode: [pre_call, post_call]
       api_key: os.environ/WINGBACK_INTEGRATION_API_KEY

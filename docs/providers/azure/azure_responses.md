@@ -63,7 +63,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="Azure Responses API"
 model_list:
   - model_name: o1-pro
-    litellm_params:
+    lumina_params:
       model: azure/o1-pro
       api_key: os.environ/AZURE_RESPONSES_OPENAI_API_KEY
       api_base: https://litellm8397336933.openai.azure.com/
@@ -174,7 +174,7 @@ First, add this to your litellm proxy config.yaml:
 ```yaml showLineNumbers title="Azure Codex Models"
 model_list:
   - model_name: codex-mini
-    litellm_params:
+    lumina_params:
       model: azure/codex-mini
       api_key: os.environ/AZURE_RESPONSES_OPENAI_API_KEY
       api_base: https://litellm8397336933.openai.azure.com
@@ -265,7 +265,7 @@ print(response)
 ```yaml showLineNumbers
 model_list:
   - model_name: my-custom-o1-pro
-    litellm_params:
+    lumina_params:
       model: azure/responses/my-custom-o1-pro
       api_key: os.environ/AZURE_API_KEY
       api_base: https://my-azure-endpoint.openai.azure.com/
@@ -285,7 +285,7 @@ litellm --config /path/to/config.yaml
 curl http://localhost:4000/v1/chat/completions \
   -X POST \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Authorization: Bearer $LUMINA_API_KEY" \
   -d '{
     "model": "my-custom-o1-pro",
     "messages": [{"role": "user", "content": "Hello world"}]

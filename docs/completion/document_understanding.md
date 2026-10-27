@@ -67,7 +67,7 @@ assert response is not None
 ```yaml
 model_list:
   - model_name: bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -85,7 +85,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-model",
     "messages": [
@@ -158,7 +158,7 @@ assert response is not None
 ```yaml
 model_list:
   - model_name: bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -176,7 +176,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-model",
     "messages": [
@@ -248,7 +248,7 @@ assert response is not None
 ```yaml
 model_list:
   - model_name: bedrock-model
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -266,7 +266,7 @@ litellm --config /path/to/config.yaml
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "bedrock-model",
     "messages": [
@@ -327,7 +327,7 @@ assert response is not None
 ```bash
 curl -X POST 'http://0.0.0.0:4000/chat/completions' \
 -H 'Content-Type: application/json' \
--H "Authorization: Bearer $LITELLM_API_KEY" \
+-H "Authorization: Bearer $LUMINA_API_KEY" \
 -d '{
     "model": "mistral/mistral-large-latest",
     "messages": [
@@ -373,7 +373,7 @@ assert supports_pdf_input(model="bedrock/us.anthropic.{{anthropic}}") == True
 ```yaml
 model_list:
   - model_name: bedrock-model # model group name
-    litellm_params:
+    lumina_params:
       model: bedrock/us.anthropic.{{anthropic}}
       aws_access_key_id: os.environ/AWS_ACCESS_KEY_ID
       aws_secret_access_key: os.environ/AWS_SECRET_ACCESS_KEY
@@ -394,7 +394,7 @@ litellm --config config.yaml
 curl -X 'GET' \
   'http://localhost:4000/model/info' \
   -H 'accept: application/json' \
-  -H "x-api-key: $LITELLM_API_KEY"
+  -H "x-api-key: $LUMINA_API_KEY"
 ```
 
 Expected Response
@@ -404,7 +404,7 @@ Expected Response
   "data": [
     {
       "model_name": "bedrock-model",
-      "litellm_params": {...},
+      "lumina_params": {...},
       "model_info": {
         "litellm_provider": "bedrock_converse",
         "mode": "chat",

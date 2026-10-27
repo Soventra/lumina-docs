@@ -69,8 +69,8 @@ LiteLLM lacked provider-specific beta header validation. When Claude Code introd
 | 2 | Implement strict validation: headers must be explicitly mapped to be forwarded | ✅ Done | [`litellm_logging.py`](https://github.com/BerriAI/litellm/blob/main/litellm/litellm_core_utils/litellm_logging.py) |
 | 3 | Add `/reload/anthropic_beta_headers` endpoint for dynamic config updates | ✅ Done | Proxy management endpoints |
 | 4 | Add `/schedule/anthropic_beta_headers_reload` for automatic periodic updates | ✅ Done | Proxy management endpoints |
-| 5 | Support `LITELLM_ANTHROPIC_BETA_HEADERS_URL` for custom config sources | ✅ Done | Environment configuration |
-| 6 | Support `LITELLM_LOCAL_ANTHROPIC_BETA_HEADERS` for air-gapped deployments | ✅ Done | Environment configuration |
+| 5 | Support `LUMINA_ANTHROPIC_BETA_HEADERS_URL` for custom config sources | ✅ Done | Environment configuration |
+| 6 | Support `LUMINA_LOCAL_ANTHROPIC_BETA_HEADERS` for air-gapped deployments | ✅ Done | Environment configuration |
 
 Now LiteLLM validates and transforms headers per-provider:
 

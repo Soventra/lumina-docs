@@ -78,7 +78,7 @@ Use the `x-litellm-disable-callbacks` header to disable specific callbacks for i
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'x-litellm-disable-callbacks: langfuse' \
     --data '{
     "model": "{{anthropic}}",
@@ -131,7 +131,7 @@ You can disable multiple callbacks by providing a comma-separated list in the he
 ```bash
 curl --location 'http://0.0.0.0:4000/chat/completions' \
     --header 'Content-Type: application/json' \
-    --header "Authorization: Bearer $LITELLM_API_KEY" \
+    --header "Authorization: Bearer $LUMINA_API_KEY" \
     --header 'x-litellm-disable-callbacks: langfuse,datadog,prometheus' \
     --data '{
     "model": "{{anthropic}}",
@@ -244,7 +244,7 @@ Here's a complete example for an organization requiring guaranteed logging:
 # config.yaml
 model_list:
   - model_name: {{openai_large}}
-    litellm_params:
+    lumina_params:
       model: openai/{{openai_large}}
       api_key: os.environ/OPENAI_API_KEY
 
